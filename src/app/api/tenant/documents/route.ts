@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       tenantId: z.string().min(1),
       title: z.string().min(1),
       description: z.string().optional().nullable(),
-      fileUrl: z.string().url(),
+      fileUrl: z.string(),
       mimeType: z.string(),
       size: z.number().int(),
       type: z.string().default("UNDUHAN_UMUM"),
