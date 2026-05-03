@@ -93,6 +93,51 @@ export async function sendApplicationNotification(applicationId: string) {
 }
 
 /**
+ * Mengirim notifikasi WA ke Super Admin dan Marketer/Affiliasi ketika ada pendaftaran baru
+ */
+export async function sendNewApplicationAlerts(applicationId: string, affiliateId?: string | null) {
+  const app = await db.tenantApplication.findUnique({ where: { id: applicationId } })
+  if (!app) return
+
+  const settings = await getPlatformSettings()
+  const apiKey = settings.STARSENDER_API_KEY
+  if (!apiKey) return // Tidak bisa kirim WA jika API Key kosong
+
+  const sendWa = async (to: string, message: string) => {
+    try {
+      await fetch("https://api.starsender.online/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({ messageType: "text", to, body: message }),
+      })
+    } catch (err) {
+      logger.error("WA alert failed", err)
+    }
+  }
+
+  // 1. Alert ke Super Admin
+  const superAdmins = await db.user.findMany({ where: { isSuperAdmin: true, isActive: true } })
+  const adminMsg = `*PENDAFTARAN SEKOLAH BARU*\n\nSekolah: ${app.schoolName}\nAdmin: ${app.adminName}\nWA: ${app.adminPhone}\nSubdomain: ${app.schoolSlug}.schoolpro.id\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`
+  
+  for (const admin of superAdmins) {
+    if (admin.phone) await sendWa(admin.phone, adminMsg)
+  }
+
+  // 2. Alert ke Marketer (Jika menggunakan kode referral)
+  if (affiliateId) {
+    const affiliate = await db.affiliateProfile.findUnique({
+      where: { id: affiliateId },
+      include: { user: true }
+    })
+    
+    if (affiliate && affiliate.user.phone) {
+      const affiliateMsg = `*LEAD SEKOLAH BARU! 🎉*\n\nHalo ${affiliate.user.name},\nKabar baik! Pendaftaran sekolah baru telah masuk menggunakan kode referral Anda (${affiliate.referralCode}).\n\nSekolah: ${app.schoolName}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`
+      await sendWa(affiliate.user.phone, affiliateMsg)
+    }
+  }
+}
+
+/**
  * Logika menyetujui pengajuan dan membuat tenant baru
  */
 export async function approveApplication(id: string) {

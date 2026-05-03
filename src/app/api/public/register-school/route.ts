@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { sendApplicationNotification } from "@/lib/services/application"
+import { sendApplicationNotification, sendNewApplicationAlerts } from "@/lib/services/application"
 import { parseBody } from "@/lib/api-utils"
 
 const registerSchoolSchema = z.object({
@@ -72,6 +72,7 @@ export async function POST(req: Request) {
 
     // Kirim notifikasi WA status PENDING
     await sendApplicationNotification(application.id)
+    await sendNewApplicationAlerts(application.id, affiliateId)
 
     return NextResponse.json({ message: "Pengajuan berhasil dikirim", id: application.id })
   } catch (error) {
