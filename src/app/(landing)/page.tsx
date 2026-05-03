@@ -383,69 +383,6 @@ export default async function LandingPage() {
         </Tabs>
       </section>
 
-      {/* ====== PRICING SECTION ====== */}
-      <section id="harga" className="container mx-auto px-4 py-10 md:py-16">
-        <div className="text-center mb-10 space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs md:text-sm text-primary font-medium">
-            <Shield className="h-3.5 w-3.5" />
-            Harga Transparan
-          </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Pilih Paket yang Tepat</h2>
-          <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
-            Mulai gratis, upgrade kapan saja. Tidak ada biaya tersembunyi.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`relative glass rounded-2xl md:rounded-3xl p-5 md:p-8 border flex flex-col ${
-                plan.popular ? "border-primary/50 shadow-lg shadow-primary/10" : ""
-              }`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="rounded-full btn-gradient text-white text-xs font-semibold px-4 py-1 shadow-lg">
-                    Terpopuler
-                  </span>
-                </div>
-              )}
-              <div className="mb-5">
-                <h3 className="text-lg md:text-xl font-bold">{plan.name}</h3>
-                <p className="text-muted-foreground text-xs md:text-sm mt-1">{plan.description}</p>
-                <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-2xl md:text-3xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground text-sm">{plan.period}</span>
-                </div>
-              </div>
-              <ul className="space-y-2.5 flex-1">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-xs md:text-sm">
-                    <div className="h-4 w-4 shrink-0 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Check className="h-2.5 w-2.5 text-primary" />
-                    </div>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6">
-                <Link href="/daftarkan-sekolah">
-                  <Button
-                    className={`w-full rounded-xl h-10 md:h-11 text-sm ${
-                      plan.popular
-                        ? "btn-gradient text-white glow-primary border-0"
-                        : "variant-outline glass"
-                    }`}
-                  >
-                    Mulai Sekarang
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* ====== CTA SECTION ====== */}
       <section className="container mx-auto px-4 py-12 md:py-20">
