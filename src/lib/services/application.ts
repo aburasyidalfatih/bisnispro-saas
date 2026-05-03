@@ -29,21 +29,31 @@ export async function sendApplicationNotification(applicationId: string) {
 
   switch (app.status) {
     case "PENDING":
-      subject = `Pendaftaran ${app.schoolName} Berhasil Diterima`
-      message = `Halo ${app.adminName},\n\nSelamat! Formulir pendaftaran sekolah ${app.schoolName} telah kami terima dan saat ini sudah masuk ke dalam antrean peninjauan tim kami.\n\nKami akan segera menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih.`
+      subject = settings.WA_SUBJECT_PENDING || `Pendaftaran ${app.schoolName} Berhasil Diterima`
+      const tplPending = settings.WA_TEMPLATE_PENDING || `Halo {{adminName}},\n\nSelamat! Formulir pendaftaran sekolah {{schoolName}} telah kami terima dan saat ini sudah masuk ke dalam antrean peninjauan tim kami.\n\nKami akan segera menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih.`
+      message = tplPending.replace(/{{adminName}}/g, app.adminName).replace(/{{schoolName}}/g, app.schoolName)
       break
     case "APPROVED":
       const tempPwd = app.adminMessage?.startsWith("temp_pwd:") ? app.adminMessage.replace("temp_pwd:", "") : "Hubungi admin untuk mendapatkan password"
-      subject = `Selamat! Pendaftaran ${app.schoolName} Disetujui`
-      message = `Halo ${app.adminName},\n\nPendaftaran sekolah ${app.schoolName} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan kredensial berikut:\n\nURL Login: https://${app.schoolSlug}.${settings.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id'}/login\nEmail: ${app.adminEmail}\nPassword Sementara: ${tempPwd}\n\n⚠️ PENTING: Harap segera mengganti password Anda setelah berhasil login pertama kali demi keamanan akun Anda.\n\nTerima kasih.`
+      const loginUrl = `https://${app.schoolSlug}.${settings.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id'}/login`
+      subject = settings.WA_SUBJECT_APPROVED || `Selamat! Pendaftaran ${app.schoolName} Disetujui`
+      const tplApproved = settings.WA_TEMPLATE_APPROVED || `Halo {{adminName}},\n\nPendaftaran sekolah {{schoolName}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan kredensial berikut:\n\nURL Login: {{loginUrl}}\nEmail: {{adminEmail}}\nPassword Sementara: {{tempPwd}}\n\n⚠️ PENTING: Harap segera mengganti password Anda setelah berhasil login pertama kali demi keamanan akun Anda.\n\nTerima kasih.`
+      message = tplApproved
+        .replace(/{{adminName}}/g, app.adminName)
+        .replace(/{{schoolName}}/g, app.schoolName)
+        .replace(/{{loginUrl}}/g, loginUrl)
+        .replace(/{{adminEmail}}/g, app.adminEmail)
+        .replace(/{{tempPwd}}/g, tempPwd)
       break
     case "REVISION":
-      subject = `Permintaan Revisi Pendaftaran: ${app.schoolName}`
-      message = `Halo ${app.adminName},\n\nTerima kasih telah mendaftar. Namun, ada beberapa data yang perlu diperbaiki:\n\n"${app.adminMessage}"\n\nSilakan hubungi kami untuk melakukan perbaikan data.`
+      subject = settings.WA_SUBJECT_REVISION || `Permintaan Revisi Pendaftaran: ${app.schoolName}`
+      const tplRevision = settings.WA_TEMPLATE_REVISION || `Halo {{adminName}},\n\nTerima kasih telah mendaftar. Namun, ada beberapa data yang perlu diperbaiki:\n\n"{{adminMessage}}"\n\nSilakan hubungi kami untuk melakukan perbaikan data.`
+      message = tplRevision.replace(/{{adminName}}/g, app.adminName).replace(/{{adminMessage}}/g, app.adminMessage || "")
       break
     case "REJECTED":
-      subject = `Update Pendaftaran: ${app.schoolName}`
-      message = `Halo ${app.adminName},\n\nMohon maaf, pendaftaran sekolah ${app.schoolName} belum dapat kami setujui saat ini.\n\nAlasan: ${app.adminMessage}\n\nTerima kasih atas minat Anda.`
+      subject = settings.WA_SUBJECT_REJECTED || `Update Pendaftaran: ${app.schoolName}`
+      const tplRejected = settings.WA_TEMPLATE_REJECTED || `Halo {{adminName}},\n\nMohon maaf, pendaftaran sekolah {{schoolName}} belum dapat kami setujui saat ini.\n\nAlasan: {{adminMessage}}\n\nTerima kasih atas minat Anda.`
+      message = tplRejected.replace(/{{adminName}}/g, app.adminName).replace(/{{schoolName}}/g, app.schoolName).replace(/{{adminMessage}}/g, app.adminMessage || "")
       break
   }
 
@@ -117,7 +127,12 @@ export async function sendNewApplicationAlerts(applicationId: string, affiliateI
 
   // 1. Alert ke Super Admin
   const superAdmins = await db.user.findMany({ where: { isSuperAdmin: true, isActive: true } })
-  const adminMsg = `*PENDAFTARAN SEKOLAH BARU*\n\nSekolah: ${app.schoolName}\nAdmin: ${app.adminName}\nWA: ${app.adminPhone}\nSubdomain: ${app.schoolSlug}.schoolpro.id\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`
+  const defaultAdminMsg = `*PENDAFTARAN SEKOLAH BARU*\n\nSekolah: {{schoolName}}\nAdmin: {{adminName}}\nWA: {{adminPhone}}\nSubdomain: {{schoolSlug}}.schoolpro.id\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`
+  const adminMsg = (settings.WA_TEMPLATE_ALERT_SUPERADMIN || defaultAdminMsg)
+    .replace(/{{schoolName}}/g, app.schoolName)
+    .replace(/{{adminName}}/g, app.adminName)
+    .replace(/{{adminPhone}}/g, app.adminPhone)
+    .replace(/{{schoolSlug}}/g, app.schoolSlug)
   
   for (const admin of superAdmins) {
     if (admin.phone) await sendWa(admin.phone, adminMsg)
@@ -131,7 +146,11 @@ export async function sendNewApplicationAlerts(applicationId: string, affiliateI
     })
     
     if (affiliate && affiliate.user.phone) {
-      const affiliateMsg = `*LEAD SEKOLAH BARU! 🎉*\n\nHalo ${affiliate.user.name},\nKabar baik! Pendaftaran sekolah baru telah masuk menggunakan kode referral Anda (${affiliate.referralCode}).\n\nSekolah: ${app.schoolName}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`
+      const defaultAffiliateMsg = `*LEAD SEKOLAH BARU! 🎉*\n\nHalo {{affiliateName}},\nKabar baik! Pendaftaran sekolah baru telah masuk menggunakan kode referral Anda ({{referralCode}}).\n\nSekolah: {{schoolName}}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`
+      const affiliateMsg = (settings.WA_TEMPLATE_ALERT_AFFILIATE || defaultAffiliateMsg)
+        .replace(/{{affiliateName}}/g, affiliate.user.name)
+        .replace(/{{referralCode}}/g, affiliate.referralCode)
+        .replace(/{{schoolName}}/g, app.schoolName)
       await sendWa(affiliate.user.phone, affiliateMsg)
     }
   }

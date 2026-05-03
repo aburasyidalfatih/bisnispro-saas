@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { 
   Server, Shield, Eye, EyeOff, Mail, MessageSquare, 
   CreditCard, Globe, Settings2, Save, ExternalLink,
@@ -45,6 +46,16 @@ export default function SuperAdminSettingsPage() {
     // WhatsApp
     STARSENDER_API_KEY: "",
     STARSENDER_DEVICE_ID: "",
+    WA_SUBJECT_PENDING: "",
+    WA_TEMPLATE_PENDING: "",
+    WA_SUBJECT_APPROVED: "",
+    WA_TEMPLATE_APPROVED: "",
+    WA_SUBJECT_REVISION: "",
+    WA_TEMPLATE_REVISION: "",
+    WA_SUBJECT_REJECTED: "",
+    WA_TEMPLATE_REJECTED: "",
+    WA_TEMPLATE_ALERT_SUPERADMIN: "",
+    WA_TEMPLATE_ALERT_AFFILIATE: "",
     
     // Payment
     TRIPAY_API_KEY: "",
@@ -450,6 +461,51 @@ export default function SuperAdminSettingsPage() {
               </div>
               <Button variant="outline" className="w-full rounded-xl gap-2 border-primary/30 text-primary hover:bg-primary/5" onClick={handleTestWA} disabled={testing || !form.STARSENDER_API_KEY}>
                 {testing ? "Mengirim..." : "Kirim Pesan Tes"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="glass border-0 lg:col-span-2">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10"><Settings2 className="h-4 w-4 text-blue-500" /></div>
+                <CardTitle className="text-lg">Template Pesan WhatsApp</CardTitle>
+              </div>
+              <CardDescription>Gunakan variabel dinamis seperti {'{{adminName}}, {{schoolName}}, {{adminEmail}}, {{tempPwd}}, {{schoolSlug}}, {{adminMessage}}, {{adminPhone}}, {{affiliateName}}, {{referralCode}}'}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label className="text-emerald-600 font-bold">1. Pendaftaran Diterima (PENDING)</Label>
+                  <Textarea value={form.WA_TEMPLATE_PENDING} onChange={e => setForm({...form, WA_TEMPLATE_PENDING: e.target.value})} placeholder={`Halo {{adminName}},\nSelamat! Pendaftaran {{schoolName}} diterima.`} className="min-h-[100px] text-xs font-mono" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-blue-600 font-bold">2. Pendaftaran Disetujui (APPROVED)</Label>
+                  <Textarea value={form.WA_TEMPLATE_APPROVED} onChange={e => setForm({...form, WA_TEMPLATE_APPROVED: e.target.value})} placeholder={`Halo {{adminName}},\nPendaftaran {{schoolName}} disetujui. URL: {{loginUrl}}`} className="min-h-[100px] text-xs font-mono" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-amber-600 font-bold">3. Revisi Data (REVISION)</Label>
+                  <Textarea value={form.WA_TEMPLATE_REVISION} onChange={e => setForm({...form, WA_TEMPLATE_REVISION: e.target.value})} placeholder={`Halo {{adminName}},\nRevisi: {{adminMessage}}`} className="min-h-[100px] text-xs font-mono" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-red-600 font-bold">4. Pendaftaran Ditolak (REJECTED)</Label>
+                  <Textarea value={form.WA_TEMPLATE_REJECTED} onChange={e => setForm({...form, WA_TEMPLATE_REJECTED: e.target.value})} placeholder={`Halo {{adminName}},\nDitolak: {{adminMessage}}`} className="min-h-[100px] text-xs font-mono" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-purple-600 font-bold">5. Alert ke Super Admin</Label>
+                  <Textarea value={form.WA_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder={`Sekolah Baru: {{schoolName}}\nWA: {{adminPhone}}`} className="min-h-[100px] text-xs font-mono" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-orange-600 font-bold">6. Alert ke Marketer (Afiliasi)</Label>
+                  <Textarea value={form.WA_TEMPLATE_ALERT_AFFILIATE} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_AFFILIATE: e.target.value})} placeholder={`Halo {{affiliateName}},\nLead baru: {{schoolName}}`} className="min-h-[100px] text-xs font-mono" />
+                </div>
+              </div>
+              <Button 
+                className="w-full gap-2 btn-gradient text-white border-0 rounded-xl" 
+                onClick={() => handleSaveBatch(['WA_TEMPLATE_PENDING', 'WA_TEMPLATE_APPROVED', 'WA_TEMPLATE_REVISION', 'WA_TEMPLATE_REJECTED', 'WA_TEMPLATE_ALERT_SUPERADMIN', 'WA_TEMPLATE_ALERT_AFFILIATE'])} 
+                disabled={saving}
+              >
+                <Save className="h-4 w-4" /> Simpan Semua Template Pesan
               </Button>
             </CardContent>
           </Card>
