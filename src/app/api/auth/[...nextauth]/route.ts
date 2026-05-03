@@ -50,12 +50,12 @@ async function getDynamicConfig(req: NextRequest) {
   return config
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, ctx: any) {
   const config = await getDynamicConfig(req)
-  return NextAuth(config).handlers.GET(req)
+  return NextAuth(config).handlers.GET(req, ctx)
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, ctx: any) {
   const config = await getDynamicConfig(req)
-  return NextAuth(config).handlers.POST(req)
+  return NextAuth(config).handlers.POST(req, ctx)
 }
