@@ -13,8 +13,9 @@ const testSchema = z.object({
   smtpFrom: z.string().optional(),
   smtpTo: z.string().email("Email tujuan tidak valid").optional(),
   // WhatsApp fields
-  waApiUrl: z.string().url().optional(),
+  waApiUrl: z.string().url("URL tidak valid").optional(),
   waApiKey: z.string().optional(),
+  waDeviceId: z.string().optional(),
   waPhone: z.string().optional(),
 })
 
@@ -26,9 +27,13 @@ export async function POST(req: Request) {
   if (parsed.error) return parsed.error
   const data = parsed.data
 
+  // ==================== TEST SMTP ====================
   if (data.type === "smtp") {
     if (!data.smtpHost || !data.smtpUser || !data.smtpPass || !data.smtpTo) {
-      return NextResponse.json({ error: "Lengkapi konfigurasi SMTP terlebih dahulu" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Lengkapi konfigurasi SMTP: Host, User, Password, dan Email Tujuan" },
+        { status: 400 }
+      )
     }
     try {
       const nodemailer = await import("nodemailer")
@@ -43,7 +48,7 @@ export async function POST(req: Request) {
         from: data.smtpFrom || data.smtpUser,
         to: data.smtpTo,
         subject: "Test Email — SchoolPro",
-        html: `<p>Email test berhasil dikirim dari konfigurasi SMTP tenant Anda.</p><p>Waktu: ${new Date().toLocaleString("id-ID")}</p>`,
+        html: `<p>Email test berhasil dikirim dari konfigurasi SMTP.</p><p>Waktu: ${new Date().toLocaleString("id-ID")}</p>`,
       })
       return NextResponse.json({ message: "Email test berhasil dikirim!" })
     } catch (err: any) {
@@ -51,30 +56,44 @@ export async function POST(req: Request) {
     }
   }
 
+  // ==================== TEST WHATSAPP ====================
   if (data.type === "whatsapp") {
     if (!data.waApiUrl || !data.waApiKey || !data.waPhone) {
-      return NextResponse.json({ error: "Lengkapi konfigurasi WhatsApp terlebih dahulu" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Lengkapi konfigurasi WhatsApp: URL API, API Key, dan Nomor Tujuan" },
+        { status: 400 }
+      )
     }
     try {
+      const body: Record<string, string> = {
+        messageType: "text",
+        to: data.waPhone,
+        body: `Test pesan dari SchoolPro. Waktu: ${new Date().toLocaleString("id-ID")}`,
+      }
+      // Sertakan deviceId jika tersedia
+      if (data.waDeviceId) body.deviceId = data.waDeviceId
+
       const res = await fetch(`${data.waApiUrl}/send`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: data.waApiKey,
+          Authorization: `Bearer ${data.waApiKey}`, // ✅ Format Bearer yang benar
         },
-        body: JSON.stringify({
-          messageType: "text",
-          to: data.waPhone,
-          body: `Test pesan dari SchoolPro. Waktu: ${new Date().toLocaleString("id-ID")}`,
-        }),
+        body: JSON.stringify(body),
       })
       const result = await res.json()
       if (!res.ok) {
-        return NextResponse.json({ error: `WhatsApp API error: ${result.message || res.statusText}` }, { status: 400 })
+        return NextResponse.json(
+          { error: `WhatsApp API error: ${result.message || res.statusText}` },
+          { status: 400 }
+        )
       }
       return NextResponse.json({ message: "Pesan WhatsApp test berhasil dikirim!" })
     } catch (err: any) {
-      return NextResponse.json({ error: `Koneksi WhatsApp gagal: ${err.message}` }, { status: 400 })
+      return NextResponse.json(
+        { error: `Koneksi WhatsApp gagal: ${err.message}` },
+        { status: 400 }
+      )
     }
   }
 

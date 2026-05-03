@@ -206,7 +206,7 @@ export default function UsersPage() {
             </div>
             <div className="space-y-2">
               <Label>Password</Label>
-              <Input name="password" type="password" placeholder="Min 8 karakter" defaultValue="password123" className="rounded-xl" />
+              <Input name="password" type="password" placeholder="Biarkan kosong untuk random password" className="rounded-xl" />
             </div>
             <div className="space-y-2">
               <Label>Role</Label>

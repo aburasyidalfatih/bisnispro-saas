@@ -44,9 +44,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   eslint: {
-    // TODO: Migrasi ke ESLint flat config lalu set false
-    // next lint deprecated di Next.js 15.5, perlu migrasi dulu
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   images: {
     remotePatterns: ALLOWED_IMAGE_DOMAINS,

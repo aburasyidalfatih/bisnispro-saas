@@ -30,6 +30,9 @@ const websiteSchema = z.object({
   // SEO
   seoTitle: z.string().max(70).optional().nullable(),
   seoDesc: z.string().max(160).optional().nullable(),
+  // Google Auth
+  googleClientId: z.string().optional().nullable(),
+  googleClientSecret: z.string().optional().nullable(),
 })
 
 // GET: ambil data website tenant
@@ -48,7 +51,7 @@ export async function GET(req: Request) {
       about: true, logo: true, heroImage: true, address: true, phone: true,
       email: true, website: true, whatsapp: true, instagram: true,
       facebook: true, youtube: true, services: true, gallery: true,
-      seoTitle: true, seoDesc: true,
+      seoTitle: true, seoDesc: true, googleClientId: true, googleClientSecret: true,
     },
   })
 

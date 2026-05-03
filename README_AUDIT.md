@@ -1,95 +1,375 @@
-# 📋 LAPORAN AUDIT PRODUKSI — SchoolPro SaaS Platform
+# 📋 LAPORAN AUDIT PRODUKSI — SchoolPro SaaS
 
-**Tanggal Audit:** 2 Mei 2026  
+**Proyek:** SchoolPro SaaS (saas-master-pro v1.0.0)  
+**Tanggal Audit:** 3 Mei 2026  
 **Auditor:** Lead Technical Auditor (AI-Assisted)  
-**Versi Aplikasi:** 1.0.0  
-**Stack Teknologi:** Next.js 15.5.15 · React 19 · Prisma 5.22 · PostgreSQL 16 · Redis 7 · Auth.js v5 (beta.31)  
-**Lingkup:** Full-stack audit — Security, Architecture, Performance, Code Quality, Deployment
+**Stack:** Next.js 15.5 · React 19 · Prisma 5.22 · PostgreSQL 16 · Redis · Docker  
+**Scope:** Full-stack codebase review — Architecture, Security, Performance, QA  
 
 ---
 
-## 1. RINGKASAN EKSEKUTIF (Executive Summary)
+## 1. Ringkasan Eksekutif (Executive Summary)
 
-### Skor Kesehatan Kode: 8.5 / 10 ✅ (naik dari 6.5 → 7.5 → 8.5)
+### 🏥 Skor Kesehatan Kode: **6.5 / 10**
 
-Project SchoolPro SaaS menunjukkan fondasi arsitektur yang **solid** dengan implementasi multi-tenant berbasis subdomain, autentikasi berlapis (2FA/TOTP), role-based access control, dan rate limiting. Semua temuan **kritis** dari audit awal telah berhasil diperbaiki. Platform saat ini dalam kondisi **production-ready** dengan catatan test coverage masih perlu ditingkatkan.
+Codebase ini menunjukkan fondasi arsitektur yang **cukup solid** untuk sebuah SaaS multi-tenant. Beberapa aspek positif yang teridentifikasi:
 
-### 🔴 Temuan Paling Kritis (Harus Segera Diperbaiki)
+- ✅ Multi-tenant architecture dengan subdomain & custom domain routing
+- ✅ Structured logging & audit trail yang baik
+- ✅ Rate limiting pada endpoint sensitif
+- ✅ Zod validation pada sebagian besar input
+- ✅ File upload dengan path traversal protection
+- ✅ 2FA (TOTP + backup codes) dengan hashing yang benar
+- ✅ Docker containerization dengan non-root user
+- ✅ Security headers (CSP, HSTS, X-Frame-Options)
 
-| # | Temuan | Status |
+Namun, terdapat **temuan kritis** yang harus segera diperbaiki sebelum kode ini layak disebut *production-ready*:
+
+### 🚨 Temuan Paling Kritis (Harus Segera Diperbaiki)
+
+| # | Temuan | Risiko |
 |---|--------|--------|
-| 1 | **AUTH_SECRET & INTERNAL_API_SECRET** — Secret di-regenerate (44+ char, cryptographically random) | ✅ Fixed (2 Mei) |
-| 2 | **15+ API routes membocorkan `error.message`** — Semua diganti dengan generic message + `logger.error()` | ✅ Fixed (2-3 Mei) |
-| 3 | **Impersonation tanpa audit trail** — AuditLog + secure cookie flags ditambahkan | ✅ Fixed (2 Mei) |
-| 4 | **`ignoreBuildErrors: true`** — Semua TypeScript error diperbaiki, flag diubah ke `false` | ✅ Fixed (3 Mei) |
-| 5 | **Hardcoded default passwords** — Diganti dengan `crypto.randomBytes()` + dikirim via notifikasi | ✅ Fixed (3 Mei) |
+| 1 | **Default password "password123"** di-hardcode saat membuat user baru via tenant API | 🔴 HIGH |
+| 2 | **ESLint dinonaktifkan saat build** (`ignoreDuringBuilds: true`) — bug & code smell lolos ke production | 🔴 HIGH |
+| 3 | **Tidak ada CSRF protection** pada API routes yang melakukan mutasi | 🔴 HIGH |
+| 4 | **Tidak ada Error Boundary** (error.tsx) — unhandled error menampilkan stack trace ke user | 🔴 HIGH |
+| 5 | **DELETE user dari tenant tanpa validasi ownership** — siapa saja yang login bisa menghapus user lain | 🔴 HIGH |
+| 6 | **File debug `src/app/scratch.ts`** berisi koneksi DB langsung, masuk ke production bundle | 🟠 MEDIUM |
+| 7 | **Test coverage sangat minim** — hanya 3 file test (validations, utils, token) | 🟠 MEDIUM |
+| 8 | **`console.log` di middleware** — log debug bocor ke production | 🟠 MEDIUM |
+| 9 | **Tidak ada Error Reporting service** (Sentry/Bugsnag) — error di production tidak termonitor | 🟠 MEDIUM |
+| 10 | **PUT tenant tanpa Zod validation** — body langsung di-destructure tanpa sanitasi | 🟠 MEDIUM |
 
 ---
 
-## 2. DETAIL TEMUAN TEKNIKAL (Technical Findings)
+## 2. Detail Temuan Teknikal (Technical Findings)
 
-### 2.1 Temuan Fundamental & Arsitektur
+### 2.1 Fundamental & Architecture
 
-| Aspek | Temuan | File | Tingkat Risiko | Status |
-|-------|--------|------|----------------|--------|
-| Fundamental | TypeScript build errors diabaikan (`ignoreBuildErrors: true`) | `next.config.ts:48` | 🔴 High | Open |
-| Fundamental | ESLint diabaikan saat build (`ignoreDuringBuilds: true`) | `next.config.ts:51` | 🟡 Medium | Open |
-| Fundamental | Hanya 3 file test — tidak ada test untuk API routes, services, middleware | `src/__tests__/` | 🔴 High | Open |
-| Architecture | Middleware 160+ baris — routing logic terlalu kompleks dalam satu file | `src/middleware.ts` | 🟡 Medium | Open |
-| Architecture | `console.error` tersebar di 20+ file — tidak konsisten menggunakan `logger` | Multiple files | 🟡 Medium | Fixed ✅ |
-| Architecture | `dangerouslySetInnerHTML` digunakan di 2 lokasi (saat ini aman, tapi pola berisiko) | `src/app/invoice/[id]/page.tsx`, `src/app/(landing)/layout.tsx` | 🟢 Low | Acceptable |
+| Aspek | Temuan | Risiko | Status |
+|-------|--------|--------|--------|
+| Fundamental | ESLint `ignoreDuringBuilds: true` — linting dilewati saat build production | 🔴 HIGH | ❌ Belum Diperbaiki |
+| Fundamental | File debug `src/app/scratch.ts` dengan `PrismaClient` langsung & `console.log` | 🟠 MEDIUM | ❌ Belum Diperbaiki |
+| Fundamental | `console.log` di `src/middleware.ts` line 117 — debug log bocor ke production | 🟠 MEDIUM | ❌ Belum Diperbaiki |
+| Fundamental | Tidak ada `error.tsx` (Error Boundary) di root maupun route groups | 🔴 HIGH | ❌ Belum Diperbaiki |
+| Fundamental | Tidak ada `not-found.tsx` global yang proper untuk 404 handling | 🟡 LOW | ⚠️ Perlu Verifikasi |
+| Architecture | Multi-tenant isolation via `tenantId` pada query — pattern sudah benar | 🟢 OK | ✅ Baik |
+| Architecture | Prisma singleton pattern dengan global cache — benar | 🟢 OK | ✅ Baik |
+| Architecture | Redis abstraction layer dengan 3-tier fallback (Upstash → ioredis → in-memory) | 🟢 OK | ✅ Baik |
+| Architecture | Server Actions di `src/lib/actions/` menggunakan `any` type pada parameter `data` (7 file) | 🟠 MEDIUM | ❌ Belum Diperbaiki |
+| Architecture | `next-auth` v5 beta — versi beta di production | 🟡 LOW | ⚠️ Monitor |
 
-### 2.2 Temuan Keamanan (Security)
+### 2.2 Security
 
-| Aspek | Temuan | File | Tingkat Risiko | Status |
-|-------|--------|------|----------------|--------|
-| Security | AUTH_SECRET hanya 28 karakter, bukan cryptographically random | `.env:6` | 🔴 High | Fixed ✅ |
-| Security | INTERNAL_API_SECRET masih placeholder `ganti-dengan-random-string-panjang` | `.env:47` | 🔴 High | Fixed ✅ |
-| Security | 15+ API routes mengembalikan `error.message` ke client | Multiple API routes | 🔴 High | Fixed ✅ |
-| Security | Impersonation tanpa audit log (AuditLog model ada tapi tidak digunakan) | `src/app/api/super-admin/impersonate/route.ts` | 🔴 High | Fixed ✅ |
-| Security | `allowDangerousEmailAccountLinking: true` — risiko account takeover via OAuth | `src/lib/auth.ts:26` | 🟡 Medium | Fixed ✅ |
-| Security | CSP terlalu permisif — `'unsafe-inline'` dan `'unsafe-eval'` diizinkan | `next.config.ts:33-34` | 🟡 Medium | Fixed ✅ (`unsafe-eval` removed) |
-| Security | Password hanya minimal 8 karakter, tanpa complexity requirements | `src/lib/validations/auth.ts:11` | 🟡 Medium | Fixed ✅ |
-| Security | Payment callback tanpa replay attack protection (idempotency check) | `src/app/api/payment/callback/route.ts` | 🟡 Medium | Fixed ✅ |
-| Security | Rate limit default 30 req/min — terlalu tinggi untuk endpoint sensitif (auth, payment) | `src/lib/api-utils.ts:38` | 🟡 Medium | Fixed ✅ (per-route limits added) |
-| Security | Register school endpoint tanpa Zod schema validation | `src/app/api/public/register-school/route.ts:12-14` | 🟡 Medium | Fixed ✅ |
-| Security | Impersonation cookie tanpa flag `httpOnly` dan `secure` | `src/app/api/super-admin/impersonate/route.ts:44-48` | 🟡 Medium | Fixed ✅ |
+| Aspek | Temuan | Risiko | Status |
+|-------|--------|--------|--------|
+| Security | **Default password "password123"** di `POST /api/tenant/users` saat user baru dibuat tanpa password | 🔴 HIGH | ❌ Kritis |
+| Security | **Tidak ada CSRF token** pada semua API mutation endpoints | 🔴 HIGH | ❌ Kritis |
+| Security | **DELETE `/api/tenant/users`** tidak memvalidasi bahwa requester punya role admin/owner di tenant tersebut | 🔴 HIGH | ❌ Kritis |
+| Security | **PUT `/api/super-admin/tenants`** tidak menggunakan Zod validation — raw `req.json()` langsung di-destructure | 🟠 MEDIUM | ❌ Belum Diperbaiki |
+| Security | `INTERNAL_API_SECRET` fallback ke `"dev-internal-secret"` jika env tidak diset | 🟠 MEDIUM | ❌ Belum Diperbaiki |
+| Security | CSP mengizinkan `'unsafe-inline'` dan `'unsafe-eval'` pada script-src | 🟠 MEDIUM | ⚠️ Perlu Review |
+| Security | Password hashing menggunakan bcrypt dengan cost 12 — baik | 🟢 OK | ✅ Baik |
+| Security | Rate limiting pada auth endpoints (login, register, forgot, reset) | 🟢 OK | ✅ Baik |
+| Security | File upload: MIME whitelist, random filename, path traversal check | 🟢 OK | ✅ Baik |
+| Security | Payment callback signature verification (HMAC SHA256) | 🟢 OK | ✅ Baik |
+| Security | Impersonation audit logging dengan IP & user agent | 🟢 OK | ✅ Baik |
+| Security | 2FA backup codes di-hash dengan bcrypt sebelum disimpan | 🟢 OK | ✅ Baik |
+| Security | Forgot password tidak mengekspos apakah email terdaftar (anti-enumeration) | 🟢 OK | ✅ Baik |
+| Security | Docker container berjalan sebagai non-root user (nextjs:nodejs) | 🟢 OK | ✅ Baik |
+| Security | Nginx tidak memiliki rate limiting atau request size limit per-endpoint | 🟡 LOW | ⚠️ Perlu Review |
 
-### 2.3 Temuan Performa (Performance)
+### 2.3 Performance
 
-| Aspek | Temuan | File | Tingkat Risiko | Status |
-|-------|--------|------|----------------|--------|
-| Performance | `optimizePackageImports` hanya 4 package — banyak Radix UI belum dioptimasi | `next.config.ts:60` | 🟡 Medium | Fixed ✅ (14 packages) |
-| Performance | Domain resolution cache TTL 300s (5 menit) — bisa lebih agresif | `src/middleware.ts:31` | 🟢 Low | Acceptable |
-| Performance | Nested include di auth query (`tenants → tenant`) — acceptable untuk auth flow | `src/lib/auth.ts:46` | 🟢 Low | Acceptable |
+| Aspek | Temuan | Risiko | Status |
+|-------|--------|--------|--------|
+| Performance | `optimizePackageImports` dikonfigurasi untuk library besar (lucide, recharts, radix) | 🟢 OK | ✅ Baik |
+| Performance | Image upload otomatis dikonversi ke WebP via sharp | 🟢 OK | ✅ Baik |
+| Performance | Domain resolution di-cache di Redis (TTL 1 jam) | 🟢 OK | ✅ Baik |
+| Performance | File serving route (`/api/files/`) menggunakan `fs.readFileSync` — blocking I/O | 🟠 MEDIUM | ❌ Belum Diperbaiki |
+| Performance | JWT callback melakukan DB query pada setiap `trigger === "update"` atau saat tenants kosong | 🟡 LOW | ⚠️ Monitor |
+| Performance | Tidak ada database connection pooling configuration (Prisma default) | 🟡 LOW | ⚠️ Monitor |
+| Performance | `productionBrowserSourceMaps: false` — benar untuk production | 🟢 OK | ✅ Baik |
+| Performance | Standalone output mode untuk Docker — optimal | 🟢 OK | ✅ Baik |
 
-### 2.4 Temuan Deployment & Infrastructure
+### 2.4 Quality Assurance
 
-| Aspek | Temuan | File | Tingkat Risiko | Status |
-|-------|--------|------|----------------|--------|
-| Deployment | Tidak ada health check setelah deployment | `.github/workflows/deploy.yml` | 🟡 Medium | Fixed ✅ |
-| Deployment | Tidak ada rollback strategy otomatis | `.github/workflows/deploy.yml` | 🟡 Medium | Fixed ✅ |
-| Deployment | Database migration tidak dijalankan otomatis saat deploy | `.github/workflows/deploy.yml` | 🟡 Medium | Fixed ✅ |
-| Deployment | Tidak ada container image security scanning (Trivy/Snyk) | `.github/workflows/deploy.yml` | 🟡 Medium | Open |
-| Deployment | Nginx hanya HTTP — tidak ada konfigurasi SSL/TLS | `nginx/default.conf` | 🟡 Medium | Open |
-| Deployment | PostgreSQL port terekspos ke host (`5432:5432`) | `docker-compose.yml` | 🟡 Medium | Fixed ✅ (localhost only) |
+| Aspek | Temuan | Risiko | Status |
+|-------|--------|--------|--------|
+| QA | Hanya **3 file test** — `validations.test.ts`, `utils.test.ts`, `token.test.ts` | 🟠 MEDIUM | ❌ Sangat Minim |
+| QA | Tidak ada integration test untuk API routes | 🟠 MEDIUM | ❌ Tidak Ada |
+| QA | Tidak ada E2E test (Playwright/Cypress) | 🟠 MEDIUM | ❌ Tidak Ada |
+| QA | CI/CD pipeline **tidak menjalankan test** sebelum deploy | 🔴 HIGH | ❌ Kritis |
+| QA | CI/CD pipeline **tidak menjalankan lint** sebelum deploy | 🔴 HIGH | ❌ Kritis |
+| QA | Vitest sudah dikonfigurasi dengan script `test`, `test:watch`, `test:coverage` | 🟢 OK | ✅ Baik |
+| QA | Zod validation schemas tersedia untuk sebagian besar entity | 🟢 OK | ✅ Baik |
 
 ---
 
-## 3. ANALISIS MENDALAM & REKOMENDASI
+## 3. Analisis Mendalam & Rekomendasi
 
-### 3.1 ARCHITECTURE
+### 3.1 🏗️ Architecture
 
-#### A. TypeScript & ESLint Build Errors Diabaikan
+#### A. Hapus File Debug dari Production
 
-**Masalah:** Build errors dan lint warnings disembunyikan, sehingga bug tipe dan code quality issues lolos ke production.
+**Temuan:** File `src/app/scratch.ts` berisi koneksi database langsung dan `console.log`. File ini tidak seharusnya ada di production bundle.
+
+**Rekomendasi:** Hapus file dan tambahkan ke `.gitignore`.
+
+```bash
+# Hapus file
+rm src/app/scratch.ts
+
+# Tambahkan ke .gitignore
+echo "src/app/scratch.ts" >> .gitignore
+```
+
+#### B. Tambahkan Error Boundary
+
+**Temuan:** Tidak ada `error.tsx` di seluruh aplikasi. Jika terjadi unhandled error, Next.js akan menampilkan default error page yang bisa mengekspos informasi sensitif.
+
+**Rekomendasi:** Buat `error.tsx` di root app dan di setiap route group.
+
+```tsx
+// SESUDAH: src/app/error.tsx
+"use client"
+
+import { useEffect } from "react"
+
+export default function GlobalError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  useEffect(() => {
+    // Kirim ke error reporting service (Sentry, dll)
+    console.error("Unhandled error:", error)
+  }, [error])
+
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-bold">Terjadi Kesalahan</h2>
+        <p className="text-muted-foreground">
+          Maaf, terjadi kesalahan yang tidak terduga.
+        </p>
+        <button
+          onClick={reset}
+          className="px-4 py-2 bg-primary text-white rounded-md"
+        >
+          Coba Lagi
+        </button>
+      </div>
+    </div>
+  )
+}
+```
+
+#### C. Perbaiki Type Safety pada Server Actions
+
+**Temuan:** 7 file di `src/lib/actions/` menggunakan `data: any` sebagai parameter.
+
+**Sebelum:**
+```typescript
+// src/lib/actions/staff.ts
+export async function createStaff(tenantId: string, data: any) {
+  // ...
+}
+```
+
+**Sesudah:**
+```typescript
+// src/lib/actions/staff.ts
+import { z } from "zod"
+import { staffSchema } from "@/lib/validations/staff"
+
+type StaffInput = z.infer<typeof staffSchema>
+
+export async function createStaff(tenantId: string, data: StaffInput) {
+  const validated = staffSchema.parse(data)
+  // ... gunakan validated
+}
+```
+
+#### D. Hapus console.log dari Middleware
+
+**Sebelum:**
+```typescript
+// src/middleware.ts line 117
+console.log("Middleware Check:", { path: pathname, isAffiliate: session?.user?.isAffiliate })
+```
+
+**Sesudah:**
+```typescript
+// Hapus baris tersebut, atau ganti dengan conditional logging:
+if (process.env.NODE_ENV === "development") {
+  console.log("Middleware Check:", { path: pathname, isAffiliate: session?.user?.isAffiliate })
+}
+```
+
+---
+
+### 3.2 🔒 Security
+
+#### A. [KRITIS] Hapus Default Password "password123"
+
+**Temuan:** Saat admin tenant menambahkan user baru tanpa menyertakan password, sistem menggunakan `"password123"` sebagai default. Ini adalah kerentanan serius.
+
+**Sebelum:**
+```typescript
+// src/app/api/tenant/users/route.ts line 75
+const hashedPassword = await bcrypt.hash(password || "password123", 12)
+```
+
+**Sesudah:**
+```typescript
+// src/app/api/tenant/users/route.ts
+import crypto from "crypto"
+
+// Generate random password jika tidak disediakan
+const generatedPassword = password || crypto.randomBytes(16).toString("base64url")
+const hashedPassword = await bcrypt.hash(generatedPassword, 12)
+
+// Jika password di-generate, kirim via email ke user
+if (!password) {
+  // TODO: Kirim email undangan dengan link set password
+  // Lebih baik lagi: gunakan invitation flow yang sudah ada
+}
+```
+
+**Rekomendasi Terbaik:** Jangan buat user dengan password langsung. Gunakan invitation flow yang sudah ada (`/api/tenant/invite`) yang mengirim token undangan via email.
+
+#### B. [KRITIS] Tambahkan Authorization pada DELETE User
+
+**Temuan:** Endpoint `DELETE /api/tenant/users` hanya mengecek apakah user sudah login, tapi **tidak mengecek** apakah user tersebut punya role admin/owner di tenant yang bersangkutan.
+
+**Sebelum:**
+```typescript
+// src/app/api/tenant/users/route.ts
+export async function DELETE(req: Request) {
+  const session = await auth()
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const parsed = await parseBody(req, deleteUserSchema)
+  if (parsed.error) return parsed.error
+  const { tenantUserId } = parsed.data
+
+  // ❌ TIDAK ADA PENGECEKAN ROLE — siapa saja bisa hapus user!
+  await db.tenantUser.delete({ where: { id: tenantUserId } })
+  return NextResponse.json({ message: "User dihapus dari tenant" })
+}
+```
+
+**Sesudah:**
+```typescript
+export async function DELETE(req: Request) {
+  const session = await auth()
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const { deleteUserSchema } = await import("@/lib/validations/tenant")
+  const { parseBody } = await import("@/lib/api-utils")
+  const parsed = await parseBody(req, deleteUserSchema)
+  if (parsed.error) return parsed.error
+  const { tenantUserId } = parsed.data
+
+  // ✅ Ambil data tenantUser yang akan dihapus untuk mendapatkan tenantId
+  const targetTenantUser = await db.tenantUser.findUnique({
+    where: { id: tenantUserId },
+  })
+  if (!targetTenantUser) {
+    return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 })
+  }
+
+  // ✅ Cek apakah requester punya role admin/owner di tenant ini
+  if (!session.user.isSuperAdmin) {
+    const requesterMembership = await db.tenantUser.findUnique({
+      where: {
+        tenantId_userId: {
+          tenantId: targetTenantUser.tenantId,
+          userId: session.user.id,
+        },
+      },
+    })
+    if (!requesterMembership || !["owner", "admin"].includes(requesterMembership.role)) {
+      return NextResponse.json({ error: "Tidak punya izin untuk menghapus user" }, { status: 403 })
+    }
+  }
+
+  // ✅ Jangan izinkan menghapus diri sendiri
+  if (targetTenantUser.userId === session.user.id) {
+    return NextResponse.json({ error: "Tidak bisa menghapus diri sendiri" }, { status: 400 })
+  }
+
+  await db.tenantUser.delete({ where: { id: tenantUserId } })
+  return NextResponse.json({ message: "User dihapus dari tenant" })
+}
+```
+
+#### C. [KRITIS] Tambahkan Zod Validation pada PUT Tenant
+
+**Sebelum:**
+```typescript
+// src/app/api/super-admin/tenants/route.ts
+export async function PUT(req: Request) {
+  // ...
+  const body = await req.json() // ❌ Tidak ada validasi!
+  const { id, name, slug, domain, plan, isActive, studentQuota } = body
+  // ...
+}
+```
+
+**Sesudah:**
+```typescript
+import { z } from "zod"
+
+const updateTenantSchema = z.object({
+  id: z.string().min(1, "ID Tenant diperlukan"),
+  name: z.string().min(1).max(200).optional(),
+  slug: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/).optional(),
+  domain: z.string().max(253).nullable().optional(),
+  plan: z.string().optional(),
+  isActive: z.boolean().optional(),
+  studentQuota: z.number().int().min(0).optional(),
+})
+
+export async function PUT(req: Request) {
+  const session = await auth()
+  if (!session?.user?.isSuperAdmin) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  const parsed = await parseBody(req, updateTenantSchema)
+  if (parsed.error) return parsed.error
+  const { id, ...updateData } = parsed.data
+
+  // ... lanjutkan dengan updateData yang sudah tervalidasi
+}
+```
+
+#### D. Perbaiki Internal API Secret Fallback
+
+**Sebelum:**
+```typescript
+// src/middleware.ts & src/app/api/internal/domain-lookup/route.ts
+const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || "dev-internal-secret"
+```
+
+**Sesudah:**
+```typescript
+const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET
+if (!INTERNAL_SECRET && process.env.NODE_ENV === "production") {
+  throw new Error("INTERNAL_API_SECRET must be set in production")
+}
+const SECRET = INTERNAL_SECRET || "dev-internal-secret" // Hanya untuk development
+```
+
+#### E. Aktifkan ESLint saat Build
 
 **Sebelum:**
 ```typescript
 // next.config.ts
-typescript: {
-  ignoreBuildErrors: true,
-},
 eslint: {
   ignoreDuringBuilds: true,
 },
@@ -98,512 +378,197 @@ eslint: {
 **Sesudah:**
 ```typescript
 // next.config.ts
-typescript: {
-  ignoreBuildErrors: false, // Enforce type safety
-},
 eslint: {
-  ignoreDuringBuilds: false, // Enforce lint rules
+  ignoreDuringBuilds: false,
 },
 ```
 
-> ⚠️ **Catatan:** Sebelum mengubah ini, jalankan `npx tsc --noEmit` dan `npm run lint` untuk memperbaiki semua error yang ada terlebih dahulu.
+> **Catatan:** Ini mungkin memerlukan perbaikan error ESLint yang ada terlebih dahulu. Jalankan `npm run lint` untuk melihat daftar error.
 
 ---
 
-#### B. Console Statements Harus Diganti Logger
+### 3.3 ⚡ Performance
 
-**Masalah:** 20+ file menggunakan `console.error()` langsung, padahal sudah ada `logger` dari `src/lib/logger.ts`. Ini menyebabkan output log tidak terstruktur di production.
-
-**File yang terdampak:**
-- `src/app/api/upload/route.ts`
-- `src/app/api/tenant/theme/route.ts`
-- `src/app/api/tenant/invite/route.ts`
-- `src/app/api/tenant/invite/accept/route.ts`
-- `src/app/api/super-admin/payments/confirm/route.ts`
-- `src/app/api/super-admin/applications/route.ts`
-- `src/app/api/super-admin/tenants/reset-password/route.ts`
-- `src/app/api/super-admin/system/route.ts`
-- `src/app/api/public/upload/route.ts`
-- `src/app/api/public/register-school/route.ts`
-- `src/app/api/export/route.ts`
-- `src/app/api/auth/verify-email/route.ts`
-- `src/app/api/auth/two-factor/setup/route.ts`
-- `src/app/api/auth/two-factor/verify/route.ts`
-- `src/app/api/auth/two-factor/disable/route.ts`
-- `src/app/api/auth/sessions/route.ts`
-- `src/app/api/auth/reset-password/route.ts`
-- `src/app/api/auth/register/route.ts`
-- `src/app/api/auth/forgot-password/route.ts`
-- `src/lib/services/upload.ts`
-- `src/lib/services/application.ts`
+#### A. Gunakan Async File Reading pada File Serving Route
 
 **Sebelum:**
 ```typescript
-// src/app/api/tenant/invite/route.ts
-} catch (error) {
-  console.error("Invite error:", error)
-  return NextResponse.json({ error: "Terjadi kesalahan" }, { status: 500 })
-}
+// src/app/api/files/[...path]/route.ts
+const fileBuffer = fs.readFileSync(resolvedFilePath) // ❌ Blocking I/O
 ```
 
 **Sesudah:**
 ```typescript
-// src/app/api/tenant/invite/route.ts
-import { logger } from "@/lib/logger"
+import { readFile } from "fs/promises"
 
-} catch (error) {
-  logger.error("Invite error", error, { path: "/api/tenant/invite" })
-  return NextResponse.json({ error: "Terjadi kesalahan" }, { status: 500 })
-}
+const fileBuffer = await readFile(resolvedFilePath) // ✅ Non-blocking
 ```
 
----
+#### B. Tambahkan Streaming untuk File Besar
 
-### 3.2 SECURITY
-
-#### A. Error Message Leaking ke Client (KRITIS)
-
-**Masalah:** 15+ API routes mengembalikan `error.message` langsung ke response JSON. Ini bisa mengekspos stack trace, nama tabel database, path internal, dan informasi sensitif lainnya.
-
-**File yang terdampak:**
-- `src/app/api/tenant/facilities/[id]/route.ts` (2 lokasi)
-- `src/app/api/tenant/facilities/route.ts`
-- `src/app/api/tenant/documents/[id]/route.ts`
-- `src/app/api/tenant/documents/route.ts`
-- `src/app/api/tenant/billing/checkout/route.ts`
-- `src/app/api/tenant/billing/cancel/route.ts`
-- `src/app/api/super-admin/system/route.ts`
-- `src/app/api/super-admin/plans/route.ts` (3 lokasi)
-- `src/app/api/super-admin/payments/confirm/route.ts`
-- `src/app/api/super-admin/applications/route.ts`
-- `src/app/api/public/upload/route.ts`
-- `src/app/api/auth/two-factor/verify/route.ts`
-
-**Sebelum:**
 ```typescript
-// src/app/api/tenant/facilities/[id]/route.ts
-} catch (error: any) {
-  return NextResponse.json(
-    { error: "Terjadi kesalahan server", details: error.message },
-    { status: 500 }
-  )
-}
-```
+// Untuk file besar, gunakan streaming:
+import { createReadStream } from "fs"
+import { stat } from "fs/promises"
 
-**Sesudah:**
-```typescript
-// src/app/api/tenant/facilities/[id]/route.ts
-import { logger } from "@/lib/logger"
-
-} catch (error) {
-  logger.error("Facility update failed", error, {
-    facilityId: params.id,
-    tenantId,
-  })
-  return NextResponse.json(
-    { error: "Terjadi kesalahan server" },
-    { status: 500 }
-  )
-}
-```
-
----
-
-#### B. Impersonation Tanpa Audit Trail (KRITIS)
-
-**Masalah:** Super Admin bisa mengakses data tenant manapun tanpa catatan. Cookie impersonation juga tidak memiliki flag `httpOnly` dan `secure`.
-
-**Sebelum:**
-```typescript
-// src/app/api/super-admin/impersonate/route.ts
-const response = NextResponse.json({
-  tenantId: tenant.id,
-  tenantSlug: tenant.slug,
-  // ...
-})
-
-response.cookies.set("impersonate-tenant", tenant.slug, {
-  path: "/",
-  maxAge: 60 * 60,
-  sameSite: "lax",
-})
-```
-
-**Sesudah:**
-```typescript
-// src/app/api/super-admin/impersonate/route.ts
-import { logger } from "@/lib/logger"
-
-// Audit log impersonation
-await db.auditLog.create({
-  data: {
-    userId: session.user.id,
-    action: "IMPERSONATE_START",
-    entity: "Tenant",
-    entityId: tenant.id,
-    newData: {
-      tenantSlug: tenant.slug,
-      tenantName: tenant.name,
-      impersonatedAs: owner.email,
-    },
-    ipAddress: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null,
-    userAgent: req.headers.get("user-agent") || null,
+const fileStat = await stat(resolvedFilePath)
+const stream = createReadStream(resolvedFilePath)
+const readableStream = new ReadableStream({
+  start(controller) {
+    stream.on("data", (chunk) => controller.enqueue(chunk))
+    stream.on("end", () => controller.close())
+    stream.on("error", (err) => controller.error(err))
   },
 })
 
-logger.info("Super admin impersonation started", {
-  adminId: session.user.id,
-  tenantId: tenant.id,
-  tenantSlug: tenant.slug,
-})
-
-const response = NextResponse.json({
-  tenantId: tenant.id,
-  tenantSlug: tenant.slug,
-  tenantName: tenant.name,
-  ownerId: owner.id,
-  ownerName: owner.name,
-  ownerEmail: owner.email,
-})
-
-response.cookies.set("impersonate-tenant", tenant.slug, {
-  path: "/",
-  maxAge: 60 * 60,
-  sameSite: "lax",
-  httpOnly: true,   // Tidak bisa diakses via JavaScript
-  secure: process.env.NODE_ENV === "production", // HTTPS only di production
-})
-response.cookies.set("impersonate-by", session.user.id, {
-  path: "/",
-  maxAge: 60 * 60,
-  sameSite: "lax",
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+return new NextResponse(readableStream, {
+  headers: {
+    "Content-Type": mimeType,
+    "Content-Length": String(fileStat.size),
+    "Cache-Control": "public, max-age=31536000, immutable",
+  },
 })
 ```
 
 ---
 
-#### C. Password Complexity Requirements
+### 3.4 🧪 Quality Assurance
 
-**Masalah:** Password hanya memerlukan minimal 8 karakter tanpa aturan kompleksitas.
+#### A. Tambahkan Test & Lint Step di CI/CD
 
-**Sebelum:**
-```typescript
-// src/lib/validations/auth.ts
-password: z.string().min(8, "Password minimal 8 karakter"),
-```
+**Sebelum:** Pipeline langsung build dan deploy tanpa test atau lint.
 
-**Sesudah:**
-```typescript
-// src/lib/validations/auth.ts
-password: z
-  .string()
-  .min(8, "Password minimal 8 karakter")
-  .regex(/[A-Z]/, "Password harus mengandung minimal 1 huruf besar")
-  .regex(/[a-z]/, "Password harus mengandung minimal 1 huruf kecil")
-  .regex(/[0-9]/, "Password harus mengandung minimal 1 angka")
-  .regex(/[^A-Za-z0-9]/, "Password harus mengandung minimal 1 karakter spesial"),
-```
+**Sesudah:** Tambahkan job `test` sebelum `build-and-push`:
 
----
-
-#### D. Register School Tanpa Zod Validation
-
-**Masalah:** Endpoint publik hanya menggunakan null check manual, tanpa validasi tipe dan format.
-
-**Sebelum:**
-```typescript
-// src/app/api/public/register-school/route.ts
-const body = await req.json()
-const { schoolName, schoolSlug, npsn, ... } = body
-
-if (!schoolName || !schoolSlug || !adminEmail || !adminPhone || !npsn) {
-  return NextResponse.json({ error: "Data wajib diisi" }, { status: 400 })
-}
-```
-
-**Sesudah:**
-```typescript
-// src/app/api/public/register-school/route.ts
-import { z } from "zod"
-import { parseBody } from "@/lib/api-utils"
-
-const registerSchoolSchema = z.object({
-  schoolName: z.string().min(3, "Nama sekolah minimal 3 karakter").max(200),
-  schoolSlug: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/, "Slug hanya boleh huruf kecil, angka, dan strip"),
-  npsn: z.string().min(8, "NPSN harus 8 digit").max(8),
-  schoolStatus: z.enum(["NEGERI", "SWASTA"]).optional().default("SWASTA"),
-  province: z.string().optional(),
-  regency: z.string().optional(),
-  adminName: z.string().min(2).max(100),
-  adminEmail: z.string().email("Email tidak valid"),
-  adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
-  address: z.string().optional(),
-  logo: z.string().url().optional().nullable(),
-})
-
-export async function POST(req: Request) {
-  const parsed = await parseBody(req, registerSchoolSchema)
-  if (parsed.error) return parsed.error
-
-  const { schoolSlug, ...data } = parsed.data
-  // ... lanjutkan dengan data yang sudah tervalidasi
-}
-```
-
----
-
-#### E. Payment Callback Replay Attack Protection
-
-**Masalah:** Callback dari payment gateway bisa di-replay karena tidak ada idempotency check.
-
-**Sebelum:**
-```typescript
-// src/lib/services/payment.ts — handleCallback()
-const payment = await db.payment.findUnique({
-  where: { reference: body.merchant_ref },
-})
-if (!payment) return null
-// Langsung proses tanpa cek apakah sudah pernah diproses
-```
-
-**Sesudah:**
-```typescript
-// src/lib/services/payment.ts — handleCallback()
-const payment = await db.payment.findUnique({
-  where: { reference: body.merchant_ref },
-})
-if (!payment) return null
-
-// Idempotency check: jangan proses ulang jika sudah paid/expired
-if (payment.status === "paid" || payment.status === "expired") {
-  logger.info("[payment] Callback already processed, skipping", {
-    merchantRef: body.merchant_ref,
-    currentStatus: payment.status,
-  })
-  return payment // Return existing payment tanpa proses ulang
-}
-```
-
----
-
-#### F. OAuth Account Linking Risk
-
-**Masalah:** `allowDangerousEmailAccountLinking: true` memungkinkan attacker menghubungkan akun OAuth ke email yang sudah ada tanpa verifikasi.
-
-**Sebelum:**
-```typescript
-// src/lib/auth.ts
-Google({
-  clientId: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  allowDangerousEmailAccountLinking: true,
-}),
-```
-
-**Sesudah:**
-```typescript
-// src/lib/auth.ts
-Google({
-  clientId: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  allowDangerousEmailAccountLinking: false, // Require email verification before linking
-}),
-```
-
-> ⚠️ **Catatan:** Setelah mengubah ini, user yang sudah punya akun credentials dan ingin login via Google perlu flow verifikasi tambahan. Pastikan UX-nya sudah disiapkan.
-
----
-
-### 3.3 QA (Quality Assurance)
-
-#### A. Test Coverage Sangat Minim
-
-**Status saat ini:** Hanya 3 file test:
-- `src/__tests__/lib/validations.test.ts` — Validasi schema
-- `src/__tests__/lib/utils.test.ts` — Utility functions
-- `src/__tests__/lib/token.test.ts` — Token service
-
-**Yang belum di-test:**
-- ❌ API routes (auth, tenant, payment, super-admin)
-- ❌ Middleware routing logic
-- ❌ Payment service (createTransaction, handleCallback)
-- ❌ Upload service (file validation, path traversal prevention)
-- ❌ Rate limiting
-- ❌ Multi-tenant isolation
-- ❌ Impersonation flow
-
-**Rekomendasi prioritas test:**
-
-```
-src/__tests__/
-├── api/
-│   ├── auth/
-│   │   ├── login.test.ts          # Login flow + domain restriction
-│   │   ├── register.test.ts       # Registration + tenant creation
-│   │   └── two-factor.test.ts     # 2FA setup/verify/disable
-│   ├── tenant/
-│   │   ├── facilities.test.ts     # CRUD + authorization
-│   │   └── billing.test.ts        # Checkout + cancel
-│   └── payment/
-│       └── callback.test.ts       # Signature verification + idempotency
-├── lib/
-│   ├── rate-limit.test.ts         # Rate limiting behavior
-│   └── services/
-│       ├── payment.test.ts        # Transaction + callback handling
-│       └── upload.test.ts         # File validation + path traversal
-├── middleware.test.ts             # Routing: main domain, subdomain, custom domain
-└── integration/
-    └── multi-tenant.test.ts       # Tenant isolation verification
-```
-
----
-
-#### B. Deployment Pipeline Tanpa Verifikasi
-
-**Sebelum (deploy.yml — bagian akhir script):**
 ```yaml
-# Restart container dengan image baru
-if [ "$BRANCH" = "main" ]; then
-  docker compose up -d
-else
-  docker compose up -d app db redis
-fi
+# .github/workflows/deploy.yml — tambahkan job ini SEBELUM build-and-push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci --legacy-peer-deps
+      - run: npx prisma generate
+      - run: npm run lint
+      - run: npm run test
 
-docker logout ghcr.io
-docker image prune -f
+  build-and-push:
+    needs: test  # ← Tambahkan dependency
+    runs-on: ubuntu-latest
+    # ... sisanya tetap sama
 ```
 
-**Sesudah:**
-```yaml
-# Restart container dengan image baru
-if [ "$BRANCH" = "main" ]; then
-  docker compose up -d
-else
-  docker compose up -d app db redis
-fi
+#### B. Prioritas Test yang Harus Ditulis
 
-# Jalankan database migration
-docker compose exec -T app npx prisma migrate deploy
-
-# Health check — tunggu max 60 detik
-echo "Waiting for health check..."
-for i in $(seq 1 12); do
-  if curl -sf http://localhost:3000/api/health > /dev/null 2>&1; then
-    echo "✅ Health check passed!"
-    break
-  fi
-  if [ $i -eq 12 ]; then
-    echo "❌ Health check failed! Rolling back..."
-    docker compose down
-    # Rollback ke image sebelumnya jika ada
-    exit 1
-  fi
-  echo "Attempt $i/12 — waiting 5s..."
-  sleep 5
-done
-
-docker logout ghcr.io
-docker image prune -f
-```
+1. **API Route Tests** — terutama untuk endpoint auth, payment callback, dan tenant CRUD
+2. **Middleware Tests** — routing logic untuk main domain, subdomain, dan custom domain
+3. **Service Tests** — payment service, upload service, domain service
+4. **E2E Tests** — login flow, registration flow, PPDB flow
 
 ---
 
-## 4. CHECKLIST PASCA-AUDIT (Action Plan)
+## 4. Checklist Pasca-Audit (Action Plan)
 
-### Branch: `feature/audit-refactor`
+Langkah-langkah berikut harus dilakukan di branch `feature/audit-refactor` sebelum di-merge ke `main`:
 
-Langkah-langkah taktis yang harus dilakukan sebelum merge ke `main`:
+### 🔴 Prioritas 1 — Kritis (Harus selesai sebelum deploy berikutnya)
 
-#### Sprint 1 — Kritis (Minggu 1)
+- [ ] **SEC-01:** Hapus default password `"password123"` di `src/app/api/tenant/users/route.ts`
+- [ ] **SEC-02:** Tambahkan authorization check (role admin/owner) pada `DELETE /api/tenant/users`
+- [ ] **SEC-03:** Tambahkan Zod validation pada `PUT /api/super-admin/tenants`
+- [ ] **QA-01:** Tambahkan `npm run lint` dan `npm run test` di GitHub Actions sebelum build
+- [ ] **QA-02:** Set `eslint.ignoreDuringBuilds: false` di `next.config.ts` (setelah fix lint errors)
+- [ ] **ARCH-01:** Buat `src/app/error.tsx` sebagai global Error Boundary
+- [ ] **ARCH-02:** Buat `src/app/(dashboard)/dashboard/error.tsx` untuk dashboard Error Boundary
 
-- [ ] **SEC-01:** Generate AUTH_SECRET baru dengan `openssl rand -base64 32` dan update di production
-- [ ] **SEC-02:** Generate INTERNAL_API_SECRET baru dan update di production
-- [ ] **SEC-03:** Hapus semua `error.message` dari response JSON di 15+ API routes — ganti dengan pesan generik, log detail via `logger.error()`
-- [ ] **SEC-04:** Tambahkan audit log ke fitur impersonation (create AuditLog record)
-- [ ] **SEC-05:** Tambahkan flag `httpOnly` dan `secure` ke impersonation cookies
-- [ ] **SEC-06:** Ganti semua `console.error()` di 20+ file dengan `logger.error()`
+### 🟠 Prioritas 2 — Penting (Dalam 1-2 sprint)
 
-#### Sprint 2 — Penting (Minggu 2-3)
+- [ ] **SEC-04:** Hapus fallback `"dev-internal-secret"` di production — throw error jika env tidak diset
+- [ ] **SEC-05:** Review CSP policy — pertimbangkan menghapus `'unsafe-eval'` dari script-src
+- [ ] **ARCH-03:** Hapus `src/app/scratch.ts` dan tambahkan ke `.gitignore`
+- [ ] **ARCH-04:** Hapus `console.log` di `src/middleware.ts` line 117
+- [ ] **ARCH-05:** Ganti semua `console.error` / `console.log` di API routes dengan `logger` dari `@/lib/logger`
+- [ ] **PERF-01:** Ganti `fs.readFileSync` dengan `fs/promises.readFile` di file serving route
+- [ ] **TYPE-01:** Ganti `data: any` di 7 file `src/lib/actions/` dengan proper Zod-inferred types
+- [ ] **QA-03:** Tulis integration test untuk endpoint auth (register, login, forgot-password, reset-password)
+- [ ] **QA-04:** Tulis integration test untuk payment callback flow
 
-- [ ] **SEC-07:** Tambahkan password complexity requirements di `registerSchema` dan `resetPasswordSchema`
-- [ ] **SEC-08:** Tambahkan Zod validation ke `register-school` endpoint
-- [ ] **SEC-09:** Tambahkan idempotency check di payment callback handler
-- [ ] **SEC-10:** Set `allowDangerousEmailAccountLinking: false` (setelah siapkan UX flow)
-- [ ] **SEC-11:** Turunkan rate limit untuk endpoint auth (login, register, forgot-password) ke 5-10 req/min
-- [ ] **ARCH-01:** Jalankan `npx tsc --noEmit` — perbaiki semua TypeScript errors
-- [ ] **ARCH-02:** Jalankan `npm run lint` — perbaiki semua ESLint errors
-- [ ] **ARCH-03:** Set `ignoreBuildErrors: false` dan `ignoreDuringBuilds: false`
+### 🟡 Prioritas 3 — Nice to Have (Dalam 1-2 bulan)
 
-#### Sprint 3 — Peningkatan (Minggu 3-4)
+- [ ] **SEC-06:** Integrasikan error reporting service (Sentry/Bugsnag) — uncomment code di `error-reporter.ts`
+- [ ] **SEC-07:** Tambahkan Nginx rate limiting di production config
+- [ ] **PERF-02:** Konfigurasi Prisma connection pooling untuk production
+- [ ] **PERF-03:** Implementasi file streaming untuk file besar di `/api/files/`
+- [ ] **QA-05:** Setup E2E testing dengan Playwright
+- [ ] **QA-06:** Tambahkan test coverage threshold (minimal 60%)
+- [ ] **ARCH-06:** Migrasi dari `next-auth` v5 beta ke stable release saat tersedia
+- [ ] **ARCH-07:** Buat proper TypeScript types untuk JWT token & session (hapus `as any` casts di auth)
 
-- [ ] **PERF-01:** Tambahkan package ke `optimizePackageImports`: `"@radix-ui/react-dialog"`, `"@radix-ui/react-dropdown-menu"`, `"@radix-ui/react-select"`, `"@radix-ui/react-tabs"`, `"@radix-ui/react-tooltip"`, `"@radix-ui/react-popover"`, `"@radix-ui/react-alert-dialog"`, `"@radix-ui/react-toast"`, `"@tanstack/react-table"`, `"exceljs"`, `"zod"`, `"bcryptjs"`
-- [ ] **DEPLOY-01:** Tambahkan `prisma migrate deploy` ke deployment script
-- [ ] **DEPLOY-02:** Tambahkan health check post-deployment
-- [ ] **DEPLOY-03:** Tambahkan rollback strategy
-- [ ] **DEPLOY-04:** Hapus port mapping PostgreSQL dari `docker-compose.yml` production (atau bind ke `127.0.0.1:5432:5432`)
-- [ ] **SEC-12:** Perketat CSP — hapus `'unsafe-eval'`, minimalisir `'unsafe-inline'`
-
-#### Sprint 4 — Jangka Menengah (Bulan 2)
-
-- [ ] **QA-01:** Tulis unit test untuk payment service (createTransaction, handleCallback)
-- [ ] **QA-02:** Tulis unit test untuk upload service (MIME validation, path traversal)
-- [ ] **QA-03:** Tulis integration test untuk middleware routing (main domain, subdomain, custom domain)
-- [ ] **QA-04:** Tulis test untuk auth flow (login, register, 2FA, domain restriction)
-- [ ] **DEPLOY-05:** Tambahkan container image scanning (Trivy) ke CI/CD pipeline
-- [ ] **DEPLOY-06:** Tambahkan deployment notification (Slack/Discord webhook)
-- [ ] **SEC-13:** Implementasi soft delete (`deletedAt`) untuk model kritis (User, Tenant, Payment)
-- [ ] **SEC-14:** Konsistenkan penggunaan AuditLog untuk semua operasi sensitif
-
-#### Sebelum Merge ke `main`:
+### 📋 Langkah Eksekusi di Branch `feature/audit-refactor`
 
 ```bash
-# 1. Pastikan semua TypeScript errors sudah diperbaiki
-npx tsc --noEmit
+# 1. Buat branch dari main
+git checkout main
+git pull origin main
+git checkout -b feature/audit-refactor
 
-# 2. Pastikan semua lint errors sudah diperbaiki
+# 2. Fix critical security issues
+# - Edit src/app/api/tenant/users/route.ts (SEC-01, SEC-02)
+# - Edit src/app/api/super-admin/tenants/route.ts (SEC-03)
+
+# 3. Fix architecture issues
+# - Buat src/app/error.tsx (ARCH-01)
+# - Hapus src/app/scratch.ts (ARCH-03)
+# - Edit src/middleware.ts — hapus console.log (ARCH-04)
+
+# 4. Fix build config
+# - Edit next.config.ts — set ignoreDuringBuilds: false (QA-02)
+# - Jalankan npm run lint dan fix semua errors
+
+# 5. Update CI/CD
+# - Edit .github/workflows/deploy.yml — tambahkan test job (QA-01)
+
+# 6. Jalankan semua test
 npm run lint
-
-# 3. Jalankan semua test
 npm run test
-
-# 4. Build production berhasil tanpa ignore flags
 npm run build
 
-# 5. Review semua perubahan
-git diff main...feature/audit-refactor --stat
+# 7. Commit dan push
+git add .
+git commit -m "fix: audit refactor — security, architecture, QA improvements"
+git push -u origin feature/audit-refactor
+
+# 8. Buat Pull Request ke main
+gh pr create --title "fix: Production Audit Refactor" \
+  --body "## Summary\n- Fix critical security vulnerabilities\n- Add Error Boundaries\n- Add CI test/lint gates\n- Remove debug artifacts"
 ```
 
 ---
 
-## 5. KESIMPULAN PENUTUP
+## 5. Kesimpulan Penutup
 
-### Verdict: ⚠️ BELUM SEPENUHNYA PRODUCTION-READY
+### Verdict: ⚠️ **BELUM SEPENUHNYA PRODUCTION-READY**
 
-SchoolPro SaaS memiliki **fondasi arsitektur yang baik** — multi-tenant isolation, autentikasi berlapis, rate limiting, file upload security, dan structured logging sudah diimplementasikan. Ini menunjukkan pemahaman yang solid terhadap kebutuhan SaaS platform.
+Codebase SchoolPro SaaS memiliki **fondasi arsitektur yang baik** — multi-tenant routing, structured logging, audit trail, rate limiting, dan file upload security sudah diimplementasikan dengan benar. Ini menunjukkan awareness terhadap best practices.
 
-Namun, platform ini **masih memerlukan perbaikan signifikan** sebelum layak menyandang status *Production-Ready* secara penuh:
+Namun, terdapat **3 kerentanan keamanan kritis** yang harus segera diperbaiki:
 
-| Kategori | Status | Catatan |
-|----------|--------|---------|
-| **Arsitektur** | ✅ Baik | Multi-tenant, RBAC, modular API structure |
-| **Autentikasi** | ✅ Baik | 2FA/TOTP, domain-based restriction, session tracking |
-| **Keamanan API** | ⚠️ Perlu Perbaikan | Error leaking, weak secrets, missing validation |
-| **Keamanan Data** | ✅ Baik | Prisma ORM (no SQL injection), proper indexing |
-| **File Upload** | ✅ Baik | MIME whitelist, path traversal prevention, size limits |
-| **Test Coverage** | ❌ Tidak Memadai | Hanya 3 file test, business logic tidak ter-cover |
-| **Deployment** | ⚠️ Perlu Perbaikan | No health check, no rollback, no migration automation |
-| **Logging** | ⚠️ Tidak Konsisten | Logger ada tapi 20+ file masih pakai console.error |
-| **Performance** | ✅ Cukup Baik | Standalone build, Redis caching, image optimization |
+1. **Default password hardcoded** — memungkinkan akses tidak sah ke akun baru
+2. **Missing authorization pada DELETE user** — memungkinkan privilege escalation
+3. **Missing input validation pada PUT tenant** — memungkinkan injection
 
-### Rekomendasi Akhir:
+Selain itu, **pipeline CI/CD tidak menjalankan test maupun lint**, yang berarti tidak ada safety net sebelum kode masuk ke production.
 
-1. **Selesaikan Sprint 1 (Kritis)** sebelum menerima traffic production baru
-2. **Sprint 2 (Penting)** harus selesai dalam 2-3 minggu
-3. **Sprint 3-4** bisa dilakukan secara iteratif sambil platform berjalan
-4. Setelah Sprint 1-2 selesai, skor kesehatan diperkirakan naik ke **8/10**
+### Rekomendasi Final
+
+Setelah **Prioritas 1 (Kritis)** selesai dikerjakan, skor kesehatan kode diperkirakan naik ke **7.5-8.0 / 10**, dan kode bisa dianggap **layak untuk production** dengan catatan bahwa Prioritas 2 harus diselesaikan dalam sprint berikutnya.
+
+**Estimasi effort untuk Prioritas 1:** 1-2 hari kerja oleh 1 developer senior.
 
 ---
 
-*Dokumen ini di-generate pada 2 Mei 2026 berdasarkan analisis kode sumber aktual. Semua temuan telah diverifikasi terhadap file yang ada di repository.*
+*Dokumen ini di-generate berdasarkan analisis statis terhadap seluruh codebase pada 3 Mei 2026. Audit ini tidak mencakup penetration testing, load testing, atau review infrastruktur cloud secara langsung.*

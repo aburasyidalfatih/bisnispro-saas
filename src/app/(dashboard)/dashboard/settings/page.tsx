@@ -150,7 +150,7 @@ export default function SettingsGeneralPage() {
   const [showPw, setShowPw] = useState({ current: false, newPass: false, confirm: false })
 
   // Org
-  const [orgForm, setOrgForm] = useState({ name: "", description: "", logo: "" })
+  const [orgForm, setOrgForm] = useState({ name: "", description: "", logo: "", googleClientId: "", googleClientSecret: "" })
   const [savingOrg, setSavingOrg] = useState(false)
   const [logoPreview, setLogoPreview] = useState("")
   const [uploadingLogo, setUploadingLogo] = useState(false)
@@ -183,7 +183,13 @@ export default function SettingsGeneralPage() {
   useEffect(() => {
     if (!tenantId) return
     fetch(`/api/tenant/website?tenantId=${tenantId}`).then(r => r.json()).then(d => {
-      setOrgForm({ name: d.name || "", description: d.description || "", logo: d.logo || "" })
+      setOrgForm({ 
+        name: d.name || "", 
+        description: d.description || "", 
+        logo: d.logo || "",
+        googleClientId: d.googleClientId || "",
+        googleClientSecret: d.googleClientSecret || ""
+      })
       setLogoPreview(d.logo || "")
     })
     fetch(`/api/tenant/domain?tenantId=${tenantId}`).then(r => r.json()).then(d => {
@@ -257,7 +263,14 @@ export default function SettingsGeneralPage() {
     setSavingOrg(true)
     const res = await fetch("/api/tenant/website", {
       method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tenantId, name: orgForm.name, description: orgForm.description, logo: orgForm.logo || null }),
+      body: JSON.stringify({ 
+        tenantId, 
+        name: orgForm.name, 
+        description: orgForm.description, 
+        logo: orgForm.logo || null,
+        googleClientId: orgForm.googleClientId || null,
+        googleClientSecret: orgForm.googleClientSecret || null
+      }),
     })
     setSavingOrg(false)
     if (res.ok) {
@@ -500,6 +513,24 @@ export default function SettingsGeneralPage() {
               <textarea value={orgForm.description} onChange={e => setOrgForm(p => ({ ...p, description: e.target.value }))}
                 placeholder="Deskripsi singkat organisasi" rows={3}
                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+            </div>
+
+            {/* Google OAuth Tenant */}
+            <div className="space-y-2 mt-4 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
+              <div className="flex items-center gap-2 mb-2">
+                <Globe className="h-4 w-4 text-red-500" />
+                <Label className="font-semibold text-red-600">Google Login (OAuth 2.0)</Label>
+              </div>
+              <p className="text-[11px] text-muted-foreground mb-3">Isi kredensial ini jika ingin mengaktifkan "Login dengan Google" khusus untuk sekolah Anda. Authorized redirect URI: <code className="bg-white/50 px-1 rounded">https://{session?.user?.tenants?.[0]?.slug || "sub"}.schoolpro.id/api/auth/callback/google</code></p>
+              
+              <div className="space-y-1.5">
+                <Label className="text-xs">Client ID</Label>
+                <Input value={orgForm.googleClientId} onChange={e => setOrgForm(p => ({ ...p, googleClientId: e.target.value }))} placeholder="Google Client ID" className="rounded-xl h-9 text-xs font-mono" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Client Secret</Label>
+                <Input type="password" value={orgForm.googleClientSecret} onChange={e => setOrgForm(p => ({ ...p, googleClientSecret: e.target.value }))} placeholder="Google Client Secret" className="rounded-xl h-9 text-xs font-mono" />
+              </div>
             </div>
             <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveOrg} disabled={savingOrg || !tenantId}>
               {savingOrg ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}

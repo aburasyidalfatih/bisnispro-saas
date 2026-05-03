@@ -1,11 +1,10 @@
 import { db } from "@/lib/db"
 import nodemailer from "nodemailer"
+import { logger } from "@/lib/logger"
 
 // ==================== EMAIL ====================
 
-// Buat transporter berdasarkan config tenant atau fallback ke platform default
 async function getEmailTransporter(tenantId?: string) {
-  // Coba ambil config SMTP tenant
   if (tenantId) {
     const tenant = await db.tenant.findUnique({
       where: { id: tenantId },
@@ -48,10 +47,19 @@ export async function sendEmail(to: string, subject: string, html: string, tenan
   })
 }
 
-// ==================== WHATSAPP (StarSender) ====================
+// ==================== WHATSAPP (Platform Gateway) ====================
 
-async function getWaConfig(tenantId?: string) {
-  // Coba ambil config WA tenant
+export interface WaConfig {
+  apiUrl: string
+  apiKey: string
+  deviceId?: string
+}
+
+/**
+ * Mengambil konfigurasi WhatsApp per-tenant atau fallback ke platform settings.
+ * Digunakan untuk notifikasi kontekstual dalam dashboard tenant.
+ */
+export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
   if (tenantId) {
     const tenant = await db.tenant.findUnique({
       where: { id: tenantId },
@@ -62,27 +70,68 @@ async function getWaConfig(tenantId?: string) {
       return {
         apiUrl: settings.whatsapp.waApiUrl || "https://api.starsender.online/api",
         apiKey: settings.whatsapp.waApiKey,
+        deviceId: settings.whatsapp.waDeviceId,
       }
     }
   }
-  // Fallback ke platform default
+  // Fallback ke platform settings dari database, lalu env var
+  const platformSettings = await db.platformSetting.findMany({
+    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID"] } },
+  })
+  const map = Object.fromEntries(
+    platformSettings.filter((s) => s.value).map((s) => [s.key, s.value!])
+  )
   return {
-    apiUrl: process.env.STARSENDER_API_URL || "https://api.starsender.online/api",
-    apiKey: process.env.STARSENDER_API_KEY || "",
+    apiUrl: map.STARSENDER_API_URL || process.env.STARSENDER_API_URL || "https://api.starsender.online/api",
+    apiKey: map.STARSENDER_API_KEY || process.env.STARSENDER_API_KEY || "",
+    deviceId: map.STARSENDER_DEVICE_ID || process.env.STARSENDER_DEVICE_ID,
   }
 }
 
-export async function sendWhatsApp(phone: string, message: string, tenantId?: string) {
-  const { apiUrl, apiKey } = await getWaConfig(tenantId)
-  const response = await fetch(`${apiUrl}/send`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: apiKey,
-    },
-    body: JSON.stringify({ messageType: "text", to: phone, body: message }),
-  })
-  return response.json()
+/**
+ * Fungsi pengiriman WA terpusat — SATU-SATUNYA fungsi yang boleh memanggil API gateway.
+ * Selalu menggunakan format Authorization: Bearer <key> sesuai standar StarSender.
+ */
+export async function sendWhatsApp(
+  phone: string,
+  message: string,
+  tenantId?: string
+): Promise<{ success: boolean; error?: string }> {
+  const config = await getWaConfig(tenantId)
+
+  if (!config.apiKey) {
+    logger.warn("WA gateway not configured — message not sent", { phone })
+    return { success: false, error: "WA gateway belum dikonfigurasi" }
+  }
+
+  try {
+    const body: Record<string, string> = {
+      messageType: "text",
+      to: phone,
+      body: message,
+    }
+    if (config.deviceId) body.deviceId = config.deviceId
+
+    const res = await fetch(`${config.apiUrl}/send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apiKey}`,  // ✅ Selalu format Bearer
+      },
+      body: JSON.stringify(body),
+    })
+
+    if (!res.ok) {
+      const errText = await res.text()
+      logger.error("WA send failed", { phone, status: res.status, body: errText })
+      return { success: false, error: `Gateway error: ${res.status}` }
+    }
+
+    return { success: true }
+  } catch (err: any) {
+    logger.error("WA send exception", err, { phone })
+    return { success: false, error: err.message }
+  }
 }
 
 // ==================== IN-APP NOTIFICATION ====================
@@ -118,14 +167,10 @@ export async function sendNotification(params: {
 }) {
   const channels = params.channels || ["inapp"]
 
-  // Cek preferensi user
-  const settings = await db.notificationSetting.findMany({
-    where: { userId: params.userId },
-  })
-
-  const user = await db.user.findUnique({
-    where: { id: params.userId },
-  })
+  const [settings, user] = await Promise.all([
+    db.notificationSetting.findMany({ where: { userId: params.userId } }),
+    db.user.findUnique({ where: { id: params.userId } }),
+  ])
 
   for (const channel of channels) {
     const setting = settings.find((s) => s.channel === channel)
@@ -137,12 +182,23 @@ export async function sendNotification(params: {
         break
       case "email":
         if (user?.email) {
-          await sendEmail(user.email, params.title, `<p>${params.message}</p>`, params.tenantId)
+          await sendEmail(
+            user.email,
+            params.title,
+            `<p>${params.message}</p>`,
+            params.tenantId
+          )
         }
         break
       case "whatsapp":
         if (user?.phone) {
-          await sendWhatsApp(user.phone, `${params.title}\n\n${params.message}`, params.tenantId)
+          await sendWhatsApp(
+            user.phone,
+            `${params.title}\n\n${params.message}`,
+            params.tenantId
+          )
+        } else {
+          logger.warn("WA notification skipped — user has no phone number", { userId: params.userId })
         }
         break
     }
