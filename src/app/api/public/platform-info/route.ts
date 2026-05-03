@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 
 export async function GET() {
   try {
-    const keys = ["app_logo", "platform_name", "platform_tagline", "GOOGLE_CLIENT_ID"]
+    const keys = ["app_logo", "platform_name", "platform_tagline", "GOOGLE_CLIENT_ID", "TURNSTILE_SITE_KEY"]
     const settings = await db.platformSetting.findMany({
       where: { key: { in: keys } },
     })
@@ -13,12 +13,15 @@ export async function GET() {
       platform_name: "SchoolPro",
       platform_tagline: "Solusi Manajemen Sekolah Digital",
       googleAuthEnabled: false,
+      turnstileSiteKey: "",
     }
 
     settings.forEach(s => {
       if (s.value) {
         if (s.key === "GOOGLE_CLIENT_ID") {
           data.googleAuthEnabled = true
+        } else if (s.key === "TURNSTILE_SITE_KEY") {
+          data.turnstileSiteKey = s.value
         } else {
           data[s.key] = s.value
         }

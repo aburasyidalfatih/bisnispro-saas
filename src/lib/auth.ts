@@ -40,12 +40,37 @@ export const authOptions: NextAuthConfig = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
         twoFactorCode: { label: "2FA Code", type: "text" },
+        turnstileToken: { label: "Turnstile", type: "text" },
         hostname: { label: "Hostname", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new CustomAuthError("Email dan password harus diisi")
         }
+
+        // --- CLOUDFLARE TURNSTILE VERIFICATION ---
+        const turnstileToken = credentials.turnstileToken as string | undefined;
+        const settings = await db.platformSetting.findMany({
+          where: { key: { in: ['TURNSTILE_SECRET_KEY'] } }
+        })
+        const secretSetting = settings.find(s => s.key === 'TURNSTILE_SECRET_KEY')
+        const secretKey = process.env.TURNSTILE_SECRET_KEY || secretSetting?.value
+
+        if (secretKey) {
+          if (!turnstileToken) throw new CustomAuthError("Token keamanan tidak ditemukan")
+          const formData = new URLSearchParams()
+          formData.append('secret', secretKey)
+          formData.append('response', turnstileToken)
+          const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+            body: formData,
+            method: 'POST',
+          })
+          const outcome = await result.json()
+          if (!outcome.success) {
+            throw new CustomAuthError("Verifikasi keamanan gagal, silakan coba lagi")
+          }
+        }
+        // -----------------------------------------
 
         const user = await db.user.findUnique({
           where: { email: credentials.email as string },
@@ -75,10 +100,9 @@ export const authOptions: NextAuthConfig = {
           hostWithoutPort === `www.${rootDomain}`
 
         if (isMainDomain) {
-          // Hanya Super Admin dan Afiliasi yang boleh login di domain utama
-          const isAffiliate = !!user.affiliateProfile
-          if (!user.isSuperAdmin && !isAffiliate) {
-            throw new CustomAuthError("Hanya Super Admin atau Mitra Afiliasi yang dapat login di domain utama.")
+          // KHUSUS SUPER ADMIN: Mitra Afiliasi dilarang login dengan form
+          if (!user.isSuperAdmin) {
+            throw new CustomAuthError("Akses ditolak. Silakan gunakan portal Mitra Afiliasi untuk masuk.")
           }
         } else {
           // Ini adalah subdomain tenant

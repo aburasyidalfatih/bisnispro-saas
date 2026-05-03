@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { LogIn } from "lucide-react"
 
+import { Turnstile } from "@marsidev/react-turnstile"
+
 export default function LoginPage() {
   const router = useRouter()
   const [error, setError] = useState("")
@@ -21,6 +23,10 @@ export default function LoginPage() {
   const [tenantNameDisplay, setTenantNameDisplay] = useState<string | null>(null)
   const [platformLogo, setPlatformLogo] = useState("/logo-schoolpro.png")
   const [googleAuthEnabled, setGoogleAuthEnabled] = useState(false)
+  
+  // Turnstile
+  const [turnstileSiteKey, setTurnstileSiteKey] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   useEffect(() => {
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
@@ -37,6 +43,9 @@ export default function LoginPage() {
           }
           if (data && data.googleAuthEnabled) {
             setGoogleAuthEnabled(true)
+          }
+          if (data && data.turnstileSiteKey) {
+            setTurnstileSiteKey(data.turnstileSiteKey)
           }
         })
         .catch(console.error)
@@ -62,6 +71,11 @@ export default function LoginPage() {
   })
 
   async function onSubmit(data: LoginInput & { twoFactorCode?: string }) {
+    if (turnstileSiteKey && !turnstileToken) {
+      setError("Silakan selesaikan verifikasi keamanan (CAPTCHA) terlebih dahulu.")
+      return
+    }
+
     setLoading(true)
     setError("")
 
@@ -69,6 +83,7 @@ export default function LoginPage() {
       email: data.email,
       password: data.password,
       twoFactorCode: data.twoFactorCode || "",
+      turnstileToken: turnstileToken || "",
       hostname: window.location.hostname,
       redirect: false,
     })
@@ -151,6 +166,16 @@ export default function LoginPage() {
                 <Label htmlFor="twoFactorCode">Kode 2FA</Label>
                 <Input id="twoFactorCode" placeholder="000000" maxLength={6} className="h-11 rounded-xl bg-background/50 text-center tracking-widest text-lg" {...register("twoFactorCode")} />
                 <p className="text-xs text-muted-foreground">Masukkan kode dari aplikasi authenticator Anda</p>
+              </div>
+            )}
+
+            {turnstileSiteKey && (
+              <div className="flex justify-center py-2">
+                <Turnstile 
+                  siteKey={turnstileSiteKey} 
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  options={{ theme: 'light' }}
+                />
               </div>
             )}
 

@@ -66,6 +66,10 @@ export default function SuperAdminSettingsPage() {
     // Google OAuth
     GOOGLE_CLIENT_ID: "",
     GOOGLE_CLIENT_SECRET: "",
+
+    // Cloudflare Turnstile
+    TURNSTILE_SITE_KEY: "",
+    TURNSTILE_SECRET_KEY: "",
   })
 
   const [testEmail, setTestEmail] = useState("")
@@ -599,6 +603,33 @@ export default function SuperAdminSettingsPage() {
               </Button>
             </CardContent>
           </Card>
+
+          <Card className="glass border-0">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
+                  <ShieldCheck className="h-4 w-4 text-orange-500" />
+                </div>
+                <CardTitle className="text-lg">Keamanan Cloudflare Turnstile</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">Konfigurasi Cloudflare Turnstile untuk mencegah serangan bot dan spam pada halaman Login Super Admin.</p>
+              
+              <div className="space-y-2">
+                <Label>Site Key</Label>
+                <Input value={form.TURNSTILE_SITE_KEY} onChange={e => setForm({...form, TURNSTILE_SITE_KEY: e.target.value})} placeholder="Masukkan Site Key" className="rounded-xl font-mono text-xs" />
+              </div>
+              <div className="space-y-2">
+                <Label>Secret Key</Label>
+                <Input type="password" value={form.TURNSTILE_SECRET_KEY} onChange={e => setForm({...form, TURNSTILE_SECRET_KEY: e.target.value})} placeholder="Masukkan Secret Key" className="rounded-xl font-mono text-xs" />
+              </div>
+              <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['TURNSTILE_SITE_KEY', 'TURNSTILE_SECRET_KEY'])} disabled={saving}>
+                <Save className="h-4 w-4" /> Simpan Kredensial
+              </Button>
+            </CardContent>
+          </Card>
+
 
           <Card className="glass border-0">
             <CardHeader>
