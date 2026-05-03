@@ -6,6 +6,8 @@ import { db } from "@/lib/db"
 import { verifyTwoFactorLogin } from "@/lib/services/two-factor"
 import { authConfig } from "@/lib/auth.config"
 
+import { NextAuthConfig } from "next-auth"
+
 class CustomAuthError extends CredentialsSignin {
   code: string
   constructor(message: string) {
@@ -14,7 +16,7 @@ class CustomAuthError extends CredentialsSignin {
   }
 }
 
-export const authOptions: any = {
+export const authOptions: NextAuthConfig = {
   ...authConfig,
   session: {
     strategy: "jwt",
