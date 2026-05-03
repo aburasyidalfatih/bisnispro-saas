@@ -20,7 +20,7 @@ const registerSchoolSchema = z.object({
   adminEmail: z.string().email("Email tidak valid"),
   adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
   address: z.string().optional(),
-  logo: z.string().url().optional().nullable(),
+  logo: z.string().optional().nullable(),
 })
 
 export async function POST(req: Request) {
