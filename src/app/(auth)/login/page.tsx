@@ -79,6 +79,8 @@ export default function LoginPage() {
       const session = await res.json()
       if (session?.user?.isSuperAdmin) {
         router.push("/super-admin")
+      } else if (session?.user?.isAffiliate) {
+        router.push("/affiliate")
       } else {
         router.push("/dashboard")
       }

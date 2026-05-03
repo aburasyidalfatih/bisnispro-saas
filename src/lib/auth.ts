@@ -39,7 +39,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await db.user.findUnique({
           where: { email: credentials.email as string },
-          include: { tenants: { include: { tenant: true } } },
+          include: { tenants: { include: { tenant: true } }, affiliateProfile: true },
         })
 
         if (!user || !user.isActive) {
@@ -65,9 +65,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           hostWithoutPort === `www.${rootDomain}`
 
         if (isMainDomain) {
-          // Hanya Super Admin yang boleh login di domain utama
-          if (!user.isSuperAdmin) {
-            throw new Error("Hanya Super Admin yang dapat login di domain utama.")
+          // Hanya Super Admin dan Afiliasi yang boleh login di domain utama
+          const isAffiliate = !!user.affiliateProfile
+          if (!user.isSuperAdmin && !isAffiliate) {
+            throw new Error("Hanya Super Admin atau Mitra Afiliasi yang dapat login di domain utama.")
           }
         } else {
           // Ini adalah subdomain tenant
@@ -99,6 +100,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           image: user.avatar,
           isSuperAdmin: user.isSuperAdmin,
           twoFactorEnabled: user.twoFactorEnabled,
+          isAffiliate: !!user.affiliateProfile,
           tenants: user.tenants.map((tu) => ({
             id: tu.tenant.id,
             name: tu.tenant.name,
@@ -200,13 +202,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id!
         token.isSuperAdmin = user.isSuperAdmin || false
         token.twoFactorEnabled = user.twoFactorEnabled || false
+        token.isAffiliate = (user as any).isAffiliate || false
         token.tenants = user.tenants || []
       }
       // Re-fetch user + tenant data on session update or if tenants empty (OAuth first login)
       if ((trigger === "update" || (token.id && (!token.tenants || token.tenants.length === 0)))) {
         const freshUser = await db.user.findUnique({
           where: { id: token.id as string },
-          include: { tenants: { include: { tenant: true } } },
+          include: { tenants: { include: { tenant: true } }, affiliateProfile: true },
         })
         if (freshUser) {
           // Refresh semua data user termasuk name dan avatar
@@ -214,6 +217,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.picture = freshUser.avatar  // NextAuth menyimpan image di token.picture
           token.isSuperAdmin = freshUser.isSuperAdmin
           token.twoFactorEnabled = freshUser.twoFactorEnabled
+          token.isAffiliate = !!freshUser.affiliateProfile
           token.tenants = freshUser.tenants.map((tu) => ({
             id: tu.tenant.id,
             name: tu.tenant.name,
@@ -233,6 +237,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id as string
         session.user.isSuperAdmin = token.isSuperAdmin as boolean
         session.user.twoFactorEnabled = token.twoFactorEnabled as boolean
+        session.user.isAffiliate = token.isAffiliate as boolean
         session.user.tenants = token.tenants as any[] || []
         // Sinkronisasi name dan image dari token (di-refresh saat trigger=update)
         if (token.name) session.user.name = token.name as string

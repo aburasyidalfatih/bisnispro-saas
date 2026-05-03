@@ -321,6 +321,16 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
       ],
     },
     {
+      title: "Kemitraan",
+      items: [
+        {
+          label: "Manajemen Afiliasi",
+          href: "/super-admin/affiliates",
+          icon: UserPlus,
+        },
+      ],
+    },
+    {
       title: "Monitoring",
       items: [
         { label: "Audit Log Global", href: "/super-admin/audit", icon: FileText },

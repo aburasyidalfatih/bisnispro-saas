@@ -28,6 +28,7 @@ interface Application {
   status: string
   adminMessage: string
   createdAt: string
+  logo?: string | null
 }
 
 export default function SuperAdminApplicationsPage() {
@@ -106,13 +107,17 @@ export default function SuperAdminApplicationsPage() {
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-2xl",
-                    app.schoolStatus === 'NEGERI' ? "bg-blue-500/10 text-blue-500" : "bg-primary/10 text-primary"
+                    "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden",
+                    app.logo ? "bg-white border" : (app.schoolStatus === 'NEGERI' ? "bg-blue-500/10 text-blue-500" : "bg-primary/10 text-primary")
                   )}>
-                    <School className="h-6 w-6" />
+                    {app.logo ? (
+                      <img src={app.logo} alt={app.schoolName} className="h-full w-full object-contain p-1" />
+                    ) : (
+                      <School className="h-6 w-6" />
+                    )}
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="font-bold text-sm leading-none">{app.schoolName}</h3>
+                  <div className="space-y-1 overflow-hidden">
+                    <h3 className="font-bold text-sm leading-none truncate">{app.schoolName}</h3>
                     <div className="flex items-center gap-3 text-[10px] text-muted-foreground uppercase font-semibold">
                       <span className="flex items-center gap-1"><Hash className="h-3 w-3" /> {app.npsn}</span>
                       <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {app.regency}, {app.province}</span>
@@ -147,9 +152,21 @@ export default function SuperAdminApplicationsPage() {
                 <div className="grid gap-3">
                   <div className="p-3 rounded-2xl bg-muted/50 border space-y-3">
                     <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Institusi</p>
-                        <p className="font-bold text-sm">{selectedApp.schoolName}</p>
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden",
+                          selectedApp.logo ? "bg-white border" : (selectedApp.schoolStatus === 'NEGERI' ? "bg-blue-500/10 text-blue-500" : "bg-primary/10 text-primary")
+                        )}>
+                          {selectedApp.logo ? (
+                            <img src={selectedApp.logo} alt={selectedApp.schoolName} className="h-full w-full object-contain p-0.5" />
+                          ) : (
+                            <School className="h-5 w-5" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Institusi</p>
+                          <p className="font-bold text-sm">{selectedApp.schoolName}</p>
+                        </div>
                       </div>
                       <Badge variant="outline" className="text-[10px]">{selectedApp.schoolStatus}</Badge>
                     </div>

@@ -21,6 +21,7 @@ declare module "next-auth" {
       image?: string | null
       isSuperAdmin: boolean
       twoFactorEnabled: boolean
+      isAffiliate?: boolean
       tenants: TenantInfo[]
     }
   }
@@ -28,6 +29,7 @@ declare module "next-auth" {
   interface User {
     isSuperAdmin?: boolean
     twoFactorEnabled?: boolean
+    isAffiliate?: boolean
     tenants?: TenantInfo[]
   }
 }
@@ -37,6 +39,7 @@ declare module "next-auth/jwt" {
     id: string
     isSuperAdmin: boolean
     twoFactorEnabled: boolean
+    isAffiliate?: boolean
     tenants: TenantInfo[]
   }
 }

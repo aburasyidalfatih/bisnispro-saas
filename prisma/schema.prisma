@@ -8,60 +8,62 @@ datasource db {
 }
 
 model Tenant {
-  id                 String              @id @default(cuid())
-  name               String
-  slug               String              @unique
-  domain             String?             @unique
-  logo               String?
-  description        String?
-  plan               String              @default("free")
-  theme              String              @default("aurora")
-  isActive           Boolean             @default(true)
-  settings           Json?
-  tagline            String?
-  about              String?
-  address            String?
-  phone              String?
-  email              String?
-  website            String?
-  whatsapp           String?
-  instagram          String?
-  facebook           String?
-  youtube            String?
-  services           Json?
-  heroImage          String?
-  gallery            Json?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  expiresAt          DateTime?
-  planId             String?
-  seoDesc            String?
-  seoTitle           String?
-  studentQuota       Int                 @default(0)
-  achievements       Achievement[]
-  alumni             Alumni[]
-  auditLogs          AuditLog[]
-  categories         Category[]
-  contactSubmissions ContactSubmission[]
-  documents          Document[]
-  events             Event[]
-  extracurriculars   Extracurricular[]
-  facilities         Facility[]
-  invitations        Invitation[]
-  notifications      Notification[]
-  payments           Payment[]
-  popups             Popup[]
-  posts              Post[]
-  programs           Program[]
-  sliders            Slider[]
-  staff              Staff[]
-  subscriptions      Subscription[]
-  users              TenantUser[]
-  periodePpdb        PeriodePpdb[]
-  pendaftarPpdb      PendaftarPpdb[]
-  rekening           Rekening[]
-  students           Student[]
-  subscriptionPlan   SubscriptionPlan?   @relation(fields: [planId], references: [id])
+  id                   String                @id @default(cuid())
+  name                 String
+  slug                 String                @unique
+  domain               String?               @unique
+  logo                 String?
+  description          String?
+  plan                 String                @default("free")
+  theme                String                @default("aurora")
+  isActive             Boolean               @default(true)
+  settings             Json?
+  tagline              String?
+  about                String?
+  address              String?
+  phone                String?
+  email                String?
+  website              String?
+  whatsapp             String?
+  instagram            String?
+  facebook             String?
+  youtube              String?
+  services             Json?
+  heroImage            String?
+  gallery              Json?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  affiliateId          String?
+  expiresAt            DateTime?
+  planId               String?
+  seoDesc              String?
+  seoTitle             String?
+  studentQuota         Int                   @default(0)
+  achievements         Achievement[]
+  affiliateCommissions AffiliateCommission[]
+  alumni               Alumni[]
+  auditLogs            AuditLog[]
+  categories           Category[]
+  contactSubmissions   ContactSubmission[]
+  documents            Document[]
+  events               Event[]
+  extracurriculars     Extracurricular[]
+  facilities           Facility[]
+  invitations          Invitation[]
+  notifications        Notification[]
+  payments             Payment[]
+  pendaftarPpdb        PendaftarPpdb[]
+  periodePpdb          PeriodePpdb[]
+  popups               Popup[]
+  posts                Post[]
+  programs             Program[]
+  rekening             Rekening[]
+  sliders              Slider[]
+  staff                Staff[]
+  students             Student[]
+  subscriptions        Subscription[]
+  users                TenantUser[]
+  subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
 
   @@index([isActive])
   @@index([plan])
@@ -84,15 +86,16 @@ model User {
   twoFactorBackupCodes Json?
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
+  affiliateProfile     AffiliateProfile?
   alumniProfiles       Alumni[]
   auditLogs            AuditLog[]
   documents            Document[]
   notificationSettings NotificationSetting[]
   notifications        Notification[]
+  pendaftarPpdb        PendaftarPpdb[]
   posts                Post[]
   sessions             Session[]
   staffProfiles        Staff[]
-  pendaftarPpdb        PendaftarPpdb[]
   students             Student[]
   tenants              TenantUser[]
   verificationTokens   VerificationToken[]
@@ -191,22 +194,23 @@ model NotificationSetting {
 }
 
 model Payment {
-  id           String        @id @default(cuid())
-  tenantId     String
-  reference    String        @unique
-  amount       Float
-  method       String?
-  status       String        @default("pending")
-  plan         String
-  tripayRef    String?
-  paidAt       DateTime?
-  expiredAt    DateTime?
-  metadata     Json?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  planId       String?
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  subscription Subscription?
+  id                  String               @id @default(cuid())
+  tenantId            String
+  reference           String               @unique
+  amount              Float
+  method              String?
+  status              String               @default("pending")
+  plan                String
+  tripayRef           String?
+  paidAt              DateTime?
+  expiredAt           DateTime?
+  metadata            Json?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  planId              String?
+  affiliateCommission AffiliateCommission?
+  tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscription        Subscription?
 
   @@index([tenantId])
   @@index([status])
@@ -293,6 +297,7 @@ model TenantApplication {
   regency      String?
   schoolStatus String?  @default("SWASTA")
   logo         String?
+  affiliateId  String?
 
   @@index([status])
   @@map("tenant_applications")
@@ -566,11 +571,11 @@ model PeriodePpdb {
   tanggalBuka  DateTime
   tanggalTutup DateTime
   isActive     Boolean             @default(true)
-  pengaturan   Json?               // biayaPendaftaran, kuota, biayaDaftarUlang
+  pengaturan   Json?
   createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
-  tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   pendaftar    PendaftarPpdb[]
+  tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   persyaratan  PersyaratanBerkas[]
 
   @@index([tenantId])
@@ -583,33 +588,33 @@ model PersyaratanBerkas {
   periodeId String
   nama      String
   isWajib   Boolean      @default(true)
-  tipeFile  String?      // e.g., "image/*,application/pdf"
+  tipeFile  String?
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
-  periode   PeriodePpdb  @relation(fields: [periodeId], references: [id], onDelete: Cascade)
   berkas    BerkasPpdb[]
+  periode   PeriodePpdb  @relation(fields: [periodeId], references: [id], onDelete: Cascade)
 
   @@index([periodeId])
   @@map("persyaratan_berkas")
 }
 
 model PendaftarPpdb {
-  id             String        @id @default(cuid())
-  tenantId       String
-  userId         String
-  periodeId      String
-  noPendaftaran  String        @unique
-  namaLengkap    String
-  dataFormulir   Json?         // NISN, jenis kelamin, TTL, alamat, telepon
-  dataOrangtua   Json?         // ayah, ibu, wali
-  status         String        @default("MENUNGGU") // MENUNGGU, TERVERIFIKASI, DITERIMA, DITOLAK
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  tenant         Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  periode        PeriodePpdb   @relation(fields: [periodeId], references: [id], onDelete: Cascade)
-  berkas         BerkasPpdb[]
-  tagihan        TagihanPpdb[]
+  id            String        @id @default(cuid())
+  tenantId      String
+  userId        String
+  periodeId     String
+  noPendaftaran String        @unique
+  namaLengkap   String
+  dataFormulir  Json?
+  dataOrangtua  Json?
+  status        String        @default("MENUNGGU")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  berkas        BerkasPpdb[]
+  periode       PeriodePpdb   @relation(fields: [periodeId], references: [id], onDelete: Cascade)
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tagihan       TagihanPpdb[]
 
   @@index([tenantId])
   @@index([userId])
@@ -623,7 +628,7 @@ model BerkasPpdb {
   pendaftarId   String
   requirementId String
   fileUrl       String
-  status        String            @default("MENUNGGU") // MENUNGGU, DITERIMA, DITOLAK
+  status        String            @default("MENUNGGU")
   catatan       String?
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
@@ -638,30 +643,30 @@ model BerkasPpdb {
 model TagihanPpdb {
   id          String           @id @default(cuid())
   pendaftarId String
-  jenis       String           // PENDAFTARAN, DAFTAR_ULANG
+  jenis       String
   nominal     Float
-  items       Json?            // breakdown: [{nama: "Seragam", nominal: 500000}, ...]
-  status      String           @default("BELUM_LUNAS") // BELUM_LUNAS, LUNAS
+  items       Json?
+  status      String           @default("BELUM_LUNAS")
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
-  pendaftar   PendaftarPpdb    @relation(fields: [pendaftarId], references: [id], onDelete: Cascade)
   pembayaran  PembayaranPpdb[]
+  pendaftar   PendaftarPpdb    @relation(fields: [pendaftarId], references: [id], onDelete: Cascade)
 
   @@index([pendaftarId])
   @@map("tagihan_ppdbs")
 }
 
 model PembayaranPpdb {
-  id          String      @id @default(cuid())
-  tagihanId   String
-  nominal     Float
-  buktiUrl    String?
-  status      String      @default("PENDING") // PENDING, APPROVED, REJECTED
-  catatan     String?
-  paidAt      DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  tagihan     TagihanPpdb @relation(fields: [tagihanId], references: [id], onDelete: Cascade)
+  id        String      @id @default(cuid())
+  tagihanId String
+  nominal   Float
+  buktiUrl  String?
+  status    String      @default("PENDING")
+  catatan   String?
+  paidAt    DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  tagihan   TagihanPpdb @relation(fields: [tagihanId], references: [id], onDelete: Cascade)
 
   @@index([tagihanId])
   @@map("pembayaran_ppdbs")
@@ -682,32 +687,90 @@ model Rekening {
 }
 
 model Student {
-  id             String    @id @default(cuid())
-  tenantId       String
-  userId         String?
-  noPendaftaran  String?   // optional link to PPDB
-  nis            String?   @unique
-  nisn           String?   @unique
-  name           String
-  gender         String?
-  birthPlace     String?
-  birthDate      DateTime?
-  address        String?
-  phone          String?
-  email          String?
-  fatherName     String?
-  motherName     String?
-  guardianName   String?
-  metadata       Json?
-  isActive       Boolean   @default(true)
-  syncedAt       DateTime? // when it was synced from PPDB
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user           User?     @relation(fields: [userId], references: [id])
+  id            String    @id @default(cuid())
+  tenantId      String
+  userId        String?
+  noPendaftaran String?
+  nis           String?   @unique
+  nisn          String?   @unique
+  name          String
+  gender        String?
+  birthPlace    String?
+  birthDate     DateTime?
+  address       String?
+  phone         String?
+  email         String?
+  fatherName    String?
+  motherName    String?
+  guardianName  String?
+  metadata      Json?
+  isActive      Boolean   @default(true)
+  syncedAt      DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user          User?     @relation(fields: [userId], references: [id])
 
   @@index([tenantId])
   @@index([userId])
   @@index([isActive])
   @@map("students")
+}
+
+model AffiliateProfile {
+  id            String                @id @default(cuid())
+  userId        String                @unique
+  referralCode  String                @unique
+  bankName      String?
+  bankAccount   String?
+  accountName   String?
+  balance       Float                 @default(0)
+  totalEarnings Float                 @default(0)
+  isActive      Boolean               @default(true)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  commissions   AffiliateCommission[]
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  withdrawals   AffiliateWithdrawal[]
+
+  @@map("affiliate_profiles")
+}
+
+model AffiliateCommission {
+  id          String           @id @default(cuid())
+  affiliateId String
+  tenantId    String
+  paymentId   String           @unique
+  amount      Float
+  status      String           @default("PENDING")
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  affiliate   AffiliateProfile @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  payment     Payment          @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([affiliateId])
+  @@index([tenantId])
+  @@index([status])
+  @@map("affiliate_commissions")
+}
+
+model AffiliateWithdrawal {
+  id          String           @id @default(cuid())
+  affiliateId String
+  amount      Float
+  status      String           @default("PENDING")
+  bankName    String?
+  bankAccount String?
+  accountName String?
+  notes       String?
+  receiptUrl  String?
+  processedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  affiliate   AffiliateProfile @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@index([affiliateId])
+  @@index([status])
+  @@map("affiliate_withdrawals")
 }

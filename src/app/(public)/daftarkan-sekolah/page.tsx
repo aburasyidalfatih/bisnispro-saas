@@ -37,6 +37,7 @@ export default function RegisterSchoolPage() {
     adminEmail: "",
     adminPhone: "",
     address: "",
+    referralCode: "",
   })
 
   useEffect(() => {
@@ -44,6 +45,20 @@ export default function RegisterSchoolPage() {
       a: Math.floor(Math.random() * 10) + 1,
       b: Math.floor(Math.random() * 10) + 1,
     })
+
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search)
+      const ref = urlParams.get('ref')
+      if (ref) {
+        setForm(prev => ({ ...prev, referralCode: ref }))
+        localStorage.setItem('schoolpro_ref', ref)
+      } else {
+        const storedRef = localStorage.getItem('schoolpro_ref')
+        if (storedRef) {
+          setForm(prev => ({ ...prev, referralCode: storedRef }))
+        }
+      }
+    }
   }, [])
 
   // Debounced Subdomain Checker
