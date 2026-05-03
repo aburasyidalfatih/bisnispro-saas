@@ -165,6 +165,13 @@ export default async function LandingPage() {
     if (s.key === "platform_tagline" && s.value) platformTagline = s.value
   })
 
+  const activeTenants = await db.tenant.findMany({
+    where: { isActive: true, logo: { not: null } },
+    select: { id: true, name: true, address: true, logo: true },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  })
+
   return (
     <div className="min-h-screen bg-mesh">
       {/* ====== NAVBAR ====== */}
@@ -237,6 +244,44 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ====== SCHOOLS SLIDER SECTION ====== */}
+      {activeTenants.length > 0 && (
+        <section className="py-8 md:py-10 border-y bg-muted/30 overflow-hidden">
+          <div className="container mx-auto px-4 mb-6 text-center">
+            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+              Dipercaya oleh inovator pendidikan di seluruh Indonesia
+            </p>
+          </div>
+          {/* Marquee Container */}
+          <div className="relative w-full overflow-hidden flex">
+            <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-r from-background to-transparent" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-l from-background to-transparent" />
+            
+            <div className="animate-marquee flex gap-8 md:gap-12 pl-8 md:pl-12 items-center">
+              {/* Render items 4 times to ensure seamless loop for marquee */}
+              {[...activeTenants, ...activeTenants, ...activeTenants, ...activeTenants].map((tenant, idx) => {
+                const city = tenant.address ? tenant.address.split(",").pop()?.trim() : "Indonesia"
+                return (
+                  <div key={`${tenant.id}-${idx}`} className="flex items-center gap-3 shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
+                    {tenant.logo ? (
+                      <img src={tenant.logo} alt={tenant.name} className="h-10 w-10 md:h-12 md:w-12 object-contain rounded-full border bg-white p-1" />
+                    ) : (
+                      <div className="h-10 w-10 md:h-12 md:w-12 rounded-full border bg-muted flex items-center justify-center shrink-0">
+                        <School className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    )}
+                    <div className="flex flex-col text-left">
+                      <span className="text-sm md:text-base font-semibold leading-tight">{tenant.name}</span>
+                      <span className="text-[10px] md:text-xs text-muted-foreground font-medium">{city}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ====== SOLUSI SECTION ====== */}
       <section id="solusi" className="container mx-auto px-4 py-10 md:py-16">
