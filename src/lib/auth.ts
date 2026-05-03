@@ -1,10 +1,18 @@
-import NextAuth from "next-auth"
+import NextAuth, { CredentialsSignin } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
 import { verifyTwoFactorLogin } from "@/lib/services/two-factor"
 import { authConfig } from "@/lib/auth.config"
+
+class CustomAuthError extends CredentialsSignin {
+  code: string
+  constructor(message: string) {
+    super(message)
+    this.code = message
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -34,7 +42,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email dan password harus diisi")
+          throw new CustomAuthError("Email dan password harus diisi")
         }
 
         const user = await db.user.findUnique({
@@ -43,12 +51,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
 
         if (!user || !user.isActive) {
-          throw new Error("Email atau password salah")
+          throw new CustomAuthError("Email atau password salah")
         }
 
         const isValid = await bcrypt.compare(credentials.password as string, user.password)
         if (!isValid) {
-          throw new Error("Email atau password salah")
+          throw new CustomAuthError("Email atau password salah")
         }
 
         // --- DOMAIN BASED LOGIN RESTRICTION ---
@@ -68,7 +76,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           // Hanya Super Admin dan Afiliasi yang boleh login di domain utama
           const isAffiliate = !!user.affiliateProfile
           if (!user.isSuperAdmin && !isAffiliate) {
-            throw new Error("Hanya Super Admin atau Mitra Afiliasi yang dapat login di domain utama.")
+            throw new CustomAuthError("Hanya Super Admin atau Mitra Afiliasi yang dapat login di domain utama.")
           }
         } else {
           // Ini adalah subdomain tenant
@@ -76,21 +84,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           
           // Super Admin dilarang login langsung di subdomain
           if (user.isSuperAdmin) {
-             throw new Error("Super Admin harus login melalui domain utama.")
+             throw new CustomAuthError("Super Admin harus login melalui domain utama.")
           }
 
           // Cek apakah user terdaftar di tenant ini
           const belongsToTenant = user.tenants.some(t => t.tenant.slug === slug)
           if (!belongsToTenant) {
-            throw new Error(`Akses ditolak: Anda tidak terdaftar di sekolah ini.`)
+            throw new CustomAuthError(`Akses ditolak: Anda tidak terdaftar di sekolah ini.`)
           }
         }
         // --------------------------------------
 
         if (user.twoFactorEnabled) {
-          if (!credentials.twoFactorCode) throw new Error("2FA_REQUIRED")
+          if (!credentials.twoFactorCode) throw new CustomAuthError("2FA_REQUIRED")
           const is2FAValid = await verifyTwoFactorLogin(user.id, credentials.twoFactorCode as string)
-          if (!is2FAValid) throw new Error("Kode 2FA tidak valid")
+          if (!is2FAValid) throw new CustomAuthError("Kode 2FA tidak valid")
         }
 
         return {
