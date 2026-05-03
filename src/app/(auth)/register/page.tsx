@@ -106,47 +106,45 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {error && (
-              <div className="rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive text-center">
-                {error}
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="name">Nama Lengkap</Label>
-              <Input id="name" placeholder="Nama Anda" className="h-11 rounded-xl bg-background/50" {...register("name")} />
-              {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="nama@email.com" className="h-11 rounded-xl bg-background/50" {...register("email")} />
-              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="Minimal 8 karakter" className="h-11 rounded-xl bg-background/50" {...register("password")} />
-              {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
-            </div>
-            
-            {isMainDomain && (
-              <div className="space-y-2">
-                <Label htmlFor="tenantName">Nama Organisasi</Label>
-                <Input id="tenantName" placeholder="Contoh: SD Harapan Bangsa" className="h-11 rounded-xl bg-background/50" {...register("tenantName")} />
-                {errors.tenantName && <p className="text-xs text-destructive">{errors.tenantName.message}</p>}
-              </div>
-            )}
-
-            <Button type="submit" className="w-full h-11 rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 gap-2 mt-1" disabled={loading}>
-              {loading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              ) : (
-                <>
-                  <UserPlus className="h-4 w-4" />
-                  Daftar
-                </>
+          {!isMainDomain ? (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {error && (
+                <div className="rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive text-center">
+                  {error}
+                </div>
               )}
-            </Button>
-          </form>
+              <div className="space-y-2">
+                <Label htmlFor="name">Nama Lengkap</Label>
+                <Input id="name" placeholder="Nama Anda" className="h-11 rounded-xl bg-background/50" {...register("name")} />
+                {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="nama@email.com" className="h-11 rounded-xl bg-background/50" {...register("email")} />
+                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" placeholder="Minimal 8 karakter" className="h-11 rounded-xl bg-background/50" {...register("password")} />
+                {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+              </div>
+
+              <Button type="submit" className="w-full h-11 rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 gap-2 mt-1" disabled={loading}>
+                {loading ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4" />
+                    Daftar
+                  </>
+                )}
+              </Button>
+            </form>
+          ) : (
+            <div className="text-center text-sm text-muted-foreground mb-4">
+              Silakan daftar menggunakan akun Google Anda untuk bergabung menjadi Mitra Afiliasi.
+            </div>
+          )}
 
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
@@ -157,10 +155,12 @@ export default function RegisterPage() {
 
           {/* OAuth */}
           <div className="mt-5">
-            <div className="relative mb-4">
-              <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">atau</span></div>
-            </div>
+            {!isMainDomain && (
+              <div className="relative mb-4">
+                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">atau</span></div>
+              </div>
+            )}
             <Button
               type="button"
               variant="outline"

@@ -25,6 +25,10 @@ export async function GET() {
       }
     })
 
+    if (!data.googleAuthEnabled && process.env.GOOGLE_CLIENT_ID) {
+      data.googleAuthEnabled = true
+    }
+
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ 
