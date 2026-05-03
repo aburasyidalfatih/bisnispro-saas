@@ -1,13 +1,3 @@
-/**
- * Edge-compatible auth config — TANPA Node.js modules (Prisma, bcrypt, crypto).
- *
- * File ini dipakai oleh src/middleware.ts yang berjalan di Edge Runtime.
- * src/lib/auth.ts (full config) tetap dipakai oleh API routes dan server components.
- *
- * Pattern ini adalah rekomendasi resmi NextAuth v5:
- * https://authjs.dev/guides/edge-compatibility
- */
-
 import type { NextAuthConfig } from "next-auth"
 
 export const authConfig: NextAuthConfig = {
@@ -26,6 +16,8 @@ export const authConfig: NextAuthConfig = {
       if (user) {
         token.id = user.id!
         token.isSuperAdmin = (user as any).isSuperAdmin || false
+        token.isAffiliate = (user as any).isAffiliate || false
+        token.tenants = (user as any).tenants || []
       }
       return token
     },
@@ -33,6 +25,8 @@ export const authConfig: NextAuthConfig = {
       if (session.user) {
         session.user.id = token.id as string
         session.user.isSuperAdmin = token.isSuperAdmin as boolean
+        session.user.isAffiliate = token.isAffiliate as boolean
+        session.user.tenants = token.tenants as any[] || []
       }
       return session
     },

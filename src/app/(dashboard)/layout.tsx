@@ -17,10 +17,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
-    // Super admin redirect ke panel super admin, KECUALI sedang impersonate
-    if (status === "authenticated" && session?.user?.isSuperAdmin) {
-      const isImpersonating = document.cookie.includes("impersonate-tenant=")
-      if (!isImpersonating) router.push("/super-admin")
+    if (status === "authenticated") {
+      if (session?.user?.isSuperAdmin) {
+        const isImpersonating = document.cookie.includes("impersonate-tenant=")
+        if (!isImpersonating) router.push("/super-admin")
+      } else if (session?.user?.isAffiliate && (!session.user.tenants || session.user.tenants.length === 0)) {
+        router.push("/affiliate")
+      }
     }
   }, [status, session, router])
 

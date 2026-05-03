@@ -97,7 +97,7 @@ export default async function middleware(request: NextRequest) {
   // A. MAIN DOMAIN
   // ============================================================
   if (isMainDomain) {
-    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/super-admin")
+    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
     if (isProtected && !session) {
@@ -105,11 +105,28 @@ export default async function middleware(request: NextRequest) {
     }
 
     if (pathname.startsWith("/super-admin") && session && !session.user?.isSuperAdmin) {
-      return addSecurityHeaders(NextResponse.redirect(new URL("/dashboard", request.url)))
+      const fallback = session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0) ? "/affiliate" : "/dashboard"
+      return addSecurityHeaders(NextResponse.redirect(new URL(fallback, request.url)))
+    }
+
+    if (pathname.startsWith("/affiliate") && session && !session.user?.isAffiliate) {
+      return addSecurityHeaders(NextResponse.redirect(new URL(session.user?.isSuperAdmin ? "/super-admin" : "/dashboard", request.url)))
+    }
+
+    console.log("Middleware Check:", { path: pathname, isAffiliate: session?.user?.isAffiliate })
+
+    if (pathname.startsWith("/dashboard") && session && session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0)) {
+      return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
     }
 
     if (isAuthPage && session) {
-      return addSecurityHeaders(NextResponse.redirect(new URL(session.user?.isSuperAdmin ? "/super-admin" : "/dashboard", request.url)))
+      if (session.user?.isSuperAdmin) {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/super-admin", request.url)))
+      } else if (session.user?.isAffiliate) {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
+      } else {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/dashboard", request.url)))
+      }
     }
 
     return addSecurityHeaders(NextResponse.next())

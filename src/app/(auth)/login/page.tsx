@@ -72,13 +72,23 @@ export default function LoginPage() {
         setLoading(false)
         return
       }
-      setError(result.error)
+      
+      // NextAuth v5 maps custom credentials errors to "CredentialsSignin"
+      if (result.error === "CredentialsSignin") {
+        setError("Email atau password yang Anda masukkan salah.")
+      } else if (result.error === "Configuration") {
+        setError("Terjadi kesalahan pada konfigurasi server (Database belum tersinkronisasi).")
+      } else {
+        setError(result.error)
+      }
       setLoading(false)
     } else {
       const res = await fetch("/api/auth/session")
       const session = await res.json()
       if (session?.user?.isSuperAdmin) {
         router.push("/super-admin")
+      } else if (session?.user?.isAffiliate) {
+        router.push("/affiliate")
       } else {
         router.push("/dashboard")
       }

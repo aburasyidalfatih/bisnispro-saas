@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { sendApplicationNotification } from "@/lib/services/application"
+import { sendApplicationNotification, sendNewApplicationAlerts } from "@/lib/services/application"
 import { parseBody } from "@/lib/api-utils"
 
 const registerSchoolSchema = z.object({
@@ -21,6 +21,7 @@ const registerSchoolSchema = z.object({
   adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
   address: z.string().optional(),
   logo: z.string().optional().nullable(),
+  referralCode: z.string().optional(),
 })
 
 export async function POST(req: Request) {
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
 
     const {
       schoolName, schoolSlug, npsn, schoolStatus,
-      province, regency, adminName, adminEmail, adminPhone, address, logo
+      province, regency, adminName, adminEmail, adminPhone, address, logo, referralCode
     } = parsed.data
 
     // Cek ketersediaan slug/subdomain
@@ -39,6 +40,16 @@ export async function POST(req: Request) {
     
     if (existingTenant || existingApp) {
       return NextResponse.json({ error: "Subdomain sudah digunakan" }, { status: 400 })
+    }
+
+    let affiliateId = undefined
+    if (referralCode) {
+      const affiliate = await db.affiliateProfile.findUnique({
+        where: { referralCode }
+      })
+      if (affiliate && affiliate.isActive) {
+        affiliateId = affiliate.id
+      }
     }
 
     const application = await db.tenantApplication.create({
@@ -54,12 +65,14 @@ export async function POST(req: Request) {
         adminPhone,
         address,
         logo,
-        status: "PENDING"
+        status: "PENDING",
+        affiliateId
       }
     })
 
     // Kirim notifikasi WA status PENDING
     await sendApplicationNotification(application.id)
+    await sendNewApplicationAlerts(application.id, affiliateId)
 
     return NextResponse.json({ message: "Pengajuan berhasil dikirim", id: application.id })
   } catch (error) {
