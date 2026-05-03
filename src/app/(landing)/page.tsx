@@ -180,14 +180,10 @@ export default async function LandingPage() {
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             <Link href="#fitur" className="hover:text-foreground transition-colors">Fitur</Link>
             <Link href="#solusi" className="hover:text-foreground transition-colors">Solusi</Link>
-            <Link href="#harga" className="hover:text-foreground transition-colors">Harga</Link>
           </div>
 
           {/* CTA + Mobile hint */}
           <div className="flex items-center gap-2">
-            <Link href="/login" className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Masuk
-            </Link>
             <Link href="/daftarkan-sekolah">
               <Button size="sm" className="rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 text-xs md:text-sm">
                 Daftar Gratis
