@@ -165,6 +165,13 @@ export default async function LandingPage() {
     if (s.key === "platform_tagline" && s.value) platformTagline = s.value
   })
 
+  const activeTenants = await db.tenant.findMany({
+    where: { isActive: true, logo: { not: null } },
+    select: { id: true, name: true, address: true, logo: true },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  })
+
   return (
     <div className="min-h-screen bg-mesh">
       {/* ====== NAVBAR ====== */}
@@ -203,20 +210,18 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-4xl space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-xs md:text-sm">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span className="text-muted-foreground">Platform SaaS Pendidikan Modern</span>
+              <span className="text-muted-foreground">Platform Manajemen Pendidikan Masa Depan</span>
               <ChevronRight className="h-3 w-3 text-muted-foreground" />
             </div>
 
             {/* Hero Title — smaller base size for mobile */}
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15]">
-              Langkah Mudah{" "}
-              <span className="text-gradient">Digitalisasi</span>{" "}
-              Sekolah Anda
+              Transformasi <span className="text-gradient">Digital</span> Sekolah Anda
             </h1>
 
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
-              Dapatkan <strong className="text-foreground">Website Sekolah Gratis</strong> sekarang juga.{" "}
-              Kelola administrasi, tagihan otomatis, PPDB online, hingga tabungan E-Kantin dalam satu platform terpusat.
+              Sistem informasi terpadu tanpa biaya setup.{" "}
+              Kelola administrasi, tagihan otomatis, PPDB online, hingga ekosistem E-Kantin cerdas dalam satu platform.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
@@ -240,6 +245,44 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ====== SCHOOLS SLIDER SECTION ====== */}
+      {activeTenants.length > 0 && (
+        <section className="py-8 md:py-10 border-y bg-muted/30 overflow-hidden">
+          <div className="container mx-auto px-4 mb-6 text-center">
+            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+              Dipercaya oleh inovator pendidikan di seluruh Indonesia
+            </p>
+          </div>
+          {/* Marquee Container */}
+          <div className="relative w-full overflow-hidden flex">
+            <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-r from-background to-transparent" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-l from-background to-transparent" />
+            
+            <div className="animate-marquee flex gap-8 md:gap-12 pl-8 md:pl-12 items-center">
+              {/* Render items 4 times to ensure seamless loop for marquee */}
+              {[...activeTenants, ...activeTenants, ...activeTenants, ...activeTenants].map((tenant, idx) => {
+                const city = tenant.address ? tenant.address.split(",").pop()?.trim() : "Indonesia"
+                return (
+                  <div key={`${tenant.id}-${idx}`} className="flex items-center gap-3 shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
+                    {tenant.logo ? (
+                      <img src={tenant.logo} alt={tenant.name} className="h-10 w-10 md:h-12 md:w-12 object-contain rounded-full border bg-white p-1" />
+                    ) : (
+                      <div className="h-10 w-10 md:h-12 md:w-12 rounded-full border bg-muted flex items-center justify-center shrink-0">
+                        <School className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    )}
+                    <div className="flex flex-col text-left">
+                      <span className="text-sm md:text-base font-semibold leading-tight">{tenant.name}</span>
+                      <span className="text-[10px] md:text-xs text-muted-foreground font-medium">{city}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ====== SOLUSI SECTION ====== */}
       <section id="solusi" className="container mx-auto px-4 py-10 md:py-16">
         <div className="glass rounded-2xl md:rounded-3xl p-6 md:p-12 relative overflow-hidden">
@@ -249,17 +292,17 @@ export default async function LandingPage() {
             {/* Left */}
             <div className="space-y-5">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Tinggalkan Cara Lama yang Merepotkan
+                Otomatisasi Administrasi, Selamat Tinggal Proses Manual
               </h2>
               <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                Kami memahami sulitnya mengelola tumpukan kertas administrasi, mengingatkan wali murid tentang tunggakan SPP, dan mengelola pendaftaran siswa baru secara manual.
+                Tingkatkan efisiensi lembaga pendidikan Anda. Kami mendigitalisasi proses kompleks mulai dari pencatatan pembayaran, pengelolaan akademik, hingga komunikasi wali murid menjadi sangat sederhana dan real-time.
               </p>
               <ul className="space-y-3 pt-1">
                 {[
-                  "Website sekolah yang profesional & gratis.",
-                  "Tagihan & kuitansi terkirim otomatis via WhatsApp.",
-                  "Data master siswa & guru yang selalu tersinkronisasi.",
-                  "PPDB Online yang dapat dipantau secara real-time.",
+                  "Portal sekolah elegan & kustomisasi dinamis.",
+                  "Penagihan & kuitansi instan terintegrasi WhatsApp.",
+                  "Sinkronisasi data master siswa & staf secara real-time.",
+                  "Penerimaan Siswa Baru (PPDB) end-to-end terstruktur.",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary">
@@ -278,8 +321,8 @@ export default async function LandingPage() {
                   <BellRing className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm md:text-base">Sistem Notifikasi Pintar</h4>
-                  <p className="text-xs md:text-sm text-muted-foreground">Otomatisasi pengingat via WhatsApp</p>
+                  <h4 className="font-semibold text-sm md:text-base">Notifikasi Pintar AI-Powered</h4>
+                  <p className="text-xs md:text-sm text-muted-foreground">Otomatisasi pengiriman pesan proaktif</p>
                 </div>
               </div>
               <div className="space-y-3">
@@ -387,11 +430,11 @@ export default async function LandingPage() {
           <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full orb-2 opacity-20 blur-3xl" />
           <div className="relative space-y-6 md:space-y-8 max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-              Siap memajukan <br className="hidden sm:block" />
-              <span className="text-gradient">Sekolah Anda?</span>
+              Wujudkan Sekolah <br className="hidden sm:block" />
+              <span className="text-gradient">Bertaraf Digital</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-lg">
-              Gabung bersama ratusan lembaga pendidikan yang telah mengadopsi teknologi digital demi efisiensi dan transparansi.
+              Tingkatkan kredibilitas dan operasional lembaga Anda bersama platform yang dirancang khusus untuk ekosistem pendidikan masa depan.
             </p>
             <div className="pt-2">
               <Link href="/daftarkan-sekolah">
@@ -399,7 +442,7 @@ export default async function LandingPage() {
                   size="lg"
                   className="rounded-xl md:rounded-2xl btn-gradient text-white shadow-2xl glow-primary h-12 md:h-14 px-7 md:px-10 text-sm md:text-lg font-semibold gap-3 border-0 w-full sm:w-auto"
                 >
-                  Buat Website Sekolah Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                  Daftar & Mulai Sekarang <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </Link>
             </div>
