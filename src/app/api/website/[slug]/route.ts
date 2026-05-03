@@ -31,6 +31,8 @@ export async function GET(
       gallery: true,
       theme: true,
       isActive: true,
+      googleClientId: true,
+      googleClientSecret: true,
     },
   })
 
@@ -38,6 +40,8 @@ export async function GET(
     return NextResponse.json({ error: "Tidak ditemukan" }, { status: 404 })
   }
 
-  // Native Json fields — Prisma returns parsed objects directly
-  return NextResponse.json(tenant)
+  const { googleClientId, googleClientSecret, ...tenantData } = tenant
+  const googleAuthEnabled = !!(googleClientId && googleClientSecret)
+
+  return NextResponse.json({ ...tenantData, googleAuthEnabled })
 }

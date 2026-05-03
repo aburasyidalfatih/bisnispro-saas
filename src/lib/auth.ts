@@ -14,7 +14,7 @@ class CustomAuthError extends CredentialsSignin {
   }
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions: any = {
   ...authConfig,
   session: {
     strategy: "jwt",
@@ -163,13 +163,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                  })
               }
             } else {
-              // Main domain: Create personal tenant
-              const slug = user.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || `user-${Date.now().toString(36)}`
-              const tenant = await tx.tenant.create({
-                data: { name: `${user.name || "User"}'s Org`, slug },
-              })
-              await tx.tenantUser.create({
-                data: { tenantId: tenant.id, userId: newUser.id, role: "owner" },
+              // Main domain: Create affiliate profile (bukan super admin)
+              const referralCode = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+              await tx.affiliateProfile.create({
+                data: {
+                  userId: newUser.id,
+                  referralCode,
+                }
               })
             }
 
@@ -189,7 +189,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           // Jika user sudah ada tapi belum terhubung ke tenant saat ini (dan login dari subdomain)
           if (targetTenantSlug) {
              const existingTenant = await db.tenant.findUnique({ where: { slug: targetTenantSlug } })
-             if (existingTenant) {
+              if (existingTenant) {
                const alreadyMember = await db.tenantUser.findUnique({
                  where: { tenantId_userId: { tenantId: existingTenant.id, userId: existing.id } }
                })
@@ -198,6 +198,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     data: { tenantId: existingTenant.id, userId: existing.id, role: "member" }
                   })
                }
+             }
+          } else {
+             // Jika login dari domain utama, pastikan mereka jadi Affiliate jika bukan Super Admin
+             if (!existing.isSuperAdmin) {
+                const hasAffiliate = await db.affiliateProfile.findUnique({ where: { userId: existing.id } })
+                if (!hasAffiliate) {
+                   const referralCode = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+                   await db.affiliateProfile.create({
+                     data: { userId: existing.id, referralCode }
+                   })
+                }
              }
           }
           user.id = existing.id
@@ -289,4 +300,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
-})
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions)

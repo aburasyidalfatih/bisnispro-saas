@@ -39,6 +39,8 @@ model Tenant {
   seoDesc              String?
   seoTitle             String?
   studentQuota         Int                   @default(0)
+  googleClientId       String?
+  googleClientSecret   String?
   achievements         Achievement[]
   affiliateCommissions AffiliateCommission[]
   alumni               Alumni[]
