@@ -52,10 +52,12 @@ async function getDynamicConfig(req: NextRequest) {
 
 export async function GET(req: NextRequest, ctx: any) {
   const config = await getDynamicConfig(req)
+  // @ts-ignore - NextAuth handlers expect 1 arg in types, but Next.js router needs ctx
   return NextAuth(config).handlers.GET(req, ctx)
 }
 
 export async function POST(req: NextRequest, ctx: any) {
   const config = await getDynamicConfig(req)
+  // @ts-ignore - NextAuth handlers expect 1 arg in types, but Next.js router needs ctx
   return NextAuth(config).handlers.POST(req, ctx)
 }
