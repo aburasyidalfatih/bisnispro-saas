@@ -163,6 +163,7 @@ export default function SuperAdminSettingsPage() {
 
   const handleTestWA = async () => {
     if (!testWANumber) { toast({ title: "Isi nomor tujuan", variant: "destructive" }); return }
+    if (!form.STARSENDER_API_KEY) { toast({ title: "Isi API Key terlebih dahulu", variant: "destructive" }); return }
     setTesting(true)
     try {
       const res = await fetch("/api/tenant/settings/test", {
@@ -172,8 +173,8 @@ export default function SuperAdminSettingsPage() {
           type: "whatsapp",
           waApiUrl: "https://api.starsender.online/api",
           waApiKey: form.STARSENDER_API_KEY,
+          waDeviceId: form.STARSENDER_DEVICE_ID || undefined,
           waPhone: testWANumber,
-          message: "Tes koneksi WhatsApp dari Platform SchoolPro.",
         }),
       })
       const data = await res.json()
