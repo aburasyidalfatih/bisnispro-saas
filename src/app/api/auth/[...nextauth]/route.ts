@@ -5,9 +5,16 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 
 async function getDynamicConfig(req: NextRequest) {
-  const host = req.nextUrl.hostname
+  // PENTING: Di belakang reverse proxy (nginx → Docker), req.nextUrl.hostname
+  // mengembalikan nama container internal (misal: schoolpro-dev-app), bukan domain asli.
+  // Gunakan X-Forwarded-Host atau Host header, sama seperti middleware.ts
+  const rawHost =
+    req.headers.get("x-forwarded-host") ||
+    req.headers.get("host") ||
+    req.nextUrl.hostname
+  const hostWithoutPort = rawHost.split(":")[0]
+
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
-  const hostWithoutPort = host.split(":")[0]
   const isMainDomain =
     hostWithoutPort === "localhost" ||
     hostWithoutPort === rootDomain ||
