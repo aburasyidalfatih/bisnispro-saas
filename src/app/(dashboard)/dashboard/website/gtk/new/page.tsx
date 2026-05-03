@@ -186,7 +186,7 @@ export default function NewStaffPage() {
                     placeholder="Contoh: guru@sekolah.com" 
                     className="rounded-xl"
                   />
-                  <p className="text-[10px] text-muted-foreground mt-1">Jika diisi, akun User otomatis dibuat dengan password: password123</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">Jika diisi, akun User otomatis dibuat. Biarkan kosong jika tidak ingin membuat akun. Jika password dikosongkan, user harus menggunakan fitur Lupa Password untuk login.</p>
                 </div>
 
                 <div className="space-y-2">

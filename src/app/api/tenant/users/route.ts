@@ -71,7 +71,10 @@ export async function POST(req: Request) {
     })
     if (existing) return NextResponse.json({ error: "User sudah menjadi anggota tenant ini" }, { status: 400 })
   } else {
-    const hashedPassword = await bcrypt.hash(password || "password123", 12)
+    // Gunakan password yang diberikan atau generate random secure string (agar tidak ada default password yang bisa ditebak)
+    const crypto = await import("crypto")
+    const fallbackPassword = crypto.randomBytes(16).toString("hex")
+    const hashedPassword = await bcrypt.hash(password || fallbackPassword, 12)
     user = await db.user.create({
       data: { name, email, phone, password: hashedPassword },
     })
@@ -94,6 +97,23 @@ export async function DELETE(req: Request) {
   const parsed = await parseBody(req, deleteUserSchema)
   if (parsed.error) return parsed.error
   const { tenantUserId } = parsed.data
+
+  const targetTu = await db.tenantUser.findUnique({ where: { id: tenantUserId } })
+  if (!targetTu) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 })
+
+  if (!session.user.isSuperAdmin) {
+    const callerTu = await db.tenantUser.findUnique({
+      where: { tenantId_userId: { tenantId: targetTu.tenantId, userId: session.user.id } }
+    })
+    
+    if (!callerTu || !["owner", "admin"].includes(callerTu.role)) {
+      return NextResponse.json({ error: "Tidak punya izin untuk menghapus user dari tenant ini" }, { status: 403 })
+    }
+    
+    if (targetTu.role === "owner" && callerTu.role !== "owner") {
+      return NextResponse.json({ error: "Admin tidak bisa menghapus Owner" }, { status: 403 })
+    }
+  }
 
   await db.tenantUser.delete({ where: { id: tenantUserId } })
   return NextResponse.json({ message: "User dihapus dari tenant" })
