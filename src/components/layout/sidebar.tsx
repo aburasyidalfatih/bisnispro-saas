@@ -343,6 +343,10 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
           label: "Pengaturan",
           href: "/super-admin/settings",
           icon: Settings,
+          children: [
+            { label: "Platform", href: "/super-admin/settings", icon: Building2 },
+            { label: "Profil Saya", href: "/super-admin/profile", icon: User },
+          ]
         },
       ],
     },
