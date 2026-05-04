@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Infinity, Landmark, Sparkles, TrendingUp, Users } from "lucide-react"
+import { CommissionSimulator } from "./_components/commission-simulator"
 
 export default function AffiliateGuidePage() {
   return (
@@ -25,31 +26,7 @@ export default function AffiliateGuidePage() {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6 mt-2">
-            <div className="bg-white/60 p-5 rounded-2xl border border-emerald-100 shadow-sm">
-              <h4 className="font-semibold text-emerald-900 mb-2 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-emerald-600" /> Ilustrasi Komisi
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Misalkan sekolah memilih <strong>Paket Pro (Rp 30.000 / Siswa / Tahun)</strong> dengan total <strong>100 siswa</strong>.
-                Total pembayaran sekolah adalah <strong>Rp 3.000.000</strong>.
-              </p>
-              <div className="mt-4 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-                <p className="text-sm font-medium text-emerald-900">Komisi Anda: 20% x Rp 3.000.000</p>
-                <p className="text-2xl font-bold text-emerald-600">= Rp 600.000 <span className="text-sm font-normal text-emerald-700">/ tahun</span></p>
-              </div>
-            </div>
-
-            <div className="bg-white/60 p-5 rounded-2xl border border-emerald-100 shadow-sm">
-              <h4 className="font-semibold text-emerald-900 mb-2 flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-600" /> Komisi Bertambah Sendiri
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Jika di tahun berikutnya sekolah tersebut bertambah menjadi <strong>150 siswa</strong>, maka komisi Anda otomatis naik menjadi <strong>20% dari total tagihan baru</strong> tanpa Anda harus melakukan apa-apa lagi!
-              </p>
-              <div className="mt-4 flex items-center gap-2 text-sm font-medium text-emerald-700">
-                <Landmark className="w-4 h-4" /> Pencairan langsung ke rekening Anda
-              </div>
-            </div>
+            <CommissionSimulator />
           </div>
         </CardContent>
       </Card>
