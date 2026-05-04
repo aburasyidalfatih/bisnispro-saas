@@ -44,8 +44,13 @@ export async function POST(req: Request) {
 
     let affiliateId = undefined
     if (referralCode) {
-      const affiliate = await db.affiliateProfile.findUnique({
-        where: { referralCode }
+      const affiliate = await db.affiliateProfile.findFirst({
+        where: {
+          OR: [
+            { referralCode },
+            { referralCode: `ref-${referralCode}` }
+          ]
+        }
       })
       if (affiliate && affiliate.isActive) {
         affiliateId = affiliate.id
