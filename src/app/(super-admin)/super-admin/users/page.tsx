@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
   Users, Search, ShieldCheck, Mail, Calendar,
-  Building2, MoreHorizontal, UserCog
+  Building2, MoreHorizontal, UserCog, Trash2, ExternalLink, Briefcase
 } from "lucide-react"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ServerPagination } from "@/components/shared/server-pagination"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { useToast } from "@/components/ui/use-toast"
 
 interface UserRow {
   id: string
@@ -22,6 +24,7 @@ interface UserRow {
   email: string
   isSuperAdmin: boolean
   createdAt: string
+  affiliateProfile?: { id: string } | null
   tenants: {
     role: string
     tenant: { name: string; slug: string }
@@ -34,6 +37,7 @@ export default function UsersPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const { toast } = useToast()
   const limit = 20
 
   const fetchUsers = useCallback(() => {
@@ -49,6 +53,20 @@ export default function UsersPage() {
   }, [page, search])
 
   useEffect(() => { fetchUsers() }, [fetchUsers])
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.")) return
+    
+    try {
+      const res = await fetch(`/api/super-admin/users/${id}`, { method: "DELETE" })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Gagal menghapus pengguna")
+      toast({ title: "Berhasil", description: "Pengguna telah dihapus." })
+      fetchUsers()
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    }
+  }
 
   const totalPages = Math.ceil(total / limit)
 
@@ -119,15 +137,28 @@ export default function UsersPage() {
                     </td>
 
                     <td className="px-4 py-4">
-                      {u.isSuperAdmin ? (
-                        <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20 gap-1.5 rounded-lg px-2 py-1">
-                          <ShieldCheck className="h-3.5 w-3.5" /> Super Admin
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1.5 rounded-lg px-2 py-1">
-                          User Platform
-                        </Badge>
-                      )}
+                      <div className="flex flex-col gap-1.5 items-start">
+                        {u.isSuperAdmin && (
+                          <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20 gap-1.5 rounded-lg px-2 py-0.5">
+                            <ShieldCheck className="h-3.5 w-3.5" /> Super Admin
+                          </Badge>
+                        )}
+                        {u.affiliateProfile && (
+                          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 gap-1.5 rounded-lg px-2 py-0.5">
+                            <Briefcase className="h-3.5 w-3.5" /> Mitra Afiliasi
+                          </Badge>
+                        )}
+                        {u.tenants && u.tenants.length > 0 && (
+                          <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1.5 rounded-lg px-2 py-0.5">
+                            <Building2 className="h-3.5 w-3.5" /> Admin Tenant
+                          </Badge>
+                        )}
+                        {!u.isSuperAdmin && !u.affiliateProfile && (!u.tenants || u.tenants.length === 0) && (
+                          <Badge variant="outline" className="bg-slate-500/10 text-slate-600 border-slate-500/20 gap-1.5 rounded-lg px-2 py-0.5">
+                            User Biasa
+                          </Badge>
+                        )}
+                      </div>
                     </td>
 
                     <td className="px-4 py-4">
@@ -163,9 +194,18 @@ export default function UsersPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 glass rounded-2xl p-2 shadow-2xl border-0 ring-1 ring-black/5">
-                          <DropdownMenuItem className="gap-2 rounded-xl h-10 cursor-pointer">
-                            <UserCog className="h-4 w-4 text-primary" />
-                            <span className="font-medium text-sm">Lihat Detail</span>
+                          <DropdownMenuItem asChild className="gap-2 rounded-xl h-10 cursor-pointer">
+                            <Link href={`/super-admin/users/${u.id}`}>
+                              <ExternalLink className="h-4 w-4 text-primary" />
+                              <span className="font-medium text-sm">Lihat Detail</span>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="gap-2 rounded-xl h-10 cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => handleDelete(u.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="font-medium text-sm">Hapus Pengguna</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
