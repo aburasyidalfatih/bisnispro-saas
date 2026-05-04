@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
@@ -13,6 +13,7 @@ import { TenantBrandingProvider } from "@/components/providers/tenant-branding-p
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
@@ -23,9 +24,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         if (!isImpersonating) router.push("/super-admin")
       } else if (session?.user?.isAffiliate && (!session.user.tenants || session.user.tenants.length === 0)) {
         router.push("/affiliate")
+      } else {
+        // Redirect free tenants from the root dashboard to the website dashboard
+        const plan = (session?.user as any)?.tenants?.[0]?.plan || "free"
+        if (plan === "free") {
+          const allowedPaths = [
+            "/dashboard/website",
+            "/dashboard/users",
+            "/dashboard/settings",
+            "/dashboard/billing"
+          ]
+          
+          const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(`${p}/`))
+          
+          if (pathname === "/dashboard" || !isAllowed) {
+            router.replace("/dashboard/website")
+          }
+        }
       }
     }
-  }, [status, session, router])
+  }, [status, session, router, pathname])
 
   if (status === "loading") {
     return (
