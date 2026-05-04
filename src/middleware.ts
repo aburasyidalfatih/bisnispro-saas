@@ -154,7 +154,9 @@ export default async function middleware(request: NextRequest) {
     if (
       pathname.startsWith("/dashboard") ||
       pathname.startsWith("/login") ||
-      pathname.startsWith("/register") ||
+      pathname.startsWith("/forgot-password") ||
+      pathname.startsWith("/reset-password") ||
+      pathname.startsWith("/invite") ||
       pathname.startsWith("/api") ||
       pathname.startsWith("/invoice")
     ) {
@@ -180,7 +182,15 @@ export default async function middleware(request: NextRequest) {
     const slug = await resolveCustomDomain(hostname, request.url)
     if (!slug) return addSecurityHeaders(NextResponse.rewrite(new URL("/not-found", request.url)))
 
-    if (pathname.startsWith("/api") || pathname.startsWith("/invoice")) {
+    if (
+      pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/login") ||
+      pathname.startsWith("/forgot-password") ||
+      pathname.startsWith("/reset-password") ||
+      pathname.startsWith("/invite") ||
+      pathname.startsWith("/api") ||
+      pathname.startsWith("/invoice")
+    ) {
       const response = NextResponse.next()
       response.headers.set("x-tenant-slug", slug)
       response.headers.set("x-custom-domain", hostname)

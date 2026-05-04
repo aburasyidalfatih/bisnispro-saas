@@ -200,14 +200,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {!isMainDomain && (
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                Belum punya akun?{" "}
-                <Link href="/register" className="text-primary font-semibold hover:underline">Daftar sekarang</Link>
-              </p>
-            </div>
-          )}
+          {/* Omitted register link since there is no public registration page */}
 
           {/* OAuth */}
           {googleAuthEnabled && (
