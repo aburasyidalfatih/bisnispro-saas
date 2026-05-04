@@ -18,3 +18,7 @@ next_log.txt
 next_turbo_log.txt
 vps_error*.html
 test.ts
+dummy.txt
+query.sql
+test-auth.js
+src/app/scratch.ts
