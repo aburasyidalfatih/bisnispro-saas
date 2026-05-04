@@ -7,6 +7,7 @@ import AffiliateSidebar from "./_components/affiliate-sidebar"
 import { Header } from "@/components/layout/header"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { WaRequirementPopup } from "./_components/wa-requirement-popup"
 
 export default function AffiliateLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
@@ -32,6 +33,7 @@ export default function AffiliateLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex h-screen overflow-hidden">
+      <WaRequirementPopup />
       <div className="hidden lg:block"><AffiliateSidebar /></div>
 
       {mobileOpen && (
