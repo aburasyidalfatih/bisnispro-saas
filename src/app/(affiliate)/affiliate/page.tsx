@@ -52,7 +52,7 @@ export default async function AffiliateDashboardPage() {
       <Card className="glass border-emerald-500/20 bg-emerald-500/5">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-center gap-4 justify-between">
-            <div className="space-y-1">
+            <div className="space-y-1 text-center md:text-left">
               <h3 className="font-semibold text-emerald-800 dark:text-emerald-400">Link Referral Anda</h3>
               <p className="text-sm text-emerald-600 dark:text-emerald-500">Bagikan link ini ke calon sekolah untuk mendapatkan komisi.</p>
             </div>

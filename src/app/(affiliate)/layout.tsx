@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import AffiliateSidebar from "./_components/affiliate-sidebar"
 import { Header } from "@/components/layout/header"
@@ -14,12 +14,18 @@ export default function AffiliateLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  const pathname = usePathname()
+
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
     if (status === "authenticated" && !session?.user?.isAffiliate && !session?.user?.isSuperAdmin) {
       router.push("/dashboard")
     }
   }, [status, session, router])
+
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
 
   if (status === "loading") {
     return (
