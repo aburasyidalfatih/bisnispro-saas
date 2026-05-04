@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
   try {
     const keys = ["app_logo", "platform_name", "platform_tagline", "GOOGLE_CLIENT_ID", "TURNSTILE_SITE_KEY", "TURNSTILE_ENABLED"]
