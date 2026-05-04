@@ -14,13 +14,14 @@ const registerSchoolSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Slug hanya boleh huruf kecil, angka, dan strip"),
   npsn: z.string().min(8, "NPSN harus 8 digit").max(8, "NPSN harus 8 digit"),
   schoolStatus: z.enum(["NEGERI", "SWASTA"]).optional().default("SWASTA"),
-  province: z.string().optional(),
-  regency: z.string().optional(),
+  province: z.string().min(2, "Provinsi wajib diisi"),
+  regency: z.string().min(2, "Kabupaten/Kota wajib diisi"),
   adminName: z.string().min(2, "Nama admin minimal 2 karakter").max(100),
   adminEmail: z.string().email("Email tidak valid"),
   adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
-  address: z.string().optional(),
-  logo: z.string().optional().nullable(),
+  address: z.string().min(5, "Alamat wajib diisi"),
+  logo: z.string().min(1, "Logo wajib diunggah"),
+  studentCount: z.coerce.number().min(1, "Jumlah siswa harus lebih dari 0"),
   referralCode: z.string().optional(),
 })
 
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
 
     const {
       schoolName, schoolSlug, npsn, schoolStatus,
-      province, regency, adminName, adminEmail, adminPhone, address, logo, referralCode
+      province, regency, adminName, adminEmail, adminPhone, address, logo, studentCount, referralCode
     } = parsed.data
 
     // Cek ketersediaan slug/subdomain
@@ -70,6 +71,7 @@ export async function POST(req: Request) {
         adminPhone,
         address,
         logo,
+        studentCount,
         status: "PENDING",
         affiliateId
       }

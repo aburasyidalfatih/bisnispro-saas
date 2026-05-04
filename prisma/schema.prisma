@@ -299,6 +299,7 @@ model TenantApplication {
   regency      String?
   schoolStatus String?  @default("SWASTA")
   logo         String?
+  studentCount Int      @default(0)
   affiliateId  String?
   affiliate    AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 

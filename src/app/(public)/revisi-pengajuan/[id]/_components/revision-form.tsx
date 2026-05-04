@@ -29,6 +29,7 @@ export function RevisionForm({ application }: { application: any }) {
     adminPhone: application.adminPhone,
     address: application.address || "",
     logo: application.logo || null,
+    studentCount: application.studentCount || 0,
   })
 
   const [logoFile, setLogoFile] = useState<File | null>(null)
@@ -39,6 +40,12 @@ export function RevisionForm({ application }: { application: any }) {
     setLoading(true)
 
     try {
+      if (!logoFile && !form.logo) {
+        toast({ title: "Gagal", description: "Logo sekolah wajib diunggah", variant: "destructive" })
+        setLoading(false)
+        return
+      }
+
       let finalLogoUrl = form.logo
 
       if (logoFile) {
@@ -131,6 +138,20 @@ export function RevisionForm({ application }: { application: any }) {
                   </label>
                 </div>
               </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label>Jumlah Siswa Saat Ini <span className="text-red-500">*</span></Label>
+                <div className="relative">
+                  <Input 
+                    required 
+                    type="number"
+                    min="1"
+                    value={form.studentCount || ""} 
+                    onChange={(e) => setForm({...form, studentCount: parseInt(e.target.value) || 0})}
+                    placeholder="Contoh: 500" 
+                    className="rounded-xl h-11"
+                  />
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -156,8 +177,8 @@ export function RevisionForm({ application }: { application: any }) {
                 <Input required value={form.adminPhone} onChange={(e) => setForm({ ...form, adminPhone: e.target.value.replace(/[^0-9]/g, "") })} className="rounded-xl" />
               </div>
               <div className="space-y-2 md:col-span-2">
-                <Label>Alamat Lengkap</Label>
-                <Textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="rounded-xl min-h-[100px]" />
+                <Label>Alamat Lengkap <span className="text-red-500">*</span></Label>
+                <Textarea required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="rounded-xl min-h-[100px]" />
               </div>
             </div>
           </CardContent>

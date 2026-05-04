@@ -13,12 +13,13 @@ const reviseSchoolSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Slug hanya boleh huruf kecil, angka, dan strip"),
   npsn: z.string().min(8, "NPSN harus 8 digit").max(8, "NPSN harus 8 digit"),
   schoolStatus: z.enum(["NEGERI", "SWASTA"]).optional().default("SWASTA"),
-  province: z.string().optional(),
-  regency: z.string().optional(),
+  province: z.string().min(2, "Provinsi wajib diisi"),
+  regency: z.string().min(2, "Kabupaten/Kota wajib diisi"),
   adminName: z.string().min(2, "Nama admin minimal 2 karakter").max(100),
   adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
-  address: z.string().optional(),
-  logo: z.string().optional().nullable(),
+  address: z.string().min(5, "Alamat wajib diisi"),
+  logo: z.string().min(1, "Logo wajib diunggah"),
+  studentCount: z.coerce.number().min(1, "Jumlah siswa harus lebih dari 0"),
 })
 
 export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
@@ -39,7 +40,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
 
     const {
       schoolName, schoolSlug, npsn, schoolStatus,
-      province, regency, adminName, adminPhone, address, logo
+      province, regency, adminName, adminPhone, address, logo, studentCount
     } = parsed.data
 
     // Cek ketersediaan slug/subdomain jika berubah
@@ -65,6 +66,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
         adminPhone,
         address,
         logo,
+        studentCount,
         status: "PENDING", // Set back to PENDING for Super Admin to review
       }
     })
