@@ -152,7 +152,7 @@ export function Header() {
         </Link>
 
         {/* Daftar PPDB Button */}
-        {!isSuperAdminPanel && !isAffiliatePanel && (
+        {!isSuperAdminPanel && !isAffiliatePanel && !["owner", "admin"].includes(session?.user?.tenants?.[0]?.role || "") && (
           <Link href="/dashboard/ppdb/portal">
             <Button className="hidden sm:flex rounded-xl btn-gradient text-white border-0 shadow-md shadow-primary/20 gap-2 h-9 px-4 ml-1">
               <UserPlus className="h-4 w-4" />
