@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 
+export const dynamic = "force-dynamic"
+
 // Public API — no auth required. Used by tenant website pages.
 export async function GET(
   _req: Request,
