@@ -4,6 +4,7 @@ import { Users, Building2, Wallet, ArrowUpRight, Copy } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { redirect } from "next/navigation"
+import { CopyLinkButton } from "./copy-button"
 
 export default async function AffiliateDashboardPage() {
   const session = await auth()
@@ -56,9 +57,7 @@ export default async function AffiliateDashboardPage() {
             </div>
             <div className="flex items-center gap-2 bg-background p-2 rounded-xl border w-full md:w-auto">
               <code className="px-3 py-1 text-sm font-semibold flex-1 md:w-80 truncate">{referralLink}</code>
-              <Button size="sm" className="shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white">
-                <Copy className="h-4 w-4 mr-2" /> Salin Link
-              </Button>
+              <CopyLinkButton link={referralLink} />
             </div>
           </div>
         </CardContent>
