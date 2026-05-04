@@ -57,20 +57,7 @@ export default function AffiliateSidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-border mt-auto space-y-2">
-        <Link href="/dashboard">
-          <Button variant="outline" className="w-full justify-start text-muted-foreground hover:text-foreground">
-            <LayoutDashboard className="mr-2 h-4 w-4" /> Buka Panel Sekolah
-          </Button>
-        </Link>
-        <Button 
-          variant="ghost" 
-          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-          onClick={() => signOut({ callbackUrl: "/login" })}
-        >
-          <LogOut className="mr-2 h-4 w-4" /> Keluar
-        </Button>
-      </div>
+
     </aside>
   )
 }
