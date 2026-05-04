@@ -37,7 +37,7 @@ export default async function AffiliateDashboardPage() {
   const freeTenants = referredTenants.filter(t => t.plan === "free").length
   const proTenants = referredTenants.filter(t => t.plan === "pro").length
 
-  const referralLink = `${process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"}/daftarkan-sekolah?ref=${affiliate.referralCode}`
+  const referralLink = `${process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"}/${affiliate.referralCode.toLowerCase()}`
 
   return (
     <div className="space-y-8">

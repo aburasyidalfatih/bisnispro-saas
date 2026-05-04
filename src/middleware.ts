@@ -97,6 +97,15 @@ export default async function middleware(request: NextRequest) {
   // A. MAIN DOMAIN
   // ============================================================
   if (isMainDomain) {
+    // Cek Affiliate Shortlink (3 Huruf + 3 Angka, misal: /bdi123)
+    if (pathname.match(/^\/[a-z]{3}[0-9]{3}$/i)) {
+      const code = pathname.substring(1).toLowerCase()
+      const redirectUrl = new URL("/daftarkan-sekolah", request.url)
+      redirectUrl.searchParams.set("ref", code)
+      const res = addSecurityHeaders(NextResponse.redirect(redirectUrl))
+      return res
+    }
+
     const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
