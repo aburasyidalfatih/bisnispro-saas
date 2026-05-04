@@ -154,6 +154,7 @@ export default async function middleware(request: NextRequest) {
     if (
       pathname.startsWith("/dashboard") ||
       pathname.startsWith("/login") ||
+      pathname.startsWith("/register") ||
       pathname.startsWith("/forgot-password") ||
       pathname.startsWith("/reset-password") ||
       pathname.startsWith("/invite") ||
@@ -185,6 +186,7 @@ export default async function middleware(request: NextRequest) {
     if (
       pathname.startsWith("/dashboard") ||
       pathname.startsWith("/login") ||
+      pathname.startsWith("/register") ||
       pathname.startsWith("/forgot-password") ||
       pathname.startsWith("/reset-password") ||
       pathname.startsWith("/invite") ||
