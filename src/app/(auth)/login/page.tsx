@@ -14,6 +14,8 @@ import { LogIn } from "lucide-react"
 
 import { Turnstile } from "@marsidev/react-turnstile"
 
+import { checkIsMainDomain, getRootDomain } from "@/lib/utils"
+
 export default function LoginPage() {
   const router = useRouter()
   const [error, setError] = useState("")
@@ -29,9 +31,8 @@ export default function LoginPage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   useEffect(() => {
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
     const host = window.location.hostname // tidak menyertakan port
-    const main = host === rootDomain || host === `www.${rootDomain}` || host === "localhost"
+    const main = checkIsMainDomain(host)
     setIsMainDomain(main)
     
     if (main) {
@@ -51,6 +52,7 @@ export default function LoginPage() {
         .catch(console.error)
     } else {
       // Ambil slug dari subdomain, e.g. "demo" dari "demo.schoolpro.test"
+      const rootDomain = getRootDomain(host)
       const slug = host.replace(`.${rootDomain}`, "").split('.')[0]
       fetch(`/api/website/${slug}`)
         .then(res => res.json())

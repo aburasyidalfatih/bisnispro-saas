@@ -6,14 +6,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { checkIsMainDomain } from "@/lib/utils";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function applyTheme() {
-      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id";
       const host = window.location.hostname;
       
-      if (host === rootDomain || host === `www.${rootDomain}` || host === "localhost") {
+      if (checkIsMainDomain(host)) {
         // Main domain (Super Admin)
         document.documentElement.setAttribute("data-theme", "aurora");
       } else {
