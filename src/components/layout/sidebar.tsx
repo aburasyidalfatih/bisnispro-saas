@@ -746,22 +746,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
         ))}
       </nav>
 
-      {/* Bottom card */}
-      {!collapsed && !isSuperAdminPath && currentPlan === "free" && (
-        <div className="p-3">
-          <div className="rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 p-4 border border-primary/10">
-            <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <Lock className="h-3 w-3 text-primary" /> Paket Gratis
-            </p>
-            <p className="text-[10px] text-muted-foreground mt-1">Upgrade ke PRO untuk fitur manajemen siswa lengkap.</p>
-            <Link href={`${basePath}/billing`}>
-              <Button size="sm" className="mt-3 w-full rounded-lg btn-gradient text-white text-xs h-8 border-0 shadow-sm shadow-primary/20">
-                Upgrade Sekarang
-              </Button>
-            </Link>
-          </div>
-        </div>
-      )}
+
 
       {/* App Version */}
       <div className={cn("p-4 text-center border-t border-border mt-auto flex flex-col gap-1", collapsed ? "hidden" : "block")}>
