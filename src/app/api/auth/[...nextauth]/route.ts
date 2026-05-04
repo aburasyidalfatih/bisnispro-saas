@@ -65,7 +65,7 @@ export async function GET(req: NextRequest, ctx: any) {
     const config = await getDynamicConfig(req)
     // @ts-ignore — NextAuth v5 handlers need ctx for dynamic routes
     return NextAuth(config).handlers.GET(req, ctx)
-  } catch (error) {
+  } catch (error: any) {
     console.error("NEXTAUTH GET ERROR:", error);
     return new Response(JSON.stringify({ error: error.message || "Unknown error" }), { status: 500 })
   }
