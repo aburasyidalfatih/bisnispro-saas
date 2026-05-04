@@ -55,8 +55,12 @@ export default function SuperAdminApplicationsPage() {
 
   const fetchApps = () => {
     fetch("/api/super-admin/applications")
-      .then((r) => r.json())
+      .then(async (r) => {
+        const text = await r.text();
+        return text ? JSON.parse(text) : [];
+      })
       .then((data) => { setApps(data); setLoading(false) })
+      .catch((err) => { console.error(err); setLoading(false); })
   }
 
   useEffect(() => { fetchApps() }, [])

@@ -61,9 +61,14 @@ async function getDynamicConfig(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest, ctx: any) {
-  const config = await getDynamicConfig(req)
-  // @ts-ignore — NextAuth v5 handlers need ctx for dynamic routes
-  return NextAuth(config).handlers.GET(req, ctx)
+  try {
+    const config = await getDynamicConfig(req)
+    // @ts-ignore — NextAuth v5 handlers need ctx for dynamic routes
+    return NextAuth(config).handlers.GET(req, ctx)
+  } catch (error) {
+    console.error("NEXTAUTH GET ERROR:", error);
+    return new Response(JSON.stringify({ error: error.message || "Unknown error" }), { status: 500 })
+  }
 }
 
 export async function POST(req: NextRequest, ctx: any) {

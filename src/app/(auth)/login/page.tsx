@@ -37,7 +37,10 @@ export default function LoginPage() {
     
     if (main) {
       fetch("/api/public/platform-info")
-        .then(res => res.json())
+        .then(async (res) => {
+          const text = await res.text()
+          return text ? JSON.parse(text) : {}
+        })
         .then(data => {
           if (data && data.app_logo) {
             setPlatformLogo(data.app_logo)
@@ -55,13 +58,19 @@ export default function LoginPage() {
       const rootDomain = getRootDomain(host)
       const slug = host.replace(`.${rootDomain}`, "").split('.')[0]
       fetch(`/api/website/${slug}`)
-        .then(res => res.json())
+        .then(async (res) => {
+          const text = await res.text()
+          return text ? JSON.parse(text) : {}
+        })
         .then(data => {
           if (data && data.name) {
             setTenantNameDisplay(data.name)
           }
           if (data && data.googleAuthEnabled) {
             setGoogleAuthEnabled(true)
+          }
+          if (data && data.turnstileSiteKey) {
+            setTurnstileSiteKey(data.turnstileSiteKey)
           }
         })
         .catch(console.error)
@@ -107,21 +116,27 @@ export default function LoginPage() {
       }
       setLoading(false)
     } else {
-      const res = await fetch("/api/auth/session")
-      const session = await res.json()
-      
-      if (isMainDomain) {
-        if (session?.user?.isSuperAdmin) {
-          router.push("/super-admin")
-        } else if (session?.user?.isAffiliate) {
-          router.push("/affiliate")
+      try {
+        const res = await fetch("/api/auth/session")
+        const text = await res.text()
+        const session = text ? JSON.parse(text) : null
+        
+        if (isMainDomain) {
+          if (session?.user?.isSuperAdmin) {
+            router.push("/super-admin")
+          } else if (session?.user?.isAffiliate) {
+            router.push("/affiliate")
+          } else {
+            router.push("/dashboard")
+          }
         } else {
+          // Pada subdomain, semua user (termasuk super admin/afiliasi yang terdaftar di tenant ini) 
+          // harus selalu diarahkan ke dashboard tenant.
           router.push("/dashboard")
         }
-      } else {
-        // Pada subdomain, semua user (termasuk super admin/afiliasi yang terdaftar di tenant ini) 
-        // harus selalu diarahkan ke dashboard tenant.
-        router.push("/dashboard")
+      } catch (err) {
+        console.error("Gagal mendapatkan sesi:", err)
+        setError("Gagal membaca sesi dari server. Silakan muat ulang halaman.")
       }
     }
   }
