@@ -43,5 +43,11 @@ export async function GET(
   const { googleClientId, googleClientSecret, ...tenantData } = tenant
   const googleAuthEnabled = !!(googleClientId && googleClientSecret)
 
-  return NextResponse.json({ ...tenantData, googleAuthEnabled })
+  // Fetch global turnstile setting
+  const turnstileSetting = await db.platformSetting.findUnique({
+    where: { key: "TURNSTILE_SITE_KEY" }
+  })
+  const turnstileSiteKey = process.env.TURNSTILE_SITE_KEY || turnstileSetting?.value
+
+  return NextResponse.json({ ...tenantData, googleAuthEnabled, turnstileSiteKey })
 }
