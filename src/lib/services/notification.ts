@@ -116,7 +116,7 @@ export async function sendWhatsApp(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${config.apiKey}`,  // ✅ Selalu format Bearer
+        Authorization: config.apiKey,  // Tidak menggunakan Bearer untuk StarSender
       },
       body: JSON.stringify(body),
     })
