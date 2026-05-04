@@ -16,7 +16,7 @@ import {
 import { ServerPagination } from "@/components/shared/server-pagination"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 interface UserRow {
   id: string

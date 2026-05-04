@@ -2,13 +2,13 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session?.user?.isSuperAdmin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const { id } = params
+  const { id } = await params
 
   if (session.user.id === id) {
     return NextResponse.json({ error: "Tidak dapat menghapus akun Anda sendiri" }, { status: 400 })

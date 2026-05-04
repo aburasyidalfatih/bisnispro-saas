@@ -7,10 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/text-area" // or Textarea
+import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { Megaphone, Send, Loader2, Info } from "lucide-react"
 
 export default function BroadcastPage() {
@@ -112,24 +111,16 @@ export default function BroadcastPage() {
 
                 <div className="space-y-3">
                   <Label>Jalur Pengiriman (Channel)</Label>
-                  <RadioGroup 
-                    value={form.channel} 
-                    onValueChange={(val) => setForm({ ...form, channel: val })}
-                    className="flex flex-col sm:flex-row gap-4"
-                  >
-                    <div className="flex items-center space-x-2 bg-background p-3 rounded-xl border flex-1">
-                      <RadioGroupItem value="whatsapp" id="r1" />
-                      <Label htmlFor="r1" className="cursor-pointer">WhatsApp Saja</Label>
-                    </div>
-                    <div className="flex items-center space-x-2 bg-background p-3 rounded-xl border flex-1">
-                      <RadioGroupItem value="email" id="r2" />
-                      <Label htmlFor="r2" className="cursor-pointer">Email Saja</Label>
-                    </div>
-                    <div className="flex items-center space-x-2 bg-background p-3 rounded-xl border flex-1">
-                      <RadioGroupItem value="both" id="r3" />
-                      <Label htmlFor="r3" className="cursor-pointer">WA & Email</Label>
-                    </div>
-                  </RadioGroup>
+                  <Select value={form.channel} onValueChange={(val) => setForm({ ...form, channel: val })}>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Pilih jalur pengiriman..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="whatsapp">WhatsApp Saja</SelectItem>
+                      <SelectItem value="email">Email Saja</SelectItem>
+                      <SelectItem value="both">WhatsApp & Email</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {(form.channel === "email" || form.channel === "both") && (
@@ -156,7 +147,7 @@ export default function BroadcastPage() {
                   </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-2">
                     <Info className="h-3 w-3" />
-                    Variabel tersedia: <code className="bg-accent px-1 rounded">{{name}}</code> <code className="bg-accent px-1 rounded">{{email}}</code> <code className="bg-accent px-1 rounded">{{phone}}</code> <code className="bg-accent px-1 rounded">{{schoolName}}</code> (khusus tenant)
+                    Variabel tersedia: <code className="bg-accent px-1 rounded">{"{{name}}"}</code> <code className="bg-accent px-1 rounded">{"{{email}}"}</code> <code className="bg-accent px-1 rounded">{"{{phone}}"}</code> <code className="bg-accent px-1 rounded">{"{{schoolName}}"}</code> (khusus tenant)
                   </p>
                 </div>
 
