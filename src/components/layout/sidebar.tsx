@@ -331,6 +331,16 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
       ],
     },
     {
+      title: "Komunikasi",
+      items: [
+        {
+          label: "Broadcast Pesan",
+          href: "/super-admin/broadcast",
+          icon: Megaphone,
+        },
+      ],
+    },
+    {
       title: "Monitoring",
       items: [
         { label: "Audit Log Global", href: "/super-admin/audit", icon: FileText },
