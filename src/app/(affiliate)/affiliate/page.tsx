@@ -4,6 +4,7 @@ import { Users, Building2, Wallet, ArrowUpRight, Copy } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { redirect } from "next/navigation"
+import { CopyLinkButton } from "./copy-button"
 
 export default async function AffiliateDashboardPage() {
   const session = await auth()
@@ -37,7 +38,8 @@ export default async function AffiliateDashboardPage() {
   const freeTenants = referredTenants.filter(t => t.plan === "free").length
   const proTenants = referredTenants.filter(t => t.plan === "pro").length
 
-  const referralLink = `${process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"}/daftarkan-sekolah?ref=${affiliate.referralCode}`
+  const displayCode = affiliate.referralCode.replace(/^ref-/i, '').toLowerCase()
+  const referralLink = `${process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"}/${displayCode}`
 
   return (
     <div className="space-y-8">
@@ -50,15 +52,13 @@ export default async function AffiliateDashboardPage() {
       <Card className="glass border-emerald-500/20 bg-emerald-500/5">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-center gap-4 justify-between">
-            <div className="space-y-1">
+            <div className="space-y-1 text-center md:text-left">
               <h3 className="font-semibold text-emerald-800 dark:text-emerald-400">Link Referral Anda</h3>
               <p className="text-sm text-emerald-600 dark:text-emerald-500">Bagikan link ini ke calon sekolah untuk mendapatkan komisi.</p>
             </div>
             <div className="flex items-center gap-2 bg-background p-2 rounded-xl border w-full md:w-auto">
               <code className="px-3 py-1 text-sm font-semibold flex-1 md:w-80 truncate">{referralLink}</code>
-              <Button size="sm" className="shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white">
-                <Copy className="h-4 w-4 mr-2" /> Salin Link
-              </Button>
+              <CopyLinkButton link={referralLink} />
             </div>
           </div>
         </CardContent>

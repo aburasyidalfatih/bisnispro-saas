@@ -299,7 +299,9 @@ model TenantApplication {
   regency      String?
   schoolStatus String?  @default("SWASTA")
   logo         String?
+  studentCount Int      @default(0)
   affiliateId  String?
+  affiliate    AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 
   @@index([status])
   @@map("tenant_applications")
@@ -732,6 +734,7 @@ model AffiliateProfile {
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
   commissions   AffiliateCommission[]
+  tenantApplications TenantApplication[]
   user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   withdrawals   AffiliateWithdrawal[]
 

@@ -10,38 +10,55 @@ export async function GET() {
   if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
   const applications = await db.tenantApplication.findMany({
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
+    include: {
+      affiliate: {
+        include: { user: true }
+      }
+    }
   })
   return NextResponse.json(applications)
 }
 
-// Update status pengajuan (Approve, Reject, Revision)
+// Update status pengajuan (Approve, Reject, Revision) - Mendukung BULK
 export async function PUT(req: Request) {
   const session = await auth()
   if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
   const body = await req.json()
-  const { id, status, adminMessage } = body
+  const { id, ids, status, adminMessage } = body
+
+  // Dukungan untuk single ID atau array of IDs
+  const targetIds = ids || (id ? [id] : [])
+
+  if (!targetIds.length) {
+    return NextResponse.json({ error: "ID tidak boleh kosong" }, { status: 400 })
+  }
 
   try {
-    if (status === "APPROVED") {
-      // Jalankan logika persetujuan (Buat Tenant + User + Notif)
-      const tenant = await approveApplication(id)
-      return NextResponse.json({ message: "Pengajuan disetujui dan Tenant berhasil dibuat", tenant })
-    } else {
-      // Update status biasa (Rejected/Revision)
-      const application = await db.tenantApplication.update({
-        where: { id },
-        data: { status, adminMessage }
-      })
+    const results = []
 
-      // Kirim notifikasi status terbaru
-      await sendApplicationNotification(id)
-      
-      return NextResponse.json({ message: `Status diperbarui ke ${status}`, application })
+    for (const targetId of targetIds) {
+      if (status === "APPROVED") {
+        // Jalankan logika persetujuan (Buat Tenant + User + Notif)
+        const tenant = await approveApplication(targetId)
+        results.push({ id: targetId, status: "APPROVED", tenant })
+      } else {
+        // Update status biasa (Rejected/Revision)
+        const application = await db.tenantApplication.update({
+          where: { id: targetId },
+          data: { status, adminMessage }
+        })
+
+        // Kirim notifikasi status terbaru
+        await sendApplicationNotification(targetId)
+        results.push({ id: targetId, status, application })
+      }
     }
+
+    return NextResponse.json({ message: `Berhasil memproses ${targetIds.length} data.`, results })
   } catch (error) {
-    logger.error("Update application failed", error, { applicationId: id })
+    logger.error("Update application failed", error, { targetIds })
     return NextResponse.json({ error: "Gagal memperbarui status pengajuan" }, { status: 500 })
   }
 }

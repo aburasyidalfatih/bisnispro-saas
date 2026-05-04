@@ -29,12 +29,17 @@ export async function registerAffiliate(formData: FormData) {
       return { error: "Email sudah terdaftar. Silakan gunakan email lain atau login." }
     }
 
-    // Generate kode referral unik (e.g., BUDI123)
-    let baseCode = parsed.name.substring(0, 4).toUpperCase().replace(/[^A-Z]/g, "")
-    if (baseCode.length < 3) baseCode = "MITRA"
+    // Generate kode referral unik (e.g., bud123) - 3 Huruf + 3 Angka
+    let baseLetters = parsed.name.toLowerCase().replace(/[^a-z]/g, "").substring(0, 3)
+    if (baseLetters.length < 3) {
+      const alphabet = "abcdefghijklmnopqrstuvwxyz"
+      while (baseLetters.length < 3) {
+        baseLetters += alphabet[Math.floor(Math.random() * alphabet.length)]
+      }
+    }
     
-    const randomSuffix = Math.floor(1000 + Math.random() * 9000)
-    const referralCode = `${baseCode}${randomSuffix}`
+    const randomNumbers = Math.floor(100 + Math.random() * 900).toString()
+    const referralCode = `${baseLetters}${randomNumbers}`
 
     const hashedPassword = await hash(parsed.password, 12)
 

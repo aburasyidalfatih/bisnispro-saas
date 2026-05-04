@@ -123,8 +123,8 @@ export default async function AffiliateCommissionsPage() {
                Belum ada riwayat komisi.
              </div>
           ) : (
-            <div className="rounded-xl border overflow-hidden">
-              <table className="w-full text-sm text-left">
+            <div className="rounded-xl border overflow-hidden overflow-x-auto">
+              <table className="w-full text-sm text-left whitespace-nowrap md:whitespace-normal">
                 <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3 font-medium">Tanggal</th>

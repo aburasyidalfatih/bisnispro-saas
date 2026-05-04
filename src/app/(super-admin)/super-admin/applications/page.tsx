@@ -9,9 +9,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
 import { 
   CheckCircle, XCircle, Clock, RefreshCcw, 
-  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft 
+  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu"
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger
+} from "@/components/ui/dialog"
 
 interface Application {
   id: string
@@ -29,13 +35,23 @@ interface Application {
   adminMessage: string
   createdAt: string
   logo?: string | null
+  affiliate?: { user: { name: string } } | null
 }
 
 export default function SuperAdminApplicationsPage() {
   const [apps, setApps] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
+  
+  // Modal states
   const [selectedApp, setSelectedApp] = useState<Application | null>(null)
+  const [detailModalOpen, setDetailModalOpen] = useState(false)
+  const [actionModalOpen, setActionModalOpen] = useState(false)
+  const [actionType, setActionType] = useState<"APPROVED" | "REVISION" | "REJECTED" | null>(null)
   const [adminMessage, setAdminMessage] = useState("")
+
+  // Bulk action states
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [bulkActionModalOpen, setBulkActionModalOpen] = useState(false)
 
   const fetchApps = () => {
     fetch("/api/super-admin/applications")
@@ -45,18 +61,32 @@ export default function SuperAdminApplicationsPage() {
 
   useEffect(() => { fetchApps() }, [])
 
-  const handleUpdateStatus = async (id: string, status: string) => {
+  const handleUpdateStatus = async () => {
+    if (!actionType || (!selectedApp && selectedIds.length === 0)) return
+    
+    const isBulk = selectedIds.length > 0 && !selectedApp
+
+    const payload = isBulk 
+      ? { ids: selectedIds, status: actionType, adminMessage }
+      : { id: selectedApp?.id, status: actionType, adminMessage }
+
     const res = await fetch("/api/super-admin/applications", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status, adminMessage }),
+      body: JSON.stringify(payload),
     })
 
     if (res.ok) {
-      toast({ title: "Berhasil", description: `Pengajuan telah di-${status.toLowerCase()}.` })
+      toast({ title: "Berhasil", description: `Pengajuan telah di-${actionType.toLowerCase()}.` })
       setAdminMessage("")
       setSelectedApp(null)
+      setActionModalOpen(false)
+      setBulkActionModalOpen(false)
+      if (isBulk) setSelectedIds([])
       fetchApps()
+    } else {
+      const errorData = await res.json()
+      toast({ title: "Error", description: errorData.error, variant: "destructive" })
     }
   }
 
@@ -70,11 +100,44 @@ export default function SuperAdminApplicationsPage() {
     }
   }
 
+  const toggleSelectAll = () => {
+    if (selectedIds.length === apps.length) {
+      setSelectedIds([])
+    } else {
+      setSelectedIds(apps.map(a => a.id))
+    }
+  }
+
+  const toggleSelect = (id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(i => i !== id))
+    } else {
+      setSelectedIds([...selectedIds, id])
+    }
+  }
+
+  const openActionModal = (app: Application | null, type: "APPROVED" | "REVISION" | "REJECTED", isBulk: boolean = false) => {
+    setActionType(type)
+    setAdminMessage(app?.adminMessage || "")
+    if (!isBulk) {
+      setSelectedApp(app)
+      setActionModalOpen(true)
+    } else {
+      setSelectedApp(null)
+      setBulkActionModalOpen(true)
+    }
+  }
+
+  const viewDetail = (app: Application) => {
+    setSelectedApp(app)
+    setDetailModalOpen(true)
+  }
+
   if (loading) return <div className="skeleton h-96 rounded-2xl" />
 
   return (
     <div className="space-y-6 pb-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Pengajuan Sekolah Baru</h1>
           <p className="text-muted-foreground mt-1 text-sm">Validasi dan tinjau pendaftaran tenant dari sekolah.</p>
@@ -87,172 +150,256 @@ export default function SuperAdminApplicationsPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* List Card */}
-        <div className="lg:col-span-2 space-y-3">
-          {apps.length === 0 && (
-            <div className="text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
-              <p className="text-muted-foreground">Belum ada data pendaftaran.</p>
-            </div>
-          )}
-          {apps.map((app) => (
-            <Card 
-              key={app.id} 
-              className={cn(
-                "glass border-0 cursor-pointer transition-all duration-300 hover:scale-[1.01]",
-                selectedApp?.id === app.id ? "ring-2 ring-primary bg-primary/5" : "hover:bg-muted/30"
+      {selectedIds.length > 0 && (
+        <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-2xl border">
+          <span className="text-sm font-semibold ml-2">{selectedIds.length} Dipilih</span>
+          <Button size="sm" variant="outline" className="h-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50" onClick={() => openActionModal(null, "APPROVED", true)}>
+            <CheckCircle className="h-4 w-4 mr-1.5" /> Setujui Masal
+          </Button>
+          <Button size="sm" variant="outline" className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50" onClick={() => openActionModal(null, "REVISION", true)}>
+            <RefreshCcw className="h-4 w-4 mr-1.5" /> Revisi Masal
+          </Button>
+          <Button size="sm" variant="outline" className="h-8 border-rose-200 text-rose-600 hover:bg-rose-50" onClick={() => openActionModal(null, "REJECTED", true)}>
+            <XCircle className="h-4 w-4 mr-1.5" /> Tolak Masal
+          </Button>
+        </div>
+      )}
+
+      <Card className="glass border-0 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-muted-foreground uppercase bg-muted/30 border-b">
+              <tr>
+                <th className="px-4 py-3 w-10 text-center">
+                  <input 
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 accent-primary"
+                    checked={apps.length > 0 && selectedIds.length === apps.length} 
+                    onChange={toggleSelectAll} 
+                  />
+                </th>
+                <th className="px-4 py-3 font-semibold">Tenant (Sekolah)</th>
+                <th className="px-4 py-3 font-semibold">Penanggungjawab</th>
+                <th className="px-4 py-3 font-semibold">Kota / Provinsi</th>
+                <th className="px-4 py-3 font-semibold">Affiliator</th>
+                <th className="px-4 py-3 font-semibold">Status</th>
+                <th className="px-4 py-3 font-semibold text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/50">
+              {apps.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran.</td>
+                </tr>
               )}
-              onClick={() => { setSelectedApp(app); setAdminMessage(app.adminMessage || "") }}
-            >
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={cn(
-                    "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden",
-                    app.logo ? "bg-white border" : (app.schoolStatus === 'NEGERI' ? "bg-blue-500/10 text-blue-500" : "bg-primary/10 text-primary")
-                  )}>
-                    {app.logo ? (
-                      <img src={app.logo} alt={app.schoolName} className="h-full w-full object-contain p-1" />
-                    ) : (
-                      <School className="h-6 w-6" />
-                    )}
-                  </div>
-                  <div className="space-y-1 overflow-hidden">
-                    <h3 className="font-bold text-sm leading-none truncate">{app.schoolName}</h3>
-                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground uppercase font-semibold">
-                      <span className="flex items-center gap-1"><Hash className="h-3 w-3" /> {app.npsn}</span>
-                      <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {app.regency}, {app.province}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  {getStatusBadge(app.status)}
-                  <span className="text-[10px] text-muted-foreground">{new Date(app.createdAt).toLocaleDateString('id-ID')}</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Panel Detail */}
-        <div className="space-y-6">
-          {selectedApp ? (
-            <Card className="glass border-0 sticky top-6 overflow-hidden">
-              <div className={cn(
-                "h-1.5 w-full",
-                selectedApp.schoolStatus === 'NEGERI' ? "bg-blue-500" : "bg-primary"
-              )} />
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  Detail Pendaftaran
-                </CardTitle>
-                <CardDescription>ID Pengajuan: {selectedApp.id.slice(-8).toUpperCase()}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Data Sekolah */}
-                <div className="grid gap-3">
-                  <div className="p-3 rounded-2xl bg-muted/50 border space-y-3">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-3">
-                        <div className={cn(
-                          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden",
-                          selectedApp.logo ? "bg-white border" : (selectedApp.schoolStatus === 'NEGERI' ? "bg-blue-500/10 text-blue-500" : "bg-primary/10 text-primary")
-                        )}>
-                          {selectedApp.logo ? (
-                            <img src={selectedApp.logo} alt={selectedApp.schoolName} className="h-full w-full object-contain p-0.5" />
-                          ) : (
-                            <School className="h-5 w-5" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Institusi</p>
-                          <p className="font-bold text-sm">{selectedApp.schoolName}</p>
-                        </div>
-                      </div>
-                      <Badge variant="outline" className="text-[10px]">{selectedApp.schoolStatus}</Badge>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">NPSN</p>
-                        <p className="text-xs font-medium">{selectedApp.npsn}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Subdomain</p>
-                        <p className="text-xs font-medium text-primary underline">{selectedApp.schoolSlug}.schoolpro.id</p>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase">Alamat & Lokasi</p>
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                        {selectedApp.address}, {selectedApp.regency}, {selectedApp.province}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Data Admin */}
-                  <div className="p-3 rounded-2xl bg-primary/5 border border-primary/10 space-y-3">
-                    <div>
-                      <p className="text-[10px] font-bold text-primary uppercase">Penanggung Jawab</p>
-                      <p className="font-bold text-sm">{selectedApp.adminName}</p>
-                    </div>
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Mail className="h-3 w-3 text-primary" /> {selectedApp.adminEmail}
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Phone className="h-3 w-3 text-primary" /> {selectedApp.adminPhone}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tindakan */}
-                <div className="space-y-4 pt-2">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase text-muted-foreground">Catatan / Alasan</Label>
-                    <Textarea 
-                      value={adminMessage} 
-                      onChange={(e) => setAdminMessage(e.target.value)}
-                      placeholder="Tulis alasan jika ditolak atau revisi..." 
-                      className="rounded-xl min-h-[80px] text-xs bg-white"
+              {apps.map((app) => (
+                <tr key={app.id} className={cn("hover:bg-muted/10 transition-colors", selectedIds.includes(app.id) && "bg-muted/30")}>
+                  <td className="px-4 py-4 text-center">
+                    <input 
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 accent-primary"
+                      checked={selectedIds.includes(app.id)} 
+                      onChange={() => toggleSelect(app.id)} 
                     />
-                  </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden">
+                        {app.logo ? <img src={app.logo} alt="Logo" className="object-contain p-0.5" /> : <School className="h-5 w-5 text-muted-foreground" />}
+                      </div>
+                      <div>
+                        <p className="font-bold">{app.schoolName}</p>
+                        <p className="text-[10px] text-muted-foreground">Subdomain: <span className="text-primary">{app.schoolSlug}.schoolpro.id</span></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <p className="font-medium">{app.adminName}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5"><Phone className="h-3 w-3" /> {app.adminPhone}</p>
+                  </td>
+                  <td className="px-4 py-4">
+                    <p className="font-medium">{app.regency}</p>
+                    <p className="text-xs text-muted-foreground">{app.province}</p>
+                  </td>
+                  <td className="px-4 py-4">
+                    {app.affiliate ? (
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">
+                        <User className="h-3 w-3" /> {app.affiliate.user.name}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">-</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-4">
+                    {getStatusBadge(app.status)}
+                  </td>
+                  <td className="px-4 py-4 text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuLabel>Tindakan</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => viewDetail(app)}>
+                          <Eye className="h-4 w-4 mr-2 text-primary" /> Lihat Detail
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => openActionModal(app, "APPROVED")}>
+                          <CheckCircle className="h-4 w-4 mr-2 text-emerald-500" /> Setujui
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openActionModal(app, "REVISION")}>
+                          <RefreshCcw className="h-4 w-4 mr-2 text-blue-500" /> Revisi
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openActionModal(app, "REJECTED")} className="text-rose-600">
+                          <XCircle className="h-4 w-4 mr-2" /> Tolak
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button 
-                      variant="outline" 
-                      className="rounded-xl h-10 text-xs border-rose-200 text-rose-600 hover:bg-rose-50"
-                      onClick={() => handleUpdateStatus(selectedApp.id, "REJECTED")}
-                    >
-                      Tolak
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="rounded-xl h-10 text-xs border-blue-200 text-blue-600 hover:bg-blue-50"
-                      onClick={() => handleUpdateStatus(selectedApp.id, "REVISION")}
-                    >
-                      Revisi
-                    </Button>
-                    <Button 
-                      className="col-span-2 rounded-xl h-11 btn-gradient text-white border-0 font-bold"
-                      onClick={() => handleUpdateStatus(selectedApp.id, "APPROVED")}
-                    >
-                      Setujui & Aktifkan Sekolah
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="h-[400px] flex flex-col items-center justify-center text-center p-8 bg-muted/10 rounded-3xl border-2 border-dashed">
-              <div className="h-16 w-16 bg-muted/20 rounded-full flex items-center justify-center mb-4">
-                <ChevronLeft className="h-8 w-8 text-muted-foreground opacity-20" />
-              </div>
-              <h4 className="font-bold text-muted-foreground">Pilih Pengajuan</h4>
-              <p className="text-xs text-muted-foreground max-w-[200px] mt-1">Klik pada salah satu kartu di samping untuk melihat detail pendaftaran.</p>
+      {/* Action Dialog (Single) */}
+      <Dialog open={actionModalOpen} onOpenChange={setActionModalOpen}>
+        <DialogContent className="glass border-0">
+          <DialogHeader>
+            <DialogTitle>
+              {actionType === "APPROVED" ? "Setujui Pendaftaran" : actionType === "REVISION" ? "Minta Revisi" : "Tolak Pendaftaran"}
+            </DialogTitle>
+            <DialogDescription>
+              Tindakan ini akan mengirimkan notifikasi ke email <strong className="text-primary">{selectedApp?.adminEmail}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          {(actionType === "REVISION" || actionType === "REJECTED") && (
+            <div className="space-y-3 py-4">
+              <Label>Alasan {actionType === "REVISION" ? "Revisi" : "Penolakan"} (Wajib)</Label>
+              <Textarea 
+                placeholder="Tulis alasan secara detail agar sekolah dapat memperbaikinya..." 
+                value={adminMessage}
+                onChange={(e) => setAdminMessage(e.target.value)}
+                className="min-h-[100px]"
+              />
             </div>
           )}
-        </div>
-      </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActionModalOpen(false)}>Batal</Button>
+            <Button 
+              className={cn(
+                actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : "bg-rose-500 hover:bg-rose-600",
+                "text-white"
+              )}
+              onClick={handleUpdateStatus}
+              disabled={(actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim()}
+            >
+              Konfirmasi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Action Dialog */}
+      <Dialog open={bulkActionModalOpen} onOpenChange={setBulkActionModalOpen}>
+        <DialogContent className="glass border-0">
+          <DialogHeader>
+            <DialogTitle>
+              Konfirmasi Masal: {actionType === "APPROVED" ? "Setujui" : actionType === "REVISION" ? "Revisi" : "Tolak"} ({selectedIds.length} Sekolah)
+            </DialogTitle>
+            <DialogDescription>
+              Tindakan ini akan diproses untuk seluruh {selectedIds.length} pengajuan yang dipilih secara masal.
+            </DialogDescription>
+          </DialogHeader>
+          {(actionType === "REVISION" || actionType === "REJECTED") && (
+            <div className="space-y-3 py-4">
+              <Label>Alasan (Akan dikirim ke semua)</Label>
+              <Textarea 
+                placeholder="Tulis alasan..." 
+                value={adminMessage}
+                onChange={(e) => setAdminMessage(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBulkActionModalOpen(false)}>Batal</Button>
+            <Button 
+              className={cn(
+                actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : "bg-rose-500 hover:bg-rose-600",
+                "text-white"
+              )}
+              onClick={handleUpdateStatus}
+              disabled={(actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim()}
+            >
+              Proses Masal
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Detail Dialog */}
+      <Dialog open={detailModalOpen} onOpenChange={setDetailModalOpen}>
+        <DialogContent className="max-w-3xl glass border-0">
+          <DialogHeader>
+            <DialogTitle>Detail Pendaftaran Tenant</DialogTitle>
+            <DialogDescription>Data lengkap pengajuan operasional platform.</DialogDescription>
+          </DialogHeader>
+          {selectedApp && (
+            <div className="grid md:grid-cols-2 gap-6 py-4">
+              <div className="space-y-4">
+                <h4 className="font-bold border-b pb-2 flex items-center gap-2"><School className="h-4 w-4" /> Informasi Sekolah</h4>
+                <div className="grid grid-cols-2 gap-y-3 text-sm">
+                  <div className="text-muted-foreground">Nama Sekolah</div>
+                  <div className="font-medium">{selectedApp.schoolName}</div>
+                  
+                  <div className="text-muted-foreground">Status</div>
+                  <div className="font-medium">{selectedApp.schoolStatus}</div>
+                  
+                  <div className="text-muted-foreground">NPSN</div>
+                  <div className="font-medium">{selectedApp.npsn}</div>
+                  
+                  <div className="text-muted-foreground">Subdomain</div>
+                  <div className="font-medium text-primary">{selectedApp.schoolSlug}.schoolpro.id</div>
+                  
+                  <div className="text-muted-foreground col-span-2 mt-2">Alamat Lengkap</div>
+                  <div className="col-span-2 font-medium bg-muted/20 p-2 rounded-lg text-xs leading-relaxed">
+                    {selectedApp.address}, {selectedApp.regency}, {selectedApp.province}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-bold border-b pb-2 flex items-center gap-2"><User className="h-4 w-4" /> Penanggung Jawab</h4>
+                <div className="grid grid-cols-2 gap-y-3 text-sm">
+                  <div className="text-muted-foreground">Nama Admin</div>
+                  <div className="font-medium">{selectedApp.adminName}</div>
+                  
+                  <div className="text-muted-foreground">Email</div>
+                  <div className="font-medium truncate">{selectedApp.adminEmail}</div>
+                  
+                  <div className="text-muted-foreground">WhatsApp</div>
+                  <div className="font-medium">{selectedApp.adminPhone}</div>
+                  
+                  <div className="text-muted-foreground mt-4">Tanggal Daftar</div>
+                  <div className="font-medium mt-4">{new Date(selectedApp.createdAt).toLocaleDateString('id-ID')}</div>
+
+                  {selectedApp.affiliate && (
+                    <>
+                      <div className="text-emerald-600 mt-2 font-bold">Direkomendasikan Oleh</div>
+                      <div className="font-bold text-emerald-600 mt-2">{selectedApp.affiliate.user.name}</div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

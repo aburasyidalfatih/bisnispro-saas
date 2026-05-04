@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, Wallet, Settings, LogOut, ChevronLeft } from "lucide-react"
+import { LayoutDashboard, Users, Wallet, Settings, LogOut, ChevronLeft, BookOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { signOut } from "next-auth/react"
@@ -11,6 +11,7 @@ const affiliateMenu = [
   { label: "Overview", href: "/affiliate", icon: LayoutDashboard },
   { label: "Leads & Sekolah", href: "/affiliate/referrals", icon: Users },
   { label: "Komisi & Penarikan", href: "/affiliate/commissions", icon: Wallet },
+  { label: "Panduan Program", href: "/affiliate/panduan", icon: BookOpen },
   { label: "Pengaturan Akun", href: "/affiliate/settings", icon: Settings },
 ]
 
@@ -57,20 +58,7 @@ export default function AffiliateSidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-border mt-auto space-y-2">
-        <Link href="/dashboard">
-          <Button variant="outline" className="w-full justify-start text-muted-foreground hover:text-foreground">
-            <LayoutDashboard className="mr-2 h-4 w-4" /> Buka Panel Sekolah
-          </Button>
-        </Link>
-        <Button 
-          variant="ghost" 
-          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-          onClick={() => signOut({ callbackUrl: "/login" })}
-        >
-          <LogOut className="mr-2 h-4 w-4" /> Keluar
-        </Button>
-      </div>
+
     </aside>
   )
 }

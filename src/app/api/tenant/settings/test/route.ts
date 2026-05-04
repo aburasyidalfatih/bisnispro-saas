@@ -77,7 +77,7 @@ export async function POST(req: Request) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${data.waApiKey}`, // ✅ Format Bearer yang benar
+          Authorization: data.waApiKey, // Tidak menggunakan Bearer untuk StarSender
         },
         body: JSON.stringify(body),
       })

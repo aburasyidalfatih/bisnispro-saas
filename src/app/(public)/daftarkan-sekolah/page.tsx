@@ -38,6 +38,7 @@ export default function RegisterSchoolPage() {
     adminPhone: "",
     address: "",
     referralCode: "",
+    studentCount: 0,
   })
 
   useEffect(() => {
@@ -99,6 +100,12 @@ export default function RegisterSchoolPage() {
     }
 
     setLoading(true)
+
+    if (!logoFile) {
+      setLoading(false)
+      toast({ title: "Gagal", description: "Logo sekolah wajib diunggah", variant: "destructive" })
+      return
+    }
 
     let uploadedLogoUrl = ""
     if (logoFile) {
@@ -293,6 +300,21 @@ export default function RegisterSchoolPage() {
                   <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
                     <Globe className="h-3 w-3" /> Anda bisa menambahkan Custom Domain (misal: .sch.id) setelah disetujui.
                   </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Jumlah Siswa Saat Ini</Label>
+                <div className="relative">
+                  <Input 
+                    required 
+                    type="number"
+                    min="1"
+                    value={form.studentCount || ""} 
+                    onChange={(e) => setForm({...form, studentCount: parseInt(e.target.value) || 0})}
+                    placeholder="Contoh: 500" 
+                    className="rounded-xl h-11"
+                  />
                 </div>
               </div>
             </CardContent>

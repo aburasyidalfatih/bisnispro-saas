@@ -97,6 +97,20 @@ export default async function middleware(request: NextRequest) {
   // A. MAIN DOMAIN
   // ============================================================
   if (isMainDomain) {
+    // Cek Affiliate Shortlink (contoh: /bdi123, /ref-abc, /mitra123)
+    // Hindari rute sistem yang valid
+    const systemRoutes = ["/dashboard", "/super-admin", "/affiliate", "/login", "/register", "/daftarkan-sekolah", "/api", "/invoice"]
+    const isSystemRoute = systemRoutes.some(r => pathname.startsWith(r))
+    
+    // Tangkap path apa saja yang bukan system route dan panjangnya antara 5-15 karakter alfanumerik (atau hyphen)
+    if (!isSystemRoute && pathname.match(/^\/[a-zA-Z0-9-]{5,15}$/)) {
+      const code = pathname.substring(1).toLowerCase()
+      const redirectUrl = new URL("/", request.url)
+      redirectUrl.searchParams.set("ref", code)
+      const res = addSecurityHeaders(NextResponse.redirect(redirectUrl))
+      return res
+    }
+
     const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 

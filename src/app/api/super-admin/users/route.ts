@@ -29,6 +29,9 @@ export async function GET(req: Request) {
         email: true,
         isSuperAdmin: true,
         createdAt: true,
+        affiliateProfile: {
+          select: { id: true }
+        },
         tenants: {
           include: {
             tenant: {
