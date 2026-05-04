@@ -100,19 +100,13 @@ export const authOptions: NextAuthConfig = {
             )
           }
         } else {
-          // Subdomain: Super Admin cannot login via tenant subdomain
-          if (user.isSuperAdmin) {
-            throw new CustomAuthError("Super Admin harus login melalui domain utama.")
-          }
-
-          // Check user belongs to this tenant
+          // Subdomain: Check if user belongs to this tenant
           const slug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
           const belongsToTenant = user.tenants.some((t) => t.tenant.slug === slug)
           if (!belongsToTenant) {
             throw new CustomAuthError("Akses ditolak: Anda tidak terdaftar di sekolah ini.")
           }
         }
-        // --------------------------------------
 
         if (user.twoFactorEnabled) {
           if (!credentials.twoFactorCode) throw new CustomAuthError("2FA_REQUIRED")

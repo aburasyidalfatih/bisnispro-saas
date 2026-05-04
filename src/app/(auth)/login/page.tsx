@@ -109,11 +109,18 @@ export default function LoginPage() {
     } else {
       const res = await fetch("/api/auth/session")
       const session = await res.json()
-      if (session?.user?.isSuperAdmin) {
-        router.push("/super-admin")
-      } else if (session?.user?.isAffiliate) {
-        router.push("/affiliate")
+      
+      if (isMainDomain) {
+        if (session?.user?.isSuperAdmin) {
+          router.push("/super-admin")
+        } else if (session?.user?.isAffiliate) {
+          router.push("/affiliate")
+        } else {
+          router.push("/dashboard")
+        }
       } else {
+        // Pada subdomain, semua user (termasuk super admin/afiliasi yang terdaftar di tenant ini) 
+        // harus selalu diarahkan ke dashboard tenant.
         router.push("/dashboard")
       }
     }
