@@ -1,1 +1,0 @@
-SELECT id, name, slug, tagline, description FROM "Tenant" WHERE slug = 'demo' LIMIT 1;
