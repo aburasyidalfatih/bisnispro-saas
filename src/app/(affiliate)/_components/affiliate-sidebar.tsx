@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, Wallet, Settings, LogOut, ChevronLeft } from "lucide-react"
+import { LayoutDashboard, Users, Wallet, Settings, LogOut, ChevronLeft, BookOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { signOut } from "next-auth/react"
@@ -11,6 +11,7 @@ const affiliateMenu = [
   { label: "Overview", href: "/affiliate", icon: LayoutDashboard },
   { label: "Leads & Sekolah", href: "/affiliate/referrals", icon: Users },
   { label: "Komisi & Penarikan", href: "/affiliate/commissions", icon: Wallet },
+  { label: "Panduan Program", href: "/affiliate/panduan", icon: BookOpen },
   { label: "Pengaturan Akun", href: "/affiliate/settings", icon: Settings },
 ]
 
