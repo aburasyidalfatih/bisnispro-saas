@@ -105,7 +105,7 @@ export default async function middleware(request: NextRequest) {
     // Tangkap path apa saja yang bukan system route dan panjangnya antara 5-15 karakter alfanumerik (atau hyphen)
     if (!isSystemRoute && pathname.match(/^\/[a-zA-Z0-9-]{5,15}$/)) {
       const code = pathname.substring(1).toLowerCase()
-      const redirectUrl = new URL("/daftarkan-sekolah", request.url)
+      const redirectUrl = new URL("/", request.url)
       redirectUrl.searchParams.set("ref", code)
       const res = addSecurityHeaders(NextResponse.redirect(redirectUrl))
       return res

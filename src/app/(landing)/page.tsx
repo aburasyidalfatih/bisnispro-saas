@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ReferralCapture } from "@/components/shared/referral-capture"
 
 const featureModules = [
   {
@@ -174,6 +175,7 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-mesh">
+      <ReferralCapture />
       {/* ====== NAVBAR ====== */}
       <nav className="glass sticky top-0 z-50 border-b">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
