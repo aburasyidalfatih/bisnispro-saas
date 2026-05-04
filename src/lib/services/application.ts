@@ -62,12 +62,14 @@ export async function sendApplicationNotification(applicationId: string) {
     }
     case "REVISION": {
       subject = settings.WA_SUBJECT_REVISION || `Permintaan Revisi Pendaftaran: ${app.schoolName}`
+      const revisionUrl = `https://${rootDomain}/revisi-pengajuan/${app.id}`
       const tpl =
         settings.WA_TEMPLATE_REVISION ||
-        `Halo {{adminName}},\n\nTerima kasih telah mendaftar. Namun, ada beberapa data yang perlu diperbaiki:\n\n"{{adminMessage}}"\n\nSilakan hubungi kami untuk melakukan perbaikan data.`
+        `Halo {{adminName}},\n\nTerima kasih telah mendaftar. Namun, ada beberapa data yang perlu diperbaiki:\n\n"{{adminMessage}}"\n\nSilakan klik disini untuk melengkapi data: {{revisionUrl}}`
       message = tpl
         .replace(/{{adminName}}/g, app.adminName)
         .replace(/{{adminMessage}}/g, app.adminMessage || "")
+        .replace(/{{revisionUrl}}/g, revisionUrl)
       break
     }
     case "REJECTED": {
