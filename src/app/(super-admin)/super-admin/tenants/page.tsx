@@ -72,7 +72,10 @@ export default function TenantsPage() {
   const fetchTenants = useCallback(() => {
     setLoading(true)
     fetch(`/api/super-admin/tenants?page=${page}&limit=${limit}&search=${search}`)
-      .then((r) => r.json())
+      .then(async (r) => {
+        const text = await r.text();
+        return text ? JSON.parse(text) : { data: [], total: 0 };
+      })
       .then((data) => {
         setTenants(data.data || [])
         setTotal(data.total || 0)
