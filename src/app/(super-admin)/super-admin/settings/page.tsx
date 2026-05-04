@@ -68,6 +68,7 @@ export default function SuperAdminSettingsPage() {
     GOOGLE_CLIENT_SECRET: "",
 
     // Cloudflare Turnstile
+    TURNSTILE_ENABLED: "false",
     TURNSTILE_SITE_KEY: "",
     TURNSTILE_SECRET_KEY: "",
   })
@@ -617,6 +618,29 @@ export default function SuperAdminSettingsPage() {
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">Konfigurasi Cloudflare Turnstile untuk mencegah serangan bot dan spam pada halaman Login Super Admin.</p>
               
+              <button
+                onClick={() => {
+                  const newVal = form.TURNSTILE_ENABLED === "true" ? "false" : "true"
+                  setForm({...form, TURNSTILE_ENABLED: newVal})
+                  handleSaveBatch(['TURNSTILE_ENABLED'], { TURNSTILE_ENABLED: newVal })
+                }}
+                className={cn(
+                  "flex w-full items-center justify-between rounded-xl border-2 p-4 transition-all duration-200 text-left mb-4 mt-4",
+                  form.TURNSTILE_ENABLED === "true" ? "border-primary bg-primary/5" : "border-transparent bg-muted/50 hover:bg-muted"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", form.TURNSTILE_ENABLED === "true" ? "bg-primary/10" : "bg-muted")}>
+                    <ShieldCheck className={cn("h-5 w-5", form.TURNSTILE_ENABLED === "true" ? "text-primary" : "text-muted-foreground")} />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">Aktifkan Turnstile</p>
+                    <p className="text-xs text-muted-foreground">Wajibkan CAPTCHA pada halaman login</p>
+                  </div>
+                </div>
+                <div className={cn("h-2.5 w-2.5 rounded-full", form.TURNSTILE_ENABLED === "true" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
+              </button>
+
               <div className="space-y-2">
                 <Label>Site Key</Label>
                 <Input value={form.TURNSTILE_SITE_KEY} onChange={e => setForm({...form, TURNSTILE_SITE_KEY: e.target.value})} placeholder="Masukkan Site Key" className="rounded-xl font-mono text-xs" />
