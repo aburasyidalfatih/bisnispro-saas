@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
+import { getRootDomain } from "@/lib/utils"
+
 export function TenantSwitcher() {
   const { data: session } = useSession()
 
@@ -20,7 +22,7 @@ export function TenantSwitcher() {
 
   // Current tenant = first tenant (or detected from subdomain in production)
   const currentTenant = tenants[0]
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000"
+  const rootDomain = getRootDomain()
 
   const switchTenant = (slug: string) => {
     // In production: navigate to subdomain

@@ -41,3 +41,28 @@ export function generateSlug(text: string): string {
 export function truncate(str: string, length: number): string {
   return str.length > length ? str.substring(0, length) + "..." : str
 }
+
+export function getRootDomain(hostname?: string): string {
+  let host = hostname || ""
+  if (typeof window !== "undefined" && !host) {
+    host = window.location.hostname
+  }
+  
+  if (host.endsWith("schoolpro.my.id") || host === "schoolpro.my.id") {
+    return "schoolpro.my.id"
+  } else if (host.endsWith("schoolpro.id") || host === "schoolpro.id") {
+    return "schoolpro.id"
+  }
+  
+  return process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+}
+
+export function checkIsMainDomain(hostname?: string): boolean {
+  let host = hostname || ""
+  if (typeof window !== "undefined" && !host) {
+    host = window.location.hostname
+  }
+  
+  const root = getRootDomain(host)
+  return host === root || host === `www.${root}` || host === "localhost" || host === "127.0.0.1" || host.startsWith("localhost:")
+}
