@@ -47,7 +47,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
             return (
               <Link
                 key={facility.id}
-                href={resolveHref("/fasilitas")}
+                href={resolveHref(`/fasilitas/${facility.id}`)}
                 className={`group relative rounded-2xl overflow-hidden border bg-muted/30 transition-all duration-500 hover:shadow-xl ${
                   isLarge ? "md:col-span-1 lg:col-span-2 aspect-[16/10]" : "aspect-square"
                 }`}
