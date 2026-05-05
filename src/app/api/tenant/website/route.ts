@@ -27,6 +27,7 @@ const websiteSchema = z.object({
   // Konten JSON
   services: z.any().optional().nullable(),
   gallery: z.any().optional().nullable(),
+  settings: z.any().optional().nullable(),
   // SEO
   seoTitle: z.string().max(70).optional().nullable(),
   seoDesc: z.string().max(160).optional().nullable(),
@@ -50,7 +51,7 @@ export async function GET(req: Request) {
       id: true, name: true, slug: true, tagline: true, description: true,
       about: true, logo: true, heroImage: true, address: true, phone: true,
       email: true, website: true, whatsapp: true, instagram: true,
-      facebook: true, youtube: true, services: true, gallery: true,
+      facebook: true, youtube: true, services: true, gallery: true, settings: true,
       seoTitle: true, seoDesc: true, googleClientId: true, googleClientSecret: true,
     },
   })

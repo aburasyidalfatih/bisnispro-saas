@@ -26,6 +26,7 @@ export default function WebsiteAboutPage() {
     heroImage: "",
     seoTitle: "",
     seoDesc: "",
+    settings: {} as any,
   })
 
   // Resolve tenantId
@@ -56,6 +57,7 @@ export default function WebsiteAboutPage() {
           heroImage: d.heroImage || "",
           seoTitle: d.seoTitle || "",
           seoDesc: d.seoDesc || "",
+          settings: d.settings || {},
         })
         setLoading(false)
       })
@@ -98,6 +100,27 @@ export default function WebsiteAboutPage() {
       }
     } finally {
       setUploadingHero(false)
+      e.target.value = ""
+    }
+  }
+
+  const handlePrincipalImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !tenantId) return
+    try {
+      const fd = new FormData()
+      fd.append("file", file)
+      fd.append("tenantId", tenantId)
+      fd.append("subDir", "principal")
+      const res = await fetch("/api/upload", { method: "POST", body: fd })
+      const d = await res.json()
+      if (res.ok && d.url) {
+        setForm(p => ({ ...p, settings: { ...(p.settings || {}), principalImage: d.url } }))
+        toast({ title: "Foto diunggah", description: "Klik Simpan untuk menyimpan perubahan." })
+      } else {
+        toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
+      }
+    } finally {
       e.target.value = ""
     }
   }
@@ -239,6 +262,69 @@ export default function WebsiteAboutPage() {
               rows={8}
               className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
             <p className="text-xs text-muted-foreground mt-2">Tampil di halaman Tentang Kami website</p>
+          </CardContent>
+        </Card>
+
+        {/* Sambutan Kepala Sekolah */}
+        <Card className="glass border-0 lg:col-span-2">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <Info className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Sambutan Kepala Sekolah</CardTitle>
+                <CardDescription>Pesan sambutan dari kepala sekolah untuk beranda website</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Nama Kepala Sekolah</Label>
+                <Input value={form.settings?.principalName || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalName: e.target.value } }))}
+                  placeholder="Contoh: Ir. Sherly Puspita, M.Pd" className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>Jabatan (Opsional)</Label>
+                <Input value={form.settings?.principalTitle || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalTitle: e.target.value } }))}
+                  placeholder="Contoh: Kepala Sekolah" className="rounded-xl" />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Pesan Sambutan</Label>
+              <textarea value={form.settings?.principalMessage || ""}
+                onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalMessage: e.target.value } }))}
+                placeholder="Puji syukur ke hadirat Tuhan YME..."
+                rows={6}
+                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Foto Kepala Sekolah</Label>
+              <div className="flex gap-2">
+                <Input value={form.settings?.principalImage || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalImage: e.target.value } }))}
+                  placeholder="https://... atau upload file" className="rounded-xl flex-1" />
+                <Label className="cursor-pointer">
+                  <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePrincipalImageUpload} />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-input bg-background hover:bg-muted/50">
+                    <Upload className="h-4 w-4" />
+                  </div>
+                </Label>
+                {form.settings?.principalImage && (
+                  <Button type="button" variant="outline" size="icon" className="rounded-xl shrink-0 text-destructive"
+                    onClick={() => setForm(p => ({ ...p, settings: { ...p.settings, principalImage: "" } }))}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              {form.settings?.principalImage && (
+                <div className="mt-4 rounded-xl overflow-hidden border w-32 h-32">
+                  <img src={form.settings?.principalImage} alt="Principal preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 

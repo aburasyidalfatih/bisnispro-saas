@@ -7,6 +7,7 @@ import { StatsBar } from "./_components/stats-bar"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
+import { PrincipalWelcome } from "./_components/principal-welcome"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -75,6 +76,11 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
       {/* ── Stats Bar ── */}
       <StatsBar stats={stats} />
+
+      {/* ── Sambutan Kepala Sekolah ── */}
+      {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage) && (
+        <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} />
+      )}
 
       {/* ── Tentang Singkat ── */}
       {tenant.about && (
