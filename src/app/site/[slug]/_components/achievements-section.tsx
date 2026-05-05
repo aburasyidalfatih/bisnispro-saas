@@ -64,7 +64,7 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
             return (
               <Link
                 key={achievement.id}
-                href={resolveHref("/prestasi")}
+                href={resolveHref(`/prestasi/${achievement.id}`)}
                 className={`group rounded-2xl border p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${config.bg}`}
               >
                 <div className="flex items-start gap-4">

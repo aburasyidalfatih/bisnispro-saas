@@ -60,7 +60,7 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
             return (
               <Link
                 key={program.id}
-                href={resolveHref("/program")}
+                href={resolveHref(`/program/${program.id}`)}
                 className={`group relative rounded-2xl border bg-background overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${color.border}`}
               >
                 {/* Image / Gradient Header */}

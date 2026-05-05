@@ -8,22 +8,38 @@ import { Calendar, User, ArrowRight } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 
-export default async function BeritaPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BeritaPage({ 
+  params,
+  searchParams 
+}: { 
+  params: Promise<{ slug: string }>,
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const { slug } = await params
+  const resolvedSearchParams = await searchParams
+  const typeFilter = typeof resolvedSearchParams.type === 'string' ? resolvedSearchParams.type.toUpperCase() : null
+
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)
-  const posts = tenant.posts || []
+  let posts = tenant.posts || []
+  
+  if (typeFilter) {
+    posts = posts.filter((p: any) => p.type === typeFilter)
+  }
+
+  const pageTitle = typeFilter === 'PENGUMUMAN' ? "Pengumuman Terbaru" : "Artikel & Berita Terbaru"
+  const breadcrumbLabel = typeFilter === 'PENGUMUMAN' ? "Pengumuman" : "Berita"
 
   return (
     <div className="bg-background min-h-screen pb-12">
       <PageHeader
-        title="Artikel & Berita Terbaru"
+        title={pageTitle}
         description={<>Ikuti informasi terkini mengenai kegiatan, prestasi, dan pengumuman di {tenant.name}.</>}
         breadcrumbs={[
           { label: "Informasi" },
-          { label: "Informasi" }
+          { label: breadcrumbLabel }
         ]}
       />
 
