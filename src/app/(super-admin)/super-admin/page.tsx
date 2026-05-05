@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Building2, Users, CreditCard, Activity, TrendingUp } from "lucide-react"
+import { Building2, Users, CreditCard, Activity, TrendingUp, FileText } from "lucide-react"
 import Link from "next/link"
 import { SystemHealth } from "./_components/SystemHealth"
 import { TenantMap } from "./_components/TenantMap"
@@ -13,6 +13,7 @@ interface Stats {
   activeTenants: number
   totalRevenue: number
   recentPayments: number
+  applicationCount: number
 }
 
 export default function SuperAdminDashboard() {
@@ -32,7 +33,8 @@ export default function SuperAdminDashboard() {
     { label: "Total Tenant", value: stats?.tenantCount ?? "—", icon: Building2, gradient: "from-blue-500/10 to-cyan-500/10", iconColor: "text-blue-600 dark:text-blue-400", href: "/super-admin/tenants" },
     { label: "Total Pengguna", value: stats?.userCount ?? "—", icon: Users, gradient: "from-emerald-500/10 to-teal-500/10", iconColor: "text-emerald-600 dark:text-emerald-400", href: "/super-admin/users" },
     { label: "Pendapatan", value: stats ? formatCurrency(stats.totalRevenue) : "—", icon: CreditCard, gradient: "from-amber-500/10 to-orange-500/10", iconColor: "text-amber-600 dark:text-amber-400", href: "/super-admin/payments" },
-    { label: "Tenant Aktif", value: stats?.activeTenants ?? "—", icon: Activity, gradient: "from-violet-500/10 to-purple-500/10", iconColor: "text-violet-600 dark:text-violet-400", href: "/super-admin/analytics" },
+    { label: "Tenant Aktif", value: stats?.activeTenants ?? "—", icon: Activity, gradient: "from-violet-500/10 to-purple-500/10", iconColor: "text-violet-600 dark:text-violet-400", href: "/super-admin/tenants" },
+    { label: "Total Pengajuan", value: stats?.applicationCount ?? "—", icon: FileText, gradient: "from-rose-500/10 to-pink-500/10", iconColor: "text-rose-600 dark:text-rose-400", href: "/super-admin/applications" },
   ]
 
   return (
@@ -42,7 +44,7 @@ export default function SuperAdminDashboard() {
         <p className="text-muted-foreground mt-1">Kelola dan pantau seluruh platform SchoolPro</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         {cards.map((stat) => (
           <Link key={stat.label} href={stat.href}>
             <Card className="glass border-0 hover-lift cursor-pointer h-full">
