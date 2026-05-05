@@ -4,7 +4,7 @@ import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, User, Briefcase } from "lucide-react"
+import { ArrowLeft, User, Briefcase, Mail, Globe, GraduationCap, BookOpen } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
@@ -75,9 +75,19 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
 
             <div className="mt-16 md:mt-20">
                <h1 className="text-4xl font-black text-slate-900 mb-4">{staff.name}</h1>
-               <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 text-primary font-bold tracking-widest uppercase text-xs mb-8">
+               <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 text-primary font-bold tracking-widest uppercase text-xs mb-6">
                   <Briefcase className="h-4 w-4" />
                   {staff.role}
+               </div>
+
+               {/* Social / Contact */}
+               <div className="flex items-center justify-center gap-3 mb-10">
+                  <a href={`mailto:${staff.email || "contact@school.edu"}`} className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-colors" title="Kirim Email">
+                     <Mail className="h-4 w-4" />
+                  </a>
+                  <a href="#" className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#0A66C2] hover:text-white transition-colors" title="Profil Profesional">
+                     <Globe className="h-4 w-4" />
+                  </a>
                </div>
 
                {/* Bio/Quote */}
@@ -99,8 +109,27 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                       <li className="flex items-start gap-3">
                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0"><User className="h-4 w-4" /></div>
                          <div>
-                            <p className="text-xs text-muted-foreground font-bold">Status Pegawai</p>
-                            <p className="font-semibold text-slate-900">Staff Aktif</p>
+                            <p className="text-xs text-muted-foreground font-bold">Status Kepegawaian</p>
+                            <p className="font-semibold text-slate-900">Tenaga Pendidik Aktif</p>
+                         </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                         <div className="h-8 w-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0"><BookOpen className="h-4 w-4" /></div>
+                         <div>
+                            <p className="text-xs text-muted-foreground font-bold">Mata Pelajaran</p>
+                            <p className="font-semibold text-slate-900">{staff.subject || "Guru Kelas / Umum"}</p>
+                         </div>
+                      </li>
+                   </ul>
+                </div>
+                <div>
+                   <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Riwayat Akademik</h3>
+                   <ul className="space-y-4">
+                      <li className="flex items-start gap-3">
+                         <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0"><GraduationCap className="h-4 w-4" /></div>
+                         <div>
+                            <p className="text-xs text-muted-foreground font-bold">Pendidikan Terakhir</p>
+                            <p className="font-semibold text-slate-900">{staff.education || "S1 Pendidikan"}</p>
                          </div>
                       </li>
                    </ul>
