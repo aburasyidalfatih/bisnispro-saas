@@ -187,6 +187,7 @@ export default function SuperAdminApplicationsPage() {
                 <th className="px-4 py-3 font-semibold">Tenant (Sekolah)</th>
                 <th className="px-4 py-3 font-semibold">Penanggungjawab</th>
                 <th className="px-4 py-3 font-semibold">Kota / Provinsi</th>
+                <th className="px-4 py-3 font-semibold text-center">Jml. Siswa</th>
                 <th className="px-4 py-3 font-semibold">Affiliator</th>
                 <th className="px-4 py-3 font-semibold">Status</th>
                 <th className="px-4 py-3 font-semibold text-right">Aksi</th>
@@ -195,7 +196,7 @@ export default function SuperAdminApplicationsPage() {
             <tbody className="divide-y divide-border/50">
               {apps.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran.</td>
+                  <td colSpan={8} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran.</td>
                 </tr>
               )}
               {apps.map((app) => (
@@ -226,6 +227,9 @@ export default function SuperAdminApplicationsPage() {
                   <td className="px-4 py-4">
                     <p className="font-medium">{app.regency}</p>
                     <p className="text-xs text-muted-foreground">{app.province}</p>
+                  </td>
+                  <td className="px-4 py-4 text-center">
+                    <span className="font-semibold">{app.studentCount ? app.studentCount.toLocaleString('id-ID') : '-'}</span>
                   </td>
                   <td className="px-4 py-4">
                     {app.affiliate ? (
