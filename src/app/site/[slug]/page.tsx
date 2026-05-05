@@ -8,6 +8,7 @@ import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { PrincipalWelcome } from "./_components/principal-welcome"
+import { InfoBoard } from "./_components/info-board"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -81,6 +82,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage) && (
         <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} />
       )}
+
+      {/* ── Info Board (Agenda, Pengumuman, Artikel) ── */}
+      <InfoBoard events={tenant.events || []} posts={tenant.posts || []} base={base} />
 
       {/* ── Tentang Singkat ── */}
       {tenant.about && (
