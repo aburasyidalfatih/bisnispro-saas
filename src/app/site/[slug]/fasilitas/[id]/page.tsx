@@ -4,7 +4,7 @@ import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, Building2 } from "lucide-react"
+import { ArrowLeft, Building2, Users, CheckCircle, Tag } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
@@ -90,17 +90,24 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
               </h3>
               <ul className="space-y-6">
                  <li className="flex items-start gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary shrink-0"><Building2 className="h-5 w-5" /></div>
+                    <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary shrink-0"><Tag className="h-5 w-5" /></div>
                     <div>
                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Kategori</p>
-                       <p className="font-semibold text-slate-900 mt-1">Sarana Pendidikan</p>
+                       <p className="font-semibold text-slate-900 mt-1">Sarana & Prasarana</p>
                     </div>
                  </li>
                  <li className="flex items-start gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary shrink-0"><Building2 className="h-5 w-5" /></div>
+                    <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-500 shrink-0"><CheckCircle className="h-5 w-5" /></div>
                     <div>
-                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Akses</p>
-                       <p className="font-semibold text-slate-900 mt-1">Seluruh Siswa</p>
+                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Kondisi</p>
+                       <p className="font-semibold text-slate-900 mt-1">Sangat Baik / Terawat</p>
+                    </div>
+                 </li>
+                 <li className="flex items-start gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-blue-500 shrink-0"><Users className="h-5 w-5" /></div>
+                    <div>
+                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Hak Akses</p>
+                       <p className="font-semibold text-slate-900 mt-1">Seluruh Sivitas Akademika</p>
                     </div>
                  </li>
               </ul>
