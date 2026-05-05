@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
+import { getFacilityById, updateFacility } from "@/lib/actions/facilities"
 
 export default function EditFacilityPage() {
   const router = useRouter()
@@ -39,10 +40,9 @@ export default function EditFacilityPage() {
 
   useEffect(() => {
     if (!isLoadingTenant && tenantId) {
-      fetch(`/api/tenant/facilities/${id}?tenantId=${tenantId}`)
-        .then(r => r.json())
+      getFacilityById(id, tenantId)
         .then(d => {
-          if (d.error) {
+          if (!d) {
             toast({ title: "Gagal", description: "Fasilitas tidak ditemukan", variant: "destructive" })
             router.push("/dashboard/website/facilities")
           } else {
@@ -58,8 +58,8 @@ export default function EditFacilityPage() {
           }
           setLoading(false)
         })
-        .catch(() => {
-          toast({ title: "Error", description: "Gagal memuat data", variant: "destructive" })
+        .catch((err: any) => {
+          toast({ title: "Error", description: err.message || "Gagal memuat data", variant: "destructive" })
           setLoading(false)
         })
     }
@@ -107,27 +107,17 @@ export default function EditFacilityPage() {
         setUploading(false)
       }
       
-      const docRes = await fetch(`/api/tenant/facilities/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenantId,
-          name: formData.name,
-          description: formData.description,
-          imageUrl: finalImageUrl,
-          category: formData.category,
-          condition: formData.condition,
-          access: formData.access,
-        })
+      await updateFacility(id, tenantId, {
+        name: formData.name,
+        description: formData.description,
+        imageUrl: finalImageUrl,
+        category: formData.category,
+        condition: formData.condition,
+        access: formData.access,
       })
 
-      if (docRes.ok) {
-        toast({ title: "Fasilitas berhasil diperbarui!" })
-        router.push("/dashboard/website/facilities")
-      } else {
-        const d = await docRes.json()
-        throw new Error(d.error || "Gagal menyimpan fasilitas")
-      }
+      toast({ title: "Fasilitas berhasil diperbarui!" })
+      router.push("/dashboard/website/facilities")
     } catch (error: any) {
       toast({ title: "Gagal", description: error.message, variant: "destructive" })
       setUploading(false)

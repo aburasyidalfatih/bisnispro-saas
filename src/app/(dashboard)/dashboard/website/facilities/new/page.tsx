@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { createFacility } from "@/lib/actions/facilities"
 
 export default function NewFacilityPage() {
   const router = useRouter()
@@ -74,27 +75,17 @@ export default function NewFacilityPage() {
         setUploading(false)
       }
       
-        const docRes = await fetch("/api/tenant/facilities", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenantId,
-          name: formData.name,
-          description: formData.description,
-          imageUrl: imageUrl,
-          category: formData.category,
-          condition: formData.condition,
-          access: formData.access,
-        })
+      await createFacility(tenantId, {
+        name: formData.name,
+        description: formData.description,
+        imageUrl: imageUrl,
+        category: formData.category,
+        condition: formData.condition,
+        access: formData.access,
       })
 
-      if (docRes.ok) {
-        toast({ title: "Fasilitas berhasil disimpan!" })
-        router.push("/dashboard/website/facilities")
-      } else {
-        const d = await docRes.json()
-        throw new Error(d.error || "Gagal menyimpan fasilitas")
-      }
+      toast({ title: "Fasilitas berhasil disimpan!" })
+      router.push("/dashboard/website/facilities")
     } catch (error: any) {
       toast({ title: "Gagal", description: error.message, variant: "destructive" })
       setUploading(false)

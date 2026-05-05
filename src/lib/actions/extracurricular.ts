@@ -1,29 +1,15 @@
 "use server"
 
+import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { extracurricularSchema } from "@/lib/validations/extracurricular"
 import { revalidatePath } from "next/cache"
 
-async function checkTenantAccess(tenantId: string) {
-  const session = await auth()
-  if (!session?.user) throw new Error("Unauthorized")
 
-  if (session.user.isSuperAdmin) return true
-
-  const tu = await db.tenantUser.findUnique({
-    where: { tenantId_userId: { tenantId, userId: session.user.id } },
-  })
-  
-  const allowedRoles = ["owner", "admin", "operator"]
-  if (!tu || !allowedRoles.includes(tu.role)) {
-    throw new Error("Forbidden")
-  }
-  return true
-}
 
 export async function getExtracurriculars(tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   return await db.extracurricular.findMany({
     where: { tenantId },
@@ -32,7 +18,7 @@ export async function getExtracurriculars(tenantId: string) {
 }
 
 export async function getExtracurricularById(id: string, tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   return await db.extracurricular.findUnique({
     where: { id, tenantId }
@@ -40,7 +26,7 @@ export async function getExtracurricularById(id: string, tenantId: string) {
 }
 
 export async function createExtracurricular(tenantId: string, data: any) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   const parsed = extracurricularSchema.parse(data)
   
@@ -56,7 +42,7 @@ export async function createExtracurricular(tenantId: string, data: any) {
 }
 
 export async function updateExtracurricular(id: string, tenantId: string, data: any) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   const parsed = extracurricularSchema.parse(data)
   
@@ -69,7 +55,7 @@ export async function updateExtracurricular(id: string, tenantId: string, data: 
 }
 
 export async function deleteExtracurricular(id: string, tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   await db.extracurricular.delete({
     where: { id, tenantId }
@@ -77,3 +63,4 @@ export async function deleteExtracurricular(id: string, tenantId: string) {
   
   revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
 }
+

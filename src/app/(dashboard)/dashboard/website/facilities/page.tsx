@@ -10,12 +10,16 @@ import { Plus, Trash2, Edit, Building2, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import Image from "next/image"
+import { getFacilities, deleteFacility as deleteFacilityAction } from "@/lib/actions/facilities"
 
 interface Facility {
   id: string
   name: string
-  description?: string
-  imageUrl?: string
+  description?: string | null
+  imageUrl?: string | null
+  category?: string | null
+  condition?: string | null
+  access?: string | null
   createdAt: string
 }
 
@@ -29,10 +33,11 @@ export default function FacilitiesPage() {
   const loadFacilities = () => {
     if (!tenantId) return
     setLoading(true)
-    fetch(`/api/tenant/facilities?tenantId=${tenantId}`)
-      .then(r => r.json())
+    getFacilities(tenantId)
       .then(d => {
-        setFacilities(Array.isArray(d) ? d : [])
+        // Parse dates safely since Server Actions pass date objects down if not careful, but Prisma dates are serializable.
+        // Or if it causes issue we map it. 
+        setFacilities(Array.isArray(d) ? d.map(f => ({...f, createdAt: new Date(f.createdAt).toISOString()})) : [])
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -47,16 +52,11 @@ export default function FacilitiesPage() {
   const deleteFacility = async (id: string) => {
     if (!tenantId) return
     try {
-      const res = await fetch(`/api/tenant/facilities/${id}?tenantId=${tenantId}`, { method: "DELETE" })
-      if (res.ok) {
-        toast({ title: "Fasilitas dihapus" })
-        loadFacilities()
-      } else {
-        const d = await res.json()
-        toast({ title: "Gagal", description: d.error, variant: "destructive" })
-      }
-    } catch {
-      toast({ title: "Gagal menghapus", variant: "destructive" })
+      await deleteFacilityAction(id, tenantId)
+      toast({ title: "Fasilitas dihapus" })
+      loadFacilities()
+    } catch (err: any) {
+      toast({ title: "Gagal menghapus", description: err.message || "", variant: "destructive" })
     }
   }
 

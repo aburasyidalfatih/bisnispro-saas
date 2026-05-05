@@ -1,29 +1,15 @@
 "use server"
 
+import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { popupSchema } from "@/lib/validations/popup"
 import { revalidatePath } from "next/cache"
 
-async function checkTenantAccess(tenantId: string) {
-  const session = await auth()
-  if (!session?.user) throw new Error("Unauthorized")
 
-  if (session.user.isSuperAdmin) return true
-
-  const tu = await db.tenantUser.findUnique({
-    where: { tenantId_userId: { tenantId, userId: session.user.id } },
-  })
-  
-  const allowedRoles = ["owner", "admin", "operator"]
-  if (!tu || !allowedRoles.includes(tu.role)) {
-    throw new Error("Forbidden")
-  }
-  return true
-}
 
 export async function getPopups(tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   return await db.popup.findMany({
     where: { tenantId },
@@ -40,7 +26,7 @@ export async function getActivePopup(tenantId: string) {
 }
 
 export async function getPopupById(id: string, tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   return await db.popup.findUnique({
     where: { id, tenantId }
@@ -48,7 +34,7 @@ export async function getPopupById(id: string, tenantId: string) {
 }
 
 export async function createPopup(tenantId: string, data: any) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   const parsed = popupSchema.parse(data)
   
@@ -72,7 +58,7 @@ export async function createPopup(tenantId: string, data: any) {
 }
 
 export async function updatePopup(id: string, tenantId: string, data: any) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   const parsed = popupSchema.parse(data)
   
@@ -92,7 +78,7 @@ export async function updatePopup(id: string, tenantId: string, data: any) {
 }
 
 export async function deletePopup(id: string, tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   await db.popup.delete({
     where: { id, tenantId }
@@ -102,7 +88,7 @@ export async function deletePopup(id: string, tenantId: string) {
 }
 
 export async function togglePopupStatus(id: string, tenantId: string, isActive: boolean) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   if (isActive) {
     await db.popup.updateMany({
@@ -118,3 +104,4 @@ export async function togglePopupStatus(id: string, tenantId: string, isActive: 
   
   revalidatePath("/(dashboard)/dashboard/website/popups", "page")
 }
+

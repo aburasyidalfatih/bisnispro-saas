@@ -1,30 +1,16 @@
 "use server"
 
+import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { sliderSchema } from "@/lib/validations/slider"
 import { revalidatePath } from "next/cache"
 import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 
-async function checkTenantAccess(tenantId: string) {
-  const session = await auth()
-  if (!session?.user) throw new Error("Unauthorized")
 
-  if (session.user.isSuperAdmin) return true
-
-  const tu = await db.tenantUser.findUnique({
-    where: { tenantId_userId: { tenantId, userId: session.user.id } },
-  })
-  
-  const allowedRoles = ["owner", "admin", "operator"]
-  if (!tu || !allowedRoles.includes(tu.role)) {
-    throw new Error("Forbidden")
-  }
-  return true
-}
 
 export async function getSliders(tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   return await db.slider.findMany({
     where: { tenantId },
@@ -40,7 +26,7 @@ export async function getActiveSliders(tenantId: string) {
 }
 
 export async function getSliderById(id: string, tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   return await db.slider.findUnique({
     where: { id, tenantId }
@@ -48,7 +34,7 @@ export async function getSliderById(id: string, tenantId: string) {
 }
 
 export async function createSlider(tenantId: string, data: any) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   const parsed = sliderSchema.parse(data)
   
@@ -69,7 +55,7 @@ export async function createSlider(tenantId: string, data: any) {
 }
 
 export async function updateSlider(id: string, tenantId: string, data: any) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   const parsed = sliderSchema.parse(data)
   
@@ -87,7 +73,7 @@ export async function updateSlider(id: string, tenantId: string, data: any) {
 }
 
 export async function deleteSlider(id: string, tenantId: string) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   await db.slider.delete({
     where: { id, tenantId }
@@ -102,7 +88,7 @@ export async function deleteSlider(id: string, tenantId: string) {
 }
 
 export async function toggleSliderStatus(id: string, tenantId: string, isActive: boolean) {
-  await checkTenantAccess(tenantId)
+  await requireTenantAccess(tenantId)
   
   await db.slider.update({
     where: { id, tenantId },
@@ -116,3 +102,4 @@ export async function toggleSliderStatus(id: string, tenantId: string, isActive:
     revalidatePath(`/site/${tenant.slug}`, "page")
   }
 }
+
