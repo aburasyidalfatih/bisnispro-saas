@@ -75,7 +75,11 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
         {teachers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teachers.map((s: any) => (
-              <div key={s.id} className="group relative flex flex-col bg-white rounded-3xl overflow-hidden border border-border hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+              <Link 
+                href={`${base}/gtk/${s.id}`}
+                key={s.id} 
+                className="group relative flex flex-col bg-white rounded-3xl overflow-hidden border border-border hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+              >
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <OptimizedImage 
                     src={s.imageUrl || "https://images.unsplash.com/photo-1580894732230-285b963a9013?q=80&w=2070"} 
@@ -104,7 +108,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
                   )}
                   <div className="h-1 w-12 bg-primary/20 mx-auto rounded-full group-hover:w-20 group-hover:bg-primary transition-all duration-500" />
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

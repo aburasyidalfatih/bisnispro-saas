@@ -29,47 +29,53 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         {events.length === 0 ? (
-          <div className="text-center py-20 bg-muted/30 rounded-[40px] border-2 border-dashed">
-             <p className="text-muted-foreground">Belum ada agenda kegiatan yang dijadwalkan.</p>
+          <div className="flex flex-col items-center justify-center py-32 bg-white/50 rounded-[3rem] border border-dashed border-border/60">
+             <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
+               <Calendar className="h-10 w-10" />
+             </div>
+             <h3 className="text-2xl font-bold mb-2">Belum ada agenda</h3>
+             <p className="text-muted-foreground max-w-sm text-center">Jadwal acara dan kegiatan sekolah akan segera diperbarui di sini.</p>
           </div>
         ) : (
-          <div className="grid gap-6">
+          <div className="max-w-4xl mx-auto space-y-6">
             {events.map((event: any) => (
-              <div 
+              <Link 
                 key={event.id} 
-                className="group flex flex-col md:flex-row bg-background rounded-3xl overflow-hidden border hover:border-primary/50 transition-all duration-300"
+                href={`${base}/agenda/${event.id}`}
+                className="group flex flex-col md:flex-row bg-white rounded-3xl overflow-hidden border border-border/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative"
               >
-                <div className="md:w-48 bg-primary text-white flex flex-col items-center justify-center p-6 text-center">
-                   <p className="text-sm font-bold uppercase tracking-widest opacity-80 mb-1">
+                {/* Decoration line */}
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary/20 group-hover:bg-primary transition-colors" />
+                
+                <div className="md:w-56 bg-primary/5 group-hover:bg-primary text-primary group-hover:text-white flex flex-col items-center justify-center p-8 text-center transition-colors duration-300">
+                   <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-2">
                       {format(new Date(event.startDate), 'MMMM', { locale: id })}
                    </p>
-                   <p className="text-5xl font-black">
+                   <p className="text-6xl font-black leading-none mb-2">
                       {format(new Date(event.startDate), 'dd')}
                    </p>
-                   <p className="text-sm font-bold mt-1 opacity-80">
+                   <p className="text-sm font-bold opacity-80">
                       {format(new Date(event.startDate), 'yyyy')}
                    </p>
                 </div>
-                <div className="flex-1 p-8 flex flex-col justify-center">
-                  <h3 className="text-xl font-bold mb-4">{event.title}</h3>
-                  <div className="grid sm:grid-cols-2 gap-4 text-sm text-muted-foreground mb-6">
-                     <div className="flex items-center gap-2">
+                <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
+                  <h3 className="text-2xl font-bold mb-4 text-slate-900 group-hover:text-primary transition-colors">{event.title}</h3>
+                  <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-muted-foreground mb-6 font-medium">
+                     <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg">
                         <Clock className="h-4 w-4 text-primary" /> {event.time || "08.00 - Selesai"}
                      </div>
-                     <div className="flex items-center gap-2">
+                     <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg">
                         <MapPin className="h-4 w-4 text-primary" /> {event.location || "Area Sekolah"}
                      </div>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                    {event.description || "Mari berpartisipasi dalam kegiatan sekolah untuk mempererat silaturahmi dan meningkatkan kompetensi diri."}
+                  <p className="text-muted-foreground line-clamp-2 leading-relaxed">
+                     {event.description || "Silakan klik untuk melihat detail informasi agenda kegiatan ini."}
                   </p>
+                  <div className="mt-6 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    Lihat Detail <ArrowRight className="h-3 w-3" />
+                  </div>
                 </div>
-                <div className="p-8 flex items-center justify-center border-t md:border-t-0 md:border-l">
-                   <button className="h-12 w-12 rounded-full border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                      <ArrowRight className="h-5 w-5" />
-                   </button>
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
