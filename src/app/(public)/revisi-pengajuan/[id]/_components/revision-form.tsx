@@ -13,6 +13,7 @@ import {
   School, User, Phone, MapPin, Send, 
   Globe, Hash, Landmark, Loader2, AlertCircle, ImageIcon
 } from "lucide-react"
+import { RegionSelector } from "@/components/ui/region-selector"
 
 export function RevisionForm({ application }: { application: any }) {
   const router = useRouter()
@@ -200,28 +201,13 @@ export function RevisionForm({ application }: { application: any }) {
             <CardDescription>Perbaiki wilayah dan alamat sekolah Anda.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
-            <div className="grid md:grid-cols-2 gap-5">
-              <div className="space-y-2">
-                <Label>Provinsi <span className="text-red-500">*</span></Label>
-                <Input 
-                  required 
-                  value={form.province} 
-                  onChange={(e) => setForm({ ...form, province: e.target.value })} 
-                  placeholder="Contoh: Jawa Barat" 
-                  className="rounded-xl h-11" 
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Kabupaten / Kota <span className="text-red-500">*</span></Label>
-                <Input 
-                  required 
-                  value={form.regency} 
-                  onChange={(e) => setForm({ ...form, regency: e.target.value })} 
-                  placeholder="Contoh: Bandung" 
-                  className="rounded-xl h-11" 
-                />
-              </div>
-            </div>
+            <RegionSelector
+              province={form.province}
+              regency={form.regency}
+              onProvinceChange={(v) => setForm({ ...form, province: v, regency: "" })}
+              onRegencyChange={(v) => setForm({ ...form, regency: v })}
+              required
+            />
             <div className="space-y-2">
               <Label>Alamat Lengkap <span className="text-red-500">*</span></Label>
               <Textarea required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="rounded-xl min-h-[100px]" placeholder="Jl. Pendidikan No. 123..." />

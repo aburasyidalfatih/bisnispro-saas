@@ -13,6 +13,7 @@ import {
   CheckCircle2, Globe, Hash, Landmark, Loader2, Check, X 
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { RegionSelector } from "@/components/ui/region-selector"
 
 export default function RegisterSchoolPage() {
   const [loading, setLoading] = useState(false)
@@ -332,28 +333,13 @@ export default function RegisterSchoolPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Provinsi</Label>
-                  <Input 
-                    required 
-                    value={form.province} 
-                    onChange={(e) => setForm({...form, province: e.target.value})}
-                    placeholder="Contoh: Jawa Barat" 
-                    className="rounded-xl h-11"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Kabupaten / Kota</Label>
-                  <Input 
-                    required 
-                    value={form.regency} 
-                    onChange={(e) => setForm({...form, regency: e.target.value})}
-                    placeholder="Contoh: Bandung" 
-                    className="rounded-xl h-11"
-                  />
-                </div>
-              </div>
+              <RegionSelector
+                province={form.province}
+                regency={form.regency}
+                onProvinceChange={(v) => setForm({...form, province: v, regency: ""})}
+                onRegencyChange={(v) => setForm({...form, regency: v})}
+                required
+              />
               <div className="space-y-2">
                 <Label>Alamat Lengkap</Label>
                 <Textarea 

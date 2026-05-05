@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Building2, Users, CreditCard, Activity, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { SystemHealth } from "./_components/SystemHealth"
+import { TenantMap } from "./_components/TenantMap"
 
 interface Stats {
   tenantCount: number
@@ -59,6 +60,8 @@ export default function SuperAdminDashboard() {
           </Link>
         ))}
       </div>
+
+      <TenantMap />
 
       <SystemHealth />
     </div>

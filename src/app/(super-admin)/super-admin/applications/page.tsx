@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -12,6 +12,7 @@ import {
   School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { checkDataCompleteness, type CompletenessLevel } from "@/lib/utils/data-completeness"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
@@ -211,8 +212,13 @@ export default function SuperAdminApplicationsPage() {
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden">
+                      <div className="h-10 w-10 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden relative">
                         {app.logo ? <img src={app.logo} alt="Logo" className="object-contain p-0.5" /> : <School className="h-5 w-5 text-muted-foreground" />}
+                        {(() => {
+                          const result = checkDataCompleteness(app)
+                          const color = result.level === 'complete' ? 'bg-emerald-500' : result.level === 'location' ? 'bg-amber-500' : 'bg-rose-500'
+                          return <span className={`absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white ${color}`} title={result.level === 'complete' ? 'Data Lengkap' : result.level === 'location' ? 'Lokasi tidak cocok dataset' : `Kurang: ${result.missingFields.join(', ')}`} />
+                        })()}
                       </div>
                       <div>
                         <p className="font-bold">{app.schoolName}</p>
