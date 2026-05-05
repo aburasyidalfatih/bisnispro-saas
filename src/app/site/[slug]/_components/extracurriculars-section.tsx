@@ -45,7 +45,7 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
           {displayed.map((ekskul, idx) => (
             <Link
               key={ekskul.id}
-              href={resolveHref("/ekstrakurikuler")}
+              href={resolveHref(`/ekstrakurikuler/${ekskul.id}`)}
               className="group relative bg-background rounded-2xl border p-5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-purple-200"
             >
               <div className="mx-auto w-16 h-16 rounded-2xl overflow-hidden mb-4 shadow-sm border bg-muted/50 flex items-center justify-center">
