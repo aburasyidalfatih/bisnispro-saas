@@ -7,6 +7,9 @@ export const staffSchema = z.object({
   imageUrl: z.string().optional().nullable(),
   sortOrder: z.number().int().default(0),
   email: z.string().email("Email tidak valid").optional().or(z.literal('')),
+  phone: z.string().optional().nullable(),
+  subject: z.string().optional().nullable(),
+  education: z.string().optional().nullable(),
 })
 
 export type StaffInput = z.infer<typeof staffSchema>

@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
+import { getFacilityById, updateFacility } from "@/lib/actions/facilities"
 
 export default function EditFacilityPage() {
   const router = useRouter()
@@ -29,31 +30,36 @@ export default function EditFacilityPage() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    imageUrl: ""
+    imageUrl: "",
+    category: "",
+    condition: "",
+    access: "",
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!isLoadingTenant && tenantId) {
-      fetch(`/api/tenant/facilities/${id}?tenantId=${tenantId}`)
-        .then(r => r.json())
+      getFacilityById(id, tenantId)
         .then(d => {
-          if (d.error) {
+          if (!d) {
             toast({ title: "Gagal", description: "Fasilitas tidak ditemukan", variant: "destructive" })
             router.push("/dashboard/website/facilities")
           } else {
             setFormData({
               name: d.name || "",
               description: d.description || "",
-              imageUrl: d.imageUrl || ""
+              imageUrl: d.imageUrl || "",
+              category: d.category || "",
+              condition: d.condition || "",
+              access: d.access || ""
             })
             if (d.imageUrl) setPreviewUrl(d.imageUrl)
           }
           setLoading(false)
         })
-        .catch(() => {
-          toast({ title: "Error", description: "Gagal memuat data", variant: "destructive" })
+        .catch((err: any) => {
+          toast({ title: "Error", description: err.message || "Gagal memuat data", variant: "destructive" })
           setLoading(false)
         })
     }
@@ -101,24 +107,17 @@ export default function EditFacilityPage() {
         setUploading(false)
       }
       
-      const docRes = await fetch(`/api/tenant/facilities/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenantId,
-          name: formData.name,
-          description: formData.description,
-          imageUrl: finalImageUrl,
-        })
+      await updateFacility(id, tenantId, {
+        name: formData.name,
+        description: formData.description,
+        imageUrl: finalImageUrl,
+        category: formData.category,
+        condition: formData.condition,
+        access: formData.access,
       })
 
-      if (docRes.ok) {
-        toast({ title: "Fasilitas berhasil diperbarui!" })
-        router.push("/dashboard/website/facilities")
-      } else {
-        const d = await docRes.json()
-        throw new Error(d.error || "Gagal menyimpan fasilitas")
-      }
+      toast({ title: "Fasilitas berhasil diperbarui!" })
+      router.push("/dashboard/website/facilities")
     } catch (error: any) {
       toast({ title: "Gagal", description: error.message, variant: "destructive" })
       setUploading(false)
@@ -207,6 +206,39 @@ export default function EditFacilityPage() {
                 placeholder="Jelaskan kegunaan dan kelengkapan fasilitas ini..."
                 className="rounded-xl resize-none h-24"
               />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category">Kategori</Label>
+                <Input 
+                  id="category" 
+                  value={formData.category} 
+                  onChange={e => setFormData({...formData, category: e.target.value})} 
+                  placeholder="Contoh: Sarana Olahraga" 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="condition">Kondisi</Label>
+                <Input 
+                  id="condition" 
+                  value={formData.condition} 
+                  onChange={e => setFormData({...formData, condition: e.target.value})} 
+                  placeholder="Contoh: Sangat Baik" 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="access">Hak Akses</Label>
+                <Input 
+                  id="access" 
+                  value={formData.access} 
+                  onChange={e => setFormData({...formData, access: e.target.value})} 
+                  placeholder="Contoh: Seluruh Siswa" 
+                  className="rounded-xl"
+                />
+              </div>
             </div>
           </CardContent>
         </Card>

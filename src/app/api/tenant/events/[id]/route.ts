@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { eventSchema } from "@/lib/validations/event"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
+import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -56,6 +57,9 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
      return NextResponse.json({ error: "Acara tidak ditemukan atau gagal diupdate" }, { status: 404 })
   }
 
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) await invalidatePublicTenantCache(tenant.slug)
+
   return NextResponse.json({ message: "Acara berhasil diperbarui" })
 }
 
@@ -86,6 +90,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   if (result.count === 0) {
     return NextResponse.json({ error: "Acara tidak ditemukan" }, { status: 404 })
   }
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) await invalidatePublicTenantCache(tenant.slug)
 
   return NextResponse.json({ message: "Acara berhasil dihapus" })
 }

@@ -6,6 +6,8 @@ import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import Link from "next/link"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 
 export default async function PrestasiPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -14,6 +16,7 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
   if (!tenant) notFound()
 
   const achievements = tenant.achievements || []
+  const base = await getPublicBasePath(slug)
 
   return (
     <div className="bg-background min-h-screen">
@@ -32,9 +35,10 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
         {achievements.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {achievements.map((item: any, index: number) => (
-              <div 
+              <Link 
+                href={`${base}/prestasi/${item.id}`}
                 key={item.id} 
-                className="group relative flex flex-col bg-white rounded-[2rem] overflow-hidden border border-border shadow-sm hover:shadow-2xl transition-all duration-500"
+                className="group relative flex flex-col bg-white rounded-[2rem] overflow-hidden border border-border shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
               >
                 {/* Image & Badge */}
                 <div className="relative aspect-[4/3] overflow-hidden">
@@ -79,7 +83,7 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
                      </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

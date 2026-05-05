@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Play } from "lucide-react"
+import { useRouting } from "@/components/providers/routing-provider"
 
 interface Slide {
   title: string
@@ -15,13 +16,13 @@ interface Slide {
 
 interface HeroSliderProps {
   slides: Slide[]
-  base: string
 }
 
 const AUTO_INTERVAL = 6000
 const TRANSITION_MS = 600
 
-export function HeroSlider({ slides, base }: HeroSliderProps) {
+export function HeroSlider({ slides }: HeroSliderProps) {
+  const { resolveHref } = useRouting()
   const [current, setCurrent] = useState(0)
   const [prev, setPrev]       = useState<number | null>(null)
   const [animating, setAnimating] = useState(false)
@@ -158,7 +159,7 @@ export function HeroSlider({ slides, base }: HeroSliderProps) {
             {/* CTAs */}
             <div className="flex flex-wrap gap-4" style={{ animation: "textFadeUp 0.65s 0.4s ease both" }}>
               <Link
-                href={slide.cta.href.startsWith("http") ? slide.cta.href : `${base}${slide.cta.href}`}
+                href={slide.cta.href.startsWith("http") ? slide.cta.href : resolveHref(slide.cta.href)}
                 className="group/btn relative inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white overflow-hidden transition-all hover:scale-105"
                 style={{ background: "hsl(var(--primary))", boxShadow: "0 10px 25px -5px hsl(var(--primary)/0.5)" }}
               >
@@ -168,7 +169,7 @@ export function HeroSlider({ slides, base }: HeroSliderProps) {
               </Link>
               {slide.ctaSecondary && (
                 <Link
-                  href={slide.ctaSecondary.href.startsWith("http") ? slide.ctaSecondary.href : `${base}${slide.ctaSecondary.href}`}
+                  href={slide.ctaSecondary.href.startsWith("http") ? slide.ctaSecondary.href : resolveHref(slide.ctaSecondary.href)}
                   className="inline-flex items-center gap-3 px-7 py-3.5 rounded-xl text-sm font-bold border border-white/30 bg-white/5 backdrop-blur-md text-white hover:bg-white/20 hover:border-white/50 transition-all shadow-xl"
                 >
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-black">

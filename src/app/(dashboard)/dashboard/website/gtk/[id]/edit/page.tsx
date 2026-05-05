@@ -33,7 +33,10 @@ export default function EditStaffPage() {
     bio: "",
     sortOrder: 0,
     imageUrl: "",
-    email: ""
+    email: "",
+    phone: "",
+    subject: "",
+    education: ""
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -52,7 +55,10 @@ export default function EditStaffPage() {
               bio: d.bio || "",
               sortOrder: d.sortOrder || 0,
               imageUrl: d.imageUrl || "",
-              email: (d as any).email || ""
+              email: (d as any).email || "",
+              phone: (d as any).phone || "",
+              subject: (d as any).subject || "",
+              education: (d as any).education || ""
             })
             if (d.imageUrl) setPreviewUrl(d.imageUrl)
           }
@@ -113,7 +119,10 @@ export default function EditStaffPage() {
         bio: formData.bio,
         sortOrder: Number(formData.sortOrder),
         imageUrl: finalImageUrl,
-        email: formData.email
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        education: formData.education
       })
 
       toast({ title: "Data GTK berhasil diperbarui!" })
@@ -233,6 +242,39 @@ export default function EditStaffPage() {
                     className="rounded-xl"
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="phone">Nomor WhatsApp (Cth: 0812345...)</Label>
+                <Input 
+                  id="phone" 
+                  value={formData.phone} 
+                  onChange={e => setFormData({...formData, phone: e.target.value})} 
+                  placeholder="Opsional" 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="subject">Mata Pelajaran (Selain Jabatan)</Label>
+                <Input 
+                  id="subject" 
+                  value={formData.subject} 
+                  onChange={e => setFormData({...formData, subject: e.target.value})} 
+                  placeholder="Contoh: Matematika" 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="education">Riwayat Akademik / Pendidikan Terakhir</Label>
+                <Input 
+                  id="education" 
+                  value={formData.education} 
+                  onChange={e => setFormData({...formData, education: e.target.value})} 
+                  placeholder="Contoh: S1 Pendidikan Matematika - Universitas ABC" 
+                  className="rounded-xl"
+                />
               </div>
             </div>
 

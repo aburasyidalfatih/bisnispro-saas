@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { Building2, Info, MapPin } from "lucide-react"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -13,7 +14,7 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
   if (!tenant) notFound()
 
   const facilities = tenant.facilities || []
-  const base = `/site/${slug}`
+  const base = await getPublicBasePath(slug)
 
   return (
     <div className="bg-background min-h-screen">
@@ -31,45 +32,40 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
       <section className="py-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {facilities.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {facilities.map((facility: any) => (
-              <div 
+            {facilities.map((facility: any, index: number) => (
+              <Link 
                 key={facility.id} 
-                className="group relative bg-muted/30 rounded-3xl overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-300 flex flex-col h-full shadow-sm hover:shadow-xl"
+                href={`${base}/fasilitas/${facility.id}`}
+                className={cn(
+                  "group relative overflow-hidden rounded-[2rem] flex flex-col h-[380px] shadow-sm hover:shadow-2xl transition-all duration-500",
+                  index % 3 === 0 ? "md:col-span-2 lg:col-span-2" : "col-span-1"
+                )}
               >
-                <div className="relative aspect-[16/10] overflow-hidden">
+                <div className="absolute inset-0 bg-muted">
                   <OptimizedImage
                     src={facility.imageUrl || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070"}
                     alt={facility.name}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {/* Subtle dark gradient for readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
                 </div>
                 
-                <div className="p-6 flex flex-col flex-grow">
-                  <div className="flex items-center gap-2 mb-3 text-primary">
-                    <Building2 className="h-4 w-4" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Sarana Prasarana</span>
+                <div className="relative mt-auto p-8 flex flex-col justify-end text-white z-10">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="bg-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-sm">
+                      Fasilitas
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                  <h3 className="text-2xl font-bold mb-2 group-hover:text-primary-foreground transition-colors">
                     {facility.name}
                   </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
-                    {facility.description || "Fasilitas yang dirancang untuk mendukung kegiatan belajar mengajar dengan standar kenyamanan tinggi."}
+                  <p className="text-white/80 text-sm leading-relaxed mb-0 line-clamp-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                    {facility.description || "Klik untuk melihat informasi selengkapnya mengenai fasilitas ini."}
                   </p>
-                  
-                  <div className="pt-4 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>Area Kampus</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Info className="h-3 w-3" />
-                      <span>Standar Nasional</span>
-                    </div>
-                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

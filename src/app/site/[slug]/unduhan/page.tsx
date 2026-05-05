@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Download, FileText, ExternalLink, Search } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
@@ -12,6 +13,7 @@ export default async function UnduhanPage({ params }: { params: Promise<{ slug: 
   if (!tenant) notFound()
 
   const documents = tenant.documents || []
+  const base = await getPublicBasePath(slug)
 
   const getFileIcon = (type: string) => {
      return <FileText className="h-6 w-6 text-primary" />
@@ -31,15 +33,19 @@ export default async function UnduhanPage({ params }: { params: Promise<{ slug: 
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         {documents.length === 0 ? (
-          <div className="text-center py-20 bg-muted/30 rounded-[40px] border-2 border-dashed">
-             <p className="text-muted-foreground">Belum ada dokumen yang tersedia untuk diunduh.</p>
+          <div className="flex flex-col items-center justify-center py-32 bg-white/50 rounded-[3rem] border border-dashed border-border/60">
+             <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
+               <FileText className="h-10 w-10" />
+             </div>
+             <h3 className="text-2xl font-bold mb-2">Belum ada dokumen</h3>
+             <p className="text-muted-foreground max-w-sm text-center">Dokumen, formulir, atau materi digital akan segera diunggah oleh sekolah.</p>
           </div>
         ) : (
-          <div className="grid gap-4">
+          <div className="flex flex-col gap-4 max-w-5xl mx-auto">
             {documents.map((doc: any) => (
               <div 
                 key={doc.id} 
-                className="group flex items-center justify-between p-6 bg-background rounded-2xl border hover:border-primary/50 hover:shadow-md transition-all duration-300"
+                className="group flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-[2rem] border border-border/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 gap-6"
               >
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -58,9 +64,9 @@ export default async function UnduhanPage({ params }: { params: Promise<{ slug: 
                     href={doc.url} 
                     target="_blank" 
                     rel="noopener"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto"
                    >
-                      <Download className="h-4 w-4" /> Unduh Dokumen
+                      Unduh <Download className="h-4 w-4 group-hover:animate-bounce" />
                    </a>
                 </div>
               </div>
@@ -79,7 +85,7 @@ export default async function UnduhanPage({ params }: { params: Promise<{ slug: 
                <h4 className="font-bold text-lg">Tidak menemukan dokumen yang dicari?</h4>
                <p className="text-sm text-muted-foreground">Silakan hubungi bagian tata usaha sekolah untuk bantuan informasi lebih lanjut.</p>
             </div>
-            <Link href={`/site/${slug}/contact`} className="px-6 py-2.5 bg-white border border-primary/20 text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">
+            <Link href={`${base}/contact`} className="px-6 py-2.5 bg-white border border-primary/20 text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">
                Hubungi Kami
             </Link>
          </div>

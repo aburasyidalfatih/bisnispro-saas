@@ -1,12 +1,20 @@
-import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
+
+export const dynamic = "force-dynamic"
 import Link from "next/link"
-import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Calendar, Users, BookOpen, Award, Clock } from "lucide-react"
+import { ArrowRight, MapPin, Phone, Mail, MessageCircle } from "lucide-react"
 import { HeroSlider } from "./_components/hero-slider"
 import { StatsBar } from "./_components/stats-bar"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
-import { format } from "date-fns"
-import { id as idLocale } from "date-fns/locale"
+import { getPublicBasePath } from "@/lib/utils/public-path"
+import { PrincipalWelcome } from "./_components/principal-welcome"
+import { InfoBoard } from "./_components/info-board"
+import { ProgramsSection } from "./_components/programs-section"
+import { AchievementsSection } from "./_components/achievements-section"
+import { FacilitiesSection } from "./_components/facilities-section"
+import { ExtracurricularsSection } from "./_components/extracurriculars-section"
+import { StaffHighlight } from "./_components/staff-highlight"
+import { AlumniTestimonials } from "./_components/alumni-testimonials"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -25,12 +33,12 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
   if (!tenant) notFound()
 
-  const services = Array.isArray(tenant.services) ? tenant.services : []
+  const base = await getPublicBasePath(slug)
+
   const rawGallery = Array.isArray(tenant.gallery) ? tenant.gallery : []
   const gallery = rawGallery.map((item: any) =>
     typeof item === "string" ? { url: item, caption: "" } : item
   )
-  const base = `/site/${slug}`
 
   // Build stats from tenant data
   const staffCount = tenant.staff?.length || 0
@@ -42,14 +50,10 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     { value: "15+", label: "Tahun Berdiri", icon: "clock" },
   ]
 
-  // Get latest posts for "Berita Terbaru" section
-  const posts = (tenant.posts || []).slice(0, 3)
-
   return (
     <main>
-      {/* ── Hero ── */}
+      {/* ── 1. Hero Slider ── */}
       <HeroSlider
-        base={base}
         slides={
           tenant.sliders && tenant.sliders.length > 0
             ? tenant.sliders.map((s: any) => ({
@@ -73,10 +77,18 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         }
       />
 
-      {/* ── Stats Bar ── */}
+      {/* ── 2. Stats Bar ── */}
       <StatsBar stats={stats} />
 
-      {/* ── Tentang Singkat ── */}
+      {/* ── 3. Sambutan Kepala Sekolah ── */}
+      {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage) && (
+        <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} />
+      )}
+
+      {/* ── 4. Info Board (Agenda, Pengumuman, Artikel) ── */}
+      <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
+
+      {/* ── 5. Tentang Singkat ── */}
       {tenant.about && (
         <section className="py-16 bg-background">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -110,43 +122,22 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         </section>
       )}
 
-      {/* ── Layanan ── */}
-      {services.length > 0 && (
-        <section className="py-16 bg-secondary/10">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <span className="inline-block px-3 py-1 mb-4 rounded-full bg-accent text-accent-foreground text-xs font-bold tracking-wider uppercase">
-                Layanan
-              </span>
-              <h2 className="text-3xl font-bold">Layanan Kami</h2>
-              <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-                Kami menyediakan berbagai layanan profesional untuk memenuhi kebutuhan Anda.
-              </p>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.slice(0, 6).map((svc: any, i: number) => (
-                <div key={i} className="group rounded-2xl border bg-background p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                  <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 text-primary mb-5 shadow-sm">
-                    <span className="text-2xl">{svc.icon || "⚡"}</span>
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">{svc.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{svc.description}</p>
-                </div>
-              ))}
-            </div>
-            {services.length > 6 && (
-              <div className="text-center mt-8">
-                <Link href={`${base}/services`}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border hover:bg-muted transition-colors text-sm font-medium">
-                  Lihat Semua Layanan <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+      {/* ── 6. Program Keahlian ── */}
+      <ProgramsSection programs={tenant.programs || []} />
 
-      {/* ── Galeri ── */}
+      {/* ── 7. Prestasi ── */}
+      <AchievementsSection achievements={tenant.achievements || []} />
+
+      {/* ── 8. Fasilitas Sekolah ── */}
+      <FacilitiesSection facilities={tenant.facilities || []} />
+
+      {/* ── 9. Ekstrakurikuler ── */}
+      <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
+
+      {/* ── 10. Guru & Staff Highlight ── */}
+      <StaffHighlight staff={tenant.staff || []} />
+
+      {/* ── 11. Galeri ── */}
       {gallery.length > 0 && (
         <section className="py-16 bg-background">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -164,7 +155,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => (
-                <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border">
+                <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
                   <img src={item.url} alt={item.caption || `Foto ${i + 1}`}
                     className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   {item.caption && (
@@ -172,55 +163,6 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
                       <p className="text-white text-xs line-clamp-1">{item.caption}</p>
                     </div>
                   )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Berita Terbaru ── */}
-      {posts.length > 0 && (
-        <section className="py-16 bg-background">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <span className="inline-block px-3 py-1 mb-3 rounded-full bg-accent text-accent-foreground text-xs font-bold tracking-wider uppercase">
-                  Berita
-                </span>
-                <h2 className="text-2xl font-bold">Berita & Artikel Terbaru</h2>
-              </div>
-              <Link href={`${base}/berita`}
-                className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
-                Lihat Semua <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid gap-6 md:grid-cols-3">
-              {posts.map((post: any) => (
-                <Link
-                  key={post.id}
-                  href={`${base}/berita/${post.id}`}
-                  className="group flex flex-col bg-background rounded-2xl overflow-hidden border hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-                >
-                  <div className="aspect-[16/10] relative overflow-hidden bg-muted">
-                    {post.image ? (
-                      <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <div className="flex items-center justify-center h-full bg-primary/5">
-                        <Calendar className="h-8 w-8 text-primary/20" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-5 flex-1 flex flex-col">
-                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground mb-2">
-                      <Calendar className="h-3 w-3" />
-                      {format(new Date(post.createdAt), 'dd MMM yyyy', { locale: idLocale })}
-                    </div>
-                    <h3 className="text-base font-bold mb-2 line-clamp-2 leading-snug group-hover:text-primary transition-colors">{post.title}</h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed flex-1">
-                      {post.excerpt || post.content?.replace(/<[^>]*>/g, '').substring(0, 120) + "..."}
-                    </p>
-                  </div>
                 </Link>
               ))}
             </div>
@@ -228,7 +170,10 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         </section>
       )}
 
-      {/* ── Kontak CTA ── */}
+      {/* ── 12. Testimonial Alumni ── */}
+      <AlumniTestimonials alumni={tenant.alumni || []} />
+
+      {/* ── 13. Kontak CTA ── */}
       {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
         <section className="py-16 bg-muted/30">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { GraduationCap, Quote, MessageCircle, ExternalLink, Heart, Star, Award } from "lucide-react"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 
@@ -12,6 +13,7 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
   if (!tenant) notFound()
 
   const alumni = tenant.alumni || []
+  const base = await getPublicBasePath(slug)
 
   return (
     <div className="bg-background min-h-screen">
@@ -153,7 +155,7 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
                   Apakah Anda alumni kami? Mari tetap terhubung dan bagikan kabar gembira Anda untuk menginspirasi adik-adik kelas.
                </p>
                <a 
-                 href={`/site/${slug}/contact`} 
+                 href={`${base}/contact`} 
                  className="block text-center w-full py-3 bg-primary text-white rounded-xl font-bold text-sm hover:shadow-lg transition-all"
                >
                  Isi Tracer Study
@@ -184,8 +186,8 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
          <div className="relative z-10 max-w-4xl mx-auto px-4">
             <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">Mendidik dengan Hati, <br/> Mencetak Generasi Berprestasi</h2>
             <div className="flex justify-center gap-6">
-               <a href={`/site/${slug}/contact`} className="px-10 py-4 bg-primary rounded-full font-bold hover:scale-105 transition-transform">PPDB Sekarang</a>
-               <a href={`/site/${slug}`} className="px-10 py-4 bg-white/10 backdrop-blur-md rounded-full font-bold hover:bg-white/20 transition-all border border-white/20">Tentang Kami</a>
+               <a href={`${base}/contact`} className="px-10 py-4 bg-primary rounded-full font-bold hover:scale-105 transition-transform">PPDB Sekarang</a>
+               <a href={`${base}/`} className="px-10 py-4 bg-white/10 backdrop-blur-md rounded-full font-bold hover:bg-white/20 transition-all border border-white/20">Tentang Kami</a>
             </div>
          </div>
       </section>
