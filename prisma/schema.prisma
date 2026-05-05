@@ -412,6 +412,9 @@ model Facility {
   name        String
   description String?
   imageUrl    String?
+  category    String?
+  condition   String?
+  access      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -421,15 +424,17 @@ model Facility {
 }
 
 model Extracurricular {
-  id          String   @id @default(cuid())
-  tenantId    String
-  name        String
-  description String?
-  schedule    String?
-  imageUrl    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id              String   @id @default(cuid())
+  tenantId        String
+  name            String
+  description     String?
+  schedule        String?
+  imageUrl        String?
+  contactPerson   String?
+  registrationUrl String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@map("extracurriculars")
@@ -441,6 +446,8 @@ model Program {
   name        String
   description String?
   imageUrl    String?
+  focus       String?
+  prospects   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -480,6 +487,9 @@ model Staff {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   email     String?
+  phone     String?
+  subject   String?
+  education String?
   userId    String?
   tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user      User?    @relation(fields: [userId], references: [id])

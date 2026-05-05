@@ -29,6 +29,19 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
   if (!program) notFound()
 
   const base = await getPublicBasePath(slug)
+  
+  const focusList = program.focus ? program.focus.split(',').map((f: string) => f.trim()).filter(Boolean) : [
+    "Teori & Praktik Intensif",
+    "Sertifikasi Kompetensi",
+    "Kemitraan Industri",
+    "Pengembangan Karakter"
+  ]
+
+  const prospectList = program.prospects ? program.prospects.split(',').map((p: string) => p.trim()).filter(Boolean) : [
+    "Terserap di Industri/Perusahaan Mitra",
+    "Melanjutkan ke Perguruan Tinggi Terkemuka",
+    "Menjadi Wirausaha Muda Profesional"
+  ]
 
   return (
     <div className="bg-background min-h-screen pb-12">
@@ -62,12 +75,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
             <div className="bg-white/10 backdrop-blur-md rounded-[2rem] p-8 border border-white/20 w-full md:w-80 shrink-0">
                <h4 className="text-white font-bold mb-4">Fokus Pembelajaran</h4>
                <ul className="space-y-3">
-                  {[
-                     "Teori & Praktik Intensif",
-                     "Sertifikasi Kompetensi",
-                     "Kemitraan Industri",
-                     "Pengembangan Karakter"
-                  ].map((item, i) => (
+                  {focusList.map((item: string, i: number) => (
                      <li key={i} className="flex items-center gap-3 text-sm text-white/80">
                         <div className="h-2 w-2 rounded-full bg-primary" /> {item}
                      </li>
@@ -111,18 +119,12 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                 </h3>
                 <p className="text-slate-600 mb-6">Lulusan dari program keahlian {program.name} memiliki prospek masa depan yang cerah, antara lain:</p>
                 <div className="space-y-4">
-                   <div className="bg-white p-4 rounded-xl shadow-sm border border-border/50 flex items-center gap-4">
-                      <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-bold">1</div>
-                      <span className="font-medium text-slate-700">Terserap di Industri/Perusahaan Mitra</span>
-                   </div>
-                   <div className="bg-white p-4 rounded-xl shadow-sm border border-border/50 flex items-center gap-4">
-                      <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-bold">2</div>
-                      <span className="font-medium text-slate-700">Melanjutkan ke Perguruan Tinggi Terkemuka</span>
-                   </div>
-                   <div className="bg-white p-4 rounded-xl shadow-sm border border-border/50 flex items-center gap-4">
-                      <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-bold">3</div>
-                      <span className="font-medium text-slate-700">Menjadi Wirausaha Muda Profesional</span>
-                   </div>
+                   {prospectList.map((item: string, i: number) => (
+                     <div key={i} className="bg-white p-4 rounded-xl shadow-sm border border-border/50 flex items-center gap-4">
+                        <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-bold">{i + 1}</div>
+                        <span className="font-medium text-slate-700">{item}</span>
+                     </div>
+                   ))}
                 </div>
              </div>
           </div>

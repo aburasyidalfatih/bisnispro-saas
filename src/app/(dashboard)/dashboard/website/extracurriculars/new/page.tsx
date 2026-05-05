@@ -26,7 +26,9 @@ export default function NewExtracurricularPage() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    schedule: ""
+    schedule: "",
+    contactPerson: "",
+    registrationUrl: ""
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -78,6 +80,8 @@ export default function NewExtracurricularPage() {
         description: formData.description,
         schedule: formData.schedule,
         imageUrl: imageUrl,
+        contactPerson: formData.contactPerson,
+        registrationUrl: formData.registrationUrl
       })
 
       toast({ title: "Ekstrakurikuler berhasil disimpan!" })
@@ -167,6 +171,27 @@ export default function NewExtracurricularPage() {
                   value={formData.schedule} 
                   onChange={e => setFormData({...formData, schedule: e.target.value})} 
                   placeholder="Contoh: Setiap Sabtu, 08.00 - 10.00 WIB" 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contactPerson">Kontak Pembina (Cth: Bpk Budi / 081...)</Label>
+                <Input 
+                  id="contactPerson" 
+                  value={formData.contactPerson} 
+                  onChange={e => setFormData({...formData, contactPerson: e.target.value})} 
+                  placeholder="Opsional" 
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="registrationUrl">Link Pendaftaran (Opsional)</Label>
+                <Input 
+                  id="registrationUrl" 
+                  value={formData.registrationUrl} 
+                  onChange={e => setFormData({...formData, registrationUrl: e.target.value})} 
+                  placeholder="Cth: https://forms.gle/..." 
                   className="rounded-xl"
                 />
               </div>

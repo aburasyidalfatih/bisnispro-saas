@@ -33,6 +33,9 @@ export async function PUT(req: Request, props: { params: Promise<{ id: string }>
       name: z.string().min(1),
       description: z.string().optional().nullable(),
       imageUrl: z.string().optional().nullable(),
+      category: z.string().optional().nullable(),
+      condition: z.string().optional().nullable(),
+      access: z.string().optional().nullable(),
     })
 
     const parsed = schema.safeParse(body)

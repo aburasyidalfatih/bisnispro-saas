@@ -31,7 +31,9 @@ export default function EditExtracurricularPage() {
     name: "",
     description: "",
     schedule: "",
-    imageUrl: ""
+    imageUrl: "",
+    contactPerson: "",
+    registrationUrl: ""
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -48,7 +50,9 @@ export default function EditExtracurricularPage() {
               name: d.name || "",
               description: d.description || "",
               schedule: d.schedule || "",
-              imageUrl: d.imageUrl || ""
+              imageUrl: d.imageUrl || "",
+              contactPerson: d.contactPerson || "",
+              registrationUrl: d.registrationUrl || ""
             })
             if (d.imageUrl) setPreviewUrl(d.imageUrl)
           }
@@ -108,6 +112,8 @@ export default function EditExtracurricularPage() {
         description: formData.description,
         schedule: formData.schedule,
         imageUrl: finalImageUrl,
+        contactPerson: formData.contactPerson,
+        registrationUrl: formData.registrationUrl
       })
 
       toast({ title: "Ekstrakurikuler berhasil diperbarui!" })
@@ -199,6 +205,28 @@ export default function EditExtracurricularPage() {
                   value={formData.schedule} 
                   onChange={e => setFormData({...formData, schedule: e.target.value})} 
                   placeholder="Contoh: Setiap Sabtu, 08.00 - 10.00 WIB" 
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contactPerson">Kontak Pembina (Cth: Bpk Budi / 081...)</Label>
+                <Input 
+                  id="contactPerson" 
+                  value={formData.contactPerson} 
+                  onChange={e => setFormData({...formData, contactPerson: e.target.value})} 
+                  placeholder="Opsional" 
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="registrationUrl">Link Pendaftaran (Opsional)</Label>
+                <Input 
+                  id="registrationUrl" 
+                  value={formData.registrationUrl} 
+                  onChange={e => setFormData({...formData, registrationUrl: e.target.value})} 
+                  placeholder="Cth: https://forms.gle/..." 
                   className="rounded-xl"
                 />
               </div>

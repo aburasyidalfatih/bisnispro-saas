@@ -25,7 +25,9 @@ export default function NewProgramPage() {
   
   const [formData, setFormData] = useState({
     name: "",
-    description: ""
+    description: "",
+    focus: "",
+    prospects: ""
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -76,6 +78,8 @@ export default function NewProgramPage() {
         name: formData.name,
         description: formData.description,
         imageUrl: imageUrl,
+        focus: formData.focus,
+        prospects: formData.prospects
       })
 
       toast({ title: "Program berhasil disimpan!" })
@@ -163,8 +167,30 @@ export default function NewProgramPage() {
                 id="description" 
                 value={formData.description} 
                 onChange={e => setFormData({...formData, description: e.target.value})} 
-                placeholder="Penjelasan mengenai kurikulum, prospek lulusan, atau materi yang dipelajari..."
-                className="rounded-xl resize-none h-32"
+                placeholder="Penjelasan umum mengenai program studi..."
+                className="rounded-xl resize-none h-24"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="focus">Fokus Pembelajaran (Pisahkan dengan koma)</Label>
+              <Textarea 
+                id="focus" 
+                value={formData.focus} 
+                onChange={e => setFormData({...formData, focus: e.target.value})} 
+                placeholder="Misal: Pemrograman Web, Pemrograman Dasar, Sistem Basis Data"
+                className="rounded-xl resize-none h-16"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="prospects">Prospek Lulusan (Pisahkan dengan koma)</Label>
+              <Textarea 
+                id="prospects" 
+                value={formData.prospects} 
+                onChange={e => setFormData({...formData, prospects: e.target.value})} 
+                placeholder="Misal: Software Engineer, Web Developer, System Analyst"
+                className="rounded-xl resize-none h-16"
               />
             </div>
           </CardContent>

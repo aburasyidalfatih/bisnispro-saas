@@ -25,6 +25,9 @@ export default function NewFacilityPage() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    category: "",
+    condition: "",
+    access: "",
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -71,7 +74,7 @@ export default function NewFacilityPage() {
         setUploading(false)
       }
       
-      const docRes = await fetch("/api/tenant/facilities", {
+        const docRes = await fetch("/api/tenant/facilities", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -79,6 +82,9 @@ export default function NewFacilityPage() {
           name: formData.name,
           description: formData.description,
           imageUrl: imageUrl,
+          category: formData.category,
+          condition: formData.condition,
+          access: formData.access,
         })
       })
 
@@ -175,6 +181,39 @@ export default function NewFacilityPage() {
                 placeholder="Jelaskan kegunaan dan kelengkapan fasilitas ini..."
                 className="rounded-xl resize-none h-24"
               />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category">Kategori</Label>
+                <Input 
+                  id="category" 
+                  value={formData.category} 
+                  onChange={e => setFormData({...formData, category: e.target.value})} 
+                  placeholder="Contoh: Sarana Olahraga" 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="condition">Kondisi</Label>
+                <Input 
+                  id="condition" 
+                  value={formData.condition} 
+                  onChange={e => setFormData({...formData, condition: e.target.value})} 
+                  placeholder="Contoh: Sangat Baik" 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="access">Hak Akses</Label>
+                <Input 
+                  id="access" 
+                  value={formData.access} 
+                  onChange={e => setFormData({...formData, access: e.target.value})} 
+                  placeholder="Contoh: Seluruh Siswa" 
+                  className="rounded-xl"
+                />
+              </div>
             </div>
           </CardContent>
         </Card>

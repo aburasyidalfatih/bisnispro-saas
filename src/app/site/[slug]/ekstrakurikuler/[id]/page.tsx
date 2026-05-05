@@ -106,10 +106,25 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
 
               <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2rem] p-8 shadow-xl text-white text-center">
                  <h4 className="font-bold text-lg mb-4">Tertarik Bergabung?</h4>
-                 <p className="text-white/70 text-sm mb-6">Hubungi pembina atau pengurus OSIS bagian ekstrakurikuler untuk pendaftaran anggota baru.</p>
-                 <button className="w-full py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-primary hover:text-white transition-colors">
-                    Daftar Sekarang
-                 </button>
+                 <p className="text-white/70 text-sm mb-6">
+                   {extra.contactPerson 
+                     ? `Hubungi pembina ekstrakurikuler: ${extra.contactPerson}`
+                     : "Hubungi pembina atau pengurus OSIS bagian ekstrakurikuler untuk pendaftaran anggota baru."}
+                 </p>
+                 {extra.registrationUrl ? (
+                   <a 
+                     href={extra.registrationUrl.startsWith('http') ? extra.registrationUrl : `https://${extra.registrationUrl}`}
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     className="block w-full py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-primary hover:text-white transition-colors text-center"
+                   >
+                      Daftar Sekarang
+                   </a>
+                 ) : (
+                   <button className="w-full py-3 bg-white/20 text-white cursor-not-allowed rounded-xl font-bold transition-colors">
+                      Daftar Offline
+                   </button>
+                 )}
               </div>
            </div>
         </div>

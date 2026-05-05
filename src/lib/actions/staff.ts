@@ -82,6 +82,9 @@ export async function createStaff(tenantId: string, data: any) {
       imageUrl: parsed.imageUrl,
       sortOrder: parsed.sortOrder,
       email: parsed.email || null,
+      phone: parsed.phone || null,
+      subject: parsed.subject || null,
+      education: parsed.education || null,
       userId,
       tenantId,
     }
@@ -142,6 +145,9 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
       imageUrl: parsed.imageUrl,
       sortOrder: parsed.sortOrder,
       email: parsed.email || null,
+      phone: parsed.phone || null,
+      subject: parsed.subject || null,
+      education: parsed.education || null,
       userId,
     }
   })
