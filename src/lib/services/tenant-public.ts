@@ -57,6 +57,7 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       events: { orderBy: { startDate: 'asc' } },
       documents: { orderBy: { createdAt: 'desc' } },
       sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' } },
+      settings: true,
     },
   })
 
