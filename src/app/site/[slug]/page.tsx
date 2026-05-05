@@ -1,5 +1,7 @@
 import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
+
+export const dynamic = "force-dynamic"
 import Link from "next/link"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Calendar, Users, BookOpen, Award, Clock } from "lucide-react"
 import { HeroSlider } from "./_components/hero-slider"
