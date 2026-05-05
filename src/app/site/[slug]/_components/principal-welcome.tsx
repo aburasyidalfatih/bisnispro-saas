@@ -22,10 +22,10 @@ export function PrincipalWelcome({ tenantName, settings }: PrincipalWelcomeProps
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-[2fr_3fr] gap-12 lg:gap-20 items-center">
+        <div className="grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-16 items-center">
           
           {/* Left Column - Image */}
-          <div className="relative mx-auto lg:mx-0 max-w-md w-full">
+          <div className="relative mx-auto lg:mx-0 max-w-sm w-full">
             {/* Subtle decorative frame behind image */}
             <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-accent/20 rounded-[2.5rem] transform rotate-3 scale-105 opacity-50 blur-sm" />
             <div className="absolute inset-0 bg-gradient-to-tr from-primary to-accent rounded-3xl transform -rotate-2 scale-105 opacity-10" />
