@@ -38,48 +38,62 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
   return (
     <div className="bg-background min-h-screen pb-12">
-      <PageHeader
-        title={post.title}
-        description={
-          <div className="flex flex-wrap items-center gap-4 justify-center text-sm">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5" />
-              {format(new Date(post.createdAt), "dd MMMM yyyy", { locale: idLocale })}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <User className="h-3.5 w-3.5" />
-              Admin
-            </span>
-            {post.type && (
-              <span className="flex items-center gap-1.5">
-                <Tag className="h-3.5 w-3.5" />
-                {post.type}
-              </span>
-            )}
-          </div>
-        }
-        breadcrumbs={[
-          { label: "Beranda", href: base },
-          { label: "Berita", href: `${base}/berita` },
-          { label: post.title },
-        ]}
-      />
-
-      <article className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
-        {/* Featured Image */}
-        {(post.featuredImage || post.image) && (
-          <div className="rounded-3xl overflow-hidden mb-10 border shadow-sm">
-            <img
-              src={post.featuredImage || post.image}
-              alt={post.title}
-              className="w-full h-auto max-h-[500px] object-cover"
-            />
-          </div>
+      {/* ── PREMIUM EDITORIAL HERO ── */}
+      <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] bg-slate-900 overflow-hidden">
+        {/* Background Image */}
+        {(post.featuredImage || post.image) ? (
+          <img
+            src={post.featuredImage || post.image}
+            alt={post.title}
+            className="w-full h-full object-cover opacity-60"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-primary/80 to-slate-900 opacity-60" />
         )}
+        
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        
+        {/* Navigation & Breadcrumb (Absolute Top) */}
+        <div className="absolute top-0 left-0 right-0 p-6 z-20">
+           <div className="max-w-4xl mx-auto flex items-center justify-between">
+              <Link 
+                href={`${base}/berita`}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all"
+              >
+                 <ArrowLeft className="h-4 w-4" /> Kembali
+              </Link>
+           </div>
+        </div>
 
+        {/* Title Block (Bottom Aligned) */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-10 pb-12">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <div className="px-3 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                 {post.type || "BERITA"}
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-medium text-white/80 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                 <Calendar className="h-3.5 w-3.5" />
+                 {format(new Date(post.createdAt), "dd MMMM yyyy", { locale: idLocale })}
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-medium text-white/80 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                 <User className="h-3.5 w-3.5" />
+                 Admin
+              </div>
+            </div>
+            
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] mb-6 drop-shadow-lg">
+              {post.title}
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <article className="mx-auto max-w-3xl px-4 sm:px-6 py-12 lg:py-16">
         {/* Content */}
         <div
-          className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-img:rounded-2xl"
+          className="prose prose-lg md:prose-xl max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-img:rounded-3xl prose-img:shadow-xl"
           dangerouslySetInnerHTML={{ __html: post.content || "" }}
         />
 

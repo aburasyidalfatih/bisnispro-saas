@@ -32,42 +32,80 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
 
   return (
     <div className="bg-background min-h-screen pb-12">
-      <PageHeader
-        title={facility.name}
-        description={`Fasilitas ${tenant.name}`}
-        breadcrumbs={[
-          { label: "Beranda", href: base || "/" },
-          { label: "Fasilitas", href: `${base}/fasilitas` },
-          { label: facility.name },
-        ]}
-      />
-
-      <article className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-border">
-          {facility.imageUrl ? (
-            <div className="w-full h-[400px] relative rounded-2xl overflow-hidden mb-10 shadow-md">
-              <Image 
-                src={facility.imageUrl} 
-                alt={facility.name} 
-                fill 
-                className="object-cover"
-                priority
-              />
+      {/* ── IMMERSIVE HERO IMAGE ── */}
+      <div className="relative w-full h-[60vh] md:h-[75vh] bg-slate-900">
+         {facility.imageUrl ? (
+            <img 
+               src={facility.imageUrl} 
+               alt={facility.name} 
+               className="w-full h-full object-cover opacity-80"
+            />
+         ) : (
+            <div className="w-full h-full bg-gradient-to-br from-primary/80 to-slate-900 opacity-80 flex items-center justify-center">
+               <Building2 className="h-32 w-32 text-white/20" />
             </div>
-          ) : (
-            <div className="w-full h-[300px] bg-gradient-to-br from-emerald-500/10 to-teal-500/5 rounded-2xl flex items-center justify-center mb-10">
-              <Building2 className="h-24 w-24 text-emerald-500/30" />
-            </div>
-          )}
+         )}
+         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+         
+         <div className="absolute top-0 left-0 right-0 p-6 z-20">
+           <div className="max-w-6xl mx-auto flex items-center justify-between">
+              <Link 
+                href={`${base}/fasilitas`}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all"
+              >
+                 <ArrowLeft className="h-4 w-4" /> Kembali
+              </Link>
+           </div>
+         </div>
+      </div>
 
-          <div className="prose prose-lg max-w-none prose-p:text-muted-foreground">
-            <h3 className="text-2xl font-bold mb-4">Informasi Fasilitas</h3>
-            {facility.description ? (
-              <p className="whitespace-pre-wrap">{facility.description}</p>
-            ) : (
-              <p className="italic">Tidak ada penjelasan lebih detail mengenai fasilitas ini.</p>
-            )}
-          </div>
+      <article className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-32 pb-16">
+        <div className="grid lg:grid-cols-3 gap-12 items-start">
+           
+           {/* Main Content */}
+           <div className="lg:col-span-2 bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-border">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-6">
+                 <Building2 className="h-4 w-4" /> Fasilitas Utama
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black text-slate-900 leading-tight mb-8">
+                 {facility.name}
+              </h1>
+              
+              <div className="prose prose-lg max-w-none prose-p:text-slate-600 prose-p:leading-relaxed">
+                 {facility.description ? (
+                    <p className="whitespace-pre-wrap first-letter:text-7xl first-letter:font-black first-letter:text-primary first-letter:mr-3 first-letter:float-left first-letter:leading-none">
+                       {facility.description}
+                    </p>
+                 ) : (
+                    <p className="italic text-muted-foreground">Tidak ada penjelasan lebih detail mengenai fasilitas ini.</p>
+                 )}
+              </div>
+           </div>
+
+           {/* Sidebar Specs */}
+           <div className="bg-slate-50 rounded-[2.5rem] p-8 border border-border sticky top-32">
+              <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
+                 <div className="h-6 w-1.5 bg-primary rounded-full" />
+                 Spesifikasi
+              </h3>
+              <ul className="space-y-6">
+                 <li className="flex items-start gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary shrink-0"><Building2 className="h-5 w-5" /></div>
+                    <div>
+                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Kategori</p>
+                       <p className="font-semibold text-slate-900 mt-1">Sarana Pendidikan</p>
+                    </div>
+                 </li>
+                 <li className="flex items-start gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary shrink-0"><Building2 className="h-5 w-5" /></div>
+                    <div>
+                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Akses</p>
+                       <p className="font-semibold text-slate-900 mt-1">Seluruh Siswa</p>
+                    </div>
+                 </li>
+              </ul>
+           </div>
+
         </div>
 
         {/* Back Link */}

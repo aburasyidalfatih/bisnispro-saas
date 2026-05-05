@@ -33,30 +33,60 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
 
   return (
     <div className="bg-background min-h-screen pb-12">
-      <PageHeader
-        title={event.title}
-        description={
-          <div className="flex flex-wrap items-center gap-4 justify-center text-sm">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5" />
-              {format(new Date(event.startDate), "dd MMMM yyyy", { locale: idLocale })}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5" />
-              {format(new Date(event.startDate), "HH:mm")} WIB
-            </span>
-          </div>
-        }
-        breadcrumbs={[
-          { label: "Beranda", href: base || "/" },
-          { label: "Agenda", href: `${base}/agenda` },
-          { label: event.title },
-        ]}
-      />
+      <div className="bg-slate-900 pt-24 pb-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Background Accents */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20">
+           <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary rounded-full blur-[120px]" />
+           <div className="absolute top-1/2 -left-24 w-72 h-72 bg-blue-500 rounded-full blur-[100px]" />
+        </div>
 
-      <article className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-border">
-          <div className="grid md:grid-cols-2 gap-8 mb-10">
+        <div className="max-w-5xl mx-auto relative z-10 flex flex-col md:flex-row gap-12 items-center md:items-start">
+           {/* Date Box */}
+           <div className="bg-white rounded-[2rem] p-8 text-center shadow-2xl shrink-0 w-full md:w-64 border-b-8 border-primary transform md:-rotate-2 hover:rotate-0 transition-transform duration-500">
+              <div className="text-primary font-black uppercase tracking-[0.3em] text-sm mb-2">
+                 {format(new Date(event.startDate), "MMMM", { locale: idLocale })}
+              </div>
+              <div className="text-7xl font-black text-slate-900 leading-none mb-2">
+                 {format(new Date(event.startDate), "dd")}
+              </div>
+              <div className="text-slate-500 font-bold">
+                 {format(new Date(event.startDate), "yyyy")}
+              </div>
+              <div className="mt-6 pt-6 border-t border-dashed border-slate-200">
+                 <button className="w-full py-3 bg-primary/10 text-primary rounded-xl font-bold text-sm hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2">
+                    <Calendar className="h-4 w-4" /> Simpan Jadwal
+                 </button>
+              </div>
+           </div>
+
+           {/* Event Details */}
+           <div className="flex-1 text-center md:text-left">
+              <Link 
+                href={`${base}/agenda`}
+                className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 text-sm font-semibold transition-colors"
+              >
+                 <ArrowLeft className="h-4 w-4" /> Kembali ke Agenda
+              </Link>
+              <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-6">
+                 {event.title}
+              </h1>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white text-sm font-medium border border-white/10">
+                    <Clock className="h-4 w-4 text-primary" />
+                    {event.time || format(new Date(event.startDate), "HH:mm")} WIB
+                 </div>
+                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white text-sm font-medium border border-white/10">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    {event.location || "Area Kampus"}
+                 </div>
+              </div>
+           </div>
+        </div>
+      </div>
+
+      <article className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 -mt-20 relative z-20 pb-16">
+        <div className="bg-white rounded-[2.5rem] p-8 md:p-16 shadow-2xl border border-border">
+          <div className="grid md:grid-cols-2 gap-8 mb-12 pb-12 border-b border-border/50">
             <div className="flex items-start gap-4">
               <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                 <MapPin className="h-6 w-6 text-primary" />
@@ -78,10 +108,13 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
             </div>
           </div>
 
-          <div className="prose prose-lg max-w-none prose-p:text-muted-foreground">
-            <h3 className="text-xl font-bold mb-4">Deskripsi Kegiatan</h3>
+          <div className="prose prose-lg max-w-none prose-p:text-muted-foreground prose-p:leading-relaxed">
+            <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
+               <div className="h-8 w-2 bg-primary rounded-full" />
+               Deskripsi Kegiatan
+            </h3>
             {event.description ? (
-              <p className="whitespace-pre-wrap">{event.description}</p>
+              <p className="whitespace-pre-wrap text-lg">{event.description}</p>
             ) : (
               <p className="italic">Tidak ada deskripsi detail untuk agenda ini.</p>
             )}
