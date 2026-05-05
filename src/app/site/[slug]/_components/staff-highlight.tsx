@@ -50,8 +50,9 @@ export function StaffHighlight({ staff, base }: StaffHighlightProps) {
         {/* Staff Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5">
           {displayed.map((member) => (
-            <div
+            <Link
               key={member.id}
+              href={`${base}/gtk`}
               className="group text-center"
             >
               {/* Photo */}
@@ -81,7 +82,7 @@ export function StaffHighlight({ staff, base }: StaffHighlightProps) {
               <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">
                 {member.role}
               </p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

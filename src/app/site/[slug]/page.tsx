@@ -154,7 +154,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => (
-                <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border">
+                <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
                   <img src={item.url} alt={item.caption || `Foto ${i + 1}`}
                     className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   {item.caption && (
@@ -162,7 +162,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
                       <p className="text-white text-xs line-clamp-1">{item.caption}</p>
                     </div>
                   )}
-                </div>
+                </Link>
               ))}
             </div>
           </div>

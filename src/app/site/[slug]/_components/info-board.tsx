@@ -48,7 +48,7 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
             
             <div className="space-y-6 flex-1">
               {agenda.length > 0 ? agenda.map((item, idx) => (
-                <div key={idx} className="flex gap-4 group">
+                <Link key={idx} href={`${base}/agenda`} className="flex gap-4 group cursor-pointer">
                   <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
                     <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
                       {format(new Date(item.startDate), "dd")}
@@ -74,7 +74,7 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               )) : (
                 <div className="text-center py-10 text-muted-foreground text-sm">
                   Belum ada agenda kegiatan.
@@ -102,7 +102,7 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
                 const badgeColor = badgeColors[idx % badgeColors.length];
                 
                 return (
-                  <div key={idx} className="flex gap-4 group">
+                  <Link key={idx} href={`${base}/berita/${item.id}`} className="flex gap-4 group cursor-pointer">
                     <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
                       <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
                         {format(new Date(item.createdAt), "dd")}
@@ -122,7 +122,7 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
                         {item.excerpt || item.content?.replace(/<[^>]*>?/gm, '').substring(0, 50) || "Silakan baca selengkapnya..."}
                       </p>
                     </div>
-                  </div>
+                  </Link>
                 )
               }) : (
                 <div className="text-center py-10 text-muted-foreground text-sm">
@@ -146,7 +146,7 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
             
             <div className="space-y-6 flex-1">
               {artikel.length > 0 ? artikel.map((item, idx) => (
-                <div key={idx} className="flex gap-4 group">
+                <Link key={idx} href={`${base}/berita/${item.id}`} className="flex gap-4 group cursor-pointer">
                   <div className="w-20 h-16 rounded-xl overflow-hidden shrink-0 border bg-muted">
                     {item.featuredImage ? (
                       <img 
@@ -168,7 +168,7 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
                       {format(new Date(item.createdAt), "dd MMM yyyy", { locale: idLocale })}
                     </p>
                   </div>
-                </div>
+                </Link>
               )) : (
                 <div className="text-center py-10 text-muted-foreground text-sm">
                   Belum ada artikel.

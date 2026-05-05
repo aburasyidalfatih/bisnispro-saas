@@ -52,9 +52,10 @@ export function FacilitiesSection({ facilities, base }: FacilitiesSectionProps) 
             const isLarge = idx < 2
             
             return (
-              <div
+              <Link
                 key={facility.id}
-                className={`group relative rounded-2xl overflow-hidden border bg-muted/30 transition-all duration-500 hover:shadow-xl cursor-pointer ${
+                href={`${base}/fasilitas`}
+                className={`group relative rounded-2xl overflow-hidden border bg-muted/30 transition-all duration-500 hover:shadow-xl ${
                   isLarge ? "md:col-span-1 lg:col-span-2 aspect-[16/10]" : "aspect-square"
                 }`}
               >
@@ -84,7 +85,7 @@ export function FacilitiesSection({ facilities, base }: FacilitiesSectionProps) 
                     </p>
                   )}
                 </div>
-              </div>
+              </Link>
             )
           })}
         </div>

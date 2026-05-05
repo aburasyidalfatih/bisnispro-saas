@@ -45,8 +45,9 @@ export function ExtracurricularsSection({ extracurriculars, base }: Extracurricu
         {/* Ekskul Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
           {displayed.map((ekskul, idx) => (
-            <div
+            <Link
               key={ekskul.id}
+              href={`${base}/ekstrakurikuler`}
               className="group relative bg-background rounded-2xl border p-5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-purple-200"
             >
               {/* Avatar */}
@@ -80,7 +81,7 @@ export function ExtracurricularsSection({ extracurriculars, base }: Extracurricu
                   {ekskul.description}
                 </p>
               )}
-            </div>
+            </Link>
           ))}
         </div>
 

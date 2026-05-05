@@ -63,8 +63,9 @@ export function AchievementsSection({ achievements, base }: AchievementsSectionP
             const Icon = config.icon
 
             return (
-              <div
+              <Link
                 key={achievement.id}
+                href={`${base}/prestasi`}
                 className={`group rounded-2xl border p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${config.bg}`}
               >
                 <div className="flex items-start gap-4">
@@ -104,7 +105,7 @@ export function AchievementsSection({ achievements, base }: AchievementsSectionP
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             )
           })}
         </div>
