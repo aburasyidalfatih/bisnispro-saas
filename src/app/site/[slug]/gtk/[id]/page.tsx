@@ -4,7 +4,7 @@ import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, User, Briefcase, Mail, Globe, GraduationCap, BookOpen } from "lucide-react"
+import { ArrowLeft, User, Briefcase, Mail, Globe, GraduationCap, BookOpen, MessageCircle } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
@@ -82,8 +82,11 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
 
                {/* Social / Contact */}
                <div className="flex items-center justify-center gap-3 mb-10">
-                  <a href={`mailto:${staff.email || "contact@school.edu"}`} className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-colors" title="Kirim Email">
+                  <a href={staff.email ? `mailto:${staff.email}` : "#"} className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-colors" title="Kirim Email">
                      <Mail className="h-4 w-4" />
+                  </a>
+                  <a href={staff.phone ? `https://wa.me/${staff.phone.replace(/[^0-9]/g, '')}` : "#"} target="_blank" rel="noreferrer" className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-emerald-500 hover:text-white transition-colors" title="WhatsApp">
+                     <MessageCircle className="h-4 w-4" />
                   </a>
                   <a href="#" className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#0A66C2] hover:text-white transition-colors" title="Profil Profesional">
                      <Globe className="h-4 w-4" />

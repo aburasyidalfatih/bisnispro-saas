@@ -79,7 +79,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
               </div>
               <div className="flex items-center gap-1.5 text-xs font-medium text-white/80 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
                  <User className="h-3.5 w-3.5" />
-                 Admin
+                 {post.author || "Admin"}
               </div>
             </div>
             
