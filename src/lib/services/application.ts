@@ -196,25 +196,49 @@ export async function approveApplication(id: string) {
   const app = await db.tenantApplication.findUnique({ where: { id } })
   if (!app) throw new Error("Pengajuan tidak ditemukan")
 
-  // 1. Buat Tenant Baru
-  const tenant = await db.tenant.create({
-    data: {
-      name: app.schoolName,
-      slug: app.schoolSlug,
-      email: app.adminEmail,
-      phone: app.adminPhone,
-      address: app.address,
-      logo: app.logo,
-      isActive: true,
-      plan: "free",
-      settings: {
-        npsn: app.npsn,
-        province: app.province,
-        regency: app.regency,
-        schoolStatus: app.schoolStatus,
+  // 1. Cek apakah tenant dengan slug yang sama sudah ada (misal: re-approve setelah revisi)
+  let tenant = await db.tenant.findUnique({ where: { slug: app.schoolSlug } })
+
+  if (tenant) {
+    // Update data tenant yang sudah ada dengan data terbaru dari pengajuan
+    tenant = await db.tenant.update({
+      where: { id: tenant.id },
+      data: {
+        name: app.schoolName,
+        email: app.adminEmail,
+        phone: app.adminPhone,
+        address: app.address,
+        logo: app.logo,
+        isActive: true,
+        settings: {
+          npsn: app.npsn,
+          province: app.province,
+          regency: app.regency,
+          schoolStatus: app.schoolStatus,
+        },
       },
-    },
-  })
+    })
+  } else {
+    // Buat Tenant Baru
+    tenant = await db.tenant.create({
+      data: {
+        name: app.schoolName,
+        slug: app.schoolSlug,
+        email: app.adminEmail,
+        phone: app.adminPhone,
+        address: app.address,
+        logo: app.logo,
+        isActive: true,
+        plan: "free",
+        settings: {
+          npsn: app.npsn,
+          province: app.province,
+          regency: app.regency,
+          schoolStatus: app.schoolStatus,
+        },
+      },
+    })
+  }
 
   // 2. Cek apakah user admin sudah ada
   let user = await db.user.findUnique({ where: { email: app.adminEmail } })
@@ -232,10 +256,16 @@ export async function approveApplication(id: string) {
     })
   }
 
-  // 3. Hubungkan User ke Tenant sebagai Owner
-  await db.tenantUser.create({
-    data: { tenantId: tenant.id, userId: user.id, role: "owner" },
+  // 3. Hubungkan User ke Tenant sebagai Owner (cek duplikat)
+  const existingTenantUser = await db.tenantUser.findUnique({
+    where: { tenantId_userId: { tenantId: tenant.id, userId: user.id } }
   })
+
+  if (!existingTenantUser) {
+    await db.tenantUser.create({
+      data: { tenantId: tenant.id, userId: user.id, role: "owner" },
+    })
+  }
 
   // 4. Update status + simpan temp password untuk notifikasi
   await db.tenantApplication.update({
