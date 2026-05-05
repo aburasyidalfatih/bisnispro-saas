@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { postSchema } from "@/lib/validations/post"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
+import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 
 export async function GET(req: Request) {
   const session = await auth()
@@ -63,6 +64,9 @@ export async function POST(req: Request) {
       authorId
     }
   })
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) await invalidatePublicTenantCache(tenant.slug)
 
   return NextResponse.json({ message: "Artikel berhasil dibuat", post })
 }

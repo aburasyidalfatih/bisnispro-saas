@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { eventSchema } from "@/lib/validations/event"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
+import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 
 export async function GET(req: Request) {
   const session = await auth()
@@ -50,6 +51,9 @@ export async function POST(req: Request) {
       tenantId,
     }
   })
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) await invalidatePublicTenantCache(tenant.slug)
 
   return NextResponse.json({ message: "Acara berhasil dibuat", event })
 }
