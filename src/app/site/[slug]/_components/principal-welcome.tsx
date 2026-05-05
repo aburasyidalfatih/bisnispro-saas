@@ -25,7 +25,7 @@ export function PrincipalWelcome({ tenantName, settings }: PrincipalWelcomeProps
         <div className="grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-16 items-center">
           
           {/* Left Column - Image */}
-          <div className="relative mx-auto lg:mx-0 max-w-sm w-full">
+          <div className="relative mx-auto lg:mx-0 max-w-[260px] w-full">
             {/* Subtle decorative frame behind image */}
             <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-accent/20 rounded-[2.5rem] transform rotate-3 scale-105 opacity-50 blur-sm" />
             <div className="absolute inset-0 bg-gradient-to-tr from-primary to-accent rounded-3xl transform -rotate-2 scale-105 opacity-10" />
