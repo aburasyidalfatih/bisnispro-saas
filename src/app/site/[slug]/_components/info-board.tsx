@@ -4,28 +4,28 @@ import Link from "next/link"
 import { CalendarDays, Megaphone, Newspaper, ArrowRight, MapPin, Clock } from "lucide-react"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
+import { useRouting } from "@/components/providers/routing-provider"
 
 interface InfoBoardProps {
   events: any[]
   posts: any[]
-  base: string
 }
 
-export function InfoBoard({ events, posts, base }: InfoBoardProps) {
+export function InfoBoard({ events, posts }: InfoBoardProps) {
+  const { resolveHref } = useRouting()
+
   // Agenda Kegiatan (Events)
   const agenda = (events || []).slice(0, 4)
 
   // Pengumuman (Posts with type PENGUMUMAN or just fallback to some posts if none)
   let pengumuman = (posts || []).filter((p) => p.type === "PENGUMUMAN").slice(0, 4)
   if (pengumuman.length === 0) {
-    // Fallback if no PENGUMUMAN type exists, use first 4 posts as pengumuman just to fill the UI
     pengumuman = (posts || []).slice(0, 4)
   }
 
   // Artikel & Berita (Posts with type BERITA or BLOG_GURU, excluding pengumuman)
   let artikel = (posts || []).filter((p) => p.type !== "PENGUMUMAN").slice(0, 4)
   if (artikel.length === 0 && posts && posts.length > 0) {
-     // fallback if needed
      artikel = (posts || []).slice(0, 4)
   }
 
@@ -41,14 +41,14 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
                 <CalendarDays className="h-6 w-6 text-emerald-600" />
                 <h3 className="font-bold text-lg">Agenda Kegiatan</h3>
               </div>
-              <Link href={`${base}/agenda`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+              <Link href={resolveHref("/agenda")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
             
             <div className="space-y-6 flex-1">
               {agenda.length > 0 ? agenda.map((item, idx) => (
-                <Link key={idx} href={`${base}/agenda`} className="flex gap-4 group cursor-pointer">
+                <Link key={idx} href={resolveHref("/agenda")} className="flex gap-4 group cursor-pointer">
                   <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
                     <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
                       {format(new Date(item.startDate), "dd")}
@@ -90,19 +90,18 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
                 <Megaphone className="h-6 w-6 text-emerald-600" />
                 <h3 className="font-bold text-lg">Pengumuman Terbaru</h3>
               </div>
-              <Link href={`${base}/berita?type=pengumuman`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+              <Link href={resolveHref("/berita?type=pengumuman")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
             
             <div className="space-y-6 flex-1">
               {pengumuman.length > 0 ? pengumuman.map((item, idx) => {
-                // Determine a fake badge color based on index or category
                 const badgeColors = ["bg-blue-600", "bg-amber-600", "bg-emerald-600", "bg-purple-600"];
                 const badgeColor = badgeColors[idx % badgeColors.length];
                 
                 return (
-                  <Link key={idx} href={`${base}/berita/${item.id}`} className="flex gap-4 group cursor-pointer">
+                  <Link key={idx} href={resolveHref(`/berita/${item.id}`)} className="flex gap-4 group cursor-pointer">
                     <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
                       <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
                         {format(new Date(item.createdAt), "dd")}
@@ -139,14 +138,14 @@ export function InfoBoard({ events, posts, base }: InfoBoardProps) {
                 <Newspaper className="h-6 w-6 text-emerald-600" />
                 <h3 className="font-bold text-lg">Artikel & Berita</h3>
               </div>
-              <Link href={`${base}/berita`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+              <Link href={resolveHref("/berita")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
             
             <div className="space-y-6 flex-1">
               {artikel.length > 0 ? artikel.map((item, idx) => (
-                <Link key={idx} href={`${base}/berita/${item.id}`} className="flex gap-4 group cursor-pointer">
+                <Link key={idx} href={resolveHref(`/berita/${item.id}`)} className="flex gap-4 group cursor-pointer">
                   <div className="w-20 h-16 rounded-xl overflow-hidden shrink-0 border bg-muted">
                     {item.featuredImage ? (
                       <img 

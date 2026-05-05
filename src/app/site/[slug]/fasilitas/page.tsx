@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { Building2, Info, MapPin } from "lucide-react"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -13,7 +14,7 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
   if (!tenant) notFound()
 
   const facilities = tenant.facilities || []
-  const base = `/site/${slug}`
+  const base = await getPublicBasePath(slug)
 
   return (
     <div className="bg-background min-h-screen">

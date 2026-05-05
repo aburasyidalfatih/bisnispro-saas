@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Calendar, MapPin, Clock, ArrowRight, Search } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
@@ -12,6 +13,7 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
   if (!tenant) notFound()
 
   const events = tenant.events || []
+  const base = await getPublicBasePath(slug)
 
   return (
     <div className="bg-background min-h-screen pb-12">
@@ -83,7 +85,7 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
                <h4 className="font-bold text-lg">Ada pertanyaan mengenai acara?</h4>
                <p className="text-sm text-muted-foreground">Silakan hubungi bagian kesiswaan atau panitia terkait untuk informasi lebih lanjut.</p>
             </div>
-            <Link href={`/site/${slug}/contact`} className="px-6 py-2.5 bg-white border border-primary/20 text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">
+            <Link href={`${base}/contact`} className="px-6 py-2.5 bg-white border border-primary/20 text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">
                Hubungi Kami
             </Link>
          </div>

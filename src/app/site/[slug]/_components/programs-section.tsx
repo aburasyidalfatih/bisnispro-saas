@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { ArrowRight, BookOpen, GraduationCap } from "lucide-react"
+import { useRouting } from "@/components/providers/routing-provider"
 
 interface Program {
   id: string
@@ -12,7 +13,6 @@ interface Program {
 
 interface ProgramsSectionProps {
   programs: Program[]
-  base: string
 }
 
 const ACCENT_COLORS = [
@@ -24,7 +24,9 @@ const ACCENT_COLORS = [
   { bg: "from-cyan-500/10 to-sky-500/10", border: "hover:border-cyan-300", icon: "text-cyan-600", badge: "bg-cyan-100 text-cyan-700" },
 ]
 
-export function ProgramsSection({ programs, base }: ProgramsSectionProps) {
+export function ProgramsSection({ programs }: ProgramsSectionProps) {
+  const { resolveHref } = useRouting()
+
   if (!programs || programs.length === 0) return null
 
   const displayed = programs.slice(0, 6)
@@ -58,7 +60,7 @@ export function ProgramsSection({ programs, base }: ProgramsSectionProps) {
             return (
               <Link
                 key={program.id}
-                href={`${base}/program`}
+                href={resolveHref("/program")}
                 className={`group relative rounded-2xl border bg-background overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${color.border}`}
               >
                 {/* Image / Gradient Header */}
@@ -106,7 +108,7 @@ export function ProgramsSection({ programs, base }: ProgramsSectionProps) {
         {programs.length > 6 && (
           <div className="text-center mt-10">
             <Link
-              href={`${base}/program`}
+              href={resolveHref("/program")}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border hover:bg-muted transition-colors text-sm font-medium"
             >
               Lihat Semua Program <ArrowRight className="h-4 w-4" />

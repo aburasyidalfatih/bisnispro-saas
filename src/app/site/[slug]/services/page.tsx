@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 
 const defaultServices = [
   { title: "Konsultasi", description: "Konsultasi profesional untuk membantu Anda menemukan solusi terbaik sesuai kebutuhan.", icon: "💡" },
@@ -20,7 +21,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
 
   const services: { title: string; description: string; icon: string }[] =
     Array.isArray(tenant.services) ? tenant.services : defaultServices
-  const base = `/site/${slug}`
+  const base = await getPublicBasePath(slug)
 
   return (
     <>

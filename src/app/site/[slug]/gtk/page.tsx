@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { Users, GraduationCap, Mail, MessageSquare, Award, BookOpen } from "lucide-react"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -13,7 +14,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
   if (!tenant) notFound()
 
   const staff = tenant.staff || []
-  const base = `/site/${slug}`
+  const base = await getPublicBasePath(slug)
   const totalStaff = staff.length
 
   // Group staff by role

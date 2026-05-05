@@ -6,6 +6,7 @@ import { ArrowRight, MapPin, Phone, Mail, MessageCircle } from "lucide-react"
 import { HeroSlider } from "./_components/hero-slider"
 import { StatsBar } from "./_components/stats-bar"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import { PrincipalWelcome } from "./_components/principal-welcome"
 import { InfoBoard } from "./_components/info-board"
 import { ProgramsSection } from "./_components/programs-section"
@@ -32,11 +33,12 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
   if (!tenant) notFound()
 
+  const base = await getPublicBasePath(slug)
+
   const rawGallery = Array.isArray(tenant.gallery) ? tenant.gallery : []
   const gallery = rawGallery.map((item: any) =>
     typeof item === "string" ? { url: item, caption: "" } : item
   )
-  const base = `/site/${slug}`
 
   // Build stats from tenant data
   const staffCount = tenant.staff?.length || 0
@@ -52,7 +54,6 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     <main>
       {/* ── 1. Hero Slider ── */}
       <HeroSlider
-        base={base}
         slides={
           tenant.sliders && tenant.sliders.length > 0
             ? tenant.sliders.map((s: any) => ({
@@ -85,7 +86,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       )}
 
       {/* ── 4. Info Board (Agenda, Pengumuman, Artikel) ── */}
-      <InfoBoard events={tenant.events || []} posts={tenant.posts || []} base={base} />
+      <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
 
       {/* ── 5. Tentang Singkat ── */}
       {tenant.about && (
@@ -122,19 +123,19 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       )}
 
       {/* ── 6. Program Keahlian ── */}
-      <ProgramsSection programs={tenant.programs || []} base={base} />
+      <ProgramsSection programs={tenant.programs || []} />
 
       {/* ── 7. Prestasi ── */}
-      <AchievementsSection achievements={tenant.achievements || []} base={base} />
+      <AchievementsSection achievements={tenant.achievements || []} />
 
       {/* ── 8. Fasilitas Sekolah ── */}
-      <FacilitiesSection facilities={tenant.facilities || []} base={base} />
+      <FacilitiesSection facilities={tenant.facilities || []} />
 
       {/* ── 9. Ekstrakurikuler ── */}
-      <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} base={base} />
+      <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
 
       {/* ── 10. Guru & Staff Highlight ── */}
-      <StaffHighlight staff={tenant.staff || []} base={base} />
+      <StaffHighlight staff={tenant.staff || []} />
 
       {/* ── 11. Galeri ── */}
       {gallery.length > 0 && (

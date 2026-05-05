@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowRight, Trophy, Medal, Star, Globe } from "lucide-react"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
+import { useRouting } from "@/components/providers/routing-provider"
 
 interface Achievement {
   id: string
@@ -16,7 +17,6 @@ interface Achievement {
 
 interface AchievementsSectionProps {
   achievements: Achievement[]
-  base: string
 }
 
 const LEVEL_CONFIG: Record<string, { icon: typeof Trophy; color: string; bg: string; label: string }> = {
@@ -31,18 +31,18 @@ function getLevelConfig(level: string) {
   return LEVEL_CONFIG[level.toUpperCase()] || LEVEL_CONFIG.LOKAL
 }
 
-export function AchievementsSection({ achievements, base }: AchievementsSectionProps) {
+export function AchievementsSection({ achievements }: AchievementsSectionProps) {
+  const { resolveHref } = useRouting()
+
   if (!achievements || achievements.length === 0) return null
 
   const displayed = achievements.slice(0, 6)
 
   return (
     <section className="py-16 md:py-20 bg-gradient-to-b from-secondary/5 to-background relative overflow-hidden">
-      {/* Decorative */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-amber-400/3 blur-3xl pointer-events-none" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold tracking-wider uppercase mb-4">
             <Trophy className="h-3.5 w-3.5" />
@@ -56,7 +56,6 @@ export function AchievementsSection({ achievements, base }: AchievementsSectionP
           </p>
         </div>
 
-        {/* Achievements Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayed.map((achievement) => {
             const config = getLevelConfig(achievement.level)
@@ -65,26 +64,19 @@ export function AchievementsSection({ achievements, base }: AchievementsSectionP
             return (
               <Link
                 key={achievement.id}
-                href={`${base}/prestasi`}
+                href={resolveHref("/prestasi")}
                 className={`group rounded-2xl border p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${config.bg}`}
               >
                 <div className="flex items-start gap-4">
-                  {/* Icon / Image */}
                   {achievement.imageUrl ? (
                     <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border bg-white shadow-sm">
-                      <img
-                        src={achievement.imageUrl}
-                        alt={achievement.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
+                      <img src={achievement.imageUrl} alt={achievement.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                   ) : (
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-white/80 shadow-sm border`}>
                       <Icon className={`h-7 w-7 ${config.color}`} />
                     </div>
                   )}
-
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${config.color} bg-white/60 border`}>
@@ -92,16 +84,12 @@ export function AchievementsSection({ achievements, base }: AchievementsSectionP
                         {config.label}
                       </span>
                     </div>
-                    <h3 className="font-bold text-sm mb-1 line-clamp-2 leading-snug">
-                      {achievement.title}
-                    </h3>
+                    <h3 className="font-bold text-sm mb-1 line-clamp-2 leading-snug">{achievement.title}</h3>
                     <p className="text-[11px] text-muted-foreground font-medium">
                       {format(new Date(achievement.date), "dd MMMM yyyy", { locale: idLocale })}
                     </p>
                     {achievement.description && (
-                      <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
-                        {achievement.description}
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">{achievement.description}</p>
                     )}
                   </div>
                 </div>
@@ -110,11 +98,10 @@ export function AchievementsSection({ achievements, base }: AchievementsSectionP
           })}
         </div>
 
-        {/* See All */}
         {achievements.length > 6 && (
           <div className="text-center mt-10">
             <Link
-              href={`${base}/prestasi`}
+              href={resolveHref("/prestasi")}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border hover:bg-muted transition-colors text-sm font-medium"
             >
               Lihat Semua Prestasi <ArrowRight className="h-4 w-4" />

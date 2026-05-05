@@ -1,6 +1,7 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { Calendar, User, ArrowLeft, Clock, Tag } from "lucide-react"
 import { format } from "date-fns"
@@ -28,7 +29,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
   const post = (tenant.posts || []).find((p: any) => p.id === id)
   if (!post) notFound()
 
-  const base = `/site/${slug}`
+  const base = await getPublicBasePath(slug)
 
   // Get related posts (same type, exclude current)
   const relatedPosts = (tenant.posts || [])

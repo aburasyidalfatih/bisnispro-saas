@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Download, FileText, ExternalLink, Search } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
@@ -12,6 +13,7 @@ export default async function UnduhanPage({ params }: { params: Promise<{ slug: 
   if (!tenant) notFound()
 
   const documents = tenant.documents || []
+  const base = await getPublicBasePath(slug)
 
   const getFileIcon = (type: string) => {
      return <FileText className="h-6 w-6 text-primary" />
@@ -79,7 +81,7 @@ export default async function UnduhanPage({ params }: { params: Promise<{ slug: 
                <h4 className="font-bold text-lg">Tidak menemukan dokumen yang dicari?</h4>
                <p className="text-sm text-muted-foreground">Silakan hubungi bagian tata usaha sekolah untuk bantuan informasi lebih lanjut.</p>
             </div>
-            <Link href={`/site/${slug}/contact`} className="px-6 py-2.5 bg-white border border-primary/20 text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">
+            <Link href={`${base}/contact`} className="px-6 py-2.5 bg-white border border-primary/20 text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">
                Hubungi Kami
             </Link>
          </div>

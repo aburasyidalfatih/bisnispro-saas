@@ -7,11 +7,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 import Link from "next/link"
+import { useRouting } from "@/components/providers/routing-provider"
 
 export default function PublicPpdbPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const { resolveHref } = useRouting()
 
   useEffect(() => {
     fetch(`/api/public/ppdb/${slug}`)
@@ -76,7 +78,7 @@ export default function PublicPpdbPage({ params }: { params: Promise<{ slug: str
                    <h3 className="text-2xl font-bold mb-6 text-center">Daftar Sekarang</h3>
                    <div className="space-y-4">
                       <p className="text-sm text-center text-muted-foreground mb-8">Silakan login atau buat akun terlebih dahulu untuk melanjutkan proses pendaftaran.</p>
-                      <Link href={`/login?callbackUrl=/site/${slug}/ppdb/daftar`}>
+                      <Link href={`/login?callbackUrl=${resolveHref("/ppdb/daftar")}`}>
                          <Button className="w-full h-14 rounded-2xl btn-gradient text-white text-lg font-bold shadow-xl shadow-primary/20 group">
                            Mulai Pendaftaran <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                          </Button>
@@ -85,7 +87,7 @@ export default function PublicPpdbPage({ params }: { params: Promise<{ slug: str
                          <div className="absolute inset-x-0 top-1/2 h-px bg-border/50" />
                          <span className="relative bg-white dark:bg-[#0f172a] px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Atau</span>
                       </div>
-                      <Link href={`/site/${slug}/ppdb/cek-status`}>
+                      <Link href={resolveHref("/ppdb/cek-status")}>
                          <Button variant="outline" className="w-full h-14 rounded-2xl glass border-0 text-primary font-bold">
                            Cek Status Pendaftaran
                          </Button>
@@ -106,7 +108,7 @@ export default function PublicPpdbPage({ params }: { params: Promise<{ slug: str
              <h2 className="text-2xl font-bold">Pendaftaran Belum Dibuka</h2>
              <p className="text-muted-foreground mt-2 max-w-md">Saat ini tidak ada gelombang pendaftaran yang aktif. Silakan hubungi bagian administrasi sekolah untuk informasi lebih lanjut.</p>
              <Button variant="outline" className="mt-8 rounded-xl" asChild>
-                <Link href={`/site/${slug}`}>Kembali ke Beranda</Link>
+                <Link href={resolveHref("/")}>Kembali ke Beranda</Link>
              </Button>
           </Card>
         )}

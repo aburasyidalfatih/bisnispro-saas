@@ -1,6 +1,7 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicBasePath } from "@/lib/utils/public-path"
 import Image from "next/image"
 import Link from "next/link"
 import { Calendar, User, ArrowRight } from "lucide-react"
@@ -12,6 +13,7 @@ export default async function BeritaPage({ params }: { params: Promise<{ slug: s
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
+  const base = await getPublicBasePath(slug)
   const posts = tenant.posts || []
 
   return (
@@ -35,7 +37,7 @@ export default async function BeritaPage({ params }: { params: Promise<{ slug: s
             {posts.map((post: any) => (
               <Link 
                 key={post.id} 
-                href={`/site/${slug}/berita/${post.id}`}
+                href={`${base}/berita/${post.id}`}
                 className="group flex flex-col bg-background rounded-3xl overflow-hidden border hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
               >
                 <div className="aspect-[16/10] relative overflow-hidden bg-muted">
