@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
 import { 
   School, User, Phone, MapPin, Send, 
-  Globe, Hash, Landmark, Loader2, AlertCircle
+  Globe, Hash, Landmark, Loader2, AlertCircle, ImageIcon
 } from "lucide-react"
 
 export function RevisionForm({ application }: { application: any }) {
@@ -108,6 +108,39 @@ export function RevisionForm({ application }: { application: any }) {
             <CardDescription>Perbaiki profil lembaga pendidikan Anda.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
+            {/* Logo Upload */}
+            <div className="space-y-2">
+              <Label>Logo Sekolah <span className="text-red-500">*</span></Label>
+              <div className="flex items-center gap-4">
+                {logoPreview ? (
+                  <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded-lg border bg-white" />
+                ) : (
+                  <div className="h-16 w-16 rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
+                    <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <Input 
+                    type="file" 
+                    accept="image/png, image/jpeg, image/webp"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        if (file.size > 2 * 1024 * 1024) {
+                          toast({ title: "File Terlalu Besar", description: "Maksimal ukuran logo adalah 2MB", variant: "destructive" })
+                          return
+                        }
+                        setLogoFile(file)
+                        setLogoPreview(URL.createObjectURL(file))
+                      }
+                    }}
+                    className="rounded-xl h-11"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">Maks 2MB. Format: JPG, PNG, WEBP.</p>
+                </div>
+              </div>
+            </div>
+
             <div className="grid md:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <Label>Nama Sekolah <span className="text-red-500">*</span></Label>
@@ -123,7 +156,7 @@ export function RevisionForm({ application }: { application: any }) {
               </div>
               <div className="space-y-2">
                 <Label>NPSN <span className="text-red-500">*</span></Label>
-                <Input required minLength={8} maxLength={8} value={form.npsn} onChange={(e) => setForm({ ...form, npsn: e.target.value.replace(/[^0-9]/g, "") })} className="rounded-xl" />
+                <Input required minLength={8} maxLength={8} value={form.npsn} onChange={(e) => setForm({ ...form, npsn: e.target.value.replace(/[^0-9]/g, "") })} className="rounded-xl" placeholder="8 digit NPSN" />
               </div>
               <div className="space-y-2">
                 <Label>Status Lembaga</Label>
@@ -156,6 +189,46 @@ export function RevisionForm({ application }: { application: any }) {
           </CardContent>
         </Card>
 
+        {/* Lokasi Sekolah */}
+        <Card className="glass border-0 shadow-lg relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <div className="p-2 bg-emerald-500/10 rounded-xl"><MapPin className="h-5 w-5 text-emerald-500" /></div>
+              Lokasi Sekolah
+            </CardTitle>
+            <CardDescription>Perbaiki wilayah dan alamat sekolah Anda.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label>Provinsi <span className="text-red-500">*</span></Label>
+                <Input 
+                  required 
+                  value={form.province} 
+                  onChange={(e) => setForm({ ...form, province: e.target.value })} 
+                  placeholder="Contoh: Jawa Barat" 
+                  className="rounded-xl h-11" 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Kabupaten / Kota <span className="text-red-500">*</span></Label>
+                <Input 
+                  required 
+                  value={form.regency} 
+                  onChange={(e) => setForm({ ...form, regency: e.target.value })} 
+                  placeholder="Contoh: Bandung" 
+                  className="rounded-xl h-11" 
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Alamat Lengkap <span className="text-red-500">*</span></Label>
+              <Textarea required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="rounded-xl min-h-[100px]" placeholder="Jl. Pendidikan No. 123..." />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Informasi Penanggung Jawab */}
         <Card className="glass border-0 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
@@ -175,10 +248,6 @@ export function RevisionForm({ application }: { application: any }) {
               <div className="space-y-2">
                 <Label>Nomor WhatsApp Aktif <span className="text-red-500">*</span></Label>
                 <Input required value={form.adminPhone} onChange={(e) => setForm({ ...form, adminPhone: e.target.value.replace(/[^0-9]/g, "") })} className="rounded-xl" />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label>Alamat Lengkap <span className="text-red-500">*</span></Label>
-                <Textarea required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="rounded-xl min-h-[100px]" />
               </div>
             </div>
           </CardContent>

@@ -59,6 +59,7 @@ export async function PUT(req: Request) {
     return NextResponse.json({ message: `Berhasil memproses ${targetIds.length} data.`, results })
   } catch (error) {
     logger.error("Update application failed", error, { targetIds })
-    return NextResponse.json({ error: "Gagal memperbarui status pengajuan" }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : "Gagal memperbarui status pengajuan"
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
