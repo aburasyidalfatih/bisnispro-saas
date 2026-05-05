@@ -118,7 +118,6 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                 {[
                   { label: "Beranda", href: "" },
                   { label: "Tentang Kami", href: "/about" },
-                  { label: "Layanan", href: "/services" },
                   { label: "Guru & Staf", href: "/gtk" },
                   { label: "PPDB", href: "/contact" },
                   { label: "Berita & Artikel", href: "/berita" },
@@ -144,7 +143,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                 {programItems.map((item) => (
                   <li key={item}>
                     <Link
-                      href={resolveHref("/services")}
+                      href={resolveHref("/program")}
                       className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
                       style={{ color: "rgba(255,255,255,0.45)" }}
                     >

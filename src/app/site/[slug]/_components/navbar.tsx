@@ -59,7 +59,6 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
         { label: "Alumni Success", href: "/alumni" },
       ],
     },
-    { label: "Layanan", href: "/services" },
     { label: "Kontak", href: "/contact" },
   ]
 
