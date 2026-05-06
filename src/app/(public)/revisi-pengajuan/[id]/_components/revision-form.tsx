@@ -18,6 +18,7 @@ import { RegionSelector } from "@/components/ui/region-selector"
 export function RevisionForm({ application }: { application: any }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   
   const [form, setForm] = useState({
     schoolName: application.schoolName,
@@ -54,8 +55,11 @@ export function RevisionForm({ application }: { application: any }) {
         formData.append("file", logoFile)
         formData.append("type", "school-logo")
 
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: formData })
-        if (!uploadRes.ok) throw new Error("Gagal mengunggah logo")
+        const uploadRes = await fetch("/api/public/upload", { method: "POST", body: formData })
+        if (!uploadRes.ok) {
+          const uploadErr = await uploadRes.json().catch(() => ({}))
+          throw new Error(uploadErr.error || "Gagal mengunggah logo")
+        }
         const uploadData = await uploadRes.json()
         finalLogoUrl = uploadData.url
       }
@@ -67,18 +71,33 @@ export function RevisionForm({ application }: { application: any }) {
       })
 
       if (res.ok) {
-        toast({ title: "Berhasil!", description: "Revisi berhasil dikirim dan menunggu tinjauan admin." })
-        router.refresh()
+        setSubmitted(true)
       } else {
         const data = await res.json()
-        toast({ title: "Gagal", description: data.error, variant: "destructive" })
+        toast({ title: "Gagal", description: data.error || "Terjadi kesalahan saat mengirim revisi.", variant: "destructive" })
       }
     } catch (error) {
       console.error(error)
-      toast({ title: "Gagal", description: "Terjadi kesalahan sistem.", variant: "destructive" })
+      const errMsg = error instanceof Error ? error.message : "Terjadi kesalahan sistem."
+      toast({ title: "Gagal", description: errMsg, variant: "destructive" })
     } finally {
       setLoading(false)
     }
+  }
+
+  if (submitted) {
+    return (
+      <div className="max-w-2xl mx-auto text-center space-y-6 glass p-12 rounded-3xl animate-in fade-in zoom-in-95 duration-500">
+        <div className="mx-auto w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center">
+          <Send className="h-10 w-10 text-emerald-600" />
+        </div>
+        <h2 className="text-3xl font-bold tracking-tight">Revisi Berhasil Dikirim! 🎉</h2>
+        <p className="text-muted-foreground text-lg max-w-md mx-auto">
+          Data pengajuan Anda telah diperbarui dan sedang menunggu tinjauan dari tim verifikasi kami.
+          Anda akan menerima notifikasi melalui WhatsApp ketika pengajuan Anda telah ditinjau.
+        </p>
+      </div>
+    )
   }
 
   return (
