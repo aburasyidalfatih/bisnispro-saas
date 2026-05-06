@@ -89,59 +89,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
         )}
       </section>
 
-      {/* ── HIGHLIGHT SECTION ── */}
-      <section className="py-12 bg-white relative overflow-hidden">
-         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-               <div className="absolute -top-10 -left-10 h-40 w-40 bg-primary/10 rounded-full blur-3xl" />
-               <div className="absolute -bottom-10 -right-10 h-40 w-40 bg-amber-400/10 rounded-full blur-3xl" />
-               <div className="relative rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
-                  <OptimizedImage 
-                    src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070" 
-                    alt="Education Highlight" 
-                    width={800} 
-                    height={600} 
-                    className="object-cover"
-                  />
-               </div>
-            </div>
-            <div className="space-y-8">
-               <div className="bg-primary/5 px-4 py-1.5 rounded-full border border-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest w-fit">
-                  Keunggulan Kami
-               </div>
-               <h2 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight">Membangun Kompetensi Abad 21</h2>
-               <p className="text-lg text-muted-foreground leading-relaxed">
-                  Kami membekali siswa dengan 4C (Critical Thinking, Communication, Collaboration, & Creativity) melalui setiap kegiatan yang dilakukan di sekolah.
-               </p>
-               <ul className="space-y-4">
-                  {[
-                    "Kurikulum Adaptif & Berbasis Proyek",
-                    "Pembimbingan Karakter & Etika Islami",
-                    "Fasilitas Praktikum Lengkap",
-                    "Ekosistem Belajar yang Aman & Nyaman"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3">
-                       <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                          <CheckCircle2 className="h-4 w-4" />
-                       </div>
-                       <span className="font-bold text-slate-700">{item}</span>
-                    </li>
-                  ))}
-               </ul>
-               <div className="pt-6">
-                  <div className="flex items-center gap-4 p-4 bg-muted/40 rounded-2xl border border-border/50">
-                     <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center text-white">
-                        <Award className="h-6 w-6" />
-                     </div>
-                     <div>
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest leading-none mb-1">Terakreditasi</p>
-                        <p className="text-lg font-black text-slate-900 leading-tight">Grade A (Sangat Baik)</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </section>
+
     </div>
   )
 }
