@@ -30,7 +30,6 @@ export function RegionSelector({ province, regency, onProvinceChange, onRegencyC
           value={province}
           onChange={(e) => {
             onProvinceChange(e.target.value)
-            onRegencyChange("") // Reset regency when province changes
           }}
           className="flex h-11 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >

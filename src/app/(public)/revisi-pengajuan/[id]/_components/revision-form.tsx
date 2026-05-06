@@ -87,12 +87,12 @@ export function RevisionForm({ application }: { application: any }) {
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto text-center space-y-6 glass p-12 rounded-3xl animate-in fade-in zoom-in-95 duration-500">
-        <div className="mx-auto w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center">
-          <Send className="h-10 w-10 text-emerald-600" />
+      <div className="max-w-2xl mx-auto text-center space-y-6 glass p-6 md:p-12 rounded-3xl animate-in fade-in zoom-in-95 duration-500">
+        <div className="mx-auto w-16 h-16 md:w-20 md:h-20 bg-emerald-100 rounded-full flex items-center justify-center">
+          <Send className="h-8 w-8 md:h-10 md:w-10 text-emerald-600" />
         </div>
-        <h2 className="text-3xl font-bold tracking-tight">Revisi Berhasil Dikirim! 🎉</h2>
-        <p className="text-muted-foreground text-lg max-w-md mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Revisi Berhasil Dikirim! 🎉</h2>
+        <p className="text-muted-foreground text-base md:text-lg max-w-md mx-auto">
           Data pengajuan Anda telah diperbarui dan sedang menunggu tinjauan dari tim verifikasi kami.
           Anda akan menerima notifikasi melalui WhatsApp ketika pengajuan Anda telah ditinjau.
         </p>
@@ -169,9 +169,9 @@ export function RevisionForm({ application }: { application: any }) {
               <div className="space-y-2">
                 <Label>Subdomain / URL Sistem <span className="text-red-500">*</span></Label>
                 <div className="flex rounded-xl overflow-hidden shadow-sm border focus-within:ring-2 focus-within:ring-primary/20">
-                  <span className="flex items-center justify-center bg-muted/50 px-3 border-r text-muted-foreground text-sm font-medium">https://</span>
-                  <Input required value={form.schoolSlug} onChange={(e) => setForm({ ...form, schoolSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} className="border-0 rounded-none focus-visible:ring-0 shadow-none px-2 font-semibold text-primary" />
-                  <span className="flex items-center justify-center bg-muted/50 px-3 border-l text-muted-foreground text-sm font-medium">.schoolpro.id</span>
+                  <span className="flex items-center justify-center bg-muted/50 px-2 sm:px-3 border-r text-muted-foreground text-xs sm:text-sm font-medium shrink-0">https://</span>
+                  <Input required value={form.schoolSlug} onChange={(e) => setForm({ ...form, schoolSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} className="border-0 rounded-none focus-visible:ring-0 shadow-none px-2 font-semibold text-primary min-w-0" />
+                  <span className="flex items-center justify-center bg-muted/50 px-2 sm:px-3 border-l text-muted-foreground text-xs sm:text-sm font-medium shrink-0">.schoolpro.id</span>
                 </div>
               </div>
               <div className="space-y-2">
