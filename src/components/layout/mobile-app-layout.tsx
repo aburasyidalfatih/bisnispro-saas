@@ -9,11 +9,11 @@ export function MobileAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   const navItems = [
-    { label: "Beranda", icon: Home, href: "/dashboard" },
-    { label: "Akademik", icon: FileText, href: "/dashboard/my-documents" },
+    { label: "Beranda", icon: Home, href: "/ortu" },
+    { label: "Akademik", icon: FileText, href: "/ortu/akademik" },
     // Center floating item handled separately
-    { label: "Tagihan", icon: Wallet, href: "/dashboard/tagihan" },
-    { label: "Profil", icon: User, href: "/dashboard/settings" },
+    { label: "Tagihan", icon: Wallet, href: "/ortu/tagihan" },
+    { label: "Profil", icon: User, href: "/ortu/profil" },
   ]
 
   return (
@@ -33,7 +33,7 @@ export function MobileAppLayout({ children }: { children: React.ReactNode }) {
             {/* Left Nav Items */}
             <div className="flex w-2/5 justify-between relative z-10">
               {navItems.slice(0, 2).map((item) => {
-                const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
+                const isActive = pathname === item.href || (item.href !== "/ortu" && pathname.startsWith(item.href))
                 return (
                   <Link href={item.href} key={item.label} className="flex flex-col items-center justify-center p-2 gap-1 w-16">
                     <item.icon className={cn("h-6 w-6 transition-all duration-300", isActive ? "text-primary scale-110" : "text-muted-foreground")} />
@@ -47,11 +47,11 @@ export function MobileAppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Floating Action Button (Jadwal) */}
             <div className="absolute left-1/2 -top-8 -translate-x-1/2 flex flex-col items-center justify-center z-20">
-              <Link href="/dashboard/my-schedule" className="flex flex-col items-center group">
+              <Link href="/ortu/jadwal" className="flex flex-col items-center group">
                 <div className="h-16 w-16 rounded-full btn-gradient text-white flex items-center justify-center shadow-lg shadow-primary/40 ring-[6px] ring-background group-hover:scale-105 transition-transform mb-1">
                   <Calendar className="h-7 w-7" />
                 </div>
-                <span className={cn("text-[10px] font-medium text-muted-foreground absolute -bottom-5", pathname.includes("/my-schedule") && "text-primary font-bold")}>
+                <span className={cn("text-[10px] font-medium text-muted-foreground absolute -bottom-5", pathname.includes("/jadwal") && "text-primary font-bold")}>
                   Jadwal
                 </span>
               </Link>
@@ -60,7 +60,7 @@ export function MobileAppLayout({ children }: { children: React.ReactNode }) {
             {/* Right Nav Items */}
             <div className="flex w-2/5 justify-between relative z-10">
               {navItems.slice(2, 4).map((item) => {
-                const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
+                const isActive = pathname === item.href || (item.href !== "/ortu" && pathname.startsWith(item.href))
                 return (
                   <Link href={item.href} key={item.label} className="flex flex-col items-center justify-center p-2 gap-1 w-16">
                     <item.icon className={cn("h-6 w-6 transition-all duration-300", isActive ? "text-primary scale-110" : "text-muted-foreground")} />

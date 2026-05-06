@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, CreditCard, Bell, BarChart3, TrendingUp } from "lucide-react"
 import {
@@ -62,8 +63,16 @@ export default function DashboardPage() {
   const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
   const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
 
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isAdminRole) {
+      router.replace("/ortu")
+    }
+  }, [isAdminRole, router])
+
   if (!isAdminRole) {
-    return <ParentDashboard />
+    return null
   }
 
   return (

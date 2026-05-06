@@ -142,8 +142,14 @@ export default function SettingsGeneralPage() {
   const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
   const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
 
+  useEffect(() => {
+    if (!isAdminRole && status !== "loading") {
+      router.replace("/ortu/profil")
+    }
+  }, [isAdminRole, status, router])
+
   if (!isAdminRole && status !== "loading") {
-    return <ParentProfile />
+    return null
   }
 
   // Profile

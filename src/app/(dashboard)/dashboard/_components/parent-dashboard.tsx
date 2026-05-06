@@ -9,12 +9,12 @@ export function ParentDashboard() {
   const tenant = session?.user?.tenants?.[0]
 
   const layanan = [
-    { label: "Tagihan", icon: CreditCard, color: "bg-rose-500/10 text-rose-600", href: "/dashboard/billing" },
+    { label: "Tagihan", icon: CreditCard, color: "bg-rose-500/10 text-rose-600", href: "/ortu/tagihan" },
     { label: "Akademik", icon: BookOpen, color: "bg-blue-500/10 text-blue-600", href: "#" },
     { label: "Kehadiran", icon: ClipboardList, color: "bg-emerald-500/10 text-emerald-600", href: "#" },
     { label: "Jadwal", icon: Calendar, color: "bg-purple-500/10 text-purple-600", href: "#" },
     { label: "Pesan Guru", icon: MessageSquare, color: "bg-cyan-500/10 text-cyan-600", href: "#" },
-    { label: "PPDB", icon: Users, color: "bg-amber-500/10 text-amber-600", href: "/dashboard/ppdb/portal" },
+    { label: "PPDB", icon: Users, color: "bg-amber-500/10 text-amber-600", href: "/ortu/ppdb" },
     { label: "Ekstrakurikuler", icon: Activity, color: "bg-pink-500/10 text-pink-600", href: "#" },
     { label: "Prestasi", icon: Award, color: "bg-indigo-500/10 text-indigo-600", href: "#" },
   ]
@@ -61,7 +61,7 @@ export function ParentDashboard() {
                  <h3 className="text-lg font-bold mb-1 drop-shadow-sm">Portal PPDB</h3>
                  <p className="text-xs opacity-90 max-w-[180px] leading-relaxed">Daftarkan putra/putri Anda ke sekolah kami dengan mudah secara online.</p>
               </div>
-              <a href="/dashboard/ppdb/portal" className="bg-white text-primary px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:scale-105 transition-transform flex items-center gap-1.5 shrink-0">
+              <a href="/ortu/ppdb" className="bg-white text-primary px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:scale-105 transition-transform flex items-center gap-1.5 shrink-0">
                  Daftar <ArrowRight className="h-3.5 w-3.5" />
               </a>
            </div>
@@ -124,7 +124,7 @@ export function ParentDashboard() {
              <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
                <Receipt className="h-4 w-4 text-rose-500" /> Tagihan Belum Dibayar
              </h3>
-             <a href="/dashboard/billing" className="text-[10px] font-bold text-primary hover:underline">Lihat Semua →</a>
+             <a href="/ortu/tagihan" className="text-[10px] font-bold text-primary hover:underline">Lihat Semua →</a>
           </div>
           <div className="space-y-3">
              <div className="flex items-center justify-between border-b border-border/50 pb-3">
