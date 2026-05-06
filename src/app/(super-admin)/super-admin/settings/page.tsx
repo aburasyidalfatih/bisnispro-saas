@@ -72,6 +72,16 @@ export default function SuperAdminSettingsPage() {
     TURNSTILE_ENABLED: "false",
     TURNSTILE_SITE_KEY: "",
     TURNSTILE_SECRET_KEY: "",
+
+    // Kendali Akses Free Plan
+    FREE_PLAN_ACCESS: JSON.stringify({
+      enable_ppdb: false,
+      enable_finance: false,
+      enable_whatsapp: false,
+      enable_custom_domain: false,
+      enable_analytics: false,
+      enable_parent_portal: false
+    })
   })
 
   const [testEmail, setTestEmail] = useState("")
@@ -206,6 +216,7 @@ export default function SuperAdminSettingsPage() {
             <TabsTrigger value="whatsapp" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">WhatsApp</TabsTrigger>
             <TabsTrigger value="payment" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Pembayaran</TabsTrigger>
             <TabsTrigger value="google" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Google Login</TabsTrigger>
+            <TabsTrigger value="plan_access" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kendali Fitur</TabsTrigger>
           </TabsList>
         </div>
 
@@ -707,6 +718,62 @@ export default function SuperAdminSettingsPage() {
                   <code className="block mt-1 bg-muted p-2 rounded-lg text-xs break-all text-foreground font-semibold">https://schoolpro.id/api/auth/callback/google</code>
                 </li>
               </ol>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        {/* --- TAB: KENDALI FITUR --- */}
+        <TabsContent value="plan_access" className="grid gap-6 outline-none">
+          <Card className="glass border-0">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Settings2 className="h-4 w-4 text-primary" /></div>
+                <CardTitle className="text-lg">Kendali Akses Paket Free</CardTitle>
+              </div>
+              <CardDescription>Aktifkan atau matikan modul mana saja yang dapat diakses oleh sekolah dengan paket gratis (Free Plan).</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(() => {
+                let access: Record<string, boolean> = {};
+                try { access = JSON.parse(form.FREE_PLAN_ACCESS || "{}"); } catch (e) {}
+                
+                const toggleFeature = (key: string) => {
+                  const newAccess = { ...access, [key]: !access[key] };
+                  const newVal = JSON.stringify(newAccess);
+                  setForm({ ...form, FREE_PLAN_ACCESS: newVal });
+                  handleSaveBatch(['FREE_PLAN_ACCESS'], { FREE_PLAN_ACCESS: newVal });
+                };
+
+                const features = [
+                  { key: "enable_ppdb", title: "Modul PPDB Online", desc: "Izinkan penerimaan siswa baru online." },
+                  { key: "enable_finance", title: "Modul Keuangan (Tagihan)", desc: "Izinkan pencatatan tagihan dan integrasi SPP." },
+                  { key: "enable_whatsapp", title: "WhatsApp Gateway", desc: "Izinkan pengiriman pesan dan notifikasi otomatis." },
+                  { key: "enable_custom_domain", title: "Custom Domain", desc: "Izinkan pengaturan domain mandiri (.sch.id dll)." },
+                  { key: "enable_analytics", title: "Dashboard Analytics", desc: "Izinkan akses ke grafik analitik di halaman utama." },
+                  { key: "enable_parent_portal", title: "Portal Orang Tua", desc: "Izinkan akses portal mandiri bagi orang tua wali." }
+                ];
+
+                return features.map((f) => (
+                  <button
+                    key={f.key}
+                    onClick={() => toggleFeature(f.key)}
+                    className={cn(
+                      "flex w-full items-center justify-between rounded-xl border-2 p-4 transition-all duration-200 text-left",
+                      access[f.key] ? "border-primary bg-primary/5" : "border-transparent bg-muted/50 hover:bg-muted"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", access[f.key] ? "bg-primary/10" : "bg-muted")}>
+                        {access[f.key] ? <Eye className="h-5 w-5 text-primary" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{f.title}</p>
+                        <p className="text-xs text-muted-foreground">{f.desc}</p>
+                      </div>
+                    </div>
+                    <div className={cn("h-2.5 w-2.5 rounded-full", access[f.key] ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
+                  </button>
+                ))
+              })()}
             </CardContent>
           </Card>
         </TabsContent>

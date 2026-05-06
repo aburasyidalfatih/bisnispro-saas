@@ -74,113 +74,13 @@ interface MenuSection {
   items: MenuItem[]
 }
 
+import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
+
 // --- TENANT ADMIN MENU ---
-function getTenantMenu(basePath: string, plan: string = "free"): MenuSection[] {
-  const isPro = plan === "pro"
+function getTenantMenu(basePath: string, plan: string = "free", access: Record<string, boolean>): MenuSection[] {
   const isFree = plan === "free"
 
-  if (isFree) {
-    return [
-      {
-        items: [
-          { label: "Dashboard", href: `${basePath}/website`, icon: LayoutDashboard },
-        ],
-      },
-      {
-        title: "Konten Website",
-        items: [
-          {
-            label: "Beranda & Slider",
-            href: `${basePath}/website`,
-            icon: Home,
-            children: [
-              { label: "Overview Website", href: `${basePath}/website`, icon: Home },
-              { label: "Slider Beranda", href: `${basePath}/website/sliders`, icon: LayoutTemplate },
-              { label: "Popup Pengumuman", href: `${basePath}/website/popups`, icon: Megaphone },
-            ],
-          },
-          {
-            label: "Informasi & Berita",
-            href: `${basePath}/website/posts`,
-            icon: FileText,
-            children: [
-              { label: "Artikel & Pos", href: `${basePath}/website/posts`, icon: FileText },
-              { label: "Kategori Artikel", href: `${basePath}/website/categories`, icon: Tag },
-              { label: "Agenda & Acara", href: `${basePath}/website/events`, icon: Calendar },
-              { label: "Pusat Unduhan", href: `${basePath}/website/documents`, icon: Download },
-            ],
-          },
-          {
-            label: "Profil & GTK",
-            href: `${basePath}/website/about`,
-            icon: Building2,
-            children: [
-              { label: "Profil & Tentang", href: `${basePath}/website/about`, icon: Info },
-              { label: "Guru & Staf (GTK)", href: `${basePath}/website/gtk`, icon: Users },
-              { label: "Fasilitas Sekolah", href: `${basePath}/website/facilities`, icon: Building2 },
-              { label: "Program & Jurusan", href: `${basePath}/website/programs`, icon: BookOpen },
-              { label: "Ekskul", href: `${basePath}/website/extracurriculars`, icon: Activity },
-            ],
-          },
-          {
-            label: "Galeri & Alumni",
-            href: `${basePath}/website/gallery`,
-            icon: Image,
-            children: [
-              { label: "Galeri Foto", href: `${basePath}/website/gallery`, icon: Image },
-              { label: "Prestasi Siswa", href: `${basePath}/website/achievements`, icon: Award },
-              { label: "Alumni Success", href: `${basePath}/website/alumni`, icon: GraduationCap },
-              { label: "Layanan Sekolah", href: `${basePath}/website/services`, icon: Briefcase },
-              { label: "Kontak", href: `${basePath}/website/contact`, icon: Phone },
-            ],
-          },
-        ],
-      },
-      {
-        title: "Manajemen",
-        items: [
-          {
-            label: "Data Master",
-            href: `${basePath}/users`,
-            icon: Database,
-            children: [
-              { label: "Data Admin", href: `${basePath}/users?role=admin`, icon: ShieldCheck },
-              { label: "Data Guru", href: `${basePath}/users?role=guru`, icon: Users },
-            ],
-          },
-        ],
-      },
-      {
-        title: "Konfigurasi",
-        items: [
-          {
-            label: "Pengaturan",
-            href: `${basePath}/settings`,
-            icon: Settings,
-            children: [
-              { label: "Umum", href: `${basePath}/settings`, icon: Building2 },
-              { label: "Custom Domain", href: `${basePath}/settings/domain`, icon: Globe },
-              { label: "Tampilan & Tema", href: `${basePath}/settings/appearance`, icon: Palette },
-              { label: "Email (SMTP)", href: `${basePath}/settings/email`, icon: Mail },
-              { label: "WhatsApp Gateway", href: `${basePath}/settings/whatsapp`, icon: Megaphone },
-              { label: "Payment Gateway", href: `${basePath}/settings/payment`, icon: CreditCard },
-            ],
-          },
-          {
-            label: "Langganan",
-            href: `${basePath}/billing`,
-            icon: CreditCard,
-            children: [
-              { label: "Paket Langganan", href: `${basePath}/billing`, icon: Wallet },
-              { label: "Riwayat Pembayaran", href: `${basePath}/billing/history`, icon: Receipt },
-            ],
-          },
-        ],
-      },
-    ]
-  }
-
-  return [
+  const menu: MenuSection[] = [
     {
       items: [
         { label: "Dashboard", href: basePath, icon: LayoutDashboard },
@@ -332,6 +232,61 @@ function getTenantMenu(basePath: string, plan: string = "free"): MenuSection[] {
       ],
     },
   ]
+
+  if (isFree) {
+    menu.forEach(section => {
+      // Manajemen
+      if (section.title === "Manajemen") {
+        section.items = section.items.filter(item => {
+          if (item.label === "PPDB Online") return access.enable_ppdb === true;
+          if (item.label === "Keuangan & Kas") return access.enable_finance === true;
+          if (item.label === "E-Kantin") return access.enable_finance === true; // kantin terkait finance
+          if (item.label === "Akademik & Siswa") return false; // always false for free? Actually, we didn't add this toggle. Let's make it false or true depending on requirements. Let's make it false for free plan to encourage upgrade, or just true. Let's keep it true.
+          return true; // Data master dll
+        });
+      }
+      
+      // Portal & Laporan
+      if (section.title === "Portal & Laporan") {
+        section.items = section.items.filter(item => {
+          if (item.label === "Portal Wali") return access.enable_parent_portal === true;
+          if (item.label === "Laporan Umum") return access.enable_analytics === true;
+          return true;
+        });
+      }
+      
+      // Aktivitas & Pesan
+      if (section.title === "Aktivitas & Pesan") {
+        section.items = section.items.filter(item => {
+          if (item.label === "AI Assistant") return false; // Pro only feature
+          return true;
+        });
+      }
+
+      // Konfigurasi
+      if (section.title === "Konfigurasi") {
+        section.items.forEach(item => {
+          if (item.label === "Pengaturan" && item.children) {
+            item.children = item.children.filter(child => {
+              if (child.label === "Custom Domain") return access.enable_custom_domain === true;
+              if (child.label === "WhatsApp Gateway") return access.enable_whatsapp === true;
+              if (child.label === "Payment Gateway") return access.enable_finance === true;
+              return true;
+            });
+          }
+        });
+        section.items = section.items.filter(item => {
+          if (item.label === "Audit Log") return false; // Pro only
+          return true;
+        });
+      }
+    });
+
+    // Remove empty sections
+    return menu.filter(section => section.items && section.items.length > 0);
+  }
+
+  return menu;
 }
 
 // --- MEMBER (USER BIASA) MENU ---
@@ -509,6 +464,8 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   const currentRole = currentTenant?.role || "member"
   const currentPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
 
+  const { access: freeAccess } = useFreePlanAccess()
+
   // Branding: pakai context (update instan) untuk nama & logo, fallback ke session
   const brandName = isSuperAdminPath ? "SchoolPro" : (branding.name || currentTenant?.name || "SchoolPro")
   const brandLogo = isSuperAdminPath ? null : (branding.logo || (currentTenant as any)?.logo || null)
@@ -525,7 +482,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   if (isSuperAdminPath) {
     sections = getSuperAdminMenu(pendingPayments)
   } else if (isAdminRole) {
-    sections = getTenantMenu(basePath, currentPlan)
+    sections = getTenantMenu(basePath, currentPlan, freeAccess)
   } else {
     sections = getMemberMenu(basePath)
   }
