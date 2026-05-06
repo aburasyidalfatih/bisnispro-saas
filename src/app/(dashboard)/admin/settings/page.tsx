@@ -169,7 +169,7 @@ export default function SettingsGeneralPage() {
     name: "", description: "", logo: "", 
     googleClientId: "", googleClientSecret: "",
     phone: "", email: "", facebook: "", instagram: "", youtube: "",
-    npsn: "", akreditasi: "", visi: "", misi: "", videoProfil: "", sambutanKepsek: ""
+    npsn: "", akreditasi: "", visi: "", misi: "", videoProfil: "", sambutanKepsek: "", address: ""
   })
   const [rawSettings, setRawSettings] = useState<any>({})
   const [savingOrg, setSavingOrg] = useState(false)
@@ -221,7 +221,8 @@ export default function SettingsGeneralPage() {
         visi: s.visi || "",
         misi: s.misi || "",
         videoProfil: s.videoProfil || "",
-        sambutanKepsek: s.sambutanKepsek || ""
+        sambutanKepsek: s.sambutanKepsek || "",
+        address: d.address || ""
       })
       setRawSettings(s)
       setLogoPreview(d.logo || "")
@@ -306,6 +307,7 @@ export default function SettingsGeneralPage() {
         googleClientSecret: orgForm.googleClientSecret || null,
         phone: orgForm.phone || null,
         email: orgForm.email || null,
+        address: orgForm.address || null,
         facebook: orgForm.facebook || null,
         instagram: orgForm.instagram || null,
         youtube: orgForm.youtube || null,
@@ -613,6 +615,13 @@ export default function SettingsGeneralPage() {
                 <Label className="text-xs">Email Publik</Label>
                 <Input value={orgForm.email} onChange={e => setOrgForm(p => ({ ...p, email: e.target.value }))} placeholder="info@sekolah.com" className="rounded-xl h-9 text-sm" />
               </div>
+            </div>
+
+            <div className="space-y-1.5 mt-4">
+              <Label className="text-xs">Alamat Lengkap</Label>
+              <textarea value={orgForm.address} onChange={e => setOrgForm(p => ({ ...p, address: e.target.value }))}
+                placeholder="Alamat lengkap sekolah" rows={2}
+                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
             </div>
 
             <div className="space-y-2 mt-4">
