@@ -1,4 +1,7 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS base
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+FROM base AS builder
 WORKDIR /app
 
 # Copy package files from the sub-service
@@ -16,7 +19,7 @@ COPY services/wa-gateway/tsconfig.json ./
 # Build TypeScript
 RUN npx tsc
 
-FROM node:20-alpine AS runner
+FROM base AS runner
 WORKDIR /app
 
 COPY --from=builder /app/node_modules ./node_modules
