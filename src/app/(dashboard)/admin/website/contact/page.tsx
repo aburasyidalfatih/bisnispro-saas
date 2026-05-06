@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { Save, Phone, MapPin, Mail, Globe, MessageCircle, ExternalLink, Inbox, Check, Trash2, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { formatDateTime } from "@/lib/utils"
-import { PROVINCES, REGENCIES } from "@/lib/data/regencies-sumatera-jawa"
+import { RegionSelector } from "@/components/ui/region-selector"
 
 interface Submission {
   id: string
@@ -199,38 +199,12 @@ export default function WebsiteContactPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Provinsi</Label>
-                    <select
-                      value={form.settings?.province || ""}
-                      onChange={(e) => setForm(p => ({ ...p, settings: { ...p.settings, province: e.target.value, regency: "" } }))}
-                      className="flex h-9 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">Pilih Provinsi...</option>
-                      {PROVINCES.map((p) => (
-                        <option key={p.id} value={p.name}>{p.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Kab/Kota</Label>
-                    <select
-                      value={form.settings?.regency || ""}
-                      onChange={(e) => setForm(p => ({ ...p, settings: { ...p.settings, regency: e.target.value } }))}
-                      disabled={!form.settings?.province}
-                      className="flex h-9 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">Pilih Kab/Kota...</option>
-                      {form.settings?.province &&
-                        REGENCIES.filter(r => r.provinceId === PROVINCES.find(p => p.name === form.settings?.province)?.id)
-                          .map(r => (
-                            <option key={r.id} value={r.name}>{r.name}</option>
-                          ))
-                      }
-                    </select>
-                  </div>
-                </div>
+                <RegionSelector
+                  province={form.settings?.province || ""}
+                  regency={form.settings?.regency || ""}
+                  onProvinceChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, province: v, regency: "" } }))}
+                  onRegencyChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, regency: v } }))}
+                />
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Alamat Lengkap</Label>
                   <textarea value={form.address} onChange={set("address")}

@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight } from "lucide-react"
+import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
 
 export default function WebsiteAboutPage() {
   const { data: session } = useSession()
