@@ -127,9 +127,9 @@ jobs:
             
             # Restart container dengan image baru (Hindari Nginx di Dev)
             if [ "$BRANCH" = "main" ]; then
-              docker compose up -d
+              docker compose up -d app db redis wa-gateway --build wa-gateway
             else
-              docker compose up -d app db redis wa-gateway
+              docker compose up -d app db redis wa-gateway --build wa-gateway
             fi
             
             # Tunggu container ready (max 30s)
