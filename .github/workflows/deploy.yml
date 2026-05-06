@@ -125,11 +125,14 @@ jobs:
             # Pull image yang sudah di-build oleh GitHub Actions
             docker compose pull app
             
-            # Restart container dengan image baru (Hindari Nginx di Dev)
+            # Build wa-gateway secara eksplisit di VPS
+            docker compose build wa-gateway
+            
+            # Restart container dengan image baru (Gunakan --no-build agar app tidak dibuild ulang di VPS)
             if [ "$BRANCH" = "main" ]; then
-              docker compose up -d app db redis wa-gateway --build wa-gateway
+              docker compose up -d --no-build app db redis wa-gateway
             else
-              docker compose up -d app db redis wa-gateway --build wa-gateway
+              docker compose up -d --no-build app db redis wa-gateway
             fi
             
             # Tunggu container ready (max 30s)
