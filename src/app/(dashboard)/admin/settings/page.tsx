@@ -166,10 +166,8 @@ export default function SettingsGeneralPage() {
 
   // Org
   const [orgForm, setOrgForm] = useState({ 
-    name: "", description: "", logo: "", 
-    googleClientId: "", googleClientSecret: "",
-    phone: "", email: "", facebook: "", instagram: "", youtube: "",
-    npsn: "", akreditasi: "", visi: "", misi: "", videoProfil: "", sambutanKepsek: "", address: ""
+    name: "", logo: "", 
+    googleClientId: "", googleClientSecret: ""
   })
   const [rawSettings, setRawSettings] = useState<any>({})
   const [savingOrg, setSavingOrg] = useState(false)
@@ -207,22 +205,9 @@ export default function SettingsGeneralPage() {
       const s = d.settings || {}
       setOrgForm({ 
         name: d.name || "", 
-        description: d.description || "", 
         logo: d.logo || "",
         googleClientId: d.googleClientId || "",
-        googleClientSecret: d.googleClientSecret || "",
-        phone: d.phone || "",
-        email: d.email || "",
-        facebook: d.facebook || "",
-        instagram: d.instagram || "",
-        youtube: d.youtube || "",
-        npsn: s.npsn || "",
-        akreditasi: s.akreditasi || "",
-        visi: s.visi || "",
-        misi: s.misi || "",
-        videoProfil: s.videoProfil || "",
-        sambutanKepsek: s.sambutanKepsek || "",
-        address: d.address || ""
+        googleClientSecret: d.googleClientSecret || ""
       })
       setRawSettings(s)
       setLogoPreview(d.logo || "")
@@ -301,25 +286,9 @@ export default function SettingsGeneralPage() {
       body: JSON.stringify({ 
         tenantId, 
         name: orgForm.name, 
-        description: orgForm.description, 
         logo: orgForm.logo || null,
         googleClientId: orgForm.googleClientId || null,
-        googleClientSecret: orgForm.googleClientSecret || null,
-        phone: orgForm.phone || null,
-        email: orgForm.email || null,
-        address: orgForm.address || null,
-        facebook: orgForm.facebook || null,
-        instagram: orgForm.instagram || null,
-        youtube: orgForm.youtube || null,
-        settings: {
-          ...rawSettings,
-          npsn: orgForm.npsn,
-          akreditasi: orgForm.akreditasi,
-          visi: orgForm.visi,
-          misi: orgForm.misi,
-          videoProfil: orgForm.videoProfil,
-          sambutanKepsek: orgForm.sambutanKepsek
-        }
+        googleClientSecret: orgForm.googleClientSecret || null
       }),
     })
     setSavingOrg(false)
@@ -556,24 +525,6 @@ export default function SettingsGeneralPage() {
                 <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
               </button>
               <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{session?.user?.tenants?.[0]?.slug || "—"}</span></p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 mt-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">No. Telepon Publik</Label>
-                <Input value={orgForm.phone} onChange={e => setOrgForm(p => ({ ...p, phone: e.target.value }))} placeholder="021-xxxxxxxx" className="rounded-xl h-9 text-sm" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Email Publik</Label>
-                <Input value={orgForm.email} onChange={e => setOrgForm(p => ({ ...p, email: e.target.value }))} placeholder="info@sekolah.com" className="rounded-xl h-9 text-sm" />
-              </div>
-            </div>
-
-            <div className="space-y-1.5 mt-4">
-              <Label className="text-xs">Alamat Lengkap</Label>
-              <textarea value={orgForm.address} onChange={e => setOrgForm(p => ({ ...p, address: e.target.value }))}
-                placeholder="Alamat lengkap sekolah" rows={2}
-                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
             </div>
 
             {/* Google OAuth Tenant */}
