@@ -168,8 +168,10 @@ export default function SettingsGeneralPage() {
   const [orgForm, setOrgForm] = useState({ 
     name: "", description: "", logo: "", 
     googleClientId: "", googleClientSecret: "",
-    phone: "", email: "", facebook: "", instagram: "", youtube: ""
+    phone: "", email: "", facebook: "", instagram: "", youtube: "",
+    npsn: "", akreditasi: "", visi: "", misi: "", videoProfil: "", sambutanKepsek: ""
   })
+  const [rawSettings, setRawSettings] = useState<any>({})
   const [savingOrg, setSavingOrg] = useState(false)
   const [logoPreview, setLogoPreview] = useState("")
   const [uploadingLogo, setUploadingLogo] = useState(false)
@@ -202,6 +204,7 @@ export default function SettingsGeneralPage() {
   useEffect(() => {
     if (!tenantId) return
     fetch(`/api/tenant/website?tenantId=${tenantId}`).then(r => r.json()).then(d => {
+      const s = d.settings || {}
       setOrgForm({ 
         name: d.name || "", 
         description: d.description || "", 
@@ -212,8 +215,15 @@ export default function SettingsGeneralPage() {
         email: d.email || "",
         facebook: d.facebook || "",
         instagram: d.instagram || "",
-        youtube: d.youtube || ""
+        youtube: d.youtube || "",
+        npsn: s.npsn || "",
+        akreditasi: s.akreditasi || "",
+        visi: s.visi || "",
+        misi: s.misi || "",
+        videoProfil: s.videoProfil || "",
+        sambutanKepsek: s.sambutanKepsek || ""
       })
+      setRawSettings(s)
       setLogoPreview(d.logo || "")
     })
     fetch(`/api/tenant/domain?tenantId=${tenantId}`).then(r => r.json()).then(d => {
@@ -298,7 +308,16 @@ export default function SettingsGeneralPage() {
         email: orgForm.email || null,
         facebook: orgForm.facebook || null,
         instagram: orgForm.instagram || null,
-        youtube: orgForm.youtube || null
+        youtube: orgForm.youtube || null,
+        settings: {
+          ...rawSettings,
+          npsn: orgForm.npsn,
+          akreditasi: orgForm.akreditasi,
+          visi: orgForm.visi,
+          misi: orgForm.misi,
+          videoProfil: orgForm.videoProfil,
+          sambutanKepsek: orgForm.sambutanKepsek
+        }
       }),
     })
     setSavingOrg(false)
@@ -537,11 +556,52 @@ export default function SettingsGeneralPage() {
               <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{session?.user?.tenants?.[0]?.slug || "—"}</span></p>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs">Deskripsi</Label>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs">NPSN</Label>
+                <Input value={orgForm.npsn} onChange={e => setOrgForm(p => ({ ...p, npsn: e.target.value }))} placeholder="Nomor Pokok Sekolah Nasional" className="rounded-xl h-9 text-sm" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Akreditasi</Label>
+                <Input value={orgForm.akreditasi} onChange={e => setOrgForm(p => ({ ...p, akreditasi: e.target.value }))} placeholder="Contoh: A (Sangat Baik)" className="rounded-xl h-9 text-sm" />
+              </div>
+            </div>
+
+            <div className="space-y-1.5 mt-4">
+              <Label className="text-xs">Deskripsi Singkat / Sejarah</Label>
               <textarea value={orgForm.description} onChange={e => setOrgForm(p => ({ ...p, description: e.target.value }))}
-                placeholder="Deskripsi singkat organisasi" rows={3}
+                placeholder="Deskripsi singkat atau sejarah berdirinya sekolah" rows={3}
                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+            </div>
+
+            <div className="space-y-2 mt-4 p-4 rounded-xl border bg-muted/10">
+              <Label className="font-semibold text-sm">Visi & Misi Sekolah</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Visi</Label>
+                <textarea value={orgForm.visi} onChange={e => setOrgForm(p => ({ ...p, visi: e.target.value }))}
+                  placeholder="Contoh: Menjadi lembaga pendidikan terdepan yang berakhlak mulia..." rows={2}
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Misi</Label>
+                <textarea value={orgForm.misi} onChange={e => setOrgForm(p => ({ ...p, misi: e.target.value }))}
+                  placeholder="Gunakan enter untuk memisahkan setiap poin misi..." rows={4}
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+              </div>
+            </div>
+
+            <div className="space-y-2 mt-4 p-4 rounded-xl border bg-muted/10">
+              <Label className="font-semibold text-sm">Profil Lanjutan</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Sambutan Kepala Sekolah</Label>
+                <textarea value={orgForm.sambutanKepsek} onChange={e => setOrgForm(p => ({ ...p, sambutanKepsek: e.target.value }))}
+                  placeholder="Pesan sambutan singkat dari Kepala Sekolah..." rows={3}
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+              </div>
+              <div className="space-y-1.5 mt-2">
+                <Label className="text-xs">Link Video Profil (YouTube)</Label>
+                <Input value={orgForm.videoProfil} onChange={e => setOrgForm(p => ({ ...p, videoProfil: e.target.value }))} placeholder="https://youtube.com/watch?v=..." className="rounded-xl h-9 text-sm" />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 mt-4">
