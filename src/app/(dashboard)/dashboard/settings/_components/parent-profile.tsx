@@ -69,9 +69,11 @@ export function ParentProfile() {
   }
 
   // Fake Data for visual matching
-  const studentData = {
-    nisn: "24010001",
-    kelas: "X MIPA 1",
+  const parentData = {
+    id: "PRNT-882190",
+    hubungan: "Ayah Kandung",
+    alamat: "Jl. Pendidikan No. 123, Jakarta",
+    pekerjaan: "Wiraswasta"
   }
 
   return (
@@ -82,7 +84,7 @@ export function ParentProfile() {
           <button onClick={() => router.push("/dashboard")} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
              <ArrowLeft className="h-4 w-4" />
           </button>
-          <h1 className="font-bold text-lg">Profil Saya</h1>
+          <h1 className="font-bold text-lg">Profil Orang Tua</h1>
         </div>
       </div>
 
@@ -111,16 +113,16 @@ export function ParentProfile() {
          </div>
 
          {/* Name & Subtitle */}
-         <h2 className="text-xl font-bold text-foreground text-center mb-1">{profileForm.name || "Nama Pengguna"}</h2>
+         <h2 className="text-xl font-bold text-foreground text-center mb-1">{profileForm.name || "Nama Orang Tua"}</h2>
          <p className="text-xs text-muted-foreground text-center mb-6">
-            {studentData.nisn} &bull; {studentData.kelas}
+            {parentData.hubungan} &bull; ID: {parentData.id}
          </p>
 
          {/* Data Diri Card */}
          <div className="w-full bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-5">
             <div className="bg-primary/5 px-4 py-3 border-b border-border flex items-center gap-2">
                <CreditCard className="h-4 w-4 text-primary" />
-               <h3 className="font-bold text-sm text-foreground">Data Diri</h3>
+               <h3 className="font-bold text-sm text-foreground">Informasi Orang Tua</h3>
             </div>
             <div className="p-4 space-y-4">
                <div className="flex justify-between items-center border-b border-border/50 pb-3">
@@ -132,7 +134,7 @@ export function ParentProfile() {
                   />
                </div>
                <div className="flex justify-between items-center border-b border-border/50 pb-3">
-                  <span className="text-xs text-muted-foreground w-1/3">Telepon</span>
+                  <span className="text-xs text-muted-foreground w-1/3">Telepon/WA</span>
                   <input 
                      value={profileForm.phone} 
                      onChange={e => setProfileForm(p => ({...p, phone: e.target.value}))} 
@@ -141,15 +143,19 @@ export function ParentProfile() {
                   />
                </div>
                <div className="flex justify-between items-center border-b border-border/50 pb-3">
-                  <span className="text-xs text-muted-foreground">Email</span>
+                  <span className="text-xs text-muted-foreground">Email Akun</span>
                   <span className="text-xs font-semibold text-foreground">{session?.user?.email}</span>
                </div>
                <div className="flex justify-between items-center border-b border-border/50 pb-3">
-                  <span className="text-xs text-muted-foreground">NISN / ID</span>
-                  <span className="text-xs font-semibold text-foreground">{studentData.nisn}</span>
+                  <span className="text-xs text-muted-foreground">Pekerjaan</span>
+                  <span className="text-xs font-semibold text-foreground">{parentData.pekerjaan}</span>
+               </div>
+               <div className="flex justify-between items-center border-b border-border/50 pb-3">
+                  <span className="text-xs text-muted-foreground">Alamat</span>
+                  <span className="text-xs font-semibold text-foreground text-right max-w-[60%] line-clamp-2">{parentData.alamat}</span>
                </div>
                <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">Status</span>
+                  <span className="text-xs text-muted-foreground">Status Akun</span>
                   <span className="text-xs font-semibold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full">Aktif</span>
                </div>
             </div>
