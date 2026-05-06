@@ -1,25 +1,22 @@
-import { WhatsappManager } from "../../(dashboard)/admin/settings/whatsapp/_components/whatsapp-manager"
+"use client"
+
+import { useEffect, useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { 
+  Server, Shield, Eye, EyeOff, Mail, MessageSquare, 
+  CreditCard, Globe, Settings2, Save, ExternalLink,
+  Send, Smartphone, ShieldCheck
+} from "lucide-react"
+import { cn } from "@/lib/utils"
+import { toast } from "@/hooks/use-toast"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { WhatsappManager } from "@/app/(dashboard)/admin/settings/whatsapp/_components/whatsapp-manager"
 
 export default function SuperAdminSettingsPage() {
-// ... existing states ...
-// ... around line 434 (WhatsApp Tab) ...
-        {/* --- TAB: WHATSAPP --- */}
-        <TabsContent value="whatsapp" className="space-y-6 outline-none">
-          <Card className="glass border-0">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
-                <CardTitle className="text-lg">Internal WhatsApp Gateway (Platform)</CardTitle>
-              </div>
-              <CardDescription>Hubungkan WhatsApp utama platform untuk mengirim notifikasi pendaftaran, revisi, dan alert sistem.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <WhatsappManager tenantId="platform" />
-            </CardContent>
-          </Card>
-
-          <Card className="glass border-0 lg:col-span-2">
-// ... existing Template card ...
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
@@ -450,7 +447,18 @@ export default function SuperAdminSettingsPage() {
             </div>
 
             <TabsContent value="internal" className="mt-0 outline-none">
-              <WhatsappManager tenantId="platform" />
+              <Card className="glass border-0">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
+                    <CardTitle className="text-lg">Internal WhatsApp Gateway (Platform)</CardTitle>
+                  </div>
+                  <CardDescription>Hubungkan WhatsApp utama platform untuk mengirim notifikasi pendaftaran, revisi, dan alert sistem.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <WhatsappManager tenantId="platform" />
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="starsender" className="mt-0 outline-none grid gap-6 lg:grid-cols-2">

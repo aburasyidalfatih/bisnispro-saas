@@ -11,9 +11,9 @@ import { Smartphone, RefreshCcw, LogOut, Send, CheckCircle2, AlertCircle, QrCode
 import { getWaStatus, startWaSession, logoutWaSession, sendWaMessageTest } from "@/lib/actions/whatsapp"
 import Image from "next/image"
 
-export function WhatsappManager() {
+export function WhatsappManager({ tenantId: propTenantId }: { tenantId?: string } = {}) {
   const { data: session } = useSession()
-  const tenantId = session?.user?.tenants?.[0]?.id
+  const tenantId = propTenantId || session?.user?.tenants?.[0]?.id
 
   const [status, setStatus] = useState<"DISCONNECTED" | "CONNECTING" | "CONNECTED">("DISCONNECTED")
   const [qrCode, setQrCode] = useState<string | null>(null)
