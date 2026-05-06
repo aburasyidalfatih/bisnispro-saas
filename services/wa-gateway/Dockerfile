@@ -7,7 +7,7 @@ RUN npm ci
 
 # Copy prisma schema from the root and generate client
 COPY prisma ./prisma
-RUN npx prisma generate
+RUN npx prisma@5.22.0 generate
 
 # Copy the rest of the source code
 COPY services/wa-gateway/src ./src
