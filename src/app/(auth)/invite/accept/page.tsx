@@ -72,7 +72,7 @@ export default function AcceptInvitePage() {
               </div>
               <h1 className="text-xl font-bold mb-2">Berhasil Bergabung!</h1>
               <p className="text-muted-foreground text-sm mb-6">{message}</p>
-              <Link href="/dashboard"><Button className="rounded-xl btn-gradient text-white border-0">Buka Dashboard</Button></Link>
+              <Link href="/admin"><Button className="rounded-xl btn-gradient text-white border-0">Buka Dashboard</Button></Link>
             </>
           )}
           {state === "error" && (
@@ -82,7 +82,7 @@ export default function AcceptInvitePage() {
               </div>
               <h1 className="text-xl font-bold mb-2">Gagal</h1>
               <p className="text-muted-foreground text-sm mb-6">{message}</p>
-              <Link href="/dashboard"><Button variant="outline" className="rounded-xl">Kembali ke Dashboard</Button></Link>
+              <Link href="/admin"><Button variant="outline" className="rounded-xl">Kembali ke Dashboard</Button></Link>
             </>
           )}
         </div>

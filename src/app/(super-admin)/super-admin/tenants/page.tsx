@@ -67,7 +67,15 @@ export default function TenantsPage() {
   const [newPassword, setNewPassword] = useState("")
   const [reseting, setReseting] = useState(false)
 
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const [rootDomain, setRootDomain] = useState("schoolpro.id")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      let host = window.location.host
+      if (host.startsWith("www.")) host = host.replace("www.", "")
+      setRootDomain(host)
+    }
+  }, [])
 
   const fetchTenants = useCallback(() => {
     setLoading(true)
@@ -157,7 +165,7 @@ export default function TenantsPage() {
       body: JSON.stringify({ tenantId }),
     })
     if (res.ok) {
-      window.location.href = "/dashboard"
+      window.location.href = "/admin"
     } else {
       const data = await res.json()
       toast({ title: "Gagal", description: data.error || "Tidak dapat login sebagai tenant.", variant: "destructive" })

@@ -87,6 +87,35 @@ export async function PUT(req: Request) {
     data,
   })
 
+  // Auto-sync: jika settings.principalImage atau principalName diubah,
+  // sinkronkan ke Staff record yang ber-role "Kepala Sekolah"
+  if (data.settings) {
+    const settings = data.settings as Record<string, any>
+    if (settings.principalImage || settings.principalName) {
+      try {
+        const principalStaff = await db.staff.findFirst({
+          where: {
+            tenantId,
+            role: { contains: "Kepala Sekolah", mode: "insensitive" },
+          },
+        })
+
+        if (principalStaff) {
+          const staffUpdate: Record<string, any> = {}
+          if (settings.principalImage) staffUpdate.imageUrl = settings.principalImage
+          if (settings.principalName) staffUpdate.name = settings.principalName
+
+          await db.staff.update({
+            where: { id: principalStaff.id },
+            data: staffUpdate,
+          })
+        }
+      } catch (error) {
+        console.error("[website/route] Gagal sync principal ke staff:", error)
+      }
+    }
+  }
+
   // Invalidate Redis cache so public site reflects changes immediately
   await invalidatePublicTenantCache(updated.slug)
 

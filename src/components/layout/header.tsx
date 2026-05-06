@@ -143,7 +143,7 @@ export function Header() {
         </Button>
 
         {/* Notifications */}
-        <Link href="/dashboard/notifications">
+        <Link href="/admin/notifications">
           <Button variant="ghost" size="icon" className="relative rounded-xl h-9 w-9">
             <Bell className="h-[18px] w-[18px]" />
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary ring-2 ring-background" />
@@ -153,7 +153,7 @@ export function Header() {
 
         {/* Daftar PPDB Button */}
         {!isSuperAdminPanel && !isAffiliatePanel && !["owner", "admin"].includes(session?.user?.tenants?.[0]?.role || "") && (
-          <Link href="/dashboard/ppdb/portal">
+          <Link href="/admin/ppdb/portal">
             <Button className="hidden sm:flex rounded-xl btn-gradient text-white border-0 shadow-md shadow-primary/20 gap-2 h-9 px-4 ml-1">
               <UserPlus className="h-4 w-4" />
               <span className="text-sm font-bold">Portal PPDB</span>
@@ -180,7 +180,7 @@ export function Header() {
           <DropdownMenuContent className="w-56 glass rounded-xl" align="end" forceMount>
             <DropdownMenuItem asChild>
               <Link 
-                href={isSuperAdminPanel ? "/super-admin/settings" : isAffiliatePanel ? "/affiliate/settings" : "/dashboard/settings"} 
+                href={isSuperAdminPanel ? "/super-admin/settings" : isAffiliatePanel ? "/affiliate/settings" : "/admin/settings"} 
                 className="flex items-center gap-2 rounded-lg"
               >
                 <User className="h-4 w-4" />

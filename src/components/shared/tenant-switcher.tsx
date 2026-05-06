@@ -31,7 +31,7 @@ export function TenantSwitcher() {
       window.location.href = `https://${slug}.${rootDomain}/dashboard`
     } else {
       // Dev mode: show info that subdomain switching requires custom domain
-      window.location.href = "/dashboard"
+      window.location.href = "/admin"
     }
   }
 

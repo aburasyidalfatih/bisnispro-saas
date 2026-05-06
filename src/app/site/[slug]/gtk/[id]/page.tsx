@@ -31,124 +31,94 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
   const base = await getPublicBasePath(slug)
 
   return (
-    <div className="bg-background min-h-screen pb-12">
-      {/* ── PROFILE BANNER ── */}
-      <div className="relative h-64 md:h-80 w-full bg-slate-900 overflow-hidden">
-         {/* Decorative Background */}
-         <div className="absolute inset-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/80 to-slate-900 mix-blend-multiply" />
-         
-         <div className="absolute top-0 left-0 right-0 p-6 z-20">
-           <div className="max-w-5xl mx-auto flex items-center justify-between">
-              <Link 
-                href={`${base}/gtk`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all"
-              >
-                 <ArrowLeft className="h-4 w-4" /> Kembali
-              </Link>
-           </div>
-         </div>
-      </div>
-
-      <article className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-30 pb-16">
-        <div className="bg-white rounded-[2.5rem] shadow-2xl border border-border overflow-hidden -mt-32 relative">
+    <div className="bg-background min-h-screen pb-16">
+      {/* ── HEADER SECTION ── */}
+      <div className="bg-muted/30 pt-8 pb-12 border-b">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Link 
+            href={`${base}/gtk`}
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
+          >
+             <ArrowLeft className="h-4 w-4" /> Kembali
+          </Link>
           
-          <div className="px-8 md:px-16 pt-16 pb-12 text-center flex flex-col items-center">
-            {/* Avatar */}
-            <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden shadow-2xl border-8 border-white absolute -top-24 mx-auto left-0 right-0 bg-white">
-              {staff.imageUrl ? (
-                <Image 
-                  src={staff.imageUrl} 
-                  alt={staff.name} 
-                  fill 
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-6xl font-bold text-primary/30 uppercase">
-                    {staff.name.charAt(0)}
-                  </span>
+          <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
+             <div className="w-32 h-32 md:w-40 md:h-40 relative rounded-full overflow-hidden border-4 border-background shadow-md shrink-0 bg-muted">
+               {staff.imageUrl ? (
+                 <Image 
+                   src={staff.imageUrl} 
+                   alt={staff.name} 
+                   fill 
+                   className="object-cover"
+                   priority
+                 />
+               ) : (
+                 <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                   <span className="text-4xl font-bold text-primary/30 uppercase">
+                     {staff.name.charAt(0)}
+                   </span>
+                 </div>
+               )}
+             </div>
+
+             <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-bold tracking-widest uppercase text-xs mb-3">
+                   <Briefcase className="h-3.5 w-3.5" />
+                   {staff.role}
                 </div>
-              )}
-            </div>
-
-            <div className="mt-16 md:mt-20">
-               <h1 className="text-4xl font-black text-slate-900 mb-4">{staff.name}</h1>
-               <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 text-primary font-bold tracking-widest uppercase text-xs mb-6">
-                  <Briefcase className="h-4 w-4" />
-                  {staff.role}
-               </div>
-
-               {/* Social / Contact */}
-               <div className="flex items-center justify-center gap-3 mb-10">
-                  <a href={staff.email ? `mailto:${staff.email}` : "#"} className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-colors" title="Kirim Email">
-                     <Mail className="h-4 w-4" />
-                  </a>
-                  <a href={staff.phone ? `https://wa.me/${staff.phone.replace(/[^0-9]/g, '')}` : "#"} target="_blank" rel="noreferrer" className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-emerald-500 hover:text-white transition-colors" title="WhatsApp">
-                     <MessageCircle className="h-4 w-4" />
-                  </a>
-                  <a href="#" className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#0A66C2] hover:text-white transition-colors" title="Profil Profesional">
-                     <Globe className="h-4 w-4" />
-                  </a>
-               </div>
-
-               {/* Bio/Quote */}
-               <div className="relative max-w-2xl mx-auto">
-                  <div className="absolute -top-6 -left-6 text-primary/10 text-6xl font-serif">"</div>
-                  <p className="text-xl text-slate-700 leading-relaxed italic relative z-10">
-                     {staff.bio || "Berkomitmen penuh untuk mendidik dan membimbing siswa-siswi menuju masa depan yang cerah dengan bekal ilmu dan akhlak mulia."}
-                  </p>
-                  <div className="absolute -bottom-10 -right-6 text-primary/10 text-6xl font-serif">"</div>
-               </div>
-            </div>
-          </div>
-          
-          <div className="bg-slate-50 p-8 md:p-12 border-t border-slate-200">
-             <div className="max-w-2xl mx-auto grid sm:grid-cols-2 gap-8 text-left">
-                <div>
-                   <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Informasi Tambahan</h3>
-                   <ul className="space-y-4">
-                      <li className="flex items-start gap-3">
-                         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0"><User className="h-4 w-4" /></div>
-                         <div>
-                            <p className="text-xs text-muted-foreground font-bold">Status Kepegawaian</p>
-                            <p className="font-semibold text-slate-900">Tenaga Pendidik Aktif</p>
-                         </div>
-                      </li>
-                      <li className="flex items-start gap-3">
-                         <div className="h-8 w-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0"><BookOpen className="h-4 w-4" /></div>
-                         <div>
-                            <p className="text-xs text-muted-foreground font-bold">Mata Pelajaran</p>
-                            <p className="font-semibold text-slate-900">{staff.subject || "Guru Kelas / Umum"}</p>
-                         </div>
-                      </li>
-                   </ul>
-                </div>
-                <div>
-                   <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Riwayat Akademik</h3>
-                   <ul className="space-y-4">
-                      <li className="flex items-start gap-3">
-                         <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0"><GraduationCap className="h-4 w-4" /></div>
-                         <div>
-                            <p className="text-xs text-muted-foreground font-bold">Pendidikan Terakhir</p>
-                            <p className="font-semibold text-slate-900">{staff.education || "S1 Pendidikan"}</p>
-                         </div>
-                      </li>
-                   </ul>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight mb-4">
+                   {staff.name}
+                </h1>
+                
+                {/* Social / Contact */}
+                <div className="flex items-center gap-3">
+                   <a href={staff.email ? `mailto:${staff.email}` : "#"} className="h-10 w-10 rounded-full bg-background border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all">
+                      <Mail className="h-4 w-4" />
+                   </a>
+                   <a href={staff.phone ? `https://wa.me/${staff.phone.replace(/[^0-9]/g, '')}` : "#"} target="_blank" rel="noreferrer" className="h-10 w-10 rounded-full bg-background border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all">
+                      <MessageCircle className="h-4 w-4" />
+                   </a>
+                   <a href="#" className="h-10 w-10 rounded-full bg-background border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-all">
+                      <Globe className="h-4 w-4" />
+                   </a>
                 </div>
              </div>
           </div>
         </div>
+      </div>
 
-        {/* Back Link */}
-        <div className="mt-12 text-center">
-          <Link
-            href={`${base}/gtk`}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-primary/10 text-primary rounded-full text-sm font-bold hover:bg-primary hover:text-white transition-all"
-          >
-            <ArrowLeft className="h-4 w-4" /> Kembali ke Direktori GTK
-          </Link>
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
+        <div className="grid md:grid-cols-3 gap-8 items-start">
+           
+           <div className="md:col-span-2 prose prose-lg max-w-none text-muted-foreground leading-relaxed">
+              <h3 className="text-xl font-bold mb-4 text-foreground">Profil & Biografi</h3>
+              <p className="whitespace-pre-wrap">
+                 {staff.bio || "Berkomitmen penuh untuk mendidik dan membimbing siswa-siswi menuju masa depan yang cerah dengan bekal ilmu dan akhlak mulia."}
+              </p>
+           </div>
+
+           <div className="space-y-6">
+              <div className="bg-muted/30 rounded-3xl p-6 border border-border/50">
+                 <h4 className="font-bold text-lg mb-4 text-foreground">Informasi Akademik</h4>
+                 <ul className="space-y-4">
+                    <li className="flex items-start gap-3">
+                       <div className="h-8 w-8 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center text-primary shrink-0"><BookOpen className="h-4 w-4" /></div>
+                       <div>
+                          <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Mata Pelajaran</p>
+                          <p className="font-semibold text-foreground text-sm mt-0.5">{staff.subject || "Guru Kelas / Umum"}</p>
+                       </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                       <div className="h-8 w-8 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center text-primary shrink-0"><GraduationCap className="h-4 w-4" /></div>
+                       <div>
+                          <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Pendidikan</p>
+                          <p className="font-semibold text-foreground text-sm mt-0.5">{staff.education || "S1 Pendidikan"}</p>
+                       </div>
+                    </li>
+                 </ul>
+              </div>
+           </div>
+           
         </div>
       </article>
     </div>

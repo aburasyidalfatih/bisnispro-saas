@@ -1,0 +1,170 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ConfirmDialog } from "@/components/shared/confirm-dialog"
+import { toast } from "@/hooks/use-toast"
+import { Plus, Edit2, Trash2, FileText, Globe } from "lucide-react"
+import Link from "next/link"
+import { format } from "date-fns"
+
+interface Post {
+  id: string
+  title: string
+  slug: string
+  type: string
+  status: string
+  createdAt: string
+  author: { name: string }
+  category?: { name: string } | null
+}
+
+export default function PostsPage() {
+  const { branding, isLoadingTenant } = useTenantBranding()
+  const [loading, setLoading] = useState(true)
+  const [posts, setPosts] = useState<Post[]>([])
+
+  const tenantId = branding.id
+
+  const loadPosts = () => {
+    if (!tenantId) return
+    setLoading(true)
+    fetch(`/api/tenant/posts?tenantId=${tenantId}`)
+      .then(r => r.json())
+      .then(d => {
+        setPosts(Array.isArray(d) ? d : [])
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    if (!isLoadingTenant && tenantId) {
+      loadPosts()
+    }
+  }, [tenantId, isLoadingTenant])
+
+  const deletePost = async (id: string) => {
+    if (!tenantId) return
+    try {
+      const res = await fetch(`/api/tenant/posts/${id}?tenantId=${tenantId}`, { method: "DELETE" })
+      if (res.ok) {
+        toast({ title: "Artikel dihapus" })
+        loadPosts()
+      } else {
+        const d = await res.json()
+        toast({ title: "Gagal", description: d.error, variant: "destructive" })
+      }
+    } catch {
+      toast({ title: "Gagal menghapus", variant: "destructive" })
+    }
+  }
+
+  if (loading) return <div className="skeleton h-64 rounded-2xl" />
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Artikel & Pos</h1>
+          <p className="text-muted-foreground mt-1">Kelola pos editorial, blog guru, dan pengumuman.</p>
+        </div>
+        <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
+          <Link href="/admin/website/posts/new">
+            <Plus className="h-4 w-4" /> Tulis Pos Baru
+          </Link>
+        </Button>
+      </div>
+
+      <Card className="glass border-0">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Daftar Artikel</CardTitle>
+          <CardDescription className="text-xs">Daftar semua tulisan yang ada di website sekolah.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {posts.length === 0 ? (
+            <div className="py-12 text-center">
+              <FileText className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+              <p className="font-semibold mb-1">Belum ada artikel</p>
+              <p className="text-sm text-muted-foreground mb-4">Mulai tulis artikel pertama Anda untuk website.</p>
+              <Button asChild variant="outline" className="rounded-xl">
+                <Link href="/admin/website/posts/new">Tulis Sekarang</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground bg-muted/30 border-b">
+                  <tr>
+                    <th className="px-4 py-3 font-medium rounded-tl-lg">Judul Artikel</th>
+                    <th className="px-4 py-3 font-medium">Tipe</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
+                    <th className="px-4 py-3 font-medium">Penulis</th>
+                    <th className="px-4 py-3 font-medium">Tanggal</th>
+                    <th className="px-4 py-3 font-medium text-right rounded-tr-lg">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {posts.map(post => (
+                    <tr key={post.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-foreground">{post.title}</div>
+                        <div className="text-[11px] text-muted-foreground font-mono mt-0.5">/{post.slug}</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary">
+                          {post.type.replace('_', ' ')}
+                        </span>
+                        {post.category?.name && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground ml-1">
+                            {post.category.name}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {post.status === "PUBLISHED" ? (
+                          <span className="inline-flex items-center gap-1 text-xs text-emerald-600">
+                            <Globe className="h-3 w-3" /> Publik
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-xs text-amber-600">
+                            <FileText className="h-3 w-3" /> Draft
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">{post.author?.name}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{format(new Date(post.createdAt), 'dd MMM yyyy')}</td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 hover:text-primary">
+                            <Link href={`/admin/website/posts/${post.id}`}>
+                              <Edit2 className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <ConfirmDialog
+                            trigger={
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            }
+                            title="Hapus artikel ini?"
+                            description="Tindakan ini tidak dapat dibatalkan."
+                            confirmText="Ya, hapus"
+                            onConfirm={() => deletePost(post.id)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

@@ -32,103 +32,82 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
   const base = await getPublicBasePath(slug)
 
   return (
-    <div className="bg-background min-h-screen pb-12">
-      <div className="bg-slate-900 pt-24 pb-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Background Accents */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20">
-           <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary rounded-full blur-[120px]" />
-           <div className="absolute top-1/2 -left-24 w-72 h-72 bg-blue-500 rounded-full blur-[100px]" />
-        </div>
-
-        <div className="max-w-5xl mx-auto relative z-10 flex flex-col md:flex-row gap-12 items-center md:items-start">
-           {/* Date Box */}
-           <div className="bg-white rounded-[2rem] p-8 text-center shadow-2xl shrink-0 w-full md:w-64 border-b-8 border-primary transform md:-rotate-2 hover:rotate-0 transition-transform duration-500">
-              <div className="text-primary font-black uppercase tracking-[0.3em] text-sm mb-2">
-                 {format(new Date(event.startDate), "MMMM", { locale: idLocale })}
-              </div>
-              <div className="text-7xl font-black text-slate-900 leading-none mb-2">
-                 {format(new Date(event.startDate), "dd")}
-              </div>
-              <div className="text-slate-500 font-bold">
-                 {format(new Date(event.startDate), "yyyy")}
-              </div>
-              <div className="mt-6 pt-6 border-t border-dashed border-slate-200">
-                 <button className="w-full py-3 bg-primary/10 text-primary rounded-xl font-bold text-sm hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2">
-                    <Calendar className="h-4 w-4" /> Simpan Jadwal
-                 </button>
-              </div>
-           </div>
-
-           {/* Event Details */}
-           <div className="flex-1 text-center md:text-left">
-              <Link 
-                href={`${base}/agenda`}
-                className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 text-sm font-semibold transition-colors"
-              >
-                 <ArrowLeft className="h-4 w-4" /> Kembali ke Agenda
-              </Link>
-              <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-6">
-                 {event.title}
-              </h1>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white text-sm font-medium border border-white/10">
-                    <Clock className="h-4 w-4 text-primary" />
-                    {event.time || format(new Date(event.startDate), "HH:mm")} WIB
-                 </div>
-                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white text-sm font-medium border border-white/10">
-                    <MapPin className="h-4 w-4 text-primary" />
-                    {event.location || "Area Kampus"}
-                 </div>
-              </div>
-           </div>
+    <div className="bg-background min-h-screen pb-16">
+      {/* ── HEADER SECTION ── */}
+      <div className="bg-muted/30 pt-8 pb-12 border-b">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Link 
+            href={`${base}/agenda`}
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
+          >
+             <ArrowLeft className="h-4 w-4" /> Kembali
+          </Link>
+          
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+             <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-1.5">
+               <Calendar className="h-3.5 w-3.5" /> Agenda
+             </div>
+             <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
+                <Clock className="h-4 w-4" />
+                {event.time || format(new Date(event.startDate), "HH:mm")} WIB
+             </div>
+             <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
+                <MapPin className="h-4 w-4" />
+                {event.location || "Area Kampus"}
+             </div>
+          </div>
+          
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight">
+             {event.title}
+          </h1>
         </div>
       </div>
 
-      <article className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 -mt-20 relative z-20 pb-16">
-        <div className="bg-white rounded-[2.5rem] p-8 md:p-16 shadow-2xl border border-border">
-          <div className="grid md:grid-cols-2 gap-8 mb-12 pb-12 border-b border-border/50">
-            <div className="flex items-start gap-4">
-              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <MapPin className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-1">Lokasi Kegiatan</h3>
-                <p className="text-muted-foreground">{event.location || "Area Sekolah"}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-4">
-              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <User className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-1">Contact Person</h3>
-                <p className="text-muted-foreground">{event.contactPerson || "Panitia / Tata Usaha"}</p>
-              </div>
-            </div>
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
+          {/* Date Card */}
+          <div className="bg-muted rounded-3xl p-6 text-center border border-border/50 shadow-sm flex flex-col justify-center">
+             <div className="text-primary font-bold uppercase tracking-widest text-xs mb-1">
+                {format(new Date(event.startDate), "MMMM", { locale: idLocale })}
+             </div>
+             <div className="text-5xl font-black text-foreground leading-none mb-1">
+                {format(new Date(event.startDate), "dd")}
+             </div>
+             <div className="text-muted-foreground font-medium text-sm">
+                {format(new Date(event.startDate), "yyyy")}
+             </div>
           </div>
-
-          <div className="prose prose-lg max-w-none prose-p:text-muted-foreground prose-p:leading-relaxed">
-            <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-               <div className="h-8 w-2 bg-primary rounded-full" />
-               Deskripsi Kegiatan
-            </h3>
-            {event.description ? (
-              <p className="whitespace-pre-wrap text-lg">{event.description}</p>
-            ) : (
-              <p className="italic">Tidak ada deskripsi detail untuk agenda ini.</p>
-            )}
+          
+          {/* Info Cards */}
+          <div className="md:col-span-2 grid sm:grid-cols-2 gap-4">
+            <div className="bg-background rounded-2xl p-5 border border-border/50 flex items-start gap-4 shadow-sm">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Lokasi</p>
+                <p className="text-sm font-medium text-foreground">{event.location || "Area Sekolah"}</p>
+              </div>
+            </div>
+            <div className="bg-background rounded-2xl p-5 border border-border/50 flex items-start gap-4 shadow-sm">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <User className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Kontak</p>
+                <p className="text-sm font-medium text-foreground">{event.contactPerson || "Panitia / Tata Usaha"}</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Back Link */}
-        <div className="mt-12 text-center">
-          <Link
-            href={`${base}/agenda`}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-primary/10 text-primary rounded-full text-sm font-bold hover:bg-primary hover:text-white transition-all"
-          >
-            <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Agenda
-          </Link>
+        <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
+          <h3 className="text-xl font-bold text-foreground mb-4">Deskripsi Kegiatan</h3>
+          {event.description ? (
+            <p className="whitespace-pre-wrap">{event.description}</p>
+          ) : (
+            <p className="italic">Tidak ada deskripsi detail untuk agenda ini.</p>
+          )}
         </div>
       </article>
     </div>
