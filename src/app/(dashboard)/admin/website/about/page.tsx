@@ -26,6 +26,9 @@ export default function WebsiteAboutPage() {
     heroImage: "",
     seoTitle: "",
     seoDesc: "",
+    facebook: "",
+    instagram: "",
+    youtube: "",
     settings: {} as any,
   })
 
@@ -58,6 +61,9 @@ export default function WebsiteAboutPage() {
           seoTitle: d.seoTitle || "",
           seoDesc: d.seoDesc || "",
           settings: d.settings || {},
+          facebook: d.facebook || "",
+          instagram: d.instagram || "",
+          youtube: d.youtube || ""
         })
         setLoading(false)
       })
@@ -258,10 +264,56 @@ export default function WebsiteAboutPage() {
           <CardContent>
             <textarea value={form.about}
               onChange={e => setForm(p => ({ ...p, about: e.target.value }))}
-              placeholder="Ceritakan tentang organisasi Anda, sejarah, visi, dan misi..."
-              rows={8}
+              placeholder="Ceritakan tentang organisasi Anda, sejarah panjang..."
+              rows={6}
               className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
-            <p className="text-xs text-muted-foreground mt-2">Tampil di halaman Tentang Kami website</p>
+            
+            <div className="space-y-1.5 mt-4">
+              <Label>Link Video Profil (YouTube)</Label>
+              <Input value={form.settings?.videoProfil || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, videoProfil: e.target.value } }))} placeholder="https://youtube.com/watch?v=..." className="rounded-xl h-9" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="space-y-1.5">
+                <Label>NPSN</Label>
+                <Input value={form.settings?.npsn || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, npsn: e.target.value } }))} placeholder="Nomor Pokok Sekolah Nasional" className="rounded-xl h-9" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Akreditasi</Label>
+                <Input value={form.settings?.akreditasi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, akreditasi: e.target.value } }))} placeholder="Contoh: A (Sangat Baik)" className="rounded-xl h-9" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+              <div className="space-y-1.5">
+                <Label>Visi</Label>
+                <textarea value={form.settings?.visi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, visi: e.target.value } }))}
+                  placeholder="Visi sekolah..." rows={3}
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Misi</Label>
+                <textarea value={form.settings?.misi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, misi: e.target.value } }))}
+                  placeholder="Gunakan enter untuk memisahkan misi..." rows={4}
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+              </div>
+            </div>
+
+            <div className="space-y-2 mt-4 pt-4 border-t">
+              <Label className="font-semibold text-sm">Sosial Media</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Facebook</Label>
+                <Input value={form.facebook} onChange={e => setForm(p => ({ ...p, facebook: e.target.value }))} placeholder="https://facebook.com/namasekolah" className="rounded-xl h-9 text-sm" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Instagram</Label>
+                <Input value={form.instagram} onChange={e => setForm(p => ({ ...p, instagram: e.target.value }))} placeholder="https://instagram.com/namasekolah" className="rounded-xl h-9 text-sm" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">YouTube</Label>
+                <Input value={form.youtube} onChange={e => setForm(p => ({ ...p, youtube: e.target.value }))} placeholder="https://youtube.com/@namasekolah" className="rounded-xl h-9 text-sm" />
+              </div>
+            </div>
           </CardContent>
         </Card>
 
