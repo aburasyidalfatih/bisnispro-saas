@@ -5,12 +5,15 @@ import { Quote } from "lucide-react"
 interface PrincipalWelcomeProps {
   tenantName: string
   settings?: any
+  staff?: any[]
 }
 
-export function PrincipalWelcome({ tenantName, settings }: PrincipalWelcomeProps) {
-  const principalName = settings?.principalName || "Ir. Sherly Puspita, M.Pd"
-  const principalTitle = settings?.principalTitle || "Kepala Sekolah"
-  const principalImage = settings?.principalImage || "/principal_portrait.png"
+export function PrincipalWelcome({ tenantName, settings, staff = [] }: PrincipalWelcomeProps) {
+  const principalStaff = staff.find((s: any) => s.role && s.role.toLowerCase().includes("kepala sekolah"))
+
+  const principalName = principalStaff?.name || settings?.principalName || "Ir. Sherly Puspita, M.Pd"
+  const principalTitle = principalStaff?.role || settings?.principalTitle || "Kepala Sekolah"
+  const principalImage = principalStaff?.imageUrl || settings?.principalImage || "/principal_portrait.png"
   const principalMessage = settings?.principalMessage || `Puji syukur ke hadirat Tuhan YME atas segala rahmat dan karunia-Nya. Selamat datang di website resmi ${tenantName}. Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara sekolah dengan orang tua, peserta didik, serta masyarakat luas.\n\nMelalui media ini, kami berharap seluruh informasi mengenai kegiatan, prestasi, serta program pendidikan dapat tersampaikan secara transparan, cepat, dan akurat. Kami berkomitmen untuk terus meningkatkan kualitas pendidikan dan mencetak generasi penerus bangsa yang unggul dan berkarakter.`
 
   const paragraphs = principalMessage.split("\n").filter((p: string) => p.trim() !== "")

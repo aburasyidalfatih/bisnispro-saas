@@ -81,8 +81,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       <StatsBar stats={stats} />
 
       {/* ── 3. Sambutan Kepala Sekolah ── */}
-      {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage) && (
-        <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} />
+      {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage || tenant.staff?.some((s: any) => s.role && s.role.toLowerCase().includes("kepala sekolah"))) && (
+        <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
       )}
 
       {/* ── 4. Info Board (Agenda, Pengumuman, Artikel) ── */}
