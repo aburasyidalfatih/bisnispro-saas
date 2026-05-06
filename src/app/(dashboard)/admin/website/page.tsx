@@ -47,6 +47,17 @@ export default function WebsiteOverviewPage() {
   const [slug, setSlug] = useState<string | null>(null)
   const [data, setData] = useState<WebsiteData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [rootDomain, setRootDomain] = useState("schoolpro.id")
+  const [appUrl, setAppUrl] = useState("http://schoolpro.id")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      let host = window.location.host
+      if (host.startsWith("www.")) host = host.replace("www.", "")
+      setRootDomain(host)
+      setAppUrl(`${window.location.protocol}//${host}`)
+    }
+  }, [])
 
   // Resolve tenantId
   useEffect(() => {
@@ -88,8 +99,6 @@ export default function WebsiteOverviewPage() {
   }
 
   const base = "/admin/website"
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000"
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || `http://${rootDomain}`
 
   // Priority: custom domain (verified) → subdomain → fallback /site/[slug]
   const customDomainUrl = data?.customDomain?.status === "verified" && data.domain
