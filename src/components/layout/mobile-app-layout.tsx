@@ -8,13 +8,32 @@ import { cn } from "@/lib/utils"
 export function MobileAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
-  const navItems = [
+  const isSiswa = pathname.startsWith("/siswa")
+  const isGuru = pathname.startsWith("/guru")
+  const baseRoute = isSiswa ? "/siswa" : isGuru ? "/guru" : "/ortu"
+
+  const navItems = isSiswa ? [
+    { label: "Beranda", icon: Home, href: "/siswa" },
+    { label: "Tugas", icon: FileText, href: "/siswa/tugas" },
+    { label: "Nilai", icon: Wallet, href: "/siswa/nilai" },
+    { label: "Profil", icon: User, href: "/siswa/profil" },
+  ] : isGuru ? [
+    { label: "Beranda", icon: Home, href: "/guru" },
+    { label: "Kelas", icon: FileText, href: "/guru/kelas" },
+    { label: "Nilai", icon: Wallet, href: "/guru/nilai" },
+    { label: "Profil", icon: User, href: "/guru/profil" },
+  ] : [
     { label: "Beranda", icon: Home, href: "/ortu" },
     { label: "Akademik", icon: FileText, href: "/ortu/akademik" },
-    // Center floating item handled separately
     { label: "Tagihan", icon: Wallet, href: "/ortu/tagihan" },
     { label: "Profil", icon: User, href: "/ortu/profil" },
   ]
+
+  const floatingAction = {
+    label: "Jadwal",
+    icon: Calendar,
+    href: `${baseRoute}/jadwal`
+  }
 
   return (
     <div className="min-h-screen flex justify-center w-full font-sans bg-muted/20">
@@ -33,7 +52,7 @@ export function MobileAppLayout({ children }: { children: React.ReactNode }) {
             {/* Left Nav Items */}
             <div className="flex w-2/5 justify-between relative z-10">
               {navItems.slice(0, 2).map((item) => {
-                const isActive = pathname === item.href || (item.href !== "/ortu" && pathname.startsWith(item.href))
+                const isActive = pathname === item.href || (item.href !== baseRoute && pathname.startsWith(item.href))
                 return (
                   <Link href={item.href} key={item.label} className="flex flex-col items-center justify-center p-2 gap-1 w-16">
                     <item.icon className={cn("h-6 w-6 transition-all duration-300", isActive ? "text-primary scale-110" : "text-muted-foreground")} />
@@ -47,12 +66,12 @@ export function MobileAppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Floating Action Button (Jadwal) */}
             <div className="absolute left-1/2 -top-8 -translate-x-1/2 flex flex-col items-center justify-center z-20">
-              <Link href="/ortu/jadwal" className="flex flex-col items-center group">
+              <Link href={floatingAction.href} className="flex flex-col items-center group">
                 <div className="h-16 w-16 rounded-full btn-gradient text-white flex items-center justify-center shadow-lg shadow-primary/40 ring-[6px] ring-background group-hover:scale-105 transition-transform mb-1">
-                  <Calendar className="h-7 w-7" />
+                  <floatingAction.icon className="h-7 w-7" />
                 </div>
                 <span className={cn("text-[10px] font-medium text-muted-foreground absolute -bottom-5", pathname.includes("/jadwal") && "text-primary font-bold")}>
-                  Jadwal
+                  {floatingAction.label}
                 </span>
               </Link>
             </div>
@@ -60,7 +79,7 @@ export function MobileAppLayout({ children }: { children: React.ReactNode }) {
             {/* Right Nav Items */}
             <div className="flex w-2/5 justify-between relative z-10">
               {navItems.slice(2, 4).map((item) => {
-                const isActive = pathname === item.href || (item.href !== "/ortu" && pathname.startsWith(item.href))
+                const isActive = pathname === item.href || (item.href !== baseRoute && pathname.startsWith(item.href))
                 return (
                   <Link href={item.href} key={item.label} className="flex flex-col items-center justify-center p-2 gap-1 w-16">
                     <item.icon className={cn("h-6 w-6 transition-all duration-300", isActive ? "text-primary scale-110" : "text-muted-foreground")} />

@@ -19,7 +19,6 @@ const chartData = [
   { bulan: "Jun", pengguna: 0, pendapatan: 0 },
 ]
 
-import { ParentDashboard } from "./_components/parent-dashboard"
 
 export default function DashboardPage() {
   const { data: session } = useSession()
