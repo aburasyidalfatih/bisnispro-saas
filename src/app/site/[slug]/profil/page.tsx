@@ -38,7 +38,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
              <div className="absolute bottom-8 left-8 text-white">
                 <p className="text-4xl font-black mb-1">Sejak</p>
-                <p className="text-xl font-bold opacity-80">2010 — Berdedikasi</p>
+                <p className="text-xl font-bold opacity-80">{new Date(tenant.createdAt).getFullYear()} — Berdedikasi</p>
              </div>
           </div>
           <div className="space-y-6">
@@ -46,22 +46,8 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                Sekapur Sirih
             </div>
             <h2 className="text-3xl font-extrabold text-foreground">Visi, Misi & Sejarah</h2>
-            <div className="prose prose-slate leading-relaxed text-muted-foreground">
-               <p>{tenant.about || "Sekolah kami didirikan dengan satu tujuan: membentuk karakter unggul dan kecakapan akademik di era modern. Kami percaya setiap siswa memiliki potensi unik yang harus diasah dengan penuh kasih sayang dan dedikasi."}</p>
-            </div>
-            <div className="grid grid-cols-2 gap-4 pt-4">
-               <div className="p-4 rounded-2xl bg-muted/40 border border-border/50">
-                  <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                     <CheckCircle className="h-4 w-4 text-primary" /> Visi Kami
-                  </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed">Menjadi lembaga pendidikan pilihan utama dengan standar global.</p>
-               </div>
-               <div className="p-4 rounded-2xl bg-muted/40 border border-border/50">
-                  <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                     <CheckCircle className="h-4 w-4 text-primary" /> Misi Kami
-                  </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed">Mendidik siswa dengan integritas, inovasi, dan kearifan lokal.</p>
-               </div>
+             <div className="prose prose-slate leading-relaxed text-muted-foreground">
+               <p>{tenant.about || "Belum ada informasi profil sejarah sekolah."}</p>
             </div>
           </div>
         </div>
