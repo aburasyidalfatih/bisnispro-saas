@@ -14,7 +14,7 @@ export function ParentDashboard() {
     { label: "Kehadiran", icon: ClipboardList, color: "bg-emerald-500/10 text-emerald-600", href: "#" },
     { label: "Jadwal", icon: Calendar, color: "bg-purple-500/10 text-purple-600", href: "#" },
     { label: "Pesan Guru", icon: MessageSquare, color: "bg-cyan-500/10 text-cyan-600", href: "#" },
-    { label: "PPDB", icon: Users, color: "bg-amber-500/10 text-amber-600", href: "/portal-ppdb" },
+    { label: "PPDB", icon: Users, color: "bg-amber-500/10 text-amber-600", href: "/dashboard/ppdb/portal" },
     { label: "Ekstrakurikuler", icon: Activity, color: "bg-pink-500/10 text-pink-600", href: "#" },
     { label: "Prestasi", icon: Award, color: "bg-indigo-500/10 text-indigo-600", href: "#" },
   ]
@@ -61,7 +61,7 @@ export function ParentDashboard() {
                  <h3 className="text-lg font-bold mb-1 drop-shadow-sm">Portal PPDB</h3>
                  <p className="text-xs opacity-90 max-w-[180px] leading-relaxed">Daftarkan putra/putri Anda ke sekolah kami dengan mudah secara online.</p>
               </div>
-              <a href="/portal-ppdb" className="bg-white text-primary px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:scale-105 transition-transform flex items-center gap-1.5 shrink-0">
+              <a href="/dashboard/ppdb/portal" className="bg-white text-primary px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:scale-105 transition-transform flex items-center gap-1.5 shrink-0">
                  Daftar <ArrowRight className="h-3.5 w-3.5" />
               </a>
            </div>
