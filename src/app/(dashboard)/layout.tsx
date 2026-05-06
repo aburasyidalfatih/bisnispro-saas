@@ -17,6 +17,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  // Determine if the user is a normal member (orangtua/siswa) instead of admin
+  const currentTenantSlug = session?.user?.tenants?.[0]?.slug
+  const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
+  const currentRole = currentTenant?.role || "member"
+  
+  const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
+  const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
+  const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
+
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
     if (status === "authenticated") {
@@ -26,9 +35,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       } else if (session?.user?.isAffiliate && (!session.user.tenants || session.user.tenants.length === 0)) {
         router.push("/affiliate")
       } else {
-        // Redirect free tenants from the root dashboard to the website dashboard
-        const plan = (session?.user as any)?.tenants?.[0]?.plan || "free"
-        if (plan === "free") {
+        // Redirect free tenants from the root dashboard to the website dashboard (ONLY FOR ADMINS)
+        const plan = currentTenant?.plan || "free"
+        if (plan === "free" && isAdminRole) {
           const allowedPaths = [
             "/dashboard/website",
             "/dashboard/users",
@@ -44,7 +53,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         }
       }
     }
-  }, [status, session, router, pathname])
+  }, [status, session, router, pathname, currentTenant, isAdminRole])
 
   if (status === "loading") {
     return (
@@ -55,15 +64,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   if (!session) return null
-
-  // Determine if the user is a normal member (orangtua/siswa) instead of admin
-  const currentTenantSlug = session?.user?.tenants?.[0]?.slug
-  const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
-  const currentRole = currentTenant?.role || "member"
-  
-  const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
-  const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
-  const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
 
   return (
     <TenantBrandingProvider>
