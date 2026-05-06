@@ -39,7 +39,7 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
   const displayed = achievements.slice(0, 6)
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-b from-secondary/5 to-background relative overflow-hidden">
+    <section className="py-16 md:py-20 bg-primary/5 relative overflow-hidden">
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-amber-400/3 blur-3xl pointer-events-none" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">

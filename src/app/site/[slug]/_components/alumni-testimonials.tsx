@@ -58,7 +58,7 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
   const person = withTestimonials[current]
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-b from-secondary/10 to-background relative overflow-hidden">
+    <section className="py-16 md:py-20 bg-primary/5 relative overflow-hidden">
       {/* Decorative */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-primary/3 blur-3xl pointer-events-none" />
 
