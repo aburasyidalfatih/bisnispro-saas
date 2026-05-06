@@ -75,12 +75,18 @@ export async function createStaff(tenantId: string, data: any) {
       tenantId,
     }
   })
+
+  // Auto-sync: jika role Kepala Sekolah, sinkronkan foto & nama ke tenant.settings
+  if (parsed.role && parsed.role.toLowerCase().includes("kepala sekolah")) {
+    await syncPrincipalToSettings(tenantId, parsed.name, parsed.imageUrl || null)
+  }
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}/gtk`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page")
     revalidatePath("/gtk", "page")
     revalidatePath("/", "layout")
   }
@@ -137,12 +143,18 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
       userId,
     }
   })
+
+  // Auto-sync: jika role Kepala Sekolah, sinkronkan foto & nama ke tenant.settings
+  if (parsed.role && parsed.role.toLowerCase().includes("kepala sekolah")) {
+    await syncPrincipalToSettings(tenantId, parsed.name, parsed.imageUrl || null)
+  }
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}/gtk`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page")
     revalidatePath("/gtk", "page")
     revalidatePath("/", "layout")
   }
@@ -152,16 +164,35 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
 
 export async function deleteStaff(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
+
+  // Ambil data staff sebelum dihapus untuk cek role
+  const staffToDelete = await db.staff.findUnique({ where: { id, tenantId }, select: { role: true } })
   
   await db.staff.delete({
     where: { id, tenantId }
   })
+
+  // Jika yang dihapus adalah Kepala Sekolah, bersihkan data di settings
+  if (staffToDelete?.role && staffToDelete.role.toLowerCase().includes("kepala sekolah")) {
+    try {
+      const tenantData = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })
+      const currentSettings = (tenantData?.settings as Record<string, any>) || {}
+      const { principalImage, principalName, ...restSettings } = currentSettings
+      await db.tenant.update({
+        where: { id: tenantId },
+        data: { settings: restSettings },
+      })
+    } catch (error) {
+      console.error("[deleteStaff] Gagal clear principal settings:", error)
+    }
+  }
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}/gtk`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page")
     revalidatePath("/gtk", "page")
     revalidatePath("/", "layout")
   }
@@ -169,3 +200,30 @@ export async function deleteStaff(id: string, tenantId: string) {
   revalidatePath("/(dashboard)/dashboard/website/gtk", "page")
 }
 
+/**
+ * Helper: Sinkronkan data Kepala Sekolah dari Staff ke tenant.settings
+ * Memastikan foto & nama kepsek konsisten antara halaman /gtk dan homepage
+ */
+async function syncPrincipalToSettings(tenantId: string, name: string, imageUrl: string | null) {
+  try {
+    const tenant = await db.tenant.findUnique({
+      where: { id: tenantId },
+      select: { settings: true },
+    })
+
+    const currentSettings = (tenant?.settings as Record<string, any>) || {}
+    const updatedSettings = {
+      ...currentSettings,
+      principalName: name,
+      ...(imageUrl ? { principalImage: imageUrl } : {}),
+    }
+
+    await db.tenant.update({
+      where: { id: tenantId },
+      data: { settings: updatedSettings },
+    })
+  } catch (error) {
+    // Non-critical: log tapi jangan gagalkan operasi utama
+    console.error("[syncPrincipalToSettings] Gagal sync:", error)
+  }
+}
