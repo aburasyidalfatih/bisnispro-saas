@@ -86,7 +86,7 @@ export default function WebsiteAboutPage() {
     })
     setSaving(false)
     if (res.ok) {
-      toast({ title: "Disimpan", description: "Profil & tentang kami berhasil diperbarui." })
+      toast({ title: "Disimpan", description: "Profil lembaga berhasil diperbarui." })
     } else {
       const d = await res.json().catch(() => ({}))
       toast({ title: "Gagal", description: d.error || "Terjadi kesalahan.", variant: "destructive" })
@@ -150,7 +150,7 @@ export default function WebsiteAboutPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Profil & Tentang Kami</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Profil Lembaga</h1>
           <p className="text-muted-foreground mt-1">Kelola identitas, konten beranda, dan cerita organisasi Anda.</p>
         </div>
         <div className="flex items-center gap-2">
