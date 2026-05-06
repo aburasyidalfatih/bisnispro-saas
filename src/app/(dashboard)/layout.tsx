@@ -10,12 +10,14 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { TenantBrandingProvider } from "@/components/providers/tenant-branding-provider"
 import { MobileAppLayout } from "@/components/layout/mobile-app-layout"
+import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { access: freeAccess } = useFreePlanAccess()
 
   // Determine if the user is a normal member (orangtua/siswa) instead of admin
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
@@ -45,6 +47,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             "/admin/billing"
           ]
           
+          if (freeAccess.enable_ppdb) allowedPaths.push("/admin/ppdb")
+          if (freeAccess.enable_finance) allowedPaths.push("/admin/finance", "/admin/canteen")
+          if (freeAccess.enable_analytics) allowedPaths.push("/admin/reports")
+
           const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(`${p}/`))
           
           if (pathname === "/admin" || !isAllowed) {
@@ -53,7 +59,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         }
       }
     }
-  }, [status, session, router, pathname, currentTenant, isAdminRole])
+  }, [status, session, router, pathname, currentTenant, isAdminRole, freeAccess])
 
   if (status === "loading") {
     return (
