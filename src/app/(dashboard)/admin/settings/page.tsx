@@ -164,19 +164,12 @@ export default function SettingsGeneralPage() {
   const [savingPassword, setSavingPassword] = useState(false)
   const [showPw, setShowPw] = useState({ current: false, newPass: false, confirm: false })
 
-  // Org
+  // Integrations
   const [orgForm, setOrgForm] = useState({ 
-    name: "", logo: "", 
     googleClientId: "", googleClientSecret: ""
   })
   const [rawSettings, setRawSettings] = useState<any>({})
   const [savingOrg, setSavingOrg] = useState(false)
-  const [logoPreview, setLogoPreview] = useState("")
-  const [uploadingLogo, setUploadingLogo] = useState(false)
-  const logoInputRef = useRef<HTMLInputElement>(null)
-
-  // Domain
-  const [domainStatus, setDomainStatus] = useState<{ domain: string | null; status: string | null }>({ domain: null, status: null })
 
   // Notif
   const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>({ inapp: true, email: true, whatsapp: false })
@@ -204,17 +197,11 @@ export default function SettingsGeneralPage() {
     fetch(`/api/tenant/website?tenantId=${tenantId}`).then(r => r.json()).then(d => {
       const s = d.settings || {}
       setOrgForm({ 
-        name: d.name || "", 
-        logo: d.logo || "",
         googleClientId: d.googleClientId || "",
         googleClientSecret: d.googleClientSecret || ""
       })
       setRawSettings(s)
-      setLogoPreview(d.logo || "")
     })
-    fetch(`/api/tenant/domain?tenantId=${tenantId}`).then(r => r.json()).then(d => {
-      setDomainStatus({ domain: d.domain || null, status: d.customDomain?.status || null })
-    }).catch(() => {})
   }, [tenantId])
 
   useEffect(() => {
@@ -285,15 +272,12 @@ export default function SettingsGeneralPage() {
       method: "PUT", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
         tenantId, 
-        name: orgForm.name, 
-        logo: orgForm.logo || null,
         googleClientId: orgForm.googleClientId || null,
         googleClientSecret: orgForm.googleClientSecret || null
       }),
     })
     setSavingOrg(false)
     if (res.ok) {
-      updateBranding({ name: orgForm.name, logo: orgForm.logo || null })
       await updateSession({ forceRefresh: true })
       router.refresh()
       toast({ title: "Organisasi disimpan" })
@@ -301,20 +285,6 @@ export default function SettingsGeneralPage() {
       const d = await res.json().catch(() => ({}))
       toast({ title: "Gagal", description: d.error, variant: "destructive" })
     }
-  }
-
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !tenantId) return
-    setUploadingLogo(true)
-    try {
-      const fd = new FormData()
-      fd.append("file", file); fd.append("tenantId", tenantId); fd.append("subDir", "logos")
-      const res = await fetch("/api/upload", { method: "POST", body: fd })
-      const d = await res.json()
-      if (res.ok && d.url) { setOrgForm(p => ({ ...p, logo: d.url })); setLogoPreview(d.url); toast({ title: "Logo diunggah", description: "Klik Simpan Organisasi untuk menyimpan." }) }
-      else toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
-    } finally { setUploadingLogo(false); e.target.value = "" }
   }
 
   const toggleNotif = async (channel: string) => {
@@ -455,80 +425,17 @@ export default function SettingsGeneralPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-                <Building2 className="h-4 w-4 text-primary" />
+                <KeyRound className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-lg">Organisasi</CardTitle>
-                <CardDescription>Pengaturan tenant Anda</CardDescription>
+                <CardTitle className="text-lg">Integrasi & Autentikasi</CardTitle>
+                <CardDescription>Pengaturan OAuth untuk tenant</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            {/* Logo */}
-            <div className="space-y-1.5">
-              <Label className="text-xs">Logo Organisasi</Label>
-              <div className="flex items-center gap-3">
-                <div className="relative h-14 w-14 shrink-0">
-                  {logoPreview ? (
-                    <div className="relative h-14 w-14 rounded-xl overflow-hidden border">
-                      <img src={logoPreview} alt="Logo" className="h-full w-full object-contain" />
-                      <button onClick={() => { setLogoPreview(""); setOrgForm(p => ({ ...p, logo: "" })) }}
-                        className="absolute top-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-white">
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl border-2 border-dashed bg-muted/30">
-                      <Building2 className="h-5 w-5 text-muted-foreground/40" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 space-y-1">
-                  <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml" className="hidden" onChange={handleLogoUpload} />
-                  <Button type="button" variant="outline" size="sm" className="rounded-xl gap-2 w-full h-9" onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo}>
-                    {uploadingLogo ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary border-t-transparent" /> : <Upload className="h-3.5 w-3.5" />}
-                    {uploadingLogo ? "Mengunggah..." : "Upload Logo"}
-                  </Button>
-                  <p className="text-[11px] text-muted-foreground">PNG, JPG, WebP, SVG. Maks 5MB.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs">Nama Organisasi</Label>
-              <Input value={orgForm.name} onChange={e => setOrgForm(p => ({ ...p, name: e.target.value }))} placeholder="Nama organisasi" className="rounded-xl h-9 text-sm" />
-            </div>
-
-            {/* Domain shortcut */}
-            <div className="space-y-1.5">
-              <Label className="text-xs">Domain Website</Label>
-              <button onClick={() => router.push("/admin/settings/domain")}
-                className="flex w-full items-center justify-between rounded-xl border bg-muted/30 px-3 py-2.5 text-left transition-colors hover:bg-muted/60">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                    {domainStatus.domain ? (
-                      <>
-                        <p className="text-sm font-mono font-medium">{domainStatus.domain}</p>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          {domainStatus.status === "verified"
-                            ? <ShieldCheck className="h-3 w-3 text-emerald-500" />
-                            : <ShieldOff className="h-3 w-3 text-amber-500" />}
-                          <span className={cn("text-xs", domainStatus.status === "verified" ? "text-emerald-600" : "text-amber-600")}>
-                            {domainStatus.status === "verified" ? "Terverifikasi" : "Belum diverifikasi"}
-                          </span>
-                        </div>
-                      </>
-                    ) : <p className="text-sm text-muted-foreground">Belum ada custom domain</p>}
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </button>
-              <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{session?.user?.tenants?.[0]?.slug || "—"}</span></p>
-            </div>
-
             {/* Google OAuth Tenant */}
-            <div className="space-y-2 mt-4 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
+            <div className="space-y-2 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
               <div className="flex items-center gap-2 mb-2">
                 <Globe className="h-4 w-4 text-red-500" />
                 <Label className="font-semibold text-red-600">Google Login (OAuth 2.0)</Label>
