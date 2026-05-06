@@ -75,7 +75,7 @@ export default function PpdbRegisterPage() {
 
       if (result.success) {
         toast({ title: "Berhasil!", description: "Pendaftaran awal berhasil disimpan." })
-        router.push(`/dashboard/ppdb/portal/status/${result.data?.pendaftar.id}`)
+        router.push(`/ortu/ppdb/status/${result.data?.pendaftar.id}`)
       } else {
         toast({ title: "Gagal", description: result.error, variant: "destructive" })
       }

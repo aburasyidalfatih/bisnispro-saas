@@ -157,7 +157,7 @@ export default function TenantsPage() {
       body: JSON.stringify({ tenantId }),
     })
     if (res.ok) {
-      window.location.href = "/dashboard"
+      window.location.href = "/admin"
     } else {
       const data = await res.json()
       toast({ title: "Gagal", description: data.error || "Tidak dapat login sebagai tenant.", variant: "destructive" })

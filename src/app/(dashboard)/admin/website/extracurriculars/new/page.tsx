@@ -1,0 +1,240 @@
+"use client"
+
+import { useState, useRef } from "react"
+import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "@/hooks/use-toast"
+import { ArrowLeft, Save, ImageIcon, Trophy } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { createExtracurricular } from "@/lib/actions/extracurricular"
+
+export default function NewExtracurricularPage() {
+  const router = useRouter()
+  const { branding } = useTenantBranding()
+  const tenantId = branding.id
+  
+  const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [file, setFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    schedule: "",
+    contactPerson: "",
+    registrationUrl: ""
+  })
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selected = e.target.files[0]
+      if (selected.size > 5 * 1024 * 1024) {
+        toast({ title: "File terlalu besar", description: "Maksimal 5MB", variant: "destructive" })
+        return
+      }
+      setFile(selected)
+      setPreviewUrl(URL.createObjectURL(selected))
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!tenantId || !formData.name) {
+      toast({ title: "Nama ekskul harus diisi", variant: "destructive" })
+      return
+    }
+
+    setSaving(true)
+
+    try {
+      let imageUrl = null
+      
+      if (file) {
+        setUploading(true)
+        const fd = new FormData()
+        fd.append("file", file)
+        fd.append("tenantId", tenantId)
+        fd.append("subDir", "extracurricular")
+        
+        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+        const uploadData = await uploadRes.json()
+        
+        if (!uploadRes.ok || !uploadData.url) {
+          throw new Error(uploadData.error || "Gagal mengunggah gambar")
+        }
+        
+        imageUrl = uploadData.url
+        setUploading(false)
+      }
+      
+      await createExtracurricular(tenantId, {
+        name: formData.name,
+        description: formData.description,
+        schedule: formData.schedule,
+        imageUrl: imageUrl,
+        contactPerson: formData.contactPerson,
+        registrationUrl: formData.registrationUrl
+      })
+
+      toast({ title: "Ekstrakurikuler berhasil disimpan!" })
+      router.push("/admin/website/extracurriculars")
+    } catch (error: any) {
+      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      setUploading(false)
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="space-y-6 max-w-[1200px] mx-auto pb-10">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Link href="/admin/website/extracurriculars">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Tambah Ekstrakurikuler</h1>
+            <p className="text-muted-foreground mt-1 text-sm">Tambahkan kegiatan baru untuk siswa.</p>
+          </div>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-3 items-start">
+        {/* Kolom Kiri: Konten Utama */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="glass border-0 overflow-hidden shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
+              <CardTitle className="text-base">Detail Kegiatan</CardTitle>
+              <CardDescription className="text-xs">Lengkapi informasi mengenai kegiatan ekskul.</CardDescription>
+            </CardHeader>
+          <CardContent className="space-y-4">
+            
+            <div className="space-y-2">
+              <Label>Foto/Logo Ekskul</Label>
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                className={`cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 transition-colors overflow-hidden relative ${file ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-primary/5'}`}
+              >
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileChange} 
+                  className="hidden" 
+                  accept="image/jpeg,image/png,image/webp"
+                />
+                
+                {previewUrl ? (
+                  <div className="relative w-full aspect-video rounded-lg overflow-hidden flex items-center justify-center bg-black/5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-center">
+                      <p className="text-white text-sm font-medium">Klik untuk mengubah foto</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <Trophy className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                    <p className="text-sm font-medium">Klik untuk memilih foto/logo</p>
+                    <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP (Max 5MB)</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="name">Nama Ekstrakurikuler <span className="text-destructive">*</span></Label>
+                <Input 
+                  id="name" 
+                  required 
+                  value={formData.name} 
+                  onChange={e => setFormData({...formData, name: e.target.value})} 
+                  placeholder="Misal: Pramuka, OSIS, Futsal, dsb." 
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="schedule">Jadwal Latihan / Pertemuan</Label>
+                <Input 
+                  id="schedule" 
+                  value={formData.schedule} 
+                  onChange={e => setFormData({...formData, schedule: e.target.value})} 
+                  placeholder="Contoh: Setiap Sabtu, 08.00 - 10.00 WIB" 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contactPerson">Kontak Pembina (Cth: Bpk Budi / 081...)</Label>
+                <Input 
+                  id="contactPerson" 
+                  value={formData.contactPerson} 
+                  onChange={e => setFormData({...formData, contactPerson: e.target.value})} 
+                  placeholder="Opsional" 
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="registrationUrl">Link Pendaftaran (Opsional)</Label>
+                <Input 
+                  id="registrationUrl" 
+                  value={formData.registrationUrl} 
+                  onChange={e => setFormData({...formData, registrationUrl: e.target.value})} 
+                  placeholder="Cth: https://forms.gle/..." 
+                  className="rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Deskripsi Kegiatan</Label>
+              <Textarea 
+                id="description" 
+                value={formData.description} 
+                onChange={e => setFormData({...formData, description: e.target.value})} 
+                placeholder="Penjelasan detail mengenai visi, misi, atau materi ekskul..."
+                className="rounded-xl resize-none h-24"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+        {/* Kolom Kanan: Pengaturan */}
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="glass border-0 overflow-hidden shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
+              <CardTitle className="text-base">Aksi</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-6">
+              <Button type="submit" className="w-full gap-2 btn-gradient text-white border-0 rounded-xl" disabled={saving || !formData.name}>
+                {saving ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                  </>
+                ) : (
+                  <><Save className="h-4 w-4" /> Simpan Ekskul</>
+                )}
+              </Button>
+              <Button type="button" variant="ghost" className="w-full rounded-xl" onClick={() => router.back()} disabled={saving}>
+                Batal
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </form>
+    </div>
+  )
+}

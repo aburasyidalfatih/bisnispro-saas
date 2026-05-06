@@ -131,7 +131,7 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
       return
     }
     toast({ title: "Berkas selesai!", description: "Semua berkas sudah diunggah. Menunggu verifikasi panitia." })
-    router.push(`/dashboard/ppdb/portal/status/${id}`)
+    router.push(`/ortu/ppdb/status/${id}`)
   }
 
   const uploadedCount = requirements.filter(r => getUploaded(r.id)).length
@@ -159,7 +159,7 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
       {/* Top Header Mobile Style */}
       <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
         <div className="flex items-center gap-3 text-primary-foreground mb-4">
-          <Link href={`/dashboard/ppdb/portal/status/${id}`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+          <Link href={`/ortu/ppdb/status/${id}`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
              <ArrowLeft className="h-4 w-4" />
           </Link>
           <h1 className="font-bold text-lg">Upload Berkas</h1>
@@ -204,7 +204,7 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
             <p className="text-sm text-muted-foreground/70 mt-1">
               Admin belum mengatur persyaratan untuk gelombang ini.
             </p>
-            <Button className="mt-6 rounded-xl" variant="outline" onClick={() => router.push(`/dashboard/ppdb/portal/status/${id}`)}>
+            <Button className="mt-6 rounded-xl" variant="outline" onClick={() => router.push(`/ortu/ppdb/status/${id}`)}>
               Kembali ke Status
             </Button>
           </CardContent>

@@ -491,7 +491,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
       .catch(console.error)
   }, [])
 
-  const basePath = "/dashboard"
+  const basePath = "/admin"
   const isSuperAdminPath = pathname.startsWith("/super-admin")
 
   // Fetch pending payments count for super admin badge

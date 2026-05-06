@@ -81,7 +81,7 @@ export function ParentProfile() {
       {/* Top Header */}
       <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
         <div className="flex items-center gap-3 text-primary-foreground mb-6">
-          <button onClick={() => router.push("/dashboard")} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+          <button onClick={() => router.push("/ortu")} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
              <ArrowLeft className="h-4 w-4" />
           </button>
           <h1 className="font-bold text-lg">Profil Orang Tua</h1>

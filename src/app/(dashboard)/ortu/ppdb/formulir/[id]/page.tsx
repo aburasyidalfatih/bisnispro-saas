@@ -129,7 +129,7 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
 
       if (res.ok) {
         toast({ title: "Formulir Tersimpan!", description: "Data Anda berhasil disimpan. Lanjutkan ke tahap upload berkas." })
-        router.push(`/dashboard/ppdb/portal/status/${id}`)
+        router.push(`/ortu/ppdb/status/${id}`)
       } else {
         toast({ title: "Gagal", description: "Terjadi kesalahan saat menyimpan.", variant: "destructive" })
       }
@@ -151,7 +151,7 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
       {/* Top Header Mobile Style */}
       <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
         <div className="flex items-center gap-3 text-primary-foreground mb-4">
-          <Link href={`/dashboard/ppdb/portal/status/${id}`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+          <Link href={`/ortu/ppdb/status/${id}`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
              <ArrowLeft className="h-4 w-4" />
           </Link>
           <h1 className="font-bold text-lg">Formulir Pendaftaran</h1>
@@ -411,7 +411,7 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
         <Button
           variant="outline"
           className="rounded-xl px-6"
-          onClick={() => currentStep > 1 ? setCurrentStep(s => s - 1) : router.push(`/dashboard/ppdb/portal/status/${id}`)}
+          onClick={() => currentStep > 1 ? setCurrentStep(s => s - 1) : router.push(`/ortu/ppdb/status/${id}`)}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           {currentStep === 1 ? "Batal" : "Kembali"}

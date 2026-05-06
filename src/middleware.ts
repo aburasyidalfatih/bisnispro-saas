@@ -99,7 +99,7 @@ export default async function middleware(request: NextRequest) {
   if (isMainDomain) {
     // Cek Affiliate Shortlink (contoh: /bdi123, /ref-abc, /mitra123)
     // Hindari rute sistem yang valid
-    const systemRoutes = ["/dashboard", "/super-admin", "/affiliate", "/login", "/register", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi"]
+    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi"]
     const isSystemRoute = systemRoutes.some(r => pathname.startsWith(r))
     
     // Tangkap path apa saja yang bukan system route dan panjangnya antara 5-15 karakter alfanumerik (atau hyphen)
@@ -111,7 +111,7 @@ export default async function middleware(request: NextRequest) {
       return res
     }
 
-    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu")
+    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
     if (isProtected && !session) {
@@ -119,17 +119,17 @@ export default async function middleware(request: NextRequest) {
     }
 
     if (pathname.startsWith("/super-admin") && session && !session.user?.isSuperAdmin) {
-      const fallback = session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0) ? "/affiliate" : "/dashboard"
+      const fallback = session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0) ? "/affiliate" : "/admin"
       return addSecurityHeaders(NextResponse.redirect(new URL(fallback, request.url)))
     }
 
     if (pathname.startsWith("/affiliate") && session && !session.user?.isAffiliate) {
-      return addSecurityHeaders(NextResponse.redirect(new URL(session.user?.isSuperAdmin ? "/super-admin" : "/dashboard", request.url)))
+      return addSecurityHeaders(NextResponse.redirect(new URL(session.user?.isSuperAdmin ? "/super-admin" : "/admin", request.url)))
     }
 
     console.log("Middleware Check:", { path: pathname, isAffiliate: session?.user?.isAffiliate })
 
-    if (pathname.startsWith("/dashboard") && session && session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0)) {
+    if (pathname.startsWith("/admin") && session && session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0)) {
       return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
     }
 
@@ -139,7 +139,7 @@ export default async function middleware(request: NextRequest) {
       } else if (session.user?.isAffiliate) {
         return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
       } else {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/dashboard", request.url)))
+        return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
       }
     }
 
@@ -152,7 +152,7 @@ export default async function middleware(request: NextRequest) {
   if (isSubdomain) {
     // Jangan rewrite rute Dashboard/Login di subdomain
     if (
-      pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/admin") ||
       pathname.startsWith("/ortu") ||
       pathname.startsWith("/login") ||
       pathname.startsWith("/register") ||
@@ -185,7 +185,7 @@ export default async function middleware(request: NextRequest) {
     if (!slug) return addSecurityHeaders(NextResponse.rewrite(new URL("/not-found", request.url)))
 
     if (
-      pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/admin") ||
       pathname.startsWith("/ortu") ||
       pathname.startsWith("/login") ||
       pathname.startsWith("/register") ||

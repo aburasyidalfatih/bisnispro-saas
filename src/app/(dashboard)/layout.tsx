@@ -39,16 +39,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         const plan = currentTenant?.plan || "free"
         if (plan === "free" && isAdminRole) {
           const allowedPaths = [
-            "/dashboard/website",
-            "/dashboard/users",
-            "/dashboard/settings",
-            "/dashboard/billing"
+            "/admin/website",
+            "/admin/users",
+            "/admin/settings",
+            "/admin/billing"
           ]
           
           const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(`${p}/`))
           
-          if (pathname === "/dashboard" || !isAllowed) {
-            router.replace("/dashboard/website")
+          if (pathname === "/admin" || !isAllowed) {
+            router.replace("/admin/website")
           }
         }
       }

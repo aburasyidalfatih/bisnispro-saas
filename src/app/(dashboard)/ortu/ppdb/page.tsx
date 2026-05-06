@@ -33,7 +33,7 @@ export default function PpdbPortalPage() {
       <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
         <div className="flex items-center justify-between text-primary-foreground mb-4">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+            <Link href="/ortu" className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
                <ArrowLeft className="h-4 w-4" />
             </Link>
             <h1 className="font-bold text-lg">Portal PPDB</h1>
@@ -43,7 +43,7 @@ export default function PpdbPortalPage() {
       </div>
 
       <div className="-mt-14 relative z-10 px-5 space-y-5">
-        <Link href="/dashboard/ppdb/portal/daftar" className="block w-full">
+        <Link href="/ortu/ppdb/daftar" className="block w-full">
           <Button className="w-full rounded-xl btn-gradient text-white shadow-lg shadow-primary/20 border-0 h-12 text-sm font-bold flex items-center justify-center gap-2">
             <UserPlus className="h-4 w-4" /> Mulai Pendaftaran Baru
           </Button>
@@ -75,7 +75,7 @@ export default function PpdbPortalPage() {
                           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status Saat Ini:</span>
                           <span className="text-xs font-bold text-primary">{workflow.label}</span>
                        </div>
-                       <Link href={`/dashboard/ppdb/portal/status/${reg.id}`} className="w-full md:w-auto">
+                       <Link href={`/ortu/ppdb/status/${reg.id}`} className="w-full md:w-auto">
                           <Button className="rounded-xl btn-gradient text-white shadow-lg shadow-primary/20 border-0 font-bold w-full h-11">
                             Lanjutkan Proses <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
@@ -131,7 +131,7 @@ export default function PpdbPortalPage() {
                 </div>
                 <h3 className="text-lg font-bold">Belum Ada Pendaftaran</h3>
                 <p className="text-muted-foreground text-sm max-w-sm mt-2 mb-8">Anda belum memiliki riwayat pendaftaran siswa baru. Silakan klik tombol di bawah untuk mulai mendaftar.</p>
-                <Link href="/dashboard/ppdb/portal/daftar">
+                <Link href="/ortu/ppdb/daftar">
                    <Button className="rounded-xl btn-gradient text-white shadow-xl border-0 h-12 px-8">
                      Mulai Daftar Sekarang
                    </Button>

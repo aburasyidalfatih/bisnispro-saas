@@ -62,7 +62,7 @@ export default function PpdbPaymentPage({ params }: { params: Promise<{ id: stri
 
       if (res.success) {
         toast({ title: "Berhasil!", description: "Konfirmasi pembayaran telah dikirim." })
-        router.push(`/dashboard/ppdb/portal/status/${tagihan.pendaftarId}`)
+        router.push(`/ortu/ppdb/status/${tagihan.pendaftarId}`)
       }
     } catch (error) {
       console.error(error)
@@ -78,7 +78,7 @@ export default function PpdbPaymentPage({ params }: { params: Promise<{ id: stri
       {/* Top Header Mobile Style */}
       <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
         <div className="flex items-center gap-3 text-primary-foreground mb-4">
-          <Link href={`/dashboard/ppdb/portal`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+          <Link href={`/ortu/ppdb`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
              <ArrowLeft className="h-4 w-4" />
           </Link>
           <h1 className="font-bold text-lg">Pembayaran {tagihan?.jenis}</h1>

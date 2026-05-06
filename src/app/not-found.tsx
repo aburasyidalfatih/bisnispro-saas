@@ -12,7 +12,7 @@ export default function NotFound() {
           Halaman yang Anda cari tidak ditemukan.
         </p>
         <Link
-          href="/dashboard"
+          href="/admin"
           className="inline-flex items-center justify-center h-11 px-6 rounded-xl btn-gradient text-white font-medium shadow-lg"
         >
           Kembali ke Dashboard

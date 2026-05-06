@@ -80,7 +80,7 @@ export default function PpdbStatusPage({ params }: { params: Promise<{ id: strin
       <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
         <div className="flex items-center justify-between text-primary-foreground mb-4">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard/ppdb/portal" className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+            <Link href="/ortu/ppdb" className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
                <ArrowLeft className="h-4 w-4" />
             </Link>
             <h1 className="font-bold text-lg max-w-[200px] truncate">{applicant.namaLengkap}</h1>
@@ -226,7 +226,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
                  <span className="font-bold text-lg">Rp {applicant.tagihan?.[0]?.nominal.toLocaleString()}</span>
               </div>
               <Button className="w-full h-12 rounded-xl btn-gradient text-white border-0 font-bold" asChild>
-                 <Link href={`/dashboard/ppdb/portal/pembayaran/${applicant.tagihan?.[0]?.id}`}>Bayar Sekarang</Link>
+                 <Link href={`/ortu/ppdb/pembayaran/${applicant.tagihan?.[0]?.id}`}>Bayar Sekarang</Link>
               </Button>
            </div>
         </div>
@@ -257,7 +257,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
               <p className="text-muted-foreground max-w-sm mx-auto">Pembayaran lunas! Sekarang silakan lengkapi data profil, orang tua, dan asal sekolah Anda.</p>
            </div>
            <Button className="w-full h-14 rounded-2xl btn-gradient text-white border-0 font-bold text-lg" asChild>
-              <Link href={`/dashboard/ppdb/portal/formulir/${applicant.id}`}>Mulai Isi Formulir <ArrowRight className="ml-2 h-5 w-5" /></Link>
+              <Link href={`/ortu/ppdb/formulir/${applicant.id}`}>Mulai Isi Formulir <ArrowRight className="ml-2 h-5 w-5" /></Link>
            </Button>
         </div>
       )
@@ -273,7 +273,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
               <p className="text-muted-foreground max-w-sm mx-auto">Data formulir sudah disimpan. Tahap terakhir adalah mengunggah dokumen persyaratan yang diminta.</p>
            </div>
            <Button className="w-full h-14 rounded-2xl btn-gradient text-white border-0 font-bold text-lg" asChild>
-              <Link href={`/dashboard/ppdb/portal/berkas/${applicant.id}`}>Unggah Dokumen <ArrowRight className="ml-2 h-5 w-5" /></Link>
+              <Link href={`/ortu/ppdb/berkas/${applicant.id}`}>Unggah Dokumen <ArrowRight className="ml-2 h-5 w-5" /></Link>
            </Button>
         </div>
       )
@@ -382,7 +382,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
                        </div>
                      ) : (
                        <Button className="w-full h-12 rounded-xl btn-gradient text-white border-0 font-bold" asChild>
-                          <Link href={`/dashboard/ppdb/portal/pembayaran/${tagihanDU.id}`}>
+                          <Link href={`/ortu/ppdb/pembayaran/${tagihanDU.id}`}>
                              Bayar Daftar Ulang
                           </Link>
                        </Button>
@@ -412,7 +412,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
            <div className="flex flex-col items-center gap-2">
               <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">NIS: {applicant.student?.nis || "Sedang Dibuat"}</Badge>
               <Button variant="outline" className="rounded-xl mt-4" asChild>
-                 <Link href="/dashboard/student">Buka Portal Siswa</Link>
+                 <Link href="/ortu/student">Buka Portal Siswa</Link>
               </Button>
            </div>
         </div>
