@@ -65,6 +65,7 @@ model Tenant {
   students             Student[]
   subscriptions        Subscription[]
   users                TenantUser[]
+  waSession            WaSession?
   subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
 
   @@index([isActive])
@@ -788,4 +789,35 @@ model AffiliateWithdrawal {
   @@index([affiliateId])
   @@index([status])
   @@map("affiliate_withdrawals")
+}
+
+model WaSession {
+  id        String   @id @default(cuid())
+  tenantId  String   @unique
+  status    String   @default("DISCONNECTED") // DISCONNECTED, CONNECTED, CONNECTING
+  qrCode    String?  @db.Text // Base64 image
+  creds     Json?    // Baileys auth state
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("wa_sessions")
+}
+
+model WaMessage {
+  id        String   @id @default(cuid())
+  tenantId  String
+  to        String
+  content   String   @db.Text
+  status    String   @default("PENDING") // PENDING, SENT, FAILED
+  error     String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Tidak perlu strict relation ke Tenant agar jika tenant dihapus log tidak hilang (atau bisa diatur Cascade)
+  // Tapi untuk konsistensi kita tambahkan index saja
+  @@index([tenantId])
+  @@index([status])
+  @@map("wa_messages")
 }
