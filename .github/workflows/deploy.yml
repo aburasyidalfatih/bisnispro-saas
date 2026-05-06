@@ -129,7 +129,7 @@ jobs:
             if [ "$BRANCH" = "main" ]; then
               docker compose up -d
             else
-              docker compose up -d app db redis
+              docker compose up -d app db redis wa-gateway
             fi
             
             # Tunggu container ready (max 30s)
