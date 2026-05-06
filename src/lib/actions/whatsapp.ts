@@ -12,10 +12,10 @@ export async function getWaStatus(tenantId: string) {
   
   const session = await db.waSession.findUnique({
     where: { tenantId },
-    select: { status: true, qrCode: true, updatedAt: true }
+    select: { status: true, qrCode: true, updatedAt: true, delayMin: true, delayMax: true }
   })
   
-  return session || { status: 'DISCONNECTED', qrCode: null }
+  return session || { status: 'DISCONNECTED', qrCode: null, delayMin: 5, delayMax: 15 }
 }
 
 export async function startWaSession(tenantId: string) {
@@ -32,6 +32,8 @@ export async function startWaSession(tenantId: string) {
     })
     
     if (!response.ok) {
+      const errorText = await response.text()
+      console.error("[startWaSession] WA Gateway returned error:", response.status, errorText)
       throw new Error("Failed to start WA session on gateway")
     }
     
@@ -39,6 +41,30 @@ export async function startWaSession(tenantId: string) {
   } catch (error) {
     console.error("[startWaSession]", error)
     return { error: "Gagal menyambungkan ke server WhatsApp Gateway." }
+  }
+}
+
+export async function updateWaDelay(tenantId: string, delayMin: number, delayMax: number) {
+  await requireTenantAccess(tenantId)
+
+  try {
+    // Pastikan session sudah ada
+    const existing = await db.waSession.findUnique({ where: { tenantId } })
+    if (existing) {
+      await db.waSession.update({
+        where: { tenantId },
+        data: { delayMin, delayMax }
+      })
+    } else {
+      // Jika session belum ada, kita bisa buat dengan default status DISCONNECTED
+      await db.waSession.create({
+        data: { tenantId, status: 'DISCONNECTED', delayMin, delayMax }
+      })
+    }
+    return { success: true }
+  } catch (error) {
+    console.error("[updateWaDelay]", error)
+    return { error: "Gagal menyimpan pengaturan delay." }
   }
 }
 

@@ -35,12 +35,40 @@ export async function POST(req: Request) {
       province, regency, adminName, adminEmail, adminPhone, address, logo, studentCount, referralCode
     } = parsed.data
 
-    // Cek ketersediaan slug/subdomain
+    // Cek ketersediaan slug/subdomain di tabel Tenant utama
     const existingTenant = await db.tenant.findUnique({ where: { slug: schoolSlug } })
-    const existingApp = await db.tenantApplication.findUnique({ where: { schoolSlug } })
+    if (existingTenant) {
+      return NextResponse.json({ error: "Subdomain sudah digunakan oleh sekolah lain" }, { status: 400 })
+    }
+
+    // Cek duplikasi di pengajuan aplikasi (NPSN, Email, atau Slug)
+    const existingApp = await db.tenantApplication.findFirst({
+      where: {
+        OR: [
+          { schoolSlug },
+          { adminEmail },
+          { npsn }
+        ],
+        status: { not: "REJECTED" } // Boleh daftar ulang jika sebelumnya ditolak
+      }
+    })
     
-    if (existingTenant || existingApp) {
-      return NextResponse.json({ error: "Subdomain sudah digunakan" }, { status: 400 })
+    if (existingApp) {
+      if (existingApp.schoolSlug === schoolSlug) {
+        return NextResponse.json({ error: "Subdomain sudah diajukan sebelumnya" }, { status: 400 })
+      }
+      if (existingApp.npsn === npsn) {
+        return NextResponse.json({ error: "Sekolah dengan NPSN ini sudah terdaftar" }, { status: 400 })
+      }
+      if (existingApp.adminEmail === adminEmail) {
+        return NextResponse.json({ error: "Email ini sedang dalam proses pengajuan sekolah lain" }, { status: 400 })
+      }
+    }
+
+    // Cek apakah email sudah terdaftar sebagai User di platform
+    const existingUser = await db.user.findUnique({ where: { email: adminEmail } })
+    if (existingUser) {
+      return NextResponse.json({ error: "Email ini sudah terdaftar sebagai pengguna SchoolPro" }, { status: 400 })
     }
 
     let affiliateId = undefined
