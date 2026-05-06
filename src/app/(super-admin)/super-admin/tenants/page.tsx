@@ -67,7 +67,15 @@ export default function TenantsPage() {
   const [newPassword, setNewPassword] = useState("")
   const [reseting, setReseting] = useState(false)
 
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const [rootDomain, setRootDomain] = useState("schoolpro.id")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      let host = window.location.host
+      if (host.startsWith("www.")) host = host.replace("www.", "")
+      setRootDomain(host)
+    }
+  }, [])
 
   const fetchTenants = useCallback(() => {
     setLoading(true)
