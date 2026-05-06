@@ -1,21 +1,25 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { 
-  Server, Shield, Eye, EyeOff, Mail, MessageSquare, 
-  CreditCard, Globe, Settings2, Save, ExternalLink,
-  Send, Smartphone, ShieldCheck
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { toast } from "@/hooks/use-toast"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { WhatsappManager } from "../../(dashboard)/admin/settings/whatsapp/_components/whatsapp-manager"
 
 export default function SuperAdminSettingsPage() {
+// ... existing states ...
+// ... around line 434 (WhatsApp Tab) ...
+        {/* --- TAB: WHATSAPP --- */}
+        <TabsContent value="whatsapp" className="space-y-6 outline-none">
+          <Card className="glass border-0">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
+                <CardTitle className="text-lg">Internal WhatsApp Gateway (Platform)</CardTitle>
+              </div>
+              <CardDescription>Hubungkan WhatsApp utama platform untuk mengirim notifikasi pendaftaran, revisi, dan alert sistem.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <WhatsappManager tenantId="platform" />
+            </CardContent>
+          </Card>
+
+          <Card className="glass border-0 lg:col-span-2">
+// ... existing Template card ...
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
@@ -432,47 +436,17 @@ export default function SuperAdminSettingsPage() {
         </TabsContent>
 
         {/* --- TAB: WHATSAPP --- */}
-        <TabsContent value="whatsapp" className="grid gap-6 lg:grid-cols-2 outline-none">
+        <TabsContent value="whatsapp" className="space-y-6 outline-none">
           <Card className="glass border-0">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
-                <CardTitle className="text-lg">StarSender API</CardTitle>
+                <CardTitle className="text-lg">Internal WhatsApp Gateway (Platform)</CardTitle>
               </div>
+              <CardDescription>Hubungkan WhatsApp utama platform untuk mengirim notifikasi pendaftaran, revisi, dan alert sistem.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>API Token / Key</Label>
-                <div className="relative">
-                  <Input type={showWAToken ? "text" : "password"} value={form.STARSENDER_API_KEY} onChange={e => setForm({...form, STARSENDER_API_KEY: e.target.value})} placeholder="Token StarSender" className="rounded-xl pr-10" />
-                  <button type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Device ID (Opsional)</Label>
-                <Input value={form.STARSENDER_DEVICE_ID} onChange={e => setForm({...form, STARSENDER_DEVICE_ID: e.target.value})} placeholder="ID Perangkat" className="rounded-xl" />
-              </div>
-              <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID'])} disabled={saving}>
-                <Save className="h-4 w-4" /> Simpan WhatsApp
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="glass border-0">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Smartphone className="h-4 w-4 text-primary" /></div>
-                <CardTitle className="text-lg">Test WhatsApp</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-2">
-                <Label>Nomor Tujuan</Label>
-                <Input value={testWANumber} onChange={e => setTestWANumber(e.target.value)} placeholder="0812345678xx" className="rounded-xl" />
-              </div>
-              <Button variant="outline" className="w-full rounded-xl gap-2 border-primary/30 text-primary hover:bg-primary/5" onClick={handleTestWA} disabled={testing || !form.STARSENDER_API_KEY}>
-                {testing ? "Mengirim..." : "Kirim Pesan Tes"}
-              </Button>
+            <CardContent>
+              <WhatsappManager tenantId="platform" />
             </CardContent>
           </Card>
 

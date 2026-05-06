@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import nodemailer from "nodemailer"
 import { logger } from "@/lib/logger"
+import { sendWhatsAppMessage } from "@/lib/actions/whatsapp"
 
 // ==================== EMAIL ====================
 
@@ -88,15 +89,33 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
   }
 }
 
+
 /**
- * Fungsi pengiriman WA terpusat — SATU-SATUNYA fungsi yang boleh memanggil API gateway.
- * Selalu menggunakan format Authorization: Bearer <key> sesuai standar StarSender.
+ * Fungsi pengiriman WA terpusat — Memprioritaskan Internal Gateway, fallback ke StarSender.
  */
 export async function sendWhatsApp(
   phone: string,
   message: string,
   tenantId?: string
 ): Promise<{ success: boolean; error?: string }> {
+  // 1. Coba gunakan Internal Gateway jika ada sesi yang CONNECTED
+  try {
+    const session = await db.waSession.findUnique({
+      where: { tenantId: tenantId || "platform" }
+    })
+
+    if (session?.status === "CONNECTED") {
+      return await sendWhatsAppMessage({
+        tenantId: tenantId || "platform",
+        to: phone,
+        text: message
+      })
+    }
+  } catch (err) {
+    logger.error("Internal WA gateway check failed, falling back to StarSender", err)
+  }
+
+  // 2. Fallback ke StarSender (Legacy)
   const config = await getWaConfig(tenantId)
 
   if (!config.apiKey) {
@@ -116,20 +135,20 @@ export async function sendWhatsApp(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: config.apiKey,  // Tidak menggunakan Bearer untuk StarSender
+        Authorization: config.apiKey,
       },
       body: JSON.stringify(body),
     })
 
     if (!res.ok) {
       const errText = await res.text()
-      logger.error("WA send failed", { phone, status: res.status, body: errText })
-      return { success: false, error: `Gateway error: ${res.status}` }
+      logger.error("WA send failed (StarSender)", { phone, status: res.status, body: errText })
+      return { success: false, error: `StarSender error: ${res.status}` }
     }
 
     return { success: true }
   } catch (err: any) {
-    logger.error("WA send exception", err, { phone })
+    logger.error("WA send exception (StarSender)", err, { phone })
     return { success: false, error: err.message }
   }
 }

@@ -580,7 +580,7 @@ export default function SettingsGeneralPage() {
               {[
                 { key: "inapp", name: "In-App", desc: "Notifikasi di dalam aplikasi", icon: Bell, hint: null },
                 { key: "email", name: "Email", desc: "Dikirim ke email akun Anda", icon: Mail, hint: "Butuh konfigurasi SMTP" },
-                { key: "whatsapp", name: "WhatsApp", desc: "Via StarSender Gateway", icon: Phone, hint: "Butuh konfigurasi WhatsApp" },
+                { key: "whatsapp", name: "WhatsApp", desc: "Internal Gateway (Recommended)", icon: Phone, hint: "Butuh konfigurasi WhatsApp" },
               ].map((ch) => {
                 const active = notifPrefs[ch.key] ?? false
                 return (
