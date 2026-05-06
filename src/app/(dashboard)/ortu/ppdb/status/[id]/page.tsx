@@ -180,6 +180,7 @@ export default function PpdbStatusPage({ params }: { params: Promise<{ id: strin
            </div>
         </div>
       </div>
+      </div>
     </div>
   )
 }

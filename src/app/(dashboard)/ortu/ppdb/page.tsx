@@ -139,6 +139,7 @@ export default function PpdbPortalPage() {
              </CardContent>
           </Card>
         )}
+        </div>
       </div>
     </div>
   )

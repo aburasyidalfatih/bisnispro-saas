@@ -176,6 +176,7 @@ export default function PpdbRegisterPage() {
           </Button>
         </form>
       )}
+      </div>
     </div>
   )
 }
