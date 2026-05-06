@@ -151,7 +151,7 @@ export default function WebsiteAboutPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Profil Lembaga</h1>
-          <p className="text-muted-foreground mt-1">Kelola identitas, konten beranda, dan cerita organisasi Anda.</p>
+          <p className="text-muted-foreground mt-1">Kelola identitas, konten beranda, dan cerita lembaga Anda.</p>
         </div>
         <div className="flex items-center gap-2">
           {slug && (
@@ -184,7 +184,7 @@ export default function WebsiteAboutPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2 mb-4">
-              <Label>Logo Organisasi</Label>
+              <Label>Logo Lembaga</Label>
               <div className="flex items-center gap-4">
                 <div className="relative shrink-0 overflow-hidden rounded-xl border bg-muted">
                   {logoPreview ? (
@@ -207,9 +207,9 @@ export default function WebsiteAboutPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Nama Organisasi</Label>
+              <Label>Nama Lembaga</Label>
               <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                placeholder="Nama organisasi Anda" className="rounded-xl" />
+                placeholder="Nama lembaga Anda" className="rounded-xl" />
             </div>
 
             <div className="space-y-2 mb-4">
@@ -242,14 +242,14 @@ export default function WebsiteAboutPage() {
             <div className="space-y-2">
               <Label>Tagline / Slogan</Label>
               <Input value={form.tagline} onChange={e => setForm(p => ({ ...p, tagline: e.target.value }))}
-                placeholder="Slogan singkat yang menggambarkan organisasi" className="rounded-xl" />
+                placeholder="Slogan singkat yang menggambarkan lembaga" className="rounded-xl" />
               <p className="text-xs text-muted-foreground">Tampil di hero section dan navbar website</p>
             </div>
             <div className="space-y-2">
               <Label>Deskripsi Singkat</Label>
               <textarea value={form.description}
                 onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
-                placeholder="Deskripsi singkat organisasi Anda (maks. 300 karakter)"
+                placeholder="Deskripsi singkat lembaga Anda (maks. 300 karakter)"
                 maxLength={300} rows={4}
                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
               <p className="text-xs text-muted-foreground">{form.description.length}/300 karakter</p>
@@ -266,14 +266,14 @@ export default function WebsiteAboutPage() {
               </div>
               <div>
                 <CardTitle className="text-lg">Tentang Kami</CardTitle>
-                <CardDescription>Cerita lengkap, sejarah, visi, dan misi organisasi</CardDescription>
+                <CardDescription>Cerita lengkap, sejarah, visi, dan misi lembaga</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <textarea value={form.about}
               onChange={e => setForm(p => ({ ...p, about: e.target.value }))}
-              placeholder="Ceritakan tentang organisasi Anda, sejarah panjang..."
+              placeholder="Ceritakan tentang lembaga Anda, sejarah panjang..."
               rows={6}
               className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
             
@@ -393,7 +393,7 @@ export default function WebsiteAboutPage() {
                 <Label>Meta Title</Label>
                 <Input value={form.seoTitle} onChange={e => setForm(p => ({ ...p, seoTitle: e.target.value }))}
                   placeholder="Judul halaman untuk Google (maks. 70 karakter)" className="rounded-xl" maxLength={70} />
-                <p className="text-xs text-muted-foreground">{form.seoTitle.length}/70 · Kosongkan untuk pakai nama organisasi</p>
+                <p className="text-xs text-muted-foreground">{form.seoTitle.length}/70 · Kosongkan untuk pakai nama lembaga</p>
               </div>
               <div className="space-y-2">
                 <Label>Meta Description</Label>
@@ -401,7 +401,7 @@ export default function WebsiteAboutPage() {
                   placeholder="Deskripsi singkat untuk hasil pencarian Google (maks. 160 karakter)"
                   maxLength={160} rows={3}
                   className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
-                <p className="text-xs text-muted-foreground">{form.seoDesc.length}/160 · Kosongkan untuk pakai deskripsi organisasi</p>
+                <p className="text-xs text-muted-foreground">{form.seoDesc.length}/160 · Kosongkan untuk pakai deskripsi lembaga</p>
               </div>
             </div>
             {/* Preview */}

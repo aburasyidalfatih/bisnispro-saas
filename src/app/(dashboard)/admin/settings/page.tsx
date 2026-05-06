@@ -132,7 +132,7 @@ export default function SettingsGeneralPage() {
 
   const [tenantId, setTenantId] = useState<string | null>(null)
 
-  // Role check — card Organisasi hanya untuk owner/admin
+  // Role check — card Lembaga hanya untuk owner/admin
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
   const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
   const currentRole = currentTenant?.role || "member"
@@ -280,7 +280,7 @@ export default function SettingsGeneralPage() {
     if (res.ok) {
       await updateSession({ forceRefresh: true })
       router.refresh()
-      toast({ title: "Organisasi disimpan" })
+      toast({ title: "Lembaga disimpan" })
     } else {
       const d = await res.json().catch(() => ({}))
       toast({ title: "Gagal", description: d.error, variant: "destructive" })
@@ -307,7 +307,7 @@ export default function SettingsGeneralPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Pengaturan Umum</h1>
-        <p className="text-muted-foreground mt-1">Kelola profil, organisasi, dan preferensi notifikasi.</p>
+        <p className="text-muted-foreground mt-1">Kelola profil, lembaga, dan preferensi notifikasi.</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -453,7 +453,7 @@ export default function SettingsGeneralPage() {
             </div>
             <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveOrg} disabled={savingOrg || !tenantId}>
               {savingOrg ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
-              Simpan Organisasi
+              Simpan Lembaga
             </Button>
           </CardContent>
         </Card>

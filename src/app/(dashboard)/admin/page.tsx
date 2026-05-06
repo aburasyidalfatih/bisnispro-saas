@@ -80,7 +80,7 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold tracking-tight">
           Selamat datang, {session?.user?.name} 👋
         </h1>
-        <p className="text-muted-foreground mt-1">Berikut ringkasan aktivitas organisasi Anda.</p>
+        <p className="text-muted-foreground mt-1">Berikut ringkasan aktivitas lembaga Anda.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

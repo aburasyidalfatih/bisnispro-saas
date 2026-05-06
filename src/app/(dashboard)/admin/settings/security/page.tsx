@@ -437,7 +437,7 @@ export default function SecurityPage() {
               <ConfirmDialog
                 trigger={<Button variant="destructive" size="sm" className="rounded-lg text-xs">Hapus Akun</Button>}
                 title="Hapus akun Anda?"
-                description="Semua data termasuk organisasi dan file Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
+                description="Semua data termasuk lembaga dan file Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
                 confirmText="Ya, hapus akun saya"
                 onConfirm={() => { toast({ title: "Fitur segera hadir", description: "Penghapusan akun akan tersedia di versi berikutnya." }) }}
               />

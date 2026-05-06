@@ -243,7 +243,7 @@ export default function WebsiteContactPage() {
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
-                  <Input type="email" value={form.email} onChange={set("email")} placeholder="info@organisasi.com" className="rounded-xl" />
+                  <Input type="email" value={form.email} onChange={set("email")} placeholder="info@lembaga.com" className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" /> Website</Label>

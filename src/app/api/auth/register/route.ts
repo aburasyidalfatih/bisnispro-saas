@@ -60,9 +60,9 @@ export async function POST(req: Request) {
       })
     }
 
-    // Jika tenantSlug tidak ada (Mendaftar di domain utama / buat organisasi baru)
+    // Jika tenantSlug tidak ada (Mendaftar di domain utama / buat lembaga baru)
     if (!tenantName) {
-      return NextResponse.json({ error: "Nama organisasi harus diisi" }, { status: 400 })
+      return NextResponse.json({ error: "Nama lembaga harus diisi" }, { status: 400 })
     }
 
     let slug = generateSlug(tenantName)

@@ -237,7 +237,7 @@ export default function EmailSettingsPage() {
                 <div className="space-y-2">
                   <Label>Nama Pengirim</Label>
                   <Input value={config.smtpFromName} onChange={set("smtpFromName")}
-                    placeholder="Nama Organisasi Anda" className="rounded-xl" />
+                    placeholder="Nama Lembaga Anda" className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
                   <Label>Email Pengirim (From)</Label>

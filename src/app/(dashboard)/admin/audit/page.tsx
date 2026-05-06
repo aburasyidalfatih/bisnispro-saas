@@ -70,7 +70,7 @@ export default function AuditPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Audit Log</h1>
-        <p className="text-muted-foreground">Riwayat semua aktivitas di organisasi Anda</p>
+        <p className="text-muted-foreground">Riwayat semua aktivitas di lembaga Anda</p>
       </div>
 
       <div className="relative max-w-sm">

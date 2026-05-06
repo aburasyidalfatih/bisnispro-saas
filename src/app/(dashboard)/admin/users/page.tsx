@@ -170,7 +170,7 @@ export default function UsersPage() {
           <h1 className="text-2xl font-bold tracking-tight capitalize">
             {roleParam ? `Data ${roleParam === "orangtua" ? "Orang Tua" : roleParam}` : "Semua Pengguna"}
           </h1>
-          <p className="text-muted-foreground mt-1">Kelola anggota organisasi ({filtered.length} data)</p>
+          <p className="text-muted-foreground mt-1">Kelola anggota lembaga ({filtered.length} data)</p>
         </div>
         {roleParam === "guru" ? (
           <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
@@ -313,7 +313,7 @@ export default function UsersPage() {
                                 </DropdownMenuItem>
                               }
                               title={`Hapus ${u.name}?`}
-                              description={`${u.name} akan dihapus dari organisasi ini. Tindakan ini tidak dapat dibatalkan.`}
+                              description={`${u.name} akan dihapus dari lembaga ini. Tindakan ini tidak dapat dibatalkan.`}
                               confirmText="Ya, hapus"
                               onConfirm={() => handleDelete(u.tenantUserId, u.name)}
                             />
