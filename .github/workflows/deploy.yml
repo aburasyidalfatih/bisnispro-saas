@@ -104,6 +104,9 @@ jobs:
             echo "Deploying branch $BRANCH to $APP_DIR"
             cd $APP_DIR
             
+            # Konfigurasi remote URL menggunakan GITHUB_TOKEN agar git fetch tidak error pada repo private
+            git remote set-url origin https://oauth2:$GITHUB_TOKEN@github.com/$REPO.git
+            
             # Ambil konfigurasi (docker-compose.yml dll) terbaru dari GitHub
             git fetch --all
             git reset --hard origin/$BRANCH
