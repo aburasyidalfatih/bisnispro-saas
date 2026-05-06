@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import express from 'express'
 import dotenv from 'dotenv'
 import { startWhatsAppSession, getSession, initAllSessions, sessions } from './baileys/connection'
@@ -69,7 +70,7 @@ app.post('/api/wa/session/logout', async (req, res) => {
     // If socket isn't in memory, just cleanup DB
     await prisma.waSession.update({
       where: { tenantId },
-      data: { status: 'DISCONNECTED', qrCode: null, creds: null }
+      data: { status: 'DISCONNECTED', qrCode: null, creds: Prisma.DbNull }
     }).catch(() => {})
   }
   res.json({ message: 'Logged out' })

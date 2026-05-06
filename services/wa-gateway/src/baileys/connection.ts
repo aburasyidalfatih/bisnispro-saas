@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import makeWASocket, { DisconnectReason, fetchLatestBaileysVersion } from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
 import pino from 'pino'
@@ -49,7 +50,7 @@ export const startWhatsAppSession = async (tenantId: string) => {
         // Logged out
         await prisma.waSession.update({
           where: { tenantId },
-          data: { status: 'DISCONNECTED', qrCode: null, creds: null }
+          data: { status: 'DISCONNECTED', qrCode: null, creds: Prisma.DbNull }
         }).catch(console.error)
         sessions.delete(tenantId)
       }
