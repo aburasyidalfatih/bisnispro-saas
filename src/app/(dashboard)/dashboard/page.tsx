@@ -18,6 +18,8 @@ const chartData = [
   { bulan: "Jun", pengguna: 0, pendapatan: 0 },
 ]
 
+import { ParentDashboard } from "./_components/parent-dashboard"
+
 export default function DashboardPage() {
   const { data: session } = useSession()
   const [stats, setStats] = useState<{ userCount: number; notifCount: number; auditCount: number } | null>(null)
@@ -51,6 +53,18 @@ export default function DashboardPage() {
     { label: "Notifikasi", value: stats?.notifCount ?? "—", icon: Bell, gradient: "from-amber-500/10 to-orange-500/10", iconColor: "text-amber-600 dark:text-amber-400" },
     { label: "Aktivitas", value: stats?.auditCount ?? "—", icon: BarChart3, gradient: "from-violet-500/10 to-purple-500/10", iconColor: "text-violet-600 dark:text-violet-400" },
   ]
+
+  const currentTenantSlug = session?.user?.tenants?.[0]?.slug
+  const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
+  const currentRole = currentTenant?.role || "member"
+  
+  const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
+  const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
+  const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
+
+  if (!isAdminRole) {
+    return <ParentDashboard />
+  }
 
   return (
     <div className="space-y-6">

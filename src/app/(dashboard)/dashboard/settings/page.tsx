@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { Building2, User, Bell, Phone, Mail, Save, Globe, ShieldCheck, ShieldOff, ArrowRight, Upload, X, Eye, EyeOff, KeyRound, Camera, Check, Info, CheckCircle, AlertTriangle, XCircle } from "lucide-react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
+import { ParentProfile } from "./_components/parent-profile"
 
 // ==================== NOTIF RECENT LIST ====================
 
@@ -108,7 +109,7 @@ function NotifRecentList() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <p className={cn("text-xs truncate", !n.isRead ? "font-semibold" : "")}>{n.title}</p>
+                     <p className={cn("text-xs truncate", !n.isRead ? "font-semibold" : "")}>{n.title}</p>
                     {!n.isRead && <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
                   </div>
                   <p className="text-[11px] text-muted-foreground truncate">{n.message}</p>
@@ -126,15 +127,24 @@ function NotifRecentList() {
 }
 
 export default function SettingsGeneralPage() {
-  const { data: session, update: updateSession } = useSession()
+  const { data: session, status, update: updateSession } = useSession()
   const router = useRouter()
   const { updateBranding } = useTenantBranding()
 
   const [tenantId, setTenantId] = useState<string | null>(null)
 
   // Role check — card Organisasi hanya untuk owner/admin
-  const currentRole = session?.user?.tenants?.[0]?.role || "member"
-  const isAdminOrOwner = currentRole === "owner" || currentRole === "admin" || session?.user?.isSuperAdmin
+  const currentTenantSlug = session?.user?.tenants?.[0]?.slug
+  const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
+  const currentRole = currentTenant?.role || "member"
+  
+  const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
+  const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
+  const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
+
+  if (!isAdminRole && status !== "loading") {
+    return <ParentProfile />
+  }
 
   // Profile
   const [profileForm, setProfileForm] = useState({ name: "", phone: "" })
