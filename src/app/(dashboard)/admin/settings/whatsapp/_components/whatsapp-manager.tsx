@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import { Smartphone, RefreshCcw, LogOut, Send, CheckCircle2, AlertCircle, QrCode } from "lucide-react"
-import { getWaStatus, startWaSession, logoutWaSession, sendWaMessageTest } from "@/lib/actions/whatsapp"
+import { Smartphone, RefreshCcw, LogOut, Send, CheckCircle2, AlertCircle, QrCode, Clock, Save } from "lucide-react"
+import { getWaStatus, startWaSession, logoutWaSession, sendWaMessageTest, updateWaDelay } from "@/lib/actions/whatsapp"
 import Image from "next/image"
 
 export function WhatsappManager({ tenantId: propTenantId }: { tenantId?: string } = {}) {
@@ -23,6 +23,11 @@ export function WhatsappManager({ tenantId: propTenantId }: { tenantId?: string 
   const [testPhone, setTestPhone] = useState("")
   const [testMessage, setTestMessage] = useState("")
   const [sending, setSending] = useState(false)
+  
+  // Delay state
+  const [delayMin, setDelayMin] = useState(5)
+  const [delayMax, setDelayMax] = useState(15)
+  const [savingDelay, setSavingDelay] = useState(false)
 
   // Resolve tenantId if impersonating
   const activeTenantId = tenantId || getImpersonateTenantId()
@@ -46,6 +51,8 @@ export function WhatsappManager({ tenantId: propTenantId }: { tenantId?: string 
         const data = await getWaStatus(activeTenantId)
         setStatus(data.status as any)
         setQrCode(data.qrCode)
+        if (data.delayMin) setDelayMin(data.delayMin)
+        if (data.delayMax) setDelayMax(data.delayMax)
         setLoading(false)
 
         // If it's connecting, poll every 3 seconds to get the QR or status update
@@ -106,6 +113,22 @@ export function WhatsappManager({ tenantId: propTenantId }: { tenantId?: string 
     setSending(false)
   }
 
+  const handleSaveDelay = async () => {
+    if (!activeTenantId) return
+    if (delayMin >= delayMax) {
+      toast({ title: "Gagal", description: "Jeda Min harus lebih kecil dari Jeda Max", variant: "destructive" })
+      return
+    }
+    setSavingDelay(true)
+    const res = await updateWaDelay(activeTenantId, delayMin, delayMax)
+    if (res.error) {
+      toast({ title: "Gagal", description: res.error, variant: "destructive" })
+    } else {
+      toast({ title: "Tersimpan", description: "Pengaturan antrean dan jeda berhasil disimpan." })
+    }
+    setSavingDelay(false)
+  }
+
   if (loading && status === "DISCONNECTED") {
     return <div className="skeleton h-64 w-full rounded-2xl" />
   }
@@ -113,7 +136,8 @@ export function WhatsappManager({ tenantId: propTenantId }: { tenantId?: string 
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* Kolom Kiri: Status & Koneksi */}
-      <Card className="glass border-0 shadow-lg">
+      <div className="space-y-6">
+        <Card className="glass border-0 shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${
@@ -188,10 +212,57 @@ export function WhatsappManager({ tenantId: propTenantId }: { tenantId?: string 
             </div>
           )}
         </CardContent>
-      </Card>
+        </Card>
+
+        {/* Pengaturan Antrean & Delay */}
+        <Card className="glass border-0 shadow-lg">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600">
+                <Clock className="h-6 w-6" />
+              </div>
+              <div>
+                <CardTitle>Pengaturan Antrean & Delay</CardTitle>
+                <CardDescription>Atur jeda waktu (detik) antar pesan agar aman dari blokir spam.</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Jeda Min (Detik)</Label>
+                <Input 
+                  type="number" 
+                  min={1} 
+                  value={delayMin} 
+                  onChange={(e) => setDelayMin(Number(e.target.value))} 
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Jeda Max (Detik)</Label>
+                <Input 
+                  type="number" 
+                  min={2} 
+                  value={delayMax} 
+                  onChange={(e) => setDelayMax(Number(e.target.value))} 
+                  className="rounded-xl"
+                />
+              </div>
+            </div>
+            <Button 
+              className="w-full gap-2 rounded-xl border border-input bg-background hover:bg-accent hover:text-accent-foreground" 
+              onClick={handleSaveDelay}
+              disabled={savingDelay}
+            >
+              <Save className="h-4 w-4" /> {savingDelay ? "Menyimpan..." : "Simpan Pengaturan Delay"}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Kolom Kanan: Uji Coba Pengiriman */}
-      <Card className={`glass border-0 shadow-lg transition-all duration-500 ${status !== 'CONNECTED' ? 'opacity-50 grayscale pointer-events-none' : ''}`}>
+      <Card className={`glass border-0 shadow-lg transition-all duration-500 ${status !== 'CONNECTED' ? 'opacity-50 grayscale pointer-events-none' : ''} h-fit`}>
         <CardHeader>
           <CardTitle>Uji Coba Pengiriman</CardTitle>
           <CardDescription>Kirim pesan pengujian untuk memastikan gateway berfungsi normal.</CardDescription>

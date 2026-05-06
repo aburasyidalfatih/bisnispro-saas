@@ -145,6 +145,13 @@ jobs:
               echo "✅ Migrations applied successfully."
             fi
             
+            # OPTIMASI: Restart Nginx agar mengenali IP internal container App yang baru
+            # Ini mencegah error 502 Bad Gateway setelah deploy
+            if [ "$BRANCH" = "main" ]; then
+              echo "Restarting Nginx proxy to flush DNS cache..."
+              docker compose restart nginx
+            fi
+            
             # Health check via docker exec (tidak tergantung port expose)
             echo "Running health check..."
             HEALTH_OK=false
