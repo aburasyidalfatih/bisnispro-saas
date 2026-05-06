@@ -110,7 +110,7 @@ export default function WebsiteOverviewPage() {
   // Hitung kelengkapan konten
   const sections: StatItem[] = [
     {
-      label: "Profil & Tentang",
+      label: "Profil Lembaga",
       value: data?.about ? "Lengkap" : "Belum diisi",
       icon: <Info className="h-5 w-5" />,
       status: data?.about ? "ok" : "warn",

@@ -89,7 +89,7 @@ export default function UserDetailPage() {
         <Card className="glass border-0 shadow-lg">
           <CardHeader className="border-b border-border/50 bg-muted/20">
             <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" /> Organisasi (Tenant)
+              <Building2 className="h-5 w-5 text-primary" /> Lembaga (Tenant)
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">

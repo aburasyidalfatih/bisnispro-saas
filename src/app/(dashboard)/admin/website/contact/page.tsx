@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { Save, Phone, MapPin, Mail, Globe, MessageCircle, ExternalLink, Inbox, Check, Trash2, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { formatDateTime } from "@/lib/utils"
+import { RegionSelector } from "@/components/ui/region-selector"
 
 interface Submission {
   id: string
@@ -33,7 +34,9 @@ export default function WebsiteContactPage() {
   const [form, setForm] = useState({
     address: "", phone: "", email: "", website: "",
     whatsapp: "", instagram: "", facebook: "", youtube: "",
+    settings: {} as any
   })
+  const [domainStatus, setDomainStatus] = useState<{ domain: string | null; status: string | null }>({ domain: null, status: null })
 
   // Submissions state
   const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -62,10 +65,18 @@ export default function WebsiteContactPage() {
           address: d.address || "", phone: d.phone || "", email: d.email || "",
           website: d.website || "", whatsapp: d.whatsapp || "", instagram: d.instagram || "",
           facebook: d.facebook || "", youtube: d.youtube || "",
+          settings: d.settings || {},
         })
         setLoading(false)
       })
       .catch(() => setLoading(false))
+
+    fetch(`/api/tenant/domain?tenantId=${tenantId}`)
+      .then(r => r.json())
+      .then(d => {
+        setDomainStatus({ domain: d.domain || null, status: d.customDomain?.status || null })
+      })
+      .catch(() => {})
   }, [tenantId])
 
   const loadSubmissions = async () => {
@@ -188,10 +199,16 @@ export default function WebsiteContactPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
+                <RegionSelector
+                  province={form.settings?.province || ""}
+                  regency={form.settings?.regency || ""}
+                  onProvinceChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, province: v, regency: "" } }))}
+                  onRegencyChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, regency: v } }))}
+                />
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Alamat</Label>
+                  <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Alamat Lengkap</Label>
                   <textarea value={form.address} onChange={set("address")}
-                    placeholder="Jl. Contoh No. 123, Kota, Provinsi" rows={3}
+                    placeholder="Jl. Contoh No. 123" rows={3}
                     className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
                 </div>
                 <div className="space-y-2">
@@ -200,11 +217,16 @@ export default function WebsiteContactPage() {
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
-                  <Input type="email" value={form.email} onChange={set("email")} placeholder="info@organisasi.com" className="rounded-xl" />
+                  <Input type="email" value={form.email} onChange={set("email")} placeholder="info@lembaga.com" className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" /> Website</Label>
-                  <Input value={form.website} onChange={set("website")} placeholder="https://www.organisasi.com" className="rounded-xl" />
+                  <Input 
+                    value={domainStatus.domain ? `https://${domainStatus.domain}` : (slug ? `https://${slug}.schoolpro.id` : form.website)} 
+                    readOnly 
+                    className="rounded-xl bg-muted text-muted-foreground cursor-not-allowed" 
+                  />
+                  <p className="text-xs text-muted-foreground">Domain ini diatur otomatis berdasarkan domain aktif Anda.</p>
                 </div>
               </CardContent>
             </Card>

@@ -88,8 +88,8 @@ export default function AppearancePage() {
             {isSuperAdminOnly
               ? "Login sebagai Super Admin. Gunakan fitur \"Login Sebagai\" untuk mengubah tema tenant."
               : canChangeTheme
-              ? "Pilih tema lalu klik Simpan untuk menerapkan ke semua pengguna di organisasi ini."
-              : "Hanya Owner dan Admin yang dapat mengubah tema organisasi."}
+              ? "Pilih tema lalu klik Simpan untuk menerapkan ke semua pengguna di lembaga ini."
+              : "Hanya Owner dan Admin yang dapat mengubah tema lembaga."}
           </p>
         </CardContent>
       </Card>

@@ -77,7 +77,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Laporan & Analitik</h1>
-          <p className="text-muted-foreground">Analisis data organisasi Anda</p>
+          <p className="text-muted-foreground">Analisis data lembaga Anda</p>
         </div>
         <Button variant="outline" className="gap-2 rounded-xl" onClick={handleExport} disabled={exporting}>
           {exporting ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" /> : <Download className="h-4 w-4" />}

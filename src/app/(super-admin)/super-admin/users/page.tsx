@@ -100,7 +100,7 @@ export default function UsersPage() {
               <tr className="border-b bg-muted/30">
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Nama & Email</th>
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Akses Platform</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Organisasi (Tenant)</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Lembaga (Tenant)</th>
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Bergabung</th>
                 <th className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Aksi</th>
               </tr>
@@ -174,7 +174,7 @@ export default function UsersPage() {
                             </div>
                           ))
                         ) : (
-                          <span className="text-xs text-muted-foreground italic">Tidak ada organisasi</span>
+                          <span className="text-xs text-muted-foreground italic">Tidak ada lembaga</span>
                         )}
                       </div>
                     </td>

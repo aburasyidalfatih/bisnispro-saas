@@ -101,7 +101,7 @@ export default function RegisterPage() {
             <h1 className="text-2xl font-bold tracking-tight">Buat akun baru</h1>
             <p className="text-sm text-muted-foreground mt-1">
               {isMainDomain 
-                ? "Daftar dan buat organisasi Anda" 
+                ? "Daftar dan buat lembaga Anda" 
                 : `Daftar ke portal sistem informasi ${tenantNameDisplay || 'sekolah'}`}
             </p>
           </div>
