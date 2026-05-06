@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 
-const WA_GATEWAY_URL = "http://localhost:4000"
+const WA_GATEWAY_URL = process.env.WA_GATEWAY_URL || "http://localhost:4000"
 const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
 
 export async function getWaStatus(tenantId: string) {
