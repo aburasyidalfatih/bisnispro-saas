@@ -165,7 +165,11 @@ export default function SettingsGeneralPage() {
   const [showPw, setShowPw] = useState({ current: false, newPass: false, confirm: false })
 
   // Org
-  const [orgForm, setOrgForm] = useState({ name: "", description: "", logo: "", googleClientId: "", googleClientSecret: "" })
+  const [orgForm, setOrgForm] = useState({ 
+    name: "", description: "", logo: "", 
+    googleClientId: "", googleClientSecret: "",
+    phone: "", email: "", facebook: "", instagram: "", youtube: ""
+  })
   const [savingOrg, setSavingOrg] = useState(false)
   const [logoPreview, setLogoPreview] = useState("")
   const [uploadingLogo, setUploadingLogo] = useState(false)
@@ -203,7 +207,12 @@ export default function SettingsGeneralPage() {
         description: d.description || "", 
         logo: d.logo || "",
         googleClientId: d.googleClientId || "",
-        googleClientSecret: d.googleClientSecret || ""
+        googleClientSecret: d.googleClientSecret || "",
+        phone: d.phone || "",
+        email: d.email || "",
+        facebook: d.facebook || "",
+        instagram: d.instagram || "",
+        youtube: d.youtube || ""
       })
       setLogoPreview(d.logo || "")
     })
@@ -284,7 +293,12 @@ export default function SettingsGeneralPage() {
         description: orgForm.description, 
         logo: orgForm.logo || null,
         googleClientId: orgForm.googleClientId || null,
-        googleClientSecret: orgForm.googleClientSecret || null
+        googleClientSecret: orgForm.googleClientSecret || null,
+        phone: orgForm.phone || null,
+        email: orgForm.email || null,
+        facebook: orgForm.facebook || null,
+        instagram: orgForm.instagram || null,
+        youtube: orgForm.youtube || null
       }),
     })
     setSavingOrg(false)
@@ -528,6 +542,33 @@ export default function SettingsGeneralPage() {
               <textarea value={orgForm.description} onChange={e => setOrgForm(p => ({ ...p, description: e.target.value }))}
                 placeholder="Deskripsi singkat organisasi" rows={3}
                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs">No. Telepon Publik</Label>
+                <Input value={orgForm.phone} onChange={e => setOrgForm(p => ({ ...p, phone: e.target.value }))} placeholder="021-xxxxxxxx" className="rounded-xl h-9 text-sm" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Email Publik</Label>
+                <Input value={orgForm.email} onChange={e => setOrgForm(p => ({ ...p, email: e.target.value }))} placeholder="info@sekolah.com" className="rounded-xl h-9 text-sm" />
+              </div>
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <Label className="font-semibold text-sm">Sosial Media</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Facebook</Label>
+                <Input value={orgForm.facebook} onChange={e => setOrgForm(p => ({ ...p, facebook: e.target.value }))} placeholder="https://facebook.com/namasekolah" className="rounded-xl h-9 text-sm" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Instagram</Label>
+                <Input value={orgForm.instagram} onChange={e => setOrgForm(p => ({ ...p, instagram: e.target.value }))} placeholder="https://instagram.com/namasekolah" className="rounded-xl h-9 text-sm" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">YouTube</Label>
+                <Input value={orgForm.youtube} onChange={e => setOrgForm(p => ({ ...p, youtube: e.target.value }))} placeholder="https://youtube.com/@namasekolah" className="rounded-xl h-9 text-sm" />
+              </div>
             </div>
 
             {/* Google OAuth Tenant */}
