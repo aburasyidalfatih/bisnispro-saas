@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Camera, LogOut, KeyRound, Save, Loader2, CreditCard } from "lucide-react"
+import { ArrowLeft, Camera, LogOut, KeyRound, Save, Loader2, CreditCard, User } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 
 export function ParentProfile() {

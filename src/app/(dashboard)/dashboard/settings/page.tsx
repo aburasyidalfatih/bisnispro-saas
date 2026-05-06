@@ -441,7 +441,7 @@ export default function SettingsGeneralPage() {
         </Card>
 
         {/* ===== ORGANISASI — hanya owner/admin ===== */}
-        {isAdminOrOwner && (
+        {isAdminRole && (
         <Card className="glass border-0">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
@@ -551,7 +551,7 @@ export default function SettingsGeneralPage() {
         )}
 
         {/* ===== NOTIFIKASI ===== */}
-        <Card className={`glass border-0 ${isAdminOrOwner ? "lg:col-span-2" : ""}`}>
+        <Card className={`glass border-0 ${isAdminRole ? "lg:col-span-2" : ""}`}>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
