@@ -37,82 +37,60 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
     .slice(0, 3)
 
   return (
-    <div className="bg-background min-h-screen pb-12">
-      {/* ── PREMIUM EDITORIAL HERO ── */}
-      <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] bg-slate-900 overflow-hidden">
-        {/* Background Image */}
-        {(post.featuredImage || post.image) ? (
-          <img
-            src={post.featuredImage || post.image}
-            alt={post.title}
-            className="w-full h-full object-cover opacity-60"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-primary/80 to-slate-900 opacity-60" />
-        )}
-        
-        {/* Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-        
-        {/* Navigation & Breadcrumb (Absolute Top) */}
-        <div className="absolute top-0 left-0 right-0 p-6 z-20">
-           <div className="max-w-4xl mx-auto flex items-center justify-between">
-              <Link 
-                href={`${base}/berita`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all"
-              >
-                 <ArrowLeft className="h-4 w-4" /> Kembali
-              </Link>
-           </div>
-        </div>
-
-        {/* Title Block (Bottom Aligned) */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 z-10 pb-12">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-              <div className="px-3 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
-                 {post.type || "BERITA"}
-              </div>
-              <div className="flex items-center gap-1.5 text-xs font-medium text-white/80 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                 <Calendar className="h-3.5 w-3.5" />
-                 {format(new Date(post.createdAt), "dd MMMM yyyy", { locale: idLocale })}
-              </div>
-              <div className="flex items-center gap-1.5 text-xs font-medium text-white/80 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                 <User className="h-3.5 w-3.5" />
-                 {post.author || "Admin"}
-              </div>
-            </div>
-            
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] mb-6 drop-shadow-lg">
-              {post.title}
-            </h1>
+    <div className="bg-background min-h-screen pb-16">
+      {/* ── HEADER SECTION ── */}
+      <div className="bg-muted/30 pt-8 pb-12 border-b">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Link 
+            href={`${base}/berita`}
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
+          >
+             <ArrowLeft className="h-4 w-4" /> Kembali
+          </Link>
+          
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+             <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
+               {post.type || "BERITA"}
+             </div>
+             <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
+               <Calendar className="h-4 w-4" />
+               {format(new Date(post.createdAt), "dd MMMM yyyy", { locale: idLocale })}
+             </div>
+             <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
+               <User className="h-4 w-4" />
+               {post.author || "Admin"}
+             </div>
           </div>
+          
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight">
+            {post.title}
+          </h1>
         </div>
       </div>
 
-      <article className="mx-auto max-w-3xl px-4 sm:px-6 py-12 lg:py-16">
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
+        {(post.featuredImage || post.image) && (
+          <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
+            <img
+              src={post.featuredImage || post.image}
+              alt={post.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
         {/* Content */}
         <div
-          className="prose prose-lg md:prose-xl max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-img:rounded-3xl prose-img:shadow-xl"
+          className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-img:rounded-3xl prose-img:shadow-sm"
           dangerouslySetInnerHTML={{ __html: post.content || "" }}
         />
 
         {/* If content is plain text (no HTML), render as paragraphs */}
         {post.content && !post.content.includes("<") && (
-          <div className="text-muted-foreground leading-relaxed text-base whitespace-pre-wrap">
+          <div className="text-muted-foreground leading-relaxed text-lg whitespace-pre-wrap mt-8">
             {post.content}
           </div>
         )}
-
-        {/* Back Link */}
-        <div className="mt-12 pt-8 border-t">
-          <Link
-            href={`${base}/berita`}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
-          >
-            <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Berita
-          </Link>
-        </div>
       </article>
 
       {/* Related Posts */}
