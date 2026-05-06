@@ -86,7 +86,7 @@ jobs:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          command_timeout: 30m
+          command_timeout: 60m
           envs: GITHUB_TOKEN,ACTOR,BRANCH,REPO
           script: |
             set -e
