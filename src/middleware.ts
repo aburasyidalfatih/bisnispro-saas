@@ -111,7 +111,7 @@ export default async function middleware(request: NextRequest) {
       return res
     }
 
-    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate")
+    const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
     if (isProtected && !session) {
@@ -153,6 +153,7 @@ export default async function middleware(request: NextRequest) {
     // Jangan rewrite rute Dashboard/Login di subdomain
     if (
       pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/ortu") ||
       pathname.startsWith("/login") ||
       pathname.startsWith("/register") ||
       pathname.startsWith("/forgot-password") ||
@@ -185,6 +186,7 @@ export default async function middleware(request: NextRequest) {
 
     if (
       pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/ortu") ||
       pathname.startsWith("/login") ||
       pathname.startsWith("/register") ||
       pathname.startsWith("/forgot-password") ||
