@@ -26,9 +26,6 @@ export default function WebsiteAboutPage() {
     heroImage: "",
     seoTitle: "",
     seoDesc: "",
-    facebook: "",
-    instagram: "",
-    youtube: "",
     settings: {} as any,
   })
 
@@ -61,9 +58,6 @@ export default function WebsiteAboutPage() {
           seoTitle: d.seoTitle || "",
           seoDesc: d.seoDesc || "",
           settings: d.settings || {},
-          facebook: d.facebook || "",
-          instagram: d.instagram || "",
-          youtube: d.youtube || ""
         })
         setLoading(false)
       })
@@ -299,21 +293,6 @@ export default function WebsiteAboutPage() {
               </div>
             </div>
 
-            <div className="space-y-2 mt-4 pt-4 border-t">
-              <Label className="font-semibold text-sm">Sosial Media</Label>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Facebook</Label>
-                <Input value={form.facebook} onChange={e => setForm(p => ({ ...p, facebook: e.target.value }))} placeholder="https://facebook.com/namasekolah" className="rounded-xl h-9 text-sm" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Instagram</Label>
-                <Input value={form.instagram} onChange={e => setForm(p => ({ ...p, instagram: e.target.value }))} placeholder="https://instagram.com/namasekolah" className="rounded-xl h-9 text-sm" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">YouTube</Label>
-                <Input value={form.youtube} onChange={e => setForm(p => ({ ...p, youtube: e.target.value }))} placeholder="https://youtube.com/@namasekolah" className="rounded-xl h-9 text-sm" />
-              </div>
-            </div>
           </CardContent>
         </Card>
 
