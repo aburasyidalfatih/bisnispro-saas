@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { UserPlus, ArrowRight, Wallet, ClipboardList, CheckCircle, FileText } from "lucide-react"
+import { UserPlus, ArrowRight, ArrowLeft, Wallet, ClipboardList, CheckCircle, FileText } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
@@ -28,20 +28,28 @@ export default function PpdbPortalPage() {
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gradient">Portal Pendaftaran PPDB</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Kelola pendaftaran siswa baru Anda di sini.</p>
+    <div className="pb-10 font-sans">
+      {/* Top Header Mobile Style */}
+      <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
+        <div className="flex items-center justify-between text-primary-foreground mb-4">
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard" className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+               <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <h1 className="font-bold text-lg">Portal PPDB</h1>
+          </div>
         </div>
-        <Link href="/dashboard/ppdb/portal/daftar">
-          <Button className="rounded-xl btn-gradient text-white shadow-lg border-0">
-            <UserPlus className="mr-2 h-4 w-4" /> Daftar Siswa Baru
-          </Button>
-        </Link>
+        <p className="text-primary-foreground/80 text-sm">Kelola pendaftaran siswa baru Anda secara online.</p>
       </div>
 
-      <div className="grid gap-6">
+      <div className="-mt-14 relative z-10 px-5 space-y-5">
+        <Link href="/dashboard/ppdb/portal/daftar" className="block w-full">
+          <Button className="w-full rounded-xl btn-gradient text-white shadow-lg shadow-primary/20 border-0 h-12 text-sm font-bold flex items-center justify-center gap-2">
+            <UserPlus className="h-4 w-4" /> Mulai Pendaftaran Baru
+          </Button>
+        </Link>
+
+        <div className="grid gap-5">
         {registrations.length > 0 ? (
           registrations.map((reg) => {
             const workflow = derivePpdbStatus(reg)

@@ -143,29 +143,33 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto space-y-4">
-        <div className="h-12 rounded-xl skeleton" />
-        {[1, 2, 3].map(i => <div key={i} className="h-32 rounded-2xl skeleton" />)}
+      <div className="pb-10 font-sans">
+        <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
+          <div className="h-8 w-32 skeleton bg-white/20 rounded-full" />
+        </div>
+        <div className="-mt-14 relative z-10 px-5 space-y-4">
+          {[1, 2, 3].map(i => <div key={i} className="h-32 rounded-2xl skeleton" />)}
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 pb-20">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href={`/dashboard/ppdb/portal/status/${id}`}>
-          <Button variant="ghost" size="icon" className="rounded-xl">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Upload Berkas</h1>
-          <p className="text-muted-foreground text-sm">
-            {applicant?.namaLengkap} · <span className="font-mono text-xs">{applicant?.noPendaftaran}</span>
-          </p>
+    <div className="pb-10 font-sans">
+      {/* Top Header Mobile Style */}
+      <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
+        <div className="flex items-center gap-3 text-primary-foreground mb-4">
+          <Link href={`/dashboard/ppdb/portal/status/${id}`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+             <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <h1 className="font-bold text-lg">Upload Berkas</h1>
         </div>
+        <p className="text-primary-foreground/80 text-sm flex items-center gap-2">
+          <span className="truncate max-w-[150px]">{applicant?.namaLengkap}</span> · <span className="font-mono text-[10px]">{applicant?.noPendaftaran}</span>
+        </p>
       </div>
+
+      <div className="-mt-14 relative z-10 px-5 space-y-6">
 
       {/* Progress Bar */}
       <Card className="glass border-0">
@@ -379,6 +383,7 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
           )}
         </div>
       )}
+      </div>
     </div>
   )
 }

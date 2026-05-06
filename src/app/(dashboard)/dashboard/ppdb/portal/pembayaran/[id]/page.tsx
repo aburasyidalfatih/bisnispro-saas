@@ -74,20 +74,20 @@ export default function PpdbPaymentPage({ params }: { params: Promise<{ id: stri
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center gap-4">
-        <Link href={`/dashboard/ppdb/portal`}>
-          <Button variant="ghost" size="icon" className="rounded-xl">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Pembayaran {tagihan?.jenis}</h1>
-          <p className="text-muted-foreground text-sm">Silakan transfer sesuai nominal ke salah satu rekening di bawah.</p>
+    <div className="pb-10 font-sans">
+      {/* Top Header Mobile Style */}
+      <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
+        <div className="flex items-center gap-3 text-primary-foreground mb-4">
+          <Link href={`/dashboard/ppdb/portal`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+             <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <h1 className="font-bold text-lg">Pembayaran {tagihan?.jenis}</h1>
         </div>
+        <p className="text-primary-foreground/80 text-sm">Silakan transfer sesuai nominal ke salah satu rekening di bawah.</p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="-mt-14 relative z-10 px-5 space-y-6">
+        <div className="grid gap-6 md:grid-cols-2">
         {/* Left: Bank Accounts */}
         <div className="space-y-6">
            <Card className="glass border-0 shadow-xl p-8 bg-gradient-to-br from-primary/10 to-transparent">
@@ -164,6 +164,7 @@ export default function PpdbPaymentPage({ params }: { params: Promise<{ id: stri
               </Button>
            </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   )

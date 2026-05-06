@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { UserPlus, Calendar, ArrowRight, ClipboardList, Info } from "lucide-react"
+import { UserPlus, Calendar, ArrowRight, ArrowLeft, ClipboardList, Info } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -89,11 +89,19 @@ export default function PpdbRegisterPage() {
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gradient">Daftar Siswa Baru</h1>
-        <p className="text-muted-foreground">Lengkapi formulir singkat di bawah untuk memulai proses pendaftaran.</p>
+    <div className="pb-10 font-sans">
+      {/* Top Header Mobile Style */}
+      <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
+        <div className="flex items-center gap-3 text-primary-foreground mb-4">
+          <button type="button" onClick={() => router.back()} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+             <ArrowLeft className="h-4 w-4" />
+          </button>
+          <h1 className="font-bold text-lg">Daftar Siswa Baru</h1>
+        </div>
+        <p className="text-primary-foreground/80 text-sm">Lengkapi formulir awal pendaftaran.</p>
       </div>
+
+      <div className="-mt-14 relative z-10 px-5 space-y-5">
 
       {periods.length === 0 ? (
         <Card className="glass border-0 shadow-lg p-10 text-center">

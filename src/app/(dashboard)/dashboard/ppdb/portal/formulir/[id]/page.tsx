@@ -147,28 +147,27 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-20">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href={`/dashboard/ppdb/portal/status/${id}`}>
-          <Button variant="ghost" size="icon" className="rounded-xl">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Formulir Pendaftaran</h1>
-          <p className="text-muted-foreground text-sm flex items-center gap-2">
-            {applicant?.namaLengkap} · <span className="font-mono text-xs">{applicant?.noPendaftaran}</span>
-            {lastSaved && (
-              <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium ml-2 animate-pulse">
-                Tersimpan {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            )}
-          </p>
+    <div className="pb-10 font-sans">
+      {/* Top Header Mobile Style */}
+      <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
+        <div className="flex items-center gap-3 text-primary-foreground mb-4">
+          <Link href={`/dashboard/ppdb/portal/status/${id}`} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+             <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <h1 className="font-bold text-lg">Formulir Pendaftaran</h1>
         </div>
+        <p className="text-primary-foreground/80 text-sm flex items-center flex-wrap gap-2">
+          <span className="truncate max-w-[150px]">{applicant?.namaLengkap}</span> · <span className="font-mono text-[10px]">{applicant?.noPendaftaran}</span>
+          {lastSaved && (
+            <span className="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded-full font-medium animate-pulse whitespace-nowrap">
+              Disimpan {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
+          )}
+        </p>
       </div>
 
-      {/* Step Indicator */}
+      <div className="-mt-14 relative z-10 px-5 space-y-6">
+        {/* Step Indicator */}
       <div className="flex items-center gap-0">
         {STEPS.map((step, idx) => (
           <div key={step.id} className="flex items-center flex-1">
@@ -439,6 +438,7 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
             </>}
           </Button>
         )}
+      </div>
       </div>
     </div>
   )

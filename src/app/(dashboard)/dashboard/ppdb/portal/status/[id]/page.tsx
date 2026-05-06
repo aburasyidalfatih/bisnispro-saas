@@ -75,25 +75,27 @@ export default function PpdbStatusPage({ params }: { params: Promise<{ id: strin
   const workflow = derivePpdbStatus(applicant)
 
   return (
-    <div className="space-y-8 pb-20">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard/ppdb/portal">
-            <Button variant="ghost" size="icon" className="rounded-xl">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">{applicant.namaLengkap}</h1>
-            <p className="text-muted-foreground text-sm">Status: <span className="text-primary font-bold">{workflow.label}</span></p>
+    <div className="pb-10 font-sans">
+      {/* Top Header Mobile Style */}
+      <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
+        <div className="flex items-center justify-between text-primary-foreground mb-4">
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard/ppdb/portal" className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+               <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <h1 className="font-bold text-lg max-w-[200px] truncate">{applicant.namaLengkap}</h1>
           </div>
         </div>
-        <Badge variant="outline" className="px-4 py-1.5 rounded-full border-primary/20 text-primary bg-primary/5 font-mono">
-           {applicant.noPendaftaran}
-        </Badge>
+        <div className="flex items-center justify-between">
+          <p className="text-primary-foreground/80 text-sm">Status: <span className="font-bold text-white">{workflow.label}</span></p>
+          <Badge variant="outline" className="px-2 py-0.5 rounded-full border-white/20 text-white bg-white/10 font-mono text-[10px]">
+             {applicant.noPendaftaran}
+          </Badge>
+        </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="-mt-14 relative z-10 px-5 space-y-6">
+        <div className="grid gap-6 lg:grid-cols-3">
         {/* Progress Stepper (Left) */}
         <div className="lg:col-span-1">
            <Card className="glass border-0 shadow-sm p-6 sticky top-24">
