@@ -93,8 +93,6 @@ export default function WebsiteAboutPage() {
     }
   }
 
-  }
-
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !tenantId) return
