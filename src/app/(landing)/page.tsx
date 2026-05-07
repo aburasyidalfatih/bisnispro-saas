@@ -260,11 +260,26 @@ export default async function LandingPage() {
             <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-l from-background to-transparent" />
             <div 
               className="animate-marquee flex gap-8 md:gap-12 pl-8 md:pl-12 items-center"
-              style={{ animationDuration: `${Math.max(activeTenants.length * 15, 60)}s` }}
+              style={{ animationDuration: `${Math.max(activeTenants.length * 2, 10)}s` }}
             >
               {/* Render items 4 times to ensure seamless loop for marquee */}
               {[...activeTenants, ...activeTenants, ...activeTenants, ...activeTenants].map((tenant, idx) => {
-                const city = tenant.address ? tenant.address.split(",").pop()?.trim() : "Indonesia"
+                let city = "Indonesia"
+                if (tenant.address) {
+                  const kabMatch = tenant.address.match(/(Kota|Kabupaten|Kab\.)\s+([A-Za-z\- ]+)/i)
+                  if (kabMatch) {
+                    city = kabMatch[0].trim()
+                  } else {
+                    const kecMatch = tenant.address.match(/(Kecamatan|Kec\.)\s+([A-Za-z\- ]+)/i)
+                    if (kecMatch) {
+                      city = kecMatch[0].trim()
+                    } else {
+                      const parts = tenant.address.split(",")
+                      const last = parts[parts.length - 1].trim()
+                      city = last.length > 25 ? last.substring(0, 25) + "..." : last
+                    }
+                  }
+                }
                 return (
                   <div key={`${tenant.id}-${idx}`} className="flex items-center gap-3 shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
                     {tenant.logo ? (
