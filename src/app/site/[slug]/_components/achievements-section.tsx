@@ -43,17 +43,22 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-amber-400/3 blur-3xl pointer-events-none" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold tracking-wider uppercase mb-4">
-            <Trophy className="h-3.5 w-3.5" />
-            Prestasi
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold tracking-wider uppercase mb-4">
+              <Trophy className="h-3.5 w-3.5" />
+              Prestasi
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+              Prestasi Membanggakan
+            </h2>
+            <p className="text-muted-foreground text-sm md:text-base max-w-xl">
+              Deretan pencapaian siswa dan sekolah kami di berbagai kompetisi dan ajang bergengsi.
+            </p>
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
-            Prestasi Membanggakan
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
-            Deretan pencapaian siswa dan sekolah kami di berbagai kompetisi dan ajang bergengsi.
-          </p>
+          <Link href={resolveHref("/prestasi")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+            Lihat Semua <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -98,16 +103,7 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
           })}
         </div>
 
-        {achievements.length > 6 && (
-          <div className="text-center mt-10">
-            <Link
-              href={resolveHref("/prestasi")}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border hover:bg-muted transition-colors text-sm font-medium"
-            >
-              Lihat Semua Prestasi <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        )}
+
       </div>
     </section>
   )

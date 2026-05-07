@@ -39,17 +39,22 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-4">
-            <GraduationCap className="h-3.5 w-3.5" />
-            Program Keahlian
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-4">
+              <GraduationCap className="h-3.5 w-3.5" />
+              Program Keahlian
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+              Program Unggulan Kami
+            </h2>
+            <p className="text-muted-foreground text-sm md:text-base max-w-xl">
+              Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja.
+            </p>
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
-            Program Unggulan Kami
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
-            Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja.
-          </p>
+          <Link href={resolveHref("/program")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+            Lihat Semua <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
         {/* Programs Grid */}

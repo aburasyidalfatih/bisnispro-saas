@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 import Link from "next/link"
-import { ArrowRight, MapPin, Phone, Mail, MessageCircle } from "lucide-react"
+import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
 import { HeroSlider } from "./_components/hero-slider"
 import { StatsBar } from "./_components/stats-bar"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
@@ -114,15 +114,18 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       {gallery.length > 0 && (
         <section className="py-10 md:py-16 bg-background">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
               <div>
-                <span className="inline-block px-3 py-1 mb-3 rounded-full bg-secondary text-secondary-foreground text-xs font-bold tracking-wider uppercase">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-500/10 text-slate-600 text-xs font-bold tracking-wider uppercase mb-4">
+                  <ImageIcon className="h-3.5 w-3.5" />
                   Galeri
-                </span>
-                <h2 className="text-2xl font-bold">Dokumentasi Kami</h2>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Dokumentasi Kami</h2>
+                <p className="text-muted-foreground text-sm md:text-base max-w-xl">
+                  Kumpulan momen dan kegiatan berharga yang telah kami abadikan.
+                </p>
               </div>
-              <Link href={`${base}/gallery`}
-                className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
+              <Link href={`${base}/gallery`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
                 Lihat Semua <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
