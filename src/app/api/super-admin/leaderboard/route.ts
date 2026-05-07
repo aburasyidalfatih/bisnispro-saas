@@ -13,6 +13,7 @@ export async function GET() {
       SELECT
         t.id,
         t.name,
+        t.slug,
         t.logo,
         t.address,
         (
@@ -32,8 +33,8 @@ export async function GET() {
     // Filter yang score-nya > 0
     const filteredLeaderboard = (leaderboard as any[]).filter(t => t.activity_score > 0);
 
-    // Ambil top 5
-    return NextResponse.json(filteredLeaderboard.slice(0, 5))
+    // Ambil top 7
+    return NextResponse.json(filteredLeaderboard.slice(0, 7))
   } catch (error) {
     console.error("Failed to fetch leaderboard", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
