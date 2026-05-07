@@ -17,7 +17,7 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
         {stats.map((stat, i) => (
           <div
             key={i}
-            className={`flex flex-col items-center justify-center p-8 text-center relative group overflow-hidden ${
+            className={`flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center relative group overflow-hidden ${
               i < stats.length - 1 ? "md:border-r border-white/10" : ""
             } ${i % 2 === 0 ? "border-r md:border-r-0 border-white/10" : ""} ${
               i < 2 ? "border-b md:border-b-0 border-white/10" : ""
@@ -29,7 +29,7 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
              <p className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-md relative z-10">
                {stat.value}
              </p>
-             <p className="text-xs md:text-sm font-bold text-white/80 uppercase tracking-widest relative z-10">
+             <p className="text-[10px] sm:text-xs md:text-sm font-bold text-white/80 uppercase tracking-widest relative z-10">
                {stat.label}
              </p>
           </div>

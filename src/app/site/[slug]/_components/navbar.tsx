@@ -158,12 +158,12 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                   {tenant.name.charAt(0)}
                 </div>
               )}
-              <div className="hidden sm:block">
-                <span className="block font-extrabold text-base text-gray-900 leading-tight tracking-tight group-hover:text-primary transition-colors">
+              <div className="flex flex-col max-w-[140px] sm:max-w-none">
+                <span className="block font-extrabold text-sm sm:text-base text-gray-900 leading-tight tracking-tight group-hover:text-primary transition-colors truncate">
                   {tenant.name}
                 </span>
                 {tenant.tagline && (
-                  <span className="block text-[10px] font-semibold text-gray-500 leading-none mt-1">
+                  <span className="block text-[9px] sm:text-[10px] font-semibold text-gray-500 leading-none mt-1 truncate">
                     {tenant.tagline}
                   </span>
                 )}

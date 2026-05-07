@@ -111,7 +111,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
       {/* ── 11. Galeri ── */}
       {gallery.length > 0 && (
-        <section className="py-16 bg-background">
+        <section className="py-10 md:py-16 bg-background">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -125,7 +125,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
                 Lihat Semua <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => (
                 <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
                   <img src={item.url} alt={item.caption || `Foto ${i + 1}`}
@@ -147,9 +147,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
       {/* ── 13. Kontak CTA ── */}
       {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
-        <section className="py-16 bg-muted/30">
+        <section className="py-10 md:py-16 bg-muted/30">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl bg-primary p-12 text-white relative overflow-hidden">
+            <div className="rounded-3xl bg-primary p-8 md:p-12 text-white relative overflow-hidden">
               <div className="absolute inset-0 opacity-10"
                 style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
               <div className="relative grid md:grid-cols-2 gap-8 items-center">

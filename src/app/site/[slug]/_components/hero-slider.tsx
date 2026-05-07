@@ -121,7 +121,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             {slide.subtitle && (
               <div className="flex items-center gap-3 mb-3" style={{ animation: "textFadeUp 0.5s 0.1s ease both" }}>
                 <div className="h-[2px] w-8 bg-amber-400 shrink-0" />
-                <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-amber-400 drop-shadow-md whitespace-nowrap">
+                <p className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.2em] sm:tracking-[0.25em] text-amber-400 drop-shadow-md break-words">
                   {slide.subtitle}
                 </p>
               </div>
@@ -130,7 +130,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             {/* Title */}
             {slide.title && (
               <h1
-                className="font-black leading-[1.15] text-white mb-4 drop-shadow-lg tracking-tight whitespace-nowrap"
+                className="font-black leading-[1.2] text-white mb-4 drop-shadow-lg tracking-tight break-words"
                 style={{
                   fontSize: "clamp(1.75rem, 4vw, 3.5rem)",
                   animation: "textFadeUp 0.55s 0.2s ease both",
@@ -211,7 +211,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
       {/* ── Dot Indicators ── */}
       {!isSingle && (
-        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2.5">
+        <div className="absolute bottom-36 md:bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2.5">
           {slides.map((_, i) => (
             <button
               key={i}
