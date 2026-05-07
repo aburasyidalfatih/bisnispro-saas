@@ -346,9 +346,16 @@ export default function WebsiteAboutPage() {
                 <Input value={form.settings?.principalTitle || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalTitle: e.target.value } }))}
                   placeholder="Contoh: Kepala Sekolah" className="rounded-xl" />
               </div>
+            <div className="grid gap-4 sm:grid-cols-2 mt-4">
+              <div className="space-y-2">
+                <Label>Tahun Berdedikasi (Badge Foto)</Label>
+                <Input value={form.settings?.principalBadgeYear || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalBadgeYear: e.target.value } }))}
+                  placeholder="Contoh: 2015" className="rounded-xl" />
+                <p className="text-xs text-muted-foreground">Tampil di badge foto halaman depan</p>
+              </div>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 mt-4">
               <Label>Pesan Sambutan</Label>
               <textarea value={form.settings?.principalMessage || ""}
                 onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalMessage: e.target.value } }))}

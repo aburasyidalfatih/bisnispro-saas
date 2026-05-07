@@ -17,6 +17,7 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
     ? (principalStaff.imageUrl || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076")
     : (settings?.principalImage || "/principal_portrait.png")
   const principalMessage = settings?.principalMessage || `Puji syukur ke hadirat Tuhan YME atas segala rahmat dan karunia-Nya. Selamat datang di website resmi ${tenantName}. Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara sekolah dengan orang tua, peserta didik, serta masyarakat luas.\n\nMelalui media ini, kami berharap seluruh informasi mengenai kegiatan, prestasi, serta program pendidikan dapat tersampaikan secara transparan, cepat, dan akurat. Kami berkomitmen untuk terus meningkatkan kualitas pendidikan dan mencetak generasi penerus bangsa yang unggul dan berkarakter.`
+  const principalBadgeYear = settings?.principalBadgeYear || "2015"
 
   const paragraphs = principalMessage.split("\n").filter((p: string) => p.trim() !== "")
 
@@ -52,7 +53,7 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
               </div>
               <div>
                 <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Berdedikasi</p>
-                <p className="text-sm font-bold">Sejak 2015</p>
+                <p className="text-sm font-bold">Sejak {principalBadgeYear}</p>
               </div>
             </div>
           </div>
