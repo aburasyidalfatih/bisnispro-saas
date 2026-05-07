@@ -13,8 +13,23 @@ import { ConfirmProvider } from "@/components/providers/confirm-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "SchoolPro",
-  description: "Platform SaaS Multi-Tenant untuk semua kebutuhan bisnis Anda",
+  title: "SchoolPro - Platform Manajemen & Website Sekolah Terpadu",
+  description: "SchoolPro adalah platform SaaS terbaik untuk digitalisasi sekolah. Tersedia fitur pembuatan website sekolah otomatis, PPDB Online, manajemen data master, hingga tagihan siswa.",
+  keywords: ["aplikasi sekolah", "website sekolah", "sistem informasi sekolah", "ppdb online", "saas pendidikan", "software administrasi sekolah"],
+  authors: [{ name: "SchoolPro Team" }],
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: "https://schoolpro.id",
+    title: "SchoolPro - Platform Manajemen & Website Sekolah Terpadu",
+    description: "Digitalisasi sekolah menjadi sangat mudah dengan SchoolPro. Buat website sekolah, kelola PPDB, tagihan, dan data akademik dalam satu portal cerdas.",
+    siteName: "SchoolPro",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SchoolPro - Digitalisasi Sekolah Tanpa Ribet",
+    description: "Satu platform untuk seluruh kebutuhan administrasi, pendaftaran, dan operasional lembaga pendidikan Anda.",
+  },
   manifest: "/manifest.json",
 }
 
