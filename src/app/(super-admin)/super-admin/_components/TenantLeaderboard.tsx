@@ -7,6 +7,7 @@ import { Trophy, Building2, Activity } from "lucide-react"
 interface LeaderboardTenant {
   id: string
   name: string
+  slug: string
   logo: string | null
   address: string | null
   activity_score: number
@@ -64,13 +65,15 @@ export function TenantLeaderboard() {
                     {index > 2 && <span className="text-muted-foreground text-sm">{index + 1}</span>}
                   </div>
                   
-                  {tenant.logo ? (
-                    <img src={tenant.logo} alt={tenant.name} className="h-10 w-10 rounded-full object-contain border bg-white p-0.5" />
-                  ) : (
-                    <div className="h-10 w-10 rounded-full border bg-muted flex items-center justify-center shrink-0">
-                      <Building2 className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                  )}
+                  <a href={`/site/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105 hover:shadow-md rounded-full">
+                    {tenant.logo ? (
+                      <img src={tenant.logo} alt={tenant.name} className="h-10 w-10 rounded-full object-contain border bg-white p-0.5" />
+                    ) : (
+                      <div className="h-10 w-10 rounded-full border bg-muted flex items-center justify-center shrink-0">
+                        <Building2 className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    )}
+                  </a>
 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate leading-tight">{tenant.name}</p>
