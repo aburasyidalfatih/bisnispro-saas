@@ -145,6 +145,13 @@ export default function WebsiteAboutPage() {
     </div>
   )
 
+  const getPublicUrl = (path: string) => {
+    if (typeof window !== "undefined" && window.location.pathname.startsWith('/site/')) {
+      return `/site/${slug}${path}`
+    }
+    return path
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -154,7 +161,7 @@ export default function WebsiteAboutPage() {
         </div>
         <div className="flex items-center gap-2">
           {slug && (
-            <a href={`/site/${slug}/about`} target="_blank" rel="noopener"
+            <a href={getPublicUrl("/about")} target="_blank" rel="noopener"
               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
               <ExternalLink className="h-3.5 w-3.5" /> Lihat Halaman
             </a>
