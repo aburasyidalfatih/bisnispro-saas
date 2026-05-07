@@ -39,7 +39,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
                 <CalendarDays className="h-6 w-6 text-emerald-600" />
-                <h3 className="font-bold text-lg">Agenda Kegiatan</h3>
+                <h3 className="font-bold text-lg">Agenda</h3>
               </div>
               <Link href={resolveHref("/agenda")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
@@ -88,7 +88,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
                 <Megaphone className="h-6 w-6 text-emerald-600" />
-                <h3 className="font-bold text-lg">Pengumuman Terbaru</h3>
+                <h3 className="font-bold text-lg">Pengumuman</h3>
               </div>
               <Link href={resolveHref("/berita?type=pengumuman")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
@@ -136,7 +136,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
                 <Newspaper className="h-6 w-6 text-emerald-600" />
-                <h3 className="font-bold text-lg">Artikel & Berita</h3>
+                <h3 className="font-bold text-lg">Artikel</h3>
               </div>
               <Link href={resolveHref("/berita")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
