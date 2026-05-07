@@ -34,40 +34,73 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
       />
 
       {/* ── PRINCIPAL HIGHLIGHT (If exists) ── */}
-      {principal && (
+      {principal && (() => {
+        const principalSlug = principal.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+        return (
         <section className="py-20 bg-muted/30 border-b border-border/50">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-[3rem] p-8 md:p-12 shadow-xl border border-border flex flex-col md:flex-row gap-12 items-center">
-              <div className="relative h-64 w-64 md:h-80 md:w-80 rounded-[2.5rem] overflow-hidden shadow-2xl shrink-0">
+            <div className="bg-white rounded-[3rem] p-8 md:p-12 shadow-xl border border-border flex flex-col md:flex-row gap-12 items-center relative">
+              <Link href={`${base}/gtk/${principalSlug}`} className="relative h-64 w-64 md:h-80 md:w-80 rounded-[2.5rem] overflow-hidden shadow-2xl shrink-0 group">
                 <OptimizedImage 
                   src={principal.imageUrl || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076"} 
                   alt={principal.name} 
                   fill 
-                  className="object-cover"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-              </div>
+              </Link>
               <div className="flex-1 space-y-6">
                 <div>
                   <div className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-2">Pimpinan Sekolah</div>
-                  <h2 className="text-3xl font-extrabold text-foreground">{principal.name}</h2>
+                  <Link href={`${base}/gtk/${principalSlug}`}>
+                    <h2 className="text-3xl font-extrabold text-foreground hover:text-primary transition-colors">{principal.name}</h2>
+                  </Link>
                   <p className="text-lg font-medium text-muted-foreground">{principal.role}</p>
                 </div>
                 <div className="prose prose-slate italic text-muted-foreground">
                   <p>"{principal.bio || "Pendidikan adalah senjata paling mematikan di dunia, karena dengan pendidikan Anda bisa mengubah dunia. Kami di sini berkomitmen penuh untuk menjaga amanah Bapak/Ibu sekalian."}"</p>
                 </div>
-                <div className="flex gap-4">
+                
+                <div className="flex flex-wrap gap-4 items-center">
                   <div className="flex items-center gap-2 text-xs font-bold text-primary bg-primary/5 px-4 py-2 rounded-full border border-primary/10">
-                    <GraduationCap className="h-4 w-4" /> Magister Pendidikan
+                    <GraduationCap className="h-4 w-4" /> {principal.education || "Pendidikan"}
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500 bg-slate-100 px-4 py-2 rounded-full border border-slate-200">
-                    <Award className="h-4 w-4" /> 15+ Tahun Pengalaman
+                  
+                  {/* Social Media Icons */}
+                  <div className="flex items-center gap-2 ml-auto md:ml-0">
+                    {principal.instagram && (
+                      <a href={principal.instagram} target="_blank" rel="noreferrer" className="flex items-center justify-center w-8 h-8 rounded-full bg-pink-50 border border-pink-100 text-pink-600 hover:bg-pink-500 hover:text-white transition-all shadow-sm">
+                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                      </a>
+                    )}
+                    {principal.facebook && (
+                      <a href={principal.facebook} target="_blank" rel="noreferrer" className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 border border-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                      </a>
+                    )}
+                    {principal.youtube && (
+                      <a href={principal.youtube} target="_blank" rel="noreferrer" className="flex items-center justify-center w-8 h-8 rounded-full bg-red-50 border border-red-100 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+                      </a>
+                    )}
+                    {principal.tiktok && (
+                      <a href={principal.tiktok} target="_blank" rel="noreferrer" className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-slate-800 hover:bg-slate-800 hover:text-white transition-all shadow-sm">
+                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        </svg>
+                      </a>
+                    )}
                   </div>
+                  
+                  <Link href={`${base}/gtk/${principalSlug}`} className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20 md:ml-auto">
+                    Lihat Profil
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </section>
-      )}
+        )
+      })}
 
       {/* ── TEACHERS GRID ── */}
       <section className="py-12 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
