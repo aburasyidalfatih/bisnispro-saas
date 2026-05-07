@@ -237,6 +237,46 @@ export const authOptions: NextAuthConfig = {
           user.id = existing.id
         }
       }
+      // --- NEW: AUDIT LOG USER LOGIN ---
+      try {
+        const { headers } = await import("next/headers")
+        const headersList = await headers()
+        const host = headersList.get("host") || ""
+        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
+        const hostWithoutPort = host.split(":")[0]
+        const isMainDomain =
+          hostWithoutPort === "localhost" ||
+          hostWithoutPort === rootDomain ||
+          hostWithoutPort === `www.${rootDomain}`
+
+        let targetTenantSlug: string | null = null
+        if (!isMainDomain) {
+          targetTenantSlug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+        }
+        
+        let tenantId = null;
+        if (targetTenantSlug) {
+            const tenant = await db.tenant.findUnique({ where: { slug: targetTenantSlug }, select: { id: true } })
+            if (tenant) tenantId = tenant.id;
+        }
+
+        if (user?.id) {
+            await db.auditLog.create({
+                data: {
+                    action: "USER_LOGIN",
+                    entity: "User",
+                    entityId: user.id,
+                    userId: user.id,
+                    tenantId: tenantId,
+                    ipAddress: headersList.get("x-forwarded-for") || undefined,
+                    userAgent: headersList.get("user-agent") || undefined,
+                }
+            })
+        }
+      } catch (error) {
+        console.error("Failed to log user login", error)
+      }
+
       return true
     },
 
