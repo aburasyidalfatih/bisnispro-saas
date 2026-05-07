@@ -55,7 +55,7 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
             >
               <div className="mx-auto w-16 h-16 rounded-2xl overflow-hidden mb-4 shadow-sm border bg-muted/50 flex items-center justify-center">
                 {ekskul.imageUrl ? (
-                  <img src={ekskul.imageUrl} alt={ekskul.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={ekskul.imageUrl} alt={`Ekstrakurikuler: ${ekskul.name}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 ) : (
                   <span className="text-3xl">{EMOJI_FALLBACKS[idx % EMOJI_FALLBACKS.length]}</span>
                 )}

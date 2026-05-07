@@ -75,7 +75,7 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
                 <div className="flex items-start gap-4">
                   {achievement.imageUrl ? (
                     <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border bg-white shadow-sm">
-                      <img src={achievement.imageUrl} alt={achievement.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <img src={achievement.imageUrl} alt={`Prestasi: ${achievement.title}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                   ) : (
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-white/80 shadow-sm border`}>

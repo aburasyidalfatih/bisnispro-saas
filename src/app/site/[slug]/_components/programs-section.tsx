@@ -71,11 +71,12 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
                 {/* Image / Gradient Header */}
                 <div className="relative h-44 overflow-hidden">
                   {program.imageUrl ? (
-                    <img
-                      src={program.imageUrl}
-                      alt={program.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
+                      <img
+                        src={program.imageUrl}
+                        alt={`Program: ${program.name}`}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
                   ) : (
                     <div className={`w-full h-full bg-gradient-to-br ${color.bg} flex items-center justify-center`}>
                       <BookOpen className={`h-16 w-16 ${color.icon} opacity-30`} />

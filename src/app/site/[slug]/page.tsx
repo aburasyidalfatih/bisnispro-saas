@@ -20,10 +20,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
+  const title = tenant.seoTitle || tenant.name
+  const description = tenant.seoDesc || tenant.description || tenant.tagline || `Website ${tenant.name}`
+  const images = tenant.logo ? [tenant.logo] : []
+
   return {
-    title: tenant.seoTitle || tenant.name,
-    description: tenant.seoDesc || tenant.description || tenant.tagline || `Website ${tenant.name}`,
+    title,
+    description,
     manifest: `/api/tenant/manifest?slug=${slug}`,
+    openGraph: {
+      title,
+      description,
+      siteName: tenant.name,
+      images,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images,
+    },
   }
 }
 
@@ -132,7 +149,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => (
                 <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
-                  <img src={item.url} alt={item.caption || `Foto ${i + 1}`}
+                  <img src={item.url} alt={item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
+                    loading="lazy"
                     className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   {item.caption && (
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
