@@ -74,9 +74,11 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
 
         {teachers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {teachers.map((s: any) => (
+            {teachers.map((s: any) => {
+              const slugifiedName = s.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+              return (
               <Link 
-                href={`${base}/gtk/${s.id}`}
+                href={`${base}/gtk/${slugifiedName}`}
                 key={s.id} 
                 className="group relative flex flex-col bg-white rounded-3xl overflow-hidden border border-border hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
               >
@@ -109,7 +111,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
                   <div className="h-1 w-12 bg-primary/20 mx-auto rounded-full group-hover:w-20 group-hover:bg-primary transition-all duration-500" />
                 </div>
               </Link>
-            ))}
+            )})}
           </div>
         ) : (
           <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed border-border">
