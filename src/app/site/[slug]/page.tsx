@@ -60,12 +60,14 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           tenant.sliders && tenant.sliders.length > 0
             ? tenant.sliders.map((s: any) => ({
                 subtitle: "",
-                title: s.title || tenant.tagline || `Selamat Datang di\n${tenant.name}`,
+                title: s.title || "",
                 description: s.subtitle || "",
                 image: s.imageUrl,
                 cta: s.buttonText
                   ? { label: s.buttonText, href: s.buttonLink || "/contact" }
-                  : { href: `/contact`, label: "Hubungi Kami" },
+                  : s.buttonLink 
+                    ? { href: s.buttonLink, label: "Selengkapnya" } 
+                    : null,
               }))
             : [
                 {
