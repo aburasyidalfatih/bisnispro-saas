@@ -88,15 +88,50 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
   }
 }
 
+
 /**
- * Fungsi pengiriman WA terpusat — SATU-SATUNYA fungsi yang boleh memanggil API gateway.
- * Selalu menggunakan format Authorization: Bearer <key> sesuai standar StarSender.
+ * Fungsi pengiriman WA terpusat — Memprioritaskan Internal Gateway, fallback ke StarSender.
  */
 export async function sendWhatsApp(
   phone: string,
   message: string,
   tenantId?: string
 ): Promise<{ success: boolean; error?: string }> {
+  // 1. Coba gunakan Internal Gateway jika ada sesi yang CONNECTED
+  try {
+    const session = await db.waSession.findUnique({
+      where: { tenantId: tenantId || "platform" }
+    })
+
+    if (session?.status === "CONNECTED") {
+      const WA_GATEWAY_URL = process.env.WA_GATEWAY_URL || "http://localhost:4000"
+      const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
+
+      const res = await fetch(`${WA_GATEWAY_URL}/api/wa/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-secret": INTERNAL_SECRET
+        },
+        body: JSON.stringify({
+          tenantId: tenantId || "platform",
+          to: phone,
+          text: message
+        })
+      })
+
+      if (res.ok) {
+        return { success: true }
+      } else {
+        const errText = await res.text()
+        logger.error("Internal WA Gateway send failed", { phone, status: res.status, body: errText })
+      }
+    }
+  } catch (err) {
+    logger.error("Internal WA gateway check failed, falling back to StarSender", err)
+  }
+
+  // 2. Fallback ke StarSender (Legacy)
   const config = await getWaConfig(tenantId)
 
   if (!config.apiKey) {
@@ -116,20 +151,20 @@ export async function sendWhatsApp(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: config.apiKey,  // Tidak menggunakan Bearer untuk StarSender
+        Authorization: config.apiKey,
       },
       body: JSON.stringify(body),
     })
 
     if (!res.ok) {
       const errText = await res.text()
-      logger.error("WA send failed", { phone, status: res.status, body: errText })
-      return { success: false, error: `Gateway error: ${res.status}` }
+      logger.error("WA send failed (StarSender)", { phone, status: res.status, body: errText })
+      return { success: false, error: `StarSender error: ${res.status}` }
     }
 
     return { success: true }
   } catch (err: any) {
-    logger.error("WA send exception", err, { phone })
+    logger.error("WA send exception (StarSender)", err, { phone })
     return { success: false, error: err.message }
   }
 }

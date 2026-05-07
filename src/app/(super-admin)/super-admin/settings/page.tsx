@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { WhatsappManager } from "@/app/(dashboard)/admin/settings/whatsapp/_components/whatsapp-manager"
 
 export default function SuperAdminSettingsPage() {
   const [loading, setLoading] = useState(true)
@@ -71,6 +72,16 @@ export default function SuperAdminSettingsPage() {
     TURNSTILE_ENABLED: "false",
     TURNSTILE_SITE_KEY: "",
     TURNSTILE_SECRET_KEY: "",
+
+    // Kendali Akses Free Plan
+    FREE_PLAN_ACCESS: JSON.stringify({
+      enable_ppdb: false,
+      enable_finance: false,
+      enable_whatsapp: false,
+      enable_custom_domain: false,
+      enable_analytics: false,
+      enable_parent_portal: false
+    })
   })
 
   const [testEmail, setTestEmail] = useState("")
@@ -205,6 +216,7 @@ export default function SuperAdminSettingsPage() {
             <TabsTrigger value="whatsapp" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">WhatsApp</TabsTrigger>
             <TabsTrigger value="payment" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Pembayaran</TabsTrigger>
             <TabsTrigger value="google" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Google Login</TabsTrigger>
+            <TabsTrigger value="plan_access" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kendali Fitur</TabsTrigger>
           </TabsList>
         </div>
 
@@ -432,49 +444,79 @@ export default function SuperAdminSettingsPage() {
         </TabsContent>
 
         {/* --- TAB: WHATSAPP --- */}
-        <TabsContent value="whatsapp" className="grid gap-6 lg:grid-cols-2 outline-none">
-          <Card className="glass border-0">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
-                <CardTitle className="text-lg">StarSender API</CardTitle>
+        <TabsContent value="whatsapp" className="space-y-6 outline-none">
+          <Tabs defaultValue="internal" className="w-full">
+            <div className="flex items-center justify-between mb-4">
+              <div className="space-y-1">
+                <h3 className="text-lg font-medium leading-none">Provider WhatsApp</h3>
+                <p className="text-sm text-muted-foreground">Pilih provider yang akan digunakan untuk mengirim pesan.</p>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>API Token / Key</Label>
-                <div className="relative">
-                  <Input type={showWAToken ? "text" : "password"} value={form.STARSENDER_API_KEY} onChange={e => setForm({...form, STARSENDER_API_KEY: e.target.value})} placeholder="Token StarSender" className="rounded-xl pr-10" />
-                  <button type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Device ID (Opsional)</Label>
-                <Input value={form.STARSENDER_DEVICE_ID} onChange={e => setForm({...form, STARSENDER_DEVICE_ID: e.target.value})} placeholder="ID Perangkat" className="rounded-xl" />
-              </div>
-              <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID'])} disabled={saving}>
-                <Save className="h-4 w-4" /> Simpan WhatsApp
-              </Button>
-            </CardContent>
-          </Card>
+              <TabsList className="bg-muted/50 rounded-xl p-1 border">
+                <TabsTrigger value="internal" className="rounded-lg">Internal Gateway</TabsTrigger>
+                <TabsTrigger value="starsender" className="rounded-lg">StarSender API</TabsTrigger>
+              </TabsList>
+            </div>
 
-          <Card className="glass border-0">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Smartphone className="h-4 w-4 text-primary" /></div>
-                <CardTitle className="text-lg">Test WhatsApp</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-2">
-                <Label>Nomor Tujuan</Label>
-                <Input value={testWANumber} onChange={e => setTestWANumber(e.target.value)} placeholder="0812345678xx" className="rounded-xl" />
-              </div>
-              <Button variant="outline" className="w-full rounded-xl gap-2 border-primary/30 text-primary hover:bg-primary/5" onClick={handleTestWA} disabled={testing || !form.STARSENDER_API_KEY}>
-                {testing ? "Mengirim..." : "Kirim Pesan Tes"}
-              </Button>
-            </CardContent>
-          </Card>
+            <TabsContent value="internal" className="mt-0 outline-none">
+              <Card className="glass border-0">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
+                    <CardTitle className="text-lg">Internal WhatsApp Gateway (Platform)</CardTitle>
+                  </div>
+                  <CardDescription>Hubungkan WhatsApp utama platform untuk mengirim notifikasi pendaftaran, revisi, dan alert sistem.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <WhatsappManager tenantId="platform" />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="starsender" className="mt-0 outline-none grid gap-6 lg:grid-cols-2">
+              <Card className="glass border-0">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
+                    <CardTitle className="text-lg">StarSender API</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>API Token / Key</Label>
+                    <div className="relative">
+                      <Input type={showWAToken ? "text" : "password"} value={form.STARSENDER_API_KEY} onChange={e => setForm({...form, STARSENDER_API_KEY: e.target.value})} placeholder="Token StarSender" className="rounded-xl pr-10" />
+                      <button type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Device ID (Opsional)</Label>
+                    <Input value={form.STARSENDER_DEVICE_ID} onChange={e => setForm({...form, STARSENDER_DEVICE_ID: e.target.value})} placeholder="ID Perangkat" className="rounded-xl" />
+                  </div>
+                  <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID'])} disabled={saving}>
+                    <Save className="h-4 w-4" /> Simpan WhatsApp
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="glass border-0">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Smartphone className="h-4 w-4 text-primary" /></div>
+                    <CardTitle className="text-lg">Test WhatsApp (StarSender)</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <Label>Nomor Tujuan</Label>
+                    <Input value={testWANumber} onChange={e => setTestWANumber(e.target.value)} placeholder="0812345678xx" className="rounded-xl" />
+                  </div>
+                  <Button variant="outline" className="w-full rounded-xl gap-2 border-primary/30 text-primary hover:bg-primary/5" onClick={handleTestWA} disabled={testing || !form.STARSENDER_API_KEY}>
+                    {testing ? "Mengirim..." : "Kirim Pesan Tes"}
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
 
           <Card className="glass border-0 lg:col-span-2">
             <CardHeader>
@@ -676,6 +718,62 @@ export default function SuperAdminSettingsPage() {
                   <code className="block mt-1 bg-muted p-2 rounded-lg text-xs break-all text-foreground font-semibold">https://schoolpro.id/api/auth/callback/google</code>
                 </li>
               </ol>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        {/* --- TAB: KENDALI FITUR --- */}
+        <TabsContent value="plan_access" className="grid gap-6 outline-none">
+          <Card className="glass border-0">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Settings2 className="h-4 w-4 text-primary" /></div>
+                <CardTitle className="text-lg">Kendali Akses Paket Free</CardTitle>
+              </div>
+              <CardDescription>Aktifkan atau matikan modul mana saja yang dapat diakses oleh sekolah dengan paket gratis (Free Plan).</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(() => {
+                let access: Record<string, boolean> = {};
+                try { access = JSON.parse(form.FREE_PLAN_ACCESS || "{}"); } catch (e) {}
+                
+                const toggleFeature = (key: string) => {
+                  const newAccess = { ...access, [key]: !access[key] };
+                  const newVal = JSON.stringify(newAccess);
+                  setForm({ ...form, FREE_PLAN_ACCESS: newVal });
+                  handleSaveBatch(['FREE_PLAN_ACCESS'], { FREE_PLAN_ACCESS: newVal });
+                };
+
+                const features = [
+                  { key: "enable_ppdb", title: "Modul PPDB Online", desc: "Izinkan penerimaan siswa baru online." },
+                  { key: "enable_finance", title: "Modul Keuangan (Tagihan)", desc: "Izinkan pencatatan tagihan dan integrasi SPP." },
+                  { key: "enable_whatsapp", title: "WhatsApp Gateway", desc: "Izinkan pengiriman pesan dan notifikasi otomatis." },
+                  { key: "enable_custom_domain", title: "Custom Domain", desc: "Izinkan pengaturan domain mandiri (.sch.id dll)." },
+                  { key: "enable_analytics", title: "Dashboard Analytics", desc: "Izinkan akses ke grafik analitik di halaman utama." },
+                  { key: "enable_parent_portal", title: "Portal Orang Tua", desc: "Izinkan akses portal mandiri bagi orang tua wali." }
+                ];
+
+                return features.map((f) => (
+                  <button
+                    key={f.key}
+                    onClick={() => toggleFeature(f.key)}
+                    className={cn(
+                      "flex w-full items-center justify-between rounded-xl border-2 p-4 transition-all duration-200 text-left",
+                      access[f.key] ? "border-primary bg-primary/5" : "border-transparent bg-muted/50 hover:bg-muted"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", access[f.key] ? "bg-primary/10" : "bg-muted")}>
+                        {access[f.key] ? <Eye className="h-5 w-5 text-primary" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{f.title}</p>
+                        <p className="text-xs text-muted-foreground">{f.desc}</p>
+                      </div>
+                    </div>
+                    <div className={cn("h-2.5 w-2.5 rounded-full", access[f.key] ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
+                  </button>
+                ))
+              })()}
             </CardContent>
           </Card>
         </TabsContent>

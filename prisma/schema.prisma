@@ -63,8 +63,10 @@ model Tenant {
   sliders              Slider[]
   staff                Staff[]
   students             Student[]
+  classrooms           Classroom[]
   subscriptions        Subscription[]
   users                TenantUser[]
+  waSession            WaSession?
   subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
 
   @@index([isActive])
@@ -99,6 +101,7 @@ model User {
   sessions             Session[]
   staffProfiles        Staff[]
   students             Student[]
+  studentParents       StudentParent[]
   tenants              TenantUser[]
   verificationTokens   VerificationToken[]
 
@@ -283,23 +286,23 @@ model PlatformSetting {
 }
 
 model TenantApplication {
-  id           String   @id @default(cuid())
+  id           String            @id @default(cuid())
   schoolName   String
-  schoolSlug   String   @unique
+  schoolSlug   String            @unique
   adminName    String
   adminEmail   String
   adminPhone   String
   address      String?
-  status       String   @default("PENDING")
+  status       String            @default("PENDING")
   adminMessage String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
   npsn         String?
   province     String?
   regency      String?
-  schoolStatus String?  @default("SWASTA")
+  schoolStatus String?           @default("SWASTA")
   logo         String?
-  studentCount Int      @default(0)
+  studentCount Int               @default(0)
   affiliateId  String?
   affiliate    AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 
@@ -477,22 +480,23 @@ model Alumni {
 }
 
 model Staff {
-  id        String   @id @default(cuid())
-  tenantId  String
-  name      String
-  role      String
-  imageUrl  String?
-  bio       String?
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email     String?
-  phone     String?
-  subject   String?
-  education String?
-  userId    String?
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user      User?    @relation(fields: [userId], references: [id])
+  id         String      @id @default(cuid())
+  tenantId   String
+  name       String
+  role       String
+  imageUrl   String?
+  bio        String?
+  sortOrder  Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  email      String?
+  phone      String?
+  subject    String?
+  education  String?
+  userId     String?
+  tenant     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user       User?       @relation(fields: [userId], references: [id])
+  classrooms Classroom[]
 
   @@index([tenantId])
   @@index([userId])
@@ -701,12 +705,12 @@ model Rekening {
 }
 
 model Student {
-  id            String    @id @default(cuid())
+  id            String          @id @default(cuid())
   tenantId      String
   userId        String?
   noPendaftaran String?
-  nis           String?   @unique
-  nisn          String?   @unique
+  nis           String?         @unique
+  nisn          String?         @unique
   name          String
   gender        String?
   birthPlace    String?
@@ -718,12 +722,15 @@ model Student {
   motherName    String?
   guardianName  String?
   metadata      Json?
-  isActive      Boolean   @default(true)
+  isActive      Boolean         @default(true)
   syncedAt      DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user          User?     @relation(fields: [userId], references: [id])
+  classroomId   String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  tenant        Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user          User?           @relation(fields: [userId], references: [id])
+  classroom     Classroom?      @relation(fields: [classroomId], references: [id])
+  parents       StudentParent[]
 
   @@index([tenantId])
   @@index([userId])
@@ -732,21 +739,21 @@ model Student {
 }
 
 model AffiliateProfile {
-  id            String                @id @default(cuid())
-  userId        String                @unique
-  referralCode  String                @unique
-  bankName      String?
-  bankAccount   String?
-  accountName   String?
-  balance       Float                 @default(0)
-  totalEarnings Float                 @default(0)
-  isActive      Boolean               @default(true)
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
-  commissions   AffiliateCommission[]
+  id                 String                @id @default(cuid())
+  userId             String                @unique
+  referralCode       String                @unique
+  bankName           String?
+  bankAccount        String?
+  accountName        String?
+  balance            Float                 @default(0)
+  totalEarnings      Float                 @default(0)
+  isActive           Boolean               @default(true)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  commissions        AffiliateCommission[]
   tenantApplications TenantApplication[]
-  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  withdrawals   AffiliateWithdrawal[]
+  user               User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  withdrawals        AffiliateWithdrawal[]
 
   @@map("affiliate_profiles")
 }
@@ -788,4 +795,73 @@ model AffiliateWithdrawal {
   @@index([affiliateId])
   @@index([status])
   @@map("affiliate_withdrawals")
+}
+
+model WaSession {
+  id        String   @id @default(cuid())
+  tenantId  String   @unique
+  status    String   @default("DISCONNECTED") // DISCONNECTED, CONNECTED, CONNECTING
+  qrCode    String?  @db.Text // Base64 image
+  creds     Json? // Baileys auth state
+  delayMin  Int      @default(5)
+  delayMax  Int      @default(15)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("wa_sessions")
+}
+
+model Classroom {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  level       String?
+  capacity    Int      @default(30)
+  waliKelasId String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  waliKelas Staff?    @relation(fields: [waliKelasId], references: [id])
+  students  Student[]
+
+  @@index([tenantId])
+  @@map("classrooms")
+}
+
+model StudentParent {
+  id        String   @id @default(cuid())
+  studentId String
+  userId    String
+  relation  String   @default("AYAH") // AYAH, IBU, WALI
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, userId])
+  @@index([studentId])
+  @@index([userId])
+  @@map("student_parents")
+}
+
+model WaMessage {
+  id        String   @id @default(cuid())
+  tenantId  String
+  to        String
+  content   String   @db.Text
+  status    String   @default("PENDING") // PENDING, SENT, FAILED
+  error     String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Tidak perlu strict relation ke Tenant agar jika tenant dihapus log tidak hilang (atau bisa diatur Cascade)
+  // Tapi untuk konsistensi kita tambahkan index saja
+  @@index([tenantId])
+  @@index([status])
+  @@map("wa_messages")
 }

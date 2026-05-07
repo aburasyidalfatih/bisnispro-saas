@@ -26,7 +26,7 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
   const displayed = extracurriculars.slice(0, 8)
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-b from-background to-secondary/5 relative overflow-hidden">
+    <section className="py-16 md:py-20 bg-background relative overflow-hidden">
       <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-purple-400/5 blur-3xl pointer-events-none" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">

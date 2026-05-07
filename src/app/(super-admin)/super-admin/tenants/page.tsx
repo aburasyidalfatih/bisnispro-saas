@@ -67,7 +67,15 @@ export default function TenantsPage() {
   const [newPassword, setNewPassword] = useState("")
   const [reseting, setReseting] = useState(false)
 
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const [rootDomain, setRootDomain] = useState("schoolpro.id")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      let host = window.location.host
+      if (host.startsWith("www.")) host = host.replace("www.", "")
+      setRootDomain(host)
+    }
+  }, [])
 
   const fetchTenants = useCallback(() => {
     setLoading(true)
@@ -157,7 +165,7 @@ export default function TenantsPage() {
       body: JSON.stringify({ tenantId }),
     })
     if (res.ok) {
-      window.location.href = "/dashboard"
+      window.location.href = "/admin"
     } else {
       const data = await res.json()
       toast({ title: "Gagal", description: data.error || "Tidak dapat login sebagai tenant.", variant: "destructive" })
@@ -172,7 +180,7 @@ export default function TenantsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Manajemen Tenant</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Kelola sekolah dan organisasi yang terdaftar ({total} tenant)</p>
+          <p className="text-muted-foreground mt-1 text-sm">Kelola sekolah dan lembaga yang terdaftar ({total} tenant)</p>
         </div>
       </div>
 

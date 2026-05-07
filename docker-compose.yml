@@ -26,6 +26,7 @@ services:
     environment:
       # Override agar mengarah ke service 'db', bukan localhost
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-saasmasterpro}
+      - WA_GATEWAY_URL=http://wa-gateway:4000
     volumes:
       - uploads:/app/uploads
     depends_on:
@@ -62,6 +63,22 @@ services:
     volumes:
       - redisdata:/data
     restart: unless-stopped
+
+  wa-gateway:
+    build:
+      context: .
+      dockerfile: services/wa-gateway/Dockerfile
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-saasmasterpro}
+      - WA_GATEWAY_PORT=4000
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - default
 
 volumes:
   pgdata:

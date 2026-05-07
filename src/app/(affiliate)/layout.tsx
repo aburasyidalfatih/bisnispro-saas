@@ -19,7 +19,7 @@ export default function AffiliateLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
     if (status === "authenticated" && !session?.user?.isAffiliate && !session?.user?.isSuperAdmin) {
-      router.push("/dashboard")
+      router.push("/admin")
     }
   }, [status, session, router])
 

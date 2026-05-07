@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import NewFacilityPage from '@/app/(dashboard)/dashboard/website/facilities/new/page'
+import NewFacilityPage from '@/app/(dashboard)/admin/website/facilities/new/page'
 
 // --- Mock Setup ---
 

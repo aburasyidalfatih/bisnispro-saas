@@ -43,11 +43,13 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   // Build stats from tenant data
   const staffCount = tenant.staff?.length || 0
   const programCount = tenant.programs?.length || 0
+  const establishedYear = (tenant.settings as any)?.establishedYear || new Date(tenant.createdAt).getFullYear()
+
   const stats = [
     { value: staffCount > 0 ? `${staffCount}+` : "20+", label: "Tenaga Pendidik", icon: "users" },
     { value: programCount > 0 ? `${programCount}` : "6+", label: "Program Keahlian", icon: "book" },
     { value: tenant.achievements?.length ? `${tenant.achievements.length}+` : "50+", label: "Prestasi Diraih", icon: "award" },
-    { value: "15+", label: "Tahun Berdiri", icon: "clock" },
+    { value: `${establishedYear}`, label: "Tahun Berdiri", icon: "clock" },
   ]
 
   return (
@@ -81,46 +83,14 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       <StatsBar stats={stats} />
 
       {/* ── 3. Sambutan Kepala Sekolah ── */}
-      {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage) && (
-        <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} />
+      {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage || tenant.staff?.some((s: any) => s.role && s.role.toLowerCase().includes("kepala sekolah"))) && (
+        <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
       )}
 
       {/* ── 4. Info Board (Agenda, Pengumuman, Artikel) ── */}
       <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
 
-      {/* ── 5. Tentang Singkat ── */}
-      {tenant.about && (
-        <section className="py-16 bg-background">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <span className="inline-block px-3 py-1 mb-4 rounded-full bg-secondary text-secondary-foreground text-xs font-bold tracking-wider uppercase">
-                  Tentang Kami
-                </span>
-                <h2 className="text-3xl font-bold mb-4">{tenant.name}</h2>
-                <p className="text-muted-foreground leading-relaxed line-clamp-6">{tenant.about}</p>
-                <Link href={`${base}/about`}
-                  className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-primary hover:underline">
-                  Selengkapnya <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-              <div className="rounded-2xl overflow-hidden aspect-video bg-secondary/30 flex items-center justify-center border border-border/50 shadow-sm">
-                {tenant.heroImage ? (
-                  <img src={tenant.heroImage} alt={tenant.name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="text-center p-8">
-                    {tenant.logo
-                      ? <img src={tenant.logo} alt={tenant.name} className="h-24 w-24 object-contain mx-auto mb-4" />
-                      : <div className="text-6xl mb-4">🏢</div>
-                    }
-                    <p className="text-muted-foreground text-sm">{tenant.name}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+
 
       {/* ── 6. Program Keahlian ── */}
       <ProgramsSection programs={tenant.programs || []} />

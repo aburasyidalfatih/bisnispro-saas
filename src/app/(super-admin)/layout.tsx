@@ -15,7 +15,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
-    if (status === "authenticated" && !session?.user?.isSuperAdmin) router.push("/dashboard")
+    if (status === "authenticated" && !session?.user?.isSuperAdmin) router.push("/admin")
   }, [status, session, router])
 
   if (status === "loading") {

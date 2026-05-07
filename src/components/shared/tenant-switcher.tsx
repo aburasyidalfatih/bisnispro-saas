@@ -31,7 +31,7 @@ export function TenantSwitcher() {
       window.location.href = `https://${slug}.${rootDomain}/dashboard`
     } else {
       // Dev mode: show info that subdomain switching requires custom domain
-      window.location.href = "/dashboard"
+      window.location.href = "/admin"
     }
   }
 
@@ -45,7 +45,7 @@ export function TenantSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 glass rounded-xl" align="start">
-        <DropdownMenuLabel className="text-xs text-muted-foreground">Organisasi Anda</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs text-muted-foreground">Lembaga Anda</DropdownMenuLabel>
         {tenants.map((t) => (
           <DropdownMenuItem
             key={t.id}

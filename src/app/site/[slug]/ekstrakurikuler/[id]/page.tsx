@@ -31,112 +31,98 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
   const base = await getPublicBasePath(slug)
 
   return (
-    <div className="bg-background min-h-screen pb-12">
-      {/* ── VIBRANT ACTIVITY HUB BANNER ── */}
-      <div className="relative pt-32 pb-40 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-900 via-primary to-blue-900 overflow-hidden">
-         {/* Dynamic Abstract Shapes */}
-         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-white/5 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
-         
-         <div className="absolute top-0 left-0 right-0 p-6 z-20">
-           <div className="max-w-5xl mx-auto flex items-center justify-between">
-              <Link 
-                href={`${base}/ekstrakurikuler`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all"
-              >
-                 <ArrowLeft className="h-4 w-4" /> Kembali
-              </Link>
-           </div>
-         </div>
-
-         <div className="max-w-5xl mx-auto relative z-10 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md text-white font-bold tracking-widest uppercase text-[10px] mb-6 border border-white/20 shadow-lg">
-               <Activity className="h-4 w-4" /> Ekstrakurikuler Pilihan
-            </div>
-            <h1 className="text-5xl md:text-7xl font-black text-white mb-6 drop-shadow-xl">{extra.name}</h1>
-            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">Wadah kreasi dan inovasi siswa untuk mengembangkan minat, bakat, dan karakter kepemimpinan unggul.</p>
-         </div>
+    <div className="bg-background min-h-screen pb-16">
+      {/* ── HEADER SECTION ── */}
+      <div className="bg-muted/30 pt-8 pb-12 border-b">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Link 
+            href={`${base}/ekstrakurikuler`}
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
+          >
+             <ArrowLeft className="h-4 w-4" /> Kembali
+          </Link>
+          
+          <div className="flex items-center gap-3 mb-4">
+             <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-1.5">
+               <Activity className="h-3.5 w-3.5" /> Ekstrakurikuler
+             </div>
+          </div>
+          
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight">
+             {extra.name}
+          </h1>
+        </div>
       </div>
 
-      <article className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-24 pb-16">
+      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
         <div className="grid md:grid-cols-3 gap-8 items-start">
            
            {/* Visual & Main Description */}
-           <div className="md:col-span-2 bg-white rounded-[2.5rem] p-8 shadow-2xl border border-border">
+           <div className="md:col-span-2">
               {extra.imageUrl ? (
-                <div className="w-full h-[350px] relative rounded-3xl overflow-hidden mb-10 shadow-lg group">
+                <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-10 shadow-sm border border-border/50 bg-muted">
                   <Image 
                     src={extra.imageUrl} 
                     alt={extra.name} 
                     fill 
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="object-cover"
                     priority
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
               ) : (
-                <div className="w-full h-[300px] bg-gradient-to-br from-indigo-500/10 to-blue-500/5 rounded-3xl flex items-center justify-center mb-10 border border-indigo-500/10">
-                  <Activity className="h-24 w-24 text-indigo-500/30" />
+                <div className="w-full aspect-[21/9] bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl flex items-center justify-center mb-10 border border-primary/10">
+                  <Activity className="h-16 w-16 text-primary/20" />
                 </div>
               )}
 
-              <div className="prose prose-lg max-w-none prose-p:text-slate-600 prose-p:leading-relaxed px-4">
-                <h3 className="text-2xl font-bold mb-6 text-slate-900">Mengenal {extra.name}</h3>
+              <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
+                <h3 className="text-xl font-bold mb-4 text-foreground">Mengenal {extra.name}</h3>
                 {extra.description ? (
                   <p className="whitespace-pre-wrap">{extra.description}</p>
                 ) : (
-                  <p className="italic text-muted-foreground">Tidak ada deskripsi detail untuk ekstrakurikuler ini.</p>
+                  <p className="italic">Tidak ada deskripsi detail untuk ekstrakurikuler ini.</p>
                 )}
               </div>
            </div>
 
            {/* Info Panel Side */}
-           <div className="space-y-6">
+           <div className="space-y-6 sticky top-10">
               {extra.schedule && (
-                <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-border/50 text-center relative overflow-hidden group hover:-translate-y-1 transition-transform">
-                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="bg-primary/10 h-16 w-16 rounded-2xl flex items-center justify-center text-primary mx-auto mb-4 rotate-3 group-hover:rotate-0 transition-transform">
-                    <Clock className="h-8 w-8" />
+                <div className="bg-background rounded-3xl p-6 shadow-sm border border-border/50">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-primary/10 h-10 w-10 rounded-xl flex items-center justify-center text-primary shrink-0">
+                      <Clock className="h-5 w-5" />
+                    </div>
+                    <h4 className="font-bold text-lg text-foreground">Jadwal Latihan</h4>
                   </div>
-                  <h4 className="font-bold text-lg text-slate-900 mb-2">Jadwal Latihan</h4>
-                  <p className="text-primary font-black text-xl">{extra.schedule}</p>
-                  <p className="text-sm text-muted-foreground mt-2">Diharapkan hadir tepat waktu sebelum sesi dimulai.</p>
+                  <p className="text-primary font-bold text-lg mb-2">{extra.schedule}</p>
+                  <p className="text-sm text-muted-foreground">Diharapkan hadir tepat waktu sebelum sesi dimulai.</p>
                 </div>
               )}
 
-              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2rem] p-8 shadow-xl text-white text-center">
-                 <h4 className="font-bold text-lg mb-4">Tertarik Bergabung?</h4>
-                 <p className="text-white/70 text-sm mb-6">
+              <div className="bg-muted/30 rounded-3xl p-6 border border-border/50">
+                 <h4 className="font-bold text-lg mb-2 text-foreground">Tertarik Bergabung?</h4>
+                 <p className="text-muted-foreground text-sm mb-6">
                    {extra.contactPerson 
                      ? `Hubungi pembina ekstrakurikuler: ${extra.contactPerson}`
-                     : "Hubungi pembina atau pengurus OSIS bagian ekstrakurikuler untuk pendaftaran anggota baru."}
+                     : "Hubungi pembina atau pengurus OSIS untuk pendaftaran."}
                  </p>
                  {extra.registrationUrl ? (
                    <a 
                      href={extra.registrationUrl.startsWith('http') ? extra.registrationUrl : `https://${extra.registrationUrl}`}
                      target="_blank" 
                      rel="noopener noreferrer"
-                     className="block w-full py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-primary hover:text-white transition-colors text-center"
+                     className="flex items-center justify-center w-full py-2.5 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors text-sm"
                    >
                       Daftar Sekarang
                    </a>
                  ) : (
-                   <button className="w-full py-3 bg-white/20 text-white cursor-not-allowed rounded-xl font-bold transition-colors">
+                   <button disabled className="w-full py-2.5 bg-muted text-muted-foreground rounded-xl font-medium cursor-not-allowed text-sm">
                       Daftar Offline
                    </button>
                  )}
               </div>
            </div>
-        </div>
-
-        {/* Back Link */}
-        <div className="mt-12 text-center">
-          <Link
-            href={`${base}/ekstrakurikuler`}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-primary/10 text-primary rounded-full text-sm font-bold hover:bg-primary hover:text-white transition-all"
-          >
-            <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Ekstrakurikuler
-          </Link>
         </div>
       </article>
     </div>

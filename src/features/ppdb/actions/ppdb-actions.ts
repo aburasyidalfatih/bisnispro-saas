@@ -45,7 +45,7 @@ export async function submitRegistration(formData: {
       return { pendaftar, tagihan };
     });
 
-    revalidatePath("/dashboard/ppdb");
+    revalidatePath("/admin/ppdb");
     return { success: true, data: result };
   } catch (error) {
     logger.error("PPDB Registration Error", error, { action: "submitRegistration" });
@@ -71,7 +71,7 @@ export async function confirmPayment(data: {
       },
     });
 
-    revalidatePath("/dashboard/ppdb");
+    revalidatePath("/admin/ppdb");
     return { success: true, data: pembayaran };
   } catch (error) {
     logger.error("PPDB Payment Error", error, { action: "confirmPayment" });

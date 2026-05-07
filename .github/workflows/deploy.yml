@@ -86,7 +86,7 @@ jobs:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          command_timeout: 30m
+          command_timeout: 60m
           envs: GITHUB_TOKEN,ACTOR,BRANCH,REPO
           script: |
             set -e
@@ -103,6 +103,9 @@ jobs:
             
             echo "Deploying branch $BRANCH to $APP_DIR"
             cd $APP_DIR
+            
+            # Konfigurasi remote URL menggunakan GITHUB_TOKEN agar git fetch tidak error pada repo private
+            git remote set-url origin https://oauth2:$GITHUB_TOKEN@github.com/$REPO.git
             
             # Ambil konfigurasi (docker-compose.yml dll) terbaru dari GitHub
             git fetch --all
@@ -122,11 +125,14 @@ jobs:
             # Pull image yang sudah di-build oleh GitHub Actions
             docker compose pull app
             
-            # Restart container dengan image baru (Hindari Nginx di Dev)
+            # Build wa-gateway secara eksplisit di VPS
+            docker compose build wa-gateway
+            
+            # Restart container dengan image baru (Gunakan --no-build agar app tidak dibuild ulang di VPS)
             if [ "$BRANCH" = "main" ]; then
-              docker compose up -d
+              docker compose up -d --no-build app db redis wa-gateway
             else
-              docker compose up -d app db redis
+              docker compose up -d --no-build app db redis wa-gateway
             fi
             
             # Tunggu container ready (max 30s)
@@ -140,6 +146,13 @@ jobs:
               echo "⚠️ Migration failed! Check logs above."
             else
               echo "✅ Migrations applied successfully."
+            fi
+            
+            # OPTIMASI: Restart Nginx agar mengenali IP internal container App yang baru
+            # Ini mencegah error 502 Bad Gateway setelah deploy
+            if [ "$BRANCH" = "main" ]; then
+              echo "Restarting Nginx proxy to flush DNS cache..."
+              docker compose restart nginx
             fi
             
             # Health check via docker exec (tidak tergantung port expose)
