@@ -161,7 +161,7 @@ export default function WebsiteAboutPage() {
         </div>
         <div className="flex items-center gap-2">
           {slug && (
-            <a href={getPublicUrl("/about")} target="_blank" rel="noopener"
+            <a href={getPublicUrl("/profil")} target="_blank" rel="noopener"
               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
               <ExternalLink className="h-3.5 w-3.5" /> Lihat Halaman
             </a>
