@@ -59,7 +59,8 @@ export default function EditStaffPage() {
               email: (d as any).email || "",
               phone: (d as any).phone || "",
               subject: (d as any).subject || "",
-              education: (d as any).education || ""
+              education: (d as any).education || "",
+              password: ""
             })
             if (d.imageUrl) setPreviewUrl(d.imageUrl)
           }

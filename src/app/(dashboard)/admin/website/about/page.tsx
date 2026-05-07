@@ -346,6 +346,8 @@ export default function WebsiteAboutPage() {
                 <Input value={form.settings?.principalTitle || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalTitle: e.target.value } }))}
                   placeholder="Contoh: Kepala Sekolah" className="rounded-xl" />
               </div>
+            </div>
+            
             <div className="grid gap-4 sm:grid-cols-2 mt-4">
               <div className="space-y-2">
                 <Label>Tahun Berdedikasi (Badge Foto)</Label>
