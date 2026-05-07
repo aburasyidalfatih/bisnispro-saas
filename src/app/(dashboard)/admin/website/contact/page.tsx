@@ -99,13 +99,24 @@ export default function WebsiteContactPage() {
   const handleSave = async () => {
     if (!tenantId) return
     setSaving(true)
+    
+    const payload: any = { tenantId, ...form }
+    // Convert empty strings to null to pass Zod's optional/nullable email/url validations
+    Object.keys(payload).forEach(k => {
+      if (payload[k] === "") payload[k] = null
+    })
+
     const res = await fetch("/api/tenant/website", {
       method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tenantId, ...form }),
+      body: JSON.stringify(payload),
     })
     setSaving(false)
-    if (res.ok) toast({ title: "Disimpan", description: "Informasi kontak berhasil diperbarui." })
-    else toast({ title: "Gagal", description: "Terjadi kesalahan.", variant: "destructive" })
+    if (res.ok) {
+      toast({ title: "Disimpan", description: "Informasi kontak berhasil diperbarui." })
+    } else {
+      const d = await res.json().catch(() => ({}))
+      toast({ title: "Gagal", description: d.error || "Terjadi kesalahan.", variant: "destructive" })
+    }
   }
 
   const markRead = async (id: string) => {
