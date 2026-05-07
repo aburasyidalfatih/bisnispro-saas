@@ -15,7 +15,7 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json()
-    const { name, role, email, phone, subject, education, bio } = body
+    const { name, role, email, phone, subject, education, bio, instagram, facebook, tiktok, youtube } = body
 
     // Cek apakah staff data milik user yang sedang login
     const existingStaff = await db.staff.findFirst({
@@ -39,7 +39,11 @@ export async function PATCH(req: Request) {
         phone,
         subject,
         education,
-        bio
+        bio,
+        instagram,
+        facebook,
+        tiktok,
+        youtube
       }
     })
 

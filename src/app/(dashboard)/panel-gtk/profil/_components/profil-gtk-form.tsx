@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, BookOpen, GraduationCap, Info, User, Briefcase, Pencil, Save, X, Loader2 } from "lucide-react"
+import { Mail, Phone, BookOpen, GraduationCap, Info, User, Briefcase, Pencil, Save, X, Loader2, Link as LinkIcon } from "lucide-react"
 import { Staff } from "@prisma/client"
 
 interface ProfilGTKFormProps {
@@ -33,7 +33,11 @@ export function ProfilGTKForm({ staff, sessionImage, sessionEmail }: ProfilGTKFo
       phone: staff.phone || "",
       subject: staff.subject || "",
       education: staff.education || "",
-      bio: staff.bio || ""
+      bio: staff.bio || "",
+      instagram: (staff as any).instagram || "",
+      facebook: (staff as any).facebook || "",
+      tiktok: (staff as any).tiktok || "",
+      youtube: (staff as any).youtube || ""
     }
   })
 
@@ -219,6 +223,72 @@ export function ProfilGTKForm({ staff, sessionImage, sessionEmail }: ProfilGTKFo
           </CardContent>
         </Card>
       </div>
+
+      {/* Sosial Media */}
+      <Card className="glass border-0 shadow-md">
+        <CardHeader className="pb-4 border-b border-border/50">
+          <h3 className="font-semibold flex items-center gap-2">
+            <LinkIcon className="h-4 w-4 text-primary" />
+            Sosial Media
+          </h3>
+        </CardHeader>
+        <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-8 rounded-full bg-pink-500/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-pink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground font-medium mb-1">Instagram</p>
+              {isEditing ? (
+                <Input {...register("instagram")} placeholder="https://instagram.com/..." className="h-8 text-sm" />
+              ) : (
+                <p className="text-sm font-medium">{(staff as any).instagram || "-"}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-8 rounded-full bg-blue-600/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground font-medium mb-1">Facebook</p>
+              {isEditing ? (
+                <Input {...register("facebook")} placeholder="https://facebook.com/..." className="h-8 text-sm" />
+              ) : (
+                <p className="text-sm font-medium">{(staff as any).facebook || "-"}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-slate-800 dark:text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground font-medium mb-1">TikTok</p>
+              {isEditing ? (
+                <Input {...register("tiktok")} placeholder="https://tiktok.com/@..." className="h-8 text-sm" />
+              ) : (
+                <p className="text-sm font-medium">{(staff as any).tiktok || "-"}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-8 rounded-full bg-red-600/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground font-medium mb-1">YouTube</p>
+              {isEditing ? (
+                <Input {...register("youtube")} placeholder="https://youtube.com/c/..." className="h-8 text-sm" />
+              ) : (
+                <p className="text-sm font-medium">{(staff as any).youtube || "-"}</p>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Info Badge */}
       {!isEditing && (
