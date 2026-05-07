@@ -35,6 +35,7 @@ export default function RegisterSchoolPage() {
     province: "",
     regency: "",
     adminName: "",
+    adminPosition: "",
     adminEmail: "",
     adminPhone: "",
     address: "",
@@ -365,15 +366,27 @@ export default function RegisterSchoolPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-5">
-              <div className="space-y-2">
-                <Label>Nama Lengkap</Label>
-                <Input 
-                  required 
-                  value={form.adminName} 
-                  onChange={(e) => setForm({...form, adminName: e.target.value})}
-                  placeholder="Nama lengkap tanpa gelar" 
-                  className="rounded-xl h-11"
-                />
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Nama Lengkap</Label>
+                  <Input 
+                    required 
+                    value={form.adminName} 
+                    onChange={(e) => setForm({...form, adminName: e.target.value})}
+                    placeholder="Nama lengkap tanpa gelar" 
+                    className="rounded-xl h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Jabatan di Sekolah</Label>
+                  <Input 
+                    required 
+                    value={form.adminPosition} 
+                    onChange={(e) => setForm({...form, adminPosition: e.target.value})}
+                    placeholder="Contoh: Kepala Sekolah, Operator, dll" 
+                    className="rounded-xl h-11"
+                  />
+                </div>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">

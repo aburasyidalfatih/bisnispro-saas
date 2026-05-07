@@ -19,6 +19,7 @@ const registerSchoolSchema = z.object({
   adminName: z.string().min(2, "Nama admin minimal 2 karakter").max(100),
   adminEmail: z.string().email("Email tidak valid"),
   adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
+  adminPosition: z.string().min(2, "Jabatan penanggung jawab wajib diisi"),
   address: z.string().min(5, "Alamat wajib diisi"),
   logo: z.string().min(1, "Logo wajib diunggah"),
   studentCount: z.coerce.number().min(1, "Jumlah siswa harus lebih dari 0"),
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
 
     const {
       schoolName, schoolSlug, npsn, schoolStatus,
-      province, regency, adminName, adminEmail, adminPhone, address, logo, studentCount, referralCode
+      province, regency, adminName, adminEmail, adminPhone, adminPosition, address, logo, studentCount, referralCode
     } = parsed.data
 
     // Cek ketersediaan slug/subdomain di tabel Tenant utama
@@ -97,6 +98,7 @@ export async function POST(req: Request) {
         adminName,
         adminEmail,
         adminPhone,
+        adminPosition,
         address,
         logo,
         studentCount,

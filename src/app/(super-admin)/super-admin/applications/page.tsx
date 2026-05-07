@@ -29,6 +29,7 @@ interface Application {
   province: string
   regency: string
   adminName: string
+  adminPosition?: string | null
   adminEmail: string
   adminPhone: string
   address: string
@@ -426,6 +427,9 @@ export default function SuperAdminApplicationsPage() {
                   <div className="grid grid-cols-2 gap-y-3 text-sm">
                     <div className="text-muted-foreground">Nama Admin</div>
                     <div className="font-medium">{selectedApp.adminName}</div>
+                    
+                    <div className="text-muted-foreground">Jabatan</div>
+                    <div className="font-medium">{selectedApp.adminPosition || '-'}</div>
                     
                     <div className="text-muted-foreground">Email</div>
                     <div className="font-medium truncate">{selectedApp.adminEmail}</div>
