@@ -296,6 +296,7 @@ model TenantApplication {
   adminName    String
   adminEmail   String
   adminPhone   String
+  adminPosition String?
   address      String?
   status       String            @default("PENDING")
   adminMessage String?

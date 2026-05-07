@@ -215,6 +215,7 @@ export async function approveApplication(id: string) {
           province: app.province,
           regency: app.regency,
           schoolStatus: app.schoolStatus,
+          adminPosition: app.adminPosition,
         },
       },
     })
@@ -235,6 +236,7 @@ export async function approveApplication(id: string) {
           province: app.province,
           regency: app.regency,
           schoolStatus: app.schoolStatus,
+          adminPosition: app.adminPosition,
         },
       },
     })
