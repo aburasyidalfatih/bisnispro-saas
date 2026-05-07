@@ -495,6 +495,9 @@ export default async function LandingPage() {
               <Link href="/syarat-ketentuan" className="hover:text-foreground transition-colors">
                 Syarat & Ketentuan
               </Link>
+              <Link href="/program-afiliasi" className="hover:text-foreground transition-colors font-medium text-primary">
+                Program Afiliasi
+              </Link>
             </div>
           </div>
         </div>
