@@ -496,6 +496,10 @@ model Staff {
   phone      String?
   subject    String?
   education  String?
+  instagram  String?
+  facebook   String?
+  tiktok     String?
+  youtube    String?
   userId     String?
   tenant     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user       User?       @relation(fields: [userId], references: [id])
