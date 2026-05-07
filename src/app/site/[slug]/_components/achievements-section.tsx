@@ -49,7 +49,7 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
               <Trophy className="h-3.5 w-3.5" />
               Prestasi
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
               Prestasi Membanggakan
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">

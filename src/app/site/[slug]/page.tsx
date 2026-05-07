@@ -120,7 +120,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
                   <ImageIcon className="h-3.5 w-3.5" />
                   Galeri
                 </div>
-                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Dokumentasi Kami</h2>
+                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">Dokumentasi Kami</h2>
                 <p className="text-muted-foreground text-sm md:text-base max-w-xl">
                   Kumpulan momen dan kegiatan berharga yang telah kami abadikan.
                 </p>

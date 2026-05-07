@@ -31,7 +31,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
               <Building2 className="h-3.5 w-3.5" />
               Fasilitas
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Fasilitas Sekolah</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">Fasilitas Sekolah</h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
               Fasilitas modern dan lengkap untuk mendukung proses belajar mengajar yang optimal.
             </p>

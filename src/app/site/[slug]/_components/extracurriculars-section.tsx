@@ -36,7 +36,7 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
               <Palette className="h-3.5 w-3.5" />
               Ekstrakurikuler
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Kegiatan Ekstrakurikuler</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">Kegiatan Ekstrakurikuler</h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
               Wadah pengembangan minat, bakat, dan kreativitas siswa di luar kegiatan akademik.
             </p>
