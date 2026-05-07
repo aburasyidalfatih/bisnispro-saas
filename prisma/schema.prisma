@@ -66,6 +66,7 @@ model Tenant {
   classrooms           Classroom[]
   subscriptions        Subscription[]
   users                TenantUser[]
+  internalMessages     InternalMessage[]
   waSession            WaSession?
   subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
 
@@ -104,6 +105,8 @@ model User {
   studentParents       StudentParent[]
   tenants              TenantUser[]
   verificationTokens   VerificationToken[]
+  sentMessages         InternalMessage[] @relation("MessageSender")
+  receivedMessages     InternalMessage[] @relation("MessageReceiver")
 
   @@index([isActive])
   @@index([isSuperAdmin])
@@ -864,4 +867,25 @@ model WaMessage {
   @@index([tenantId])
   @@index([status])
   @@map("wa_messages")
+}
+
+model InternalMessage {
+  id         String   @id @default(cuid())
+  tenantId   String
+  senderId   String
+  receiverId String?  // Jika null, berarti pesan broadcast/untuk Admin
+  subject    String?
+  body       String   @db.Text
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sender     User     @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User?    @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@map("internal_messages")
 }

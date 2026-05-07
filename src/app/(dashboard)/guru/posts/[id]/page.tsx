@@ -43,7 +43,7 @@ export default function PostFormPage() {
     resolver: zodResolver(postSchema),
     defaultValues: {
       type: "BLOG_GURU",
-      status: "PUBLISHED",
+      status: "PENDING",
       featuredImage: "",
       categoryId: "",
       content: "",
@@ -77,7 +77,7 @@ export default function PostFormPage() {
       .then(d => {
         if (d.error) {
           toast({ title: "Gagal memuat artikel", description: d.error, variant: "destructive" })
-          router.push("/admin/website/posts")
+          router.push("/guru/posts")
           return
         }
         setValue("title", d.title)
@@ -122,7 +122,7 @@ export default function PostFormPage() {
       const d = await res.json()
       if (res.ok) {
         toast({ title: "Berhasil", description: d.message })
-        router.push("/admin/website/posts")
+        router.push("/guru/posts")
         router.refresh()
       } else {
         toast({ title: "Gagal menyimpan", description: d.error, variant: "destructive" })
@@ -144,7 +144,7 @@ export default function PostFormPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <Link href="/admin/website/posts">
+            <Link href="/guru/posts">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -247,9 +247,7 @@ export default function PostFormPage() {
                   {...register("status")} 
                   className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
                 >
-                  <option value="PUBLISHED">🟢 Publikasikan Langsung</option>
-                  <option value="PENDING">🔵 Menunggu Review (Draf Guru)</option>
-                  <option value="REJECTED">🔴 Tolak / Perlu Revisi</option>
+                  <option value="PENDING">🔵 Kirim untuk Direview</option>
                   <option value="DRAFT">🟡 Simpan sebagai Draft</option>
                 </select>
                 {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
@@ -272,7 +270,6 @@ export default function PostFormPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="categoryId">Kategori Artikel</Label>
-                  <Link href="/admin/website/categories" className="text-[10px] text-primary hover:underline font-medium">Kelola</Link>
                 </div>
                 <select 
                   id="categoryId" 
@@ -323,10 +320,10 @@ export default function PostFormPage() {
           <div className="flex flex-col gap-3">
             <Button type="submit" disabled={loading} className="w-full gap-2 btn-gradient text-white border-0 rounded-xl py-6 shadow-md hover:shadow-lg transition-all">
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-              <span className="text-base font-semibold">{isNew ? "Simpan & Publikasikan" : "Perbarui Artikel"}</span>
+              <span className="text-base font-semibold">{isNew ? "Simpan & Kirim" : "Perbarui Artikel"}</span>
             </Button>
             <Button asChild variant="ghost" className="w-full rounded-xl" disabled={loading}>
-              <Link href="/admin/website/posts">Batal</Link>
+              <Link href="/guru/posts">Batal</Link>
             </Button>
           </div>
         </div>

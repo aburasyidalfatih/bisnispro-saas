@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Plus, Edit2, Trash2, FileText, Globe } from "lucide-react"
+import { Plus, Edit2, Trash2, FileText, Globe, Clock, XCircle } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 
@@ -125,12 +125,23 @@ export default function PostsPage() {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        {post.status === "PUBLISHED" ? (
-                          <span className="inline-flex items-center gap-1 text-xs text-emerald-600">
+                        {post.status === "PUBLISHED" && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-500/10 px-2 rounded-full py-0.5">
                             <Globe className="h-3 w-3" /> Publik
                           </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-xs text-amber-600">
+                        )}
+                        {post.status === "PENDING" && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 bg-blue-500/10 px-2 rounded-full py-0.5">
+                            <Clock className="h-3 w-3" /> Perlu Review
+                          </span>
+                        )}
+                        {post.status === "REJECTED" && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 bg-rose-500/10 px-2 rounded-full py-0.5">
+                            <XCircle className="h-3 w-3" /> Ditolak
+                          </span>
+                        )}
+                        {post.status === "DRAFT" && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 bg-amber-500/10 px-2 rounded-full py-0.5">
                             <FileText className="h-3 w-3" /> Draft
                           </span>
                         )}

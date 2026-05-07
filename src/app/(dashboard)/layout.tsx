@@ -26,7 +26,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   
   const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
   const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
-  const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
+  const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || currentRole === "guru" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       } else {
         // Redirect free tenants from the root dashboard to the website dashboard (ONLY FOR ADMINS)
         const plan = currentTenant?.plan || "free"
-        if (plan === "free" && isAdminRole) {
+        if (plan === "free" && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))) {
           const allowedPaths = [
             "/admin/website",
             "/admin/users",
