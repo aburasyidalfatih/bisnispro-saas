@@ -47,15 +47,21 @@ export default function WebsiteOverviewPage() {
   const [slug, setSlug] = useState<string | null>(null)
   const [data, setData] = useState<WebsiteData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [rootDomain, setRootDomain] = useState("schoolpro.id")
-  const [appUrl, setAppUrl] = useState("http://schoolpro.id")
+  const [rootDomain, setRootDomain] = useState(process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id")
+  const [appUrl, setAppUrl] = useState("")
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       let host = window.location.host
-      if (host.startsWith("www.")) host = host.replace("www.", "")
-      setRootDomain(host)
-      setAppUrl(`${window.location.protocol}//${host}`)
+      let protocol = window.location.protocol
+      setAppUrl(`${protocol}//${host}`)
+      
+      const envDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN
+      if (envDomain) {
+        setRootDomain(envDomain)
+      } else {
+        setRootDomain("schoolpro.my.id")
+      }
     }
   }, [])
 
