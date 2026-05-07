@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: tenant.seoTitle || tenant.name,
     description: tenant.seoDesc || tenant.description || tenant.tagline || `Website ${tenant.name}`,
+    manifest: "/manifest.webmanifest",
   }
 }
 
