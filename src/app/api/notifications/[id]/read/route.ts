@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   if (!session?.user?.id) {
@@ -12,8 +12,10 @@ export async function PATCH(
   }
 
   try {
+    const { id } = await params
+
     const notification = await db.notification.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!notification || notification.userId !== session.user.id) {
@@ -21,7 +23,7 @@ export async function PATCH(
     }
 
     const updated = await db.notification.update({
-      where: { id: params.id },
+      where: { id },
       data: { isRead: true },
     })
 
