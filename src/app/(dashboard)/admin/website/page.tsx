@@ -9,6 +9,7 @@ import {
   Briefcase, Info, LayoutTemplate, ArrowRight, Eye,
   CheckCircle, AlertCircle, ShieldCheck, ShieldOff, Download,
   Building2, Award, GraduationCap, Activity, Megaphone, BookOpen,
+  BarChart3, MessageSquare
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -41,6 +42,7 @@ interface WebsiteData {
     extracurriculars: number
     programs: number
     popups: number
+    contactSubmissions: number
   }
 }
 
@@ -319,6 +321,55 @@ export default function WebsiteOverviewPage() {
                 <ExternalLink className="h-3 w-3" /> Buka website
               </a>
             )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Analytics & Interaction Row */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {/* Contact Submissions */}
+        <Link href={`${base}/contact`}>
+          <Card className="glass border-0 hover-lift cursor-pointer h-full relative overflow-hidden">
+            <div className="absolute top-0 right-0 h-24 w-24 bg-rose-500/10 blur-2xl rounded-full" />
+            <CardContent className="p-5 relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500/10 to-pink-500/10">
+                  <MessageSquare className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                </div>
+                {data?._count?.contactSubmissions ? (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white animate-pulse">
+                    {data._count.contactSubmissions}
+                  </span>
+                ) : null}
+              </div>
+              <div className="text-2xl font-bold tracking-tight">
+                {data?._count?.contactSubmissions || 0} <span className="text-sm font-normal text-muted-foreground">Pesan Baru</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Dari form buku tamu / hubungi kami di website.
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+
+        {/* Traffic Analytics Placeholder */}
+        <Card className="glass border-0 relative overflow-hidden">
+          <div className="absolute top-0 right-0 h-24 w-24 bg-indigo-500/10 blur-2xl rounded-full" />
+          <CardContent className="p-5 relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-blue-500/10">
+                <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <span className="inline-flex items-center rounded-md bg-secondary/50 px-2 py-1 text-[10px] font-medium text-secondary-foreground">
+                Segera Hadir
+              </span>
+            </div>
+            <div className="text-2xl font-bold tracking-tight text-muted-foreground/50">
+              -- <span className="text-sm font-normal">Kunjungan</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Statistik lalu lintas pengunjung website minggu ini.
+            </p>
           </CardContent>
         </Card>
       </div>
