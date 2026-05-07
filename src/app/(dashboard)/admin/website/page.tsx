@@ -146,13 +146,7 @@ export default function WebsiteOverviewPage() {
       status: getColStatus(data?._count?.posts),
       href: `${base}/posts`,
     },
-    {
-      label: "Layanan",
-      value: Array.isArray(data?.services) && data.services.length > 0 ? `${data.services.length} layanan` : "Belum ada",
-      icon: <Briefcase className="h-5 w-5" />,
-      status: getColStatus(data?.services?.length),
-      href: `${base}/services`,
-    },
+
     {
       label: "Galeri",
       value: Array.isArray(data?.gallery) && data.gallery.length > 0 ? `${data.gallery.length} foto` : "Belum ada",

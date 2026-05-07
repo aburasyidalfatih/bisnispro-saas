@@ -25,7 +25,6 @@ const websiteSchema = z.object({
   facebook: z.string().max(100).optional().nullable(),
   youtube: z.string().max(100).optional().nullable(),
   // Konten JSON
-  services: z.any().optional().nullable(),
   gallery: z.any().optional().nullable(),
   settings: z.any().optional().nullable(),
   // SEO
@@ -51,7 +50,7 @@ export async function GET(req: Request) {
       id: true, name: true, slug: true, tagline: true, description: true,
       about: true, logo: true, heroImage: true, address: true, phone: true,
       email: true, website: true, whatsapp: true, instagram: true,
-      facebook: true, youtube: true, services: true, gallery: true, settings: true,
+      facebook: true, youtube: true, gallery: true, settings: true,
       seoTitle: true, seoDesc: true, googleClientId: true, googleClientSecret: true,
       _count: {
         select: {
