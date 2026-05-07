@@ -44,24 +44,33 @@ export async function POST(req: Request) {
 
   // Verifikasi peran
   const isSuperAdmin = session.user.isSuperAdmin
+  let userRole = "member"
   if (!isSuperAdmin) {
     const tu = await db.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: session.user.id } },
     })
-    const allowedRoles = ["owner", "admin", "teacher", "operator"]
+    const allowedRoles = ["owner", "admin", "teacher", "operator", "guru"]
     if (!tu || !allowedRoles.includes(tu.role)) {
       return NextResponse.json({ error: "Tidak punya izin untuk membuat artikel" }, { status: 403 })
     }
+    userRole = tu.role
   }
 
   // Jika authorId tidak dikirim dari FE, ambil dari session user
   const authorId = session.user.id
 
+  // Guru tidak bisa mempublikasikan langsung (wajib approval)
+  let finalStatus = data.status || "PUBLISHED"
+  if (userRole === "guru") {
+    finalStatus = "PENDING"
+  }
+
   const post = await db.post.create({
     data: {
       ...data,
       tenantId,
-      authorId
+      authorId,
+      status: finalStatus
     }
   })
 

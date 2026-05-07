@@ -36,7 +36,8 @@ export default function EditStaffPage() {
     email: "",
     phone: "",
     subject: "",
-    education: ""
+    education: "",
+    password: ""
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -58,7 +59,8 @@ export default function EditStaffPage() {
               email: (d as any).email || "",
               phone: (d as any).phone || "",
               subject: (d as any).subject || "",
-              education: (d as any).education || ""
+              education: (d as any).education || "",
+              password: ""
             })
             if (d.imageUrl) setPreviewUrl(d.imageUrl)
           }
@@ -122,7 +124,8 @@ export default function EditStaffPage() {
         email: formData.email,
         phone: formData.phone,
         subject: formData.subject,
-        education: formData.education
+        education: formData.education,
+        password: formData.password
       })
 
       toast({ title: "Data GTK berhasil diperbarui!" })
@@ -229,7 +232,20 @@ export default function EditStaffPage() {
                     placeholder="Contoh: guru@sekolah.com" 
                     className="rounded-xl"
                   />
-                  <p className="text-[10px] text-muted-foreground mt-1">Jika diisi dan akun belum ada, akun User otomatis dibuat. Jika password dikosongkan, user harus menggunakan fitur Lupa Password untuk login perdana.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">Jika diisi dan akun belum ada, akun User otomatis dibuat. Biarkan kosong jika tidak ingin membuat akun.</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password Akun (Opsional)</Label>
+                  <Input 
+                    id="password" 
+                    type="text"
+                    value={formData.password} 
+                    onChange={e => setFormData({...formData, password: e.target.value})} 
+                    placeholder="Kosongkan jika tidak ingin mengubah password" 
+                    className="rounded-xl"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">Isi jika Anda ingin mengatur atau mengubah password akun login guru.</p>
                 </div>
 
                 <div className="space-y-2">

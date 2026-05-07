@@ -104,6 +104,7 @@ export function Header() {
 
   const isSuperAdminPanel = pathname.startsWith("/super-admin")
   const isAffiliatePanel = pathname.startsWith("/affiliate")
+  const isGTKPanel = pathname.startsWith("/panel-gtk")
 
   const initials = session?.user?.name
     ?.split(" ")
@@ -179,7 +180,7 @@ export function Header() {
           <DropdownMenuContent className="w-56 glass rounded-xl" align="end" forceMount>
             <DropdownMenuItem asChild>
               <Link 
-                href={isSuperAdminPanel ? "/super-admin/settings" : isAffiliatePanel ? "/affiliate/settings" : "/admin/settings"} 
+                href={isSuperAdminPanel ? "/super-admin/settings" : isAffiliatePanel ? "/affiliate/settings" : isGTKPanel ? "#" : "/admin/settings"} 
                 className="flex items-center gap-2 rounded-lg"
               >
                 <User className="h-4 w-4" />

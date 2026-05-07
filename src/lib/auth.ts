@@ -158,10 +158,25 @@ export const authOptions: NextAuthConfig = {
           targetTenantSlug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
         }
 
+        const { cookies } = await import("next/headers")
+        const cookieStore = await cookies()
+        const cb = cookieStore.get("next-auth.callback-url")?.value || cookieStore.get("__Secure-next-auth.callback-url")?.value || cookieStore.get("authjs.callback-url")?.value || cookieStore.get("__Secure-authjs.callback-url")?.value || ""
+        const isAffiliateFlow = cb.includes("/affiliate") || cb.includes("/mitra")
+
         const existing = await db.user.findUnique({
           where: { email: user.email },
           include: { affiliateProfile: true },
         })
+
+        // Restriksi di domain utama:
+        // Jika login BUKAN dari halaman mitra afiliasi, maka wajib Super Admin
+        if (isMainDomain && !isAffiliateFlow) {
+          if (!existing || !existing.isSuperAdmin) {
+            return "/login?error=" + encodeURIComponent("Akun tidak ditemukan")
+          }
+          user.id = existing.id
+          return true
+        }
 
         if (!existing) {
           // --- NEW USER: provision based on context ---
@@ -185,7 +200,7 @@ export const authOptions: NextAuthConfig = {
                 })
               }
             } else {
-              // Main domain: create Affiliate profile (never Super Admin via OAuth)
+              // Main domain: create Affiliate profile (because this must be isAffiliateFlow)
               const referralCode = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
               await tx.affiliateProfile.create({
                 data: { userId: newUser.id, referralCode },
@@ -237,6 +252,46 @@ export const authOptions: NextAuthConfig = {
           user.id = existing.id
         }
       }
+      // --- NEW: AUDIT LOG USER LOGIN ---
+      try {
+        const { headers } = await import("next/headers")
+        const headersList = await headers()
+        const host = headersList.get("host") || ""
+        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
+        const hostWithoutPort = host.split(":")[0]
+        const isMainDomain =
+          hostWithoutPort === "localhost" ||
+          hostWithoutPort === rootDomain ||
+          hostWithoutPort === `www.${rootDomain}`
+
+        let targetTenantSlug: string | null = null
+        if (!isMainDomain) {
+          targetTenantSlug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+        }
+        
+        let tenantId = null;
+        if (targetTenantSlug) {
+            const tenant = await db.tenant.findUnique({ where: { slug: targetTenantSlug }, select: { id: true } })
+            if (tenant) tenantId = tenant.id;
+        }
+
+        if (user?.id) {
+            await db.auditLog.create({
+                data: {
+                    action: "USER_LOGIN",
+                    entity: "User",
+                    entityId: user.id,
+                    userId: user.id,
+                    tenantId: tenantId,
+                    ipAddress: headersList.get("x-forwarded-for") || undefined,
+                    userAgent: headersList.get("user-agent") || undefined,
+                }
+            })
+        }
+      } catch (error) {
+        console.error("Failed to log user login", error)
+      }
+
       return true
     },
 

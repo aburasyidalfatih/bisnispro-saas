@@ -8,7 +8,10 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const [tenantCount, userCount, activeTenants, totalRevenue, recentPayments, pendingPayments, applicationCount] = await Promise.all([
+  const startOfToday = new Date()
+  startOfToday.setHours(0, 0, 0, 0)
+
+  const [tenantCount, userCount, activeTenants, totalRevenue, recentPayments, pendingPayments, applicationCount, loginHariIni] = await Promise.all([
     db.tenant.count(),
     db.user.count({ where: { isSuperAdmin: false } }),
     db.tenant.count({ where: { isActive: true } }),
@@ -16,6 +19,7 @@ export async function GET() {
     db.payment.count({ where: { status: "paid", paidAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } } }),
     db.payment.count({ where: { status: "pending" } }),
     db.tenantApplication.count(),
+    db.auditLog.count({ where: { action: "USER_LOGIN", createdAt: { gte: startOfToday } } }),
   ])
 
   return NextResponse.json({
@@ -26,5 +30,6 @@ export async function GET() {
     recentPayments,
     pendingPayments,
     applicationCount,
+    loginHariIni,
   })
 }

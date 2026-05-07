@@ -8,6 +8,7 @@ import { RoutingProvider } from "@/components/providers/routing-provider"
 import { headers } from "next/headers"
 import { getActivePopup } from "@/lib/actions/popup"
 import { PopupRenderer } from "./_components/popup-renderer"
+import { PwaInstaller } from "@/components/pwa/pwa-installer"
 
 export default async function WebsiteLayout({
   children,
@@ -49,6 +50,7 @@ export default async function WebsiteLayout({
         <main className="flex-1">{children}</main>
         <WebsiteFooter tenant={tenant} />
         {activePopup && <PopupRenderer popup={activePopup} />}
+        <PwaInstaller tenantName={tenant.name} tenantLogo={tenant.logo} />
       </div>
     </RoutingProvider>
   )

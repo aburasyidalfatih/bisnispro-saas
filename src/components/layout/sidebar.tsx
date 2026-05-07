@@ -288,6 +288,38 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
   return menu;
 }
 
+// --- GTK MENU ---
+function getGTKMenu(basePath: string): MenuSection[] {
+  return [
+    {
+      items: [
+        { label: "Dashboard", href: basePath, icon: LayoutDashboard },
+      ],
+    },
+    {
+      title: "Kegiatan Belajar",
+      items: [
+        { label: "Jadwal Mengajar", href: "#", icon: Calendar },
+        { label: "Kelas & Siswa", href: "#", icon: Users },
+        { label: "E-Rapor (Nilai)", href: "#", icon: FileText },
+      ],
+    },
+    {
+      title: "Konten & Informasi",
+      items: [
+        { label: "Tulis Artikel", href: `${basePath}/posts`, icon: FileText, badge: "Pending" },
+        { label: "Pesan Internal", href: "#", icon: MessageSquare },
+      ],
+    },
+    {
+      title: "Akun",
+      items: [
+        { label: "Profil Saya", href: "#", icon: User },
+      ]
+    }
+  ]
+}
+
 // --- MEMBER (USER BIASA) MENU ---
 function getMemberMenu(basePath: string): MenuSection[] {
   return [
@@ -447,6 +479,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
 
   const basePath = "/admin"
   const isSuperAdminPath = pathname.startsWith("/super-admin")
+  const isGTK = pathname.startsWith("/panel-gtk")
 
   // Fetch pending payments count for super admin badge
   useEffect(() => {
@@ -478,14 +511,20 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
 
   // Pilih menu berdasarkan role
   let sections: MenuSection[]
+  let homeHref = basePath
+
   if (isSuperAdminPath) {
     sections = getSuperAdminMenu(pendingPayments)
+    homeHref = "/super-admin"
   } else if (isAdminRole) {
     sections = getTenantMenu(basePath, currentPlan, freeAccess)
+  } else if (isGTK) {
+    sections = getGTKMenu("/panel-gtk")
+    homeHref = "/panel-gtk"
   } else {
-    sections = getMemberMenu(basePath)
+    sections = getMemberMenu("/member")
+    homeHref = "/member"
   }
-  const homeHref = isSuperAdminPath ? "/super-admin" : basePath
 
   // Auto-open parent menu if child is active
   const getInitialOpen = () => {

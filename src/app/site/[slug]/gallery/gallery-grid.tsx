@@ -32,7 +32,7 @@ export function GalleryGrid({ items }: Props) {
 
   return (
     <>
-      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+      <div className="columns-2 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6 space-y-4 sm:space-y-6">
         {items.map((item, i) => (
           <button key={i} onClick={() => setLightbox(i)}
             className="group block relative w-full rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all duration-500 transform hover:-translate-y-1">

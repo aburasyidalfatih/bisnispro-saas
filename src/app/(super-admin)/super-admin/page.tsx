@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Building2, Users, CreditCard, Activity, TrendingUp, FileText } from "lucide-react"
+import { Building2, Users, CreditCard, Activity, TrendingUp, FileText, LogIn } from "lucide-react"
 import Link from "next/link"
 import { SystemHealth } from "./_components/SystemHealth"
 import { TenantMap } from "./_components/TenantMap"
+import { TenantLeaderboard } from "./_components/TenantLeaderboard"
 
 interface Stats {
   tenantCount: number
@@ -14,6 +15,7 @@ interface Stats {
   totalRevenue: number
   recentPayments: number
   applicationCount: number
+  loginHariIni: number
 }
 
 export default function SuperAdminDashboard() {
@@ -35,6 +37,7 @@ export default function SuperAdminDashboard() {
     { label: "Pendapatan", value: stats ? formatCurrency(stats.totalRevenue) : "—", icon: CreditCard, gradient: "from-amber-500/10 to-orange-500/10", iconColor: "text-amber-600 dark:text-amber-400", href: "/super-admin/payments" },
     { label: "Tenant Aktif", value: stats?.activeTenants ?? "—", icon: Activity, gradient: "from-violet-500/10 to-purple-500/10", iconColor: "text-violet-600 dark:text-violet-400", href: "/super-admin/tenants" },
     { label: "Total Pengajuan", value: stats?.applicationCount ?? "—", icon: FileText, gradient: "from-rose-500/10 to-pink-500/10", iconColor: "text-rose-600 dark:text-rose-400", href: "/super-admin/applications" },
+    { label: "Login Hari Ini", value: stats?.loginHariIni ?? "—", icon: LogIn, gradient: "from-indigo-500/10 to-blue-500/10", iconColor: "text-indigo-600 dark:text-indigo-400", href: "#" },
   ]
 
   return (
@@ -44,7 +47,7 @@ export default function SuperAdminDashboard() {
         <p className="text-muted-foreground mt-1">Kelola dan pantau seluruh platform SchoolPro</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {cards.map((stat) => (
           <Link key={stat.label} href={stat.href}>
             <Card className="glass border-0 hover-lift cursor-pointer h-full">
@@ -63,7 +66,14 @@ export default function SuperAdminDashboard() {
         ))}
       </div>
 
-      <TenantMap />
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 h-full">
+          <TenantMap />
+        </div>
+        <div className="lg:col-span-1 h-[580px] lg:h-auto">
+          <TenantLeaderboard />
+        </div>
+      </div>
 
       <SystemHealth />
     </div>
