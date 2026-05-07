@@ -228,7 +228,11 @@
 .animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee 120s linear infinite;
+  animation-name: marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* Default duration jika tidak di-inject inline */
+  animation-duration: 60s; 
   will-change: transform;
 }
 .animate-marquee:hover {

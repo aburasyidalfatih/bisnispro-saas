@@ -258,8 +258,10 @@ export default async function LandingPage() {
           <div className="relative w-full overflow-hidden flex">
             <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-r from-background to-transparent" />
             <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-l from-background to-transparent" />
-            
-            <div className="animate-marquee flex gap-8 md:gap-12 pl-8 md:pl-12 items-center">
+            <div 
+              className="animate-marquee flex gap-8 md:gap-12 pl-8 md:pl-12 items-center"
+              style={{ animationDuration: `${Math.max(activeTenants.length * 15, 60)}s` }}
+            >
               {/* Render items 4 times to ensure seamless loop for marquee */}
               {[...activeTenants, ...activeTenants, ...activeTenants, ...activeTenants].map((tenant, idx) => {
                 const city = tenant.address ? tenant.address.split(",").pop()?.trim() : "Indonesia"
