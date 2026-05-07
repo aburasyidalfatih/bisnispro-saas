@@ -30,15 +30,20 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
       <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-purple-400/5 blur-3xl pointer-events-none" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 text-purple-600 text-xs font-bold tracking-wider uppercase mb-4">
-            <Palette className="h-3.5 w-3.5" />
-            Ekstrakurikuler
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 text-purple-600 text-xs font-bold tracking-wider uppercase mb-4">
+              <Palette className="h-3.5 w-3.5" />
+              Ekstrakurikuler
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Kegiatan Ekstrakurikuler</h2>
+            <p className="text-muted-foreground text-sm md:text-base max-w-xl">
+              Wadah pengembangan minat, bakat, dan kreativitas siswa di luar kegiatan akademik.
+            </p>
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">Kegiatan Ekstrakurikuler</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
-            Wadah pengembangan minat, bakat, dan kreativitas siswa di luar kegiatan akademik.
-          </p>
+          <Link href={resolveHref("/ekstrakurikuler")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+            Lihat Semua <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
@@ -66,16 +71,7 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
           ))}
         </div>
 
-        {extracurriculars.length > 8 && (
-          <div className="text-center mt-10">
-            <Link
-              href={resolveHref("/ekstrakurikuler")}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border hover:bg-muted transition-colors text-sm font-medium"
-            >
-              Lihat Semua Ekstrakurikuler <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        )}
+
       </div>
     </section>
   )

@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { ChevronLeft, ChevronRight, Quote, GraduationCap } from "lucide-react"
+import Link from "next/link"
+import { ChevronLeft, ChevronRight, Quote, GraduationCap, ArrowRight } from "lucide-react"
+import { useRouting } from "@/components/providers/routing-provider"
 
 interface AlumniMember {
   id: string
@@ -57,6 +59,8 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
 
   const person = withTestimonials[current]
 
+  const { resolveHref } = useRouting()
+
   return (
     <section className="py-16 md:py-20 bg-primary/5 relative overflow-hidden">
       {/* Decorative */}
@@ -64,17 +68,22 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
 
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-600 text-xs font-bold tracking-wider uppercase mb-4">
-            <GraduationCap className="h-3.5 w-3.5" />
-            Alumni
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-600 text-xs font-bold tracking-wider uppercase mb-4">
+              <GraduationCap className="h-3.5 w-3.5" />
+              Alumni
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+              Kata Mereka Tentang Kami
+            </h2>
+            <p className="text-muted-foreground text-sm md:text-base max-w-xl">
+              Cerita dan pengalaman alumni kami setelah menempuh pendidikan di sini.
+            </p>
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
-            Kata Mereka Tentang Kami
-          </h2>
-          <p className="text-muted-foreground text-sm max-w-lg mx-auto">
-            Cerita dan pengalaman alumni kami setelah menempuh pendidikan di sini.
-          </p>
+          <Link href={resolveHref("/alumni")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+            Lihat Semua <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
         {/* Testimonial Card */}
