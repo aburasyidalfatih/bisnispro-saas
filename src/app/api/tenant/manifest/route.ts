@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 
-export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const slug = searchParams.get("slug")
+
+  if (!slug) {
+    return new NextResponse("Slug is required", { status: 400 })
+  }
   const tenant = await db.tenant.findUnique({
     where: { slug }
   })
@@ -22,7 +27,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     }
   } catch (e) {}
 
-  const logoUrl = tenant.logo || "/logo.png"
+  const logoUrl = tenant.logo || "/logo-schoolpro.png"
 
   const manifest = {
     name: tenant.name,
@@ -36,12 +41,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       {
         src: logoUrl,
         sizes: "192x192",
-        type: "image/png"
+        type: "image/png",
+        purpose: "any maskable"
       },
       {
         src: logoUrl,
         sizes: "512x512",
-        type: "image/png"
+        type: "image/png",
+        purpose: "any maskable"
       }
     ]
   }
