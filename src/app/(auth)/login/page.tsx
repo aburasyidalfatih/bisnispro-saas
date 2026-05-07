@@ -130,9 +130,14 @@ export default function LoginPage() {
             router.push("/admin")
           }
         } else {
-          // Pada subdomain, semua user (termasuk super admin/afiliasi yang terdaftar di tenant ini) 
-          // harus selalu diarahkan ke dashboard tenant.
-          router.push("/admin")
+          const role = session?.user?.tenants?.[0]?.role
+          if (role === "guru") {
+            router.push("/gtk")
+          } else if (role === "siswa" || role === "orangtua") {
+            router.push("/ortu") // /ortu is for parent/student portal
+          } else {
+            router.push("/admin")
+          }
         }
       } catch (err) {
         console.error("Gagal mendapatkan sesi:", err)

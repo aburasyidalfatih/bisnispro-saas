@@ -20,14 +20,14 @@ interface Post {
   category?: { name: string } | null
 }
 
-export default function GuruPostsPage() {
+export default function GTKPostsPage() {
   const { branding } = useTenantBranding()
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!branding.id) return
-    fetch(`/api/guru/posts?tenantId=${branding.id}`)
+    fetch(`/api/gtk/posts?tenantId=${branding.id}`)
       .then(r => r.json())
       .then(d => {
         setPosts(Array.isArray(d) ? d : [])
@@ -44,7 +44,7 @@ export default function GuruPostsPage() {
           <p className="text-muted-foreground mt-1 text-sm">Kelola artikel dan berita yang Anda tulis.</p>
         </div>
         <Button asChild className="btn-gradient text-white rounded-xl shadow-sm hover:shadow-md transition-all gap-2">
-          <Link href="/guru/posts/new">
+          <Link href="/gtk/posts/new">
             <Plus className="h-4 w-4" /> Tulis Artikel
           </Link>
         </Button>
@@ -77,7 +77,7 @@ export default function GuruPostsPage() {
                         </div>
                         <p>Anda belum menulis artikel apa pun.</p>
                         <Button asChild variant="outline" size="sm" className="mt-2 rounded-lg">
-                          <Link href="/guru/posts/new">Mulai Menulis</Link>
+                          <Link href="/gtk/posts/new">Mulai Menulis</Link>
                         </Button>
                       </div>
                     </td>
@@ -119,7 +119,7 @@ export default function GuruPostsPage() {
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors">
-                            <Link href={`/guru/posts/${post.id}`} title="Edit Artikel">
+                            <Link href={`/gtk/posts/${post.id}`} title="Edit Artikel">
                               <Edit className="h-4 w-4" />
                             </Link>
                           </Button>

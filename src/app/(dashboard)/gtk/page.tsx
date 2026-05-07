@@ -11,10 +11,10 @@ export default function GuruDashboard() {
   const userName = session?.user?.name || "Guru"
 
   const cards = [
-    { label: "Jadwal Mengajar", icon: Calendar, color: "text-blue-500", bg: "bg-blue-500/10", href: "/guru/schedule", value: "Lihat" },
-    { label: "Kelas & Siswa", icon: Users, color: "text-emerald-500", bg: "bg-emerald-500/10", href: "/guru/classes", value: "Kelola" },
-    { label: "Tulis Artikel", icon: FileText, color: "text-amber-500", bg: "bg-amber-500/10", href: "/guru/posts", value: "Buat" },
-    { label: "Pesan Internal", icon: MessageSquare, color: "text-violet-500", bg: "bg-violet-500/10", href: "/guru/messages", value: "Inbox" },
+    { label: "Jadwal Mengajar", icon: Calendar, color: "text-blue-500", bg: "bg-blue-500/10", href: "#", value: "Lihat" },
+    { label: "Kelas & Siswa", icon: Users, color: "text-emerald-500", bg: "bg-emerald-500/10", href: "#", value: "Kelola" },
+    { label: "Tulis Artikel", icon: FileText, color: "text-amber-500", bg: "bg-amber-500/10", href: "/gtk/posts", value: "Buat" },
+    { label: "Pesan Internal", icon: MessageSquare, color: "text-violet-500", bg: "bg-violet-500/10", href: "#", value: "Inbox" },
   ]
 
   return (

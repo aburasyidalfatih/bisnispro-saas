@@ -9,19 +9,19 @@ export function MobileAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   const isSiswa = pathname.startsWith("/siswa")
-  const isGuru = pathname.startsWith("/guru")
-  const baseRoute = isSiswa ? "/siswa" : isGuru ? "/guru" : "/ortu"
+  const isGTK = pathname.startsWith("/gtk")
+  const baseRoute = isSiswa ? "/siswa" : isGTK ? "/gtk" : "/ortu"
 
   const navItems = isSiswa ? [
     { label: "Beranda", icon: Home, href: "/siswa" },
     { label: "Tugas", icon: FileText, href: "/siswa/tugas" },
     { label: "Nilai", icon: Wallet, href: "/siswa/nilai" },
     { label: "Profil", icon: User, href: "/siswa/profil" },
-  ] : isGuru ? [
-    { label: "Beranda", icon: Home, href: "/guru" },
-    { label: "Kelas", icon: FileText, href: "/guru/kelas" },
-    { label: "Nilai", icon: Wallet, href: "/guru/nilai" },
-    { label: "Profil", icon: User, href: "/guru/profil" },
+  ] : isGTK ? [
+    { label: "Beranda", icon: Home, href: "/gtk" },
+    { label: "Kelas", icon: FileText, href: "/gtk/kelas" },
+    { label: "Nilai", icon: Wallet, href: "/gtk/nilai" },
+    { label: "Profil", icon: User, href: "/gtk/profil" },
   ] : [
     { label: "Beranda", icon: Home, href: "/ortu" },
     { label: "Akademik", icon: FileText, href: "/ortu/akademik" },

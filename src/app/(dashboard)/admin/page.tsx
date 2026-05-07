@@ -66,9 +66,13 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isAdminRole) {
-      router.replace("/ortu")
+      if (currentRole === "guru") {
+        router.replace("/gtk")
+      } else {
+        router.replace("/ortu")
+      }
     }
-  }, [isAdminRole, router])
+  }, [isAdminRole, router, currentRole])
 
   if (!isAdminRole) {
     return null

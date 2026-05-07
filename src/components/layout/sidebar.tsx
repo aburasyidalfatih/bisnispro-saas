@@ -288,8 +288,8 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
   return menu;
 }
 
-// --- GURU MENU ---
-function getGuruMenu(basePath: string): MenuSection[] {
+// --- GTK MENU ---
+function getGTKMenu(basePath: string): MenuSection[] {
   return [
     {
       items: [
@@ -299,22 +299,22 @@ function getGuruMenu(basePath: string): MenuSection[] {
     {
       title: "Kegiatan Belajar",
       items: [
-        { label: "Jadwal Mengajar", href: `${basePath}/schedule`, icon: Calendar },
-        { label: "Kelas & Siswa", href: `${basePath}/classes`, icon: Users },
-        { label: "E-Rapor (Nilai)", href: `${basePath}/grades`, icon: FileText },
+        { label: "Jadwal Mengajar", href: "#", icon: Calendar },
+        { label: "Kelas & Siswa", href: "#", icon: Users },
+        { label: "E-Rapor (Nilai)", href: "#", icon: FileText },
       ],
     },
     {
       title: "Konten & Informasi",
       items: [
         { label: "Tulis Artikel", href: `${basePath}/posts`, icon: FileText, badge: "Pending" },
-        { label: "Pesan Internal", href: `${basePath}/messages`, icon: MessageSquare },
+        { label: "Pesan Internal", href: "#", icon: MessageSquare },
       ],
     },
     {
       title: "Akun",
       items: [
-        { label: "Profil Saya", href: `${basePath}/profile`, icon: User },
+        { label: "Profil Saya", href: "#", icon: User },
       ]
     }
   ]
@@ -479,6 +479,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
 
   const basePath = "/admin"
   const isSuperAdminPath = pathname.startsWith("/super-admin")
+  const isGTK = pathname.startsWith("/gtk")
 
   // Fetch pending payments count for super admin badge
   useEffect(() => {
@@ -517,9 +518,9 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
     homeHref = "/super-admin"
   } else if (isAdminRole) {
     sections = getTenantMenu(basePath, currentPlan, freeAccess)
-  } else if (currentRole === "guru") {
-    sections = getGuruMenu("/guru")
-    homeHref = "/guru"
+  } else if (isGTK) {
+    sections = getGTKMenu("/gtk")
+    homeHref = "/gtk"
   } else {
     sections = getMemberMenu("/member")
     homeHref = "/member"
