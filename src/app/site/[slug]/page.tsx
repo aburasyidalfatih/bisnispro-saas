@@ -73,7 +73,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
                   title: tenant.tagline || `Selamat Datang di\n${tenant.name}`,
                   description: tenant.description || "Kami berkomitmen memberikan layanan terbaik untuk Anda.",
                   cta: { href: `/contact`, label: "Hubungi Kami" },
-                  ctaSecondary: { href: `/about`, label: "Tentang Kami" },
+                  ctaSecondary: { href: `/profil`, label: "Tentang Kami" },
                 },
               ]
         }

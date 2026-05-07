@@ -117,7 +117,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
               <ul className="space-y-2.5">
                 {[
                   { label: "Beranda", href: "" },
-                  { label: "Tentang Kami", href: "/about" },
+                  { label: "Tentang Kami", href: "/profil" },
                   { label: "Guru & Staf", href: "/gtk" },
                   { label: "PPDB", href: "/contact" },
                   { label: "Berita & Artikel", href: "/berita" },
