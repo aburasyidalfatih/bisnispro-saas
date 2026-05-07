@@ -164,7 +164,8 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/reset-password") ||
       pathname.startsWith("/invite") ||
       pathname.startsWith("/api") ||
-      pathname.startsWith("/invoice")
+      pathname.startsWith("/invoice") ||
+      pathname.startsWith("/panel-gtk")
     ) {
       const response = NextResponse.next()
       response.headers.set("x-tenant-slug", subdomain)
@@ -197,7 +198,8 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/reset-password") ||
       pathname.startsWith("/invite") ||
       pathname.startsWith("/api") ||
-      pathname.startsWith("/invoice")
+      pathname.startsWith("/invoice") ||
+      pathname.startsWith("/panel-gtk")
     ) {
       const response = NextResponse.next()
       response.headers.set("x-tenant-slug", slug)
