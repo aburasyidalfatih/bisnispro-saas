@@ -297,24 +297,16 @@ function getGTKMenu(basePath: string): MenuSection[] {
       ],
     },
     {
-      title: "Kegiatan Belajar",
-      items: [
-        { label: "Jadwal Mengajar", href: "#", icon: Calendar },
-        { label: "Kelas & Siswa", href: "#", icon: Users },
-        { label: "E-Rapor (Nilai)", href: "#", icon: FileText },
-      ],
-    },
-    {
       title: "Konten & Informasi",
       items: [
         { label: "Tulis Artikel", href: `${basePath}/posts`, icon: FileText, badge: "Pending" },
-        { label: "Pesan Internal", href: "#", icon: MessageSquare },
+        { label: "Pesan Internal", href: `${basePath}/messages`, icon: MessageSquare },
       ],
     },
     {
       title: "Akun",
       items: [
-        { label: "Profil Saya", href: "#", icon: User },
+        { label: "Profil Saya", href: `${basePath}/profil`, icon: User },
       ]
     }
   ]
