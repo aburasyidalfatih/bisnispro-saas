@@ -56,6 +56,8 @@ export interface WaConfig {
   provider?: string
   metaPhoneId?: string
   metaToken?: string
+  delayMin?: number
+  delayMax?: number
 }
 
 /**
@@ -75,12 +77,14 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
         apiKey: settings.whatsapp.waApiKey,
         deviceId: settings.whatsapp.waDeviceId,
         provider: "starsender",
+        delayMin: Number(settings.whatsapp.waDelayMin || 0),
+        delayMax: Number(settings.whatsapp.waDelayMax || 0),
       }
     }
   }
   // Fallback ke platform settings dari database, lalu env var
   const platformSettings = await db.platformSetting.findMany({
-    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID", "WA_ACTIVE_PROVIDER", "META_WA_PHONE_NUMBER_ID", "META_WA_ACCESS_TOKEN"] } },
+    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID", "WA_ACTIVE_PROVIDER", "META_WA_PHONE_NUMBER_ID", "META_WA_ACCESS_TOKEN", "STARSENDER_DELAY_MIN", "STARSENDER_DELAY_MAX"] } },
   })
   const map = Object.fromEntries(
     platformSettings.filter((s) => s.value).map((s) => [s.key, s.value!])
@@ -92,6 +96,8 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
     deviceId: map.STARSENDER_DEVICE_ID || process.env.STARSENDER_DEVICE_ID,
     metaPhoneId: map.META_WA_PHONE_NUMBER_ID,
     metaToken: map.META_WA_ACCESS_TOKEN,
+    delayMin: Number(map.STARSENDER_DELAY_MIN || 0),
+    delayMax: Number(map.STARSENDER_DELAY_MAX || 0),
   }
 }
 
@@ -186,6 +192,16 @@ export async function sendWhatsApp(
   }
 
   try {
+    // Implement random delay if configured
+    if (config.delayMin && config.delayMax && config.delayMax > 0) {
+      const minMs = config.delayMin * 1000;
+      const maxMs = config.delayMax * 1000;
+      const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+      if (delay > 0) {
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+
     const body: Record<string, string> = {
       messageType: "text",
       to: phone,

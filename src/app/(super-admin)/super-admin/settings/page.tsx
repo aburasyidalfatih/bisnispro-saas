@@ -51,6 +51,8 @@ export default function SuperAdminSettingsPage() {
     META_WA_ACCESS_TOKEN: "",
     STARSENDER_API_KEY: "",
     STARSENDER_DEVICE_ID: "",
+    STARSENDER_DELAY_MIN: "5",
+    STARSENDER_DELAY_MAX: "15",
     WA_SUBJECT_PENDING: "",
     WA_TEMPLATE_PENDING: `Halo {{adminName}},\n\nSelamat! Formulir pendaftaran sekolah {{schoolName}} telah kami terima dan saat ini sudah masuk ke dalam antrean peninjauan tim kami.\n\nKami akan segera menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih.`,
     WA_SUBJECT_APPROVED: "",
@@ -220,6 +222,8 @@ export default function SuperAdminSettingsPage() {
           waApiUrl: "https://api.starsender.online/api",
           waApiKey: form.STARSENDER_API_KEY,
           waDeviceId: form.STARSENDER_DEVICE_ID || undefined,
+          waDelayMin: parseInt(form.STARSENDER_DELAY_MIN) || 5,
+          waDelayMax: parseInt(form.STARSENDER_DELAY_MAX) || 15,
           waPhone: testWANumber,
         }),
       })
@@ -544,7 +548,34 @@ export default function SuperAdminSettingsPage() {
                     <Label>Device ID (Opsional)</Label>
                     <Input value={form.STARSENDER_DEVICE_ID} onChange={e => setForm({...form, STARSENDER_DEVICE_ID: e.target.value})} placeholder="ID Perangkat" className="rounded-xl" />
                   </div>
-                  <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID'])} disabled={saving}>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Delay Minimum (Detik)</Label>
+                      <Input 
+                        type="number" 
+                        value={form.STARSENDER_DELAY_MIN} 
+                        onChange={e => setForm({...form, STARSENDER_DELAY_MIN: e.target.value})} 
+                        className="rounded-xl" 
+                        min="0"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Delay Maksimum (Detik)</Label>
+                      <Input 
+                        type="number" 
+                        value={form.STARSENDER_DELAY_MAX} 
+                        onChange={e => setForm({...form, STARSENDER_DELAY_MAX: e.target.value})} 
+                        className="rounded-xl" 
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Penundaan waktu (jeda) acak sebelum pesan terkirim. Membantu menghindari blokir WhatsApp karena terdeteksi mengirim pesan terlalu cepat.
+                  </p>
+
+                  <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID', 'STARSENDER_DELAY_MIN', 'STARSENDER_DELAY_MAX'])} disabled={saving}>
                     <Save className="h-4 w-4" /> Simpan WhatsApp
                   </Button>
                 </CardContent>
