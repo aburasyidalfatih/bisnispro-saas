@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { TenantBrandingProvider } from "@/components/providers/tenant-branding-provider"
 import { MobileAppLayout } from "@/components/layout/mobile-app-layout"
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
 import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -26,6 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   
   const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
   const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
+  const isGuru = !isImpersonatingUser && currentRole === "guru"
   const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || currentRole === "guru" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
 
   useEffect(() => {
@@ -84,8 +86,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Sidebar />
           </div>
 
-          {/* Mobile sidebar overlay */}
-          {mobileOpen && (
+          {/* Mobile sidebar overlay (Sembunyikan untuk guru karena guru pakai bottom nav di mobile) */}
+          {!isGuru && mobileOpen && (
             <div className="fixed inset-0 z-50 lg:hidden">
               <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
               <div className="relative z-10 h-full w-[260px]">
@@ -102,21 +104,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           )}
 
-          <div className="flex flex-1 flex-col overflow-hidden">
-            <header className="flex h-16 items-center justify-between border-b glass px-4 lg:px-6">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden h-9 w-9 rounded-xl mr-2"
-                onClick={() => setMobileOpen(true)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
+          <div className="flex flex-1 flex-col overflow-hidden relative">
+            <header className={cn("flex h-16 items-center justify-between border-b glass px-4 lg:px-6 z-10", isGuru && "hidden lg:flex")}>
+              {!isGuru && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="lg:hidden h-9 w-9 rounded-xl mr-2"
+                  onClick={() => setMobileOpen(true)}
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+              )}
               <Header />
             </header>
-            <main className="flex-1 overflow-y-auto bg-mesh p-4 lg:p-6" style={{ viewTransitionName: "page-content" }}>
+            <main className={cn("flex-1 overflow-y-auto bg-mesh p-4 lg:p-6", isGuru && "pb-28 lg:pb-6")} style={{ viewTransitionName: "page-content" }}>
               {children}
             </main>
+            
+            {/* Mobile Bottom Nav khusus untuk Guru */}
+            {isGuru && (
+              <div className="absolute bottom-0 left-0 right-0 z-50 lg:hidden">
+                <MobileBottomNav />
+              </div>
+            )}
           </div>
         </div>
       )}
