@@ -577,7 +577,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                   "text-[10px] font-medium leading-tight",
                   isSuperAdminPath ? "text-red-500" : "text-muted-foreground"
                 )}>
-                  {isSuperAdminPath ? "Super Admin" : isAdminRole ? "Admin Panel" : "User Panel"}
+                  {isSuperAdminPath ? "Super Admin" : isAdminRole ? "Admin Panel" : isGTK ? "GTK Panel" : "User Panel"}
                 </span>
               </div>
             </Link>
