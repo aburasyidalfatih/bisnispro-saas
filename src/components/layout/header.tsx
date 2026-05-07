@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { TenantSwitcher } from "@/components/shared/tenant-switcher"
+import { NotificationBell } from "@/components/shared/notification-bell"
 
 const labelMap: Record<string, string> = {
   dashboard: "Dashboard",
@@ -143,13 +144,7 @@ export function Header() {
         </Button>
 
         {/* Notifications */}
-        <Link href="/admin/notifications">
-          <Button variant="ghost" size="icon" className="relative rounded-xl h-9 w-9">
-            <Bell className="h-[18px] w-[18px]" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary ring-2 ring-background" />
-            <span className="sr-only">Notifikasi</span>
-          </Button>
-        </Link>
+        <NotificationBell />
 
 
         {/* User menu */}
