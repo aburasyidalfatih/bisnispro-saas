@@ -263,7 +263,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                 href="/login"
                 className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:opacity-90 rounded-full shadow-md hover:shadow-lg transition-all"
               >
-                Login Tenant
+                Login
                 <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
               </Link>
             </div>
@@ -381,7 +381,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl shadow-lg shadow-primary/30 hover:opacity-90 transition-opacity"
                     >
-                      Login Tenant
+                      Login
                       <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
                     </Link>
                   </div>
