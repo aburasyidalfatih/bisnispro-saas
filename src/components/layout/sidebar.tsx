@@ -479,7 +479,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
 
   const basePath = "/admin"
   const isSuperAdminPath = pathname.startsWith("/super-admin")
-  const isGTK = pathname.startsWith("/gtk")
+  const isGTK = pathname.startsWith("/panel-gtk")
 
   // Fetch pending payments count for super admin badge
   useEffect(() => {
@@ -519,8 +519,8 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   } else if (isAdminRole) {
     sections = getTenantMenu(basePath, currentPlan, freeAccess)
   } else if (isGTK) {
-    sections = getGTKMenu("/gtk")
-    homeHref = "/gtk"
+    sections = getGTKMenu("/panel-gtk")
+    homeHref = "/panel-gtk"
   } else {
     sections = getMemberMenu("/member")
     homeHref = "/member"

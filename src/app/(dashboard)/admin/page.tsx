@@ -67,7 +67,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isAdminRole) {
       if (currentRole === "guru") {
-        router.replace("/gtk")
+        router.replace("/panel-gtk")
       } else {
         router.replace("/ortu")
       }

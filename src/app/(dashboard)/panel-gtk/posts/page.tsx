@@ -27,7 +27,7 @@ export default function GTKPostsPage() {
 
   useEffect(() => {
     if (!branding.id) return
-    fetch(`/api/gtk/posts?tenantId=${branding.id}`)
+    fetch(`/api/panel-gtk/posts?tenantId=${branding.id}`)
       .then(r => r.json())
       .then(d => {
         setPosts(Array.isArray(d) ? d : [])
@@ -44,7 +44,7 @@ export default function GTKPostsPage() {
           <p className="text-muted-foreground mt-1 text-sm">Kelola artikel dan berita yang Anda tulis.</p>
         </div>
         <Button asChild className="btn-gradient text-white rounded-xl shadow-sm hover:shadow-md transition-all gap-2">
-          <Link href="/gtk/posts/new">
+          <Link href="/panel-gtk/posts/new">
             <Plus className="h-4 w-4" /> Tulis Artikel
           </Link>
         </Button>
@@ -77,7 +77,7 @@ export default function GTKPostsPage() {
                         </div>
                         <p>Anda belum menulis artikel apa pun.</p>
                         <Button asChild variant="outline" size="sm" className="mt-2 rounded-lg">
-                          <Link href="/gtk/posts/new">Mulai Menulis</Link>
+                          <Link href="/panel-gtk/posts/new">Mulai Menulis</Link>
                         </Button>
                       </div>
                     </td>
@@ -119,7 +119,7 @@ export default function GTKPostsPage() {
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors">
-                            <Link href={`/gtk/posts/${post.id}`} title="Edit Artikel">
+                            <Link href={`/panel-gtk/posts/${post.id}`} title="Edit Artikel">
                               <Edit className="h-4 w-4" />
                             </Link>
                           </Button>

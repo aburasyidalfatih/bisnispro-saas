@@ -111,7 +111,7 @@ export default async function middleware(request: NextRequest) {
       return res
     }
 
-    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/gtk") || pathname.startsWith("/member")
+    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/member")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
     if (isProtected && !session) {
@@ -139,7 +139,7 @@ export default async function middleware(request: NextRequest) {
       } else if (session.user?.isAffiliate) {
         return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
       } else if (session.user?.tenants?.[0]?.role === "guru") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/gtk", request.url)))
+        return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
       } else if (session.user?.tenants?.[0]?.role === "siswa" || session.user?.tenants?.[0]?.role === "orangtua") {
         return addSecurityHeaders(NextResponse.redirect(new URL("/member", request.url)))
       } else {

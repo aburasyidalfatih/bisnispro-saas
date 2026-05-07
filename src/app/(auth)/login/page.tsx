@@ -132,7 +132,7 @@ export default function LoginPage() {
         } else {
           const role = session?.user?.tenants?.[0]?.role
           if (role === "guru") {
-            router.push("/gtk")
+            router.push("/panel-gtk")
           } else if (role === "siswa" || role === "orangtua") {
             router.push("/ortu") // /ortu is for parent/student portal
           } else {
