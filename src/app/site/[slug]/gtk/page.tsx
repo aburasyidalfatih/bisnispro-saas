@@ -100,7 +100,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
           </div>
         </section>
         )
-      })}
+      })()}
 
       {/* ── TEACHERS GRID ── */}
       <section className="py-12 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
