@@ -1,19 +1,27 @@
-import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, User, Briefcase, Mail, Globe, GraduationCap, BookOpen, MessageCircle } from "lucide-react"
+import { ArrowLeft, User, Briefcase, Mail, Globe, GraduationCap, BookOpen, MessageCircle, PenTool, Calendar, ChevronRight } from "lucide-react"
 
 export const dynamic = "force-dynamic"
+
+function slugify(text: string) {
+  return text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
-  const staff = (tenant.staff || []).find((s: any) => s.id === id)
+  
+  const staffSlugDecoded = decodeURIComponent(id)
+  const staff = (tenant.staff || []).find((s: any) => 
+    s.id === id || slugify(s.name) === staffSlugDecoded
+  )
   if (!staff) return {}
+  
   return {
     title: `${staff.name} - ${tenant.name}`,
     description: staff.bio || `Profil ${staff.name} (${staff.role}) di ${tenant.name}`,
@@ -25,25 +33,40 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
-  const staff = (tenant.staff || []).find((s: any) => s.id === id)
+  const staffSlugDecoded = decodeURIComponent(id)
+  const staff = (tenant.staff || []).find((s: any) => 
+    s.id === id || slugify(s.name) === staffSlugDecoded
+  )
   if (!staff) notFound()
 
   const base = await getPublicBasePath(slug)
+  
+  // Get articles written by this staff member
+  const articles = staff.userId 
+    ? (tenant.posts || []).filter((p: any) => p.authorId === staff.userId)
+    : []
 
   return (
-    <div className="bg-background min-h-screen pb-16">
+    <div className="bg-background min-h-screen pb-20">
       {/* ── HEADER SECTION ── */}
-      <div className="bg-muted/30 pt-8 pb-12 border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative pt-24 pb-16 overflow-hidden">
+        {/* Background Decorative */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background z-0" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2 z-0" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[80px] -translate-x-1/2 translate-y-1/2 z-0" />
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <Link 
             href={`${base}/gtk`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary mb-10 transition-colors bg-white/50 backdrop-blur-md px-4 py-2 rounded-full border border-border shadow-sm"
           >
-             <ArrowLeft className="h-4 w-4" /> Kembali
+             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Guru
           </Link>
           
-          <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-             <div className="w-32 h-32 md:w-40 md:h-40 relative rounded-full overflow-hidden border-4 border-background shadow-md shrink-0 bg-muted">
+          <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-white/50 flex flex-col md:flex-row gap-10 items-center md:items-start relative overflow-hidden">
+             
+             {/* Profile Image */}
+             <div className="w-40 h-40 md:w-48 md:h-48 relative rounded-full overflow-hidden border-8 border-white shadow-xl shrink-0 bg-muted/30">
                {staff.imageUrl ? (
                  <Image 
                    src={staff.imageUrl} 
@@ -53,33 +76,30 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                    priority
                  />
                ) : (
-                 <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                   <span className="text-4xl font-bold text-primary/30 uppercase">
+                 <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                   <span className="text-6xl font-black text-primary/40 uppercase">
                      {staff.name.charAt(0)}
                    </span>
                  </div>
                )}
              </div>
 
-             <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-bold tracking-widest uppercase text-xs mb-3">
+             <div className="flex-1 text-center md:text-left">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary font-bold tracking-widest uppercase text-xs mb-4 border border-primary/20 shadow-inner">
                    <Briefcase className="h-3.5 w-3.5" />
                    {staff.role}
                 </div>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight mb-4">
+                <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight tracking-tight mb-6">
                    {staff.name}
                 </h1>
                 
-                {/* Social / Contact */}
-                <div className="flex items-center gap-3">
-                   <a href={staff.email ? `mailto:${staff.email}` : "#"} className="h-10 w-10 rounded-full bg-background border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all">
-                      <Mail className="h-4 w-4" />
+                {/* Social / Contact Buttons */}
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                   <a href={staff.email ? `mailto:${staff.email}` : "#"} className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 hover:bg-primary hover:text-white hover:border-primary transition-all font-semibold text-sm shadow-sm">
+                      <Mail className="h-4 w-4" /> Email
                    </a>
-                   <a href={staff.phone ? `https://wa.me/${staff.phone.replace(/[^0-9]/g, '')}` : "#"} target="_blank" rel="noreferrer" className="h-10 w-10 rounded-full bg-background border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all">
-                      <MessageCircle className="h-4 w-4" />
-                   </a>
-                   <a href="#" className="h-10 w-10 rounded-full bg-background border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-all">
-                      <Globe className="h-4 w-4" />
+                   <a href={staff.phone ? `https://wa.me/${staff.phone.replace(/[^0-9]/g, '')}` : "#"} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all font-semibold text-sm shadow-sm">
+                      <MessageCircle className="h-4 w-4" /> WhatsApp
                    </a>
                 </div>
              </div>
@@ -87,32 +107,72 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
         </div>
       </div>
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
-        <div className="grid md:grid-cols-3 gap-8 items-start">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8">
+        <div className="grid md:grid-cols-3 gap-10 items-start">
            
-           <div className="md:col-span-2 prose prose-lg max-w-none text-muted-foreground leading-relaxed">
-              <h3 className="text-xl font-bold mb-4 text-foreground">Profil & Biografi</h3>
-              <p className="whitespace-pre-wrap">
-                 {staff.bio || "Berkomitmen penuh untuk mendidik dan membimbing siswa-siswi menuju masa depan yang cerah dengan bekal ilmu dan akhlak mulia."}
-              </p>
+           <div className="md:col-span-2 space-y-12">
+              <section className="prose prose-lg max-w-none text-slate-600 leading-relaxed bg-white p-8 md:p-10 rounded-[2rem] shadow-lg border border-slate-100">
+                 <h3 className="text-2xl font-black mb-6 text-slate-900 flex items-center gap-3 border-b pb-4">
+                    <User className="h-6 w-6 text-primary" /> Profil & Biografi
+                 </h3>
+                 <p className="whitespace-pre-wrap text-base md:text-lg">
+                    {staff.bio || "Berkomitmen penuh untuk mendidik dan membimbing siswa-siswi menuju masa depan yang cerah dengan bekal ilmu dan akhlak mulia."}
+                 </p>
+              </section>
+
+              {/* ── ARTIKEL GURU ── */}
+              {articles.length > 0 && (
+                <section>
+                   <h3 className="text-2xl font-black mb-6 text-slate-900 flex items-center gap-3 px-2">
+                      <PenTool className="h-6 w-6 text-primary" /> Artikel & Tulisan
+                   </h3>
+                   <div className="grid sm:grid-cols-2 gap-6">
+                      {articles.map((post: any) => (
+                        <Link href={`${base}/berita/${post.slug}`} key={post.id} className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col">
+                           <div className="relative h-48 w-full overflow-hidden bg-muted">
+                              {post.featuredImage ? (
+                                <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                              ) : (
+                                <div className="absolute inset-0 bg-primary/5 flex items-center justify-center">
+                                  <BookOpen className="h-10 w-10 text-primary/20" />
+                                </div>
+                              )}
+                           </div>
+                           <div className="p-6 flex flex-col flex-1">
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium mb-3">
+                                 <Calendar className="h-3.5 w-3.5" />
+                                 {new Date(post.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                              </div>
+                              <h4 className="font-bold text-lg text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                                {post.title}
+                              </h4>
+                              <div className="mt-auto pt-4 border-t border-slate-100 flex items-center text-sm font-semibold text-primary">
+                                 Baca selengkapnya <ChevronRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                              </div>
+                           </div>
+                        </Link>
+                      ))}
+                   </div>
+                </section>
+              )}
            </div>
 
-           <div className="space-y-6">
-              <div className="bg-muted/30 rounded-3xl p-6 border border-border/50">
-                 <h4 className="font-bold text-lg mb-4 text-foreground">Informasi Akademik</h4>
-                 <ul className="space-y-4">
-                    <li className="flex items-start gap-3">
-                       <div className="h-8 w-8 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center text-primary shrink-0"><BookOpen className="h-4 w-4" /></div>
+           <div className="space-y-8 sticky top-24">
+              <div className="bg-white rounded-[2rem] p-8 shadow-lg border border-slate-100">
+                 <h4 className="font-black text-xl mb-6 text-slate-900 border-b pb-4">Informasi Akademik</h4>
+                 <ul className="space-y-6">
+                    <li className="flex items-start gap-4">
+                       <div className="h-12 w-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0"><BookOpen className="h-5 w-5" /></div>
                        <div>
-                          <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Mata Pelajaran</p>
-                          <p className="font-semibold text-foreground text-sm mt-0.5">{staff.subject || "Guru Kelas / Umum"}</p>
+                          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Mata Pelajaran</p>
+                          <p className="font-bold text-slate-800 text-base">{staff.subject || "Guru Kelas / Umum"}</p>
                        </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                       <div className="h-8 w-8 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center text-primary shrink-0"><GraduationCap className="h-4 w-4" /></div>
+                    <li className="flex items-start gap-4">
+                       <div className="h-12 w-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0"><GraduationCap className="h-5 w-5" /></div>
                        <div>
-                          <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Pendidikan</p>
-                          <p className="font-semibold text-foreground text-sm mt-0.5">{staff.education || "S1 Pendidikan"}</p>
+                          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Pendidikan</p>
+                          <p className="font-bold text-slate-800 text-base">{staff.education || "S1 Pendidikan"}</p>
                        </div>
                     </li>
                  </ul>
@@ -120,7 +180,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
            </div>
            
         </div>
-      </article>
+      </div>
     </div>
   )
 }
