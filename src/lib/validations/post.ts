@@ -6,7 +6,7 @@ export const postSchema = z.object({
   content: z.string().min(10, "Konten minimal 10 karakter"),
   featuredImage: z.string().url("URL gambar tidak valid").optional().or(z.literal("")).transform(v => v === "" ? null : v),
   type: z.enum(["EDITORIAL", "BLOG_GURU", "PENGUMUMAN"]),
-  status: z.enum(["DRAFT", "PUBLISHED"]),
+  status: z.enum(["DRAFT", "PUBLISHED", "PENDING", "REJECTED"]),
   categoryId: z.string().optional().or(z.literal("")).transform(v => v === "" ? null : v),
   seoTitle: z.string().max(60, "SEO Title maksimal 60 karakter").optional().or(z.literal("")).transform(v => v === "" ? null : v),
   seoDesc: z.string().max(160, "SEO Description maksimal 160 karakter").optional().or(z.literal("")).transform(v => v === "" ? null : v)
