@@ -158,10 +158,25 @@ export const authOptions: NextAuthConfig = {
           targetTenantSlug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
         }
 
+        const { cookies } = await import("next/headers")
+        const cookieStore = await cookies()
+        const cb = cookieStore.get("next-auth.callback-url")?.value || cookieStore.get("__Secure-next-auth.callback-url")?.value || cookieStore.get("authjs.callback-url")?.value || cookieStore.get("__Secure-authjs.callback-url")?.value || ""
+        const isAffiliateFlow = cb.includes("/affiliate") || cb.includes("/mitra")
+
         const existing = await db.user.findUnique({
           where: { email: user.email },
           include: { affiliateProfile: true },
         })
+
+        // Restriksi di domain utama:
+        // Jika login BUKAN dari halaman mitra afiliasi, maka wajib Super Admin
+        if (isMainDomain && !isAffiliateFlow) {
+          if (!existing || !existing.isSuperAdmin) {
+            return "/login?error=" + encodeURIComponent("Akses ditolak. Login Google di sini hanya untuk Super Admin. Mitra Afiliasi wajib masuk melalui /mitra-afiliasi")
+          }
+          user.id = existing.id
+          return true
+        }
 
         if (!existing) {
           // --- NEW USER: provision based on context ---
@@ -185,7 +200,7 @@ export const authOptions: NextAuthConfig = {
                 })
               }
             } else {
-              // Main domain: create Affiliate profile (never Super Admin via OAuth)
+              // Main domain: create Affiliate profile (because this must be isAffiliateFlow)
               const referralCode = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
               await tx.affiliateProfile.create({
                 data: { userId: newUser.id, referralCode },
