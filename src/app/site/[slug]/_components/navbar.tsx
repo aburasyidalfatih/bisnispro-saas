@@ -19,6 +19,7 @@ interface NavbarProps {
     facebook: string | null
     instagram: string | null
     youtube: string | null
+    tiktok: string | null
   }
 }
 
@@ -140,6 +141,12 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
               <a href={tenant.youtube.startsWith('http') ? tenant.youtube : `https://${tenant.youtube}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-100 transition-opacity">
                 <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
                 <span className="hidden sm:inline">YouTube</span>
+              </a>
+            )}
+            {tenant.tiktok && (
+              <a href={tenant.tiktok.startsWith('http') ? tenant.tiktok : `https://${tenant.tiktok}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-100 transition-opacity">
+                <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                <span className="hidden sm:inline">TikTok</span>
               </a>
             )}
           </div>

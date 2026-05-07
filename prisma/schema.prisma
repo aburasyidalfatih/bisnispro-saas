@@ -28,6 +28,7 @@ model Tenant {
   instagram            String?
   facebook             String?
   youtube              String?
+  tiktok               String?
   services             Json?
   heroImage            String?
   gallery              Json?
