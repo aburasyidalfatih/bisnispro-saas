@@ -61,7 +61,7 @@ export default function ProgramsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Program & Jurusan</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Program Unggulan</h1>
           <p className="text-muted-foreground mt-1">Kelola daftar program studi atau jurusan di sekolah.</p>
         </div>
         <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">

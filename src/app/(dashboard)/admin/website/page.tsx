@@ -193,7 +193,7 @@ export default function WebsiteOverviewPage() {
       href: `${base}/extracurriculars`,
     },
     {
-      label: "Program & Jurusan",
+      label: "Program Unggulan",
       value: "Profil Pendidikan",
       icon: <BookOpen className="h-5 w-5" />,
       status: "ok",
