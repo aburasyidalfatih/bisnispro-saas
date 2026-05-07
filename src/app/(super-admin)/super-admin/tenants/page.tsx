@@ -67,13 +67,16 @@ export default function TenantsPage() {
   const [newPassword, setNewPassword] = useState("")
   const [reseting, setReseting] = useState(false)
 
-  const [rootDomain, setRootDomain] = useState("schoolpro.id")
+  const [rootDomain, setRootDomain] = useState(process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id")
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      let host = window.location.host
-      if (host.startsWith("www.")) host = host.replace("www.", "")
-      setRootDomain(host)
+      const envDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN
+      if (envDomain) {
+        setRootDomain(envDomain)
+      } else {
+        setRootDomain("schoolpro.my.id")
+      }
     }
   }, [])
 
