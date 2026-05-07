@@ -33,7 +33,7 @@ export default function WebsiteContactPage() {
   const [activeTab, setActiveTab] = useState<"info" | "submissions">("info")
   const [form, setForm] = useState({
     address: "", phone: "", email: "", website: "",
-    whatsapp: "", instagram: "", facebook: "", youtube: "",
+    whatsapp: "", instagram: "", facebook: "", youtube: "", tiktok: "",
     settings: {} as any
   })
   const [domainStatus, setDomainStatus] = useState<{ domain: string | null; status: string | null }>({ domain: null, status: null })
@@ -64,7 +64,7 @@ export default function WebsiteContactPage() {
         setForm({
           address: d.address || "", phone: d.phone || "", email: d.email || "",
           website: d.website || "", whatsapp: d.whatsapp || "", instagram: d.instagram || "",
-          facebook: d.facebook || "", youtube: d.youtube || "",
+          facebook: d.facebook || "", youtube: d.youtube || "", tiktok: d.tiktok || "",
           settings: d.settings || {},
         })
         setLoading(false)
@@ -282,6 +282,13 @@ export default function WebsiteContactPage() {
                 <div className="space-y-2">
                   <Label>▶️ YouTube</Label>
                   <Input value={form.youtube} onChange={set("youtube")} placeholder="@channel" className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label>🎵 TikTok</Label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground shrink-0">@</span>
+                    <Input value={form.tiktok} onChange={set("tiktok")} placeholder="username" className="rounded-xl" />
+                  </div>
                 </div>
               </CardContent>
             </Card>

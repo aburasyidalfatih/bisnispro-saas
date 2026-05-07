@@ -46,6 +46,7 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       instagram: true,
       facebook: true,
       youtube: true,
+      tiktok: true,
       staff: { orderBy: { sortOrder: 'asc' } },
       alumni: { orderBy: { graduationYear: 'desc' } },
       programs: true,
