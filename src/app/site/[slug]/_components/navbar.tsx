@@ -248,12 +248,12 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                 WhatsApp
               </a>
               
-              {/* Primary CTA: Login / PPDB */}
+              {/* Primary CTA: Login */}
               <Link
-                href={resolveHref("/contact")}
+                href="/login"
                 className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:opacity-90 rounded-full shadow-md hover:shadow-lg transition-all"
               >
-                PPDB Online
+                Login Tenant
                 <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
               </Link>
             </div>
@@ -316,11 +316,11 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                       Hubungi via WhatsApp
                     </a>
                     <Link
-                      href={resolveHref("/contact")}
+                      href="/login"
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-bold text-primary-foreground bg-primary rounded-xl shadow-md hover:opacity-90 transition-opacity"
                     >
-                      PPDB Online
+                      Login Tenant
                       <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
                     </Link>
                   </div>
