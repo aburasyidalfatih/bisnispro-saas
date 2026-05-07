@@ -66,6 +66,11 @@ export default function LoginPage() {
           if (data && data.name) {
             setTenantNameDisplay(data.name)
           }
+          if (data && data.logo) {
+            setPlatformLogo(data.logo)
+          } else {
+            setPlatformLogo("") // kosongkan agar fallback ke inisial
+          }
           if (data && data.googleAuthEnabled) {
             setGoogleAuthEnabled(true)
           }
@@ -158,9 +163,13 @@ export default function LoginPage() {
             {isMainDomain ? (
               <img src={platformLogo} alt="SchoolPro Logo" className="h-20 w-auto mb-2 object-contain" />
             ) : (
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
-                {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "S"}
-              </div>
+              platformLogo ? (
+                <img src={platformLogo} alt={tenantNameDisplay || "Logo Tenant"} className="h-20 w-auto mb-4 object-contain" />
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
+                  {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "S"}
+                </div>
+              )
             )}
             <h1 className="text-2xl font-bold tracking-tight">Selamat datang</h1>
             <p className="text-sm text-muted-foreground mt-1">
