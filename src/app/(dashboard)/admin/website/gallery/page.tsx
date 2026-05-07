@@ -142,6 +142,13 @@ export default function WebsiteGalleryPage() {
 
   if (loading) return <div className="skeleton h-64 rounded-2xl" />
 
+  const getPublicUrl = (path: string) => {
+    if (typeof window !== "undefined" && window.location.pathname.startsWith('/site/')) {
+      return `/site/${slug}${path}`
+    }
+    return path
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -152,7 +159,7 @@ export default function WebsiteGalleryPage() {
         </div>
         <div className="flex items-center gap-2">
           {slug && (
-            <a href={`/site/${slug}/gallery`} target="_blank" rel="noopener"
+            <a href={getPublicUrl("/gallery")} target="_blank" rel="noopener"
               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
               <ExternalLink className="h-3.5 w-3.5" /> Lihat Galeri
             </a>
