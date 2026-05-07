@@ -53,6 +53,19 @@ export async function GET(req: Request) {
       email: true, website: true, whatsapp: true, instagram: true,
       facebook: true, youtube: true, services: true, gallery: true, settings: true,
       seoTitle: true, seoDesc: true, googleClientId: true, googleClientSecret: true,
+      _count: {
+        select: {
+          posts: true,
+          documents: true,
+          facilities: true,
+          staff: true,
+          achievements: true,
+          alumni: true,
+          extracurriculars: true,
+          programs: true,
+          popups: true,
+        }
+      }
     },
   })
 

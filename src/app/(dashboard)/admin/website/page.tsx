@@ -31,6 +31,17 @@ interface WebsiteData {
   gallery: any[] | null
   domain: string | null
   customDomain: { status: string } | null
+  _count?: {
+    posts: number
+    documents: number
+    facilities: number
+    staff: number
+    achievements: number
+    alumni: number
+    extracurriculars: number
+    programs: number
+    popups: number
+  }
 }
 
 interface StatItem {
@@ -113,102 +124,108 @@ export default function WebsiteOverviewPage() {
   const fallbackUrl = slug ? `${appUrl}/site/${slug}` : null
   const websiteUrl = customDomainUrl || subdomainUrl || fallbackUrl
 
+  const getColStatus = (count?: number | null): "ok" | "warn" | "empty" => {
+    if (!count || count === 0) return "empty"
+    if (count >= 5) return "ok"
+    return "warn"
+  }
+
   // Hitung kelengkapan konten
   const sections: StatItem[] = [
     {
       label: "Profil Lembaga",
       value: data?.about ? "Lengkap" : "Belum diisi",
       icon: <Info className="h-5 w-5" />,
-      status: data?.about ? "ok" : "warn",
+      status: data?.about ? "ok" : "empty",
       href: `${base}/about`,
     },
     {
       label: "Artikel & Pos",
-      value: "Kelola Konten",
+      value: data?._count?.posts ? `${data._count.posts} postingan` : "Belum ada",
       icon: <FileText className="h-5 w-5" />,
-      status: "ok",
+      status: getColStatus(data?._count?.posts),
       href: `${base}/posts`,
     },
     {
       label: "Layanan",
-      value: Array.isArray(data?.services) ? `${data.services.length} layanan` : "Belum diisi",
+      value: Array.isArray(data?.services) && data.services.length > 0 ? `${data.services.length} layanan` : "Belum ada",
       icon: <Briefcase className="h-5 w-5" />,
-      status: Array.isArray(data?.services) && data.services.length > 0 ? "ok" : "warn",
+      status: getColStatus(data?.services?.length),
       href: `${base}/services`,
     },
     {
       label: "Galeri",
-      value: Array.isArray(data?.gallery) ? `${data.gallery.length} foto` : "Belum diisi",
+      value: Array.isArray(data?.gallery) && data.gallery.length > 0 ? `${data.gallery.length} foto` : "Belum ada",
       icon: <Image className="h-5 w-5" />,
-      status: Array.isArray(data?.gallery) && data.gallery.length > 0 ? "ok" : "warn",
+      status: getColStatus(data?.gallery?.length),
       href: `${base}/gallery`,
     },
     {
       label: "Pusat Unduhan",
-      value: "Kelola Dokumen",
+      value: data?._count?.documents ? `${data._count.documents} dokumen` : "Belum ada",
       icon: <Download className="h-5 w-5" />,
-      status: "ok",
+      status: getColStatus(data?._count?.documents),
       href: `${base}/documents`,
     },
     {
       label: "Kontak",
       value: data?.phone || data?.email ? "Lengkap" : "Belum diisi",
       icon: <Phone className="h-5 w-5" />,
-      status: data?.phone || data?.email ? "ok" : "warn",
+      status: data?.phone || data?.email ? "ok" : "empty",
       href: `${base}/contact`,
     },
     {
       label: "Fasilitas",
-      value: "Kelola Fasilitas",
+      value: data?._count?.facilities ? `${data._count.facilities} fasilitas` : "Belum ada",
       icon: <Building2 className="h-5 w-5" />,
-      status: "ok",
+      status: getColStatus(data?._count?.facilities),
       href: `${base}/facilities`,
     },
     {
       label: "Guru & Staf (GTK)",
-      value: "Profil Pendidik",
+      value: data?._count?.staff ? `${data._count.staff} profil` : "Belum ada",
       icon: <Users className="h-5 w-5" />,
-      status: "ok",
+      status: getColStatus(data?._count?.staff),
       href: `${base}/gtk`,
     },
     {
       label: "Prestasi Siswa",
-      value: "Kelola Prestasi",
+      value: data?._count?.achievements ? `${data._count.achievements} prestasi` : "Belum ada",
       icon: <Award className="h-5 w-5" />,
-      status: "ok",
+      status: getColStatus(data?._count?.achievements),
       href: `${base}/achievements`,
     },
     {
       label: "Alumni Success",
-      value: "Database Alumni",
+      value: data?._count?.alumni ? `${data._count.alumni} alumni` : "Belum ada",
       icon: <GraduationCap className="h-5 w-5" />,
-      status: "ok",
+      status: getColStatus(data?._count?.alumni),
       href: `${base}/alumni`,
     },
     {
       label: "Ekstrakurikuler",
-      value: "Kegiatan Siswa",
+      value: data?._count?.extracurriculars ? `${data._count.extracurriculars} kegiatan` : "Belum ada",
       icon: <Activity className="h-5 w-5" />,
-      status: "ok",
+      status: getColStatus(data?._count?.extracurriculars),
       href: `${base}/extracurriculars`,
     },
     {
       label: "Program Unggulan",
-      value: "Profil Pendidikan",
+      value: data?._count?.programs ? `${data._count.programs} program` : "Belum ada",
       icon: <BookOpen className="h-5 w-5" />,
-      status: "ok",
+      status: getColStatus(data?._count?.programs),
       href: `${base}/programs`,
     },
     {
       label: "Popup Pengumuman",
-      value: "Modal Banner",
+      value: data?._count?.popups ? `${data._count.popups} banner` : "Belum ada",
       icon: <Megaphone className="h-5 w-5" />,
-      status: "ok",
+      status: data?._count?.popups && data._count.popups > 0 ? "ok" : "empty",
       href: `${base}/popups`,
     },
   ]
 
-  const filledCount = sections.filter(s => s.status === "ok").length
+  const filledCount = sections.filter(s => s.status !== "empty").length
   const completionPct = Math.round((filledCount / sections.length) * 100)
 
   return (
@@ -331,24 +348,29 @@ export default function WebsiteOverviewPage() {
               <Link key={s.href} href={s.href}
                 className={cn(
                   "flex items-center justify-between rounded-xl border-2 px-4 py-3 transition-all hover:shadow-sm",
-                  s.status === "ok"
-                    ? "border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40"
-                    : "border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40"
+                  s.status === "ok" ? "border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40" :
+                  s.status === "warn" ? "border-amber-500/40 bg-amber-500/5 hover:border-amber-500/60" :
+                  "border-rose-500/20 bg-rose-500/5 hover:border-rose-500/40"
                 )}>
                 <div className="flex items-center gap-3">
                   <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg",
-                    s.status === "ok" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600")}>
+                    s.status === "ok" ? "bg-emerald-500/10 text-emerald-600" :
+                    s.status === "warn" ? "bg-amber-500/10 text-amber-600" :
+                    "bg-rose-500/10 text-rose-600")}>
                     {s.icon}
                   </div>
                   <div>
                     <p className="text-sm font-medium">{s.label}</p>
-                    <p className={cn("text-xs", s.status === "ok" ? "text-emerald-600" : "text-amber-600")}>{s.value}</p>
+                    <p className={cn("text-xs", 
+                      s.status === "ok" ? "text-emerald-600" :
+                      s.status === "warn" ? "text-amber-600" :
+                      "text-rose-600")}>{s.value}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {s.status === "ok"
-                    ? <CheckCircle className="h-4 w-4 text-emerald-500" />
-                    : <AlertCircle className="h-4 w-4 text-amber-500" />}
+                  {s.status === "ok" ? <CheckCircle className="h-4 w-4 text-emerald-500" /> :
+                   s.status === "warn" ? <AlertCircle className="h-4 w-4 text-amber-500" /> :
+                   <AlertCircle className="h-4 w-4 text-rose-500" />}
                   <ArrowRight className="h-4 w-4 text-muted-foreground" />
                 </div>
               </Link>
