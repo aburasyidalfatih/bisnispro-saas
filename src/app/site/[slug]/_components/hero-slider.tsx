@@ -29,6 +29,10 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   const [direction, setDirection] = useState<"next" | "prev">("next")
   const [textKey, setTextKey] = useState(0) // forces text re-mount → re-animation
 
+  // Swipe handlers
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
+
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const autoTimer       = useRef<ReturnType<typeof setInterval> | null>(null)
   const isSingle        = slides.length <= 1
@@ -84,8 +88,35 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   const slide     = slides[current]
   const prevSlide = prev !== null ? slides[prev] : null
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const onTouchEndHandler = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe) {
+      goTo((current + 1) % slides.length, "next")
+    } else if (isRightSwipe) {
+      goTo((current - 1 + slides.length) % slides.length, "prev")
+    }
+  }
+
   return (
-    <section className="relative w-full overflow-hidden" style={{ minHeight: "80vh" }}>
+    <section 
+      className="relative w-full overflow-hidden min-h-[55vh] sm:min-h-[80vh]"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEndHandler}
+    >
 
       {/* ── Background layers ── */}
       {prevSlide && (
@@ -112,7 +143,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
       </div>
 
       {/* ── Text + CTA content ── */}
-      <div className="relative z-30 flex items-center" style={{ minHeight: "80vh", paddingBottom: "6rem" }}>
+      <div className="relative z-30 flex items-center min-h-[55vh] sm:min-h-[80vh] pb-12 sm:pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-20">
           {/* key forces remount → re-trigger CSS animations */}
           <div key={textKey}>
@@ -130,9 +161,9 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             {/* Title */}
             {slide.title && (
               <h1
-                className="font-black leading-[1.2] text-white mb-4 drop-shadow-lg tracking-tight break-words"
+                className="font-black leading-[1.2] text-white mb-3 sm:mb-4 drop-shadow-lg tracking-tight break-words"
                 style={{
-                  fontSize: "clamp(1.75rem, 4vw, 3.5rem)",
+                  fontSize: "clamp(1.4rem, 5vw, 3.5rem)",
                   animation: "textFadeUp 0.55s 0.2s ease both",
                 }}
               >
@@ -151,7 +182,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             {/* Description */}
             {slide.description && (
               <p
-                className="text-sm sm:text-base text-white/80 leading-relaxed mb-8 max-w-lg font-medium drop-shadow"
+                className="text-[11px] sm:text-base text-white/80 leading-relaxed mb-6 sm:mb-8 max-w-lg font-medium drop-shadow"
                 style={{ animation: "textFadeUp 0.6s 0.3s ease both" }}
               >
                 {slide.description}
@@ -164,7 +195,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                 {slide.cta && (
                   <Link
                     href={slide.cta.href.startsWith("http") ? slide.cta.href : resolveHref(slide.cta.href)}
-                    className="group/btn relative inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white overflow-hidden transition-all hover:scale-105"
+                    className="group/btn relative inline-flex items-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold text-white overflow-hidden transition-all hover:scale-105"
                     style={{ background: "hsl(var(--primary))", boxShadow: "0 10px 25px -5px hsl(var(--primary)/0.5)" }}
                   >
                     <span className="absolute inset-0 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black" />
@@ -175,10 +206,10 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                 {slide.ctaSecondary && (
                   <Link
                     href={slide.ctaSecondary.href.startsWith("http") ? slide.ctaSecondary.href : resolveHref(slide.ctaSecondary.href)}
-                    className="inline-flex items-center gap-3 px-7 py-3.5 rounded-xl text-sm font-bold border border-white/30 bg-white/5 backdrop-blur-md text-white hover:bg-white/20 hover:border-white/50 transition-all shadow-xl"
+                    className="inline-flex items-center gap-3 px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold border border-white/30 bg-white/5 backdrop-blur-md text-white hover:bg-white/20 hover:border-white/50 transition-all shadow-xl"
                   >
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-black">
-                      <Play className="h-3 w-3 fill-black" />
+                    <div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white text-black">
+                      <Play className="h-2 w-2 sm:h-3 sm:w-3 fill-black" />
                     </div>
                     {slide.ctaSecondary.label}
                   </Link>
