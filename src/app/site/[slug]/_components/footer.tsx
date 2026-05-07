@@ -17,6 +17,7 @@ interface FooterProps {
     instagram?: string | null
     facebook?: string | null
     youtube?: string | null
+    settings?: any
   }
 }
 
@@ -189,9 +190,8 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                 )}
                 <li className="flex items-start gap-2.5">
                   <Clock className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: "hsl(var(--primary))" }} />
-                  <div className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>
-                    <p>Senin - Jumat: 07.00 - 16.00</p>
-                    <p>Sabtu: 07.00 - 12.00</p>
+                  <div className="text-xs whitespace-pre-line" style={{ color: "rgba(255,255,255,0.45)" }}>
+                    {((tenant.settings as any)?.operationalHours) || "Senin - Jumat: 07.00 - 16.00\nSabtu: 07.00 - 12.00"}
                   </div>
                 </li>
               </ul>

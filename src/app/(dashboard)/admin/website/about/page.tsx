@@ -305,6 +305,15 @@ export default function WebsiteAboutPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
               <div className="space-y-1.5">
+                <Label>Jam Operasional</Label>
+                <textarea value={form.settings?.operationalHours || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, operationalHours: e.target.value } }))}
+                  placeholder="Senin - Jumat: 07.00 - 16.00&#10;Sabtu: 07.00 - 12.00" rows={3}
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+              <div className="space-y-1.5">
                 <Label>Visi</Label>
                 <textarea value={form.settings?.visi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, visi: e.target.value } }))}
                   placeholder="Visi sekolah..." rows={3}
