@@ -79,6 +79,7 @@ export async function GET(req: Request) {
     customDomain: domainSettings,
     isCustomDomainEnabled,
     lockedMessage,
+    hasChangedSubdomain: !!(tenant.settings as any)?.hasChangedSubdomain
   })
 }
 
