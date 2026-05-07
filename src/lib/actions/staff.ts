@@ -40,10 +40,18 @@ export async function createStaff(tenantId: string, data: any) {
 
     if (!user) {
       const bcrypt = await import("bcryptjs")
-      const tempPassword = crypto.randomBytes(8).toString("base64url")
+      const tempPassword = parsed.password && parsed.password.trim() !== '' ? parsed.password.trim() : crypto.randomBytes(8).toString("base64url")
       const hashedPassword = await bcrypt.hash(tempPassword, 12)
       user = await db.user.create({
         data: { name: parsed.name, email, password: hashedPassword },
+      })
+    } else if (parsed.password && parsed.password.trim() !== '') {
+      // Jika user sudah ada dan admin memasukkan password baru, update passwordnya
+      const bcrypt = await import("bcryptjs")
+      const hashedPassword = await bcrypt.hash(parsed.password.trim(), 12)
+      user = await db.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword },
       })
     }
 
@@ -108,10 +116,18 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
 
     if (!user) {
       const bcrypt = await import("bcryptjs")
-      const tempPassword = crypto.randomBytes(8).toString("base64url")
+      const tempPassword = parsed.password && parsed.password.trim() !== '' ? parsed.password.trim() : crypto.randomBytes(8).toString("base64url")
       const hashedPassword = await bcrypt.hash(tempPassword, 12)
       user = await db.user.create({
         data: { name: parsed.name, email, password: hashedPassword },
+      })
+    } else if (parsed.password && parsed.password.trim() !== '') {
+      // Jika user sudah ada dan admin memasukkan password baru, update passwordnya
+      const bcrypt = await import("bcryptjs")
+      const hashedPassword = await bcrypt.hash(parsed.password.trim(), 12)
+      user = await db.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword },
       })
     }
 
