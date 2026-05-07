@@ -126,7 +126,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
                 Lihat Semua <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => (
                 <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
                   <img src={item.url} alt={item.caption || `Foto ${i + 1}`}

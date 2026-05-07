@@ -171,7 +171,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
 
       {/* ── STATISTIK ── */}
       <section className="py-16 bg-foreground text-background">
-         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-background/10">
+         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:divide-x md:divide-background/10">
             <div>
                <p className="text-4xl md:text-5xl font-black text-primary mb-2">{totalStaff}+</p>
                <p className="text-sm font-semibold uppercase tracking-widest opacity-80">Tenaga Pendidik</p>
