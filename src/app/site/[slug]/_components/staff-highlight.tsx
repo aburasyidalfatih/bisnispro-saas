@@ -32,7 +32,7 @@ export function StaffHighlight({ staff }: StaffHighlightProps) {
               <Users className="h-3.5 w-3.5" />
               Tenaga Pendidik
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Guru & Tenaga Kependidikan</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">Guru & Tenaga Kependidikan</h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
               Tim pengajar profesional dan berdedikasi yang siap membimbing siswa menuju kesuksesan.
             </p>

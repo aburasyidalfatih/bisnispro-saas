@@ -45,7 +45,7 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
               <GraduationCap className="h-3.5 w-3.5" />
               Program Keahlian
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
               Program Unggulan Kami
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
