@@ -37,12 +37,7 @@ export default async function EkstrakurikulerPage({ params }: { params: Promise<
 
  {/* ── EXTRACURRICULAR ACTIVITIES ── */}
  <section className="py-12 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
- <div className="text-center mb-16">
- <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Pengembangan Karakter & Prestasi</h2>
- <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
- Kami menyediakan berbagai pilihan ekstrakurikuler untuk mendukung potensi setiap siswa agar berkembang secara optimal.
- </p>
- </div>
+
 
  {extracurriculars.length > 0 ? (
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
