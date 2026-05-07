@@ -167,10 +167,9 @@ export default async function LandingPage() {
   })
 
   const activeTenants = await db.tenant.findMany({
-    where: { isActive: true, logo: { not: null } },
+    where: { isActive: true },
     select: { id: true, name: true, address: true, logo: true },
     orderBy: { createdAt: "desc" },
-    take: 20,
   })
 
   return (
