@@ -109,17 +109,7 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
           })}
         </div>
 
-        {/* See All Link */}
-        {programs.length > 6 && (
-          <div className="text-center mt-10">
-            <Link
-              href={resolveHref("/program")}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border hover:bg-muted transition-colors text-sm font-medium"
-            >
-              Lihat Semua Program <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        )}
+
       </div>
     </section>
   )
