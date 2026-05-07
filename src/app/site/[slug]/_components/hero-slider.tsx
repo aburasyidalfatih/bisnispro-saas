@@ -10,8 +10,8 @@ interface Slide {
   subtitle: string
   description: string
   image?: string
-  cta: { label: string; href: string }
-  ctaSecondary?: { label: string; href: string }
+  cta?: { label: string; href: string } | null
+  ctaSecondary?: { label: string; href: string } | null
 }
 
 interface HeroSliderProps {
@@ -128,23 +128,25 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             )}
 
             {/* Title */}
-            <h1
-              className="font-black leading-[1.15] text-white mb-4 drop-shadow-lg tracking-tight whitespace-nowrap"
-              style={{
-                fontSize: "clamp(1.75rem, 4vw, 3.5rem)",
-                animation: "textFadeUp 0.55s 0.2s ease both",
-              }}
-            >
-              {slide.title.split("\\n").map((line, i, arr) =>
-                i === arr.length - 1 ? (
-                  <span key={i} className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">
-                    {line}
-                  </span>
-                ) : (
-                  <span key={i} className="block">{line}</span>
-                )
-              )}
-            </h1>
+            {slide.title && (
+              <h1
+                className="font-black leading-[1.15] text-white mb-4 drop-shadow-lg tracking-tight whitespace-nowrap"
+                style={{
+                  fontSize: "clamp(1.75rem, 4vw, 3.5rem)",
+                  animation: "textFadeUp 0.55s 0.2s ease both",
+                }}
+              >
+                {slide.title.split("\\n").map((line, i, arr) =>
+                  i === arr.length - 1 ? (
+                    <span key={i} className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">
+                      {line}
+                    </span>
+                  ) : (
+                    <span key={i} className="block">{line}</span>
+                  )
+                )}
+              </h1>
+            )}
 
             {/* Description */}
             {slide.description && (
@@ -157,28 +159,32 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             )}
 
             {/* CTAs */}
-            <div className="flex flex-wrap gap-4" style={{ animation: "textFadeUp 0.65s 0.4s ease both" }}>
-              <Link
-                href={slide.cta.href.startsWith("http") ? slide.cta.href : resolveHref(slide.cta.href)}
-                className="group/btn relative inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white overflow-hidden transition-all hover:scale-105"
-                style={{ background: "hsl(var(--primary))", boxShadow: "0 10px 25px -5px hsl(var(--primary)/0.5)" }}
-              >
-                <span className="absolute inset-0 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black" />
-                <span className="relative">{slide.cta.label}</span>
-                <ChevronRight className="relative h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-              </Link>
-              {slide.ctaSecondary && (
-                <Link
-                  href={slide.ctaSecondary.href.startsWith("http") ? slide.ctaSecondary.href : resolveHref(slide.ctaSecondary.href)}
-                  className="inline-flex items-center gap-3 px-7 py-3.5 rounded-xl text-sm font-bold border border-white/30 bg-white/5 backdrop-blur-md text-white hover:bg-white/20 hover:border-white/50 transition-all shadow-xl"
-                >
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-black">
-                    <Play className="h-3 w-3 fill-black" />
-                  </div>
-                  {slide.ctaSecondary.label}
-                </Link>
-              )}
-            </div>
+            {(slide.cta || slide.ctaSecondary) && (
+              <div className="flex flex-wrap gap-4" style={{ animation: "textFadeUp 0.65s 0.4s ease both" }}>
+                {slide.cta && (
+                  <Link
+                    href={slide.cta.href.startsWith("http") ? slide.cta.href : resolveHref(slide.cta.href)}
+                    className="group/btn relative inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white overflow-hidden transition-all hover:scale-105"
+                    style={{ background: "hsl(var(--primary))", boxShadow: "0 10px 25px -5px hsl(var(--primary)/0.5)" }}
+                  >
+                    <span className="absolute inset-0 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black" />
+                    <span className="relative">{slide.cta.label}</span>
+                    <ChevronRight className="relative h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                  </Link>
+                )}
+                {slide.ctaSecondary && (
+                  <Link
+                    href={slide.ctaSecondary.href.startsWith("http") ? slide.ctaSecondary.href : resolveHref(slide.ctaSecondary.href)}
+                    className="inline-flex items-center gap-3 px-7 py-3.5 rounded-xl text-sm font-bold border border-white/30 bg-white/5 backdrop-blur-md text-white hover:bg-white/20 hover:border-white/50 transition-all shadow-xl"
+                  >
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-black">
+                      <Play className="h-3 w-3 fill-black" />
+                    </div>
+                    {slide.ctaSecondary.label}
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

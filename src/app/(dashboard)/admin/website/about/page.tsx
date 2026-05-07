@@ -288,7 +288,7 @@ export default function WebsiteAboutPage() {
               <Input value={form.settings?.videoProfil || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, videoProfil: e.target.value } }))} placeholder="https://youtube.com/watch?v=..." className="rounded-xl h-9" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               <div className="space-y-1.5">
                 <Label>NPSN</Label>
                 <Input value={form.settings?.npsn || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, npsn: e.target.value } }))} placeholder="Nomor Pokok Sekolah Nasional" className="rounded-xl h-9" />
@@ -296,6 +296,10 @@ export default function WebsiteAboutPage() {
               <div className="space-y-1.5">
                 <Label>Akreditasi</Label>
                 <Input value={form.settings?.akreditasi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, akreditasi: e.target.value } }))} placeholder="Contoh: A (Sangat Baik)" className="rounded-xl h-9" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Tahun Berdiri</Label>
+                <Input value={form.settings?.establishedYear || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, establishedYear: e.target.value } }))} placeholder="Contoh: 1998" className="rounded-xl h-9" />
               </div>
             </div>
 

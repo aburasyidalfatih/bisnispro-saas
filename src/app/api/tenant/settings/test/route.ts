@@ -4,7 +4,7 @@ import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
 
 const testSchema = z.object({
-  type: z.enum(["smtp", "whatsapp"]),
+  type: z.enum(["smtp", "whatsapp", "meta_wa"]),
   // SMTP fields
   smtpHost: z.string().optional(),
   smtpPort: z.number().optional(),
@@ -17,6 +17,9 @@ const testSchema = z.object({
   waApiKey: z.string().optional(),
   waDeviceId: z.string().optional(),
   waPhone: z.string().optional(),
+  // Meta WA fields
+  metaPhoneId: z.string().optional(),
+  metaToken: z.string().optional(),
 })
 
 export async function POST(req: Request) {
@@ -92,6 +95,51 @@ export async function POST(req: Request) {
     } catch (err: any) {
       return NextResponse.json(
         { error: `Koneksi WhatsApp gagal: ${err.message}` },
+        { status: 400 }
+      )
+    }
+  }
+
+  // ==================== TEST META WA ====================
+  if (data.type === "meta_wa") {
+    if (!data.metaPhoneId || !data.metaToken || !data.waPhone) {
+      return NextResponse.json(
+        { error: "Lengkapi konfigurasi Meta: Phone ID, Token, dan Nomor Tujuan" },
+        { status: 400 }
+      )
+    }
+    try {
+      let toPhone = data.waPhone.replace(/\D/g, "")
+      if (toPhone.startsWith("0")) {
+        toPhone = "62" + toPhone.slice(1)
+      }
+      
+      const res = await fetch(`https://graph.facebook.com/v18.0/${data.metaPhoneId}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${data.metaToken}`,
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: toPhone,
+          type: "text",
+          text: {
+            body: `Test pesan Meta API dari SchoolPro. Waktu: ${new Date().toLocaleString("id-ID")}`
+          }
+        }),
+      })
+      const result = await res.json()
+      if (!res.ok) {
+        return NextResponse.json(
+          { error: `Meta API error: ${result.error?.message || res.statusText}` },
+          { status: 400 }
+        )
+      }
+      return NextResponse.json({ message: "Pesan Meta test berhasil dikirim!" })
+    } catch (err: any) {
+      return NextResponse.json(
+        { error: `Koneksi Meta API gagal: ${err.message}` },
         { status: 400 }
       )
     }

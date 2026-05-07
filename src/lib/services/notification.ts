@@ -53,6 +53,11 @@ export interface WaConfig {
   apiUrl: string
   apiKey: string
   deviceId?: string
+  provider?: string
+  metaPhoneId?: string
+  metaToken?: string
+  delayMin?: number
+  delayMax?: number
 }
 
 /**
@@ -71,20 +76,28 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
         apiUrl: settings.whatsapp.waApiUrl || "https://api.starsender.online/api",
         apiKey: settings.whatsapp.waApiKey,
         deviceId: settings.whatsapp.waDeviceId,
+        provider: "starsender",
+        delayMin: Number(settings.whatsapp.waDelayMin || 0),
+        delayMax: Number(settings.whatsapp.waDelayMax || 0),
       }
     }
   }
   // Fallback ke platform settings dari database, lalu env var
   const platformSettings = await db.platformSetting.findMany({
-    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID"] } },
+    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID", "WA_ACTIVE_PROVIDER", "META_WA_PHONE_NUMBER_ID", "META_WA_ACCESS_TOKEN", "STARSENDER_DELAY_MIN", "STARSENDER_DELAY_MAX"] } },
   })
   const map = Object.fromEntries(
     platformSettings.filter((s) => s.value).map((s) => [s.key, s.value!])
   )
   return {
+    provider: map.WA_ACTIVE_PROVIDER || "internal",
     apiUrl: map.STARSENDER_API_URL || process.env.STARSENDER_API_URL || "https://api.starsender.online/api",
     apiKey: map.STARSENDER_API_KEY || process.env.STARSENDER_API_KEY || "",
     deviceId: map.STARSENDER_DEVICE_ID || process.env.STARSENDER_DEVICE_ID,
+    metaPhoneId: map.META_WA_PHONE_NUMBER_ID,
+    metaToken: map.META_WA_ACCESS_TOKEN,
+    delayMin: Number(map.STARSENDER_DELAY_MIN || 0),
+    delayMax: Number(map.STARSENDER_DELAY_MAX || 0),
   }
 }
 
@@ -97,49 +110,98 @@ export async function sendWhatsApp(
   message: string,
   tenantId?: string
 ): Promise<{ success: boolean; error?: string }> {
-  // 1. Coba gunakan Internal Gateway jika ada sesi yang CONNECTED
-  try {
-    const session = await db.waSession.findUnique({
-      where: { tenantId: tenantId || "platform" }
-    })
+  
+  const config = await getWaConfig(tenantId)
 
-    if (session?.status === "CONNECTED") {
-      const WA_GATEWAY_URL = process.env.WA_GATEWAY_URL || "http://localhost:4000"
-      const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
-
-      const res = await fetch(`${WA_GATEWAY_URL}/api/wa/send`, {
+  // 0. META OFFICIAL API
+  if (config.provider === "meta") {
+    if (!config.metaPhoneId || !config.metaToken) {
+      logger.warn("Meta WA credentials not configured", { phone })
+      return { success: false, error: "Meta API credentials not configured" }
+    }
+    try {
+      let toPhone = phone.replace(/\D/g, "")
+      if (toPhone.startsWith("0")) toPhone = "62" + toPhone.slice(1)
+      
+      const res = await fetch(`https://graph.facebook.com/v18.0/${config.metaPhoneId}/messages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-internal-secret": INTERNAL_SECRET
+          Authorization: `Bearer ${config.metaToken}`,
         },
         body: JSON.stringify({
-          tenantId: tenantId || "platform",
-          to: phone,
-          text: message
-        })
+          messaging_product: "whatsapp",
+          to: toPhone,
+          type: "text",
+          text: { body: message },
+        }),
       })
 
-      if (res.ok) {
-        return { success: true }
-      } else {
+      if (!res.ok) {
         const errText = await res.text()
-        logger.error("Internal WA Gateway send failed", { phone, status: res.status, body: errText })
+        logger.error("Meta WA send failed", { phone, status: res.status, body: errText })
+        return { success: false, error: `Meta API error: ${res.status}` }
       }
+      return { success: true }
+    } catch (err: any) {
+      logger.error("Meta WA exception", err, { phone })
+      return { success: false, error: err.message }
     }
-  } catch (err) {
-    logger.error("Internal WA gateway check failed, falling back to StarSender", err)
   }
 
-  // 2. Fallback ke StarSender (Legacy)
-  const config = await getWaConfig(tenantId)
+  // 1. Coba gunakan Internal Gateway jika ada sesi yang CONNECTED (dan provider = internal)
+  if (!config.provider || config.provider === "internal") {
+    try {
+      const session = await db.waSession.findUnique({
+        where: { tenantId: tenantId || "platform" }
+      })
 
+      if (session?.status === "CONNECTED") {
+        const WA_GATEWAY_URL = process.env.WA_GATEWAY_URL || "http://localhost:4000"
+        const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
+
+        const res = await fetch(`${WA_GATEWAY_URL}/api/wa/send`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-internal-secret": INTERNAL_SECRET
+          },
+          body: JSON.stringify({
+            tenantId: tenantId || "platform",
+            to: phone,
+            text: message
+          })
+        })
+
+        if (res.ok) {
+          return { success: true }
+        } else {
+          const errText = await res.text()
+          logger.error("Internal WA Gateway send failed", { phone, status: res.status, body: errText })
+        }
+      }
+    } catch (err) {
+      logger.error("Internal WA gateway check failed, falling back to StarSender", err)
+    }
+  }
+
+  // 2. Fallback ke StarSender (Legacy / starsender provider)
   if (!config.apiKey) {
     logger.warn("WA gateway not configured — message not sent", { phone })
     return { success: false, error: "WA gateway belum dikonfigurasi" }
   }
 
   try {
+    // Implement random delay if configured
+    if (config.delayMin && config.delayMax && config.delayMax > 0) {
+      const minMs = config.delayMin * 1000;
+      const maxMs = config.delayMax * 1000;
+      const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+      if (delay > 0) {
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+
     const body: Record<string, string> = {
       messageType: "text",
       to: phone,

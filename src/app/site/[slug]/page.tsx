@@ -43,11 +43,13 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   // Build stats from tenant data
   const staffCount = tenant.staff?.length || 0
   const programCount = tenant.programs?.length || 0
+  const establishedYear = (tenant.settings as any)?.establishedYear || new Date(tenant.createdAt).getFullYear()
+
   const stats = [
     { value: staffCount > 0 ? `${staffCount}+` : "20+", label: "Tenaga Pendidik", icon: "users" },
     { value: programCount > 0 ? `${programCount}` : "6+", label: "Program Keahlian", icon: "book" },
     { value: tenant.achievements?.length ? `${tenant.achievements.length}+` : "50+", label: "Prestasi Diraih", icon: "award" },
-    { value: "15+", label: "Tahun Berdiri", icon: "clock" },
+    { value: `${establishedYear}`, label: "Tahun Berdiri", icon: "clock" },
   ]
 
   return (
@@ -58,12 +60,14 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           tenant.sliders && tenant.sliders.length > 0
             ? tenant.sliders.map((s: any) => ({
                 subtitle: "",
-                title: s.title || tenant.tagline || `Selamat Datang di\n${tenant.name}`,
+                title: s.title || "",
                 description: s.subtitle || "",
                 image: s.imageUrl,
                 cta: s.buttonText
                   ? { label: s.buttonText, href: s.buttonLink || "/contact" }
-                  : { href: `/contact`, label: "Hubungi Kami" },
+                  : s.buttonLink 
+                    ? { href: s.buttonLink, label: "Selengkapnya" } 
+                    : null,
               }))
             : [
                 {
@@ -71,7 +75,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
                   title: tenant.tagline || `Selamat Datang di\n${tenant.name}`,
                   description: tenant.description || "Kami berkomitmen memberikan layanan terbaik untuk Anda.",
                   cta: { href: `/contact`, label: "Hubungi Kami" },
-                  ctaSecondary: { href: `/about`, label: "Tentang Kami" },
+                  ctaSecondary: { href: `/profil`, label: "Tentang Kami" },
                 },
               ]
         }
