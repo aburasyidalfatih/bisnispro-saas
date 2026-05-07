@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, Search, ChevronDown, CheckCircle2, Phone, Mail, MessageCircle } from "lucide-react"
+import { Menu, X, Search, ChevronDown, CheckCircle2, Phone, Mail, MessageCircle, Home, Building2, Info, ImageIcon, PhoneCall } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useRouting } from "@/components/providers/routing-provider"
 
@@ -26,16 +26,18 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [scrolled, setScrolled] = useState(false)
+  const [expandedMobile, setExpandedMobile] = useState<string[]>([])
   const pathname = usePathname()
   const { resolveHref } = useRouting()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Simplified navLinks
   const navLinks = [
-    { label: "Beranda", href: "" },
+    { label: "Beranda", href: "", icon: Home },
     {
       label: "Profil Sekolah",
       href: "/profil",
+      icon: Building2,
       children: [
         { label: "Profil Lembaga", href: "/profil" },
         { label: "Guru & Staf (GTK)", href: "/gtk" },
@@ -47,6 +49,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
     {
       label: "Informasi",
       href: "/berita",
+      icon: Info,
       children: [
         { label: "Berita & Artikel", href: "/berita" },
         { label: "Agenda & Acara", href: "/agenda" },
@@ -56,14 +59,21 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
     {
       label: "Galeri",
       href: "/gallery",
+      icon: ImageIcon,
       children: [
         { label: "Galeri Foto", href: "/gallery" },
         { label: "Prestasi Siswa", href: "/prestasi" },
         { label: "Alumni Success", href: "/alumni" },
       ],
     },
-    { label: "Kontak", href: "/contact" },
+    { label: "Kontak", href: "/contact", icon: PhoneCall },
   ]
+
+  const toggleMobileAccordion = (label: string) => {
+    setExpandedMobile(prev => 
+      prev.includes(label) ? prev.filter(item => item !== label) : [...prev, label]
+    )
+  }
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -266,66 +276,117 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
               {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
 
-            {/* Mobile nav */}
+            {/* Mobile nav Drawer */}
             {mobileOpen && (
-              <div className="absolute top-full left-0 w-full bg-white border-b border-border shadow-2xl overflow-hidden xl:hidden animate-in fade-in slide-in-from-top-4 duration-200">
-                <div className="px-4 py-4 max-h-[70vh] overflow-y-auto space-y-1">
-                  {navLinks.map((link) => {
-                    const href = resolveHref(link.href)
-                    const isActive = link.href === "" 
-                      ? (pathname === resolveHref("/") || pathname === `/site/${tenant.slug}`) 
-                      : pathname.startsWith(href)
-                    
-                    return (
-                      <div key={link.label} className="space-y-1">
-                        <Link
-                          href={href}
-                          onClick={() => { if (!link.children) setMobileOpen(false) }}
-                          className={cn(
-                            "block px-4 py-3 text-sm font-bold rounded-xl transition-colors",
-                            isActive ? "bg-primary/10 text-primary" : "text-gray-700 hover:text-primary hover:bg-gray-50"
+              <>
+                {/* Backdrop */}
+                <div 
+                  className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] xl:hidden animate-in fade-in duration-300"
+                  onClick={() => setMobileOpen(false)}
+                />
+
+                {/* Side Drawer */}
+                <div className="fixed top-0 right-0 h-screen w-[85vw] max-w-[360px] bg-white z-[101] shadow-2xl flex flex-col xl:hidden animate-in slide-in-from-right duration-300 ease-out">
+                  {/* Drawer Header */}
+                  <div className="flex items-center justify-between px-5 py-4 border-b border-border/50 bg-gray-50/50">
+                    <span className="font-extrabold text-lg tracking-tight text-gray-900 truncate pr-4">
+                      Menu Navigasi
+                    </span>
+                    <button
+                      onClick={() => setMobileOpen(false)}
+                      className="p-2 -mr-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  {/* Drawer Scrollable Content */}
+                  <div className="flex-1 overflow-y-auto px-4 py-6 space-y-2 pb-24">
+                    {navLinks.map((link) => {
+                      const href = resolveHref(link.href)
+                      const isActive = link.href === "" 
+                        ? (pathname === resolveHref("/") || pathname === `/site/${tenant.slug}`) 
+                        : pathname.startsWith(href)
+                      const isExpanded = expandedMobile.includes(link.label)
+                      const Icon = link.icon
+                      
+                      return (
+                        <div key={link.label} className="flex flex-col">
+                          {link.children ? (
+                            <button
+                              onClick={() => toggleMobileAccordion(link.label)}
+                              className={cn(
+                                "flex items-center justify-between px-4 py-3.5 text-[15px] font-bold rounded-2xl transition-all duration-200",
+                                isActive ? "bg-primary/10 text-primary" : "text-gray-700 hover:bg-gray-50"
+                              )}
+                            >
+                              <div className="flex items-center gap-3">
+                                <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-gray-400")} />
+                                <span>{link.label}</span>
+                              </div>
+                              <ChevronDown className={cn("h-4 w-4 text-gray-400 transition-transform duration-300", isExpanded && "rotate-180")} />
+                            </button>
+                          ) : (
+                            <Link
+                              href={href}
+                              onClick={() => setMobileOpen(false)}
+                              className={cn(
+                                "flex items-center gap-3 px-4 py-3.5 text-[15px] font-bold rounded-2xl transition-all duration-200",
+                                isActive ? "bg-primary/10 text-primary border-l-4 border-primary pl-3" : "text-gray-700 hover:bg-gray-50"
+                              )}
+                            >
+                              <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-gray-400")} />
+                              <span>{link.label}</span>
+                            </Link>
                           )}
-                        >
-                          {link.label}
-                        </Link>
-                        {link.children && (
-                          <div className="pl-4 border-l-2 border-gray-100 ml-4 space-y-1 mb-2">
-                            {link.children.map((child) => (
-                              <Link
-                                key={child.label}
-                                href={resolveHref(child.href)}
-                                onClick={() => setMobileOpen(false)}
-                                className="block px-4 py-2.5 text-sm font-semibold text-gray-500 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors"
-                              >
-                                {child.label}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                  <div className="pt-4 px-2 pb-2 flex flex-col gap-3">
+                          
+                          {/* Accordion Children */}
+                          {link.children && (
+                            <div className={cn(
+                              "overflow-hidden transition-all duration-300 ease-in-out",
+                              isExpanded ? "max-h-[400px] opacity-100 mt-1" : "max-h-0 opacity-0"
+                            )}>
+                              <div className="pl-[3.25rem] pr-4 py-1 flex flex-col gap-1">
+                                {link.children.map((child) => (
+                                  <Link
+                                    key={child.label}
+                                    href={resolveHref(child.href)}
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block px-4 py-2.5 text-sm font-semibold text-gray-500 hover:text-primary hover:bg-primary/5 rounded-xl transition-colors relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-gray-300 hover:before:bg-primary"
+                                  >
+                                    {child.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* Sticky Footer CTA */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] flex flex-col gap-3">
                     <a
                       href={tenant.whatsapp ? `https://wa.me/${tenant.whatsapp}` : "#"}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-bold text-primary bg-white border-2 border-primary rounded-xl transition-colors hover:bg-primary/5"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-bold text-primary bg-white border-2 border-primary rounded-xl transition-colors hover:bg-primary/5"
                     >
-                      <MessageCircle className="h-4 w-4" />
+                      <MessageCircle className="h-5 w-5" />
                       Hubungi via WhatsApp
                     </a>
                     <Link
                       href="/login"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-bold text-primary-foreground bg-primary rounded-xl shadow-md hover:opacity-90 transition-opacity"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl shadow-lg shadow-primary/30 hover:opacity-90 transition-opacity"
                     >
                       Login Tenant
                       <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
                     </Link>
                   </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>
