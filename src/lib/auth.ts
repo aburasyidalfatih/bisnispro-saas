@@ -172,7 +172,7 @@ export const authOptions: NextAuthConfig = {
         // Jika login BUKAN dari halaman mitra afiliasi, maka wajib Super Admin
         if (isMainDomain && !isAffiliateFlow) {
           if (!existing || !existing.isSuperAdmin) {
-            return "/login?error=" + encodeURIComponent("Akses ditolak. Login Google di sini hanya untuk Super Admin. Mitra Afiliasi wajib masuk melalui /mitra-afiliasi")
+            return "/login?error=" + encodeURIComponent("Akun tidak ditemukan")
           }
           user.id = existing.id
           return true
