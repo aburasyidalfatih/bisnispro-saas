@@ -17,7 +17,6 @@ interface FooterProps {
     instagram?: string | null
     facebook?: string | null
     youtube?: string | null
-    services?: any[] | null
   }
 }
 
@@ -50,10 +49,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
   ]
 
   // Build dynamic program/service list from tenant data
-  const services = Array.isArray(tenant.services) ? tenant.services : []
-  const programItems = services.length > 0
-    ? services.slice(0, 6).map((svc: any) => svc.title || svc.name || "Layanan")
-    : ["Program Unggulan", "Kegiatan Belajar", "Pengembangan Siswa", "Ekstrakurikuler", "Bimbingan Konseling", "Layanan Informasi"]
+  const programItems = ["Program Unggulan", "Kegiatan Belajar", "Pengembangan Siswa", "Ekstrakurikuler", "Bimbingan Konseling", "Layanan Informasi"]
 
   return (
     <footer>

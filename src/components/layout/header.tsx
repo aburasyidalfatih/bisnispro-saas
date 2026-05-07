@@ -36,7 +36,6 @@ const labelMap: Record<string, string> = {
   audit: "Audit Log",
   website: "Kelola Website",
   about: "Profil Lembaga",
-  services: "Layanan",
   gallery: "Galeri",
   contact: "Kontak",
   "super-admin": "Super Admin",
