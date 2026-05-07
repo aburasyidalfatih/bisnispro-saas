@@ -1,40 +1,8 @@
 "use client"
 
-import { usePathname } from "next/navigation"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
 import { MobileBottomNav } from "./mobile-bottom-nav"
 
 export function MobileAppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-
-  const isSiswa = pathname.startsWith("/siswa")
-  const isGTK = pathname.startsWith("/panel-gtk")
-  const baseRoute = isSiswa ? "/siswa" : isGTK ? "/panel-gtk" : "/ortu"
-
-  const navItems = isSiswa ? [
-    { label: "Beranda", icon: Home, href: "/siswa" },
-    { label: "Tugas", icon: FileText, href: "/siswa/tugas" },
-    { label: "Nilai", icon: Wallet, href: "/siswa/nilai" },
-    { label: "Profil", icon: User, href: "/siswa/profil" },
-  ] : isGTK ? [
-    { label: "Beranda", icon: Home, href: "/panel-gtk" },
-    { label: "Kelas", icon: FileText, href: "/panel-gtk/kelas" },
-    { label: "Nilai", icon: Wallet, href: "/panel-gtk/nilai" },
-    { label: "Profil", icon: User, href: "/panel-gtk/profil" },
-  ] : [
-    { label: "Beranda", icon: Home, href: "/ortu" },
-    { label: "Akademik", icon: FileText, href: "/ortu/akademik" },
-    { label: "Tagihan", icon: Wallet, href: "/ortu/tagihan" },
-    { label: "Profil", icon: User, href: "/ortu/profil" },
-  ]
-
-  const floatingAction = {
-    label: "Jadwal",
-    icon: Calendar,
-    href: `${baseRoute}/jadwal`
-  }
-
   return (
     <div className="min-h-screen flex justify-center w-full font-sans bg-muted/20">
       {/* Mobile Device Simulator Container */}
