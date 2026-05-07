@@ -6,8 +6,6 @@ import { db } from "@/lib/db"
 import { achievementSchema } from "@/lib/validations/achievement"
 import { revalidatePath } from "next/cache"
 
-
-
 export async function getAchievements(tenantId: string) {
   await requireTenantAccess(tenantId)
   
@@ -63,4 +61,3 @@ export async function deleteAchievement(id: string, tenantId: string) {
   
   revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
 }
-
