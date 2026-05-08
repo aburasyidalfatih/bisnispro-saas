@@ -63,3 +63,33 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
+
+// Hapus pengajuan (Mendukung BULK)
+export async function DELETE(req: Request) {
+  const session = await auth()
+  if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
+  try {
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get("id")
+    const body = req.body ? await req.json().catch(() => ({})) : {}
+    const ids = body.ids || []
+
+    const targetIds = ids.length > 0 ? ids : (id ? [id] : [])
+
+    if (!targetIds.length) {
+      return NextResponse.json({ error: "ID tidak boleh kosong" }, { status: 400 })
+    }
+
+    const result = await db.tenantApplication.deleteMany({
+      where: {
+        id: { in: targetIds }
+      }
+    })
+
+    return NextResponse.json({ message: `Berhasil menghapus ${result.count} data pengajuan.` })
+  } catch (error) {
+    logger.error("Delete application failed", error)
+    return NextResponse.json({ error: "Gagal menghapus pengajuan" }, { status: 500 })
+  }
+}
