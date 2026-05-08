@@ -13,7 +13,7 @@ import { authConfig } from "@/lib/auth.config"
 
 const { auth } = NextAuth(authConfig)
 
-const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || "dev-internal-secret"
+const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
 
 /**
  * Resolve custom domain via internal API
@@ -127,7 +127,7 @@ export default async function middleware(request: NextRequest) {
       return addSecurityHeaders(NextResponse.redirect(new URL(session.user?.isSuperAdmin ? "/super-admin" : "/admin", request.url)))
     }
 
-    console.log("Middleware Check:", { path: pathname, isAffiliate: session?.user?.isAffiliate })
+
 
     if (pathname.startsWith("/admin") && session && session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0)) {
       return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))

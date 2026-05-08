@@ -3,7 +3,7 @@ import { logger } from "@/lib/logger"
 
 // Token verifikasi ini digunakan saat mengatur Webhook di dashboard Meta
 // Pastikan token yang diisi di dashboard Meta sama dengan token ini.
-const VERIFY_TOKEN = process.env.META_WA_VERIFY_TOKEN || "schoolpro_meta_verify_token_123"
+const VERIFY_TOKEN = process.env.META_WA_VERIFY_TOKEN || ""
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)

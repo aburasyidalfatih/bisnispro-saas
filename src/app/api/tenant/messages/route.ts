@@ -5,12 +5,12 @@ import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
 
 export async function GET(req: Request) {
-  const session = await auth()
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
+
+  const { session, error: authError } = await (await import("@/lib/api-utils")).requireTenantMembership(tenantId)
+  if (authError) return authError
 
   const isSent = url.searchParams.get("type") === "sent"
   

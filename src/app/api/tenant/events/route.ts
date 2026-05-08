@@ -7,12 +7,12 @@ import { z } from "zod"
 import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 
 export async function GET(req: Request) {
-  const session = await auth()
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
+
+  const { error } = await (await import("@/lib/api-utils")).requireTenantMembership(tenantId)
+  if (error) return error
 
   const events = await db.event.findMany({
     where: { tenantId },

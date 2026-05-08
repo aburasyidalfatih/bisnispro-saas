@@ -97,3 +97,25 @@ export async function requireSuperAdmin() {
   }
   return { session: session!, error: null }
 }
+
+/**
+ * Require authenticated user AND verify they have membership in the given tenant.
+ * SuperAdmins bypass the membership check.
+ * Use this at the top of ALL tenant-scoped API routes to prevent cross-tenant data leaks.
+ */
+export async function requireTenantMembership(tenantId: string) {
+  const { session, error } = await requireAuth()
+  if (error) return { session: null, error }
+
+  if (!session!.user.isSuperAdmin) {
+    const { db } = await import("@/lib/db")
+    const tu = await db.tenantUser.findUnique({
+      where: { tenantId_userId: { tenantId, userId: session!.user.id } },
+    })
+    if (!tu) {
+      return { session: null, error: NextResponse.json({ error: "Forbidden — no access to this tenant" }, { status: 403 }) }
+    }
+  }
+
+  return { session: session!, error: null }
+}

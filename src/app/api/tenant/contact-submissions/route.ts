@@ -59,7 +59,7 @@ export async function PUT(req: Request) {
   if (all) {
     await db.contactSubmission.updateMany({ where: { tenantId }, data: { isRead: true } })
   } else if (id) {
-    await db.contactSubmission.update({ where: { id }, data: { isRead: true } })
+    await db.contactSubmission.updateMany({ where: { id, tenantId }, data: { isRead: true } })
   }
 
   return NextResponse.json({ message: "OK" })
@@ -75,6 +75,7 @@ export async function DELETE(req: Request) {
   const hasAccess = await checkAccess(tenantId, session.user.id, session.user.isSuperAdmin)
   if (!hasAccess) return NextResponse.json({ error: "Tidak punya izin" }, { status: 403 })
 
-  await db.contactSubmission.delete({ where: { id } })
+  const result = await db.contactSubmission.deleteMany({ where: { id, tenantId } })
+  if (result.count === 0) return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 })
   return NextResponse.json({ message: "Submission dihapus" })
 }

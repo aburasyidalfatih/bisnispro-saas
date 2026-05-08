@@ -2,17 +2,17 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { postSchema } from "@/lib/validations/post"
-import { parseBody } from "@/lib/api-utils"
+import { parseBody, requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
 import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 
 export async function GET(req: Request) {
-  const session = await auth()
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
+
+  const { session, error } = await requireTenantMembership(tenantId)
+  if (error) return error
 
   const posts = await db.post.findMany({
     where: { tenantId },
