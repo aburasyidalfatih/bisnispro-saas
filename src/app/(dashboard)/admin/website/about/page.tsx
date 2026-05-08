@@ -11,6 +11,7 @@ import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, Shield
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
+import { getStaff } from "@/lib/actions/staff"
 
 export default function WebsiteAboutPage() {
   const { data: session } = useSession()
@@ -23,6 +24,7 @@ export default function WebsiteAboutPage() {
   const [uploadingLogo, setUploadingLogo] = useState(false)
   const logoInputRef = useRef<HTMLInputElement>(null)
   const [domainStatus, setDomainStatus] = useState<{ domain: string | null; status: string | null }>({ domain: null, status: null })
+  const [staffList, setStaffList] = useState<any[]>([])
 
   const [form, setForm] = useState({
     name: "", logo: "", tagline: "", description: "", about: "",
@@ -73,6 +75,12 @@ export default function WebsiteAboutPage() {
         setDomainStatus({ domain: d.domain || null, status: d.customDomain?.status || null })
       })
       .catch(() => {})
+
+    getStaff(tenantId)
+      .then(data => {
+        setStaffList(data || [])
+      })
+      .catch(console.error)
   }, [tenantId])
 
   const handleSave = async () => {
@@ -445,16 +453,49 @@ export default function WebsiteAboutPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Nama Kepala Sekolah</Label>
-                <Input value={form.settings?.principalName || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalName: e.target.value } }))}
-                  placeholder="Contoh: Ir. Sherly Puspita, M.Pd" className="rounded-xl" />
+                <Label>Pilih dari Data GTK</Label>
+                <select
+                  value={staffList.find(s => s.name === form.settings?.principalName)?.id || ""}
+                  onChange={(e) => {
+                    const selectedId = e.target.value
+                    if (selectedId) {
+                      const selected = staffList.find(s => s.id === selectedId)
+                      if (selected) {
+                        setForm(p => ({
+                          ...p,
+                          settings: {
+                            ...p.settings,
+                            principalName: selected.name,
+                            principalTitle: selected.role || "Kepala Sekolah",
+                            principalImage: selected.imageUrl || p.settings?.principalImage
+                          }
+                        }))
+                      }
+                    }
+                  }}
+                  className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <option value="">-- Isi Manual Atau Pilih GTK --</option>
+                  {staffList.map(s => (
+                    <option key={s.id} value={s.id}>{s.name} ({s.role})</option>
+                  ))}
+                </select>
+                <p className="text-[11px] text-muted-foreground">Pilih GTK untuk mengisi otomatis Nama, Jabatan, dan Foto Kepala Sekolah.</p>
               </div>
-              <div className="space-y-2">
-                <Label>Jabatan (Opsional)</Label>
-                <Input value={form.settings?.principalTitle || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalTitle: e.target.value } }))}
-                  placeholder="Contoh: Kepala Sekolah" className="rounded-xl" />
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Nama Kepala Sekolah</Label>
+                  <Input value={form.settings?.principalName || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalName: e.target.value } }))}
+                    placeholder="Contoh: Ir. Sherly Puspita, M.Pd" className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Jabatan (Opsional)</Label>
+                  <Input value={form.settings?.principalTitle || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalTitle: e.target.value } }))}
+                    placeholder="Contoh: Kepala Sekolah" className="rounded-xl" />
+                </div>
               </div>
             </div>
             
