@@ -49,6 +49,7 @@ model Tenant {
   categories           Category[]
   contactSubmissions   ContactSubmission[]
   documents            Document[]
+  dripLogs             DripLog[]
   events               Event[]
   extracurriculars     Extracurricular[]
   facilities           Facility[]
@@ -412,6 +413,34 @@ model Achievement {
 
   @@index([tenantId])
   @@map("achievements")
+}
+
+model DripCampaign {
+  id          String   @id @default(cuid())
+  dayOffset   Int      @unique
+  title       String
+  subject     String
+  content     String   @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  logs        DripLog[]
+
+  @@map("drip_campaigns")
+}
+
+model DripLog {
+  id          String   @id @default(cuid())
+  tenantId    String
+  campaignId  String
+  sentAt      DateTime @default(now())
+
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  campaign    DripCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, campaignId])
+  @@map("drip_logs")
 }
 
 model Facility {

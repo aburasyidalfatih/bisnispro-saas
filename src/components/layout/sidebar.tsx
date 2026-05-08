@@ -417,6 +417,11 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
           href: "/super-admin/broadcast",
           icon: Megaphone,
         },
+        {
+          label: "Email Edukasi",
+          href: "/super-admin/educational-emails",
+          icon: Mail,
+        },
       ],
     },
     {
