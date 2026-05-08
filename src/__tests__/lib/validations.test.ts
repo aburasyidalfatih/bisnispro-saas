@@ -32,7 +32,7 @@ describe("registerSchema", () => {
     const result = registerSchema.safeParse({
       name: "John Doe",
       email: "john@example.com",
-      password: "12345678",
+      password: "Str0ng@Pass",
       tenantName: "My Organization",
     })
     expect(result.success).toBe(true)
@@ -52,7 +52,7 @@ describe("registerSchema", () => {
     const result = registerSchema.safeParse({
       name: "John Doe",
       email: "john@example.com",
-      password: "1234",
+      password: "Ab1!",
       tenantName: "My Organization",
     })
     expect(result.success).toBe(false)
@@ -84,7 +84,7 @@ describe("resetPasswordSchema", () => {
   it("should accept valid token and password", () => {
     const result = resetPasswordSchema.safeParse({
       token: "abc123",
-      password: "newpass123",
+      password: "N3wP@ssword",
     })
     expect(result.success).toBe(true)
   })

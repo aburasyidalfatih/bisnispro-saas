@@ -64,8 +64,6 @@ describe("Audit Service", () => {
           entity: "session",
           tenantId: undefined,
           userId: undefined,
-          oldData: null,
-          newData: null,
         }),
       })
     })

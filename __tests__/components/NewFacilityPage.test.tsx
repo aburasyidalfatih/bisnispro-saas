@@ -8,7 +8,8 @@ import NewFacilityPage from '@/app/(dashboard)/admin/website/facilities/new/page
 const mockPush = vi.fn()
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: mockPush
+    push: mockPush,
+    back: vi.fn(),
   })
 }))
 
@@ -37,48 +38,70 @@ describe('UI Component: NewFacilityPage', () => {
     vi.clearAllMocks()
   })
 
-  it('TC1: Mencegah submit form jika nama fasilitas kosong (Validasi Frontend)', async () => {
+  it('TC1: Tombol submit disabled jika nama fasilitas kosong', async () => {
     render(<NewFacilityPage />)
     
     // Temukan tombol submit berdasarkan text
     const submitBtn = screen.getByText(/Simpan Fasilitas/i)
     
-    // Karena nama masih kosong, tombol harusnya di-disable
-    expect(submitBtn.hasAttribute('disabled')).toBe(true)
+    // Karena nama masih kosong, tombol harus di-disable
+    expect(submitBtn.closest('button')?.hasAttribute('disabled')).toBe(true)
     
-    // Memastikan tidak pernah menembak API / Server Action jika kosong
+    // Memastikan tidak pernah menembak Server Action jika kosong
     expect(mockCreateFacility).not.toHaveBeenCalled()
   })
 
-  it('TC2: Berhasil submit form ketika nama terisi dan mengalihkan halaman', async () => {
+  it('TC2: Tombol submit enabled setelah nama diisi', async () => {
+    render(<NewFacilityPage />)
+    
+    // Isi nama fasilitas
+    const inputName = screen.getByLabelText(/Nama Fasilitas/i)
+    fireEvent.change(inputName, { target: { value: 'Laboratorium Sains' } })
+    
+    // Tombol harus enabled sekarang
+    const submitBtn = screen.getByText(/Simpan Fasilitas/i)
+    expect(submitBtn.closest('button')?.hasAttribute('disabled')).toBe(false)
+  })
+
+  it('TC3: Berhasil submit form dan redirect ke halaman daftar', async () => {
     render(<NewFacilityPage />)
     
     // Mengisi nama fasilitas
     const inputName = screen.getByLabelText(/Nama Fasilitas/i)
     fireEvent.change(inputName, { target: { value: 'Laboratorium Sains' } })
     
-    // Mock server action agar berhasil (resolved)
+    // Mock server action agar berhasil
     mockCreateFacility.mockResolvedValueOnce({ id: 'fac-new' })
     
     // Klik tombol submit
     const submitBtn = screen.getByText(/Simpan Fasilitas/i)
     fireEvent.click(submitBtn)
     
-    // Menunggu event asinkron (pemanggilan server action & router push)
+    // Menunggu event asinkron
     await waitFor(() => {
-      // Memastikan Server Action dipanggil dengan data yang tepat
       expect(mockCreateFacility).toHaveBeenCalledWith('tenant-1', expect.objectContaining({
         name: 'Laboratorium Sains',
-        description: '', // string kosong karena tak diisi
       }))
-      
-      // Memastikan memanggil notifikasi sukses
+    })
+
+    await waitFor(() => {
       expect(mockToast).toHaveBeenCalledWith({
         title: "Fasilitas berhasil disimpan!"
       })
-      
-      // Memastikan berpindah ke halaman daftar fasilitas
-      expect(mockPush).toHaveBeenCalledWith('/dashboard/website/facilities')
     })
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/admin/website/facilities')
+    })
+  })
+
+  it('TC4: Form menampilkan semua field yang diperlukan', () => {
+    render(<NewFacilityPage />)
+    
+    expect(screen.getByLabelText(/Nama Fasilitas/i)).toBeDefined()
+    expect(screen.getByLabelText(/Deskripsi/i)).toBeDefined()
+    expect(screen.getByLabelText(/Kategori/i)).toBeDefined()
+    expect(screen.getByLabelText(/Kondisi/i)).toBeDefined()
+    expect(screen.getByLabelText(/Hak Akses/i)).toBeDefined()
   })
 })

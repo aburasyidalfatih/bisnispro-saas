@@ -15,7 +15,7 @@
 import { NextResponse } from "next/server"
 import { resolveDomainToSlug } from "@/lib/services/domain"
 
-const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || "dev-internal-secret"
+const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
 
 export async function GET(req: Request) {
   // Validasi internal secret
