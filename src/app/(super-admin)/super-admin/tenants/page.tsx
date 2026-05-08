@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { ServerPagination } from "@/components/shared/server-pagination"
-import { cn } from "@/lib/utils"
+import { cn, getRootDomain } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 
 interface TenantRow {
@@ -67,16 +67,11 @@ export default function TenantsPage() {
   const [newPassword, setNewPassword] = useState("")
   const [reseting, setReseting] = useState(false)
 
-  const [rootDomain, setRootDomain] = useState(process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id")
+  const [rootDomain, setRootDomain] = useState("")
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const envDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN
-      if (envDomain) {
-        setRootDomain(envDomain)
-      } else {
-        setRootDomain("schoolpro.my.id")
-      }
+      setRootDomain(getRootDomain())
     }
   }, [])
 

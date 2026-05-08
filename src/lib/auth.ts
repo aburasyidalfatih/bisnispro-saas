@@ -81,7 +81,7 @@ export const authOptions: NextAuthConfig = {
 
         // --- DOMAIN BASED LOGIN RESTRICTION ---
         const hostname = (credentials.hostname as string) || ""
-        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
+        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
         const hostWithoutPort = hostname.split(":")[0]
         const isMainDomain =
           !hostname ||
@@ -146,7 +146,7 @@ export const authOptions: NextAuthConfig = {
         const { headers } = await import("next/headers")
         const headersList = await headers()
         const host = headersList.get("host") || ""
-        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
+        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
         const hostWithoutPort = host.split(":")[0]
         const isMainDomain =
           hostWithoutPort === "localhost" ||
@@ -257,7 +257,7 @@ export const authOptions: NextAuthConfig = {
         const { headers } = await import("next/headers")
         const headersList = await headers()
         const host = headersList.get("host") || ""
-        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
+        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
         const hostWithoutPort = host.split(":")[0]
         const isMainDomain =
           hostWithoutPort === "localhost" ||

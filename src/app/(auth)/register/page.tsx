@@ -23,7 +23,7 @@ export default function RegisterPage() {
   const [googleAuthEnabled, setGoogleAuthEnabled] = useState(false)
 
   useEffect(() => {
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id"
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
     const host = window.location.hostname
     const main = host === rootDomain || host === `www.${rootDomain}` || host === "localhost"
     setIsMainDomain(main)

@@ -11,7 +11,7 @@ import {
   Building2, Award, GraduationCap, Activity, Megaphone, BookOpen,
   BarChart3, MessageSquare
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, getRootDomain } from "@/lib/utils"
 import Link from "next/link"
 
 interface WebsiteData {
@@ -60,7 +60,7 @@ export default function WebsiteOverviewPage() {
   const [slug, setSlug] = useState<string | null>(null)
   const [data, setData] = useState<WebsiteData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [rootDomain, setRootDomain] = useState(process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.my.id")
+  const [rootDomain, setRootDomain] = useState("")
   const [appUrl, setAppUrl] = useState("")
 
   useEffect(() => {
@@ -68,13 +68,7 @@ export default function WebsiteOverviewPage() {
       let host = window.location.host
       let protocol = window.location.protocol
       setAppUrl(`${protocol}//${host}`)
-      
-      const envDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN
-      if (envDomain) {
-        setRootDomain(envDomain)
-      } else {
-        setRootDomain("schoolpro.my.id")
-      }
+      setRootDomain(getRootDomain())
     }
   }, [])
 
