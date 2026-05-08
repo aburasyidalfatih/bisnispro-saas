@@ -125,8 +125,8 @@ jobs:
             # Pull image yang sudah di-build oleh GitHub Actions
             docker compose pull app
             
-            # Build wa-gateway secara eksplisit di VPS
-            docker compose build wa-gateway
+            # Build wa-gateway secara eksplisit di VPS (Dihapus karena menyebabkan VPS Hang/Stuck)
+            # docker compose build wa-gateway
             
             # Restart container dengan image baru (Gunakan --no-build agar app tidak dibuild ulang di VPS)
             if [ "$BRANCH" = "main" ]; then
