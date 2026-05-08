@@ -36,9 +36,9 @@ export async function GET(req: Request) {
       where,
       include: {
         classroom: { select: { id: true, name: true } },
-        WalletAccount: { select: { id: true, balance: true } },
+        walletAccount: { select: { id: true, balance: true } },
         parents: { select: { id: true, relation: true } },
-        _count: { select: { Invoice: { where: { deletedAt: null } } } },
+        _count: { select: { invoices: { where: { deletedAt: null } } } },
       },
       orderBy: { name: "asc" },
       skip: (page - 1) * take,
@@ -48,12 +48,7 @@ export async function GET(req: Request) {
   ])
 
   const formattedStudents = students.map((s: any) => ({
-    ...s,
-    walletAccount: s.WalletAccount,
-    _count: {
-      ...s._count,
-      invoices: s._count?.Invoice,
-    }
+    ...s
   }))
 
   return NextResponse.json({

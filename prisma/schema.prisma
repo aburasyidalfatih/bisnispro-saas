@@ -71,23 +71,23 @@ model Tenant {
   internalMessages     InternalMessage[]
   waSession            WaSession?
   subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
-  WalletAccount        WalletAccount[]
-  WalletTransaction    WalletTransaction[]
-  Cashflow             Cashflow[]
-  BillingType          BillingType[]
-  Invoice              Invoice[]
-  InvoicePayment       InvoicePayment[]
-  Installment          Installment[]
-  CanteenMerchant      CanteenMerchant[]
-  CanteenProduct       CanteenProduct[]
-  CanteenOrder         CanteenOrder[]
-  CanteenWithdrawal    CanteenWithdrawal[]
-  AttendanceSession    AttendanceSession[]
-  AttendanceRecord     AttendanceRecord[]
-  StaffAttendance      StaffAttendance[]
-  AttendancePermit     AttendancePermit[]
-  DonationCampaign     DonationCampaign[]
-  Donation             Donation[]
+  walletAccounts       WalletAccount[]
+  walletTransactions   WalletTransaction[]
+  cashflows            Cashflow[]
+  billingTypes         BillingType[]
+  invoices             Invoice[]
+  invoicePayments      InvoicePayment[]
+  installments         Installment[]
+  canteenMerchants     CanteenMerchant[]
+  canteenProducts      CanteenProduct[]
+  canteenOrders        CanteenOrder[]
+  canteenWithdrawals   CanteenWithdrawal[]
+  attendanceSessions   AttendanceSession[]
+  attendanceRecords    AttendanceRecord[]
+  staffAttendances     StaffAttendance[]
+  attendancePermits    AttendancePermit[]
+  donationCampaigns    DonationCampaign[]
+  donations            Donation[]
 
   @@index([isActive])
   @@index([plan])
@@ -126,7 +126,7 @@ model User {
   verificationTokens   VerificationToken[]
   sentMessages         InternalMessage[]     @relation("MessageSender")
   receivedMessages     InternalMessage[]     @relation("MessageReceiver")
-  CanteenMerchant      CanteenMerchant?
+  canteenMerchant      CanteenMerchant?
 
   @@index([isActive])
   @@index([isSuperAdmin])
@@ -794,11 +794,11 @@ model Student {
   user             User?              @relation(fields: [userId], references: [id])
   classroom        Classroom?         @relation(fields: [classroomId], references: [id])
   parents          StudentParent[]
-  WalletAccount    WalletAccount?
-  Invoice          Invoice[]
-  CanteenOrder     CanteenOrder[]
-  AttendanceRecord AttendanceRecord[]
-  AttendancePermit AttendancePermit[]
+  walletAccount    WalletAccount?
+  invoices         Invoice[]
+  canteenOrders    CanteenOrder[]
+  attendanceRecords AttendanceRecord[]
+  attendancePermits AttendancePermit[]
 
   @@index([tenantId])
   @@index([userId])
@@ -895,7 +895,7 @@ model Classroom {
   tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   waliKelas         Staff?              @relation(fields: [waliKelasId], references: [id])
   students          Student[]
-  AttendanceSession AttendanceSession[]
+  attendanceSessions AttendanceSession[]
 
   @@index([tenantId])
   @@map("classrooms")

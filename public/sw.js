@@ -1,4 +1,4 @@
-const CACHE_NAME = "schoolpro-pwa-cache-v1"
+const CACHE_NAME = "schoolpro-pwa-cache-v2"
 const OFFLINE_URL = "/"
 
 self.addEventListener("install", (event) => {
@@ -32,7 +32,8 @@ self.addEventListener("fetch", (event) => {
 
   // Abaikan request API dan resource external tertentu untuk diserahkan ke browser
   const url = new URL(event.request.url)
-  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/_next/')) {
+  // Abaikan request ke domain eksternal, API, dan Next.js assets
+  if (url.origin !== self.location.origin || url.pathname.startsWith('/api/') || url.pathname.startsWith('/_next/')) {
     return
   }
 
