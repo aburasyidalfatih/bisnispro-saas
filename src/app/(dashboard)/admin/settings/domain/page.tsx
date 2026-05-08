@@ -21,7 +21,7 @@ import {
   ExternalLink,
   Info,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, getRootDomain } from "@/lib/utils"
 
 // ==================== TYPES ====================
 
@@ -96,6 +96,7 @@ export default function DomainSettingsPage() {
   const [saving, setSaving] = useState(false)
   const [verifying, setVerifying] = useState(false)
   const [removing, setRemoving] = useState(false)
+  const [rootDomain, setRootDomain] = useState("")
   
   // Subdomain state
   const [subdomainInput, setSubdomainInput] = useState("")
@@ -104,6 +105,9 @@ export default function DomainSettingsPage() {
   // ==================== RESOLVE TENANT ID ====================
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setRootDomain(getRootDomain())
+    }
     const id = session?.user?.tenants?.[0]?.id
     if (id) { setTenantId(id); return }
     const match = document.cookie.match(/impersonate-tenant=([^;]+)/)
@@ -253,8 +257,7 @@ export default function DomainSettingsPage() {
   const customDomain = data?.customDomain
   const isVerified = customDomain?.status === "verified"
   const hasCustomDomain = !!data?.domain
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
-  const subdomain = data?.slug
+  const subdomain = data?.slug && rootDomain
     ? `${data.slug}.${rootDomain}`
     : null
 
@@ -543,12 +546,12 @@ export default function DomainSettingsPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <code className="text-xs font-mono">
-                            {process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"}
+                            {rootDomain || "schoolpro.id"}
                           </code>
                           <button
                             onClick={() =>
                               copyToClipboard(
-                                process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id",
+                                rootDomain || "schoolpro.id",
                                 "CNAME value"
                               )
                             }

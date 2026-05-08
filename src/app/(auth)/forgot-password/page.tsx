@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Mail } from "lucide-react"
+import { getRootDomain } from "@/lib/utils"
 
 export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false)
@@ -15,7 +16,7 @@ export default function ForgotPasswordPage() {
   const [platformLogo, setPlatformLogo] = useState("/logo-schoolpro.png")
 
   useEffect(() => {
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const rootDomain = getRootDomain()
     const host = window.location.hostname
     const main = host === rootDomain || host === `www.${rootDomain}` || host === "localhost"
     setIsMainDomain(main)

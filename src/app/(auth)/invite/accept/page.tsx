@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { UserPlus, CheckCircle, XCircle } from "lucide-react"
 import Link from "next/link"
+import { getRootDomain } from "@/lib/utils"
 
 export default function AcceptInvitePage() {
   const searchParams = useSearchParams()
@@ -18,7 +19,7 @@ export default function AcceptInvitePage() {
   const [tenantNameDisplay, setTenantNameDisplay] = useState<string | null>(null)
 
   useEffect(() => {
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const rootDomain = getRootDomain()
     const host = window.location.hostname
     const main = host === rootDomain || host === `www.${rootDomain}` || host === "localhost"
     setIsMainDomain(main)
