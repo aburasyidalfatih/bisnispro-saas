@@ -3,7 +3,7 @@ import nodemailer from "nodemailer"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import { logger } from "@/lib/logger"
-import { sendWhatsApp, getWaConfig } from "@/lib/services/notification"
+import { sendWhatsApp, getWaConfig, sendEmail } from "@/lib/services/notification"
 
 /**
  * Mengambil semua pengaturan platform sebagai key-value map.
@@ -147,7 +147,7 @@ export async function sendNewApplicationAlerts(
   // 1. Alert ke semua Super Admin
   const superAdmins = await db.user.findMany({
     where: { isSuperAdmin: true, isActive: true },
-    select: { id: true, phone: true, name: true },
+    select: { id: true, phone: true, name: true, email: true },
   })
 
   const defaultAdminTpl = `*PENDAFTARAN SEKOLAH BARU*\n\nSekolah: {{schoolName}}\nAdmin: {{adminName}}\nWA: {{adminPhone}}\nSubdomain: {{schoolSlug}}.${rootDomain}\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`
@@ -163,21 +163,26 @@ export async function sendNewApplicationAlerts(
     } else {
       logger.warn("Super Admin has no phone number — alert skipped", { adminId: admin.id })
     }
+    if (admin.email) {
+      await sendEmail(
+        admin.email,
+        "PENDAFTARAN SEKOLAH BARU",
+        `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #4f46e5;">SchoolPro</h2>
+          <p>${adminMsg.replace(/\n/g, "<br>")}</p>
+        </div>`
+      ).catch(err => logger.error("Super Admin email alert failed", err, { adminId: admin.id }))
+    }
   }
 
   // 2. Alert ke Mitra Afiliasi jika ada referral
   if (affiliateId) {
     const affiliate = await db.affiliateProfile.findUnique({
       where: { id: affiliateId },
-      include: { user: { select: { phone: true, name: true } } },
+      include: { user: { select: { phone: true, name: true, email: true } } },
     })
 
     if (!affiliate) return
-
-    if (!affiliate.user.phone) {
-      logger.warn("Affiliate has no phone number — alert skipped", { affiliateId })
-      return
-    }
 
     const defaultAffiliateTpl = `*LEAD SEKOLAH BARU! 🎉*\n\nHalo {{affiliateName}},\nKabar baik! Pendaftaran sekolah baru telah masuk menggunakan kode referral Anda ({{referralCode}}).\n\nSekolah: {{schoolName}}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`
     const affiliateMsg = (settings.WA_TEMPLATE_ALERT_AFFILIATE || defaultAffiliateTpl)
@@ -185,7 +190,22 @@ export async function sendNewApplicationAlerts(
       .replace(/{{referralCode}}/g, affiliate.referralCode)
       .replace(/{{schoolName}}/g, app.schoolName)
 
-    await sendWhatsApp(affiliate.user.phone, affiliateMsg)
+    if (affiliate.user.phone) {
+      await sendWhatsApp(affiliate.user.phone, affiliateMsg)
+    } else {
+      logger.warn("Affiliate has no phone number — alert skipped", { affiliateId })
+    }
+
+    if (affiliate.user.email) {
+      await sendEmail(
+        affiliate.user.email,
+        "LEAD SEKOLAH BARU! 🎉",
+        `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #4f46e5;">SchoolPro</h2>
+          <p>${affiliateMsg.replace(/\n/g, "<br>")}</p>
+        </div>`
+      ).catch(err => logger.error("Affiliate email alert failed", err, { affiliateId }))
+    }
   }
 }
 
