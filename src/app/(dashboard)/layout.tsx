@@ -12,6 +12,7 @@ import { TenantBrandingProvider } from "@/components/providers/tenant-branding-p
 import { MobileAppLayout } from "@/components/layout/mobile-app-layout"
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
 import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
+import { TenantCompletenessPopup } from "@/components/layout/tenant-completeness-popup"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
@@ -75,6 +76,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <TenantBrandingProvider>
+      <TenantCompletenessPopup />
       {!isAdminRole ? (
         <MobileAppLayout>
           {children}

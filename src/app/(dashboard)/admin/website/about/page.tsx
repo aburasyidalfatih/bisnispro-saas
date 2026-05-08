@@ -85,6 +85,29 @@ export default function WebsiteAboutPage() {
 
   const handleSave = async () => {
     if (!tenantId) return
+
+    const missingFields: string[] = []
+    if (!form.name?.trim()) missingFields.push("Nama Lembaga")
+    if (!form.logo?.trim()) missingFields.push("Logo Lembaga")
+    if (!form.tagline?.trim()) missingFields.push("Tagline / Slogan")
+    if (!form.description?.trim()) missingFields.push("Deskripsi Singkat")
+    if (!form.settings?.schoolStatus?.trim()) missingFields.push("Status Sekolah")
+    if (!form.settings?.studentCount || form.settings.studentCount < 1) missingFields.push("Estimasi Jumlah Siswa")
+    if (!form.settings?.province?.trim()) missingFields.push("Provinsi")
+    if (!form.settings?.regency?.trim()) missingFields.push("Kabupaten/Kota")
+    if (!form.address?.trim()) missingFields.push("Alamat Lengkap")
+    if (!form.phone?.trim()) missingFields.push("Nomor Telepon")
+    if (!form.email?.trim()) missingFields.push("Email Lembaga")
+
+    if (missingFields.length > 0) {
+      toast({ 
+        title: "Data Belum Lengkap", 
+        description: `Mohon lengkapi: ${missingFields.join(', ')}`, 
+        variant: "destructive" 
+      })
+      return
+    }
+
     setSaving(true)
     const payload: any = { tenantId, ...form }
     Object.keys(payload).forEach(k => {
