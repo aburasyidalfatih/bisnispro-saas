@@ -19,6 +19,11 @@ interface Campaign {
   subject: string
   content: string
   isActive: boolean
+  stats?: {
+    sent: number
+    opened: number
+    clicked: number
+  }
 }
 
 export default function EducationalEmailsPage() {
@@ -139,6 +144,29 @@ export default function EducationalEmailsPage() {
                     <Label className="text-xs font-semibold cursor-pointer">{activeCampaign.isActive ? 'Aktif' : 'Nonaktif'}</Label>
                   </div>
                 </div>
+
+                {activeCampaign.stats && (
+                  <div className="grid grid-cols-3 gap-4 pt-2">
+                    <div className="bg-primary/5 rounded-xl p-3 border border-primary/10">
+                      <div className="text-xs text-muted-foreground mb-1">Terkirim</div>
+                      <div className="text-xl font-bold">{activeCampaign.stats.sent}</div>
+                    </div>
+                    <div className="bg-green-500/5 rounded-xl p-3 border border-green-500/10">
+                      <div className="text-xs text-muted-foreground mb-1">Dibaca (Open Rate)</div>
+                      <div className="text-xl font-bold text-green-600">
+                        {activeCampaign.stats.sent > 0 ? Math.round((activeCampaign.stats.opened / activeCampaign.stats.sent) * 100) : 0}%
+                        <span className="text-xs font-normal text-muted-foreground ml-1">({activeCampaign.stats.opened})</span>
+                      </div>
+                    </div>
+                    <div className="bg-blue-500/5 rounded-xl p-3 border border-blue-500/10">
+                      <div className="text-xs text-muted-foreground mb-1">Diklik (CTR)</div>
+                      <div className="text-xl font-bold text-blue-600">
+                        {activeCampaign.stats.opened > 0 ? Math.round((activeCampaign.stats.clicked / activeCampaign.stats.opened) * 100) : 0}%
+                        <span className="text-xs font-normal text-muted-foreground ml-1">({activeCampaign.stats.clicked})</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">

@@ -55,11 +55,31 @@ export async function GET(req: Request) {
     }
 
     let campaigns = await db.dripCampaign.findMany({
-      orderBy: { dayOffset: 'asc' }
+      orderBy: { dayOffset: 'asc' },
+      include: {
+        _count: {
+          select: { logs: true } // Total sent
+        },
+        logs: {
+          select: { isOpened: true, isClicked: true } // We'll compute the stats below
+        }
+      }
+    })
+
+    const campaignsWithStats = campaigns.map(c => {
+      const totalSent = c._count.logs
+      const totalOpened = c.logs.filter(l => l.isOpened).length
+      const totalClicked = c.logs.filter(l => l.isClicked).length
+      
+      const { logs, _count, ...rest } = c
+      return {
+        ...rest,
+        stats: { sent: totalSent, opened: totalOpened, clicked: totalClicked }
+      }
     })
 
     // Seed defaults if empty
-    if (campaigns.length === 0) {
+    if (campaignsWithStats.length === 0) {
       await db.$transaction(
         DEFAULT_CAMPAIGNS.map(c => 
           db.dripCampaign.create({
@@ -73,10 +93,22 @@ export async function GET(req: Request) {
           })
         )
       )
-      campaigns = await db.dripCampaign.findMany({ orderBy: { dayOffset: 'asc' } })
+      // Re-fetch after seed
+      const newCampaigns = await db.dripCampaign.findMany({ 
+        orderBy: { dayOffset: 'asc' },
+        include: { _count: { select: { logs: true } }, logs: { select: { isOpened: true, isClicked: true } } }
+      })
+      const newCampaignsWithStats = newCampaigns.map(c => {
+        const totalSent = c._count.logs
+        const totalOpened = c.logs.filter(l => l.isOpened).length
+        const totalClicked = c.logs.filter(l => l.isClicked).length
+        const { logs, _count, ...rest } = c
+        return { ...rest, stats: { sent: totalSent, opened: totalOpened, clicked: totalClicked } }
+      })
+      return NextResponse.json(newCampaignsWithStats)
     }
 
-    return NextResponse.json(campaigns)
+    return NextResponse.json(campaignsWithStats)
   } catch (error: any) {
     console.error("GET DripCampaign Error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })

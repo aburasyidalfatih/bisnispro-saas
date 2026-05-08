@@ -435,6 +435,12 @@ model DripLog {
   tenantId    String
   campaignId  String
   sentAt      DateTime @default(now())
+  
+  isOpened    Boolean  @default(false)
+  openedAt    DateTime?
+  
+  isClicked   Boolean  @default(false)
+  clickedAt   DateTime?
 
   tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   campaign    DripCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)

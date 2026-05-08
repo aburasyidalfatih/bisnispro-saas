@@ -76,36 +76,56 @@ export async function GET(req: Request) {
       // Jika ada email yang harus dikirim ke tenant ini hari ini
       if (campaignToSend) {
         try {
-          // Replace variabel
-          const subject = campaignToSend.subject
-            .replace(/{{name}}/g, owner.name)
-            .replace(/{{schoolName}}/g, tenant.name)
-          
-          const content = campaignToSend.content
-            .replace(/{{name}}/g, owner.name)
-            .replace(/{{schoolName}}/g, tenant.name)
-
-          const htmlContent = `
-            <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
-              ${content.replace(/\n/g, '<br/>')}
-            </div>
-          `
-
-          // Kirim email
-          await sendEmail(owner.email, subject, htmlContent)
-          
-          // Catat ke log
-          await db.dripLog.create({
+          // Catat ke log DULU agar kita punya ID untuk ditaruh di link tracking
+          const dripLog = await db.dripLog.create({
             data: {
               tenantId: tenant.id,
               campaignId: campaignToSend.id
             }
           })
 
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"
+
+          // Buat regex untuk membungkus semua tag <a href="..."> menjadi tautan tracking
+          // Note: Ini mensyaratkan content ditulis dalam format HTML <a> atau kita regex link mentah
+          // Karena content diedit user di dashboard, biasanya ada link seperti https://schoolpro.id/super-admin/settings
+          // Lebih baik kita replace link http/https yang ada di dalam text
+          
+          const rawContent = campaignToSend.content
+            .replace(/{{name}}/g, owner.name)
+            .replace(/{{schoolName}}/g, tenant.name)
+
+          // Ganti link mentah (https://...) dengan link wrapper
+          // Regex ini mendeteksi url yang berawalan http atau https
+          const trackableContent = rawContent.replace(/(https?:\/\/[^\s]+)/g, (url) => {
+            const encodedUrl = encodeURIComponent(url)
+            return `${appUrl}/api/track/click?logId=${dripLog.id}&url=${encodedUrl}`
+          })
+
+          const htmlContent = `
+            <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
+              ${trackableContent.replace(/\n/g, '<br/>')}
+              <img src="${appUrl}/api/track/open?logId=${dripLog.id}" width="1" height="1" style="display:none;" />
+            </div>
+          `
+
+          const subject = campaignToSend.subject
+            .replace(/{{name}}/g, owner.name)
+            .replace(/{{schoolName}}/g, tenant.name)
+
+          // Kirim email
+          await sendEmail(owner.email, subject, htmlContent)
+
           emailsSent++
           logs.push(`Sent campaign Day ${campaignToSend.dayOffset} to ${owner.email} (${tenant.name})`)
         } catch (err: any) {
           console.error(`Failed to send to ${owner.email}:`, err.message)
+          // Hapus log jika gagal kirim, agar besok bisa dicoba lagi
+          if (campaignToSend) {
+             await db.dripLog.deleteMany({
+               where: { tenantId: tenant.id, campaignId: campaignToSend.id }
+             }).catch(() => {})
+          }
         }
       }
     }
