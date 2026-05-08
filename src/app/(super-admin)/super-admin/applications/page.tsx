@@ -53,6 +53,7 @@ export default function SuperAdminApplicationsPage() {
   const [actionModalOpen, setActionModalOpen] = useState(false)
   const [actionType, setActionType] = useState<"APPROVED" | "REVISION" | "REJECTED" | "DELETE" | null>(null)
   const [adminMessage, setAdminMessage] = useState("")
+  const [isUpdating, setIsUpdating] = useState(false)
 
   // Bulk action states
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -97,17 +98,44 @@ export default function SuperAdminApplicationsPage() {
   const handleUpdateStatus = async () => {
     if (!actionType || (!selectedApp && selectedIds.length === 0)) return
     
+    setIsUpdating(true)
     const isBulk = selectedIds.length > 0 && !selectedApp
 
-    if (actionType === "DELETE") {
+    try {
+      if (actionType === "DELETE") {
+        const res = await fetch("/api/super-admin/applications", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: isBulk ? selectedIds : [selectedApp?.id] }),
+        })
+
+        if (res.ok) {
+          toast({ title: "Berhasil", description: "Pengajuan berhasil dihapus." })
+          setSelectedApp(null)
+          setActionModalOpen(false)
+          setBulkActionModalOpen(false)
+          if (isBulk) setSelectedIds([])
+          fetchApps()
+        } else {
+          const errorData = await res.json()
+          toast({ title: "Error", description: errorData.error || "Terjadi kesalahan", variant: "destructive" })
+        }
+        return
+      }
+
+      const payload = isBulk 
+        ? { ids: selectedIds, status: actionType, adminMessage }
+        : { id: selectedApp?.id, status: actionType, adminMessage }
+
       const res = await fetch("/api/super-admin/applications", {
-        method: "DELETE",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: isBulk ? selectedIds : [selectedApp?.id] }),
+        body: JSON.stringify(payload),
       })
 
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Pengajuan berhasil dihapus." })
+        toast({ title: "Berhasil", description: `Pengajuan telah di-${actionType.toLowerCase()}.` })
+        setAdminMessage("")
         setSelectedApp(null)
         setActionModalOpen(false)
         setBulkActionModalOpen(false)
@@ -115,32 +143,12 @@ export default function SuperAdminApplicationsPage() {
         fetchApps()
       } else {
         const errorData = await res.json()
-        toast({ title: "Error", description: errorData.error, variant: "destructive" })
+        toast({ title: "Error", description: errorData.error || "Terjadi kesalahan", variant: "destructive" })
       }
-      return
-    }
-
-    const payload = isBulk 
-      ? { ids: selectedIds, status: actionType, adminMessage }
-      : { id: selectedApp?.id, status: actionType, adminMessage }
-
-    const res = await fetch("/api/super-admin/applications", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-
-    if (res.ok) {
-      toast({ title: "Berhasil", description: `Pengajuan telah di-${actionType.toLowerCase()}.` })
-      setAdminMessage("")
-      setSelectedApp(null)
-      setActionModalOpen(false)
-      setBulkActionModalOpen(false)
-      if (isBulk) setSelectedIds([])
-      fetchApps()
-    } else {
-      const errorData = await res.json()
-      toast({ title: "Error", description: errorData.error, variant: "destructive" })
+    } catch (error) {
+      toast({ title: "Error", description: "Gagal memproses permintaan.", variant: "destructive" })
+    } finally {
+      setIsUpdating(false)
     }
   }
 
@@ -391,9 +399,9 @@ export default function SuperAdminApplicationsPage() {
                 "text-white"
               )}
               onClick={handleUpdateStatus}
-              disabled={(actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim()}
+              disabled={isUpdating || ((actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim())}
             >
-              {actionType === "DELETE" ? "Ya, Hapus" : "Konfirmasi"}
+              {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus" : "Konfirmasi"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -431,9 +439,9 @@ export default function SuperAdminApplicationsPage() {
                 "text-white"
               )}
               onClick={handleUpdateStatus}
-              disabled={(actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim()}
+              disabled={isUpdating || ((actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim())}
             >
-              {actionType === "DELETE" ? "Ya, Hapus Masal" : "Proses Masal"}
+              {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus Masal" : "Proses Masal"}
             </Button>
           </DialogFooter>
         </DialogContent>
