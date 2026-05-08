@@ -68,7 +68,7 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
                 Welcome Section
               </span>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
-                Sambutan Kepala Sekolah
+                Sambutan {principalTitle}
               </h2>
               {/* Decorative Line */}
               <div className="h-1.5 w-24 bg-gradient-to-r from-accent to-primary rounded-full" />
