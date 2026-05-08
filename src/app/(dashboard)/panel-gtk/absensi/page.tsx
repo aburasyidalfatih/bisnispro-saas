@@ -59,7 +59,8 @@ export default function GTKAttendancePage() {
     fetch(`/api/panel-gtk/profil?tenantId=${tenant.id}`)
       .then(r => r.json())
       .then(data => {
-        setStaff(data?.staff || null)
+        setStaff(data.error ? null : data)
+        if (data.error) setLoading(false) // Stop loading immediately if no staff
       })
       .catch(console.error)
   }, [tenant])
