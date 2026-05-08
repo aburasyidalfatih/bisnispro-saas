@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { sendEmail } from "@/lib/services/notification"
-import { subDays, startOfDay, endOfDay } from "date-fns"
+import { startOfDay } from "date-fns"
 
 export const dynamic = 'force-dynamic'
 
@@ -13,11 +13,12 @@ export async function GET(req: Request) {
   }
 
   try {
-    const today = startOfDay(new Date())
+    const todayStart = startOfDay(new Date())
     
-    // 1. Ambil semua template campaign yang aktif
+    // 1. Ambil semua template campaign yang aktif, urutkan berdasarkan dayOffset
     const campaigns = await db.dripCampaign.findMany({
-      where: { isActive: true }
+      where: { isActive: true },
+      orderBy: { dayOffset: 'asc' }
     })
 
     if (campaigns.length === 0) {
@@ -27,71 +28,84 @@ export async function GET(req: Request) {
     let emailsSent = 0
     let logs = []
 
-    // 2. Proses tiap campaign (Hari 2, Hari 3, dst)
-    for (const campaign of campaigns) {
-      // Cari tanggal pendaftaran target. Contoh: Jika ini Day 2, berarti cari tenant yang mendaftar 2 hari lalu.
-      const targetDate = subDays(today, campaign.dayOffset)
-      
-      const tenants = await db.tenant.findMany({
-        where: {
-          createdAt: {
-            gte: targetDate,
-            lte: endOfDay(targetDate)
-          },
-          isActive: true
+    // 2. Ambil semua tenant yang aktif beserta riwayat email terakhir mereka
+    const tenants = await db.tenant.findMany({
+      where: { isActive: true },
+      include: {
+        users: {
+          where: { role: { in: ['owner', 'admin'] } },
+          include: { user: true },
+          take: 1
         },
-        include: {
-          users: {
-            where: { role: { in: ['owner', 'admin'] } },
-            include: { user: true },
-            take: 1 // Kirim ke 1 admin saja per tenant
+        dripLogs: {
+          include: { campaign: true },
+          orderBy: { sentAt: 'desc' },
+          take: 1 // Ambil 1 log terakhir
+        }
+      }
+    })
+
+    // 3. Evaluasi setiap tenant
+    for (const tenant of tenants) {
+      if (tenant.users.length === 0) continue
+
+      const owner = tenant.users[0].user
+      if (!owner?.email) continue
+
+      const lastLog = tenant.dripLogs[0]
+      let campaignToSend = null
+
+      if (!lastLog) {
+        // Belum pernah mendapat email edukasi sama sekali.
+        // Berikan campaign pertama, tapi pastikan mereka bukan mendaftar HARI INI
+        // (Harus sudah melewati H+1 pendaftaran agar wajar)
+        if (tenant.createdAt < todayStart) {
+          campaignToSend = campaigns[0]
+        }
+      } else {
+        // Sudah pernah mendapat email. Pastikan email terakhir TIDAK dikirim hari ini (1 hari = 1 email)
+        if (lastLog.sentAt < todayStart) {
+          // Cari urutan campaign berikutnya
+          const lastIndex = campaigns.findIndex(c => c.id === lastLog.campaignId)
+          if (lastIndex !== -1 && lastIndex + 1 < campaigns.length) {
+            campaignToSend = campaigns[lastIndex + 1]
           }
         }
-      })
+      }
 
-      for (const tenant of tenants) {
-        // Cek apakah email untuk campaign ini sudah pernah dikirim ke tenant ini (mencegah double send)
-        const alreadySent = await db.dripLog.findFirst({
-          where: { tenantId: tenant.id, campaignId: campaign.id }
-        })
+      // Jika ada email yang harus dikirim ke tenant ini hari ini
+      if (campaignToSend) {
+        try {
+          // Replace variabel
+          const subject = campaignToSend.subject
+            .replace(/{{name}}/g, owner.name)
+            .replace(/{{schoolName}}/g, tenant.name)
+          
+          const content = campaignToSend.content
+            .replace(/{{name}}/g, owner.name)
+            .replace(/{{schoolName}}/g, tenant.name)
 
-        if (!alreadySent && tenant.users.length > 0) {
-          const owner = tenant.users[0].user
-          if (owner?.email) {
-            try {
-              // 3. Replace variabel {{name}} dan {{schoolName}}
-              const subject = campaign.subject
-                .replace(/{{name}}/g, owner.name)
-                .replace(/{{schoolName}}/g, tenant.name)
-              
-              const content = campaign.content
-                .replace(/{{name}}/g, owner.name)
-                .replace(/{{schoolName}}/g, tenant.name)
+          const htmlContent = `
+            <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
+              ${content.replace(/\n/g, '<br/>')}
+            </div>
+          `
 
-              // Konversi baris baru (Enter) menjadi tag <br/> agar rapi di email HTML
-              const htmlContent = `
-                <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
-                  ${content.replace(/\n/g, '<br/>')}
-                </div>
-              `
-
-              // 4. Kirim Email
-              await sendEmail(owner.email, subject, htmlContent)
-              
-              // 5. Catat ke database
-              await db.dripLog.create({
-                data: {
-                  tenantId: tenant.id,
-                  campaignId: campaign.id
-                }
-              })
-
-              emailsSent++
-              logs.push(`Sent campaign Day ${campaign.dayOffset} to ${owner.email} (${tenant.name})`)
-            } catch (err: any) {
-              console.error(`Failed to send to ${owner.email}:`, err.message)
+          // Kirim email
+          await sendEmail(owner.email, subject, htmlContent)
+          
+          // Catat ke log
+          await db.dripLog.create({
+            data: {
+              tenantId: tenant.id,
+              campaignId: campaignToSend.id
             }
-          }
+          })
+
+          emailsSent++
+          logs.push(`Sent campaign Day ${campaignToSend.dayOffset} to ${owner.email} (${tenant.name})`)
+        } catch (err: any) {
+          console.error(`Failed to send to ${owner.email}:`, err.message)
         }
       }
     }
