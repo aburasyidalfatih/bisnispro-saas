@@ -14,7 +14,16 @@ export async function GET(req: Request) {
   const limit = Number(url.searchParams.get("limit") || "20")
   const search = url.searchParams.get("search") || ""
 
-  const where = search ? { name: { contains: search } } : {}
+  const where: any = search 
+    ? { 
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+          { slug: { contains: search, mode: "insensitive" } },
+          { users: { some: { role: "owner", user: { email: { contains: search, mode: "insensitive" } } } } }
+        ]
+      } 
+    : {}
   const [data, total] = await Promise.all([
     db.tenant.findMany({
       where,

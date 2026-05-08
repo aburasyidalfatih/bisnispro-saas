@@ -187,7 +187,7 @@ export default function TenantsPage() {
         <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Cari nama tenant atau slug..."
+            placeholder="Cari nama, email, atau slug..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             className="pl-9 rounded-xl"
