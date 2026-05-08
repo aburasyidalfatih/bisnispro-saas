@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Home, Calendar, Wallet, User, FileText, MessageSquare, ClipboardList, CreditCard, Heart } from "lucide-react"
+import { Home, Calendar, CalendarCheck, Wallet, User, FileText, MessageSquare, ClipboardList, CreditCard, Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function MobileBottomNav({ className }: { className?: string }) {
