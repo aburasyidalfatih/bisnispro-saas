@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { ArrowRight, Palette } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
+import Image from "next/image"
 
 interface Extracurricular {
   id: string
@@ -53,9 +54,9 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
               href={resolveHref(`/ekstrakurikuler/${ekskul.id}`)}
               className="group relative bg-background rounded-2xl border p-5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-purple-200"
             >
-              <div className="mx-auto w-16 h-16 rounded-2xl overflow-hidden mb-4 shadow-sm border bg-muted/50 flex items-center justify-center">
+              <div className="relative mx-auto w-16 h-16 rounded-2xl overflow-hidden mb-4 shadow-sm border bg-muted/50 flex items-center justify-center">
                 {ekskul.imageUrl ? (
-                  <img src={ekskul.imageUrl} alt={`Ekstrakurikuler: ${ekskul.name}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <Image src={ekskul.imageUrl} alt={`Ekstrakurikuler: ${ekskul.name}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="64px" />
                 ) : (
                   <span className="text-3xl">{EMOJI_FALLBACKS[idx % EMOJI_FALLBACKS.length]}</span>
                 )}

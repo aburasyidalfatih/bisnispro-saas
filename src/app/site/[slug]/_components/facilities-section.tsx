@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { ArrowRight, Building2 } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
+import Image from "next/image"
 
 interface Facility {
   id: string
@@ -53,7 +54,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
                 }`}
               >
                 {facility.imageUrl ? (
-                  <img src={facility.imageUrl} alt={`Fasilitas: ${facility.name}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <Image src={facility.imageUrl} alt={`Fasilitas: ${facility.name}`} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 50vw, 25vw" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
                     <Building2 className="h-12 w-12 text-emerald-200" />

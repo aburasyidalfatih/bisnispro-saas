@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { Menu, X, Search, ChevronDown, CheckCircle2, Phone, Mail, MessageCircle, Home, Building2, Info, ImageIcon, PhoneCall } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useRouting } from "@/components/providers/routing-provider"
+import Image from "next/image"
 
 interface NavbarProps {
   tenant: {
@@ -168,7 +169,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
             <Link href={resolveHref("/")} className="flex items-center gap-3 shrink-0 group">
               {tenant.logo ? (
                 <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-border shadow-sm transition-transform duration-300 group-hover:scale-105">
-                  <img src={tenant.logo} alt={tenant.name} className="object-cover w-full h-full" />
+                  <Image src={tenant.logo} alt={tenant.name} fill sizes="48px" className="object-cover" />
                 </div>
               ) : (
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground font-extrabold text-xl shadow-sm transition-transform duration-300 group-hover:scale-105">
@@ -277,6 +278,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
 
             {/* Mobile toggle */}
             <button
+              aria-label="Toggle mobile menu"
               className="xl:hidden p-2.5 rounded-full text-gray-700 hover:bg-gray-100 transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
@@ -300,6 +302,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                       Menu Navigasi
                     </span>
                     <button
+                      aria-label="Close mobile menu"
                       onClick={() => setMobileOpen(false)}
                       className="p-2 -mr-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors"
                     >

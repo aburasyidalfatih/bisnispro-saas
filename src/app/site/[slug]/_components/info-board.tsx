@@ -5,6 +5,7 @@ import { CalendarDays, Megaphone, Newspaper, ArrowRight, MapPin, Clock } from "l
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { useRouting } from "@/components/providers/routing-provider"
+import Image from "next/image"
 
 interface InfoBoardProps {
   events: any[]
@@ -146,12 +147,13 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
             <div className="space-y-6 flex-1">
               {artikel.length > 0 ? artikel.map((item, idx) => (
                 <Link key={idx} href={resolveHref(`/berita/${item.id}`)} className="flex gap-4 group cursor-pointer">
-                  <div className="w-20 h-16 rounded-xl overflow-hidden shrink-0 border bg-muted">
-                    {item.featuredImage ? (
-                      <img 
+                    <div className="relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border bg-muted">
+                      <Image 
                         src={item.featuredImage} 
                         alt={item.title} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        fill
+                        sizes="80px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-emerald-50">

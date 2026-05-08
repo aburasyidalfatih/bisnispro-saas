@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Play } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
+import Image from "next/image"
 
 interface Slide {
   title: string
@@ -127,7 +128,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             animation: `${direction === "next" ? "bgExitLeft" : "bgExitRight"} ${TRANSITION_MS}ms ease forwards`,
           }}
         >
-          <SlideBackground slide={prevSlide} />
+          <SlideBackground slide={prevSlide} isPriority={prev === 0} />
         </div>
       )}
       <div
@@ -139,7 +140,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             : "none",
         }}
       >
-        <SlideBackground slide={slide} />
+        <SlideBackground slide={slide} isPriority={current === 0} />
       </div>
 
       {/* ── Text + CTA content ── */}
@@ -297,14 +298,16 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   )
 }
 
-function SlideBackground({ slide }: { slide: Slide }) {
+function SlideBackground({ slide, isPriority }: { slide: Slide, isPriority?: boolean }) {
   return (
     <div className="absolute inset-0">
       {slide.image ? (
-        <img
+        <Image
           src={slide.image}
-          alt=""
-          className="w-full h-full object-cover object-center"
+          alt={slide.title || "Hero Image"}
+          fill
+          priority={isPriority}
+          className="object-cover object-center"
           style={{ animation: "kenburns 20s ease-in-out infinite alternate" }}
         />
       ) : (

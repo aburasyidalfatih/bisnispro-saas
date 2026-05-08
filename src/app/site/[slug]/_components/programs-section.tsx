@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { ArrowRight, BookOpen, GraduationCap } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
+import Image from "next/image"
 
 interface Program {
   id: string
@@ -71,11 +72,12 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
                 {/* Image / Gradient Header */}
                 <div className="relative h-44 overflow-hidden">
                   {program.imageUrl ? (
-                      <img
+                      <Image
                         src={program.imageUrl}
                         alt={`Program: ${program.name}`}
-                        loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                   ) : (
                     <div className={`w-full h-full bg-gradient-to-br ${color.bg} flex items-center justify-center`}>

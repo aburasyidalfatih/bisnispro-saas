@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Quote, GraduationCap, ArrowRight } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
+import Image from "next/image"
 
 interface AlumniMember {
   id: string
@@ -100,10 +101,12 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
                 <div className="absolute -inset-2 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-md" />
                 <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-4 border-background shadow-xl bg-muted">
                   {person.imageUrl ? (
-                    <img
+                    <Image
                       src={person.imageUrl}
                       alt={person.name}
-                      className="w-full h-full object-cover object-top"
+                      fill
+                      sizes="112px"
+                      className="object-cover object-top"
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">

@@ -1,6 +1,7 @@
 "use client"
 
 import { Quote } from "lucide-react"
+import Image from "next/image"
 
 interface PrincipalWelcomeProps {
   tenantName: string
@@ -37,10 +38,12 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
             <div className="absolute inset-0 bg-gradient-to-tr from-primary to-accent rounded-3xl transform -rotate-2 scale-105 opacity-10" />
             
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-background bg-background aspect-[4/5]">
-              <img 
+              <Image 
                 src={principalImage} 
                 alt={principalName} 
-                className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                fill
+                className="object-cover object-top hover:scale-105 transition-transform duration-700"
+                sizes="(max-width: 1024px) 260px, 300px"
               />
               {/* Optional: Add a subtle overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-60" />
