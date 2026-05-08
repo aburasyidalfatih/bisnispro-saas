@@ -62,6 +62,21 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
     }
   }
 
+  const handleSync = async () => {
+    try {
+      const res = await fetch(`/api/ppdb/pendaftar/${id}/sync`, { method: "POST" })
+      const data = await res.json()
+      if (res.ok) {
+        toast({ title: "Berhasil", description: data.message || "Data berhasil disinkronisasi." })
+        fetchDetail()
+      } else {
+        toast({ title: "Gagal", description: data.error || "Gagal sinkronisasi", variant: "destructive" })
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Terjadi kesalahan sistem", variant: "destructive" })
+    }
+  }
+
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>
   if (!applicant) return <div>Data tidak ditemukan.</div>
 
@@ -90,12 +105,17 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
         </div>
         
         <div className="flex items-center gap-2">
-           {applicant.status !== "DITERIMA" && (
+           {applicant.status === "DITERIMA" && (
+             <Button className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0" onClick={handleSync}>
+               <CheckCircle className="mr-2 h-4 w-4" /> Sinkronisasi ke Siswa
+             </Button>
+           )}
+           {applicant.status !== "DITERIMA" && applicant.status !== "SINKRONISASI" && (
              <Button className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white border-0" onClick={() => handleUpdateStatus("DITERIMA")}>
                <CheckCircle className="mr-2 h-4 w-4" /> Terima Siswa
              </Button>
            )}
-           {applicant.status !== "DITOLAK" && (
+           {applicant.status !== "DITOLAK" && applicant.status !== "SINKRONISASI" && (
              <Button variant="outline" className="rounded-xl text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleUpdateStatus("DITOLAK")}>
                <XCircle className="mr-2 h-4 w-4" /> Tolak
              </Button>

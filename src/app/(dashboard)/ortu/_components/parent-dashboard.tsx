@@ -3,10 +3,16 @@
 import { useSession } from "next-auth/react"
 import { Bell, CreditCard, CalendarDays, FileText, CheckCircle, Clock, BookOpen, MessageSquare, Award, MonitorSmartphone, Calendar, FileCheck, ClipboardList, Megaphone, User, ArrowRight, Receipt, Activity, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
-export function ParentDashboard() {
+import { Wallet, PlusCircle } from "lucide-react"
+
+export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] }) {
   const { data: session } = useSession()
   const tenant = session?.user?.tenants?.[0]
+  
+  const totalBalance = childrenData.reduce((acc, child) => acc + (child.walletAccount?.balance || 0), 0)
 
   const layanan = [
     { label: "Tagihan", icon: CreditCard, color: "bg-rose-500/10 text-rose-600", href: "/ortu/tagihan" },
@@ -67,6 +73,30 @@ export function ParentDashboard() {
            </div>
         </div>
 
+        {/* SchoolPay Wallet Card (EPIC 1) */}
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 shadow-lg shadow-indigo-500/30 text-white relative overflow-hidden">
+           <div className="absolute top-0 right-0 p-4 opacity-20">
+              <Wallet className="h-24 w-24 -mr-6 -mt-6" />
+           </div>
+           <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                 <p className="text-sm font-medium text-white/80">Total Saldo SchoolPay</p>
+                 <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-0">Wallet Aktif</Badge>
+              </div>
+              <h2 className="text-3xl font-black mb-1">Rp {totalBalance.toLocaleString("id-ID")}</h2>
+              <p className="text-xs text-white/70 mb-5">Terakumulasi dari {childrenData.length} rekening siswa</p>
+              
+              <div className="flex gap-3">
+                 <Button size="sm" className="bg-white text-indigo-600 hover:bg-white/90 rounded-xl text-xs h-9">
+                    <PlusCircle className="mr-1.5 h-3.5 w-3.5" /> Top Up Saldo
+                 </Button>
+                 <Button size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-xl text-xs h-9 bg-transparent">
+                    Riwayat Transaksi
+                 </Button>
+              </div>
+           </div>
+        </div>
+
         {/* Tanggungan Siswa (Anak) */}
         <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
           <div className="flex justify-between items-center mb-3">
@@ -75,31 +105,32 @@ export function ParentDashboard() {
              </h3>
           </div>
           <div className="space-y-3">
-             <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/10">
-               <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                 <User className="h-5 w-5 text-primary" />
+             {childrenData.length > 0 ? childrenData.map((child: any) => (
+               <div key={child.id} className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors">
+                 <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                   <User className="h-5 w-5 text-primary" />
+                 </div>
+                 <div className="flex-1 min-w-0">
+                   <h4 className="text-sm font-bold text-foreground truncate">{child.name}</h4>
+                   <p className="text-[11px] text-muted-foreground truncate">
+                     {child.nisn ? `NISN: ${child.nisn} • ` : ""} 
+                     {child.classroom ? child.classroom.name : "Belum masuk kelas"}
+                   </p>
+                 </div>
+                 <div className="flex flex-col items-end gap-1">
+                   <div className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 text-[10px] font-bold shrink-0">
+                     {child.isActive ? "Aktif" : "Nonaktif"}
+                   </div>
+                   {child.walletAccount && (
+                     <span className="text-[10px] font-bold text-primary">Rp {child.walletAccount.balance.toLocaleString("id-ID")}</span>
+                   )}
+                 </div>
                </div>
-               <div className="flex-1 min-w-0">
-                 <h4 className="text-sm font-bold text-foreground truncate">Ahmad Fatih</h4>
-                 <p className="text-[11px] text-muted-foreground truncate">NISN: 24010001 • Kelas X MIPA 1</p>
+             )) : (
+               <div className="p-6 text-center border-2 border-dashed rounded-xl border-border">
+                 <p className="text-xs text-muted-foreground">Belum ada data siswa yang tertaut.</p>
                </div>
-               <div className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 text-[10px] font-bold shrink-0">
-                 Aktif
-               </div>
-             </div>
-             {/* Dummy second child to show it can handle multiple */}
-             <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/50">
-               <div className="h-10 w-10 bg-muted rounded-full flex items-center justify-center shrink-0">
-                 <User className="h-5 w-5 text-muted-foreground" />
-               </div>
-               <div className="flex-1 min-w-0">
-                 <h4 className="text-sm font-bold text-foreground truncate">Siti Aisyah</h4>
-                 <p className="text-[11px] text-muted-foreground truncate">NISN: 24010002 • Kelas VII B</p>
-               </div>
-               <div className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 text-[10px] font-bold shrink-0">
-                 Aktif
-               </div>
-             </div>
+             )}
           </div>
         </div>
 
