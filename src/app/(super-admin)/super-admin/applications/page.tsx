@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
 import { 
-  CheckCircle, XCircle, Clock, RefreshCcw, 
+  CheckCircle, XCircle, Clock, RefreshCcw, Trash2,
   School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -50,7 +50,7 @@ export default function SuperAdminApplicationsPage() {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null)
   const [detailModalOpen, setDetailModalOpen] = useState(false)
   const [actionModalOpen, setActionModalOpen] = useState(false)
-  const [actionType, setActionType] = useState<"APPROVED" | "REVISION" | "REJECTED" | null>(null)
+  const [actionType, setActionType] = useState<"APPROVED" | "REVISION" | "REJECTED" | "DELETE" | null>(null)
   const [adminMessage, setAdminMessage] = useState("")
 
   // Bulk action states
@@ -73,6 +73,27 @@ export default function SuperAdminApplicationsPage() {
     if (!actionType || (!selectedApp && selectedIds.length === 0)) return
     
     const isBulk = selectedIds.length > 0 && !selectedApp
+
+    if (actionType === "DELETE") {
+      const res = await fetch("/api/super-admin/applications", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: isBulk ? selectedIds : [selectedApp?.id] }),
+      })
+
+      if (res.ok) {
+        toast({ title: "Berhasil", description: "Pengajuan berhasil dihapus." })
+        setSelectedApp(null)
+        setActionModalOpen(false)
+        setBulkActionModalOpen(false)
+        if (isBulk) setSelectedIds([])
+        fetchApps()
+      } else {
+        const errorData = await res.json()
+        toast({ title: "Error", description: errorData.error, variant: "destructive" })
+      }
+      return
+    }
 
     const payload = isBulk 
       ? { ids: selectedIds, status: actionType, adminMessage }
@@ -124,7 +145,7 @@ export default function SuperAdminApplicationsPage() {
     }
   }
 
-  const openActionModal = (app: Application | null, type: "APPROVED" | "REVISION" | "REJECTED", isBulk: boolean = false) => {
+  const openActionModal = (app: Application | null, type: "APPROVED" | "REVISION" | "REJECTED" | "DELETE", isBulk: boolean = false) => {
     setActionType(type)
     setAdminMessage(app?.adminMessage || "")
     if (!isBulk) {
@@ -169,6 +190,9 @@ export default function SuperAdminApplicationsPage() {
           </Button>
           <Button size="sm" variant="outline" className="h-8 border-rose-200 text-rose-600 hover:bg-rose-50" onClick={() => openActionModal(null, "REJECTED", true)}>
             <XCircle className="h-4 w-4 mr-1.5" /> Tolak Masal
+          </Button>
+          <Button size="sm" variant="outline" className="h-8 border-red-200 text-red-600 hover:bg-red-50" onClick={() => openActionModal(null, "DELETE", true)}>
+            <Trash2 className="h-4 w-4 mr-1.5" /> Hapus Masal
           </Button>
         </div>
       )}
@@ -273,6 +297,10 @@ export default function SuperAdminApplicationsPage() {
                         <DropdownMenuItem onClick={() => openActionModal(app, "REJECTED")} className="text-rose-600">
                           <XCircle className="h-4 w-4 mr-2" /> Tolak
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => openActionModal(app, "DELETE")} className="text-red-600 focus:text-red-700 focus:bg-red-50">
+                          <Trash2 className="h-4 w-4 mr-2" /> Hapus Pengajuan
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
@@ -288,10 +316,13 @@ export default function SuperAdminApplicationsPage() {
         <DialogContent className="glass border-0">
           <DialogHeader>
             <DialogTitle>
-              {actionType === "APPROVED" ? "Setujui Pendaftaran" : actionType === "REVISION" ? "Minta Revisi" : "Tolak Pendaftaran"}
+              {actionType === "APPROVED" ? "Setujui Pendaftaran" : actionType === "REVISION" ? "Minta Revisi" : actionType === "DELETE" ? "Hapus Pengajuan" : "Tolak Pendaftaran"}
             </DialogTitle>
             <DialogDescription>
-              Tindakan ini akan mengirimkan notifikasi ke email <strong className="text-primary">{selectedApp?.adminEmail}</strong>.
+              {actionType === "DELETE" 
+                ? "Apakah Anda yakin ingin menghapus pengajuan ini? Data yang dihapus tidak dapat dikembalikan."
+                : `Tindakan ini akan mengirimkan notifikasi ke email `}
+              {actionType !== "DELETE" && <strong className="text-primary">{selectedApp?.adminEmail}</strong>}
             </DialogDescription>
           </DialogHeader>
           {(actionType === "REVISION" || actionType === "REJECTED") && (
@@ -315,7 +346,7 @@ export default function SuperAdminApplicationsPage() {
               onClick={handleUpdateStatus}
               disabled={(actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim()}
             >
-              Konfirmasi
+              {actionType === "DELETE" ? "Ya, Hapus" : "Konfirmasi"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -326,10 +357,12 @@ export default function SuperAdminApplicationsPage() {
         <DialogContent className="glass border-0">
           <DialogHeader>
             <DialogTitle>
-              Konfirmasi Masal: {actionType === "APPROVED" ? "Setujui" : actionType === "REVISION" ? "Revisi" : "Tolak"} ({selectedIds.length} Sekolah)
+              Konfirmasi Masal: {actionType === "APPROVED" ? "Setujui" : actionType === "REVISION" ? "Revisi" : actionType === "DELETE" ? "Hapus" : "Tolak"} ({selectedIds.length} Sekolah)
             </DialogTitle>
             <DialogDescription>
-              Tindakan ini akan diproses untuk seluruh {selectedIds.length} pengajuan yang dipilih secara masal.
+              {actionType === "DELETE" 
+                ? `Apakah Anda yakin ingin menghapus ${selectedIds.length} pengajuan secara permanen?`
+                : `Tindakan ini akan diproses untuk seluruh ${selectedIds.length} pengajuan yang dipilih secara masal.`}
             </DialogDescription>
           </DialogHeader>
           {(actionType === "REVISION" || actionType === "REJECTED") && (
@@ -353,7 +386,7 @@ export default function SuperAdminApplicationsPage() {
               onClick={handleUpdateStatus}
               disabled={(actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim()}
             >
-              Proses Masal
+              {actionType === "DELETE" ? "Ya, Hapus Masal" : "Proses Masal"}
             </Button>
           </DialogFooter>
         </DialogContent>
