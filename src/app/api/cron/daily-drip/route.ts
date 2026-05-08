@@ -4,6 +4,7 @@ import { sendEmail } from "@/lib/services/notification"
 import { startOfDay } from "date-fns"
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 300 // 5 minutes timeout for cron job
 
 export async function GET(req: Request) {
   // Verifikasi keamanan CRON Job

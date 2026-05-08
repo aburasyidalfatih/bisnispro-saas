@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { db } from "@/lib/db"
 import Image from "next/image"
 import Link from "next/link"
 import { Calendar, User, ArrowRight } from "lucide-react"
@@ -18,16 +19,36 @@ export default async function BeritaPage({
   const { slug } = await params
   const resolvedSearchParams = await searchParams
   const typeFilter = typeof resolvedSearchParams.type === 'string' ? resolvedSearchParams.type.toUpperCase() : null
+  const page = typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page) : 1
+  const perPage = 9
 
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)
-  let posts = tenant.posts || []
   
-  if (typeFilter) {
-    posts = posts.filter((p: any) => p.type === typeFilter)
-  }
+  // Fetch paginated posts directly from DB
+  const posts = await db.post.findMany({
+    where: { 
+      tenantId: tenant.id, 
+      status: 'PUBLISHED',
+      ...(typeFilter ? { type: typeFilter } : {})
+    },
+    orderBy: { createdAt: 'desc' },
+    skip: (page - 1) * perPage,
+    take: perPage,
+  })
+
+  const totalPosts = await db.post.count({
+    where: { 
+      tenantId: tenant.id, 
+      status: 'PUBLISHED',
+      ...(typeFilter ? { type: typeFilter } : {})
+    }
+  })
+  const totalPages = Math.ceil(totalPosts / perPage)
+  
+
 
   const pageTitle = typeFilter === 'PENGUMUMAN' ? "Pengumuman Terbaru" : "Artikel & Berita Terbaru"
   const breadcrumbLabel = typeFilter === 'PENGUMUMAN' ? "Pengumuman" : "Berita"
@@ -120,13 +141,32 @@ export default async function BeritaPage({
                         Selengkapnya <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </section>
-    </div>
-  )
-}
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-16">
+                  {page > 1 && (
+                    <Link href={`${base}/berita?page=${page - 1}${typeFilter ? `&type=${typeFilter}` : ''}`} className="px-4 py-2 border rounded-xl hover:bg-muted font-medium">
+                      Sebelumnya
+                    </Link>
+                  )}
+                  <span className="px-4 py-2 text-muted-foreground">
+                    Halaman {page} dari {totalPages}
+                  </span>
+                  {page < totalPages && (
+                    <Link href={`${base}/berita?page=${page + 1}${typeFilter ? `&type=${typeFilter}` : ''}`} className="px-4 py-2 border rounded-xl hover:bg-muted font-medium">
+                      Selanjutnya
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </section>
+      </div>
+    )
+  }
