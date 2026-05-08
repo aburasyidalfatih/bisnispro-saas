@@ -38,14 +38,17 @@ export async function POST(req: Request) {
     const result = await saveFile(file, undefined, "public-registration", ["image"])
 
     // Konversi path absolut filesystem ke URL publik via /api/files/...
-    const uploadDirResolved = path.resolve(process.env.UPLOAD_DIR || "./uploads")
-    const fileResolved = path.resolve(result.path)
-    
-    const relativeToUpload = fileResolved
-      .replace(uploadDirResolved, "")
-      .replace(/\\/g, "/")
-      .replace(/^\//, "")
-    const publicUrl = `/api/files/${relativeToUpload}`
+    let publicUrl = result.path
+    if (!result.path.startsWith("http")) {
+      const uploadDirResolved = path.resolve(process.env.UPLOAD_DIR || "./uploads")
+      const fileResolved = path.resolve(result.path)
+      
+      const relativeToUpload = fileResolved
+        .replace(uploadDirResolved, "")
+        .replace(/\\/g, "/")
+        .replace(/^\//, "")
+      publicUrl = `/api/files/${relativeToUpload}`
+    }
 
     return NextResponse.json({
       message: "File berhasil diupload",

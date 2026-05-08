@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { 
   Server, Shield, Eye, EyeOff, Mail, MessageSquare, 
   CreditCard, Globe, Settings2, Save, ExternalLink,
-  Send, Smartphone, ShieldCheck
+  Send, Smartphone, ShieldCheck, Database, HardDrive, Cloud
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
@@ -25,6 +25,7 @@ export default function SuperAdminSettingsPage() {
   const [showPass, setShowPass] = useState(false)
   const [showWAToken, setShowWAToken] = useState(false)
   const [showTripayKey, setShowTripayKey] = useState(false)
+  const [showS3Secret, setShowS3Secret] = useState(false)
   
   // Form State
   const [form, setForm] = useState({
@@ -87,7 +88,16 @@ export default function SuperAdminSettingsPage() {
       enable_custom_domain: false,
       enable_analytics: false,
       enable_parent_portal: false
-    })
+    }),
+
+    // Penyimpanan (Storage)
+    STORAGE_PROVIDER: "local",
+    S3_ENDPOINT: "https://<account_id>.r2.cloudflarestorage.com",
+    S3_REGION: "auto",
+    S3_ACCESS_KEY: "",
+    S3_SECRET_KEY: "",
+    S3_BUCKET: "",
+    S3_PUBLIC_URL: "https://pub-<id>.r2.dev",
   })
 
   const [testEmail, setTestEmail] = useState("")
@@ -253,6 +263,7 @@ export default function SuperAdminSettingsPage() {
             <TabsTrigger value="email" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Email & SMTP</TabsTrigger>
             <TabsTrigger value="whatsapp" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">WhatsApp</TabsTrigger>
             <TabsTrigger value="payment" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Pembayaran</TabsTrigger>
+            <TabsTrigger value="storage" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Penyimpanan</TabsTrigger>
             <TabsTrigger value="google" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Google Login</TabsTrigger>
             <TabsTrigger value="plan_access" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kendali Fitur</TabsTrigger>
           </TabsList>
@@ -777,6 +788,99 @@ export default function SuperAdminSettingsPage() {
                 <code className="block bg-muted p-2 rounded-lg text-xs break-all">https://schoolpro.id/api/payment/callback</code>
                 <p className="text-[10px]">Daftarkan URL ini di dashboard Tripay Anda.</p>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* --- TAB: PENYIMPANAN (STORAGE) --- */}
+        <TabsContent value="storage" className="grid gap-6 lg:grid-cols-2 outline-none">
+          <Card className="glass border-0">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10"><HardDrive className="h-4 w-4 text-orange-500" /></div>
+                <CardTitle className="text-lg">Tipe Penyimpanan</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Pilih Provider Storage</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => {
+                      setForm({...form, STORAGE_PROVIDER: "local"})
+                      handleSaveBatch(['STORAGE_PROVIDER'], { STORAGE_PROVIDER: "local" })
+                    }}
+                    className={cn(
+                      "flex flex-col items-center justify-center rounded-xl border-2 p-4 transition-all duration-200 gap-2",
+                      form.STORAGE_PROVIDER === "local" ? "border-orange-500 bg-orange-500/10 text-orange-600" : "border-border hover:bg-muted text-muted-foreground"
+                    )}
+                  >
+                    <HardDrive className="h-6 w-6" />
+                    <span className="font-semibold text-sm">Lokal (VPS Disk)</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setForm({...form, STORAGE_PROVIDER: "s3"})
+                      handleSaveBatch(['STORAGE_PROVIDER'], { STORAGE_PROVIDER: "s3" })
+                    }}
+                    className={cn(
+                      "flex flex-col items-center justify-center rounded-xl border-2 p-4 transition-all duration-200 gap-2",
+                      form.STORAGE_PROVIDER === "s3" ? "border-orange-500 bg-orange-500/10 text-orange-600" : "border-border hover:bg-muted text-muted-foreground"
+                    )}
+                  >
+                    <Cloud className="h-6 w-6" />
+                    <span className="font-semibold text-sm">S3 / Cloudflare R2</span>
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed mt-2">
+                  Mengubah penyimpanan ke S3/R2 akan membuat semua <strong>unggahan baru</strong> masuk ke Cloud. File lama akan tetap dibaca dari Lokal.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className={cn("glass border-0 transition-opacity", form.STORAGE_PROVIDER === "local" && "opacity-50 pointer-events-none")}>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10"><Cloud className="h-4 w-4 text-orange-500" /></div>
+                <CardTitle className="text-lg">Kredensial S3 API</CardTitle>
+              </div>
+              <CardDescription>Gunakan endpoint kompatibel S3 (seperti AWS, DigitalOcean Spaces, atau Cloudflare R2).</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>S3 Endpoint</Label>
+                <Input value={form.S3_ENDPOINT} onChange={e => setForm({...form, S3_ENDPOINT: e.target.value})} placeholder="https://<account_id>.r2.cloudflarestorage.com" className="rounded-xl font-mono text-xs" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Region</Label>
+                  <Input value={form.S3_REGION} onChange={e => setForm({...form, S3_REGION: e.target.value})} placeholder="auto" className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Bucket Name</Label>
+                  <Input value={form.S3_BUCKET} onChange={e => setForm({...form, S3_BUCKET: e.target.value})} placeholder="schoolpro-assets" className="rounded-xl" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Access Key ID</Label>
+                <Input value={form.S3_ACCESS_KEY} onChange={e => setForm({...form, S3_ACCESS_KEY: e.target.value})} placeholder="Access Key" className="rounded-xl font-mono text-xs" />
+              </div>
+              <div className="space-y-2">
+                <Label>Secret Access Key</Label>
+                <div className="relative">
+                  <Input type={showS3Secret ? "text" : "password"} value={form.S3_SECRET_KEY} onChange={e => setForm({...form, S3_SECRET_KEY: e.target.value})} placeholder="Secret Key" className="rounded-xl font-mono text-xs pr-10" />
+                  <button type="button" onClick={() => setShowS3Secret(!showS3Secret)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showS3Secret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Public URL / Custom Domain</Label>
+                <Input value={form.S3_PUBLIC_URL} onChange={e => setForm({...form, S3_PUBLIC_URL: e.target.value})} placeholder="https://pub-<id>.r2.dev" className="rounded-xl font-mono text-xs" />
+                <p className="text-[10px] text-muted-foreground">URL dasar untuk mengakses file dari publik. Jangan akhiri dengan slash (/).</p>
+              </div>
+              <Button className="w-full gap-2 bg-orange-500 hover:bg-orange-600 text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['S3_ENDPOINT', 'S3_REGION', 'S3_ACCESS_KEY', 'S3_SECRET_KEY', 'S3_BUCKET', 'S3_PUBLIC_URL'])} disabled={saving}>
+                <Save className="h-4 w-4" /> Simpan Konfigurasi S3
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
