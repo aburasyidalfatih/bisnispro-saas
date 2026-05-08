@@ -24,15 +24,28 @@ async function getEmailTransporter(tenantId?: string) {
       }
     }
   }
-  // Fallback ke platform default
+  // Fallback ke platform settings dari database
+  const platformSettings = await db.platformSetting.findMany({
+    where: { key: { in: ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS", "SMTP_FROM"] } },
+  })
+  const map = Object.fromEntries(
+    platformSettings.filter((s) => s.value).map((s) => [s.key, s.value!])
+  )
+
+  const host = map.SMTP_HOST || process.env.SMTP_HOST
+  const port = Number(map.SMTP_PORT || process.env.SMTP_PORT) || 587
+  const user = map.SMTP_USER || process.env.SMTP_USER
+  const pass = map.SMTP_PASS || process.env.SMTP_PASS
+  const from = map.SMTP_FROM || process.env.SMTP_FROM || user
+
   return {
     transporter: nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass },
     }),
-    from: process.env.SMTP_FROM,
+    from: from,
     fromName: "SchoolPro",
   }
 }
