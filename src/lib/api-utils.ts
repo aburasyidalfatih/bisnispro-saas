@@ -18,7 +18,7 @@ export async function parseBody<T>(
     return { data }
   } catch (err) {
     if (err instanceof ZodError) {
-      const messages = err.errors.map((e) => e.message).join(", ")
+      const messages = err.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(", ")
       return { error: NextResponse.json({ error: messages }, { status: 400 }) }
     }
     return { error: NextResponse.json({ error: "Request body tidak valid" }, { status: 400 }) }
