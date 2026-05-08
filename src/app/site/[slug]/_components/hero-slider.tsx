@@ -307,6 +307,7 @@ function SlideBackground({ slide, isPriority }: { slide: Slide, isPriority?: boo
           alt={slide.title || "Hero Image"}
           fill
           priority={isPriority}
+          sizes="100vw"
           className="object-cover object-center"
           style={{ animation: "kenburns 20s ease-in-out infinite alternate" }}
         />

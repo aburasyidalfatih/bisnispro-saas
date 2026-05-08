@@ -169,7 +169,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
             <Link href={resolveHref("/")} className="flex items-center gap-3 shrink-0 group">
               {tenant.logo ? (
                 <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-border shadow-sm transition-transform duration-300 group-hover:scale-105">
-                  <Image src={tenant.logo} alt={tenant.name} fill sizes="48px" className="object-cover" />
+                  <Image src={tenant.logo} alt={tenant.name} fill priority sizes="48px" className="object-cover" />
                 </div>
               ) : (
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground font-extrabold text-xl shadow-sm transition-transform duration-300 group-hover:scale-105">
