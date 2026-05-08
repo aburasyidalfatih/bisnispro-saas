@@ -299,9 +299,11 @@ export default function UsersPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-44 glass rounded-xl">
-                            <DropdownMenuItem className="gap-2 rounded-lg" onClick={() => handleLoginAs(u.id, u.name)}>
-                              <LogIn className="h-4 w-4" /> Login Sebagai
-                            </DropdownMenuItem>
+                            {session?.user?.isSuperAdmin && (
+                              <DropdownMenuItem className="gap-2 rounded-lg" onClick={() => handleLoginAs(u.id, u.name)}>
+                                <LogIn className="h-4 w-4" /> Login Sebagai
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem className="gap-2 rounded-lg" onClick={() => toast({ title: "Edit", description: "Fitur edit segera hadir." })}>
                               <Pencil className="h-4 w-4" /> Edit
                             </DropdownMenuItem>

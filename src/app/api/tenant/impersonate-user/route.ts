@@ -19,14 +19,9 @@ export async function POST(req: Request) {
   if (parsed.error) return parsed.error
   const { userId, tenantId } = parsed.data
 
-  // Cek apakah caller adalah admin/owner tenant ini (atau super admin)
+  // Hanya super admin yang diizinkan menggunakan fitur impersonate user
   if (!session.user.isSuperAdmin) {
-    const callerTu = await db.tenantUser.findUnique({
-      where: { tenantId_userId: { tenantId, userId: session.user.id } },
-    })
-    if (!callerTu || !["owner", "admin"].includes(callerTu.role)) {
-      return NextResponse.json({ error: "Tidak punya izin" }, { status: 403 })
-    }
+    return NextResponse.json({ error: "Fitur ini dinonaktifkan untuk admin tenant demi menjaga kepercayaan privasi user." }, { status: 403 })
   }
 
   // Cari target user
