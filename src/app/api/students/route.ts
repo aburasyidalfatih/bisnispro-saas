@@ -36,9 +36,9 @@ export async function GET(req: Request) {
       where,
       include: {
         classroom: { select: { id: true, name: true } },
-        walletAccount: { select: { id: true, balance: true } },
+        WalletAccount: { select: { id: true, balance: true } },
         parents: { select: { id: true, relation: true } },
-        _count: { select: { invoices: { where: { deletedAt: null } } } },
+        _count: { select: { Invoice: { where: { deletedAt: null } } } },
       },
       orderBy: { name: "asc" },
       skip: (page - 1) * take,
@@ -47,8 +47,17 @@ export async function GET(req: Request) {
     db.student.count({ where }),
   ])
 
+  const formattedStudents = students.map((s: any) => ({
+    ...s,
+    walletAccount: s.WalletAccount,
+    _count: {
+      ...s._count,
+      invoices: s._count?.Invoice,
+    }
+  }))
+
   return NextResponse.json({
-    data: students,
+    data: formattedStudents,
     meta: { total, page, totalPages: Math.ceil(total / take) },
   })
 }
