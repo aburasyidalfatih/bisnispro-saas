@@ -278,7 +278,6 @@ export default function WebsiteAboutPage() {
                 <Input type="number" value={form.settings?.studentCount || ""} 
                   onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, studentCount: parseInt(e.target.value) || 0 } }))}
                   placeholder="Misal: 500" className="rounded-xl" />
-                <p className="text-[11px] text-muted-foreground">Data internal untuk manajemen platform.</p>
               </div>
             </div>
           </CardContent>
