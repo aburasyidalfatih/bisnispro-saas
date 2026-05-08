@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/daily-drip",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/auto-debet-spp",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

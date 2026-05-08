@@ -49,6 +49,10 @@ import {
   Store,
   Sparkles,
   MonitorSmartphone,
+  Heart,
+  CalendarCheck,
+  FileCheck,
+  BadgeDollarSign,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -152,11 +156,13 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
         {
           label: "Akademik & Siswa",
           href: `${basePath}/students`,
-          icon: Users,
+          icon: GraduationCap,
           children: [
             { label: "Daftar Siswa", href: `${basePath}/students`, icon: UserCog },
-            { label: "Proses Kenaikan", href: `${basePath}/students/promotion`, icon: TrendingUp },
-            { label: "Absensi", href: `${basePath}/attendance`, icon: ClipboardList },
+            { label: "Manajemen Kelas", href: `${basePath}/students/classrooms`, icon: BookOpen },
+            { label: "Absensi Siswa", href: `${basePath}/attendance`, icon: CalendarCheck },
+            { label: "Absensi Guru", href: `${basePath}/attendance/gtk`, icon: Users },
+            { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
             { label: "E-Rapor", href: `${basePath}/reports/grades`, icon: FileText },
           ],
         },
@@ -164,11 +170,29 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           label: "Keuangan & Kas",
           href: `${basePath}/finance`,
           icon: Wallet,
+          children: [
+            { label: "Dashboard Keuangan", href: `${basePath}/finance`, icon: PieChart },
+            { label: "Tagihan Siswa", href: `${basePath}/finance/invoice`, icon: Receipt },
+            { label: "Jenis Tagihan", href: `${basePath}/finance/billing-types`, icon: BadgeDollarSign },
+            { label: "Cashflow", href: `${basePath}/finance/cashflow`, icon: TrendingUp },
+          ],
         },
         {
           label: "E-Kantin",
           href: `${basePath}/canteen`,
           icon: Store,
+          children: [
+            { label: "Overview Kantin", href: `${basePath}/canteen`, icon: LayoutDashboard },
+            { label: "Merchant", href: `${basePath}/canteen/merchants`, icon: Store },
+          ],
+        },
+        {
+          label: "Donasi & Infaq",
+          href: `${basePath}/donation/campaigns`,
+          icon: Heart,
+          children: [
+            { label: "Kampanye Donasi", href: `${basePath}/donation/campaigns`, icon: Heart },
+          ],
         },
         {
           label: "Data Master",
@@ -177,10 +201,9 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           children: [
             { label: "Data Admin", href: `${basePath}/users?role=admin`, icon: ShieldCheck },
             { label: "Data Guru", href: `${basePath}/users?role=guru`, icon: Users },
-            { label: "Data Siswa", href: `${basePath}/users?role=siswa`, icon: Users },
+            { label: "Data Siswa", href: `${basePath}/students`, icon: GraduationCap },
             { label: "Data Orang Tua", href: `${basePath}/users?role=orangtua`, icon: Users },
             { label: "Ekspor/Impor Data", href: `${basePath}/users/import`, icon: Download },
-            { label: "Peran & Izin", href: `${basePath}/users/roles`, icon: ShieldCheck },
           ],
         },
       ],
@@ -293,6 +316,12 @@ function getGTKMenu(basePath: string): MenuSection[] {
     {
       items: [
         { label: "Dashboard", href: basePath, icon: LayoutDashboard },
+      ],
+    },
+    {
+      title: "Kehadiran",
+      items: [
+        { label: "Absensi Saya", href: `${basePath}/absensi`, icon: CalendarCheck },
       ],
     },
     {

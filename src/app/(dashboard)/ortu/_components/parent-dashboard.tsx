@@ -5,7 +5,7 @@ import { Bell, CreditCard, CalendarDays, FileText, CheckCircle, Clock, BookOpen,
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-
+import Link from "next/link"
 import { Wallet, PlusCircle } from "lucide-react"
 
 export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] }) {
@@ -16,12 +16,12 @@ export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] })
 
   const layanan = [
     { label: "Tagihan", icon: CreditCard, color: "bg-rose-500/10 text-rose-600", href: "/ortu/tagihan" },
+    { label: "Kehadiran", icon: ClipboardList, color: "bg-emerald-500/10 text-emerald-600", href: "/ortu/absensi" },
+    { label: "Izin/Sakit", icon: FileCheck, color: "bg-amber-500/10 text-amber-600", href: "/ortu/izin" },
+    { label: "Donasi", icon: Award, color: "bg-pink-500/10 text-pink-600", href: "/ortu/donasi" },
     { label: "Akademik", icon: BookOpen, color: "bg-blue-500/10 text-blue-600", href: "#" },
-    { label: "Kehadiran", icon: ClipboardList, color: "bg-emerald-500/10 text-emerald-600", href: "#" },
     { label: "Jadwal", icon: Calendar, color: "bg-purple-500/10 text-purple-600", href: "#" },
-    { label: "Pesan Guru", icon: MessageSquare, color: "bg-cyan-500/10 text-cyan-600", href: "#" },
-    { label: "PPDB", icon: Users, color: "bg-amber-500/10 text-amber-600", href: "/ortu/ppdb" },
-    { label: "Ekstrakurikuler", icon: Activity, color: "bg-pink-500/10 text-pink-600", href: "#" },
+    { label: "PPDB", icon: Users, color: "bg-cyan-500/10 text-cyan-600", href: "/ortu/ppdb" },
     { label: "Prestasi", icon: Award, color: "bg-indigo-500/10 text-indigo-600", href: "#" },
   ]
 
@@ -73,29 +73,35 @@ export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] })
            </div>
         </div>
 
-        {/* SchoolPay Wallet Card (EPIC 1) */}
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 shadow-lg shadow-indigo-500/30 text-white relative overflow-hidden">
-           <div className="absolute top-0 right-0 p-4 opacity-20">
-              <Wallet className="h-24 w-24 -mr-6 -mt-6" />
-           </div>
-           <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                 <p className="text-sm font-medium text-white/80">Total Saldo SchoolPay</p>
-                 <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-0">Wallet Aktif</Badge>
-              </div>
-              <h2 className="text-3xl font-black mb-1">Rp {totalBalance.toLocaleString("id-ID")}</h2>
-              <p className="text-xs text-white/70 mb-5">Terakumulasi dari {childrenData.length} rekening siswa</p>
-              
-              <div className="flex gap-3">
-                 <Button size="sm" className="bg-white text-indigo-600 hover:bg-white/90 rounded-xl text-xs h-9">
-                    <PlusCircle className="mr-1.5 h-3.5 w-3.5" /> Top Up Saldo
-                 </Button>
-                 <Button size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-xl text-xs h-9 bg-transparent">
-                    Riwayat Transaksi
-                 </Button>
-              </div>
-           </div>
-        </div>
+        {/* SchoolPay Wallet Card (EPIC 1) - PREMIUM ONLY */}
+        {tenant?.plan !== "free" && (
+          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 shadow-lg shadow-indigo-500/30 text-white relative overflow-hidden">
+             <div className="absolute top-0 right-0 p-4 opacity-20">
+                <Wallet className="h-24 w-24 -mr-6 -mt-6" />
+             </div>
+             <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                   <p className="text-sm font-medium text-white/80">Total Saldo SchoolPay</p>
+                   <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-0">Wallet Aktif</Badge>
+                </div>
+                <h2 className="text-3xl font-black mb-1">Rp {totalBalance.toLocaleString("id-ID")}</h2>
+                <p className="text-xs text-white/70 mb-5">Terakumulasi dari {childrenData.length} rekening siswa</p>
+                
+                <div className="flex gap-3">
+                   <Link href="/ortu/wallet/topup">
+                     <Button size="sm" className="bg-white text-indigo-600 hover:bg-white/90 rounded-xl text-xs h-9">
+                        <PlusCircle className="mr-1.5 h-3.5 w-3.5" /> Top Up Saldo
+                     </Button>
+                   </Link>
+                   <Link href="/ortu/wallet">
+                     <Button size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-xl text-xs h-9 bg-transparent">
+                        Riwayat Transaksi
+                     </Button>
+                   </Link>
+                </div>
+             </div>
+          </div>
+        )}
 
         {/* Tanggungan Siswa (Anak) */}
         <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
@@ -121,7 +127,7 @@ export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] })
                    <div className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 text-[10px] font-bold shrink-0">
                      {child.isActive ? "Aktif" : "Nonaktif"}
                    </div>
-                   {child.walletAccount && (
+                   {tenant?.plan !== "free" && child.walletAccount && (
                      <span className="text-[10px] font-bold text-primary">Rp {child.walletAccount.balance.toLocaleString("id-ID")}</span>
                    )}
                  </div>

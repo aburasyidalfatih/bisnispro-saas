@@ -38,6 +38,7 @@ interface CreateTransactionParams {
   customerName: string
   customerEmail: string
   customerPhone?: string
+  metadata?: any
 }
 
 export async function getPaymentChannels(tenantId?: string) {
@@ -74,7 +75,7 @@ export async function createTransaction(params: CreateTransactionParams) {
     customer_phone: params.customerPhone || "",
     order_items: [
       {
-        name: `Paket ${params.plan}`,
+        name: params.plan === "WALLET_TOPUP" ? "Top Up Saldo SchoolPay" : `Paket ${params.plan}`,
         price: params.amount,
         quantity: 1,
       },
@@ -104,6 +105,7 @@ export async function createTransaction(params: CreateTransactionParams) {
         planId: params.planId,
         tripayRef: result.data.reference,
         expiredAt: new Date(result.data.expired_time * 1000),
+        metadata: params.metadata || {},
       },
     })
   }
@@ -174,11 +176,45 @@ export async function handleCallback(body: TripayCallbackBody) {
     },
   })
 
-  // Step 4: Upgrade tenant plan jika pembayaran berhasil
+  // Step 4: Upgrade tenant plan atau TopUp Wallet jika pembayaran berhasil
   if (body.status === "PAID") {
-    const plan = await db.subscriptionPlan.findFirst({
-      where: payment.planId ? { id: payment.planId } : { slug: payment.plan },
-    })
+    if (payment.plan === "WALLET_TOPUP") {
+      await retryAsync(
+        async () => {
+           const metadata = payment.metadata as any
+           if (!metadata?.walletId) throw new Error("Wallet ID not found in payment metadata")
+           
+           const wallet = await db.walletAccount.findUnique({ where: { id: metadata.walletId }})
+           if (!wallet) throw new Error("Wallet not found")
+           
+           // 1. Update Wallet Balance
+           const newBalance = wallet.balance + payment.amount
+           await db.walletAccount.update({
+             where: { id: wallet.id },
+             data: { balance: newBalance }
+           })
+           
+           // 2. Insert WalletTransaction
+           await db.walletTransaction.create({
+             data: {
+               walletId: wallet.id,
+               tenantId: payment.tenantId,
+               type: "DEPOSIT",
+               amount: payment.amount,
+               balanceBefore: wallet.balance,
+               balanceAfter: newBalance,
+               referenceId: payment.reference,
+               description: "Top-Up via Tripay",
+               status: "SUCCESS"
+             }
+           })
+        },
+        "topup-wallet"
+      )
+    } else {
+      const plan = await db.subscriptionPlan.findFirst({
+        where: payment.planId ? { id: payment.planId } : { slug: payment.plan },
+      })
 
     await retryAsync(
       async () => {
@@ -214,6 +250,7 @@ export async function handleCallback(body: TripayCallbackBody) {
       },
       "upgrade-plan"
     )
+    } // end else
   }
 
   return updatedPayment

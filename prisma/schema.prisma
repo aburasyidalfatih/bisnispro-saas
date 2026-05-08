@@ -74,6 +74,20 @@ model Tenant {
   WalletAccount        WalletAccount[]
   WalletTransaction    WalletTransaction[]
   Cashflow             Cashflow[]
+  BillingType          BillingType[]
+  Invoice              Invoice[]
+  InvoicePayment       InvoicePayment[]
+  Installment          Installment[]
+  CanteenMerchant      CanteenMerchant[]
+  CanteenProduct       CanteenProduct[]
+  CanteenOrder         CanteenOrder[]
+  CanteenWithdrawal    CanteenWithdrawal[]
+  AttendanceSession    AttendanceSession[]
+  AttendanceRecord     AttendanceRecord[]
+  StaffAttendance      StaffAttendance[]
+  AttendancePermit     AttendancePermit[]
+  DonationCampaign     DonationCampaign[]
+  Donation             Donation[]
 
   @@index([isActive])
   @@index([plan])
@@ -112,6 +126,7 @@ model User {
   verificationTokens   VerificationToken[]
   sentMessages         InternalMessage[]     @relation("MessageSender")
   receivedMessages     InternalMessage[]     @relation("MessageReceiver")
+  CanteenMerchant      CanteenMerchant?
 
   @@index([isActive])
   @@index([isSuperAdmin])
@@ -523,27 +538,28 @@ model Alumni {
 }
 
 model Staff {
-  id         String      @id @default(cuid())
-  tenantId   String
-  name       String
-  role       String
-  imageUrl   String?
-  bio        String?
-  sortOrder  Int         @default(0)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  email      String?
-  phone      String?
-  subject    String?
-  education  String?
-  instagram  String?
-  facebook   String?
-  tiktok     String?
-  youtube    String?
-  userId     String?
-  tenant     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user       User?       @relation(fields: [userId], references: [id])
-  classrooms Classroom[]
+  id              String            @id @default(cuid())
+  tenantId        String
+  name            String
+  role            String
+  imageUrl        String?
+  bio             String?
+  sortOrder       Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  email           String?
+  phone           String?
+  subject         String?
+  education       String?
+  instagram       String?
+  facebook        String?
+  tiktok          String?
+  youtube         String?
+  userId          String?
+  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user            User?             @relation(fields: [userId], references: [id])
+  classrooms      Classroom[]
+  StaffAttendance StaffAttendance[]
 
   @@index([tenantId])
   @@index([userId])
@@ -752,33 +768,37 @@ model Rekening {
 }
 
 model Student {
-  id            String          @id @default(cuid())
-  tenantId      String
-  userId        String?
-  noPendaftaran String?
-  nis           String?         @unique
-  nisn          String?         @unique
-  name          String
-  gender        String?
-  birthPlace    String?
-  birthDate     DateTime?
-  address       String?
-  phone         String?
-  email         String?
-  fatherName    String?
-  motherName    String?
-  guardianName  String?
-  metadata      Json?
-  isActive      Boolean         @default(true)
-  syncedAt      DateTime?
-  classroomId   String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  tenant        Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user          User?           @relation(fields: [userId], references: [id])
-  classroom     Classroom?      @relation(fields: [classroomId], references: [id])
-  parents       StudentParent[]
-  WalletAccount WalletAccount?
+  id               String             @id @default(cuid())
+  tenantId         String
+  userId           String?
+  noPendaftaran    String?
+  nis              String?            @unique
+  nisn             String?            @unique
+  name             String
+  gender           String?
+  birthPlace       String?
+  birthDate        DateTime?
+  address          String?
+  phone            String?
+  email            String?
+  fatherName       String?
+  motherName       String?
+  guardianName     String?
+  metadata         Json?
+  isActive         Boolean            @default(true)
+  syncedAt         DateTime?
+  classroomId      String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user             User?              @relation(fields: [userId], references: [id])
+  classroom        Classroom?         @relation(fields: [classroomId], references: [id])
+  parents          StudentParent[]
+  WalletAccount    WalletAccount?
+  Invoice          Invoice[]
+  CanteenOrder     CanteenOrder[]
+  AttendanceRecord AttendanceRecord[]
+  AttendancePermit AttendancePermit[]
 
   @@index([tenantId])
   @@index([userId])
@@ -872,9 +892,10 @@ model Classroom {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  waliKelas Staff?    @relation(fields: [waliKelasId], references: [id])
-  students  Student[]
+  tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  waliKelas         Staff?              @relation(fields: [waliKelasId], references: [id])
+  students          Student[]
+  AttendanceSession AttendanceSession[]
 
   @@index([tenantId])
   @@map("classrooms")
@@ -998,4 +1019,365 @@ model InternalMessage {
   @@index([senderId])
   @@index([receiverId])
   @@map("internal_messages")
+}
+
+// ======================================================================
+// EPIC 2: BILLING & AUTO-DEBET SPP
+// ======================================================================
+
+// Jenis tagihan yang bisa dibuat sekolah (template)
+model BillingType {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String // "SPP", "Uang Gedung", "Seragam", dll
+  category    String   @default("SPP") // SPP, DAFTAR_ULANG, SERAGAM, BEBAS, LAINNYA
+  amount      Float
+  isRecurring Boolean  @default(false) // Jika true → Auto-Bill tiap bulan
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoices Invoice[]
+
+  @@index([tenantId])
+  @@map("billing_types")
+}
+
+// Tagihan siswa (1 tagihan per siswa per periode)
+model Invoice {
+  id            String    @id @default(cuid())
+  tenantId      String
+  studentId     String
+  billingTypeId String?
+  code          String    @unique // INV-2024-07-0001
+  title         String
+  amount        Float
+  amountPaid    Float     @default(0)
+  amountDue     Float // amount - amountPaid
+  dueDate       DateTime
+  month         Int? // 1-12, untuk SPP bulanan
+  year          Int?
+  status        String    @default("UNPAID") // UNPAID, PARTIAL, PAID, OVERDUE, CANCELLED
+  isAutoDebet   Boolean   @default(false) // Apakah didebet dari wallet otomatis?
+  notes         String?
+  deletedAt     DateTime? // Soft delete
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student      Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  billingType  BillingType?     @relation(fields: [billingTypeId], references: [id])
+  payments     InvoicePayment[]
+  installments Installment[]
+
+  @@index([tenantId])
+  @@index([studentId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("invoices")
+}
+
+// Pembayaran atas tagihan (bisa via Tripay, manual, atau Wallet)
+model InvoicePayment {
+  id         String    @id @default(cuid())
+  invoiceId  String
+  tenantId   String
+  amount     Float
+  method     String // WALLET, TRANSFER, CASH, TRIPAY
+  reference  String? // ID transaksi eksternal (Tripay ref, dsb)
+  proofUrl   String? // Bukti transfer manual
+  status     String    @default("PENDING") // PENDING, VERIFIED, REJECTED
+  verifiedAt DateTime?
+  verifiedBy String? // userId admin yang verifikasi
+  notes      String?
+  paidAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@index([tenantId])
+  @@index([status])
+  @@map("invoice_payments")
+}
+
+// Cicilan tagihan besar
+model Installment {
+  id        String    @id @default(cuid())
+  invoiceId String
+  tenantId  String
+  dueDate   DateTime
+  amount    Float
+  status    String    @default("UNPAID") // UNPAID, PAID
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@index([tenantId])
+  @@map("installments")
+}
+
+// ======================================================================
+// EPIC 3: E-KANTIN (CASHLESS CANTEEN)
+// ======================================================================
+
+// Merchant / Pedagang Kantin
+model CanteenMerchant {
+  id          String   @id @default(cuid())
+  tenantId    String
+  userId      String   @unique // Akun login si pedagang
+  name        String // "Warung Bu Siti"
+  description String?
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  balance     Float    @default(0) // Saldo kantin (pending withdrawal)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user        User                @relation(fields: [userId], references: [id])
+  products    CanteenProduct[]
+  orders      CanteenOrder[]
+  withdrawals CanteenWithdrawal[]
+
+  @@index([tenantId])
+  @@map("canteen_merchants")
+}
+
+// Menu / Produk Kantin
+model CanteenProduct {
+  id          String   @id @default(cuid())
+  merchantId  String
+  tenantId    String
+  name        String
+  description String?
+  imageUrl    String?
+  price       Float
+  stock       Int      @default(-1) // -1 = unlimited
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  merchant   CanteenMerchant    @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  orderItems CanteenOrderItem[]
+
+  @@index([merchantId])
+  @@index([tenantId])
+  @@map("canteen_products")
+}
+
+// Transaksi jual-beli di kantin
+model CanteenOrder {
+  id          String   @id @default(cuid())
+  tenantId    String
+  merchantId  String
+  studentId   String // Siswa yang membeli
+  total       Float
+  status      String   @default("COMPLETED") // PENDING, COMPLETED, CANCELLED
+  pinVerified Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  tenant   Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  merchant CanteenMerchant    @relation(fields: [merchantId], references: [id])
+  student  Student            @relation(fields: [studentId], references: [id])
+  items    CanteenOrderItem[]
+
+  @@index([tenantId])
+  @@index([merchantId])
+  @@index([studentId])
+  @@map("canteen_orders")
+}
+
+model CanteenOrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  name      String // Snapshot nama produk saat transaksi
+  price     Float
+  quantity  Int
+  subtotal  Float
+
+  order   CanteenOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product CanteenProduct @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@map("canteen_order_items")
+}
+
+// Penarikan dana merchant ke sekolah
+model CanteenWithdrawal {
+  id          String    @id @default(cuid())
+  tenantId    String
+  merchantId  String
+  amount      Float
+  status      String    @default("PENDING") // PENDING, PROCESSED, REJECTED
+  notes       String?
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  tenant   Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  merchant CanteenMerchant @relation(fields: [merchantId], references: [id])
+
+  @@index([tenantId])
+  @@index([merchantId])
+  @@map("canteen_withdrawals")
+}
+
+// ======================================================================
+// EPIC 4: ABSENSI & DISIPLIN
+// ======================================================================
+
+// Sesi Absensi Harian (dibuat per hari oleh admin/guru)
+model AttendanceSession {
+  id          String   @id @default(cuid())
+  tenantId    String
+  classroomId String?
+  date        DateTime @db.Date
+  type        String   @default("DAILY") // DAILY, EXAM, EXTRACURRICULAR
+  createdBy   String
+  createdAt   DateTime @default(now())
+
+  tenant    Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  classroom Classroom?         @relation(fields: [classroomId], references: [id])
+  records   AttendanceRecord[]
+
+  @@unique([tenantId, classroomId, date])
+  @@index([tenantId])
+  @@index([date])
+  @@map("attendance_sessions")
+}
+
+// Rekaman absensi per-siswa
+model AttendanceRecord {
+  id        String    @id @default(cuid())
+  sessionId String
+  tenantId  String
+  studentId String
+  status    String // HADIR, IZIN, SAKIT, ALPHA
+  notes     String?
+  checkinAt DateTime?
+  proofUrl  String? // Foto/surat keterangan
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  session AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student Student           @relation(fields: [studentId], references: [id])
+  tenant  Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, studentId])
+  @@index([tenantId])
+  @@index([studentId])
+  @@map("attendance_records")
+}
+
+// Absensi Guru/Staf dengan Check-In/Out + GPS
+model StaffAttendance {
+  id           String    @id @default(cuid())
+  tenantId     String
+  staffId      String
+  date         DateTime  @db.Date
+  checkInAt    DateTime?
+  checkOutAt   DateTime?
+  checkInLat   Float?
+  checkInLng   Float?
+  checkInPhoto String?
+  status       String    @default("HADIR") // HADIR, IZIN, SAKIT, ALPHA
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  staff  Staff  @relation(fields: [staffId], references: [id])
+
+  @@unique([tenantId, staffId, date])
+  @@index([tenantId])
+  @@index([staffId])
+  @@map("staff_attendances")
+}
+
+// Pengajuan Izin/Sakit dari Orang Tua
+model AttendancePermit {
+  id          String    @id @default(cuid())
+  tenantId    String
+  studentId   String
+  submittedBy String // userId ortu
+  type        String // IZIN, SAKIT
+  startDate   DateTime  @db.Date
+  endDate     DateTime  @db.Date
+  reason      String
+  proofUrl    String?
+  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id])
+
+  @@index([tenantId])
+  @@index([studentId])
+  @@map("attendance_permits")
+}
+
+// ======================================================================
+// EPIC 5: CROWDFUNDING & DONASI
+// ======================================================================
+
+model DonationCampaign {
+  id              String    @id @default(cuid())
+  tenantId        String
+  title           String
+  description     String?   @db.Text
+  imageUrl        String?
+  targetAmount    Float
+  collectedAmount Float     @default(0)
+  startDate       DateTime
+  endDate         DateTime?
+  isPublic        Boolean   @default(true) // Bisa diakses tanpa login
+  isActive        Boolean   @default(true)
+  slug            String? // Untuk URL publik
+  deletedAt       DateTime? // Soft delete
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  donations Donation[]
+
+  @@index([tenantId])
+  @@index([isActive])
+  @@map("donation_campaigns")
+}
+
+model Donation {
+  id          String    @id @default(cuid())
+  campaignId  String
+  tenantId    String
+  donorName   String // Bisa anonymous
+  donorEmail  String?
+  userId      String? // Jika login → otomatis isi
+  amount      Float
+  method      String // WALLET, TRIPAY
+  reference   String? // ID transaksi Tripay
+  isAnonymous Boolean   @default(false)
+  message     String?
+  status      String    @default("PENDING") // PENDING, PAID
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  campaign DonationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([tenantId])
+  @@index([status])
+  @@map("donations")
 }

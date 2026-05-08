@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client'
-import { mockDeep, mockReset, DeepMockProxy } from 'vitest-mock-extended'
+import { mockDeep, mockReset } from 'vitest-mock-extended'
+import { beforeEach } from 'vitest'
 
 export const db = mockDeep<PrismaClient>()
 
-export default db
+beforeEach(() => {
+  mockReset(db)
+})

@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Home, Calendar, Wallet, User, FileText, MessageSquare } from "lucide-react"
+import { Home, Calendar, Wallet, User, FileText, MessageSquare, ClipboardList, CreditCard, Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function MobileBottomNav({ className }: { className?: string }) {
@@ -19,21 +19,20 @@ export function MobileBottomNav({ className }: { className?: string }) {
     { label: "Profil", icon: User, href: "/siswa/profil" },
   ] : isGTK ? [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
+    { label: "Absensi", icon: CalendarCheck, href: "/panel-gtk/absensi" },
     { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
-    { label: "Pesan", icon: MessageSquare, href: "/panel-gtk/messages" },
     { label: "Profil", icon: User, href: "/panel-gtk/profil" },
   ] : [
     { label: "Beranda", icon: Home, href: "/ortu" },
-    { label: "Akademik", icon: FileText, href: "/ortu/akademik" },
-    { label: "Tagihan", icon: Wallet, href: "/ortu/tagihan" },
+    { label: "Kehadiran", icon: ClipboardList, href: "/ortu/absensi" },
+    { label: "Tagihan", icon: CreditCard, href: "/ortu/tagihan" },
     { label: "Profil", icon: User, href: "/ortu/profil" },
   ]
 
-  const floatingAction = {
-    label: "Jadwal",
-    icon: Calendar,
-    href: `${baseRoute}/jadwal`
-  }
+  const floatingAction = isSiswa || isGTK
+    ? { label: "Jadwal", icon: Calendar, href: `${baseRoute}/jadwal` }
+    : { label: "Wallet", icon: Wallet, href: "/ortu/wallet" }
+
 
   return (
     <div className={cn("bg-background/95 backdrop-blur-md border-t border-border/50 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] px-6 pt-2 pb-6 z-50", className)}>

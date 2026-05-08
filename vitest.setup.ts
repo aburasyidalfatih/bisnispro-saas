@@ -1,16 +1,12 @@
-import { vi, beforeEach } from 'vitest'
-import { mockReset } from 'vitest-mock-extended'
-import { db } from './__mocks__/prisma'
+import { vi } from 'vitest'
+import { mockDeep } from 'vitest-mock-extended'
 
-beforeEach(() => {
-  mockReset(db)
-  vi.clearAllMocks()
-})
-
+// Mock modul Prisma
 vi.mock('@/lib/db', () => ({
-  db: db
+  db: mockDeep()
 }))
 
+// Mock NextAuth
 vi.mock('@/lib/auth', () => ({
   auth: vi.fn()
 }))
