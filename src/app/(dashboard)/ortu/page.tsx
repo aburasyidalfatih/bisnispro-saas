@@ -14,7 +14,7 @@ export default async function OrtuDashboardPage() {
         include: {
           student: {
             include: {
-              walletAccount: true,
+              WalletAccount: true,
               classroom: true
             }
           }
@@ -23,7 +23,10 @@ export default async function OrtuDashboardPage() {
     }
   })
 
-  const students = parentData?.studentParents?.map(sp => sp.student) || []
+  const students = parentData?.studentParents?.map(sp => ({
+    ...sp.student,
+    walletAccount: (sp.student as any).WalletAccount
+  })) || []
 
   return <ParentDashboard childrenData={students} />
 }
