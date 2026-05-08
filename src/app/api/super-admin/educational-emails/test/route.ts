@@ -28,11 +28,13 @@ export async function POST(req: Request) {
       .replace(/{{name}}/g, dummyOwnerName)
       .replace(/{{schoolName}}/g, dummySchoolName)
     
-    const content = campaign.content
+    let rawContent = campaign.content
       .replace(/{{name}}/g, dummyOwnerName)
       .replace(/{{schoolName}}/g, dummySchoolName)
 
-    const trackableContent = content.replace(/(https?:\/\/[^\s<>'")]+)/g, (url) => {
+    rawContent = rawContent.replace(/https:\/\/schoolpro\.id\/admin/g, `https://sekolah-uji-coba.schoolpro.id/admin`)
+
+    const trackableContent = rawContent.replace(/(https?:\/\/[^\s<>'")]+)/g, (url) => {
       return `<a href="${url}" style="display:inline-block; margin-top:10px; margin-bottom:10px; padding:12px 24px; background-color:#2563eb; color:#ffffff; text-decoration:none; border-radius:6px; font-weight:600;">🔗 Buka Tautan</a><br/><span style="font-size:12px; color:#6b7280;">(${url})</span>`
     })
     

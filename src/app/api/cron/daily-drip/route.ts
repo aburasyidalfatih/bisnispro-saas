@@ -85,11 +85,19 @@ export async function GET(req: Request) {
           })
 
           const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"
+          const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+          
+          const tenantUrl = tenant.customDomain 
+            ? `https://${tenant.customDomain}` 
+            : `https://${tenant.slug}.${rootDomain}`
 
           // Buat regex untuk membungkus semua tag <a href="..."> menjadi tautan tracking
-          const rawContent = campaignToSend.content
+          let rawContent = campaignToSend.content
             .replace(/{{name}}/g, owner.name)
             .replace(/{{schoolName}}/g, tenant.name)
+
+          // Ubah link statis https://schoolpro.id/admin menjadi link dinamis tenant
+          rawContent = rawContent.replace(/https:\/\/schoolpro\.id\/admin/g, `${tenantUrl}/admin`)
 
           // Ganti link mentah (https://...) dengan link wrapper & berikan gaya tombol yang menarik
           const trackableContent = rawContent.replace(/(https?:\/\/[^\s<>'")]+)/g, (url) => {
