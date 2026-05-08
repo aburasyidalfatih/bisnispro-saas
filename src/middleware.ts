@@ -111,11 +111,43 @@ export default async function middleware(request: NextRequest) {
       return res
     }
 
-    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/member")
+    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
     if (isProtected && !session) {
       return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+    }
+
+    // ROLE-BASED STRICT ISOLATION
+    if (session) {
+      const impersonateRole = request.cookies.get("impersonate-user-role")?.value
+      const isSuperAdmin = session.user?.isSuperAdmin
+      const isAffiliate = session.user?.isAffiliate
+      const activeRole = impersonateRole || session.user?.tenants?.[0]?.role
+
+      if (pathname.startsWith("/admin")) {
+        if (!isSuperAdmin && !isAffiliate && activeRole !== "owner" && activeRole !== "admin") {
+          if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+          if (activeRole === "siswa" || activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+          return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+        }
+      }
+
+      if (pathname.startsWith("/panel-gtk")) {
+        if (!isSuperAdmin && activeRole !== "guru") {
+          if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
+          if (activeRole === "siswa" || activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+          return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+        }
+      }
+
+      if (pathname.startsWith("/ortu")) {
+        if (!isSuperAdmin && activeRole !== "siswa" && activeRole !== "orangtua") {
+          if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
+          if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+          return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+        }
+      }
     }
 
     if (pathname.startsWith("/super-admin") && session && !session.user?.isSuperAdmin) {
@@ -141,7 +173,7 @@ export default async function middleware(request: NextRequest) {
       } else if (session.user?.tenants?.[0]?.role === "guru") {
         return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
       } else if (session.user?.tenants?.[0]?.role === "siswa" || session.user?.tenants?.[0]?.role === "orangtua") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/member", request.url)))
+        return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
       } else {
         return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
       }

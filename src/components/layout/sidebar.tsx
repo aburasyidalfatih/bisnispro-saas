@@ -548,8 +548,8 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
     sections = getGTKMenu("/panel-gtk")
     homeHref = "/panel-gtk"
   } else {
-    sections = getMemberMenu("/member")
-    homeHref = "/member"
+    sections = getMemberMenu("/ortu")
+    homeHref = "/ortu"
   }
 
   // Auto-open parent menu if child is active
