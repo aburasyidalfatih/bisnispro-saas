@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 
 const DEFAULT_CAMPAIGNS = [
   {
@@ -50,7 +49,7 @@ const DEFAULT_CAMPAIGNS = [
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     if (!session?.user?.isSuperAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -86,7 +85,7 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     if (!session?.user?.isSuperAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }

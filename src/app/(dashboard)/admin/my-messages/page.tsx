@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { MessageSquare, Loader2, Inbox, Mail, Check, Trash2, ChevronDown, ChevronUp, Users } from "lucide-react"
+import { MessageSquare, Loader2, Inbox, Mail, Check, Trash2, ChevronDown, ChevronUp, Users, Globe } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { cn } from "@/lib/utils"
