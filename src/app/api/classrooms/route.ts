@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   const classrooms = await db.classroom.findMany({
     where: { tenantId },
     include: { _count: { select: { students: true } } },
-    orderBy: [{ grade: "asc" }, { name: "asc" }],
+    orderBy: [{ level: "asc" }, { name: "asc" }],
   })
   return NextResponse.json(classrooms)
 }
