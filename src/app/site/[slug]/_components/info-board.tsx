@@ -147,7 +147,8 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
             <div className="space-y-6 flex-1">
               {artikel.length > 0 ? artikel.map((item, idx) => (
                 <Link key={idx} href={resolveHref(`/berita/${item.id}`)} className="flex gap-4 group cursor-pointer">
-                    <div className="relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border bg-muted">
+                  <div className="relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border bg-muted">
+                    {item.featuredImage ? (
                       <Image 
                         src={item.featuredImage} 
                         alt={item.title} 
