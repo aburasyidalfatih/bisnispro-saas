@@ -87,12 +87,6 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
                 <h3 className="text-xl font-bold text-foreground">{principalName}</h3>
                 <p className="text-primary font-medium mt-1">{principalTitle}</p>
               </div>
-              {/* Signature (Simulated with a fancy font or just text) */}
-              <div className="hidden sm:block opacity-60">
-                <span className="font-serif italic text-3xl text-foreground">
-                  {principalName.split(' ')[1] || principalName.split(' ')[0]}
-                </span>
-              </div>
             </div>
           </div>
 
