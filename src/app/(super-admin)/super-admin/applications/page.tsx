@@ -58,6 +58,7 @@ export default function SuperAdminApplicationsPage() {
   // Bulk action states
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [bulkActionModalOpen, setBulkActionModalOpen] = useState(false)
+  const [bulkProgress, setBulkProgress] = useState({ total: 0, current: 0, show: false })
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("")
@@ -123,28 +124,57 @@ export default function SuperAdminApplicationsPage() {
         return
       }
 
-      const payload = isBulk 
-        ? { ids: selectedIds, status: actionType, adminMessage }
-        : { id: selectedApp?.id, status: actionType, adminMessage }
+      const targetIds = isBulk ? selectedIds : [selectedApp?.id as string]
+      
+      if (isBulk) {
+        setBulkProgress({ total: targetIds.length, current: 0, show: true })
+        let successCount = 0
+        let failCount = 0
 
-      const res = await fetch("/api/super-admin/applications", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
+        for (let i = 0; i < targetIds.length; i++) {
+          const id = targetIds[i]
+          try {
+            const res = await fetch("/api/super-admin/applications", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id, status: actionType, adminMessage }),
+            })
+            if (res.ok) successCount++
+            else failCount++
+          } catch (e) {
+            failCount++
+          }
+          setBulkProgress(prev => ({ ...prev, current: i + 1 }))
+        }
 
-      if (res.ok) {
-        toast({ title: "Berhasil", description: `Pengajuan telah di-${actionType.toLowerCase()}.` })
-        setAdminMessage("")
-        setSelectedApp(null)
-        setActionModalOpen(false)
-        setBulkActionModalOpen(false)
-        if (isBulk) setSelectedIds([])
-        fetchApps()
+        toast({ 
+          title: "Proses Masal Selesai", 
+          description: `${successCount} berhasil, ${failCount} gagal.` 
+        })
       } else {
-        const errorData = await res.json()
-        toast({ title: "Error", description: errorData.error || "Terjadi kesalahan", variant: "destructive" })
+        const res = await fetch("/api/super-admin/applications", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: targetIds[0], status: actionType, adminMessage }),
+        })
+
+        if (res.ok) {
+          toast({ title: "Berhasil", description: `Pengajuan telah di-${actionType.toLowerCase()}.` })
+        } else {
+          const errorData = await res.json()
+          toast({ title: "Error", description: errorData.error || "Terjadi kesalahan", variant: "destructive" })
+        }
       }
+
+      setAdminMessage("")
+      setSelectedApp(null)
+      setActionModalOpen(false)
+      setBulkActionModalOpen(false)
+      if (isBulk) {
+        setSelectedIds([])
+        setBulkProgress({ total: 0, current: 0, show: false })
+      }
+      fetchApps()
     } catch (error) {
       toast({ title: "Error", description: "Gagal memproses permintaan.", variant: "destructive" })
     } finally {
@@ -420,30 +450,49 @@ export default function SuperAdminApplicationsPage() {
                 : `Tindakan ini akan diproses untuk seluruh ${selectedIds.length} pengajuan yang dipilih secara masal.`}
             </DialogDescription>
           </DialogHeader>
-          {(actionType === "REVISION" || actionType === "REJECTED") && (
-            <div className="space-y-3 py-4">
-              <Label>Alasan (Akan dikirim ke semua)</Label>
-              <Textarea 
-                placeholder="Tulis alasan..." 
-                value={adminMessage}
-                onChange={(e) => setAdminMessage(e.target.value)}
-                className="min-h-[100px]"
-              />
+          
+          {bulkProgress.show ? (
+            <div className="py-8 space-y-4">
+              <div className="flex justify-between text-sm font-medium">
+                <span>Memproses...</span>
+                <span>{bulkProgress.current} / {bulkProgress.total}</span>
+              </div>
+              <div className="w-full bg-secondary rounded-full h-3 overflow-hidden">
+                <div 
+                  className="bg-primary h-full transition-all duration-300 ease-out"
+                  style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground text-center">Mohon jangan tutup jendela ini hingga proses selesai.</p>
             </div>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setBulkActionModalOpen(false)}>Batal</Button>
-            <Button 
-              className={cn(
-                actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : "bg-rose-500 hover:bg-rose-600",
-                "text-white"
+          ) : (
+            <>
+              {(actionType === "REVISION" || actionType === "REJECTED") && (
+                <div className="space-y-3 py-4">
+                  <Label>Alasan (Akan dikirim ke semua)</Label>
+                  <Textarea 
+                    placeholder="Tulis alasan..." 
+                    value={adminMessage}
+                    onChange={(e) => setAdminMessage(e.target.value)}
+                    className="min-h-[100px]"
+                  />
+                </div>
               )}
-              onClick={handleUpdateStatus}
-              disabled={isUpdating || ((actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim())}
-            >
-              {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus Masal" : "Proses Masal"}
-            </Button>
-          </DialogFooter>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setBulkActionModalOpen(false)} disabled={isUpdating}>Batal</Button>
+                <Button 
+                  className={cn(
+                    actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : "bg-rose-500 hover:bg-rose-600",
+                    "text-white"
+                  )}
+                  onClick={handleUpdateStatus}
+                  disabled={isUpdating || ((actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim())}
+                >
+                  {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus Masal" : "Proses Masal"}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
 
