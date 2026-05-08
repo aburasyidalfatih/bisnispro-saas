@@ -2,6 +2,39 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 
+export async function GET(req: Request) {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const currentTenant = session.user.tenants?.[0]
+    if (!currentTenant) {
+      return NextResponse.json({ error: "No tenant found" }, { status: 400 })
+    }
+
+    const staff = await db.staff.findFirst({
+      where: {
+        tenantId: currentTenant.id,
+        userId: session.user.id
+      }
+    })
+
+    if (!staff) {
+      return NextResponse.json({ error: "Profil Staff tidak ditemukan" }, { status: 404 })
+    }
+
+    return NextResponse.json(staff)
+  } catch (error: any) {
+    console.error("Error fetching GTK profile:", error)
+    return NextResponse.json(
+      { error: "Gagal mengambil profil", details: error.message },
+      { status: 500 }
+    )
+  }
+}
+
 export async function PATCH(req: Request) {
   try {
     const session = await auth()
