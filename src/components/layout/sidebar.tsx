@@ -262,6 +262,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           if (item.label === "PPDB Online") return access.enable_ppdb === true;
           if (item.label === "Keuangan & Kas") return access.enable_finance === true;
           if (item.label === "E-Kantin") return access.enable_finance === true; // kantin terkait finance
+          if (item.label === "Donasi & Infaq") return false; // Fitur PRO saja
           if (item.label === "Akademik & Siswa") return false; // always false for free? Actually, we didn't add this toggle. Let's make it false or true depending on requirements. Let's make it false for free plan to encourage upgrade, or just true. Let's keep it true.
           return true; // Data master dll
         });
