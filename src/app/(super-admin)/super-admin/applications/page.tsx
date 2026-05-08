@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
 import { 
   CheckCircle, XCircle, Clock, RefreshCcw, Trash2,
-  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User
+  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User, Search
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { checkDataCompleteness, type CompletenessLevel } from "@/lib/utils/data-completeness"
@@ -56,6 +57,20 @@ export default function SuperAdminApplicationsPage() {
   // Bulk action states
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [bulkActionModalOpen, setBulkActionModalOpen] = useState(false)
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredApps = useMemo(() => {
+    if (!searchQuery) return apps
+    const query = searchQuery.toLowerCase()
+    return apps.filter(app => 
+      app.schoolName.toLowerCase().includes(query) ||
+      app.adminEmail.toLowerCase().includes(query) ||
+      (app.regency && app.regency.toLowerCase().includes(query)) ||
+      (app.province && app.province.toLowerCase().includes(query))
+    )
+  }, [apps, searchQuery])
 
   const fetchApps = () => {
     fetch("/api/super-admin/applications")
@@ -130,10 +145,10 @@ export default function SuperAdminApplicationsPage() {
   }
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === apps.length) {
+    if (selectedIds.length === filteredApps.length && filteredApps.length > 0) {
       setSelectedIds([])
     } else {
-      setSelectedIds(apps.map(a => a.id))
+      setSelectedIds(filteredApps.map(a => a.id))
     }
   }
 
@@ -171,11 +186,22 @@ export default function SuperAdminApplicationsPage() {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Pengajuan Sekolah Baru</h1>
           <p className="text-muted-foreground mt-1 text-sm">Validasi dan tinjau pendaftaran tenant dari sekolah.</p>
         </div>
-        <div className="flex gap-2">
-          <Badge variant="secondary" className="px-3 py-1 rounded-lg">{apps.length} Total Pengajuan</Badge>
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-3 py-1 rounded-lg">
-            {apps.filter(a => a.status === 'PENDING').length} Perlu Tinjauan
-          </Badge>
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Cari nama, email, kota..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-10 rounded-xl w-full"
+            />
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Badge variant="secondary" className="px-3 py-1 rounded-lg flex items-center">{filteredApps.length} Hasil</Badge>
+            <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-3 py-1 rounded-lg flex items-center">
+              {filteredApps.filter(a => a.status === 'PENDING').length} Perlu Tinjauan
+            </Badge>
+          </div>
         </div>
       </div>
 
@@ -206,7 +232,7 @@ export default function SuperAdminApplicationsPage() {
                   <input 
                     type="checkbox"
                     className="h-4 w-4 rounded border-gray-300 accent-primary"
-                    checked={apps.length > 0 && selectedIds.length === apps.length} 
+                    checked={filteredApps.length > 0 && selectedIds.length === filteredApps.length} 
                     onChange={toggleSelectAll} 
                   />
                 </th>
@@ -220,12 +246,12 @@ export default function SuperAdminApplicationsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              {apps.length === 0 && (
+              {filteredApps.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran.</td>
+                  <td colSpan={8} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran yang sesuai pencarian.</td>
                 </tr>
               )}
-              {apps.map((app) => (
+              {filteredApps.map((app) => (
                 <tr key={app.id} className={cn("hover:bg-muted/10 transition-colors", selectedIds.includes(app.id) && "bg-muted/30")}>
                   <td className="px-4 py-4 text-center">
                     <input 
