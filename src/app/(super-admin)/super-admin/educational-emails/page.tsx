@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, Mail, Save, Clock, ChevronRight, Check } from "lucide-react"
+import { Loader2, Mail, Save, Clock, ChevronRight, Check, Send } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 
 interface Campaign {
   id: string
@@ -33,6 +34,10 @@ export default function EducationalEmailsPage() {
   const [loading, setLoading] = useState(true)
   const [savingId, setSavingId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<number | null>(null)
+  
+  const [isTestDialogOpen, setIsTestDialogOpen] = useState(false)
+  const [testEmailAddress, setTestEmailAddress] = useState("")
+  const [isTesting, setIsTesting] = useState(false)
 
   useEffect(() => {
     fetch("/api/super-admin/educational-emails")
@@ -67,6 +72,32 @@ export default function EducationalEmailsPage() {
   }
 
   if (!session?.user?.isSuperAdmin) return null
+
+  async function handleTestSend() {
+    if (!testEmailAddress) {
+      toast({ variant: "destructive", title: "Error", description: "Silakan masukkan email tujuan" })
+      return
+    }
+
+    setIsTesting(true)
+    try {
+      const res = await fetch("/api/super-admin/educational-emails/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ campaignId: activeCampaign.id, testEmail: testEmailAddress }),
+      })
+      
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Gagal mengirim test email")
+      
+      toast({ title: "Berhasil", description: "Test email berhasil dikirim!" })
+      setIsTestDialogOpen(false)
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Error", description: error.message })
+    } finally {
+      setIsTesting(false)
+    }
+  }
 
   if (loading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
@@ -136,12 +167,23 @@ export default function EducationalEmailsPage() {
                       Email ini dikirim {activeCampaign.dayOffset} hari setelah pendaftaran disetujui.
                     </CardDescription>
                   </div>
-                  <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-full">
-                    <Switch 
-                      checked={activeCampaign.isActive} 
-                      onCheckedChange={(val) => handleUpdate(activeCampaign.dayOffset, "isActive", val)} 
-                    />
-                    <Label className="text-xs font-semibold cursor-pointer">{activeCampaign.isActive ? 'Aktif' : 'Nonaktif'}</Label>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setIsTestDialogOpen(true)}
+                      className="gap-2"
+                    >
+                      <Send className="h-4 w-4" />
+                      Tes Kirim
+                    </Button>
+                    <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-full">
+                      <Switch 
+                        checked={activeCampaign.isActive} 
+                        onCheckedChange={(val) => handleUpdate(activeCampaign.dayOffset, "isActive", val)} 
+                      />
+                      <Label className="text-xs font-semibold cursor-pointer">{activeCampaign.isActive ? 'Aktif' : 'Nonaktif'}</Label>
+                    </div>
                   </div>
                 </div>
 
@@ -205,6 +247,32 @@ export default function EducationalEmailsPage() {
           )}
         </div>
       </div>
+
+      <Dialog open={isTestDialogOpen} onOpenChange={setIsTestDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Kirim Test Email</DialogTitle>
+            <DialogDescription>
+              Masukkan alamat email Anda untuk menerima pratinjau bagaimana email "{activeCampaign?.title}" ini akan terlihat di inbox penerima.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Input 
+              type="email" 
+              placeholder="Contoh: email-anda@gmail.com" 
+              value={testEmailAddress}
+              onChange={(e) => setTestEmailAddress(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsTestDialogOpen(false)} disabled={isTesting}>Batal</Button>
+            <Button onClick={handleTestSend} disabled={isTesting || !testEmailAddress}>
+              {isTesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+              Kirim Sekarang
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

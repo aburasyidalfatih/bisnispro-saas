@@ -87,24 +87,31 @@ export async function GET(req: Request) {
           const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"
 
           // Buat regex untuk membungkus semua tag <a href="..."> menjadi tautan tracking
-          // Note: Ini mensyaratkan content ditulis dalam format HTML <a> atau kita regex link mentah
-          // Karena content diedit user di dashboard, biasanya ada link seperti https://schoolpro.id/super-admin/settings
-          // Lebih baik kita replace link http/https yang ada di dalam text
-          
           const rawContent = campaignToSend.content
             .replace(/{{name}}/g, owner.name)
             .replace(/{{schoolName}}/g, tenant.name)
 
-          // Ganti link mentah (https://...) dengan link wrapper
-          // Regex ini mendeteksi url yang berawalan http atau https
+          // Ganti link mentah (https://...) dengan link wrapper & berikan gaya tombol yang menarik
           const trackableContent = rawContent.replace(/(https?:\/\/[^\s]+)/g, (url) => {
             const encodedUrl = encodeURIComponent(url)
-            return `${appUrl}/api/track/click?logId=${dripLog.id}&url=${encodedUrl}`
+            const trackingUrl = `${appUrl}/api/track/click?logId=${dripLog.id}&url=${encodedUrl}`
+            return `<a href="${trackingUrl}" style="display:inline-block; margin-top:10px; margin-bottom:10px; padding:12px 24px; background-color:#2563eb; color:#ffffff; text-decoration:none; border-radius:6px; font-weight:600;">🔗 Buka Tautan</a><br/><span style="font-size:12px; color:#6b7280;">(${url})</span>`
           })
 
+          const formattedContent = trackableContent.replace(/\n/g, '<br/>')
+
           const htmlContent = `
-            <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
-              ${trackableContent.replace(/\n/g, '<br/>')}
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
+              <div style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); padding: 32px 20px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">SchoolPro Edukasi</h1>
+              </div>
+              <div style="padding: 40px 32px; background-color: #ffffff; color: #374151; font-size: 16px; line-height: 1.7;">
+                ${formattedContent}
+              </div>
+              <div style="background-color: #f3f4f6; padding: 24px; text-align: center; color: #6b7280; font-size: 13px; border-top: 1px solid #e5e7eb;">
+                <p style="margin: 0 0 8px 0;">Email ini dikirim secara otomatis oleh sistem <strong>SchoolPro</strong>.</p>
+                <p style="margin: 0;">&copy; ${new Date().getFullYear()} SchoolPro Indonesia. All rights reserved.</p>
+              </div>
               <img src="${appUrl}/api/track/open?logId=${dripLog.id}" width="1" height="1" style="display:none;" />
             </div>
           `
