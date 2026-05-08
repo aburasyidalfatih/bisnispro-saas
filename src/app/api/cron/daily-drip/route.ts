@@ -92,7 +92,7 @@ export async function GET(req: Request) {
             .replace(/{{schoolName}}/g, tenant.name)
 
           // Ganti link mentah (https://...) dengan link wrapper & berikan gaya tombol yang menarik
-          const trackableContent = rawContent.replace(/(https?:\/\/[^\s]+)/g, (url) => {
+          const trackableContent = rawContent.replace(/(https?:\/\/[^\s<>'")]+)/g, (url) => {
             const encodedUrl = encodeURIComponent(url)
             const trackingUrl = `${appUrl}/api/track/click?logId=${dripLog.id}&url=${encodedUrl}`
             return `<a href="${trackingUrl}" style="display:inline-block; margin-top:10px; margin-bottom:10px; padding:12px 24px; background-color:#2563eb; color:#ffffff; text-decoration:none; border-radius:6px; font-weight:600;">🔗 Buka Tautan</a><br/><span style="font-size:12px; color:#6b7280;">(${url})</span>`

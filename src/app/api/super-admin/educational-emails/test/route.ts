@@ -32,9 +32,11 @@ export async function POST(req: Request) {
       .replace(/{{name}}/g, dummyOwnerName)
       .replace(/{{schoolName}}/g, dummySchoolName)
 
-    const formattedContent = content.replace(/\n/g, '<br/>').replace(/(https?:\/\/[^\s]+)/g, (url) => {
+    const trackableContent = content.replace(/(https?:\/\/[^\s<>'")]+)/g, (url) => {
       return `<a href="${url}" style="display:inline-block; margin-top:10px; margin-bottom:10px; padding:12px 24px; background-color:#2563eb; color:#ffffff; text-decoration:none; border-radius:6px; font-weight:600;">🔗 Buka Tautan</a><br/><span style="font-size:12px; color:#6b7280;">(${url})</span>`
     })
+    
+    const formattedContent = trackableContent.replace(/\n/g, '<br/>')
 
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
