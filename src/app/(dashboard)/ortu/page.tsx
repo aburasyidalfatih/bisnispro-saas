@@ -24,6 +24,32 @@ export default async function OrtuDashboardPage() {
   })
 
   const students = parentData?.studentParents?.map(sp => sp.student) || []
+  const studentIds = students.map(s => s.id)
+  
+  const tenantId = session.user.tenants?.[0]?.id
 
-  return <ParentDashboard childrenData={students} />
+  // Fetch tagihan yang belum lunas
+  const unpaidInvoices = studentIds.length > 0 ? await db.invoice.findMany({
+    where: {
+      studentId: { in: studentIds },
+      status: { in: ["UNPAID", "PARTIAL", "OVERDUE"] },
+      deletedAt: null
+    },
+    include: { student: { select: { name: true } } },
+    orderBy: { dueDate: 'asc' },
+    take: 3
+  }) : []
+
+  // Fetch pengumuman terbaru
+  const recentPosts = tenantId ? await db.post.findMany({
+    where: {
+      tenantId,
+      status: "PUBLISHED",
+      type: { in: ["PENGUMUMAN", "BERITA_SEKOLAH", "BLOG_GURU"] }
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 3
+  }) : []
+
+  return <ParentDashboard childrenData={students} unpaidInvoices={unpaidInvoices} recentPosts={recentPosts} />
 }

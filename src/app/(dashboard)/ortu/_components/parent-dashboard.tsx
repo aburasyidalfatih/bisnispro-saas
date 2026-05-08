@@ -8,7 +8,10 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Wallet, PlusCircle } from "lucide-react"
 
-export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] }) {
+import { format } from "date-fns"
+import { id as localeId } from "date-fns/locale"
+
+export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recentPosts = [] }: { childrenData?: any[], unpaidInvoices?: any[], recentPosts?: any[] }) {
   const { data: session } = useSession()
   const tenant = session?.user?.tenants?.[0]
   
@@ -19,10 +22,7 @@ export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] })
     { label: "Kehadiran", icon: ClipboardList, color: "bg-emerald-500/10 text-emerald-600", href: "/ortu/absensi" },
     { label: "Izin/Sakit", icon: FileCheck, color: "bg-amber-500/10 text-amber-600", href: "/ortu/izin" },
     { label: "Donasi", icon: Award, color: "bg-pink-500/10 text-pink-600", href: "/ortu/donasi" },
-    { label: "Akademik", icon: BookOpen, color: "bg-blue-500/10 text-blue-600", href: "#" },
-    { label: "Jadwal", icon: Calendar, color: "bg-purple-500/10 text-purple-600", href: "#" },
     { label: "PPDB", icon: Users, color: "bg-cyan-500/10 text-cyan-600", href: "/ortu/ppdb" },
-    { label: "Prestasi", icon: Award, color: "bg-indigo-500/10 text-indigo-600", href: "#" },
   ]
 
   return (
@@ -164,26 +164,23 @@ export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] })
              <a href="/ortu/tagihan" className="text-[10px] font-bold text-primary hover:underline">Lihat Semua →</a>
           </div>
           <div className="space-y-3">
-             <div className="flex items-center justify-between border-b border-border/50 pb-3">
-               <div>
-                 <p className="text-xs font-bold text-foreground">SPP Bulan Juli 2024</p>
-                 <p className="text-[10px] text-muted-foreground">Ahmad Fatih</p>
-               </div>
-               <div className="text-right">
-                 <p className="text-sm font-bold text-rose-500">Rp 350.000</p>
-                 <p className="text-[9px] text-rose-500/80 uppercase font-bold">Jatuh Tempo: 10 Jul</p>
-               </div>
-             </div>
-             <div className="flex items-center justify-between">
-               <div>
-                 <p className="text-xs font-bold text-foreground">Uang Gedung (Cicilan 1)</p>
-                 <p className="text-[10px] text-muted-foreground">Siti Aisyah</p>
-               </div>
-               <div className="text-right">
-                 <p className="text-sm font-bold text-rose-500">Rp 1.500.000</p>
-                 <p className="text-[9px] text-rose-500/80 uppercase font-bold">Jatuh Tempo: 15 Jul</p>
-               </div>
-             </div>
+             {unpaidInvoices.length > 0 ? unpaidInvoices.map((inv: any) => (
+                <div key={inv.id} className="flex items-center justify-between border-b border-border/50 pb-3 last:border-0 last:pb-0">
+                  <div>
+                    <p className="text-xs font-bold text-foreground">{inv.title}</p>
+                    <p className="text-[10px] text-muted-foreground">{inv.student?.name}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-rose-500">Rp {(inv.amountDue || inv.amount).toLocaleString('id-ID')}</p>
+                    <p className="text-[9px] text-rose-500/80 uppercase font-bold">Jatuh Tempo: {format(new Date(inv.dueDate), "dd MMM yyyy", { locale: localeId })}</p>
+                  </div>
+                </div>
+             )) : (
+                <div className="py-4 text-center">
+                   <CheckCircle className="h-8 w-8 text-emerald-500 mx-auto mb-2 opacity-50" />
+                   <p className="text-xs text-muted-foreground">Tidak ada tagihan yang belum dibayar. Terima kasih!</p>
+                </div>
+             )}
           </div>
         </div>
 
@@ -196,16 +193,22 @@ export function ParentDashboard({ childrenData = [] }: { childrenData?: any[] })
            </div>
            
            <div className="space-y-3">
-              <div className="flex gap-3 items-start border-b border-border/50 pb-3">
-                 <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
-                    <Megaphone className="h-5 w-5 text-amber-500" />
+              {recentPosts.length > 0 ? recentPosts.map((post: any) => (
+                 <div key={post.id} className="flex gap-3 items-start border-b border-border/50 pb-3 last:border-0 last:pb-0">
+                    <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                       <Megaphone className="h-5 w-5 text-amber-500" />
+                    </div>
+                    <div>
+                       <h4 className="text-xs font-bold text-foreground mb-1">{post.title}</h4>
+                       <p className="text-[10px] text-muted-foreground line-clamp-2" dangerouslySetInnerHTML={{ __html: post.content.substring(0, 150) }}></p>
+                       <p className="text-[9px] text-primary font-medium mt-1 flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(post.createdAt), "dd MMM yyyy", { locale: localeId })}</p>
+                    </div>
                  </div>
-                 <div>
-                    <h4 className="text-xs font-bold text-foreground mb-1">Pengambilan Raport Semester Genap</h4>
-                    <p className="text-[10px] text-muted-foreground line-clamp-2">Pengambilan raport akan dilaksanakan pada hari Sabtu, 20 Juli 2024. Harap melunasi seluruh administrasi.</p>
-                    <p className="text-[9px] text-primary font-medium mt-1 flex items-center gap-1"><Clock className="h-3 w-3" /> 2 hari yang lalu</p>
+              )) : (
+                 <div className="py-4 text-center">
+                    <p className="text-xs text-muted-foreground">Belum ada pengumuman terbaru.</p>
                  </div>
-              </div>
+              )}
            </div>
         </div>
 
