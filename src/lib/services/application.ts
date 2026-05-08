@@ -137,12 +137,6 @@ export async function sendNewApplicationAlerts(
   const settings = await getPlatformSettings()
   const rootDomain = settings.NEXT_PUBLIC_ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
 
-  // Cek apakah WA gateway dikonfigurasi
-  const waConfig = await getWaConfig()
-  if (!waConfig.apiKey) {
-    logger.warn("WA gateway not configured — new application alerts skipped", { applicationId })
-    return
-  }
 
   // 1. Alert ke semua Super Admin
   const superAdmins = await db.user.findMany({
