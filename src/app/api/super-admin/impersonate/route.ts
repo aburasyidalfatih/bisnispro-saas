@@ -69,14 +69,14 @@ export async function POST(req: Request) {
     path: "/",
     maxAge: 60 * 60,
     sameSite: "lax",
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === "production",
   })
   response.cookies.set("impersonate-by", session.user.id, {
     path: "/",
     maxAge: 60 * 60,
     sameSite: "lax",
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === "production",
   })
 
