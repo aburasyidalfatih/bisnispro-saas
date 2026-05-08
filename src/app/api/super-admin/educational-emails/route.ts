@@ -5,45 +5,45 @@ import { auth } from "@/lib/auth"
 const DEFAULT_CAMPAIGNS = [
   {
     dayOffset: 2,
-    title: "Hari 2: Kesan Pertama Penentu Segalanya",
-    subject: "Era Baru Pendidikan: Sudah Siapkah {{schoolName}} Menjadi Sekolah Digital Terdepan?",
-    content: "Halo Bapak/Ibu Admin,\n\nSemoga pesan ini menjumpai Anda dan seluruh keluarga besar {{schoolName}} dalam keadaan sehat.\n\nPernahkah Anda menyadari bahwa hal pertama yang dilakukan calon wali murid saat ini ketika mencari sekolah untuk anaknya adalah... mencarinya di Google?\n\nKesan pertama sebuah sekolah kini ditentukan oleh seberapa profesional dan mudahnya informasi sekolah diakses melalui internet.\n\nMari lengkapi data profil sekolah Anda sekarang juga. Hanya butuh waktu kurang dari 5 menit!\n\n👉 Lengkapi Profil Digital Anda di Sini:\nhttps://schoolpro.id/login\n\n(Masuk ke Dasbor -> Buka menu Konten Website -> Profil & GTK -> Lengkapi data Identitas dan Kontak)\n\nSalam Hangat,\nTim SchoolPro Indonesia"
+    title: "Hari 2: Profil & Kontak",
+    subject: "Mengapa 70% Orang Tua Meninggalkan Website Sekolah Anda dalam 5 Detik?",
+    content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nFakta di lapangan menunjukkan bahwa saat ini, kunjungan pertama wali murid tidak lagi terjadi di gerbang sekolah Anda, melainkan di *layar HP mereka*. Ketika mereka mencari {{schoolName}} di Google dan mendapati halaman profil yang kosong tanpa alamat yang jelas, keraguan mulai muncul.\n\n\"Apakah sekolah ini masih aktif?\"\n\"Apakah sekolah ini profesional?\"\n\nJangan biarkan calon siswa potensial lari ke sekolah kompetitor hanya karena kesan pertama digital yang buruk. Website adalah etalase digital Anda. Luangkan waktu 3 menit hari ini. Masukkan sejarah singkat sekolah, lengkapi nomor telepon yang bisa dihubungi, dan pasang logo kebanggaan Anda.\n\n👉 **Klik di sini untuk melengkapi Profil Anda:**\nhttps://schoolpro.id/super-admin/settings\n\nSalam Sukses,\nTim SchoolPro"
   },
   {
     dayOffset: 3,
-    title: "Hari 3: Kepemimpinan yang Menginspirasi",
-    subject: "Siapa Sosok Hebat di Balik Kesuksesan {{schoolName}}?",
-    content: "Halo Bapak/Ibu Admin,\n\nOrang tua pasti ingin tahu siapa yang mendidik anak mereka. Menampilkan profil Kepala Sekolah dan daftar guru (GTK) yang kompeten akan meningkatkan rasa percaya (Trust) masyarakat secara drastis.\n\nSudahkah profil Kepala Sekolah {{schoolName}} dan daftar staf pengajar Anda tampil di website?\n\n👉 Tambahkan sekarang juga:\nhttps://schoolpro.id/login\n\n(Masuk ke Dasbor -> Buka menu Konten Website -> Profil & GTK -> Tab Guru & Staf)\n\nSalam Hangat,\nTim SchoolPro Indonesia"
+    title: "Hari 3: Kepala Sekolah & GTK",
+    subject: "Ruh Sebuah Sekolah Berada di Tangan Pemimpinnya",
+    content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nMenyekolahkan anak adalah investasi masa depan. Oleh karena itu, orang tua butuh \"rasa aman\". Mereka ingin tahu siapa nahkoda yang akan membimbing anak-anak mereka.\n\nWebsite sekolah tanpa profil Kepala Sekolah dan daftar Guru ibarat kapal tanpa awak. Terasa sepi dan kurang meyakinkan. Sebuah \"Kata Sambutan\" yang hangat dari Kepala Sekolah di halaman depan website mampu meningkatkan rasa percaya (trust) masyarakat hingga berkali-kali lipat.\n\nTunjukkan pada dunia siapa saja pendidik hebat di balik {{schoolName}}.\n\n👉 **Klik di sini untuk menambahkan Sambutan Kepala Sekolah:**\nhttps://schoolpro.id/super-admin/settings\n\nSalam Sukses,\nTim SchoolPro"
   },
   {
     dayOffset: 4,
     title: "Hari 4: Program Unggulan",
-    subject: "Apa yang Membuat {{schoolName}} Berbeda dari Sekolah Lain?",
-    content: "Halo Bapak/Ibu Admin,\n\nSetiap sekolah pasti memiliki keunikan—entah itu program Tahfidz, Kelas Bilingual, Adiwiyata, atau kurikulum khusus lainnya.\n\nProgram Unggulan adalah ujung tombak promosi untuk menarik minat calon siswa baru. Jangan biarkan program luar biasa di {{schoolName}} tidak diketahui oleh publik!\n\n👉 Tuliskan 2-3 program terbaik sekolah Anda:\nhttps://schoolpro.id/login\n\n(Masuk ke Dasbor -> Buka menu Konten Website -> Profil & GTK -> Tab Program Unggulan)\n\nSalam Hangat,\nTim SchoolPro Indonesia"
+    subject: "Apa Alasan Terkuat Orang Tua Harus Memilih {{schoolName}}?",
+    content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nJika sekolah Bapak/Ibu mengajarkan kurikulum yang sama persis dengan sekolah di sebelah, apa yang membuat {{schoolName}} pantas dipilih?\n\nInilah pentingnya \"Program Unggulan\" (Value Proposition). Apakah sekolah Anda memiliki target hafalan Tahfidz? Program Bahasa Inggris Intensif? Kelas Robotika? Atau pembinaan karakter islami yang kuat?\n\nJika Anda memiliki program luar biasa tersebut tetapi tidak dipublikasikan di website, dunia tidak akan pernah tahu. Mari tonjolkan kekuatan utama sekolah Anda agar orang tua tidak ragu!\n\n👉 **Tuliskan Program Unggulan Anda di sini:**\nhttps://schoolpro.id/super-admin/settings\n\nSalam Sukses,\nTim SchoolPro"
   },
   {
     dayOffset: 5,
-    title: "Hari 5: Fasilitas & Ekstrakurikuler",
-    subject: "Belajar Tidak Hanya di Dalam Kelas di {{schoolName}}",
-    content: "Halo Bapak/Ibu Admin,\n\nCalon siswa baru sangat tertarik dengan kegiatan di luar jam pelajaran. Fasilitas yang memadai (seperti lab komputer, lapangan basket) dan Ekskul yang beragam sering menjadi penentu utama seorang anak memilih sekolah.\n\n👉 Pamerkan fasilitas dan kegiatan ekskul Anda:\nhttps://schoolpro.id/login\n\n(Masuk ke Dasbor -> Buka menu Konten Website -> Profil & GTK -> Fasilitas & Ekskul)\n\nSalam Hangat,\nTim SchoolPro Indonesia"
+    title: "Hari 5: Fasilitas & Ekskul",
+    subject: "Apa yang Membuat Siswa Betah Belajar di {{schoolName}}?",
+    content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nPendidikan tidak hanya terjadi di dalam kelas. Generasi Z sangat peduli dengan pengembangan bakat, minat, dan gaya hidup mereka di sekolah.\n\nFasilitas yang memadai (seperti lab komputer atau lapangan olahraga) dan Ekstrakurikuler yang beragam sering kali menjadi penentu utama seorang anak memutuskan \"Aku ingin sekolah di sini!\"\n\nJangan sembunyikan fasilitas hebat Anda. Biarkan calon siswa melihat keseruan aktivitas di {{schoolName}}.\n\n👉 **Pamerkan Fasilitas & Ekstrakurikuler Anda di sini:**\nhttps://schoolpro.id/super-admin/settings\n\nSalam Sukses,\nTim SchoolPro"
   },
   {
     dayOffset: 6,
     title: "Hari 6: Prestasi & Alumni",
-    subject: "Bukti Nyata Keberhasilan Siswa {{schoolName}}",
-    content: "Halo Bapak/Ibu Admin,\n\nKesaksian (word of mouth) adalah marketing terkuat. Menampilkan deretan medali, piala siswa, dan cerita sukses alumni yang berhasil masuk universitas favorit akan langsung membungkam keraguan orang tua calon siswa.\n\n👉 Tunjukkan kebanggaan sekolah Anda:\nhttps://schoolpro.id/login\n\n(Masuk ke Dasbor -> Buka menu Konten Website -> Galeri & Alumni -> Tab Prestasi & Alumni)\n\nSalam Hangat,\nTim SchoolPro Indonesia"
+    subject: "Bukti Nyata Kualitas Pendidikan di {{schoolName}}",
+    content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nDalam dunia psikologi marketing, ada yang namanya \"Social Proof\" (Bukti Sosial). Orang akan lebih mudah percaya jika melihat orang lain sudah terbukti berhasil.\n\nDeretan medali, piala siswa, dan cerita sukses alumni yang berhasil masuk universitas favorit adalah senjata marketing yang paling tajam. Ini akan langsung membungkam segala keraguan orang tua calon siswa.\n\n👉 **Tunjukkan kebanggaan dan prestasi sekolah Anda:**\nhttps://schoolpro.id/super-admin/settings\n\nSalam Sukses,\nTim SchoolPro"
   },
   {
     dayOffset: 7,
     title: "Hari 7: Galeri Foto",
-    subject: "Satu Foto Menceritakan Ribuan Kata tentang {{schoolName}}",
-    content: "Halo Bapak/Ibu Admin,\n\nWebsite yang tidak ada fotonya akan terkesan mati. Calon siswa dan orang tua ingin melihat keceriaan dan keaktifan proses belajar mengajar di {{schoolName}}.\n\n👉 Unggah minimal 3 foto kegiatan sekolah terbaik Anda hari ini:\nhttps://schoolpro.id/login\n\n(Masuk ke Dasbor -> Buka menu Konten Website -> Galeri & Alumni -> Galeri Foto)\n\nSalam Hangat,\nTim SchoolPro Indonesia"
+    subject: "1 Foto Bernilai 1000 Kata. Bagaimana dengan Galeri {{schoolName}}?",
+    content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nOtak manusia memproses gambar 60.000 kali lebih cepat daripada teks. Sebuah website yang hanya berisi tulisan tanpa foto kegiatan akan terkesan kaku dan membosankan.\n\nCalon siswa dan orang tua ingin melihat \"kehidupan\" di dalam sekolah Anda. Keceriaan saat class meeting, keseriusan saat upacara, atau kekompakan guru.\n\n👉 **Unggah minimal 3 foto kegiatan terbaik sekolah Anda hari ini:**\nhttps://schoolpro.id/super-admin/settings\n\nSalam Sukses,\nTim SchoolPro"
   },
   {
     dayOffset: 8,
     title: "Hari 8: Berita & Agenda",
-    subject: "Tetap Terhubung dengan Komunitas {{schoolName}}",
-    content: "Halo Bapak/Ibu Admin,\n\nWebsite yang baik adalah website yang terus di-update. Biasakan menulis berita kegiatan atau mempublikasikan agenda akademik agar masyarakat tahu bahwa {{schoolName}} adalah sekolah yang aktif dan transparan.\n\n👉 Tulis artikel atau berita pertama Anda sekarang:\nhttps://schoolpro.id/login\n\n(Masuk ke Dasbor -> Buka menu Konten Website -> Informasi & Berita -> Artikel & Pos)\n\nSemangat membangun digitalisasi sekolah!\n\nSalam Hangat,\nTim SchoolPro Indonesia"
+    subject: "Satu Tanda Utama Bahwa {{schoolName}} Adalah Sekolah yang 'Hidup'",
+    content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nSelamat! Anda telah mencapai hari terakhir dari rangkaian edukasi digital SchoolPro.\n\nSatu tips terakhir yang sangat krusial: \"Website yang tidak pernah di-update akan dianggap sebagai sekolah yang tutup atau tidak aktif.\"\n\nBiasakan untuk menulis berita kegiatan atau mempublikasikan agenda akademik secara rutin. Ini menunjukkan transparansi dan keaktifan {{schoolName}} kepada publik. Jadikan website sekolah sebagai pusat informasi terpercaya!\n\n👉 **Tulis artikel atau berita pertama Anda sekarang:**\nhttps://schoolpro.id/super-admin/settings\n\nTerima kasih telah bersama SchoolPro dalam memajukan digitalisasi pendidikan Indonesia!\n\nSalam Hangat,\nTim SchoolPro Indonesia"
   }
 ]
 
