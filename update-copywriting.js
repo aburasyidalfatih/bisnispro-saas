@@ -16,7 +16,7 @@ Fakta di lapangan menunjukkan bahwa saat ini, kunjungan pertama wali murid tidak
 Jangan biarkan calon siswa potensial lari ke sekolah kompetitor hanya karena kesan pertama digital yang buruk. Website adalah etalase digital Anda. Luangkan waktu 3 menit hari ini. Masukkan sejarah singkat sekolah, lengkapi nomor telepon yang bisa dihubungi, dan pasang logo kebanggaan Anda.
 
 👉 **Klik di sini untuk melengkapi Profil Anda:**
-https://schoolpro.id/super-admin/settings
+https://schoolpro.id/admin/settings
 
 Salam Sukses,
 Tim SchoolPro`
@@ -34,7 +34,7 @@ Website sekolah tanpa profil Kepala Sekolah dan daftar Guru ibarat kapal tanpa a
 Tunjukkan pada dunia siapa saja pendidik hebat di balik {{schoolName}}.
 
 👉 **Klik di sini untuk menambahkan Sambutan Kepala Sekolah:**
-https://schoolpro.id/super-admin/settings
+https://schoolpro.id/admin/settings
 
 Salam Sukses,
 Tim SchoolPro`
@@ -52,7 +52,7 @@ Inilah pentingnya "Program Unggulan" (Value Proposition). Apakah sekolah Anda me
 Jika Anda memiliki program luar biasa tersebut tetapi tidak dipublikasikan di website, dunia tidak akan pernah tahu. Mari tonjolkan kekuatan utama sekolah Anda agar orang tua tidak ragu!
 
 👉 **Tuliskan Program Unggulan Anda di sini:**
-https://schoolpro.id/super-admin/settings
+https://schoolpro.id/admin/settings
 
 Salam Sukses,
 Tim SchoolPro`
@@ -70,7 +70,7 @@ Fasilitas yang memadai (seperti lab komputer atau lapangan olahraga) dan Ekstrak
 Jangan sembunyikan fasilitas hebat Anda. Biarkan calon siswa melihat keseruan aktivitas di {{schoolName}}.
 
 👉 **Pamerkan Fasilitas & Ekstrakurikuler Anda di sini:**
-https://schoolpro.id/super-admin/settings
+https://schoolpro.id/admin/settings
 
 Salam Sukses,
 Tim SchoolPro`
@@ -86,7 +86,7 @@ Dalam dunia psikologi marketing, ada yang namanya "Social Proof" (Bukti Sosial).
 Deretan medali, piala siswa, dan cerita sukses alumni yang berhasil masuk universitas favorit adalah senjata marketing yang paling tajam. Ini akan langsung membungkam segala keraguan orang tua calon siswa.
 
 👉 **Tunjukkan kebanggaan dan prestasi sekolah Anda:**
-https://schoolpro.id/super-admin/settings
+https://schoolpro.id/admin/settings
 
 Salam Sukses,
 Tim SchoolPro`
@@ -102,7 +102,7 @@ Otak manusia memproses gambar 60.000 kali lebih cepat daripada teks. Sebuah webs
 Calon siswa dan orang tua ingin melihat "kehidupan" di dalam sekolah Anda. Keceriaan saat class meeting, keseriusan saat upacara, atau kekompakan guru.
 
 👉 **Unggah minimal 3 foto kegiatan terbaik sekolah Anda hari ini:**
-https://schoolpro.id/super-admin/settings
+https://schoolpro.id/admin/settings
 
 Salam Sukses,
 Tim SchoolPro`
@@ -120,7 +120,7 @@ Satu tips terakhir yang sangat krusial: "Website yang tidak pernah di-update aka
 Biasakan untuk menulis berita kegiatan atau mempublikasikan agenda akademik secara rutin. Ini menunjukkan transparansi dan keaktifan {{schoolName}} kepada publik. Jadikan website sekolah sebagai pusat informasi terpercaya!
 
 👉 **Tulis artikel atau berita pertama Anda sekarang:**
-https://schoolpro.id/super-admin/settings
+https://schoolpro.id/admin/settings
 
 Terima kasih telah bersama SchoolPro dalam memajukan digitalisasi pendidikan Indonesia!
 
