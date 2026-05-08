@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X } from "lucide-react"
+import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X, Phone, MapPin, Mail, MessageCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { RegionSelector } from "@/components/ui/region-selector"
 
 export default function WebsiteAboutPage() {
   const { data: session } = useSession()
@@ -24,13 +25,10 @@ export default function WebsiteAboutPage() {
   const [domainStatus, setDomainStatus] = useState<{ domain: string | null; status: string | null }>({ domain: null, status: null })
 
   const [form, setForm] = useState({
-    name: "",
-    logo: "",
-    tagline: "",
-    description: "",
-    about: "",
-    seoTitle: "",
-    seoDesc: "",
+    name: "", logo: "", tagline: "", description: "", about: "",
+    seoTitle: "", seoDesc: "",
+    address: "", phone: "", email: "", website: "",
+    whatsapp: "", instagram: "", facebook: "", youtube: "", tiktok: "",
     settings: {} as any,
   })
 
@@ -55,13 +53,13 @@ export default function WebsiteAboutPage() {
       .then(r => r.json())
       .then(d => {
         setForm({
-          name: d.name || "",
-          logo: d.logo || "",
-          tagline: d.tagline || "",
-          description: d.description || "",
-          about: d.about || "",
-          seoTitle: d.seoTitle || "",
-          seoDesc: d.seoDesc || "",
+          name: d.name || "", logo: d.logo || "", tagline: d.tagline || "",
+          description: d.description || "", about: d.about || "",
+          seoTitle: d.seoTitle || "", seoDesc: d.seoDesc || "",
+          address: d.address || "", phone: d.phone || "", email: d.email || "",
+          website: d.website || "", whatsapp: d.whatsapp || "",
+          instagram: d.instagram || "", facebook: d.facebook || "",
+          youtube: d.youtube || "", tiktok: d.tiktok || "",
           settings: d.settings || {},
         })
         setLogoPreview(d.logo || "")
@@ -80,10 +78,14 @@ export default function WebsiteAboutPage() {
   const handleSave = async () => {
     if (!tenantId) return
     setSaving(true)
+    const payload: any = { tenantId, ...form }
+    Object.keys(payload).forEach(k => {
+      if (payload[k] === "") payload[k] = null
+    })
     const res = await fetch("/api/tenant/website", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tenantId, ...form }),
+      body: JSON.stringify(payload),
     })
     setSaving(false)
     if (res.ok) {
@@ -259,6 +261,106 @@ export default function WebsiteAboutPage() {
                 maxLength={300} rows={4}
                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
               <p className="text-xs text-muted-foreground">{form.description.length}/300 karakter</p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 mt-2">
+              <div className="space-y-2">
+                <Label>Status Sekolah</Label>
+                <select value={form.settings?.schoolStatus || "SWASTA"}
+                  onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, schoolStatus: e.target.value } }))}
+                  className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                  <option value="SWASTA">SWASTA</option>
+                  <option value="NEGERI">NEGERI</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>Estimasi Jumlah Siswa Saat Ini</Label>
+                <Input type="number" value={form.settings?.studentCount || ""} 
+                  onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, studentCount: parseInt(e.target.value) || 0 } }))}
+                  placeholder="Misal: 500" className="rounded-xl" />
+                <p className="text-[11px] text-muted-foreground">Data internal untuk manajemen platform.</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Kontak & Lokasi */}
+        <Card className="glass border-0 lg:col-span-2">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <Phone className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Kontak & Lokasi</CardTitle>
+                <CardDescription>Alamat, telepon, dan informasi wilayah</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <RegionSelector
+              province={form.settings?.province || ""}
+              regency={form.settings?.regency || ""}
+              onProvinceChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, province: v, regency: "" } }))}
+              onRegencyChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, regency: v } }))}
+            />
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Alamat Lengkap</Label>
+              <textarea value={form.address} onChange={(e) => setForm(p => ({ ...p, address: e.target.value }))}
+                placeholder="Jl. Contoh No. 123" rows={3}
+                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" /> Nomor Telepon</Label>
+                <Input value={form.phone} onChange={(e) => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="021-12345678" className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email Lembaga</Label>
+                <Input type="email" value={form.email} onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))} placeholder="info@lembaga.com" className="rounded-xl" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Media Sosial */}
+        <Card className="glass border-0 lg:col-span-2">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <MessageCircle className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Media Sosial</CardTitle>
+                <CardDescription>Tautan ke akun media sosial lembaga</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>💬 WhatsApp</Label>
+                <Input value={form.whatsapp} onChange={(e) => setForm(p => ({ ...p, whatsapp: e.target.value }))} placeholder="6281234567890" className="rounded-xl" />
+                <p className="text-[11px] text-muted-foreground">Format internasional tanpa + (contoh: 6281234567890)</p>
+              </div>
+              <div className="space-y-2">
+                <Label>📷 Instagram</Label>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground shrink-0">@</span>
+                  <Input value={form.instagram} onChange={(e) => setForm(p => ({ ...p, instagram: e.target.value }))} placeholder="username" className="rounded-xl" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>📘 Facebook</Label>
+                <Input value={form.facebook} onChange={(e) => setForm(p => ({ ...p, facebook: e.target.value }))} placeholder="nama-halaman" className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>🎵 TikTok</Label>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground shrink-0">@</span>
+                  <Input value={form.tiktok} onChange={(e) => setForm(p => ({ ...p, tiktok: e.target.value }))} placeholder="username" className="rounded-xl" />
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
