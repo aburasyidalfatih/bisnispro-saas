@@ -60,17 +60,27 @@ export default function SuperAdminApplicationsPage() {
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("ALL")
 
   const filteredApps = useMemo(() => {
-    if (!searchQuery) return apps
-    const query = searchQuery.toLowerCase()
-    return apps.filter(app => 
-      app.schoolName.toLowerCase().includes(query) ||
-      app.adminEmail.toLowerCase().includes(query) ||
-      (app.regency && app.regency.toLowerCase().includes(query)) ||
-      (app.province && app.province.toLowerCase().includes(query))
-    )
-  }, [apps, searchQuery])
+    let result = apps
+    
+    if (statusFilter !== "ALL") {
+      result = result.filter(app => app.status === statusFilter)
+    }
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter(app => 
+        app.schoolName.toLowerCase().includes(query) ||
+        app.adminEmail.toLowerCase().includes(query) ||
+        (app.regency && app.regency.toLowerCase().includes(query)) ||
+        (app.province && app.province.toLowerCase().includes(query))
+      )
+    }
+    
+    return result
+  }, [apps, searchQuery, statusFilter])
 
   const fetchApps = () => {
     fetch("/api/super-admin/applications")
@@ -196,7 +206,18 @@ export default function SuperAdminApplicationsPage() {
               className="pl-9 h-10 rounded-xl w-full"
             />
           </div>
-          <div className="flex gap-2 shrink-0">
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="flex h-10 w-full sm:w-40 items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          >
+            <option value="ALL">Semua Status</option>
+            <option value="PENDING">Pending</option>
+            <option value="APPROVED">Disetujui</option>
+            <option value="REVISION">Revisi</option>
+            <option value="REJECTED">Ditolak</option>
+          </select>
+          <div className="flex gap-2 shrink-0 items-center">
             <Badge variant="secondary" className="px-3 py-1 rounded-lg flex items-center">{filteredApps.length} Hasil</Badge>
             <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-3 py-1 rounded-lg flex items-center">
               {filteredApps.filter(a => a.status === 'PENDING').length} Perlu Tinjauan
