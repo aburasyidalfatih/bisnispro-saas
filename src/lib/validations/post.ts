@@ -4,7 +4,7 @@ export const postSchema = z.object({
   title: z.string().min(3, "Judul artikel minimal 3 karakter").max(100, "Judul maksimal 100 karakter"),
   slug: z.string().min(3, "Slug minimal 3 karakter").max(100, "Slug maksimal 100 karakter").regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug hanya boleh berisi huruf kecil, angka, dan strip (-)"),
   content: z.string().min(10, "Konten minimal 10 karakter"),
-  featuredImage: z.string().url("URL gambar tidak valid").optional().or(z.literal("")).transform(v => v === "" ? null : v),
+  featuredImage: z.string().optional().or(z.literal("")).transform(v => v === "" ? null : v),
   type: z.enum(["EDITORIAL", "BLOG_GURU", "PENGUMUMAN"]),
   status: z.enum(["DRAFT", "PUBLISHED", "PENDING", "REJECTED"]),
   categoryId: z.string().optional().or(z.literal("")).transform(v => v === "" ? null : v),
