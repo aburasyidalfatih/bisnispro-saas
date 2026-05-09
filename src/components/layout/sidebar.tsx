@@ -160,9 +160,13 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           children: [
             { label: "Daftar Siswa", href: `${basePath}/students`, icon: UserCog },
             { label: "Manajemen Kelas", href: `${basePath}/students/classrooms`, icon: BookOpen },
+            { label: "Mata Pelajaran", href: `${basePath}/subjects`, icon: BookOpen },
+            { label: "Jadwal Pelajaran", href: `${basePath}/schedules`, icon: Calendar },
             { label: "Absensi Siswa", href: `${basePath}/attendance`, icon: CalendarCheck },
             { label: "Absensi Guru", href: `${basePath}/attendance/gtk`, icon: Users },
             { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
+            { label: "E-Rapor", href: `${basePath}/grades`, icon: FileText },
+            { label: "Catatan Perilaku (BK)", href: `${basePath}/discipline`, icon: ShieldCheck },
           ],
         },
         {
@@ -320,6 +324,13 @@ function getGTKMenu(basePath: string): MenuSection[] {
       ],
     },
     {
+      title: "Kelas & KBM",
+      items: [
+        { label: "Jurnal & Presensi", href: `${basePath}/jurnal`, icon: FileText },
+        { label: "Input Nilai", href: `${basePath}/nilai`, icon: Award },
+      ],
+    },
+    {
       title: "Konten & Informasi",
       items: [
         { label: "Tulis Artikel", href: `${basePath}/posts`, icon: FileText, badge: "Pending" },
@@ -346,6 +357,8 @@ function getMemberMenu(basePath: string): MenuSection[] {
     {
       title: "Layanan Siswa",
       items: [
+        { label: "Nilai & Rapor", href: `${basePath}/rapor`, icon: Award },
+        { label: "Riwayat Kantin", href: `${basePath}/kantin`, icon: Store },
         { label: "Pesan", href: `${basePath}/my-messages`, icon: MessageSquare },
       ],
     },

@@ -88,6 +88,11 @@ model Tenant {
   attendancePermits    AttendancePermit[]
   donationCampaigns    DonationCampaign[]
   donations            Donation[]
+  subjects             Subject[]
+  schedules            Schedule[]
+  grades               Grade[]
+  teacherJournals      TeacherJournal[]
+  disciplineRecords    DisciplineRecord[]
 
   @@index([isActive])
   @@index([plan])
@@ -560,6 +565,10 @@ model Staff {
   user            User?             @relation(fields: [userId], references: [id])
   classrooms      Classroom[]
   StaffAttendance StaffAttendance[]
+  schedules       Schedule[]
+  journals        TeacherJournal[]
+  gradeInputs     Grade[]
+  disciplines     DisciplineRecord[]
 
   @@index([tenantId])
   @@index([userId])
@@ -799,6 +808,9 @@ model Student {
   canteenOrders    CanteenOrder[]
   attendanceRecords AttendanceRecord[]
   attendancePermits AttendancePermit[]
+  grades            Grade[]
+  journalPresences  JournalPresence[]
+  disciplines       DisciplineRecord[]
 
   @@index([tenantId])
   @@index([userId])
@@ -896,6 +908,9 @@ model Classroom {
   waliKelas         Staff?              @relation(fields: [waliKelasId], references: [id])
   students          Student[]
   attendanceSessions AttendanceSession[]
+  schedules         Schedule[]
+  journals          TeacherJournal[]
+  grades            Grade[]
 
   @@index([tenantId])
   @@map("classrooms")
@@ -1380,4 +1395,146 @@ model Donation {
   @@index([tenantId])
   @@index([status])
   @@map("donations")
+}
+
+// ======================================================================
+// EPIC 6: AKADEMIK — MAPEL, JADWAL, NILAI, JURNAL, DISIPLIN
+// ======================================================================
+
+// Mata Pelajaran (Master Data per Tenant)
+model Subject {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  code        String?
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  schedules Schedule[]
+  grades    Grade[]
+  journals  TeacherJournal[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("subjects")
+}
+
+// Jadwal Pelajaran Mingguan (Roster)
+model Schedule {
+  id          String   @id @default(cuid())
+  tenantId    String
+  classroomId String
+  subjectId   String
+  staffId     String
+  dayOfWeek   Int      // 1=Senin, 2=Selasa, ..., 6=Sabtu
+  startTime   String   // "07:00"
+  endTime     String   // "08:30"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  staff     Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([classroomId])
+  @@index([staffId])
+  @@map("schedules")
+}
+
+// Penilaian / Nilai Siswa
+model Grade {
+  id          String   @id @default(cuid())
+  tenantId    String
+  studentId   String
+  subjectId   String
+  classroomId String
+  staffId     String
+  type        String   // HARIAN, PTS, PAS, PRAKTEK
+  semester    Int      // 1 atau 2
+  year        Int      // Tahun ajaran (misal 2024)
+  score       Float
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  staff     Staff     @relation(fields: [staffId], references: [id])
+
+  @@unique([tenantId, studentId, subjectId, type, semester, year])
+  @@index([tenantId])
+  @@index([studentId])
+  @@index([classroomId])
+  @@map("grades")
+}
+
+// Jurnal Mengajar Guru (per hari per kelas per mapel)
+model TeacherJournal {
+  id          String   @id @default(cuid())
+  tenantId    String
+  staffId     String
+  classroomId String
+  subjectId   String
+  date        DateTime @db.Date
+  topic       String
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  staff     Staff             @relation(fields: [staffId], references: [id])
+  classroom Classroom         @relation(fields: [classroomId], references: [id])
+  subject   Subject           @relation(fields: [subjectId], references: [id])
+  presences JournalPresence[]
+
+  @@unique([staffId, classroomId, subjectId, date])
+  @@index([tenantId])
+  @@index([staffId])
+  @@map("teacher_journals")
+}
+
+// Presensi Siswa di dalam Jurnal Guru
+model JournalPresence {
+  id        String  @id @default(cuid())
+  journalId String
+  studentId String
+  status    String  // HADIR, IZIN, SAKIT, ALPHA
+  notes     String?
+
+  journal TeacherJournal @relation(fields: [journalId], references: [id], onDelete: Cascade)
+  student Student        @relation(fields: [studentId], references: [id])
+
+  @@unique([journalId, studentId])
+  @@index([journalId])
+  @@map("journal_presences")
+}
+
+// Catatan Pelanggaran & Penghargaan Siswa (BK)
+model DisciplineRecord {
+  id          String   @id @default(cuid())
+  tenantId    String
+  studentId   String
+  staffId     String
+  type        String   // PELANGGARAN, PENGHARGAAN
+  category    String   // KEDISIPLINAN, AKADEMIK, ATRIBUT, PERILAKU
+  description String
+  points      Int      @default(0)
+  date        DateTime @db.Date
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id])
+  staff   Staff   @relation(fields: [staffId], references: [id])
+
+  @@index([tenantId])
+  @@index([studentId])
+  @@map("discipline_records")
 }

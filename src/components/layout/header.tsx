@@ -55,6 +55,15 @@ const labelMap: Record<string, string> = {
   email: "Email & SMTP",
   whatsapp: "WhatsApp",
   payment: "Payment Gateway",
+  // Academic routes (new)
+  subjects: "Mata Pelajaran",
+  schedules: "Jadwal Pelajaran",
+  grades: "E-Rapor",
+  discipline: "Catatan Perilaku (BK)",
+  jurnal: "Jurnal Mengajar",
+  nilai: "Input Nilai",
+  rapor: "Nilai & Rapor",
+  kantin: "Riwayat Kantin",
 }
 
 function HeaderBreadcrumb() {
