@@ -23,8 +23,8 @@ export default function AdminGradesPage() {
 
   const [classrooms, setClassrooms] = useState<any[]>([])
   const [subjects, setSubjects] = useState<any[]>([])
-  const [selectedClass, setSelectedClass] = useState("")
-  const [selectedSubject, setSelectedSubject] = useState("")
+  const [selectedClass, setSelectedClass] = useState("all")
+  const [selectedSubject, setSelectedSubject] = useState("all")
   const [semester, setSemester] = useState(String(new Date().getMonth() <= 5 ? 2 : 1))
   const [year, setYear] = useState(String(new Date().getFullYear()))
   const [grades, setGrades] = useState<any[]>([])
@@ -46,7 +46,7 @@ export default function AdminGradesPage() {
     if (!tenant) return
     setLoading(true)
     const params = new URLSearchParams({ tenantId: tenant.id, semester, year })
-    if (selectedClass) params.set("classroomId", selectedClass)
+    if (selectedClass && selectedClass !== "all") params.set("classroomId", selectedClass)
     const res = await fetch(`/api/grades?${params}`)
     const data = await res.json()
     setGrades(data.grades || [])
@@ -58,7 +58,7 @@ export default function AdminGradesPage() {
   // Group by student
   const byStudent: Record<string, { student: any; grades: any[] }> = {}
   grades.forEach(g => {
-    if (selectedSubject && g.subject.id !== selectedSubject) return
+    if (selectedSubject && selectedSubject !== "all" && g.subject.id !== selectedSubject) return
     const sid = g.student.id
     if (!byStudent[sid]) byStudent[sid] = { student: g.student, grades: [] }
     byStudent[sid].grades.push(g)
@@ -86,7 +86,7 @@ export default function AdminGradesPage() {
               <Select value={selectedClass} onValueChange={setSelectedClass}>
                 <SelectTrigger className="h-9"><SelectValue placeholder="Semua Kelas" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Semua Kelas</SelectItem>
+                  <SelectItem value="all">Semua Kelas</SelectItem>
                   {classrooms.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -96,7 +96,7 @@ export default function AdminGradesPage() {
               <Select value={selectedSubject} onValueChange={setSelectedSubject}>
                 <SelectTrigger className="h-9"><SelectValue placeholder="Semua Mapel" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Semua Mapel</SelectItem>
+                  <SelectItem value="all">Semua Mapel</SelectItem>
                   {subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                 </SelectContent>
               </Select>
