@@ -460,6 +460,7 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
     {
       title: "Monitoring",
       items: [
+        { label: "Riwayat Notifikasi", href: "/super-admin/notifications", icon: BellRing },
         { label: "Audit Log Global", href: "/super-admin/audit", icon: FileText },
       ],
     },
