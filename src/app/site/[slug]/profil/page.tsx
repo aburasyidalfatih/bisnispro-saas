@@ -45,7 +45,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
             <div className="flex items-center gap-2">
                <Building2 className="h-4 w-4 text-primary" />
                <span className="text-muted-foreground">Tahun Berdiri:</span>
-               <span className="font-bold text-foreground">{settings.establishedYear || new Date(tenant.createdAt).getFullYear()}</span>
+               <span className="font-bold text-foreground">{String(settings.establishedYear || new Date(tenant.createdAt || Date.now()).getFullYear())}</span>
             </div>
             {settings.npsn && (
               <div className="flex items-center gap-2">
