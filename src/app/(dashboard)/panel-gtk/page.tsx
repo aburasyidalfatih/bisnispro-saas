@@ -69,37 +69,23 @@ export default function GuruDashboard() {
         </div>
       </div>
 
-      {/* Quick Actions (Bento Grid) */}
-      <div>
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          Aksi Cepat <ChevronRight className="h-4 w-4 text-muted-foreground" />
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-          {quickActions.map((action, i) => (
-            <Link key={i} href={action.href} className="group outline-none">
-              <div className={cn(
-                "relative overflow-hidden rounded-2xl p-4 sm:p-5 h-full transition-all duration-300",
-                "bg-card hover:shadow-lg hover:shadow-primary/5 ring-1 ring-border",
-                "group-hover:-translate-y-1 group-hover:border-primary/30 group-focus-visible:ring-2 group-focus-visible:ring-primary"
-              )}>
-                {/* Decorative background circle */}
-                <div className={cn("absolute -right-4 -top-4 h-16 w-16 rounded-full blur-2xl opacity-50 transition-transform group-hover:scale-150", action.bg)}></div>
-                
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className={cn("h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110", action.bg, action.color)}>
-                    <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
+      {/* Quick Actions (App Grid Style) */}
+      <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+         <h3 className="font-bold text-foreground mb-4 text-sm flex items-center gap-2">
+           Aksi Cepat <ChevronRight className="h-4 w-4 text-muted-foreground" />
+         </h3>
+         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-y-6 gap-x-2">
+            {quickActions.map((action, i) => (
+               <Link key={i} href={action.href} className="flex flex-col items-center gap-2 group outline-none">
+                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20", action.bg, action.color)}>
+                     <action.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="font-bold text-sm sm:text-base text-card-foreground group-hover:text-primary transition-colors">
+                  <span className="text-[11px] sm:text-xs font-semibold text-muted-foreground group-hover:text-primary text-center line-clamp-2 leading-tight px-1 transition-colors">
                     {action.label}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                    {action.desc}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+                  </span>
+               </Link>
+            ))}
+         </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
