@@ -1,222 +1,383 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "@/hooks/use-toast"
 import { Textarea } from "@/components/ui/textarea"
-import { BookOpen, Calendar, CheckCircle, Clock, Loader2, Users, FileText, ChevronRight, ChevronDown } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+import { Calendar, Users, BookOpen, Clock, ChevronLeft, Plus, CheckCircle2, UserX, UserMinus, AlertCircle, Save } from "lucide-react"
+import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 
-const PRESENCE_STATUS = [
-  { value: "HADIR", label: "Hadir", color: "bg-emerald-500/10 text-emerald-700 border-emerald-300" },
-  { value: "IZIN", label: "Izin", color: "bg-blue-500/10 text-blue-700 border-blue-300" },
-  { value: "SAKIT", label: "Sakit", color: "bg-amber-500/10 text-amber-700 border-amber-300" },
-  { value: "ALPHA", label: "Alpha", color: "bg-red-500/10 text-red-700 border-red-300" },
-]
+type Metadata = {
+  classrooms: any[]
+  subjects: any[]
+  scheduleToday: any[]
+  staffId: string | null
+}
 
-export default function GTKJournalPage() {
+export default function JurnalPage() {
   const { data: session } = useSession()
-  const tenant = session?.user?.tenants?.[0]
+  const tenantId = session?.user?.tenants?.[0]?.id
 
-  const [todaySchedules, setTodaySchedules] = useState<any[]>([])
-  const [recentJournals, setRecentJournals] = useState<any[]>([])
+  const [mode, setMode] = useState<"list" | "create">("list")
   const [loading, setLoading] = useState(true)
-  const [activeSchedule, setActiveSchedule] = useState<any | null>(null)
-  const [topic, setTopic] = useState("")
-  const [notes, setNotes] = useState("")
-  const [presences, setPresences] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
+  
+  const [metadata, setMetadata] = useState<Metadata | null>(null)
+  const [journals, setJournals] = useState<any[]>([])
+  const [students, setStudents] = useState<any[]>([])
 
-  const load = async () => {
-    if (!tenant) return
-    setLoading(true)
-    const [sched, jour] = await Promise.all([
-      fetch(`/api/gtk/schedules?tenantId=${tenant.id}`).then(r => r.json()),
-      fetch(`/api/gtk/journals?tenantId=${tenant.id}`).then(r => r.json()),
-    ])
-    setTodaySchedules(sched.schedules || [])
-    setRecentJournals(jour.journals || [])
-    setLoading(false)
+  // Form State
+  const [formData, setFormData] = useState({
+    date: format(new Date(), 'yyyy-MM-dd'),
+    classroomId: "",
+    subjectId: "",
+    topic: "",
+    notes: ""
+  })
+  const [presences, setPresences] = useState<Record<string, { status: string, notes: string }>>({})
+
+  useEffect(() => {
+    if (!tenantId) return
+    fetchMetadata()
+  }, [tenantId])
+
+  useEffect(() => {
+    if (mode === "list" && metadata?.staffId) {
+      fetchJournals()
+    }
+  }, [mode, metadata?.staffId])
+
+  useEffect(() => {
+    if (formData.classroomId && mode === "create") {
+      fetchStudents(formData.classroomId)
+    }
+  }, [formData.classroomId, mode])
+
+  const fetchMetadata = async () => {
+    try {
+      const res = await fetch(`/api/gtk/metadata?tenantId=${tenantId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setMetadata(data)
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  useEffect(() => { load() }, [tenant?.id])
-
-  const openJournal = (schedule: any) => {
-    setActiveSchedule(schedule)
-    setTopic("")
-    setNotes("")
-    // Init all students to HADIR
-    const init: Record<string, string> = {}
-    schedule.classroom.students.forEach((s: any) => { init[s.id] = "HADIR" })
-    setPresences(init)
+  const fetchJournals = async () => {
+    try {
+      setLoading(true)
+      const res = await fetch(`/api/gtk/jurnal?tenantId=${tenantId}&staffId=${metadata?.staffId}`)
+      if (res.ok) {
+        setJournals(await res.json())
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleSave = async () => {
-    if (!tenant || !activeSchedule || !topic.trim()) return
+  const fetchStudents = async (classId: string) => {
+    try {
+      const res = await fetch(`/api/gtk/classrooms/${classId}/students?tenantId=${tenantId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setStudents(data)
+        
+        // Initialize all as HADIR
+        const initialPresences: Record<string, { status: string, notes: string }> = {}
+        data.forEach((s: any) => {
+          initialPresences[s.id] = { status: "HADIR", notes: "" }
+        })
+        setPresences(initialPresences)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const handlePresenceChange = (studentId: string, status: string) => {
+    setPresences(prev => ({
+      ...prev,
+      [studentId]: { ...prev[studentId], status }
+    }))
+  }
+
+  const handleSubmit = async () => {
+    if (!metadata?.staffId) return toast({ title: "Error", description: "Data staf tidak ditemukan", variant: "destructive" })
+    if (!formData.classroomId || !formData.subjectId || !formData.topic) {
+      return toast({ title: "Validasi", description: "Kelas, Mata Pelajaran, dan Materi wajib diisi", variant: "destructive" })
+    }
+
     setSaving(true)
     try {
-      const res = await fetch("/api/gtk/journals", {
+      const payload = {
+        tenantId,
+        staffId: metadata.staffId,
+        classroomId: formData.classroomId,
+        subjectId: formData.subjectId,
+        date: new Date(formData.date).toISOString(),
+        topic: formData.topic,
+        notes: formData.notes,
+        presences: Object.entries(presences).map(([studentId, data]) => ({
+          studentId,
+          status: data.status,
+          notes: data.notes
+        }))
+      }
+
+      const res = await fetch("/api/gtk/jurnal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenantId: tenant.id,
-          classroomId: activeSchedule.classroom.id,
-          subjectId: activeSchedule.subject.id,
-          date: new Date().toISOString().split("T")[0],
-          topic: topic.trim(),
-          notes: notes.trim() || null,
-          presences: Object.entries(presences).map(([studentId, status]) => ({ studentId, status })),
-        }),
+        body: JSON.stringify(payload)
       })
-      if (!res.ok) throw new Error()
-      toast({ title: "Jurnal berhasil disimpan", description: `${activeSchedule.subject.name} - ${activeSchedule.classroom.name}` })
-      setActiveSchedule(null)
-      await load()
-    } catch {
-      toast({ title: "Gagal menyimpan jurnal", variant: "destructive" })
+
+      if (res.ok) {
+        toast({ title: "Berhasil", description: "Jurnal & Absensi berhasil disimpan" })
+        setMode("list")
+        // Reset form
+        setFormData({ ...formData, topic: "", notes: "", classroomId: "", subjectId: "" })
+        setPresences({})
+        setStudents([])
+      } else {
+        const err = await res.text()
+        toast({ title: "Gagal", description: err, variant: "destructive" })
+      }
+    } catch (e) {
+      toast({ title: "Gagal", description: "Terjadi kesalahan sistem", variant: "destructive" })
+    } finally {
+      setSaving(false)
     }
-    setSaving(false)
   }
 
-  const today = format(new Date(), "EEEE, d MMMM yyyy", { locale: localeId })
-  const hadirCount = Object.values(presences).filter(v => v === "HADIR").length
+  if (loading && !metadata) return <div className="skeleton h-96 rounded-3xl" />
 
-  if (loading) return (
-    <div className="space-y-4">
-      <div className="skeleton h-8 w-48" />
-      {[1,2].map(i => <div key={i} className="skeleton h-28 rounded-2xl" />)}
-    </div>
-  )
+  if (mode === "create") {
+    return (
+      <div className="space-y-6 max-w-4xl mx-auto pb-10 animate-in fade-in slide-in-from-right-4 duration-300">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl" onClick={() => setMode("list")}>
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Buat Jurnal Baru</h1>
+            <p className="text-muted-foreground text-sm">Catat materi pembelajaran dan absensi siswa hari ini.</p>
+          </div>
+        </div>
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Jurnal Mengajar</h1>
-        <p className="text-muted-foreground">{today}</p>
-      </div>
-
-      {/* Jadwal Hari Ini */}
-      <div className="space-y-3">
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Jadwal Hari Ini</h2>
-        {todaySchedules.length === 0 ? (
-          <Card className="glass border-0">
-            <CardContent className="p-8 text-center">
-              <Calendar className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-              <p className="text-sm text-muted-foreground">Tidak ada jadwal mengajar hari ini</p>
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card className="glass border-0 shadow-sm md:col-span-2">
+            <CardHeader className="bg-muted/30 border-b border-border/50">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" /> Informasi Jurnal
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 grid sm:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Tanggal</label>
+                <Input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} className="rounded-xl bg-muted/40" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Mata Pelajaran</label>
+                <Select value={formData.subjectId} onValueChange={(val) => setFormData({ ...formData, subjectId: val })}>
+                  <SelectTrigger className="rounded-xl bg-muted/40">
+                    <SelectValue placeholder="Pilih Mata Pelajaran" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {metadata?.subjects.map(s => (
+                      <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Kelas</label>
+                <Select value={formData.classroomId} onValueChange={(val) => setFormData({ ...formData, classroomId: val })}>
+                  <SelectTrigger className="rounded-xl bg-muted/40">
+                    <SelectValue placeholder="Pilih Kelas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {metadata?.classrooms.map(c => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <label className="text-sm font-semibold">Materi / Topik Bahasan</label>
+                <Input placeholder="Contoh: Bab 1. Eksponen dan Logaritma" value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="rounded-xl bg-muted/40" />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <label className="text-sm font-semibold">Catatan Khusus (Opsional)</label>
+                <Textarea placeholder="Ada kejadian khusus hari ini?" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="rounded-xl bg-muted/40 min-h-[80px]" />
+              </div>
             </CardContent>
           </Card>
-        ) : todaySchedules.map((schedule: any) => {
-          const isOpen = activeSchedule?.id === schedule.id
-          return (
-            <Card key={schedule.id} className={cn("glass border-0 transition-all", isOpen && "border border-primary/30")}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between gap-3 cursor-pointer" onClick={() => isOpen ? setActiveSchedule(null) : openJournal(schedule)}>
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                      <BookOpen className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm">{schedule.subject.name}</p>
-                      <p className="text-xs text-muted-foreground">{schedule.classroom.name} · {schedule.startTime}–{schedule.endTime}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">{schedule.classroom.students.length} siswa</Badge>
-                    {isOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+
+          {formData.classroomId && (
+            <Card className="glass border-0 shadow-sm md:col-span-2">
+              <CardHeader className="bg-muted/30 border-b border-border/50">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Users className="h-5 w-5 text-primary" /> Absensi Siswa
+                  </CardTitle>
+                  <div className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
+                    {students.length} Siswa
                   </div>
                 </div>
-
-                {isOpen && (
-                  <div className="mt-4 space-y-4 border-t border-border/50 pt-4">
-                    {/* Topic */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Topik / Materi <span className="text-destructive">*</span></Label>
-                      <Input placeholder="Misal: Persamaan Linear Dua Variabel" value={topic} onChange={e => setTopic(e.target.value)} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Catatan (Opsional)</Label>
-                      <Textarea placeholder="Catatan tambahan untuk jurnal..." value={notes} onChange={e => setNotes(e.target.value)} rows={2} className="resize-none" />
-                    </div>
-
-                    {/* Presensi Siswa */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm font-medium">Presensi Siswa</Label>
-                        <span className="text-xs text-muted-foreground">{hadirCount}/{schedule.classroom.students.length} hadir</span>
-                      </div>
-                      <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                        {schedule.classroom.students.map((student: any, idx: number) => (
-                          <div key={student.id} className="flex items-center justify-between gap-3 rounded-xl bg-muted/40 px-3 py-2">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="text-xs text-muted-foreground w-6 text-right shrink-0">{idx + 1}.</span>
-                              <div className="min-w-0">
-                                <p className="text-sm font-medium truncate">{student.name}</p>
-                                {student.nis && <p className="text-[11px] text-muted-foreground">{student.nis}</p>}
-                              </div>
-                            </div>
-                            <div className="flex gap-1 shrink-0">
-                              {PRESENCE_STATUS.map(ps => (
-                                <button key={ps.value}
-                                  className={cn("rounded-lg border px-2 py-1 text-[10px] font-bold transition-all",
-                                    presences[student.id] === ps.value ? ps.color : "border-border text-muted-foreground hover:bg-muted")}
-                                  onClick={() => setPresences(p => ({ ...p, [student.id]: ps.value }))}>
-                                  {ps.label[0]}
-                                </button>
-                              ))}
-                            </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                {students.length === 0 ? (
+                  <div className="p-10 text-center text-muted-foreground">Tidak ada data siswa di kelas ini.</div>
+                ) : (
+                  <div className="divide-y divide-border/50">
+                    {students.map((student, index) => (
+                      <div key={student.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted/20 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center font-bold text-sm text-muted-foreground shrink-0">
+                            {index + 1}
                           </div>
-                        ))}
+                          <div>
+                            <p className="font-bold">{student.name}</p>
+                            <p className="text-xs text-muted-foreground">NISN: {student.nisn || '-'}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-1.5 shrink-0 bg-muted/30 p-1.5 rounded-2xl w-full sm:w-auto justify-between sm:justify-start">
+                          {[
+                            { val: "HADIR", icon: CheckCircle2, label: "H", color: "text-emerald-600", active: "bg-emerald-500 text-white shadow-md shadow-emerald-500/20" },
+                            { val: "SAKIT", icon: Plus, label: "S", color: "text-blue-600", active: "bg-blue-500 text-white shadow-md shadow-blue-500/20" },
+                            { val: "IZIN", icon: UserMinus, label: "I", color: "text-amber-600", active: "bg-amber-500 text-white shadow-md shadow-amber-500/20" },
+                            { val: "ALPHA", icon: UserX, label: "A", color: "text-rose-600", active: "bg-rose-500 text-white shadow-md shadow-rose-500/20" },
+                          ].map(btn => (
+                            <button
+                              key={btn.val}
+                              type="button"
+                              onClick={() => handlePresenceChange(student.id, btn.val)}
+                              className={cn(
+                                "flex items-center justify-center gap-1.5 h-10 px-4 sm:px-5 rounded-xl text-sm font-semibold transition-all duration-200 outline-none",
+                                presences[student.id]?.status === btn.val 
+                                  ? btn.active 
+                                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              )}
+                            >
+                              <btn.icon className="h-4 w-4 hidden sm:block" />
+                              {btn.label}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="flex gap-2 pt-1">
-                      <Button onClick={handleSave} disabled={saving || !topic.trim()} className="btn-gradient">
-                        {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle className="h-4 w-4 mr-2" />}
-                        Simpan Jurnal
-                      </Button>
-                      <Button variant="outline" onClick={() => setActiveSchedule(null)}>Batal</Button>
-                    </div>
+                    ))}
                   </div>
                 )}
               </CardContent>
             </Card>
-          )
-        })}
+          )}
+
+          <div className="md:col-span-2 pt-4 flex justify-end gap-3 sticky bottom-0 bg-background/80 backdrop-blur-md p-4 border-t z-10 -mx-4 sm:mx-0 sm:rounded-2xl sm:border sm:static">
+             <Button variant="outline" className="rounded-xl px-6" onClick={() => setMode("list")} disabled={saving}>Batal</Button>
+             <Button className="rounded-xl px-8" onClick={handleSubmit} disabled={saving || !formData.classroomId}>
+               {saving ? <div className="animate-spin h-5 w-5 border-2 border-white/20 border-t-white rounded-full" /> : <><Save className="mr-2 h-4 w-4" /> Simpan Jurnal & Absensi</>}
+             </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // LIST MODE
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300 pb-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Jurnal Mengajar</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Riwayat materi pembelajaran dan presensi kelas.</p>
+        </div>
+        <Button className="rounded-xl w-full sm:w-auto shadow-md shadow-primary/20" onClick={() => setMode("create")}>
+          <Plus className="mr-2 h-4 w-4" /> Buat Jurnal
+        </Button>
       </div>
 
-      {/* Riwayat Jurnal */}
-      <div className="space-y-3">
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Riwayat Jurnal (30 Terakhir)</h2>
-        {recentJournals.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-4">Belum ada jurnal yang diisi</p>
-        ) : (
-          <div className="space-y-2">
-            {recentJournals.map((j: any) => {
-              const hadir = j.presences?.filter((p: any) => p.status === "HADIR").length || 0
-              return (
-                <div key={j.id} className="flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 shrink-0">
-                    <FileText className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{j.subject.name} — {j.classroom.name}</p>
-                    <p className="text-xs text-muted-foreground">{format(new Date(j.date), "d MMM yyyy", { locale: localeId })} · {j.topic}</p>
-                  </div>
-                  <Badge variant="outline" className="text-xs shrink-0">{hadir} hadir</Badge>
-                </div>
-              )
-            })}
+      {metadata?.scheduleToday && metadata.scheduleToday.length > 0 && (
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+          <div>
+            <h4 className="font-semibold text-primary text-sm">Saran Kelas Hari Ini</h4>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {metadata.scheduleToday.map(s => (
+                <button 
+                  key={s.id}
+                  onClick={() => {
+                    setFormData({ ...formData, classroomId: s.classroom.id, subjectId: s.subject.id })
+                    setMode("create")
+                  }}
+                  className="text-xs bg-white dark:bg-black border rounded-lg px-3 py-1.5 hover:border-primary hover:text-primary transition-colors flex items-center gap-1.5 font-medium"
+                >
+                  <Clock className="h-3 w-3" /> {s.startTime} - {s.classroom.name}
+                </button>
+              ))}
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="space-y-3">
+          {[1,2,3].map(i => <div key={i} className="h-24 skeleton rounded-2xl" />)}
+        </div>
+      ) : journals.length === 0 ? (
+        <div className="text-center py-20 bg-muted/20 border border-dashed rounded-3xl">
+          <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+          <h3 className="font-semibold text-muted-foreground">Belum ada jurnal</h3>
+          <p className="text-sm text-muted-foreground mt-1">Anda belum membuat jurnal mengajar satupun.</p>
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {journals.map(j => {
+            const hadirCount = j.presences.filter((p: any) => p.status === "HADIR").length
+            const totalCount = j.presences.length
+            return (
+              <Card key={j.id} className="glass border-0 hover:border-border/50 transition-colors group">
+                <CardContent className="p-5 flex flex-col sm:flex-row gap-4 sm:items-center">
+                  <div className="flex flex-col items-center justify-center bg-primary/10 text-primary rounded-xl p-3 shrink-0 min-w-[80px]">
+                    <span className="text-2xl font-black leading-none">{format(new Date(j.date), 'dd')}</span>
+                    <span className="text-xs font-bold uppercase mt-1">{format(new Date(j.date), 'MMM', { locale: localeId })}</span>
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-bold bg-muted px-2 py-0.5 rounded text-foreground">{j.classroom.name}</span>
+                      <span className="text-xs font-medium text-muted-foreground truncate">{j.subject.name}</span>
+                    </div>
+                    <h3 className="font-bold text-lg leading-tight truncate group-hover:text-primary transition-colors">{j.topic}</h3>
+                    {j.notes && <p className="text-sm text-muted-foreground mt-1 line-clamp-1">{j.notes}</p>}
+                  </div>
+
+                  <div className="flex items-center gap-4 shrink-0 sm:pl-4 sm:border-l sm:ml-2">
+                    <div className="text-center">
+                      <p className="text-xs text-muted-foreground font-medium mb-1">Kehadiran</p>
+                      <p className="font-bold text-lg">{hadirCount}<span className="text-sm text-muted-foreground font-normal">/{totalCount}</span></p>
+                    </div>
+                    <Button variant="ghost" size="icon" className="rounded-full bg-muted/50 hover:bg-primary/10 hover:text-primary">
+                      <ChevronLeft className="h-4 w-4 rotate-180" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
