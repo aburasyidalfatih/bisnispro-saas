@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Calendar, Users, FileText, MessageSquare, ArrowRight, Clock, MapPin, BookOpen, PenTool, CheckCircle2, ChevronRight, Award, Bell } from "lucide-react"
+import { Calendar, Users, FileText, MessageSquare, ArrowRight, Clock, MapPin, BookOpen, PenTool, CheckCircle2, ChevronRight, Award, Bell, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
