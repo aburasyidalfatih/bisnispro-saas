@@ -22,7 +22,7 @@ export default async function NotificationsHistoryPage() {
     orderBy: { sentAt: 'desc' },
     include: {
       campaign: true,
-      tenant: { select: { name: true, customDomain: true, slug: true } }
+      tenant: { select: { name: true, domain: true, slug: true } }
     }
   })
 
