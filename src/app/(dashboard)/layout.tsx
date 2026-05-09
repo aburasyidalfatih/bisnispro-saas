@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 import { TenantBrandingProvider } from "@/components/providers/tenant-branding-provider"
 import { MobileAppLayout } from "@/components/layout/mobile-app-layout"
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
+import { GtkAppLayout } from "@/components/layout/gtk-app-layout"
 import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
 import { TenantCompletenessPopup } from "@/components/layout/tenant-completeness-popup"
 
@@ -77,7 +78,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <TenantBrandingProvider>
       <TenantCompletenessPopup />
-      {!isAdminRole ? (
+      {isGuru ? (
+        <GtkAppLayout>
+          {children}
+        </GtkAppLayout>
+      ) : !isAdminRole ? (
         <MobileAppLayout>
           {children}
         </MobileAppLayout>
@@ -123,13 +128,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <main className={cn("flex-1 overflow-y-auto bg-mesh p-4 lg:p-6", isGuru && "pb-28 lg:pb-6")} style={{ viewTransitionName: "page-content" }}>
               {children}
             </main>
-            
-            {/* Mobile Bottom Nav khusus untuk Guru */}
-            {isGuru && (
-              <div className="absolute bottom-0 left-0 right-0 z-50 lg:hidden">
-                <MobileBottomNav />
-              </div>
-            )}
           </div>
         </div>
       )}
