@@ -99,7 +99,7 @@ export default async function middleware(request: NextRequest) {
   if (isMainDomain) {
     // Cek Affiliate Shortlink (contoh: /bdi123, /ref-abc, /mitra123)
     // Hindari rute sistem yang valid
-    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy"]
+    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/forgot-password", "/reset-password", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy"]
     const isSystemRoute = systemRoutes.some(r => pathname.startsWith(r))
     
     // Tangkap path apa saja yang bukan system route dan panjangnya antara 5-15 karakter alfanumerik (atau hyphen)

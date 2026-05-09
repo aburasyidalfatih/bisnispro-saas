@@ -99,6 +99,15 @@ export default function ResetPasswordPage() {
               <div className="space-y-2">
                 <Label htmlFor="password">Password Baru</Label>
                 <Input id="password" name="password" type="password" placeholder="Minimal 8 karakter" required minLength={8} className="h-11 rounded-xl bg-background/50" />
+                <div className="bg-muted/50 rounded-lg p-3 mt-2 border border-border/50 text-xs text-muted-foreground space-y-1.5">
+                  <p className="font-semibold text-foreground flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-emerald-500" /> Tips Password Kuat:</p>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li>Minimal 8 karakter (lebih panjang lebih baik)</li>
+                    <li>Gunakan kombinasi huruf besar dan kecil (A-Z, a-z)</li>
+                    <li>Sertakan angka (0-9) dan simbol (!@#$%^&*)</li>
+                    <li>Hindari kata yang mudah ditebak (seperti nama atau tanggal lahir)</li>
+                  </ul>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirm">Konfirmasi Password</Label>
