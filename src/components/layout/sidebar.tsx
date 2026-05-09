@@ -163,7 +163,6 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             { label: "Absensi Siswa", href: `${basePath}/attendance`, icon: CalendarCheck },
             { label: "Absensi Guru", href: `${basePath}/attendance/gtk`, icon: Users },
             { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
-            { label: "E-Rapor", href: `${basePath}/reports/grades`, icon: FileText },
           ],
         },
         {
@@ -209,9 +208,8 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
       ],
     },
     {
-      title: "Portal & Laporan",
+      title: "Laporan",
       items: [
-        { label: "Portal Wali", href: `${basePath}/portal-wali`, icon: MonitorSmartphone },
         { label: "Laporan Umum", href: `${basePath}/reports`, icon: FileText },
       ]
     },
@@ -220,8 +218,6 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
       items: [
         { label: "Notifikasi", href: `${basePath}/notifications`, icon: Bell },
         { label: "Pesan", href: `${basePath}/my-messages`, icon: Mail },
-        { label: "Dokumen Saya", href: `${basePath}/my-documents`, icon: FolderOpen },
-        { label: "AI Assistant", href: `${basePath}/ai`, icon: Sparkles },
       ],
     },
     {
@@ -268,10 +264,9 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
         });
       }
       
-      // Portal & Laporan
-      if (section.title === "Portal & Laporan") {
+      // Laporan
+      if (section.title === "Laporan") {
         section.items = section.items.filter(item => {
-          if (item.label === "Portal Wali") return access.enable_parent_portal === true;
           if (item.label === "Laporan Umum") return access.enable_analytics === true;
           return true;
         });
@@ -280,7 +275,6 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
       // Aktivitas & Pesan
       if (section.title === "Aktivitas & Pesan") {
         section.items = section.items.filter(item => {
-          if (item.label === "AI Assistant") return false; // Pro only feature
           return true;
         });
       }
@@ -352,8 +346,6 @@ function getMemberMenu(basePath: string): MenuSection[] {
     {
       title: "Layanan Siswa",
       items: [
-        { label: "Dokumen Saya", href: `${basePath}/my-documents`, icon: FolderOpen },
-        { label: "Jadwal", href: `${basePath}/my-schedule`, icon: Calendar },
         { label: "Pesan", href: `${basePath}/my-messages`, icon: MessageSquare },
       ],
     },
@@ -361,8 +353,6 @@ function getMemberMenu(basePath: string): MenuSection[] {
       title: "Informasi",
       items: [
         { label: "Notifikasi", href: `${basePath}/notifications`, icon: Bell },
-        { label: "Panduan", href: `${basePath}/help`, icon: BookOpen },
-        { label: "FAQ", href: `${basePath}/faq`, icon: HelpCircle },
       ],
     },
     {
