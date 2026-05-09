@@ -20,10 +20,10 @@ export default function GuruDashboard() {
   }, [])
 
   const quickActions = [
-    { label: "Presensi Kelas", desc: "Catat kehadiran siswa", icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", href: "/panel-gtk/absensi" },
-    { label: "Jurnal Mengajar", desc: "Isi agenda KBM harian", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", href: "/panel-gtk/jurnal" },
+    { label: "Absen Kehadiran", desc: "Check-in GPS harian", icon: Clock, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", href: "/panel-gtk/absensi" },
+    { label: "Jurnal & Absen Siswa", desc: "Isi agenda & presensi kelas", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", href: "/panel-gtk/jurnal" },
     { label: "Input Nilai", desc: "Rekap nilai ujian & tugas", icon: Award, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", href: "/panel-gtk/nilai" },
-    { label: "Tulis Artikel", desc: "Bagikan ilmu di mading", icon: PenTool, color: "text-violet-500", bg: "bg-violet-500/10", border: "border-violet-500/20", href: "/panel-gtk/posts" },
+    { label: "Buku Poin Siswa", desc: "Catat pelanggaran/prestasi", icon: AlertCircle, color: "text-rose-500", bg: "bg-rose-500/10", border: "border-rose-500/20", href: "/panel-gtk/poin" },
   ]
 
   const scheduleToday = [
