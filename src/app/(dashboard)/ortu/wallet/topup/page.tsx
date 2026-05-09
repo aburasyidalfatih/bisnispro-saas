@@ -51,7 +51,7 @@ export default async function TopUpPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-12">
       <div>
-         <h1 className="text-2xl font-bold tracking-tight text-foreground">Top Up Saldo SchoolPay</h1>
+         <h1 className="text-2xl font-bold tracking-tight text-foreground">Nabung Sekarang</h1>
          <p className="text-sm text-muted-foreground mt-1">Isi saldo dompet digital anak Anda secara instan.</p>
       </div>
 

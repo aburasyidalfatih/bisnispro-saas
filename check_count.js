@@ -1,0 +1,1 @@
+const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); async function main() { const count = await prisma.dripLog.count({ where: { sentAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }); console.log('TOTAL EMAIL HARI INI:', count); } main().finally(() => prisma.$disconnect());

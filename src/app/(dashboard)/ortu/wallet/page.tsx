@@ -38,7 +38,7 @@ export default function OrtuWalletHistoryPage() {
     <div className="pb-12 space-y-5">
       {/* Hero */}
       <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-b-[2.5rem] pt-8 pb-20 px-6">
-        <h1 className="text-white font-bold text-xl mb-6">SchoolPay Wallet</h1>
+        <h1 className="text-white font-bold text-xl mb-6">Tabungan Siswa</h1>
         <div className="text-center">
           <p className="text-white/70 text-sm mb-1">Saldo Anda</p>
           <p className="text-white text-4xl font-black">

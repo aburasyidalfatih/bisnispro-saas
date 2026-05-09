@@ -48,7 +48,7 @@ export default function OrtuTagihanDetailPage({ params }: { params: Promise<{ id
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      toast({ title: "Pembayaran berhasil!", description: "Tagihan telah dibayar dari saldo SchoolPay." })
+      toast({ title: "Pembayaran berhasil!", description: "Tagihan telah dibayar dari saldo Tabungan." })
       router.push("/ortu/tagihan")
     } catch (err: any) {
       toast({ title: "Gagal", description: err.message, variant: "destructive" })
@@ -124,7 +124,7 @@ export default function OrtuTagihanDetailPage({ params }: { params: Promise<{ id
                 <Wallet className="h-5 w-5 text-indigo-600" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Saldo SchoolPay</p>
+                <p className="text-xs text-muted-foreground">Saldo Tabungan</p>
                 <p className="font-bold text-indigo-600">Rp {walletBalance.toLocaleString("id-ID")}</p>
               </div>
             </div>

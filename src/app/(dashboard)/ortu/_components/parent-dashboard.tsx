@@ -81,8 +81,8 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
              </div>
              <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
-                   <p className="text-sm font-medium text-white/80">Total Saldo SchoolPay</p>
-                   <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-0">Wallet Aktif</Badge>
+                   <p className="text-sm font-medium text-white/80">Total Saldo Tabungan</p>
+                   <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-0">Tabungan Aktif</Badge>
                 </div>
                 <h2 className="text-3xl font-black mb-1">Rp {totalBalance.toLocaleString("id-ID")}</h2>
                 <p className="text-xs text-white/70 mb-5">Terakumulasi dari {childrenData.length} rekening siswa</p>
@@ -90,7 +90,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                 <div className="flex gap-3">
                    <Link href="/ortu/wallet/topup">
                      <Button size="sm" className="bg-white text-indigo-600 hover:bg-white/90 rounded-xl text-xs h-9">
-                        <PlusCircle className="mr-1.5 h-3.5 w-3.5" /> Top Up Saldo
+                        <PlusCircle className="mr-1.5 h-3.5 w-3.5" /> Nabung Sekarang
                      </Button>
                    </Link>
                    <Link href="/ortu/wallet">
