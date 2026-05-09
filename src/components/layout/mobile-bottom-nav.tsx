@@ -20,6 +20,7 @@ export function MobileBottomNav({ className }: { className?: string }) {
   ] : isGTK ? [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
     { label: "Absensi", icon: CalendarCheck, href: "/panel-gtk/absensi" },
+    { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal" },
     { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
     { label: "Profil", icon: User, href: "/panel-gtk/profil" },
   ] : [
@@ -40,10 +41,10 @@ export function MobileBottomNav({ className }: { className?: string }) {
         
         {/* Left Nav Items */}
         <div className={cn("flex justify-between relative z-10", isGTK ? "w-full px-2" : "w-2/5")}>
-          {navItems.slice(0, isGTK ? 4 : 2).map((item) => {
+          {navItems.slice(0, isGTK ? 5 : 2).map((item) => {
             const isActive = pathname === item.href || (item.href !== baseRoute && pathname.startsWith(item.href))
             return (
-              <Link href={item.href} key={item.label} className={cn("flex flex-col items-center justify-center p-2 gap-1", isGTK ? "w-1/4" : "w-16")}>
+              <Link href={item.href} key={item.label} className={cn("flex flex-col items-center justify-center p-2 gap-1", isGTK ? "w-1/5" : "w-16")}>
                 <item.icon className={cn("h-6 w-6 transition-all duration-300", isActive ? "text-primary scale-110" : "text-muted-foreground")} />
                 <span className={cn("text-[10px] font-medium transition-colors duration-300", isActive ? "text-primary font-bold" : "text-muted-foreground")}>
                   {item.label}
