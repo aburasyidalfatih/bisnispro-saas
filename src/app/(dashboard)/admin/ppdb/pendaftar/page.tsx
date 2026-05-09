@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { Eye, Users, Search, Trash2 } from "lucide-react"
+import { Eye, Users, Search, Trash2, FileSpreadsheet } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -91,6 +91,14 @@ export default function PpdbPendaftarPage() {
     }
   }
 
+  const handleExportDapodik = () => {
+    if (periodeFilter === "ALL") {
+      alert("Silakan pilih gelombang tertentu terlebih dahulu untuk mengekspor data Dapodik.");
+      return;
+    }
+    window.open(`/api/ppdb/export-dapodik?tenantId=${tenantId}&periodeId=${periodeFilter}`, "_blank");
+  }
+
   const counts = {
     all: applicants.length,
     menunggu: applicants.filter(a => a.status === "MENUNGGU").length,
@@ -106,7 +114,17 @@ export default function PpdbPendaftarPage() {
           <h1 className="text-2xl font-bold tracking-tight">Meja Pendaftar</h1>
           <p className="text-muted-foreground mt-1 text-sm">Verifikasi dan kelola seluruh calon siswa yang mendaftar.</p>
         </div>
-        <Button variant="outline" className="rounded-xl" onClick={fetchApplicants}>Refresh</Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            className="rounded-xl border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+            onClick={handleExportDapodik}
+          >
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            Export Dapodik
+          </Button>
+          <Button variant="outline" className="rounded-xl" onClick={fetchApplicants}>Refresh</Button>
+        </div>
       </div>
 
       {/* Stats Row */}

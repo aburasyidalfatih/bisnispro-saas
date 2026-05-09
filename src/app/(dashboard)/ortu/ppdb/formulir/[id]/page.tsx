@@ -28,50 +28,75 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
   const [applicant, setApplicant] = useState<any>(null)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
-  // Step 1: Data Siswa
+  // Step 1: Data Siswa & Alamat
   const [dataSiswa, setDataSiswa] = useState({
+    jenisPendaftaran: "Siswa Baru",
     nisn: "",
+    nik: "",
     jenisKelamin: "",
     tempatLahir: "",
     tanggalLahir: "",
+    noRegistrasiAkta: "",
     agama: "",
     kewarganegaraan: "WNI",
+    anakKe: "",
+    kebutuhanKhusus: "Tidak",
     alamat: "",
+    rtRw: "",
+    dusun: "",
     kelurahan: "",
     kecamatan: "",
     kabupaten: "",
     provinsi: "",
+    kodePos: "",
+    lintang: "",
+    bujur: "",
+    tempatTinggal: "",
+    modaTransportasi: "",
     telepon: "",
+    emailPribadi: "",
     tinggiBadan: "",
     beratBadan: "",
-    kebutuhanKhusus: "",
   })
 
   // Step 2: Data Orang Tua
   const [dataOrangtua, setDataOrangtua] = useState({
     namaAyah: "",
-    pekerjaanAyah: "",
+    nikAyah: "",
+    tahunLahirAyah: "",
     pendidikanAyah: "",
+    pekerjaanAyah: "",
+    penghasilanAyah: "",
+    kebutuhanKhususAyah: "Tidak",
     teleponAyah: "",
     namaIbu: "",
-    pekerjaanIbu: "",
+    nikIbu: "",
+    tahunLahirIbu: "",
     pendidikanIbu: "",
+    pekerjaanIbu: "",
+    penghasilanIbu: "",
+    kebutuhanKhususIbu: "Tidak",
     teleponIbu: "",
     namaWali: "",
+    nikWali: "",
+    tahunLahirWali: "",
+    pendidikanWali: "",
+    pekerjaanWali: "",
+    penghasilanWali: "",
     hubunganWali: "",
     teleponWali: "",
-    penghasilanOrtu: "",
+    penghasilanOrtuGabungan: "",
   })
 
   // Step 3: Asal Sekolah
   const [dataSekolah, setDataSekolah] = useState({
     namaSekolahAsal: "",
-    nisn: "",
+    npsnSekolahAsal: "",
     alamatSekolahAsal: "",
     tahunLulus: "",
-    nilaiRata: "",
-    prestasiAkademik: "",
-    prestasiNonAkademik: "",
+    nomorPesertaUjian: "",
+    nomorIjazah: "",
+    nomorSKHUN: "",
   })
 
   useEffect(() => {
@@ -141,7 +166,7 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
   }
 
   const isStepValid = () => {
-    if (currentStep === 1) return dataSiswa.nisn && dataSiswa.jenisKelamin && dataSiswa.tanggalLahir && dataSiswa.alamat
+    if (currentStep === 1) return dataSiswa.nisn && dataSiswa.nik && dataSiswa.jenisKelamin && dataSiswa.tanggalLahir && dataSiswa.alamat
     if (currentStep === 2) return dataOrangtua.namaAyah && dataOrangtua.namaIbu
     return true
   }
@@ -212,9 +237,31 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
           {currentStep === 1 && (
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
-                <FormField label="NISN" required>
-                  <Input placeholder="1234567890" value={dataSiswa.nisn} onChange={e => setDataSiswa({...dataSiswa, nisn: e.target.value})} className="rounded-xl" />
+                <FormField label="Jenis Pendaftaran" required>
+                  <Select value={dataSiswa.jenisPendaftaran} onValueChange={v => setDataSiswa({...dataSiswa, jenisPendaftaran: v})}>
+                    <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Siswa Baru">Siswa Baru</SelectItem>
+                      <SelectItem value="Pindahan">Pindahan</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormField>
+                <div className="hidden md:block"></div>
+                
+                <FormField label="NISN" required>
+                  <Input placeholder="10 Digit NISN" value={dataSiswa.nisn} onChange={e => setDataSiswa({...dataSiswa, nisn: e.target.value})} className="rounded-xl" maxLength={10} />
+                </FormField>
+                <FormField label="NIK / No KTP" required>
+                  <Input placeholder="16 Digit NIK" value={dataSiswa.nik} onChange={e => setDataSiswa({...dataSiswa, nik: e.target.value})} className="rounded-xl" maxLength={16} />
+                </FormField>
+                
+                <FormField label="No. Registrasi Akta Lahir">
+                  <Input placeholder="No. Akta Kelahiran" value={dataSiswa.noRegistrasiAkta} onChange={e => setDataSiswa({...dataSiswa, noRegistrasiAkta: e.target.value})} className="rounded-xl" />
+                </FormField>
+                <FormField label="Anak Ke-berapa (Berdasarkan KK)">
+                  <Input type="number" placeholder="Contoh: 1" value={dataSiswa.anakKe} onChange={e => setDataSiswa({...dataSiswa, anakKe: e.target.value})} className="rounded-xl" />
+                </FormField>
+
                 <FormField label="Jenis Kelamin" required>
                   <Select value={dataSiswa.jenisKelamin} onValueChange={v => setDataSiswa({...dataSiswa, jenisKelamin: v})}>
                     <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
@@ -224,46 +271,110 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
                     </SelectContent>
                   </Select>
                 </FormField>
-                <FormField label="Tempat Lahir">
-                  <Input placeholder="Kota kelahiran" value={dataSiswa.tempatLahir} onChange={e => setDataSiswa({...dataSiswa, tempatLahir: e.target.value})} className="rounded-xl" />
-                </FormField>
-                <FormField label="Tanggal Lahir" required>
-                  <Input type="date" value={dataSiswa.tanggalLahir} onChange={e => setDataSiswa({...dataSiswa, tanggalLahir: e.target.value})} className="rounded-xl" />
-                </FormField>
                 <FormField label="Agama">
                   <Select value={dataSiswa.agama} onValueChange={v => setDataSiswa({...dataSiswa, agama: v})}>
                     <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih agama..." /></SelectTrigger>
                     <SelectContent>
-                      {["Islam","Kristen","Katolik","Hindu","Buddha","Konghucu"].map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                      {["Islam","Kristen","Katolik","Hindu","Buddha","Konghucu","Kepercayaan"].map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </FormField>
-                <FormField label="No. Telepon Siswa">
-                  <Input placeholder="08xxxxxxxxxx" value={dataSiswa.telepon} onChange={e => setDataSiswa({...dataSiswa, telepon: e.target.value})} className="rounded-xl" />
+
+                <FormField label="Tempat Lahir">
+                  <Input placeholder="Kota/Kab kelahiran" value={dataSiswa.tempatLahir} onChange={e => setDataSiswa({...dataSiswa, tempatLahir: e.target.value})} className="rounded-xl" />
+                </FormField>
+                <FormField label="Tanggal Lahir" required>
+                  <Input type="date" value={dataSiswa.tanggalLahir} onChange={e => setDataSiswa({...dataSiswa, tanggalLahir: e.target.value})} className="rounded-xl" />
+                </FormField>
+
+                <FormField label="Berkebutuhan Khusus">
+                  <Select value={dataSiswa.kebutuhanKhusus} onValueChange={v => setDataSiswa({...dataSiswa, kebutuhanKhusus: v})}>
+                    <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                    <SelectContent>
+                      {["Tidak","Tunanetra","Tunarungu","Tunagrahita","Tunadaksa","Lainnya"].map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </FormField>
+                <FormField label="Kewarganegaraan">
+                  <Select value={dataSiswa.kewarganegaraan} onValueChange={v => setDataSiswa({...dataSiswa, kewarganegaraan: v})}>
+                    <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="WNI">WNI</SelectItem>
+                      <SelectItem value="WNA">WNA</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormField>
               </div>
 
-              <div className="pt-2 border-t border-border/50">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Alamat Lengkap</p>
+              <div className="pt-4 border-t border-border/50">
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Alamat & Tempat Tinggal</p>
                 <div className="space-y-4">
-                  <FormField label="Jalan / RT / RW" required>
-                    <Textarea placeholder="Jl. Contoh No. 1, RT 01/02" value={dataSiswa.alamat} onChange={e => setDataSiswa({...dataSiswa, alamat: e.target.value})} className="rounded-xl resize-none" rows={2} />
+                  <FormField label="Jalan / Nama Tempat Tinggal" required>
+                    <Input placeholder="Contoh: Jl. Merdeka No 1" value={dataSiswa.alamat} onChange={e => setDataSiswa({...dataSiswa, alamat: e.target.value})} className="rounded-xl" />
                   </FormField>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Kelurahan">
-                      <Input placeholder="Nama kelurahan" value={dataSiswa.kelurahan} onChange={e => setDataSiswa({...dataSiswa, kelurahan: e.target.value})} className="rounded-xl" />
+                    <FormField label="RT / RW">
+                      <Input placeholder="001/002" value={dataSiswa.rtRw} onChange={e => setDataSiswa({...dataSiswa, rtRw: e.target.value})} className="rounded-xl" />
+                    </FormField>
+                    <FormField label="Nama Dusun">
+                      <Input placeholder="Nama dusun/kampung" value={dataSiswa.dusun} onChange={e => setDataSiswa({...dataSiswa, dusun: e.target.value})} className="rounded-xl" />
+                    </FormField>
+                    <FormField label="Desa / Kelurahan">
+                      <Input placeholder="Desa/Kelurahan" value={dataSiswa.kelurahan} onChange={e => setDataSiswa({...dataSiswa, kelurahan: e.target.value})} className="rounded-xl" />
                     </FormField>
                     <FormField label="Kecamatan">
-                      <Input placeholder="Nama kecamatan" value={dataSiswa.kecamatan} onChange={e => setDataSiswa({...dataSiswa, kecamatan: e.target.value})} className="rounded-xl" />
+                      <Input placeholder="Kecamatan" value={dataSiswa.kecamatan} onChange={e => setDataSiswa({...dataSiswa, kecamatan: e.target.value})} className="rounded-xl" />
                     </FormField>
-                    <FormField label="Kabupaten/Kota">
-                      <Input placeholder="Nama kabupaten/kota" value={dataSiswa.kabupaten} onChange={e => setDataSiswa({...dataSiswa, kabupaten: e.target.value})} className="rounded-xl" />
+                    <FormField label="Kabupaten / Kota">
+                      <Input placeholder="Kabupaten/Kota" value={dataSiswa.kabupaten} onChange={e => setDataSiswa({...dataSiswa, kabupaten: e.target.value})} className="rounded-xl" />
                     </FormField>
                     <FormField label="Provinsi">
-                      <Input placeholder="Nama provinsi" value={dataSiswa.provinsi} onChange={e => setDataSiswa({...dataSiswa, provinsi: e.target.value})} className="rounded-xl" />
+                      <Input placeholder="Provinsi" value={dataSiswa.provinsi} onChange={e => setDataSiswa({...dataSiswa, provinsi: e.target.value})} className="rounded-xl" />
+                    </FormField>
+                    <FormField label="Kode Pos">
+                      <Input placeholder="Kode Pos" value={dataSiswa.kodePos} onChange={e => setDataSiswa({...dataSiswa, kodePos: e.target.value})} className="rounded-xl" />
+                    </FormField>
+                    <div className="hidden md:block"></div>
+                    <FormField label="Lintang (Latitude)">
+                      <Input placeholder="Contoh: -6.12345" value={dataSiswa.lintang} onChange={e => setDataSiswa({...dataSiswa, lintang: e.target.value})} className="rounded-xl" />
+                    </FormField>
+                    <FormField label="Bujur (Longitude)">
+                      <Input placeholder="Contoh: 106.12345" value={dataSiswa.bujur} onChange={e => setDataSiswa({...dataSiswa, bujur: e.target.value})} className="rounded-xl" />
+                    </FormField>
+                    
+                    <FormField label="Tempat Tinggal">
+                      <Select value={dataSiswa.tempatTinggal} onValueChange={v => setDataSiswa({...dataSiswa, tempatTinggal: v})}>
+                        <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                        <SelectContent>
+                          {["Bersama Orang Tua","Wali","Kos","Asrama","Panti Asuhan","Lainnya"].map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </FormField>
+                    <FormField label="Moda Transportasi">
+                      <Select value={dataSiswa.modaTransportasi} onValueChange={v => setDataSiswa({...dataSiswa, modaTransportasi: v})}>
+                        <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                        <SelectContent>
+                          {["Jalan Kaki","Kendaraan Pribadi","Kendaraan Umum/Angkot","Jemputan Sekolah","Kereta Api","Ojek","Lainnya"].map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
                     </FormField>
                   </div>
                 </div>
+              </div>
+
+              <div className="pt-4 border-t border-border/50 grid md:grid-cols-2 gap-4">
+                <FormField label="No. HP / WhatsApp Siswa">
+                  <Input placeholder="08xxxxxxxxxx" value={dataSiswa.telepon} onChange={e => setDataSiswa({...dataSiswa, telepon: e.target.value})} className="rounded-xl" />
+                </FormField>
+                <FormField label="Email Pribadi">
+                  <Input type="email" placeholder="siswa@email.com" value={dataSiswa.emailPribadi} onChange={e => setDataSiswa({...dataSiswa, emailPribadi: e.target.value})} className="rounded-xl" />
+                </FormField>
+                <FormField label="Tinggi Badan (cm)">
+                  <Input type="number" placeholder="160" value={dataSiswa.tinggiBadan} onChange={e => setDataSiswa({...dataSiswa, tinggiBadan: e.target.value})} className="rounded-xl" />
+                </FormField>
+                <FormField label="Berat Badan (kg)">
+                  <Input type="number" placeholder="50" value={dataSiswa.beratBadan} onChange={e => setDataSiswa({...dataSiswa, beratBadan: e.target.value})} className="rounded-xl" />
+                </FormField>
               </div>
             </div>
           )}
@@ -275,25 +386,44 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="h-5 w-5 rounded-full bg-blue-500/20 flex items-center justify-center text-[9px] font-bold text-blue-600">A</div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data Ayah</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data Ayah Kandung</p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <FormField label="Nama Ayah" required>
-                    <Input placeholder="Nama lengkap ayah" value={dataOrangtua.namaAyah} onChange={e => setDataOrangtua({...dataOrangtua, namaAyah: e.target.value})} className="rounded-xl" />
+                  <FormField label="Nama Ayah (Tanpa Gelar)" required>
+                    <Input placeholder="Nama lengkap sesuai KK" value={dataOrangtua.namaAyah} onChange={e => setDataOrangtua({...dataOrangtua, namaAyah: e.target.value})} className="rounded-xl" />
                   </FormField>
-                  <FormField label="No. HP Ayah">
-                    <Input placeholder="08xxxxxxxxxx" value={dataOrangtua.teleponAyah} onChange={e => setDataOrangtua({...dataOrangtua, teleponAyah: e.target.value})} className="rounded-xl" />
+                  <FormField label="NIK Ayah" required>
+                    <Input placeholder="16 Digit NIK" value={dataOrangtua.nikAyah} onChange={e => setDataOrangtua({...dataOrangtua, nikAyah: e.target.value})} className="rounded-xl" maxLength={16} />
                   </FormField>
-                  <FormField label="Pekerjaan Ayah">
-                    <Input placeholder="Pekerjaan" value={dataOrangtua.pekerjaanAyah} onChange={e => setDataOrangtua({...dataOrangtua, pekerjaanAyah: e.target.value})} className="rounded-xl" />
+                  <FormField label="Tahun Lahir">
+                    <Input type="number" placeholder="Contoh: 1980" value={dataOrangtua.tahunLahirAyah} onChange={e => setDataOrangtua({...dataOrangtua, tahunLahirAyah: e.target.value})} className="rounded-xl" />
                   </FormField>
                   <FormField label="Pendidikan Terakhir">
                     <Select value={dataOrangtua.pendidikanAyah} onValueChange={v => setDataOrangtua({...dataOrangtua, pendidikanAyah: v})}>
                       <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
                       <SelectContent>
-                        {["SD","SMP","SMA/SMK","D3","S1","S2","S3","Lainnya"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                        {["Tidak Sekolah","Putus SD","SD Sederajat","SMP Sederajat","SMA Sederajat","D1-D3","D4/S1","S2","S3"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                       </SelectContent>
                     </Select>
+                  </FormField>
+                  <FormField label="Pekerjaan">
+                    <Select value={dataOrangtua.pekerjaanAyah} onValueChange={v => setDataOrangtua({...dataOrangtua, pekerjaanAyah: v})}>
+                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                      <SelectContent>
+                        {["Tidak Bekerja","Nelayan","Petani","Peternak","PNS/TNI/Polri","Karyawan Swasta","Pedagang Kecil","Pedagang Besar","Wiraswasta","Wirausaha","Buruh","Pensiunan","Lainnya"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label="Berkebutuhan Khusus">
+                    <Select value={dataOrangtua.kebutuhanKhususAyah} onValueChange={v => setDataOrangtua({...dataOrangtua, kebutuhanKhususAyah: v})}>
+                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                      <SelectContent>
+                        {["Tidak","Tunanetra","Tunarungu","Tunagrahita","Tunadaksa","Lainnya"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label="No. HP / WhatsApp Ayah">
+                    <Input placeholder="08xxxxxxxxxx" value={dataOrangtua.teleponAyah} onChange={e => setDataOrangtua({...dataOrangtua, teleponAyah: e.target.value})} className="rounded-xl" />
                   </FormField>
                 </div>
               </div>
@@ -302,59 +432,98 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
               <div className="pt-4 border-t border-border/50">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="h-5 w-5 rounded-full bg-pink-500/20 flex items-center justify-center text-[9px] font-bold text-pink-600">I</div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data Ibu</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data Ibu Kandung</p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <FormField label="Nama Ibu" required>
-                    <Input placeholder="Nama lengkap ibu" value={dataOrangtua.namaIbu} onChange={e => setDataOrangtua({...dataOrangtua, namaIbu: e.target.value})} className="rounded-xl" />
+                  <FormField label="Nama Ibu (Tanpa Gelar)" required>
+                    <Input placeholder="Nama lengkap sesuai KK" value={dataOrangtua.namaIbu} onChange={e => setDataOrangtua({...dataOrangtua, namaIbu: e.target.value})} className="rounded-xl" />
                   </FormField>
-                  <FormField label="No. HP Ibu">
-                    <Input placeholder="08xxxxxxxxxx" value={dataOrangtua.teleponIbu} onChange={e => setDataOrangtua({...dataOrangtua, teleponIbu: e.target.value})} className="rounded-xl" />
+                  <FormField label="NIK Ibu" required>
+                    <Input placeholder="16 Digit NIK" value={dataOrangtua.nikIbu} onChange={e => setDataOrangtua({...dataOrangtua, nikIbu: e.target.value})} className="rounded-xl" maxLength={16} />
                   </FormField>
-                  <FormField label="Pekerjaan Ibu">
-                    <Input placeholder="Pekerjaan" value={dataOrangtua.pekerjaanIbu} onChange={e => setDataOrangtua({...dataOrangtua, pekerjaanIbu: e.target.value})} className="rounded-xl" />
+                  <FormField label="Tahun Lahir">
+                    <Input type="number" placeholder="Contoh: 1982" value={dataOrangtua.tahunLahirIbu} onChange={e => setDataOrangtua({...dataOrangtua, tahunLahirIbu: e.target.value})} className="rounded-xl" />
                   </FormField>
                   <FormField label="Pendidikan Terakhir">
                     <Select value={dataOrangtua.pendidikanIbu} onValueChange={v => setDataOrangtua({...dataOrangtua, pendidikanIbu: v})}>
                       <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
                       <SelectContent>
-                        {["SD","SMP","SMA/SMK","D3","S1","S2","S3","Lainnya"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                        {["Tidak Sekolah","Putus SD","SD Sederajat","SMP Sederajat","SMA Sederajat","D1-D3","D4/S1","S2","S3"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                       </SelectContent>
                     </Select>
+                  </FormField>
+                  <FormField label="Pekerjaan">
+                    <Select value={dataOrangtua.pekerjaanIbu} onValueChange={v => setDataOrangtua({...dataOrangtua, pekerjaanIbu: v})}>
+                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                      <SelectContent>
+                        {["Tidak Bekerja","Ibu Rumah Tangga","PNS/TNI/Polri","Karyawan Swasta","Pedagang Kecil","Pedagang Besar","Wiraswasta","Wirausaha","Buruh","Pensiunan","Lainnya"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label="Berkebutuhan Khusus">
+                    <Select value={dataOrangtua.kebutuhanKhususIbu} onValueChange={v => setDataOrangtua({...dataOrangtua, kebutuhanKhususIbu: v})}>
+                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                      <SelectContent>
+                        {["Tidak","Tunanetra","Tunarungu","Tunagrahita","Tunadaksa","Lainnya"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label="No. HP / WhatsApp Ibu">
+                    <Input placeholder="08xxxxxxxxxx" value={dataOrangtua.teleponIbu} onChange={e => setDataOrangtua({...dataOrangtua, teleponIbu: e.target.value})} className="rounded-xl" />
                   </FormField>
                 </div>
               </div>
 
               {/* Wali */}
               <div className="pt-4 border-t border-border/50">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-4">
                   <div className="h-5 w-5 rounded-full bg-violet-500/20 flex items-center justify-center text-[9px] font-bold text-violet-600">W</div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data Wali <span className="normal-case font-normal">(opsional, isi jika berbeda)</span></p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data Wali <span className="normal-case font-normal">(Kosongkan jika diisi oleh ayah/ibu)</span></p>
                 </div>
-                <div className="grid md:grid-cols-3 gap-4 mt-4">
+                <div className="grid md:grid-cols-2 gap-4">
                   <FormField label="Nama Wali">
-                    <Input placeholder="Nama wali" value={dataOrangtua.namaWali} onChange={e => setDataOrangtua({...dataOrangtua, namaWali: e.target.value})} className="rounded-xl" />
+                    <Input placeholder="Nama wali sesuai KTP" value={dataOrangtua.namaWali} onChange={e => setDataOrangtua({...dataOrangtua, namaWali: e.target.value})} className="rounded-xl" />
                   </FormField>
-                  <FormField label="Hubungan">
-                    <Input placeholder="Paman, Bibi, dll." value={dataOrangtua.hubunganWali} onChange={e => setDataOrangtua({...dataOrangtua, hubunganWali: e.target.value})} className="rounded-xl" />
+                  <FormField label="NIK Wali">
+                    <Input placeholder="16 Digit NIK" value={dataOrangtua.nikWali} onChange={e => setDataOrangtua({...dataOrangtua, nikWali: e.target.value})} className="rounded-xl" maxLength={16} />
                   </FormField>
-                  <FormField label="No. HP Wali">
-                    <Input placeholder="08xxxxxxxxxx" value={dataOrangtua.teleponWali} onChange={e => setDataOrangtua({...dataOrangtua, teleponWali: e.target.value})} className="rounded-xl" />
+                  <FormField label="Tahun Lahir">
+                    <Input type="number" placeholder="Contoh: 1980" value={dataOrangtua.tahunLahirWali} onChange={e => setDataOrangtua({...dataOrangtua, tahunLahirWali: e.target.value})} className="rounded-xl" />
+                  </FormField>
+                  <FormField label="Hubungan Wali">
+                    <Input placeholder="Paman, Kakek, Kakak, dll" value={dataOrangtua.hubunganWali} onChange={e => setDataOrangtua({...dataOrangtua, hubunganWali: e.target.value})} className="rounded-xl" />
+                  </FormField>
+                  <FormField label="Pendidikan Terakhir">
+                    <Select value={dataOrangtua.pendidikanWali} onValueChange={v => setDataOrangtua({...dataOrangtua, pendidikanWali: v})}>
+                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                      <SelectContent>
+                        {["Tidak Sekolah","Putus SD","SD Sederajat","SMP Sederajat","SMA Sederajat","D1-D3","D4/S1","S2","S3"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label="Pekerjaan">
+                    <Select value={dataOrangtua.pekerjaanWali} onValueChange={v => setDataOrangtua({...dataOrangtua, pekerjaanWali: v})}>
+                      <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                      <SelectContent>
+                        {["Tidak Bekerja","Nelayan","Petani","Peternak","PNS/TNI/Polri","Karyawan Swasta","Wiraswasta","Wirausaha","Buruh","Pensiunan","Lainnya"].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </FormField>
                 </div>
               </div>
 
               {/* Penghasilan */}
               <div className="pt-4 border-t border-border/50">
-                <FormField label="Penghasilan Orang Tua per Bulan">
-                  <Select value={dataOrangtua.penghasilanOrtu} onValueChange={v => setDataOrangtua({...dataOrangtua, penghasilanOrtu: v})}>
+                <FormField label="Penghasilan Orang Tua/Wali Gabungan (Bulanan)">
+                  <Select value={dataOrangtua.penghasilanOrtuGabungan} onValueChange={v => setDataOrangtua({...dataOrangtua, penghasilanOrtuGabungan: v})}>
                     <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih range penghasilan..." /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="&lt; Rp 1.000.000">{"< Rp 1.000.000"}</SelectItem>
-                      <SelectItem value="Rp 1.000.000 - Rp 3.000.000">Rp 1.000.000 - Rp 3.000.000</SelectItem>
-                      <SelectItem value="Rp 3.000.000 - Rp 5.000.000">Rp 3.000.000 - Rp 5.000.000</SelectItem>
-                      <SelectItem value="Rp 5.000.000 - Rp 10.000.000">Rp 5.000.000 - Rp 10.000.000</SelectItem>
-                      <SelectItem value="&gt; Rp 10.000.000">{"> Rp 10.000.000"}</SelectItem>
+                      <SelectItem value="Kurang dari Rp 500.000">Kurang dari Rp 500.000</SelectItem>
+                      <SelectItem value="Rp 500.000 - Rp 999.999">Rp 500.000 - Rp 999.999</SelectItem>
+                      <SelectItem value="Rp 1.000.000 - Rp 1.999.999">Rp 1.000.000 - Rp 1.999.999</SelectItem>
+                      <SelectItem value="Rp 2.000.000 - Rp 4.999.999">Rp 2.000.000 - Rp 4.999.999</SelectItem>
+                      <SelectItem value="Rp 5.000.000 - Rp 20.000.000">Rp 5.000.000 - Rp 20.000.000</SelectItem>
+                      <SelectItem value="Lebih dari Rp 20.000.000">Lebih dari Rp 20.000.000</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormField>
@@ -367,27 +536,25 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <FormField label="Nama Sekolah Asal">
-                  <Input placeholder="SDN / MIN / SD Contoh" value={dataSekolah.namaSekolahAsal} onChange={e => setDataSekolah({...dataSekolah, namaSekolahAsal: e.target.value})} className="rounded-xl" />
+                  <Input placeholder="SDN / MIN / SMP Contoh" value={dataSekolah.namaSekolahAsal} onChange={e => setDataSekolah({...dataSekolah, namaSekolahAsal: e.target.value})} className="rounded-xl" />
                 </FormField>
-                <FormField label="Tahun Lulus">
-                  <Input type="number" placeholder="2024" value={dataSekolah.tahunLulus} onChange={e => setDataSekolah({...dataSekolah, tahunLulus: e.target.value})} className="rounded-xl" />
-                </FormField>
-                <FormField label="Nilai Rata-rata Rapor">
-                  <Input type="number" step="0.01" placeholder="85.50" value={dataSekolah.nilaiRata} onChange={e => setDataSekolah({...dataSekolah, nilaiRata: e.target.value})} className="rounded-xl" />
-                </FormField>
-                <FormField label="NISN (Sekolah Asal)">
-                  <Input placeholder="Nomor NISN" value={dataSekolah.nisn} onChange={e => setDataSekolah({...dataSekolah, nisn: e.target.value})} className="rounded-xl" />
+                <FormField label="NPSN Sekolah Asal">
+                  <Input placeholder="8 Digit Angka NPSN" value={dataSekolah.npsnSekolahAsal} onChange={e => setDataSekolah({...dataSekolah, npsnSekolahAsal: e.target.value})} className="rounded-xl" />
                 </FormField>
               </div>
               <FormField label="Alamat Sekolah Asal">
                 <Textarea placeholder="Alamat lengkap sekolah asal..." value={dataSekolah.alamatSekolahAsal} onChange={e => setDataSekolah({...dataSekolah, alamatSekolahAsal: e.target.value})} className="rounded-xl resize-none" rows={2} />
               </FormField>
-              <div className="grid md:grid-cols-2 gap-4">
-                <FormField label="Prestasi Akademik">
-                  <Textarea placeholder="Contoh: Juara 1 OSN Matematika Tingkat Kota 2023" value={dataSekolah.prestasiAkademik} onChange={e => setDataSekolah({...dataSekolah, prestasiAkademik: e.target.value})} className="rounded-xl resize-none" rows={3} />
+
+              <div className="pt-4 border-t border-border/50 grid md:grid-cols-2 gap-4">
+                <FormField label="Nomor Peserta Ujian Nasional (Jika ada)">
+                  <Input placeholder="20 digit nomor seri" value={dataSekolah.nomorPesertaUjian} onChange={e => setDataSekolah({...dataSekolah, nomorPesertaUjian: e.target.value})} className="rounded-xl" />
                 </FormField>
-                <FormField label="Prestasi Non-Akademik">
-                  <Textarea placeholder="Contoh: Juara 2 Lomba Futsal Antar Sekolah 2023" value={dataSekolah.prestasiNonAkademik} onChange={e => setDataSekolah({...dataSekolah, prestasiNonAkademik: e.target.value})} className="rounded-xl resize-none" rows={3} />
+                <FormField label="Nomor Seri Ijazah (Jika ada)">
+                  <Input placeholder="DN-01/D-SD/13/..." value={dataSekolah.nomorIjazah} onChange={e => setDataSekolah({...dataSekolah, nomorIjazah: e.target.value})} className="rounded-xl" />
+                </FormField>
+                <FormField label="Nomor SKHUN (Jika ada)">
+                  <Input placeholder="SKHUN" value={dataSekolah.nomorSKHUN} onChange={e => setDataSekolah({...dataSekolah, nomorSKHUN: e.target.value})} className="rounded-xl" />
                 </FormField>
               </div>
 
