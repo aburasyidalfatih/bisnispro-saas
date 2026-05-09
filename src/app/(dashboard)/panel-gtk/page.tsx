@@ -21,9 +21,11 @@ export default function GuruDashboard() {
 
   const quickActions = [
     { label: "Absen Kehadiran", desc: "Check-in GPS harian", icon: Clock, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", href: "/panel-gtk/absensi" },
+    { label: "Jadwal Mengajar", desc: "Lihat roster mingguan", icon: Calendar, color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500/20", href: "/panel-gtk/jadwal" },
     { label: "Jurnal & Absen Siswa", desc: "Isi agenda & presensi kelas", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", href: "/panel-gtk/jurnal" },
     { label: "Input Nilai", desc: "Rekap nilai ujian & tugas", icon: Award, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", href: "/panel-gtk/nilai" },
     { label: "Buku Poin Siswa", desc: "Catat pelanggaran/prestasi", icon: AlertCircle, color: "text-rose-500", bg: "bg-rose-500/10", border: "border-rose-500/20", href: "/panel-gtk/poin" },
+    { label: "Tulis Artikel", desc: "Bagikan tulisan ke web", icon: FileText, color: "text-violet-500", bg: "bg-violet-500/10", border: "border-violet-500/20", href: "/panel-gtk/posts" },
   ]
 
   const scheduleToday = [
@@ -72,7 +74,7 @@ export default function GuruDashboard() {
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
           Aksi Cepat <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
           {quickActions.map((action, i) => (
             <Link key={i} href={action.href} className="group outline-none">
               <div className={cn(
