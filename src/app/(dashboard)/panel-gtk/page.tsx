@@ -106,17 +106,17 @@ export default function GuruDashboard() {
                 { title: "Rapat Paripurna Kenaikan Kelas", date: "Besok, 13:00 WIB", type: "Penting" },
                 { title: "Batas Akhir Input Nilai PTS", date: "Lusa, 23:59 WIB", type: "Reminder" }
               ].map((item, i) => (
-                <div key={i} className="flex gap-3 group cursor-pointer">
+                <Link href="/panel-gtk/messages" key={i} className="flex gap-3 group cursor-pointer outline-none">
                   <div className="w-1.5 rounded-full shrink-0 bg-primary/20 group-hover:bg-primary transition-colors"></div>
                   <div className="py-1">
                     <p className="font-semibold text-sm group-hover:text-primary transition-colors">{item.title}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{item.date}</p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
-            <Button variant="ghost" className="w-full mt-4 text-xs font-medium text-primary hover:bg-primary/5">
-              Lihat Semua Pengumuman
+            <Button variant="ghost" className="w-full mt-4 text-xs font-medium text-primary hover:bg-primary/5" asChild>
+              <Link href="/panel-gtk/messages">Lihat Semua Pengumuman</Link>
             </Button>
           </CardContent>
         </Card>
