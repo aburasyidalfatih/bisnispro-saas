@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Bell, Check, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,6 +26,7 @@ export function NotificationBell() {
   })
 
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
 
   const unreadCount = data?.unreadCount || 0
   const notifications = data?.notifications || []
@@ -109,7 +111,7 @@ export function NotificationBell() {
         </div>
         
         <DropdownMenuSeparator className="m-0" />
-        <Link href="/admin/notifications" onClick={() => setIsOpen(false)}>
+        <Link href={pathname.startsWith("/super-admin") ? "/super-admin/notifications" : "/dashboard/notifications"} onClick={() => setIsOpen(false)}>
           <div className="p-2 text-center text-xs font-medium text-primary hover:bg-muted/50 transition-colors cursor-pointer rounded-b-xl">
             Lihat Semua Notifikasi
           </div>
