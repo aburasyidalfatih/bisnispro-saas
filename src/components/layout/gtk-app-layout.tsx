@@ -104,7 +104,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 w-full lg:container lg:mx-auto lg:px-4 lg:py-8 lg:pb-8 pb-28">
+      <main className="flex-1 w-full max-w-7xl mx-auto lg:px-6 lg:py-8 lg:pb-8 pb-28">
         {children}
       </main>
 

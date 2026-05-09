@@ -186,7 +186,7 @@ export default function GTKAttendancePage() {
   }
 
   return (
-    <div className="pb-12 space-y-5">
+    <div className="pb-12 space-y-5 max-w-xl mx-auto md:mt-8 md:rounded-3xl md:overflow-hidden md:border md:shadow-2xl md:shadow-indigo-500/10 bg-background">
       {/* Hero Header */}
       <div className="bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 pt-10 pb-20 px-6">
         <p className="text-indigo-200 text-sm">Absensi Harian</p>
@@ -203,7 +203,7 @@ export default function GTKAttendancePage() {
         </div>
       </div>
 
-      <div className="px-5 -mt-14 space-y-4">
+      <div className="px-5 -mt-14 space-y-4 relative z-10">
         {/* Status Card Hari Ini */}
         <Card className="glass border-0 shadow-xl">
           <CardContent className="p-5">
