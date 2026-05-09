@@ -42,8 +42,8 @@ export default async function NotificationsHistoryPage() {
     orderBy: { createdAt: 'desc' },
     include: {
       tenant: { select: { name: true } },
-      sender: { select: { name: true, role: true } },
-      receiver: { select: { name: true, role: true } }
+      sender: { select: { name: true, email: true } },
+      receiver: { select: { name: true, email: true } }
     }
   })
 
