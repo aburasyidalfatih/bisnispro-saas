@@ -50,8 +50,8 @@ export async function PUT(req: Request) {
           data: { status, adminMessage }
         })
 
-        // Kirim notifikasi status terbaru
-        await sendApplicationNotification(targetId)
+        // Kirim notifikasi status terbaru di background (Asynchronous)
+        sendApplicationNotification(targetId).catch(e => logger.error("Async notification failed", e))
         results.push({ id: targetId, status, application })
       }
     }

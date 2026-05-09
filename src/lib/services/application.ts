@@ -114,13 +114,16 @@ export async function sendApplicationNotification(applicationId: string) {
   }
 
   // 2. Kirim WhatsApp ke pendaftar (menggunakan helper terpusat)
-  if (app.adminPhone) {
+  const disableWa = settings.DISABLE_WA_NOTIFICATION === "true" || process.env.DISABLE_WA_NOTIFICATION === "true"
+  if (!disableWa && app.adminPhone) {
     const result = await sendWhatsApp(app.adminPhone, `*${subject}*\n\n${message}`)
     if (!result.success) {
       logger.warn("Application WA notification skipped", { applicationId, error: result.error })
     } else {
       logger.info("Application WA sent", { applicationId, status: app.status })
     }
+  } else if (disableWa) {
+    logger.info("WhatsApp notification disabled globally via settings", { applicationId })
   }
 }
 
@@ -283,20 +286,21 @@ export async function approveApplication(id: string) {
     })
   }
 
-  // 4. Update status + simpan temp password untuk notifikasi
+  // 4. Update status + simpan temp password untuk notifikasi sementara
   await db.tenantApplication.update({
     where: { id },
     data: { status: "APPROVED", adminMessage: `temp_pwd:${tempPassword}` },
   })
 
-  // 5. Kirim notifikasi (membaca tempPassword dari adminMessage)
-  await sendApplicationNotification(id)
-
-  // 6. Hapus temp password dari record setelah notifikasi terkirim
-  await db.tenantApplication.update({
-    where: { id },
-    data: { adminMessage: null },
-  })
+  // 5. Kirim notifikasi secara Asynchronous (Background Job)
+  // Tidak di-await agar response UI sangat cepat.
+  sendApplicationNotification(id).then(async () => {
+    // 6. Hapus temp password dari record setelah notifikasi terkirim di background
+    await db.tenantApplication.update({
+      where: { id },
+      data: { adminMessage: null },
+    }).catch(e => logger.error("Failed to clear temp password", e))
+  }).catch(e => logger.error("Async notification failed", e))
 
   return tenant
 }

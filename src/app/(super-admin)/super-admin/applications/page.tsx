@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
 import { 
   CheckCircle, XCircle, Clock, RefreshCcw, Trash2,
-  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User, Search
+  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User, Search, MessageSquareOff, MessageSquare
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { checkDataCompleteness, type CompletenessLevel } from "@/lib/utils/data-completeness"
@@ -46,6 +46,7 @@ interface Application {
 export default function SuperAdminApplicationsPage() {
   const [apps, setApps] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
+  const [isWaDisabled, setIsWaDisabled] = useState(false)
   
   // Modal states
   const [selectedApp, setSelectedApp] = useState<Application | null>(null)
@@ -94,7 +95,37 @@ export default function SuperAdminApplicationsPage() {
       .catch((err) => { console.error(err); setLoading(false); })
   }
 
-  useEffect(() => { fetchApps() }, [])
+  const fetchSettings = () => {
+    fetch("/api/super-admin/settings")
+      .then(r => r.json())
+      .then(data => setIsWaDisabled(data.DISABLE_WA_NOTIFICATION === "true"))
+      .catch(console.error)
+  }
+
+  useEffect(() => { 
+    fetchApps()
+    fetchSettings()
+  }, [])
+
+  const toggleWa = async () => {
+    const newValue = !isWaDisabled
+    setIsWaDisabled(newValue) // optimistic update
+    try {
+      const res = await fetch("/api/super-admin/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ DISABLE_WA_NOTIFICATION: newValue ? "true" : "false" })
+      })
+      if (!res.ok) {
+        setIsWaDisabled(!newValue)
+        toast({ title: "Gagal", description: "Gagal menyimpan pengaturan WA", variant: "destructive" })
+      } else {
+        toast({ title: "Berhasil", description: newValue ? "Notifikasi WhatsApp dinonaktifkan." : "Notifikasi WhatsApp diaktifkan." })
+      }
+    } catch {
+      setIsWaDisabled(!newValue)
+    }
+  }
 
   const handleUpdateStatus = async () => {
     if (!actionType || (!selectedApp && selectedIds.length === 0)) return
@@ -231,7 +262,19 @@ export default function SuperAdminApplicationsPage() {
     <div className="space-y-6 pb-10">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Pengajuan Sekolah Baru</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-3">
+            Pengajuan Sekolah Baru
+            <Button 
+              variant={isWaDisabled ? "destructive" : "outline"} 
+              size="sm" 
+              className={cn("h-7 rounded-full text-[10px] px-3 gap-1.5 transition-all", !isWaDisabled && "border-emerald-200 text-emerald-600 hover:bg-emerald-50 bg-emerald-50/50")}
+              onClick={toggleWa}
+              title="Klik untuk mengubah pengaturan WA"
+            >
+              {isWaDisabled ? <MessageSquareOff className="h-3 w-3" /> : <MessageSquare className="h-3 w-3" />}
+              {isWaDisabled ? "WA Off (Fast Mode)" : "WA On"}
+            </Button>
+          </h1>
           <p className="text-muted-foreground mt-1 text-sm">Validasi dan tinjau pendaftaran tenant dari sekolah.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
