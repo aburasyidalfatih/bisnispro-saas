@@ -15,7 +15,11 @@ export default async function OrtuDashboardPage() {
           student: {
             include: {
               walletAccount: true,
-              classroom: true
+              classroom: true,
+              attendanceRecords: {
+                orderBy: { createdAt: 'desc' },
+                take: 1
+              }
             }
           }
         }

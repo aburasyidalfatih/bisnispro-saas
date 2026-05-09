@@ -88,6 +88,43 @@ export default function GuruDashboard() {
          </div>
       </div>
 
+      {/* Widget Action Needed (Prioritas Hari Ini) */}
+      <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
+           <AlertCircle className="h-24 w-24 -mr-6 -mt-6 text-rose-600" />
+        </div>
+        <div className="flex items-center gap-2 mb-4 relative z-10">
+          <AlertCircle className="h-5 w-5 text-rose-600" />
+          <h3 className="font-bold text-rose-800 text-sm">Prioritas Hari Ini</h3>
+        </div>
+        <div className="space-y-3 relative z-10 grid sm:grid-cols-2 gap-3 sm:space-y-0">
+          <Link href="/panel-gtk/absensi" className="flex items-center justify-between bg-white/60 hover:bg-white dark:bg-black/40 dark:hover:bg-black/60 border border-rose-500/10 p-3.5 rounded-xl transition-all hover:scale-[1.02] shadow-sm group outline-none">
+            <div className="flex items-center gap-3">
+               <div className="h-10 w-10 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-600 shrink-0">
+                  <Users className="h-5 w-5" />
+               </div>
+               <div>
+                 <p className="text-xs font-bold text-rose-900 dark:text-rose-400">3 Siswa belum diabsen</p>
+                 <p className="text-[10px] text-rose-700/70 dark:text-rose-500/70 mt-0.5">Kelas 10 IPA 1</p>
+               </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-rose-400 group-hover:text-rose-600 transition-colors" />
+          </Link>
+          <Link href="/panel-gtk/jurnal" className="flex items-center justify-between bg-white/60 hover:bg-white dark:bg-black/40 dark:hover:bg-black/60 border border-amber-500/10 p-3.5 rounded-xl transition-all hover:scale-[1.02] shadow-sm group outline-none">
+            <div className="flex items-center gap-3">
+               <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-600 shrink-0">
+                  <PenTool className="h-5 w-5" />
+               </div>
+               <div>
+                 <p className="text-xs font-bold text-amber-900 dark:text-amber-400">2 Jurnal belum diisi</p>
+                 <p className="text-[10px] text-amber-700/70 dark:text-amber-500/70 mt-0.5">Segera isi sebelum pulang</p>
+               </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-amber-400 group-hover:text-amber-600 transition-colors" />
+          </Link>
+        </div>
+      </div>
+
       <div className="flex flex-col xl:grid xl:grid-cols-3 gap-6">
         
         {/* Mobile First: Pengumuman (Order 1 on Mobile, Order 2 on Desktop) */}

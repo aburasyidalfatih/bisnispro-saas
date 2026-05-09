@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
-import { Calendar, Users, BookOpen, Clock, ChevronLeft, Plus, CheckCircle2, UserX, UserMinus, AlertCircle, Save } from "lucide-react"
+import { Calendar, Users, BookOpen, Clock, ChevronLeft, Plus, CheckCircle2, UserX, UserMinus, AlertCircle, Save, Mic } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 
@@ -214,12 +214,28 @@ export default function JurnalPage() {
                 </Select>
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <label className="text-sm font-semibold">Materi / Topik Bahasan</label>
-                <Input placeholder="Contoh: Bab 1. Eksponen dan Logaritma" value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="rounded-xl bg-muted/40" />
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-semibold">Materi / Topik Bahasan</label>
+                  <div className="flex gap-2">
+                     <button type="button" onClick={() => setFormData(p => ({...p, topic: "Melanjutkan materi sebelumnya"}))} className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors">Lanjut Materi</button>
+                     <button type="button" onClick={() => setFormData(p => ({...p, topic: "Ulangan Harian"}))} className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors">Ulangan</button>
+                  </div>
+                </div>
+                <div className="relative">
+                  <Input placeholder="Contoh: Bab 1. Eksponen dan Logaritma" value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="rounded-xl bg-muted/40 pr-10" />
+                  <button type="button" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Mulai berbicara, kami akan mengubahnya menjadi teks..."})} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
+                     <Mic className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <label className="text-sm font-semibold">Catatan Khusus (Opsional)</label>
-                <Textarea placeholder="Ada kejadian khusus hari ini?" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="rounded-xl bg-muted/40 min-h-[80px]" />
+                <div className="relative">
+                  <Textarea placeholder="Ada kejadian khusus hari ini? (Siswa tidur, ribut, dll)" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="rounded-xl bg-muted/40 min-h-[80px] pr-10" />
+                  <button type="button" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Silakan sampaikan catatan kelas Anda secara lisan..."})} className="absolute right-2 bottom-3 p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
+                     <Mic className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>

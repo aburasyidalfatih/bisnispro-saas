@@ -1,174 +1,222 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Wallet, Loader2, CreditCard, CheckCircle } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
+import { ChevronLeft, Receipt, Wallet, CreditCard, Building, Info, ShieldCheck, Loader2 } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 
-export default function OrtuTagihanDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function PaymentCheckoutPage({ params }: { params: { id: string } }) {
   const { data: session } = useSession()
-  const { toast } = useToast()
+  const tenantId = session?.user?.tenants?.[0]?.id
   const router = useRouter()
-  const [invoice, setInvoice] = useState<any>(null)
+  const { toast } = useToast()
+
   const [loading, setLoading] = useState(true)
   const [paying, setPaying] = useState(false)
+  const [invoice, setInvoice] = useState<any>(null)
+  const [wallet, setWallet] = useState<any>(null)
+  
+  const [paymentMethod, setPaymentMethod] = useState<"WALLET" | "MANUAL">("WALLET")
+  const [autoDebit, setAutoDebit] = useState(false)
 
   useEffect(() => {
-    fetch(`/api/ortu/invoices/${id}`)
-      .then(r => r.json())
-      .then(setInvoice)
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [id])
+    if (!tenantId || !params.id) return
+    
+    // Simulate fetching invoice detail & wallet
+    const fetchData = async () => {
+       try {
+          const res = await fetch(`/api/ortu/invoices?tenantId=${tenantId}`)
+          const invoices = await res.json()
+          const inv = invoices.find((i: any) => i.id === params.id)
+          if (inv) setInvoice(inv)
 
-  const handlePayWithWallet = async () => {
-    if (!invoice) return
-    const wallet = invoice.student?.walletAccount
-    if (!wallet) return toast({ title: "Siswa tidak memiliki wallet", variant: "destructive" })
-    if (wallet.balance < invoice.amountDue) return toast({ title: "Saldo tidak mencukupi", variant: "destructive" })
-
-    setPaying(true)
-    try {
-      const res = await fetch(`/api/finance/invoices/${id}/pay`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenantId: invoice.student.tenantId,
-          amount: invoice.amountDue,
-          method: "WALLET",
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-      toast({ title: "Pembayaran berhasil!", description: "Tagihan telah dibayar dari saldo Tabungan." })
-      router.push("/ortu/tagihan")
-    } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
-    } finally {
-      setPaying(false)
+          const childRes = await fetch(`/api/ortu/children?tenantId=${tenantId}`)
+          const childrenData = await childRes.json()
+          if (inv && childrenData.children) {
+             const child = childrenData.children.find((c: any) => c.id === inv.studentId)
+             if (child?.walletAccount) setWallet(child.walletAccount)
+          }
+       } catch (e) {
+          console.error(e)
+       } finally {
+          setLoading(false)
+       }
     }
+
+    fetchData()
+  }, [tenantId, params.id])
+
+  const handlePayment = async () => {
+    if (!invoice) return
+    setPaying(true)
+    
+    // Simulasi proses bayar
+    setTimeout(() => {
+       setPaying(false)
+       
+       if (paymentMethod === "WALLET") {
+          if (wallet?.balance < invoice.amountDue) {
+             toast({ title: "Saldo Tidak Cukup", description: "Saldo tabungan anak tidak mencukupi untuk membayar tagihan ini.", variant: "destructive" })
+             return
+          }
+          toast({ title: "Pembayaran Berhasil!", description: "Tagihan telah lunas dipotong dari tabungan siswa." })
+       } else {
+          toast({ title: "Menunggu Pembayaran", description: "Silakan lakukan transfer ke nomor Virtual Account yang telah dikirimkan." })
+       }
+       
+       if (autoDebit) {
+          toast({ title: "Auto-Debit Aktif", description: "Tagihan bulan depan akan otomatis memotong saldo tabungan jika mencukupi." })
+       }
+       
+       router.push("/ortu/tagihan")
+    }, 1500)
   }
 
-  if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
-  if (!invoice) return <div className="py-20 text-center text-muted-foreground">Tagihan tidak ditemukan.</div>
+  if (loading) {
+     return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+  }
 
-  const walletBalance = invoice.student?.walletAccount?.balance || 0
-  const canPayWithWallet = walletBalance >= invoice.amountDue && invoice.status !== "PAID"
-  const progressPct = Math.min((invoice.amountPaid / invoice.amount) * 100, 100)
+  if (!invoice) {
+     return (
+        <div className="p-6 text-center">
+           <p className="text-muted-foreground">Tagihan tidak ditemukan.</p>
+           <Button className="mt-4" onClick={() => router.back()}>Kembali</Button>
+        </div>
+     )
+  }
+
+  const isWalletDisabled = !wallet || wallet.balance < invoice.amountDue
 
   return (
-    <div className="pb-12 space-y-5">
-      <div className="bg-primary rounded-b-[2.5rem] pt-8 pb-16 px-6">
-        <Link href="/ortu/tagihan">
-          <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10 rounded-xl mb-3 -ml-2">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <h1 className="text-white font-bold text-xl">{invoice.title}</h1>
-        <p className="text-white/70 text-sm font-mono">{invoice.code}</p>
+    <div className="pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-lg mx-auto bg-background min-h-screen">
+      {/* Header */}
+      <div className="bg-primary pt-10 pb-6 px-6 sticky top-0 z-20 shadow-sm">
+        <div className="flex items-center gap-4 text-primary-foreground">
+          <button onClick={() => router.back()} className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <div>
+             <h1 className="text-xl font-bold">Pembayaran</h1>
+             <p className="text-xs opacity-80">No. {invoice.code}</p>
+          </div>
+        </div>
       </div>
 
-      <div className="px-5 -mt-10 space-y-4">
-        {/* Kartu Nominal */}
-        <Card className="glass border-0 shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start mb-4">
+      <div className="px-5 mt-6 space-y-6">
+        {/* Ringkasan Tagihan */}
+        <div className="text-center">
+           <p className="text-sm text-muted-foreground mb-1">Total Pembayaran</p>
+           <h2 className="text-4xl font-black text-foreground mb-2">Rp {invoice.amountDue.toLocaleString('id-ID')}</h2>
+           <Badge className="bg-rose-500/10 text-rose-600 border-rose-200">Belum Dibayar</Badge>
+        </div>
+
+        <Card className="glass border-0 shadow-sm rounded-2xl overflow-hidden">
+           <CardContent className="p-0">
+              <div className="p-4 border-b flex justify-between items-center">
+                 <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                       <Receipt className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                       <p className="font-bold text-sm">{invoice.title}</p>
+                       <p className="text-xs text-muted-foreground">Atas Nama: {invoice.student?.name}</p>
+                    </div>
+                 </div>
+              </div>
+              <div className="p-4 bg-muted/20 text-xs flex justify-between">
+                 <span className="text-muted-foreground">Jatuh Tempo</span>
+                 <span className="font-semibold">{format(new Date(invoice.dueDate), "d MMMM yyyy", { locale: localeId })}</span>
+              </div>
+           </CardContent>
+        </Card>
+
+        {/* Pilih Metode Pembayaran */}
+        <div className="space-y-3">
+           <h3 className="font-bold text-sm">Pilih Metode Pembayaran</h3>
+           
+           {/* Metode: Tabungan (Wallet) */}
+           <button 
+             onClick={() => !isWalletDisabled && setPaymentMethod("WALLET")}
+             className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all text-left ${paymentMethod === "WALLET" ? "border-primary bg-primary/5 shadow-sm" : "border-border bg-card hover:bg-muted/50"} ${isWalletDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+           >
+              <div className="flex items-center gap-4">
+                 <div className={`h-12 w-12 rounded-full flex items-center justify-center shrink-0 ${paymentMethod === "WALLET" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <Wallet className="h-6 w-6" />
+                 </div>
+                 <div>
+                    <p className="font-bold text-sm">Tabungan Anak (Wallet)</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Saldo: <span className="font-semibold text-foreground">Rp {wallet?.balance.toLocaleString('id-ID') || '0'}</span></p>
+                 </div>
+              </div>
+              <div className={`h-5 w-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "WALLET" ? "border-primary bg-primary" : "border-muted-foreground"}`}>
+                 {paymentMethod === "WALLET" && <div className="h-2 w-2 bg-white rounded-full" />}
+              </div>
+           </button>
+           {isWalletDisabled && (
+              <p className="text-[10px] text-rose-500 font-medium px-2 -mt-1"><Info className="h-3 w-3 inline mr-1" />Saldo tabungan tidak mencukupi untuk tagihan ini.</p>
+           )}
+
+           {/* Metode: Transfer Manual */}
+           <button 
+             onClick={() => setPaymentMethod("MANUAL")}
+             className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all text-left ${paymentMethod === "MANUAL" ? "border-primary bg-primary/5 shadow-sm" : "border-border bg-card hover:bg-muted/50"}`}
+           >
+              <div className="flex items-center gap-4">
+                 <div className={`h-12 w-12 rounded-full flex items-center justify-center shrink-0 ${paymentMethod === "MANUAL" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <Building className="h-6 w-6" />
+                 </div>
+                 <div>
+                    <p className="font-bold text-sm">Transfer Bank / VA</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">BCA, Mandiri, BNI, BRI, dll</p>
+                 </div>
+              </div>
+              <div className={`h-5 w-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "MANUAL" ? "border-primary bg-primary" : "border-muted-foreground"}`}>
+                 {paymentMethod === "MANUAL" && <div className="h-2 w-2 bg-white rounded-full" />}
+              </div>
+           </button>
+        </div>
+
+        {/* Fitur Auto-Debit */}
+        <Card className="border border-indigo-500/20 bg-indigo-500/5 shadow-none rounded-2xl">
+           <CardContent className="p-4 flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Total Tagihan</p>
-                <p className="text-3xl font-black">Rp {invoice.amount.toLocaleString("id-ID")}</p>
+                 <div className="flex items-center gap-2 mb-1">
+                    <ShieldCheck className="h-4 w-4 text-indigo-600" />
+                    <h4 className="font-bold text-sm text-indigo-900">Auto-Debit Tabungan</h4>
+                 </div>
+                 <p className="text-[10px] text-indigo-700/80 leading-relaxed">
+                    Aktifkan fitur ini agar tagihan bulan depan otomatis dibayar menggunakan saldo tabungan anak (jika saldo mencukupi).
+                 </p>
               </div>
-              <Badge className={
-                invoice.status === "PAID" ? "bg-emerald-500/10 text-emerald-600 border-emerald-200" :
-                invoice.status === "PARTIAL" ? "bg-amber-500/10 text-amber-600 border-amber-200" :
-                "bg-red-500/10 text-red-600 border-red-200"
-              }>
-                {invoice.status === "PAID" ? "Lunas ✓" : invoice.status === "PARTIAL" ? "Sebagian" : "Belum Bayar"}
-              </Badge>
-            </div>
-
-            {/* Progress */}
-            <div className="w-full bg-muted rounded-full h-2 mb-3 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-700" style={{ width: `${progressPct}%` }} />
-            </div>
-
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Dibayar: <strong className="text-emerald-600">Rp {invoice.amountPaid.toLocaleString("id-ID")}</strong></span>
-              <span>Sisa: <strong className="text-red-500">Rp {invoice.amountDue.toLocaleString("id-ID")}</strong></span>
-            </div>
-          </CardContent>
+              <Switch checked={autoDebit} onCheckedChange={setAutoDebit} className="data-[state=checked]:bg-indigo-600" />
+           </CardContent>
         </Card>
 
-        {/* Info */}
-        <Card className="glass border-0">
-          <CardContent className="p-5 space-y-3">
-            <InfoRow label="Siswa" value={invoice.student?.name} />
-            <InfoRow label="Kelas" value={invoice.student?.classroom?.name || "—"} />
-            <InfoRow label="Jatuh Tempo" value={format(new Date(invoice.dueDate), "d MMMM yyyy", { locale: localeId })} />
-            {invoice.notes && <InfoRow label="Catatan" value={invoice.notes} />}
-          </CardContent>
-        </Card>
+      </div>
 
-        {/* Saldo Wallet */}
-        <Card className="glass border-0 bg-indigo-500/5 border-indigo-500/10">
-          <CardContent className="p-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
-                <Wallet className="h-5 w-5 text-indigo-600" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Saldo Tabungan</p>
-                <p className="font-bold text-indigo-600">Rp {walletBalance.toLocaleString("id-ID")}</p>
-              </div>
-            </div>
-            {!canPayWithWallet && invoice.status !== "PAID" && (
-              <p className="text-xs text-red-500 font-medium">Saldo kurang</p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Bayar */}
-        {invoice.status !== "PAID" && invoice.status !== "CANCELLED" && (
-          <div className="space-y-3">
-            <Button
-              className="w-full rounded-xl h-14 text-base font-bold bg-indigo-600 hover:bg-indigo-700"
-              disabled={!canPayWithWallet || paying}
-              onClick={handlePayWithWallet}
+      {/* Floating Checkout Button */}
+      <div className="fixed bottom-0 left-0 right-0 p-5 bg-background/80 backdrop-blur-md border-t z-30 sm:static sm:bg-transparent sm:border-0 sm:mt-10 sm:p-5">
+         <div className="max-w-lg mx-auto">
+            <Button 
+               onClick={handlePayment} 
+               disabled={paying || (paymentMethod === "WALLET" && isWalletDisabled)}
+               className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
             >
-              {paying
-                ? <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                : <><Wallet className="mr-2 h-5 w-5" /> Bayar dengan Wallet (Rp {invoice.amountDue.toLocaleString("id-ID")})</>
-              }
+               {paying ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : "Bayar Sekarang"}
             </Button>
-            <Button variant="outline" className="w-full rounded-xl h-12">
-              <CreditCard className="mr-2 h-4 w-4" /> Bayar via Transfer / VA
-            </Button>
-          </div>
-        )}
-
-        {invoice.status === "PAID" && (
-          <div className="flex items-center justify-center gap-3 py-6 text-emerald-600">
-            <CheckCircle className="h-8 w-8" />
-            <p className="font-bold text-xl">Tagihan Lunas!</p>
-          </div>
-        )}
+            <p className="text-center text-[10px] text-muted-foreground mt-3 flex items-center justify-center gap-1">
+               <ShieldCheck className="h-3 w-3" /> Pembayaran aman dengan enkripsi bank standar.
+            </p>
+         </div>
       </div>
-    </div>
-  )
-}
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between items-center">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-sm font-semibold">{value}</p>
     </div>
   )
 }

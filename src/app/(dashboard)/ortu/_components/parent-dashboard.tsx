@@ -19,6 +19,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
 
   const layanan = [
     { label: "Tagihan", icon: CreditCard, color: "bg-rose-500/10 text-rose-600", href: "/ortu/tagihan" },
+    { label: "Akademik", icon: BookOpen, color: "bg-indigo-500/10 text-indigo-600", href: "/ortu/akademik" },
     { label: "Kehadiran", icon: ClipboardList, color: "bg-emerald-500/10 text-emerald-600", href: "/ortu/absensi" },
     { label: "Izin/Sakit", icon: FileCheck, color: "bg-amber-500/10 text-amber-600", href: "/ortu/izin" },
     { label: "Donasi", icon: Award, color: "bg-pink-500/10 text-pink-600", href: "/ortu/donasi" },
@@ -55,89 +56,91 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
       {/* Main Content Area overlapping header */}
       <div className="px-5 -mt-24 relative z-10 space-y-5">
         
-        {/* Banner PPDB */}
-        <div className="btn-gradient rounded-2xl p-5 text-white shadow-xl shadow-primary/20 relative overflow-hidden border border-white/20">
-           {/* Abstract shapes */}
-           <div className="absolute -right-6 -bottom-10 opacity-10 pointer-events-none">
-              <div className="h-40 w-40 rounded-full border-[20px] border-white"></div>
-           </div>
-           
-           <div className="relative z-10 flex items-center justify-between">
-              <div>
-                 <h3 className="text-lg font-bold mb-1 drop-shadow-sm">Portal PPDB</h3>
-                 <p className="text-xs opacity-90 max-w-[180px] leading-relaxed">Daftarkan putra/putri Anda ke sekolah kami dengan mudah secara online.</p>
-              </div>
-              <a href="/ortu/ppdb" className="bg-white text-primary px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:scale-105 transition-transform flex items-center gap-1.5 shrink-0">
-                 Daftar <ArrowRight className="h-3.5 w-3.5" />
-              </a>
-           </div>
-        </div>
-
-        {/* SchoolPay Wallet Card (EPIC 1) - PREMIUM ONLY */}
-        {tenant?.plan !== "free" && (
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 shadow-lg shadow-indigo-500/30 text-white relative overflow-hidden">
-             <div className="absolute top-0 right-0 p-4 opacity-20">
-                <Wallet className="h-24 w-24 -mr-6 -mt-6" />
-             </div>
-             <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                   <p className="text-sm font-medium text-white/80">Total Saldo Tabungan</p>
-                   <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-0">Tabungan Aktif</Badge>
-                </div>
-                <h2 className="text-3xl font-black mb-1">Rp {totalBalance.toLocaleString("id-ID")}</h2>
-                <p className="text-xs text-white/70 mb-5">Terakumulasi dari {childrenData.length} rekening siswa</p>
-                
-                <div className="flex gap-3">
-                   <Link href="/ortu/wallet/topup">
-                     <Button size="sm" className="bg-white text-indigo-600 hover:bg-white/90 rounded-xl text-xs h-9">
-                        <PlusCircle className="mr-1.5 h-3.5 w-3.5" /> Nabung Sekarang
-                     </Button>
-                   </Link>
-                   <Link href="/ortu/wallet">
-                     <Button size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-xl text-xs h-9 bg-transparent">
-                        Riwayat Transaksi
-                     </Button>
-                   </Link>
-                </div>
-             </div>
-          </div>
-        )}
-
-        {/* Tanggungan Siswa (Anak) */}
-        <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-          <div className="flex justify-between items-center mb-3">
-             <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
-               <User className="h-4 w-4 text-primary" /> Data Anak / Tanggungan
-             </h3>
-          </div>
-          <div className="space-y-3">
-             {childrenData.length > 0 ? childrenData.map((child: any) => (
-               <div key={child.id} className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors">
-                 <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                   <User className="h-5 w-5 text-primary" />
-                 </div>
-                 <div className="flex-1 min-w-0">
-                   <h4 className="text-sm font-bold text-foreground truncate">{child.name}</h4>
-                   <p className="text-[11px] text-muted-foreground truncate">
-                     {child.nisn ? `NISN: ${child.nisn} • ` : ""} 
-                     {child.classroom ? child.classroom.name : "Belum masuk kelas"}
-                   </p>
-                 </div>
-                 <div className="flex flex-col items-end gap-1">
-                   <div className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 text-[10px] font-bold shrink-0">
-                     {child.isActive ? "Aktif" : "Nonaktif"}
+        {/* Status Anak & Keuangan (Bird's Eye View) */}
+        <div className="space-y-4">
+           {childrenData.map((child: any) => {
+              const latestAttendance = child.attendanceRecords?.[0]
+              const isHadir = latestAttendance?.status === "HADIR" || latestAttendance?.status === "PRESENT"
+              const attColor = isHadir ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : 
+                               latestAttendance ? "bg-rose-500/10 text-rose-600 border-rose-500/20" : 
+                               "bg-muted text-muted-foreground border-border"
+              const attText = isHadir ? "Hadir di Sekolah" : 
+                              latestAttendance ? latestAttendance.status : "Belum Ada Info"
+              
+              return (
+                <div key={child.id} className="bg-card rounded-[2rem] p-5 shadow-sm border border-border relative overflow-hidden">
+                   {/* Header Anak */}
+                   <div className="flex items-center gap-4 mb-5">
+                     <div className="h-14 w-14 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                       <User className="h-7 w-7 text-primary" />
+                     </div>
+                     <div className="flex-1">
+                       <h3 className="font-extrabold text-foreground text-lg">{child.name}</h3>
+                       <p className="text-xs text-muted-foreground">{child.classroom?.name || "Belum ada kelas"}</p>
+                     </div>
+                     <div className={cn("px-3 py-1.5 rounded-full text-[10px] font-bold border flex items-center gap-1.5 whitespace-nowrap", attColor)}>
+                       {isHadir && <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />}
+                       {attText}
+                     </div>
                    </div>
-                   {tenant?.plan !== "free" && child.walletAccount && (
-                     <span className="text-[10px] font-bold text-primary">Rp {child.walletAccount.balance.toLocaleString("id-ID")}</span>
+
+                   {/* Tabungan & Tagihan Row */}
+                   {tenant?.plan !== "free" && (
+                     <div className="grid grid-cols-2 gap-3">
+                       {child.walletAccount ? (
+                         <div className="bg-indigo-500/5 border border-indigo-500/10 rounded-2xl p-4 flex flex-col justify-between">
+                            <p className="text-[10px] font-bold text-indigo-600/80 uppercase tracking-wider mb-1 flex items-center gap-1"><Wallet className="h-3 w-3" /> Tabungan</p>
+                            <h4 className="text-lg font-black text-indigo-700">Rp {child.walletAccount.balance.toLocaleString("id-ID")}</h4>
+                            <Link href="/ortu/wallet/topup" className="mt-3 text-[10px] font-bold text-white bg-indigo-500 hover:bg-indigo-600 px-3 py-1.5 rounded-lg w-fit transition-colors">
+                               + Nabung
+                            </Link>
+                         </div>
+                       ) : (
+                         <div className="bg-indigo-500/5 border border-indigo-500/10 rounded-2xl p-4 flex flex-col justify-between opacity-50">
+                            <p className="text-[10px] font-bold text-indigo-600/80 uppercase tracking-wider mb-1 flex items-center gap-1"><Wallet className="h-3 w-3" /> Tabungan</p>
+                            <h4 className="text-sm font-bold text-indigo-700 mt-2">Belum Aktif</h4>
+                         </div>
+                       )}
+                       <div className="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-4 flex flex-col justify-between">
+                          <p className="text-[10px] font-bold text-rose-600/80 uppercase tracking-wider mb-1 flex items-center gap-1"><Receipt className="h-3 w-3" /> Tagihan</p>
+                          <h4 className="text-lg font-black text-rose-700">
+                             {unpaidInvoices.filter((inv: any) => inv.studentId === child.id).length} Belum Lunas
+                          </h4>
+                          <Link href="/ortu/tagihan" className="mt-3 text-[10px] font-bold text-rose-700 bg-rose-500/20 hover:bg-rose-500/30 px-3 py-1.5 rounded-lg w-fit transition-colors">
+                             Lihat & Bayar
+                          </Link>
+                       </div>
+                     </div>
                    )}
-                 </div>
+
+                   {/* Ringkasan Akademik (MOCK) */}
+                   <div className="mt-3 bg-muted/30 border border-border/50 rounded-2xl p-4 flex items-center justify-between">
+                     <div className="flex items-center gap-3">
+                       <div className="h-10 w-10 bg-indigo-500/10 rounded-xl flex items-center justify-center shrink-0">
+                         <BookOpen className="h-5 w-5 text-indigo-600" />
+                       </div>
+                       <div>
+                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Progress Akademik</p>
+                         <h4 className="text-sm font-bold text-foreground">Sangat Baik <span className="text-emerald-500 text-xs ml-1">↑</span></h4>
+                       </div>
+                     </div>
+                     <Link href="/ortu/akademik" className="text-[11px] font-bold text-indigo-600 bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-lg transition-colors">
+                       Lihat Detail
+                     </Link>
+                   </div>
+                </div>
+              )
+           })}
+
+           {childrenData.length === 0 && (
+             <div className="bg-card rounded-[2rem] p-8 text-center shadow-sm border border-border">
+               <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                  <User className="h-8 w-8 text-muted-foreground" />
                </div>
-             )) : (
-               <div className="p-6 text-center border-2 border-dashed rounded-xl border-border">
-                 <p className="text-xs text-muted-foreground">Belum ada data siswa yang tertaut.</p>
-               </div>
-             )}
-          </div>
+               <h3 className="font-bold text-lg mb-1">Belum Ada Data Anak</h3>
+               <p className="text-sm text-muted-foreground">Silakan hubungi admin sekolah untuk menghubungkan akun Anda dengan data siswa.</p>
+             </div>
+           )}
         </div>
 
         {/* Layanan Utama */}

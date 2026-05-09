@@ -173,12 +173,20 @@ export default function UsersPage() {
           <p className="text-muted-foreground mt-1">Kelola anggota lembaga ({filtered.length} data)</p>
         </div>
         {roleParam === "guru" ? (
-          <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
-            <Link href="/admin/website/gtk/new">
-              <UserPlus className="h-4 w-4" />
-              Tambah Data Guru
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button asChild variant="outline" className="gap-2 rounded-xl">
+              <Link href="/admin/users/import">
+                <UserPlus className="h-4 w-4" />
+                Import Data Guru
+              </Link>
+            </Button>
+            <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
+              <Link href="/admin/website/gtk/new">
+                <UserPlus className="h-4 w-4" />
+                Tambah Data Guru
+              </Link>
+            </Button>
+          </div>
         ) : (
           <Button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={() => setShowAdd(!showAdd)}>
             <UserPlus className="h-4 w-4" />

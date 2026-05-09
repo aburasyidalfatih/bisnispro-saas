@@ -4,7 +4,21 @@ import bcrypt from "bcryptjs"
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log("🌱 Seeding database...")
+  console.log("🌱 Seeding SchoolPro database...")
+
+  // Wipe existing data to make seed idempotent
+  await prisma.attendanceRecord.deleteMany({})
+  await prisma.walletTransaction.deleteMany({})
+  await prisma.walletAccount.deleteMany({})
+  await prisma.studentParent.deleteMany({})
+  await prisma.student.deleteMany({})
+  await prisma.schedule.deleteMany({})
+  await prisma.subject.deleteMany({})
+  await prisma.classroom.deleteMany({})
+  await prisma.staff.deleteMany({})
+  await prisma.tenantUser.deleteMany({})
+  await prisma.tenant.deleteMany({})
+  await prisma.user.deleteMany({})
 
   // ==================== SUBSCRIPTION PLANS ====================
   const freePlan = await prisma.subscriptionPlan.upsert({
@@ -16,15 +30,10 @@ async function main() {
       description: "Fitur dasar untuk website sekolah. Cocok untuk mulai go digital.",
       price: 0,
       interval: "MONTHLY",
-      maxStudents: 0, // Tak terbatas secara UI tapi fitur siswa terkunci
-      maxStorage: 100, // 100MB
+      maxStudents: 0, 
+      maxStorage: 100, 
       isActive: true,
-      features: JSON.stringify([
-        "Website Company Profile Dasar",
-        "Modul Berita & Pengumuman",
-        "Galeri Foto & Fasilitas",
-        "Pusat Unduhan (Max 100MB)",
-      ]),
+      features: JSON.stringify(["Website Company Profile Dasar", "Modul Berita & Pengumuman", "Galeri Foto", "Pusat Unduhan (Max 100MB)"]),
     },
   })
 
@@ -38,29 +47,22 @@ async function main() {
       price: 150000,
       interval: "MONTHLY",
       maxStudents: 500,
-      maxStorage: 1024, // 1GB
+      maxStorage: 1024,
       isPopular: true,
       isActive: true,
-      features: JSON.stringify([
-        "Semua fitur Paket Dasar",
-        "Manajemen Data Siswa (Max 500)",
-        "Sistem Absensi Online",
-        "E-Rapor Akademik",
-        "Custom Domain Terpisah",
-      ]),
+      features: JSON.stringify(["Semua fitur Dasar", "Sistem Manajemen Siswa & GTK", "E-Rapor & Jurnal", "Wallet Tabungan Siswa", "PPDB Online"]),
     },
   })
 
   const hashedPassword = await bcrypt.hash("admin123", 12)
 
   // ==================== SUPER ADMIN ====================
-  // Super admin TIDAK terhubung ke tenant manapun
   const superAdmin = await prisma.user.upsert({
-    where: { email: "admin@saasmasterpro.com" },
+    where: { email: "admin@schoolpro.id" },
     update: { isSuperAdmin: true },
     create: {
       name: "Super Admin",
-      email: "admin@saasmasterpro.com",
+      email: "admin@schoolpro.id",
       password: hashedPassword,
       isSuperAdmin: true,
       emailVerified: new Date(),
@@ -69,11 +71,11 @@ async function main() {
 
   // ==================== TENANT ADMIN ====================
   const tenantAdmin = await prisma.user.upsert({
-    where: { email: "tenant@saasmasterpro.com" },
+    where: { email: "admin@demo.com" },
     update: {},
     create: {
-      name: "Admin Tenant",
-      email: "tenant@saasmasterpro.com",
+      name: "Kepala Sekolah (Admin)",
+      email: "admin@demo.com",
       password: hashedPassword,
       isSuperAdmin: false,
       emailVerified: new Date(),
@@ -85,129 +87,184 @@ async function main() {
     where: { slug: "demo" },
     update: {},
     create: {
-      name: "Demo Organisasi",
+      name: "SMA N 1 SchoolPro",
       slug: "demo",
-      description: "Kami adalah perusahaan teknologi yang berdedikasi memberikan solusi digital terbaik untuk bisnis Anda.",
-      tagline: "Solusi Digital untuk Bisnis Modern",
-      about: "Didirikan pada tahun 2020, Demo Organisasi telah melayani lebih dari 500 klien dari berbagai sektor industri. Kami percaya bahwa teknologi yang tepat dapat mengubah cara bisnis beroperasi dan berkembang. Tim kami terdiri dari profesional berpengalaman yang siap membantu Anda mencapai tujuan bisnis.",
-      address: "Jl. Teknologi No. 123, Jakarta Selatan 12345",
+      description: "Sekolah Unggulan Berbasis Teknologi",
+      tagline: "Cerdas, Berakhlak, Digital",
+      about: "Didirikan pada tahun 2000, kami adalah pelopor sekolah digital pertama.",
+      address: "Jl. Pendidikan No. 1, Jakarta",
       phone: "021-12345678",
-      email: "info@demo-organisasi.com",
-      whatsapp: "6281234567890",
-      instagram: "demo.organisasi",
+      email: "info@demo.schoolpro.test",
       plan: proPlan.slug,
       planId: proPlan.id,
       studentQuota: proPlan.maxStudents,
-      services: JSON.stringify([
-        { title: "Pengembangan Web", description: "Pembuatan website profesional dengan teknologi terkini untuk meningkatkan kehadiran digital bisnis Anda.", icon: "🌐" },
-        { title: "Aplikasi Mobile", description: "Pengembangan aplikasi mobile native dan cross-platform untuk Android dan iOS.", icon: "📱" },
-        { title: "Konsultasi IT", description: "Konsultasi strategis untuk transformasi digital dan optimalisasi infrastruktur IT.", icon: "💡" },
-        { title: "Cloud Solutions", description: "Migrasi dan pengelolaan infrastruktur cloud untuk skalabilitas dan efisiensi.", icon: "☁️" },
-        { title: "Keamanan Siber", description: "Audit keamanan, penetration testing, dan implementasi sistem keamanan.", icon: "🔒" },
-        { title: "Data Analytics", description: "Analisis data dan business intelligence untuk pengambilan keputusan berbasis data.", icon: "📊" },
-      ]),
+      settings: {
+        establishedYear: "2000",
+        npsn: "12345678",
+        akreditasi: "A",
+        sambutanKepsek: "Selamat datang di sekolah inovatif kami.",
+        visi: "Menjadi sekolah berbasis teknologi terbaik di Indonesia",
+        misi: "1. Mengembangkan kurikulum adaptif\n2. Melatih karakter unggul",
+      }
     },
   })
 
-  // ==================== INITIAL SUBSCRIPTION ====================
-  await prisma.subscription.upsert({
-    where: { id: "demo-subscription" },
-    update: {},
-    create: {
-      id: "demo-subscription",
-      tenantId: demoTenant.id,
-      planId: proPlan.id,
-      status: "ACTIVE",
-      startDate: new Date(),
-      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-      amount: proPlan.price,
-    },
-  })
-
-  // Hubungkan tenant admin sebagai owner
+  // HUBUNGKAN ADMIN
   await prisma.tenantUser.upsert({
-    where: {
-      tenantId_userId: { tenantId: demoTenant.id, userId: tenantAdmin.id },
-    },
+    where: { tenantId_userId: { tenantId: demoTenant.id, userId: tenantAdmin.id } },
     update: { role: "owner" },
-    create: {
-      tenantId: demoTenant.id,
-      userId: tenantAdmin.id,
-      role: "owner",
-    },
+    create: { tenantId: demoTenant.id, userId: tenantAdmin.id, role: "owner" },
   })
 
-  // Hapus super admin dari tenant (isolasi)
-  await prisma.tenantUser.deleteMany({
-    where: { tenantId: demoTenant.id, userId: superAdmin.id },
-  })
-
-  // ==================== MEMBER USER ====================
-  const memberUser = await prisma.user.upsert({
-    where: { email: "user@saasmasterpro.com" },
+  // ==================== GTK (GURU) ====================
+  const guruUser = await prisma.user.upsert({
+    where: { email: "guru@demo.com" },
     update: {},
-    create: {
-      name: "User Demo",
-      email: "user@saasmasterpro.com",
-      password: hashedPassword,
-      isSuperAdmin: false,
-      emailVerified: new Date(),
-    },
+    create: { name: "Budi Santoso, S.Pd", email: "guru@demo.com", password: hashedPassword, emailVerified: new Date() },
   })
-
-  // Hubungkan member ke demo tenant
+  
   await prisma.tenantUser.upsert({
-    where: {
-      tenantId_userId: { tenantId: demoTenant.id, userId: memberUser.id },
-    },
-    update: { role: "member" },
-    create: {
+    where: { tenantId_userId: { tenantId: demoTenant.id, userId: guruUser.id } },
+    update: { role: "guru" },
+    create: { tenantId: demoTenant.id, userId: guruUser.id, role: "guru" },
+  })
+
+  const staff = await prisma.staff.create({
+    data: {
       tenantId: demoTenant.id,
-      userId: memberUser.id,
-      role: "member",
-    },
-  })
-
-  // Notification settings untuk semua user
-  const allUsers = [tenantAdmin, memberUser]
-  const channels = ["inapp", "email", "whatsapp"]
-  for (const user of allUsers) {
-    for (const channel of channels) {
-      await prisma.notificationSetting.upsert({
-        where: { userId_channel: { userId: user.id, channel } },
-        update: {},
-        create: { userId: user.id, channel, enabled: channel !== "whatsapp" },
-      })
+      userId: guruUser.id,
+      name: "Budi Santoso, S.Pd",
+      role: "Guru Matematika",
+      email: "guru@demo.com",
+      subject: "Matematika"
     }
-  }
-
-  // Platform settings
-  await prisma.platformSetting.upsert({
-    where: { key: "allow_impersonate_user" },
-    update: {},
-    create: { key: "allow_impersonate_user", value: "true" },
   })
 
-  console.log("✅ Seed selesai!")
+  // ==================== KELAS & MAPEL ====================
+  const kelas10A = await prisma.classroom.create({
+    data: { tenantId: demoTenant.id, name: "10 IPA 1", capacity: 30, level: "10" }
+  })
+
+  const mtk = await prisma.subject.create({
+    data: { tenantId: demoTenant.id, code: "MTK-10", name: "Matematika" }
+  })
+
+  // JADWAL MENGAJAR GURU BUDI
+  await prisma.schedule.create({
+    data: {
+      tenantId: demoTenant.id,
+      classroomId: kelas10A.id,
+      subjectId: mtk.id,
+      staffId: staff.id,
+      dayOfWeek: new Date().getDay(), // Hari ini
+      startTime: "07:00",
+      endTime: "08:30"
+    }
+  })
+
+  // ==================== ORANG TUA & SISWA ====================
+  const ortuUser = await prisma.user.upsert({
+    where: { email: "ortu@demo.com" },
+    update: {},
+    create: { name: "Bapak Ahmad", email: "ortu@demo.com", password: hashedPassword, emailVerified: new Date() },
+  })
+  await prisma.tenantUser.upsert({
+    where: { tenantId_userId: { tenantId: demoTenant.id, userId: ortuUser.id } },
+    update: { role: "orangtua" },
+    create: { tenantId: demoTenant.id, userId: ortuUser.id, role: "orangtua" },
+  })
+
+  const siswa = await prisma.student.create({
+    data: {
+      tenantId: demoTenant.id,
+      name: "Rudi Haryanto",
+      nis: "1001",
+      nisn: "0051234567",
+      gender: "L",
+      classroomId: kelas10A.id,
+    }
+  })
+
+  // Hubungkan anak dengan orang tua
+  await prisma.studentParent.create({
+    data: { studentId: siswa.id, userId: ortuUser.id, relation: "Ayah" }
+  })
+
+  // ==================== DOMPET TABUNGAN (WALLET) ====================
+  const wallet = await prisma.walletAccount.create({
+    data: {
+      tenantId: demoTenant.id,
+      studentId: siswa.id,
+      balance: 150000, // Rp 150.000 saldo awal
+      pin: await bcrypt.hash("123456", 10),
+    }
+  })
+
+  await prisma.walletTransaction.createMany({
+    data: [
+      {
+        tenantId: demoTenant.id,
+        walletId: wallet.id,
+        amount: 200000,
+        balanceBefore: 0,
+        balanceAfter: 200000,
+        type: "DEPOSIT",
+        status: "SUCCESS",
+        referenceId: "TOPUP-001",
+        description: "Setor Tabungan Awal"
+      },
+      {
+        tenantId: demoTenant.id,
+        walletId: wallet.id,
+        amount: 50000,
+        balanceBefore: 200000,
+        balanceAfter: 150000,
+        type: "PAYMENT",
+        status: "SUCCESS",
+        referenceId: "PAY-001",
+        description: "Pembayaran Buku LKS"
+      }
+    ]
+  })
+
+  // ==================== ABSENSI ====================
+  const session = await prisma.attendanceSession.create({
+    data: {
+      tenantId: demoTenant.id,
+      classroomId: kelas10A.id,
+      date: new Date(),
+      createdBy: guruUser.id,
+    }
+  })
+
+  await prisma.attendanceRecord.create({
+    data: {
+      tenantId: demoTenant.id,
+      studentId: siswa.id,
+      sessionId: session.id,
+      status: "HADIR",
+      notes: "Hadir Tepat Waktu"
+    }
+  })
+
+  console.log("✅ Seed Data Sekolah Selesai!")
   console.log("")
-  console.log("👑 Super Admin (hanya akses /super-admin):")
-  console.log("   📧 admin@saasmasterpro.com")
-  console.log("   🔑 admin123")
+  console.log("🏫 URL Tenant: http://demo.schoolpro.test:3002")
   console.log("")
-  console.log("🏢 Tenant Admin (akses /dashboard — menu lengkap):")
-  console.log("   📧 tenant@saasmasterpro.com")
-  console.log("   🔑 admin123")
+  console.log("👑 Super Admin (Akses semua data platform):")
+  console.log("   📧 admin@schoolpro.id | 🔑 admin123")
   console.log("")
-  console.log("👤 User Biasa (akses /dashboard — menu terbatas):")
-  console.log("   📧 user@saasmasterpro.com")
-  console.log("   🔑 admin123")
+  console.log("👨‍💼 Kepala Sekolah / Admin Tenant:")
+  console.log("   📧 admin@demo.com | 🔑 admin123")
+  console.log("")
+  console.log("👨‍🏫 Guru (Akses Absen, Nilai, Poin, Jurnal):")
+  console.log("   📧 guru@demo.com | 🔑 admin123")
+  console.log("")
+  console.log("👨‍👩‍👦 Orang Tua (Akses Tabungan, Tagihan, Absen Anak):")
+  console.log("   📧 ortu@demo.com | 🔑 admin123")
+  console.log("")
 }
 
 main()
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  .catch((e) => { console.error(e); process.exit(1) })
+  .finally(async () => { await prisma.$disconnect() })
