@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, CalendarCheck, FileText, User, Calendar, LogOut } from "lucide-react"
+import { Home, CalendarCheck, FileText, User, Calendar, LogOut, Award, ShieldAlert } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MobileBottomNav } from "./mobile-bottom-nav"
 import { Button } from "@/components/ui/button"
@@ -24,8 +24,9 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
     { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal" },
-    { label: "Absensi", icon: CalendarCheck, href: "/panel-gtk/absensi" },
-    { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
+    { label: "Jurnal", icon: CalendarCheck, href: "/panel-gtk/jurnal" },
+    { label: "Nilai", icon: Award, href: "/panel-gtk/nilai" },
+    { label: "Poin", icon: ShieldAlert, href: "/panel-gtk/poin" },
   ]
 
   return (
