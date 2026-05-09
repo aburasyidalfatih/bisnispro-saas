@@ -88,9 +88,41 @@ export default function GuruDashboard() {
          </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Left Column: Schedule */}
-        <div className="xl:col-span-2 space-y-6">
+      <div className="flex flex-col xl:grid xl:grid-cols-3 gap-6">
+        
+        {/* Mobile First: Pengumuman (Order 1 on Mobile, Order 2 on Desktop) */}
+        <Card className="glass border-0 shadow-sm order-1 xl:order-2 xl:col-span-1 h-fit">
+          <CardHeader className="pb-3 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-lg">Pengumuman</CardTitle>
+            </div>
+            <div className="bg-primary/10 text-primary p-1.5 rounded-full">
+              <Bell className="h-4 w-4" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                { title: "Rapat Paripurna Kenaikan Kelas", date: "Besok, 13:00 WIB", type: "Penting" },
+                { title: "Batas Akhir Input Nilai PTS", date: "Lusa, 23:59 WIB", type: "Reminder" }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-3 group cursor-pointer">
+                  <div className="w-1.5 rounded-full shrink-0 bg-primary/20 group-hover:bg-primary transition-colors"></div>
+                  <div className="py-1">
+                    <p className="font-semibold text-sm group-hover:text-primary transition-colors">{item.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.date}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Button variant="ghost" className="w-full mt-4 text-xs font-medium text-primary hover:bg-primary/5">
+              Lihat Semua Pengumuman
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Schedule (Order 2 on mobile, Order 1 on Desktop) */}
+        <div className="xl:col-span-2 space-y-6 order-2 xl:order-1 xl:row-span-2">
           <Card className="glass border-0 shadow-sm overflow-hidden">
             <CardHeader className="bg-muted/30 border-b border-border/50 pb-4">
               <div className="flex items-center justify-between">
@@ -138,57 +170,26 @@ export default function GuruDashboard() {
           </Card>
         </div>
 
-        {/* Right Column: Info & Stats */}
-        <div className="space-y-6">
-          <Card className="glass border-0 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5">
-              <Award className="h-24 w-24" />
+        {/* Kehadiran (Order 3 on mobile, Order 3 on Desktop) */}
+        <Card className="glass border-0 shadow-sm relative overflow-hidden order-3 xl:order-3 xl:col-span-1 h-fit">
+          <div className="absolute top-0 right-0 p-4 opacity-5">
+            <Award className="h-24 w-24" />
+          </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Tingkat Kehadiran Kelas</CardTitle>
+            <CardDescription>Rata-rata persentase kehadiran siswa bulan ini.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mt-2 flex items-end gap-2">
+              <span className="text-4xl font-extrabold text-emerald-500">96.5%</span>
+              <span className="text-sm text-emerald-600 font-medium mb-1">↑ 2.1%</span>
             </div>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Tingkat Kehadiran Kelas</CardTitle>
-              <CardDescription>Rata-rata persentase kehadiran siswa di kelas yang Anda ampu bulan ini.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mt-2 flex items-end gap-2">
-                <span className="text-4xl font-extrabold text-emerald-500">96.5%</span>
-                <span className="text-sm text-emerald-600 font-medium mb-1">↑ 2.1%</span>
-              </div>
-              <div className="w-full bg-secondary rounded-full h-2 mt-4 overflow-hidden">
-                <div className="bg-emerald-500 h-full rounded-full" style={{ width: '96.5%' }}></div>
-              </div>
-            </CardContent>
-          </Card>
+            <div className="w-full bg-secondary rounded-full h-2 mt-4 overflow-hidden">
+              <div className="bg-emerald-500 h-full rounded-full" style={{ width: '96.5%' }}></div>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="glass border-0 shadow-sm">
-            <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-lg">Pengumuman</CardTitle>
-              </div>
-              <div className="bg-primary/10 text-primary p-1.5 rounded-full">
-                <Bell className="h-4 w-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  { title: "Rapat Paripurna Kenaikan Kelas", date: "Besok, 13:00 WIB", type: "Penting" },
-                  { title: "Batas Akhir Input Nilai PTS", date: "Lusa, 23:59 WIB", type: "Reminder" }
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-3 group cursor-pointer">
-                    <div className="w-1.5 rounded-full shrink-0 bg-primary/20 group-hover:bg-primary transition-colors"></div>
-                    <div className="py-1">
-                      <p className="font-semibold text-sm group-hover:text-primary transition-colors">{item.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.date}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Button variant="ghost" className="w-full mt-4 text-xs font-medium text-primary hover:bg-primary/5">
-                Lihat Semua Pengumuman
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   )
