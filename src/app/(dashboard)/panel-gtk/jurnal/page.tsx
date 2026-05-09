@@ -164,7 +164,7 @@ export default function JurnalPage() {
 
   if (mode === "create") {
     return (
-      <div className="space-y-6 max-w-4xl mx-auto pb-10 animate-in fade-in slide-in-from-right-4 duration-300">
+      <div className="space-y-6 pb-10 animate-in fade-in slide-in-from-right-4 duration-300">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl" onClick={() => setMode("list")}>
             <ChevronLeft className="h-5 w-5" />

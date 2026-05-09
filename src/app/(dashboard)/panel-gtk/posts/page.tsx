@@ -37,7 +37,7 @@ export default function GTKPostsPage() {
   }, [branding.id])
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+    <div className="space-y-6 pb-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Artikel Saya</h1>

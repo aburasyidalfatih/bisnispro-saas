@@ -49,7 +49,7 @@ export default function JadwalPage() {
   if (loading) return <div className="skeleton h-96 rounded-3xl" />
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+    <div className="space-y-6 pb-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div>
         <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
           <Calendar className="h-6 w-6 text-primary" /> Jadwal Mengajar
