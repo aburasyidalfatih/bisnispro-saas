@@ -33,7 +33,7 @@ export default function DisciplinePage() {
   const [saving, setSaving] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [search, setSearch] = useState("")
-  const [filterType, setFilterType] = useState("")
+  const [filterType, setFilterType] = useState("all")
 
   const [form, setForm] = useState({
     studentId: "", staffId: "", type: "PELANGGARAN",
@@ -79,7 +79,7 @@ export default function DisciplinePage() {
 
   const filtered = records.filter(r => {
     const matchSearch = !search || r.student.name.toLowerCase().includes(search.toLowerCase())
-    const matchType = !filterType || r.type === filterType
+    const matchType = !filterType || filterType === "all" || r.type === filterType
     return matchSearch && matchType
   })
 
@@ -173,7 +173,7 @@ export default function DisciplinePage() {
         <Select value={filterType} onValueChange={setFilterType}>
           <SelectTrigger className="w-40"><SelectValue placeholder="Semua Jenis" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Semua</SelectItem>
+            <SelectItem value="all">Semua</SelectItem>
             {TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
           </SelectContent>
         </Select>

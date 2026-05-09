@@ -147,10 +147,10 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
             <CardContent className="grid md:grid-cols-2 gap-5">
               <F label="Nama Lengkap *"><Input {...field("name")} /></F>
               <F label="Kelas">
-                <Select value={form.classroomId || ""} onValueChange={v => setForm((f: any) => ({ ...f, classroomId: v }))}>
+                <Select value={form.classroomId || "none"} onValueChange={v => setForm((f: any) => ({ ...f, classroomId: v === "none" ? null : v }))}>
                   <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih kelas..." /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tanpa Kelas</SelectItem>
+                    <SelectItem value="none">Tanpa Kelas</SelectItem>
                     {classrooms.map((c: any) => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}
                   </SelectContent>
                 </Select>
