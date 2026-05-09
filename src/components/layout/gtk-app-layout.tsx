@@ -27,6 +27,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
     { label: "Jurnal", icon: CalendarCheck, href: "/panel-gtk/jurnal" },
     { label: "Nilai", icon: Award, href: "/panel-gtk/nilai" },
     { label: "Poin", icon: ShieldAlert, href: "/panel-gtk/poin" },
+    { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
   ]
 
   return (
