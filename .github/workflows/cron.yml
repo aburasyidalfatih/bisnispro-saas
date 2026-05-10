@@ -1,0 +1,23 @@
+name: Scheduled Cron Jobs
+
+on:
+  schedule:
+    # 01:00 UTC = 08:00 WIB (Waktu Indonesia Barat)
+    - cron: '0 1 * * *'
+  workflow_dispatch: # Memungkinkan eksekusi manual untuk testing
+
+jobs:
+  run-cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Daily Drip Campaign (Edukasi)
+        run: |
+          curl -X GET "https://schoolpro.id/api/cron/daily-drip" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
+
+      - name: Trigger Auto Debet SPP
+        run: |
+          curl -X GET "https://schoolpro.id/api/cron/auto-debet-spp" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
