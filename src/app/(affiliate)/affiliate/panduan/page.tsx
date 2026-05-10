@@ -30,7 +30,7 @@ export default async function AffiliateGuidePage() {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6 mt-2">
-            <CommissionSimulator initialPrice={pricePerStudent} />
+            <CommissionSimulator pricePerStudent={pricePerStudent} />
           </div>
         </CardContent>
       </Card>

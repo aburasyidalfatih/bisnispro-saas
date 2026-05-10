@@ -3,11 +3,9 @@
 import { useState } from "react"
 import { TrendingUp, Users, Info } from "lucide-react"
 
-export function CommissionSimulator({ initialPrice = 30000 }: { initialPrice?: number }) {
+export function CommissionSimulator({ pricePerStudent }: { pricePerStudent: number }) {
   const [studentCount, setStudentCount] = useState(100)
   
-  // Paket Pro: Rp 30.000 / Siswa (Default fallback, overwritten by DB)
-  const pricePerStudent = initialPrice
   const commissionRate = 0.20 // 20%
 
   const totalTagihan = studentCount * pricePerStudent
