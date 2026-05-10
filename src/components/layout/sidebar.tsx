@@ -125,6 +125,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             { label: "Fasilitas Sekolah", href: `${basePath}/website/facilities`, icon: Building2 },
             { label: "Program Unggulan", href: `${basePath}/website/programs`, icon: BookOpen },
             { label: "Ekskul", href: `${basePath}/website/extracurriculars`, icon: Activity },
+            { label: "Kerjasama", href: `${basePath}/website/partners`, icon: Briefcase },
           ],
         },
         {

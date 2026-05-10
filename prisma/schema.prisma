@@ -93,6 +93,7 @@ model Tenant {
   grades               Grade[]
   teacherJournals      TeacherJournal[]
   disciplineRecords    DisciplineRecord[]
+  partnerships         Partnership[]
 
   @@index([isActive])
   @@index([plan])
@@ -1537,4 +1538,20 @@ model DisciplineRecord {
   @@index([tenantId])
   @@index([studentId])
   @@map("discipline_records")
+}
+
+model Partnership {
+  id         String   @id @default(cuid())
+  tenantId   String
+  name       String
+  imageUrl   String
+  websiteUrl String?
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("partnerships")
 }

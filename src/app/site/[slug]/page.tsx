@@ -15,6 +15,7 @@ import { FacilitiesSection } from "./_components/facilities-section"
 import { ExtracurricularsSection } from "./_components/extracurriculars-section"
 import { StaffHighlight } from "./_components/staff-highlight"
 import { AlumniTestimonials } from "./_components/alumni-testimonials"
+import { PartnershipsSection } from "./_components/partnerships-section"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -166,6 +167,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
       {/* ── 12. Testimonial Alumni ── */}
       <AlumniTestimonials alumni={tenant.alumni || []} />
+
+      {/* ── 12.5. Kerjasama Lembaga ── */}
+      <PartnershipsSection partnerships={tenant.partnerships || []} />
 
       {/* ── 13. Kontak CTA ── */}
       {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
