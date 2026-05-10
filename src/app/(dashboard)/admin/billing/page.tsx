@@ -25,6 +25,7 @@ interface TenantBilling {
   pricing: { PRICE_PER_STUDENT: number; MIN_STUDENTS: number }
   hasPendingInvoice?: boolean
   upgradeEnabled?: boolean
+  manualPayment?: { bank: string; number: string; name: string }
 }
 interface PlanInfo {
   slug: string; name: string; description: string; price: number
@@ -488,30 +489,14 @@ export default function BillingPage() {
               
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-bold text-sm">Bank BCA</p>
-                  <p className="text-muted-foreground text-[11px]">a.n PT SchoolPro Indonesia</p>
+                  <p className="font-bold text-sm">{billing?.manualPayment?.bank || "Bank Pembayaran"}</p>
+                  <p className="text-muted-foreground text-[11px]">a.n {billing?.manualPayment?.name || "Nama Pemilik"}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-sm">1234 5678 90</span>
+                  <span className="font-mono font-bold text-sm">{billing?.manualPayment?.number || "-"}</span>
                   <button onClick={() => {
-                    navigator.clipboard.writeText("1234567890")
-                    toast({ description: "Nomor rekening BCA disalin" })
-                  }} className="text-muted-foreground hover:text-primary transition"><Copy className="h-4 w-4" /></button>
-                </div>
-              </div>
-              
-              <Separator className="bg-slate-200 dark:bg-slate-700" />
-              
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-bold text-sm">Bank Mandiri</p>
-                  <p className="text-muted-foreground text-[11px]">a.n PT SchoolPro Indonesia</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-sm">098 7654 321</span>
-                  <button onClick={() => {
-                    navigator.clipboard.writeText("0987654321")
-                    toast({ description: "Nomor rekening Mandiri disalin" })
+                    navigator.clipboard.writeText(billing?.manualPayment?.number || "")
+                    toast({ description: "Nomor rekening disalin" })
                   }} className="text-muted-foreground hover:text-primary transition"><Copy className="h-4 w-4" /></button>
                 </div>
               </div>

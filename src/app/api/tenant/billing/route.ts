@@ -40,7 +40,7 @@ export async function GET() {
   if (!tenantUser) return NextResponse.json({ error: "Unauthorized", slug_detected: slug }, { status: 401 })
   const tenantId = tenantUser.id
 
-  const [tenant, pricing, proPlan, pendingPayment, platformSetting] = await Promise.all([
+  const [tenant, pricing, proPlan, pendingPayment, platformSettings] = await Promise.all([
     db.tenant.findUnique({
       where: { id: tenantId },
       select: {
@@ -61,19 +61,27 @@ export async function GET() {
       where: { tenantId, status: "pending" },
       select: { id: true }
     }),
-    db.platformSetting.findUnique({
-      where: { key: "enable_billing_upgrade" },
-      select: { value: true }
+    db.platformSetting.findMany({
+      where: { key: { in: ["enable_billing_upgrade", "MANUAL_PAYMENT_BANK", "MANUAL_PAYMENT_NUMBER", "MANUAL_PAYMENT_NAME"] } },
+      select: { key: true, value: true }
     })
   ])
 
   const proFeatures = normalizeFeatures(proPlan?.features)
+
+  const upgradeEnabled = platformSettings.find(s => s.key === "enable_billing_upgrade")?.value === "true"
+  const manualPayment = {
+    bank: platformSettings.find(s => s.key === "MANUAL_PAYMENT_BANK")?.value || "Bank BCA",
+    number: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NUMBER")?.value || "1234 5678 90",
+    name: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NAME")?.value || "PT SchoolPro Indonesia",
+  }
 
   return NextResponse.json({
     ...tenant,
     pricing,
     proFeatures,
     hasPendingInvoice: !!pendingPayment,
-    upgradeEnabled: platformSetting?.value === "true"
+    upgradeEnabled,
+    manualPayment
   })
 }

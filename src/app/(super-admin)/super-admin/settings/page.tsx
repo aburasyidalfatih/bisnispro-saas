@@ -70,6 +70,9 @@ export default function SuperAdminSettingsPage() {
     TRIPAY_PRIVATE_KEY: "",
     TRIPAY_MERCHANT_CODE: "",
     TRIPAY_MODE: "sandbox",
+    MANUAL_PAYMENT_BANK: "Bank BCA",
+    MANUAL_PAYMENT_NUMBER: "1234 5678 90",
+    MANUAL_PAYMENT_NAME: "PT SchoolPro Indonesia",
 
     // Google OAuth
     GOOGLE_CLIENT_ID: "",
@@ -788,6 +791,35 @@ export default function SuperAdminSettingsPage() {
                 <code className="block bg-muted p-2 rounded-lg text-xs break-all">https://schoolpro.id/api/payment/callback</code>
                 <p className="text-[10px]">Daftarkan URL ini di dashboard Tripay Anda.</p>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass border-0 lg:col-span-2">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-green-500/10"><CreditCard className="h-4 w-4 text-green-500" /></div>
+                <CardTitle className="text-lg">Rekening Pembayaran Manual</CardTitle>
+              </div>
+              <CardDescription>Rekening ini akan ditampilkan kepada tenant untuk keperluan transfer manual jika Tripay belum dikonfigurasi.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Nama Bank</Label>
+                  <Input value={form.MANUAL_PAYMENT_BANK} onChange={e => setForm({...form, MANUAL_PAYMENT_BANK: e.target.value})} placeholder="Bank BCA" className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Nomor Rekening</Label>
+                  <Input value={form.MANUAL_PAYMENT_NUMBER} onChange={e => setForm({...form, MANUAL_PAYMENT_NUMBER: e.target.value})} placeholder="1234 5678 90" className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Atas Nama (Pemilik)</Label>
+                  <Input value={form.MANUAL_PAYMENT_NAME} onChange={e => setForm({...form, MANUAL_PAYMENT_NAME: e.target.value})} placeholder="PT SchoolPro Indonesia" className="rounded-xl" />
+                </div>
+              </div>
+              <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['MANUAL_PAYMENT_BANK', 'MANUAL_PAYMENT_NUMBER', 'MANUAL_PAYMENT_NAME'])} disabled={saving}>
+                <Save className="h-4 w-4" /> Simpan Rekening Manual
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
