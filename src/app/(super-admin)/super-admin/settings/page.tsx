@@ -817,6 +817,7 @@ export default function SuperAdminSettingsPage() {
                   <Label>Atas Nama (Pemilik)</Label>
                   <Input value={form.MANUAL_PAYMENT_NAME} onChange={e => setForm({...form, MANUAL_PAYMENT_NAME: e.target.value})} placeholder="PT SchoolPro Indonesia" className="rounded-xl" />
                 </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div className="space-y-2">
                   <Label>Nomor WhatsApp Konfirmasi (Admin)</Label>
