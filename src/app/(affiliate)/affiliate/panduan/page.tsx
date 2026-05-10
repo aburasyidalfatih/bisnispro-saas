@@ -1,8 +1,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Infinity, Landmark, Sparkles, TrendingUp, Users } from "lucide-react"
 import { CommissionSimulator } from "./_components/commission-simulator"
+import { db } from "@/lib/db"
 
-export default function AffiliateGuidePage() {
+export default async function AffiliateGuidePage() {
+  const proPlan = await db.subscriptionPlan.findFirst({
+    where: { slug: "pro" },
+    select: { price: true }
+  })
+  const pricePerStudent = proPlan?.price || 30000
+
   return (
     <div className="space-y-6">
       <div>
@@ -26,7 +33,7 @@ export default function AffiliateGuidePage() {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6 mt-2">
-            <CommissionSimulator />
+            <CommissionSimulator initialPrice={pricePerStudent} />
           </div>
         </CardContent>
       </Card>

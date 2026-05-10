@@ -3,11 +3,11 @@
 import { useState } from "react"
 import { TrendingUp, Users, Info } from "lucide-react"
 
-export function CommissionSimulator() {
+export function CommissionSimulator({ initialPrice = 30000 }: { initialPrice?: number }) {
   const [studentCount, setStudentCount] = useState(100)
   
-  // Paket Pro: Rp 30.000 / Siswa
-  const pricePerStudent = 30000
+  // Paket Pro: Rp 30.000 / Siswa (Default fallback, overwritten by DB)
+  const pricePerStudent = initialPrice
   const commissionRate = 0.20 // 20%
 
   const totalTagihan = studentCount * pricePerStudent
@@ -63,7 +63,7 @@ export function CommissionSimulator() {
         <div className="bg-blue-50 p-3 rounded-lg flex items-start gap-2 border border-blue-100">
           <Info className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
           <p className="text-xs text-blue-800 leading-relaxed">
-            Perhitungan di atas menggunakan estimasi Paket Pro (Rp 30.000/siswa). Komisi yang Anda terima akan terus berlanjut (<strong>Lifetime</strong>) setiap tahun selama sekolah tersebut memperpanjang langganannya.
+            Perhitungan di atas menggunakan estimasi Paket Pro (Rp {pricePerStudent.toLocaleString("id-ID")}/siswa). Komisi yang Anda terima akan terus berlanjut (<strong>Lifetime</strong>) setiap tahun selama sekolah tersebut memperpanjang langganannya.
           </p>
         </div>
       </div>
