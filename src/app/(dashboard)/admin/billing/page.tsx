@@ -14,7 +14,7 @@ import { toast } from "@/hooks/use-toast"
 import {
   CheckCircle2, Zap, Users, Info, ArrowRight,
   ShieldCheck, Star, FileText, Clock, Copy, ExternalLink,
-  AlertCircle, CheckCheck, MessageCircle
+  AlertCircle, CheckCheck, MessageCircle, Tag, Percent
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -35,6 +35,7 @@ interface InvoiceData {
   id: string; reference: string; amount: number; studentCount: number
   pricePerStudent: number; tenantName: string
   expiredAt: string; status: string; createdAt: string
+  subTotal?: number; discountAmount?: number
 }
 
 export default function BillingPage() {
@@ -47,6 +48,11 @@ export default function BillingPage() {
   const [invoice, setInvoice] = useState<InvoiceData | null>(null)
   const [showInvoice, setShowInvoice] = useState(false)
   const [copied, setCopied] = useState(false)
+
+  // Discount states
+  const [discountCodeInput, setDiscountCodeInput] = useState("")
+  const [validatingDiscount, setValidatingDiscount] = useState(false)
+  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, percentage: number } | null>(null)
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -71,10 +77,38 @@ export default function BillingPage() {
   }, [])
 
   const pricing = billing?.pricing || { PRICE_PER_STUDENT: 30000, MIN_STUDENTS: 50 }
-  const totalCost = studentCount * pricing.PRICE_PER_STUDENT
+  const subTotal = studentCount * pricing.PRICE_PER_STUDENT
+  const discountAmount = appliedDiscount ? subTotal * (appliedDiscount.percentage / 100) : 0
+  const totalCost = subTotal - discountAmount
   const isPro = billing?.plan === "pro"
   const proFeatures = proPlan?.features || []
   const currentPlanFeatures = isPro ? (proPlan?.features || []) : (freePlan?.features || [])
+
+  const handleValidateDiscount = async () => {
+    if (!discountCodeInput) return
+    setValidatingDiscount(true)
+    try {
+      const res = await fetch("/api/tenant/billing/validate-discount", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: discountCodeInput }),
+      })
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.error || "Kode tidak valid")
+      setAppliedDiscount({ code: result.code, percentage: result.percentage })
+      toast({ title: "Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
+    } catch (err: any) {
+      setAppliedDiscount(null)
+      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+    } finally {
+      setValidatingDiscount(false)
+    }
+  }
+
+  const handleRemoveDiscount = () => {
+    setAppliedDiscount(null)
+    setDiscountCodeInput("")
+  }
 
   const handleCheckout = async () => {
     if (studentCount < pricing.MIN_STUDENTS) {
@@ -86,7 +120,7 @@ export default function BillingPage() {
       const res = await fetch("/api/tenant/billing/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentCount }),
+        body: JSON.stringify({ studentCount, discountCode: appliedDiscount?.code }),
       })
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Gagal membuat invoice")
@@ -282,6 +316,14 @@ export default function BillingPage() {
                 </div>
                 <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 space-y-1.5">
                   <p className="text-xs text-muted-foreground font-medium">Estimasi Biaya</p>
+                  
+                  {appliedDiscount && (
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="text-muted-foreground line-through">Rp {subTotal.toLocaleString("id-ID")}</span>
+                      <span className="text-emerald-600 font-bold bg-emerald-100 px-1.5 py-0.5 rounded text-[10px]">-{appliedDiscount.percentage}%</span>
+                    </div>
+                  )}
+
                   <div className="flex items-end gap-1 text-primary">
                     <span className="text-sm font-semibold">Rp</span>
                     <span className="text-3xl font-bold">{totalCost.toLocaleString("id-ID")}</span>
@@ -289,6 +331,36 @@ export default function BillingPage() {
                   <p className="text-[11px] text-primary/70 italic">
                     Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")} / siswa / tahun
                   </p>
+                </div>
+
+                {/* Discount Input */}
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground">
+                    <Tag className="h-3.5 w-3.5" /> Punya Kode Diskon?
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Masukkan kode diskon..."
+                      value={discountCodeInput}
+                      onChange={(e) => setDiscountCodeInput(e.target.value.toUpperCase())}
+                      disabled={!!appliedDiscount || validatingDiscount}
+                      className="rounded-xl font-mono uppercase tracking-widest text-sm h-10"
+                    />
+                    {appliedDiscount ? (
+                      <Button variant="outline" className="rounded-xl h-10 text-destructive border-destructive/20 hover:bg-destructive/10" onClick={handleRemoveDiscount}>
+                        Hapus
+                      </Button>
+                    ) : (
+                      <Button variant="secondary" className="rounded-xl h-10 px-6 font-semibold" onClick={handleValidateDiscount} disabled={!discountCodeInput || validatingDiscount}>
+                        {validatingDiscount ? "..." : "Gunakan"}
+                      </Button>
+                    )}
+                  </div>
+                  {appliedDiscount && (
+                    <p className="text-xs text-emerald-600 flex items-center gap-1 mt-1 font-medium">
+                      <CheckCircle2 className="h-3 w-3" /> Kode {appliedDiscount.code} berhasil diterapkan!
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -389,6 +461,12 @@ export default function BillingPage() {
                 <span className="text-muted-foreground">Harga per Siswa</span>
                 <span className="font-semibold">Rp {Number(invoice?.pricePerStudent || 0).toLocaleString("id-ID")}</span>
               </div>
+              {invoice?.discountAmount && invoice.discountAmount > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Diskon</span>
+                  <span className="font-semibold text-emerald-600">- Rp {Number(invoice.discountAmount).toLocaleString("id-ID")}</span>
+                </div>
+              )}
               <Separator />
               <div className="flex justify-between text-base font-bold">
                 <span>Total Pembayaran</span>

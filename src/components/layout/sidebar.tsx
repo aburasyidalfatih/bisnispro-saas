@@ -419,6 +419,7 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
           children: [
             { label: "Semua Tenant", href: "/super-admin/tenants", icon: Globe },
             { label: "Paket & Harga", href: "/super-admin/tenants/plans", icon: Tag },
+            { label: "Kode Diskon", href: "/super-admin/tenants/discounts", icon: Tag },
             { label: "Pengajuan Sekolah", href: "/super-admin/applications", icon: FileText },
           ],
         },

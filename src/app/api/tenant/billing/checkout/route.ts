@@ -24,8 +24,8 @@ export async function POST(req: Request) {
   const tenantId = tenant.id
 
   try {
-    const { studentCount } = await req.json()
-    const result = await createUpgradeInvoice(tenantId, studentCount)
+    const { studentCount, discountCode } = await req.json()
+    const result = await createUpgradeInvoice(tenantId, studentCount, discountCode)
     
     return NextResponse.json(result)
   } catch (error) {
