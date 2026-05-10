@@ -13,8 +13,12 @@ set -e
 
 # --- KONFIGURASI ---
 COMPOSE_DIR="/home/ubuntu/schoolpro-prod"
+if [ -f "${COMPOSE_DIR}/.env" ]; then
+  source "${COMPOSE_DIR}/.env"
+fi
 BACKUP_DIR="${COMPOSE_DIR}/backups"
-GDRIVE_REMOTE="gdrive:SchoolPro-Backups"  # Nama remote rclone : folder di GDrive
+GDRIVE_FOLDER="${BACKUP_FOLDER_NAME:-SchoolPro-Backups}"
+GDRIVE_REMOTE="gdrive:${GDRIVE_FOLDER}"
 RETENTION_LOCAL=7    # Simpan 7 hari di VPS
 RETENTION_GDRIVE=30  # Simpan 30 hari di Google Drive
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
@@ -24,7 +28,6 @@ LOG_FILE="${BACKUP_DIR}/backup.log"
 # --- SETUP ---
 mkdir -p "${BACKUP_DIR}"
 
-source "${COMPOSE_DIR}/.env"
 DB_USER=${POSTGRES_USER:-postgres}
 DB_NAME=${POSTGRES_DB:-saasmasterpro}
 

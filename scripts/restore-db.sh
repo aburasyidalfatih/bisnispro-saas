@@ -12,8 +12,12 @@
 set -e
 
 COMPOSE_DIR="/home/ubuntu/schoolpro-prod"
+if [ -f "${COMPOSE_DIR}/.env" ]; then
+  source "${COMPOSE_DIR}/.env"
+fi
 BACKUP_DIR="${COMPOSE_DIR}/backups"
-GDRIVE_REMOTE="gdrive:SchoolPro-Backups"
+GDRIVE_FOLDER="${BACKUP_FOLDER_NAME:-SchoolPro-Backups}"
+GDRIVE_REMOTE="gdrive:${GDRIVE_FOLDER}"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -59,7 +63,6 @@ if [ "${CONFIRM}" != "RESTORE" ]; then
 fi
 
 # --- Restore ---
-source "${COMPOSE_DIR}/.env"
 DB_USER=${POSTGRES_USER:-postgres}
 DB_NAME=${POSTGRES_DB:-saasmasterpro}
 
