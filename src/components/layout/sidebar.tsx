@@ -165,17 +165,19 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             { label: "Catatan Perilaku (BK)", href: `${basePath}/discipline`, icon: ShieldCheck },
           ],
         },
-        {
-          label: "Kehadiran & Presensi",
-          href: `${basePath}/attendance`,
-          icon: CalendarCheck,
-          children: [
-            { label: "Overview Presensi", href: `${basePath}/attendance`, icon: LayoutDashboard },
-            { label: "Absensi Siswa", href: `${basePath}/attendance/students`, icon: GraduationCap },
-            { label: "Absensi Guru (GTK)", href: `${basePath}/attendance/gtk`, icon: Users },
-            { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
-          ],
-        },
+        ...(isFree ? [] : [
+          {
+            label: "Kehadiran & Presensi",
+            href: `${basePath}/attendance`,
+            icon: CalendarCheck,
+            children: [
+              { label: "Overview Presensi", href: `${basePath}/attendance`, icon: LayoutDashboard },
+              { label: "Absensi Siswa", href: `${basePath}/attendance/students`, icon: GraduationCap },
+              { label: "Absensi Guru (GTK)", href: `${basePath}/attendance/gtk`, icon: Users },
+              { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
+            ],
+          }
+        ]),
         {
           label: "Keuangan & Kas",
           href: `${basePath}/finance`,
