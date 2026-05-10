@@ -150,13 +150,13 @@ jobs:
             echo "Waiting for container to be ready..."
             sleep 10
             
-            # Jalankan database migration otomatis (menggunakan Prisma yang sudah bundled di image)
+            # Jalankan database synchronization otomatis (menggunakan Prisma yang sudah bundled di image)
             echo "Running database synchronization..."
-            docker compose exec -T app node node_modules/prisma/build/index.js db push --accept-data-loss 2>&1
+            docker compose exec -T app node node_modules/prisma/build/index.js db push --accept-data-loss --skip-generate 2>&1
             if [ $? -ne 0 ]; then
-              echo "⚠️ Migration failed! Check logs above."
+              echo "⚠️ Synchronization failed! Check logs above."
             else
-              echo "✅ Migrations applied successfully."
+              echo "✅ Synchronization applied successfully."
             fi
             
             # OPTIMASI: Restart Nginx agar mengenali IP internal container App yang baru
