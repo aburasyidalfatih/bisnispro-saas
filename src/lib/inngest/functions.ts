@@ -8,13 +8,18 @@ import { db } from "@/lib/db"
  * Enterprise Job Queue Functions (Fase 2)
  * Fungsi-fungsi di sini berjalan secara Asynchronous (di Background) 
  * untuk mencegah blocking pada Event Loop Node.js saat melayani ribuan tenant.
+ * 
+ * Inngest v4 API: triggers masuk ke argumen pertama (bukan argumen kedua).
+ * Ref: https://www.inngest.com/docs/reference/functions/create
  */
 
 // 1. Job Import Siswa Massal
-// @ts-ignore
 export const importStudentsJob = inngest.createFunction(
-  { id: "import-students-job", name: "Import Students Async" },
-  { event: "tenant/students.import" },
+  {
+    id: "import-students-job",
+    name: "Import Students Async",
+    triggers: [{ event: "tenant/students.import" }],
+  },
   async ({ event, step }: any) => {
     const { tenantId, students } = event.data
 
@@ -39,10 +44,12 @@ export const importStudentsJob = inngest.createFunction(
 )
 
 // 2. Job Import GTK/Users Massal
-// @ts-ignore
 export const importUsersJob = inngest.createFunction(
-  { id: "import-users-job", name: "Import GTK Async" },
-  { event: "tenant/users.import" },
+  {
+    id: "import-users-job",
+    name: "Import GTK Async",
+    triggers: [{ event: "tenant/users.import" }],
+  },
   async ({ event, step }: any) => {
     const { tenantId, users } = event.data
 
@@ -66,10 +73,12 @@ export const importUsersJob = inngest.createFunction(
 )
 
 // 3. Job Generate Tagihan Massal (Invoices)
-// @ts-ignore
 export const generateInvoicesJob = inngest.createFunction(
-  { id: "generate-invoices-job", name: "Generate Invoices Async" },
-  { event: "finance/invoices.generate" },
+  {
+    id: "generate-invoices-job",
+    name: "Generate Invoices Async",
+    triggers: [{ event: "finance/invoices.generate" }],
+  },
   async ({ event, step }: any) => {
     const { data } = event.data // DTO payload for FinanceService.createInvoice
 
