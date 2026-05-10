@@ -24,6 +24,10 @@ LOG_FILE="${BACKUP_DIR}/backup.log"
 # --- SETUP ---
 mkdir -p "${BACKUP_DIR}"
 
+source "${COMPOSE_DIR}/.env"
+DB_USER=${POSTGRES_USER:-postgres}
+DB_NAME=${POSTGRES_DB:-saasmasterpro}
+
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "${LOG_FILE}"
 }
@@ -35,8 +39,8 @@ log "Step 1: Dumping database..."
 cd "${COMPOSE_DIR}"
 
 docker compose exec -T db pg_dump \
-  -U postgres \
-  -d saasmasterpro \
+  -U "${DB_USER}" \
+  -d "${DB_NAME}" \
   --no-owner \
   --no-privileges \
   --format=plain \

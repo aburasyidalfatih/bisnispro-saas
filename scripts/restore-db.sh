@@ -59,12 +59,16 @@ if [ "${CONFIRM}" != "RESTORE" ]; then
 fi
 
 # --- Restore ---
+source "${COMPOSE_DIR}/.env"
+DB_USER=${POSTGRES_USER:-postgres}
+DB_NAME=${POSTGRES_DB:-saasmasterpro}
+
 log "Stopping app containers..."
 cd "${COMPOSE_DIR}"
 docker compose stop app wa-gateway
 
 log "Restoring database..."
-gunzip -c "${BACKUP_FILE}" | docker compose exec -T db psql -U postgres -d saasmasterpro --single-transaction
+gunzip -c "${BACKUP_FILE}" | docker compose exec -T db psql -U "${DB_USER}" -d "${DB_NAME}" --single-transaction
 
 log "Starting app containers..."
 docker compose start app wa-gateway
