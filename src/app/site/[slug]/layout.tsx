@@ -10,6 +10,15 @@ import { getActivePopup } from "@/lib/actions/popup"
 import { PopupRenderer } from "./_components/popup-renderer"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  return {
+    icons: tenant.logo ? { icon: tenant.logo, shortcut: tenant.logo, apple: tenant.logo } : undefined,
+  }
+}
+
 export default async function WebsiteLayout({
   children,
   params,

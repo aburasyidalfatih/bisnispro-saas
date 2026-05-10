@@ -84,6 +84,19 @@ export function TenantBrandingProvider({ children }: { children: React.ReactNode
     setBranding((prev) => ({ ...prev, ...data }))
   }
 
+  // Update favicon dynamically
+  useEffect(() => {
+    if (branding.logo) {
+      let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']")
+      if (!link) {
+        link = document.createElement("link")
+        link.rel = "icon"
+        document.head.appendChild(link)
+      }
+      link.href = branding.logo
+    }
+  }, [branding.logo])
+
   return (
     <TenantBrandingContext.Provider value={{ branding, updateBranding, isLoadingTenant }}>
       {children}
