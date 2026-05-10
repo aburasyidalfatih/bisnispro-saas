@@ -13,8 +13,9 @@ interface Partnership {
 export function PartnershipsSection({ partnerships }: { partnerships: Partnership[] }) {
   if (!partnerships || partnerships.length === 0) return null
 
-  // Duplicate the array if it's too short to create a seamless infinite scroll effect
-  const displayPartners = [...partnerships, ...partnerships, ...partnerships].slice(0, 12)
+  // Duplicate the array enough times to guarantee the track width is larger than any screen width
+  // This is critical for the seamless CSS marquee math to work (Track Width >= Screen Width)
+  const displayPartners = Array.from({ length: Math.max(10, Math.ceil(24 / partnerships.length)) }).flatMap(() => partnerships)
 
   return (
     <section className="py-12 md:py-20 bg-muted/20 border-y border-border/50 overflow-hidden">
@@ -27,12 +28,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
         </p>
       </div>
 
-      <div className="relative flex overflow-x-hidden group">
-        <div className="flex animate-marquee gap-8 md:gap-16 px-4 py-4 min-w-full justify-around items-center">
+      <div className="relative flex overflow-hidden group">
+        <div className="flex animate-marquee gap-8 md:gap-16 shrink-0 items-center pr-8 md:pr-16 py-4">
           {displayPartners.map((partner, i) => (
             <div key={`${partner.id}-${i}`} className="flex-shrink-0 w-[120px] md:w-[160px] grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
               {partner.websiteUrl ? (
-                <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer">
+                <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
                     <Image src={partner.imageUrl} alt={partner.name} fill className="object-contain" />
                   </div>
@@ -46,11 +47,11 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
           ))}
         </div>
         
-        <div className="flex absolute top-0 animate-marquee2 gap-8 md:gap-16 px-4 py-4 min-w-full justify-around items-center">
+        <div aria-hidden="true" className="flex animate-marquee gap-8 md:gap-16 shrink-0 items-center pr-8 md:pr-16 py-4">
           {displayPartners.map((partner, i) => (
             <div key={`${partner.id}-clone-${i}`} className="flex-shrink-0 w-[120px] md:w-[160px] grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
               {partner.websiteUrl ? (
-                <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer">
+                <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
                     <Image src={partner.imageUrl} alt={partner.name} fill className="object-contain" />
                   </div>
