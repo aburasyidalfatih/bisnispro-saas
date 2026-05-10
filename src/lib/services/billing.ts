@@ -73,7 +73,6 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
       tenantId: tenant.id,
       reference,
       amount,
-      discountAmount,
       discountCodeId: validDiscountId,
       plan: "pro",
       status: "pending",
@@ -84,6 +83,7 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
         tenantName: tenant.name,
         tenantSlug: tenant.slug,
         subTotal,
+        discountAmount,
         discountPercentage: validDiscountId ? (discountAmount / subTotal) * 100 : 0
       }
     }
