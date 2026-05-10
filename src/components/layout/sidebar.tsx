@@ -214,11 +214,13 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           children: [
             { label: "Data Admin", href: `${basePath}/users?role=admin`, icon: ShieldCheck },
             { label: "Data Guru", href: `${basePath}/users?role=guru`, icon: Users },
-            { label: "Data Siswa", href: `${basePath}/students`, icon: GraduationCap },
-            { label: "Data Orang Tua", href: `${basePath}/users?role=orangtua`, icon: Users },
-            { label: "Manajemen Kelas", href: `${basePath}/students/classrooms`, icon: BookOpen },
-            { label: "Mata Pelajaran", href: `${basePath}/subjects`, icon: BookOpen },
-            { label: "Ekspor/Impor Data", href: `${basePath}/users/import`, icon: Download },
+            ...(isFree ? [] : [
+              { label: "Data Siswa", href: `${basePath}/students`, icon: GraduationCap },
+              { label: "Data Orang Tua", href: `${basePath}/users?role=orangtua`, icon: Users },
+              { label: "Manajemen Kelas", href: `${basePath}/students/classrooms`, icon: BookOpen },
+              { label: "Mata Pelajaran", href: `${basePath}/subjects`, icon: BookOpen },
+              { label: "Ekspor/Impor Data", href: `${basePath}/users/import`, icon: Download },
+            ]),
           ],
         },
       ],
