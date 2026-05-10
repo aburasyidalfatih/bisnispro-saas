@@ -189,6 +189,9 @@ export default function DiscountsPage() {
               </div>
               {editingDiscount?.id ? "Edit Kode Diskon" : "Tambah Kode Diskon"}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Formulir untuk membuat atau mengedit kode diskon.
+            </DialogDescription>
           </DialogHeader>
 
           {editingDiscount && (
