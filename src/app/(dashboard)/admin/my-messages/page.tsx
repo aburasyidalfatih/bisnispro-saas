@@ -324,6 +324,8 @@ export default function AdminMessagesPage() {
               </div>
             )}
           </CardContent>
+        </Card>
+      )}
       {activeTab === "pengumuman" && (
         <Card className="glass border-0">
           <CardHeader className="pb-3">
@@ -372,8 +374,7 @@ export default function AdminMessagesPage() {
                     <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
                     <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
                   </div>
-                ))
-              }
+                ))}
               </div>
             )}
           </CardContent>

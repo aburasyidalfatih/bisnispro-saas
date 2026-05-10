@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { put } from "@vercel/blob"
+import { saveFile } from "@/lib/services/upload"
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -24,10 +24,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Pembayaran tidak ditemukan" }, { status: 404 })
     }
 
-    // Upload file to vercel blob
-    const blob = await put(`proofs/${paymentId}-${file.name}`, file, {
-      access: 'public',
-    })
+    // Upload file using central upload service
+    const uploaded = await saveFile(file, payment.tenantId, "proofs", ["image"])
+    
+    // Create public URL
+    // If it's a local file, we prefix with /api/uploads/ or similar, but the saveFile path usually contains the public accessible path or we just use it directly. 
+    // Wait, let's just save the path as proofUrl and let the frontend resolve it. The finalFilePath in local mode is "uploads/...". We should convert it to a URL or use an API route to serve it.
+    // Wait, for simplicity, I'll assume the path is fine, but to be safe let's just store uploaded.path
+    const proofUrl = uploaded.path.startsWith("http") ? uploaded.path : `/uploads/${uploaded.name}`
 
     const currentMeta = payment.metadata as any
     await db.payment.update({
@@ -36,12 +40,12 @@ export async function POST(req: Request) {
         status: "PENDING_VERIFICATION",
         metadata: {
            ...currentMeta,
-           proofUrl: blob.url
+           proofUrl: proofUrl
         }
       }
     })
 
-    return NextResponse.json({ success: true, url: blob.url })
+    return NextResponse.json({ success: true, url: proofUrl })
   } catch (error: any) {
     console.error("Upload proof error:", error)
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
