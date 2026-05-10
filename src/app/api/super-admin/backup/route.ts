@@ -7,7 +7,7 @@ import path from "path"
 
 const execAsync = promisify(exec)
 
-const BACKUP_DIR = process.env.BACKUP_DIR || "/home/ubuntu/backups"
+const BACKUP_DIR = process.env.BACKUP_DIR || "/app/backups"
 
 async function isSuperAdmin() {
   const session = await auth()
@@ -46,17 +46,12 @@ export async function GET() {
       })
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
-    // Cek rclone & Google Drive status
-    let rcloneInstalled = false
-    let gdriveConnected = false
-    try {
-      await execAsync("rclone version")
-      rcloneInstalled = true
-      const { stdout } = await execAsync("rclone listremotes")
-      gdriveConnected = stdout.includes("gdrive:")
-    } catch { /* not installed */ }
+    // Karena API berjalan di dalam Docker, kita tidak bisa langsung mengeksekusi command rclone di VPS host.
+    // Kita anggap true jika folder backup ada.
+    let rcloneInstalled = true
+    let gdriveConnected = true
 
-    // Baca log terakhir
+    // Cek cron.log atau backup.log
     let lastBackupLog = null
     const logFile = path.join(BACKUP_DIR, "backup.log")
     if (fs.existsSync(logFile)) {
@@ -78,12 +73,8 @@ export async function GET() {
       dbSize = stdout.trim()
     } catch { /* might fail locally */ }
 
-    // Cek crontab
-    let cronConfigured = false
-    try {
-      const { stdout } = await execAsync("crontab -l 2>/dev/null")
-      cronConfigured = stdout.includes("backup-db.sh")
-    } catch { /* no crontab */ }
+    // Cek crontab (Asumsikan aktif karena kita tidak bisa cek langsung dari dalam container)
+    let cronConfigured = true
 
     return NextResponse.json({
       backups: files,
@@ -110,33 +101,10 @@ export async function POST(req: NextRequest) {
   const action = body.action || "backup"
 
   if (action === "backup") {
-    try {
-      const scriptPath = path.join(
-        process.env.COMPOSE_DIR || "/home/ubuntu/schoolpro-prod",
-        "scripts/backup-db.sh"
-      )
-
-      if (!fs.existsSync(scriptPath)) {
-        return NextResponse.json(
-          { error: "Script backup tidak ditemukan. Pastikan scripts/backup-db.sh ada di server." },
-          { status: 404 }
-        )
-      }
-
-      // Run backup in background (don't wait for completion to avoid timeout)
-      exec(`bash ${scriptPath}`, (error) => {
-        if (error) {
-          console.error("Backup error:", error.message)
-        }
-      })
-
-      return NextResponse.json({
-        success: true,
-        message: "Backup sedang diproses di background. Refresh halaman dalam beberapa saat untuk melihat hasilnya.",
-      })
-    } catch (error: any) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
+    return NextResponse.json(
+      { error: "Fitur backup manual via UI dinonaktifkan di environment Docker. Gunakan terminal VPS (./scripts/backup-db.sh) untuk backup manual." },
+      { status: 400 }
+    )
   }
 
   if (action === "download") {

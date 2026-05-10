@@ -11,8 +11,8 @@
 
 set -e
 
-BACKUP_DIR="/home/ubuntu/backups"
 COMPOSE_DIR="/home/ubuntu/schoolpro-prod"
+BACKUP_DIR="${COMPOSE_DIR}/backups"
 GDRIVE_REMOTE="gdrive:SchoolPro-Backups"
 
 log() {

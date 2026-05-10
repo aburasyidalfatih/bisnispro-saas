@@ -1204,18 +1204,13 @@ export default function SuperAdminSettingsPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
-                className="w-full gap-2 btn-gradient text-white border-0 rounded-xl h-12"
-                onClick={handleManualBackup}
-                disabled={backupRunning}
+                className="w-full gap-2 btn-gradient text-white border-0 rounded-xl h-12 opacity-80 cursor-not-allowed"
+                disabled={true}
               >
-                {backupRunning ? (
-                  <><RefreshCw className="h-4 w-4 animate-spin" /> Backup Sedang Berjalan...</>
-                ) : (
-                  <><Database className="h-4 w-4" /> Jalankan Backup Sekarang</>
-                )}
+                <Database className="h-4 w-4" /> Backup Manual via UI Dinonaktifkan
               </Button>
               <p className="text-[10px] text-muted-foreground text-center">
-                Backup manual akan dump database, kompres, lalu upload ke Google Drive (jika tersedia).
+                Sistem SchoolPro berjalan di dalam Docker yang aman. Backup otomatis sudah dijadwalkan berjalan setiap jam 02:00 WIB. Untuk backup manual seketika, gunakan terminal VPS: <code>./scripts/backup-db.sh</code>
               </p>
 
               {backupData?.lastBackupLog && (

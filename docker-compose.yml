@@ -29,6 +29,7 @@ services:
       - WA_GATEWAY_URL=http://wa-gateway:4000
     volumes:
       - uploads:/app/uploads
+      - ./backups:/app/backups
     depends_on:
       db:
         condition: service_healthy

@@ -12,8 +12,8 @@
 set -e
 
 # --- KONFIGURASI ---
-BACKUP_DIR="/home/ubuntu/backups"
 COMPOSE_DIR="/home/ubuntu/schoolpro-prod"
+BACKUP_DIR="${COMPOSE_DIR}/backups"
 GDRIVE_REMOTE="gdrive:SchoolPro-Backups"  # Nama remote rclone : folder di GDrive
 RETENTION_LOCAL=7    # Simpan 7 hari di VPS
 RETENTION_GDRIVE=30  # Simpan 30 hari di Google Drive
