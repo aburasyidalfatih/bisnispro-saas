@@ -73,6 +73,7 @@ export default function SuperAdminSettingsPage() {
     MANUAL_PAYMENT_BANK: "Bank BCA",
     MANUAL_PAYMENT_NUMBER: "1234 5678 90",
     MANUAL_PAYMENT_NAME: "PT SchoolPro Indonesia",
+    MANUAL_PAYMENT_WA: "6281234567890",
 
     // Google OAuth
     GOOGLE_CLIENT_ID: "",
@@ -816,8 +817,14 @@ export default function SuperAdminSettingsPage() {
                   <Label>Atas Nama (Pemilik)</Label>
                   <Input value={form.MANUAL_PAYMENT_NAME} onChange={e => setForm({...form, MANUAL_PAYMENT_NAME: e.target.value})} placeholder="PT SchoolPro Indonesia" className="rounded-xl" />
                 </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div className="space-y-2">
+                  <Label>Nomor WhatsApp Konfirmasi (Admin)</Label>
+                  <Input value={form.MANUAL_PAYMENT_WA} onChange={e => setForm({...form, MANUAL_PAYMENT_WA: e.target.value})} placeholder="6281234567890" className="rounded-xl" />
+                  <p className="text-[10px] text-muted-foreground">Awali dengan kode negara, contoh: 62812...</p>
+                </div>
               </div>
-              <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['MANUAL_PAYMENT_BANK', 'MANUAL_PAYMENT_NUMBER', 'MANUAL_PAYMENT_NAME'])} disabled={saving}>
+              <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-4" onClick={() => handleSaveBatch(['MANUAL_PAYMENT_BANK', 'MANUAL_PAYMENT_NUMBER', 'MANUAL_PAYMENT_NAME', 'MANUAL_PAYMENT_WA'])} disabled={saving}>
                 <Save className="h-4 w-4" /> Simpan Rekening Manual
               </Button>
             </CardContent>

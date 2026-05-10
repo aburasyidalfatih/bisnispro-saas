@@ -62,7 +62,7 @@ export async function GET() {
       select: { id: true }
     }),
     db.platformSetting.findMany({
-      where: { key: { in: ["enable_billing_upgrade", "MANUAL_PAYMENT_BANK", "MANUAL_PAYMENT_NUMBER", "MANUAL_PAYMENT_NAME"] } },
+      where: { key: { in: ["enable_billing_upgrade", "MANUAL_PAYMENT_BANK", "MANUAL_PAYMENT_NUMBER", "MANUAL_PAYMENT_NAME", "MANUAL_PAYMENT_WA"] } },
       select: { key: true, value: true }
     })
   ])
@@ -74,6 +74,7 @@ export async function GET() {
     bank: platformSettings.find(s => s.key === "MANUAL_PAYMENT_BANK")?.value || "Bank BCA",
     number: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NUMBER")?.value || "1234 5678 90",
     name: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NAME")?.value || "PT SchoolPro Indonesia",
+    waNumber: platformSettings.find(s => s.key === "MANUAL_PAYMENT_WA")?.value || "6281234567890",
   }
 
   return NextResponse.json({

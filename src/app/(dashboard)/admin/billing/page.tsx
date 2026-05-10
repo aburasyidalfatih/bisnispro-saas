@@ -25,7 +25,7 @@ interface TenantBilling {
   pricing: { PRICE_PER_STUDENT: number; MIN_STUDENTS: number }
   hasPendingInvoice?: boolean
   upgradeEnabled?: boolean
-  manualPayment?: { bank: string; number: string; name: string }
+  manualPayment?: { bank: string; number: string; name: string; waNumber: string }
 }
 interface PlanInfo {
   slug: string; name: string; description: string; price: number
@@ -508,7 +508,7 @@ export default function BillingPage() {
                 <span>Invoice ini akan dikonfirmasi secara manual oleh admin. Hubungi kami via WhatsApp setelah melakukan pembayaran.</span>
               </div>
               <Button size="sm" className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 h-8 rounded-lg" asChild>
-                <a href={`https://wa.me/6281234567890?text=Halo%20Admin%2C%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20invoice%20${invoice?.reference}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://wa.me/${billing?.manualPayment?.waNumber || "6281234567890"}?text=Halo%20Admin%2C%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20invoice%20${invoice?.reference}`} target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="h-3.5 w-3.5" /> Konfirmasi WA
                 </a>
               </Button>
