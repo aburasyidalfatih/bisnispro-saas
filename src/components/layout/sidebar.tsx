@@ -155,16 +155,18 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             { label: "Tagihan & Bayar", href: `${basePath}/ppdb/tagihan`, icon: Wallet },
           ],
         },
-        {
-          label: "Akademik",
-          href: `${basePath}/schedules`,
-          icon: GraduationCap,
-          children: [
-            { label: "Jadwal Pelajaran", href: `${basePath}/schedules`, icon: Calendar },
-            { label: "E-Rapor", href: `${basePath}/grades`, icon: FileText },
-            { label: "Catatan Perilaku (BK)", href: `${basePath}/discipline`, icon: ShieldCheck },
-          ],
-        },
+        ...(isFree ? [] : [
+          {
+            label: "Akademik",
+            href: `${basePath}/schedules`,
+            icon: GraduationCap,
+            children: [
+              { label: "Jadwal Pelajaran", href: `${basePath}/schedules`, icon: Calendar },
+              { label: "E-Rapor", href: `${basePath}/grades`, icon: FileText },
+              { label: "Catatan Perilaku (BK)", href: `${basePath}/discipline`, icon: ShieldCheck },
+            ],
+          }
+        ]),
         ...(isFree ? [] : [
           {
             label: "Kehadiran & Presensi",
