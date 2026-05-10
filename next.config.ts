@@ -8,6 +8,7 @@ const ALLOWED_IMAGE_DOMAINS = [
   { protocol: "https" as const, hostname: "avatars.githubusercontent.com" },
   { protocol: "https" as const, hostname: "www.gravatar.com" },
   { protocol: "https" as const, hostname: "images.unsplash.com" },
+  { protocol: "https" as const, hostname: "*.public.blob.vercel-storage.com" },
 ]
 
 /**

@@ -8,7 +8,7 @@ import { Wallet, CreditCard, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 
-export function TopUpForm({ childrenWithWallets, paymentChannels, user, tenant }: any) {
+export function TopUpForm({ childrenWithWallets, paymentChannels, manualBanks = [], user, tenant }: any) {
   const [selectedWallet, setSelectedWallet] = useState<string>(childrenWithWallets[0]?.walletAccount?.id)
   const [amount, setAmount] = useState<number>(50000)
   const [customAmount, setCustomAmount] = useState<string>("")
@@ -44,8 +44,16 @@ export function TopUpForm({ childrenWithWallets, paymentChannels, user, tenant }
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Gagal membuat transaksi")
 
-      toast({ title: "Berhasil", description: "Mengarahkan ke halaman pembayaran..." })
-      router.push(data.checkoutUrl)
+      if (data.checkoutUrl) {
+         toast({ title: "Berhasil", description: "Mengarahkan ke halaman pembayaran..." })
+         router.push(data.checkoutUrl)
+      } else if (data.redirectUrl) {
+         toast({ title: "Berhasil", description: "Mengarahkan ke instruksi pembayaran manual..." })
+         router.push(data.redirectUrl)
+      } else {
+         toast({ title: "Berhasil", description: "Instruksi pembayaran disiapkan..." })
+         router.push("/ortu/wallet")
+      }
     } catch (error: any) {
        toast({ title: "Gagal", description: error.message, variant: "destructive" })
     } finally {
@@ -54,10 +62,14 @@ export function TopUpForm({ childrenWithWallets, paymentChannels, user, tenant }
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* 1. Pilih Rekening */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-bold text-foreground">1. Pilih Rekening Siswa</h3>
+      <Card className="glass border-0 shadow-xl overflow-hidden">
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-3">
+             <div className="h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">1</div>
+             <h3 className="text-sm font-bold text-foreground">Pilih Rekening Siswa</h3>
+          </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {childrenWithWallets.map((child: any) => (
              <div 
@@ -77,12 +89,17 @@ export function TopUpForm({ childrenWithWallets, paymentChannels, user, tenant }
              </div>
           ))}
         </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* 2. Pilih Nominal */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-bold text-foreground">2. Nominal Top Up</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <Card className="glass border-0 shadow-xl overflow-hidden">
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-3">
+             <div className="h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">2</div>
+             <h3 className="text-sm font-bold text-foreground">Nominal Top Up</h3>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
            {presetAmounts.map(val => (
              <div 
                key={val}
@@ -110,12 +127,17 @@ export function TopUpForm({ childrenWithWallets, paymentChannels, user, tenant }
              }}
            />
         </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* 3. Metode Pembayaran */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-bold text-foreground">3. Metode Pembayaran</h3>
-        <div className="grid gap-3 sm:grid-cols-2 max-h-[300px] overflow-y-auto pr-2 pb-2">
+      <Card className="glass border-0 shadow-xl overflow-hidden">
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-3">
+             <div className="h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">3</div>
+             <h3 className="text-sm font-bold text-foreground">Metode Pembayaran</h3>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 max-h-[300px] overflow-y-auto pr-2 pb-2 scrollbar-hide">
            {paymentChannels.filter((c: any) => c.active).map((channel: any) => (
              <div 
                 key={channel.code}
@@ -136,20 +158,43 @@ export function TopUpForm({ childrenWithWallets, paymentChannels, user, tenant }
                 </div>
              </div>
            ))}
-           {paymentChannels.length === 0 && (
-              <p className="text-sm text-red-500 col-span-full">Gateway pembayaran belum dikonfigurasi oleh sekolah.</p>
-           )}
-        </div>
-      </div>
+           {manualBanks.map((bank: any, idx: number) => (
+              <div 
+                 key={`manual-${idx}`}
+                 onClick={() => setSelectedChannel(`MANUAL_${idx}`)}
+                 className={cn(
+                   "p-3 rounded-xl border flex items-center gap-4 cursor-pointer transition-all",
+                   selectedChannel === `MANUAL_${idx}` ? "bg-primary/5 border-primary ring-1 ring-primary" : "bg-card hover:bg-muted/50 border-border"
+                 )}
+              >
+                 <div className="h-8 w-12 bg-indigo-100 text-indigo-600 rounded flex items-center justify-center">
+                    <Wallet className="h-5 w-5" />
+                 </div>
+                 <div>
+                    <p className="font-bold text-xs">Transfer Manual ({bank.bank})</p>
+                    <p className="text-[10px] text-muted-foreground">Biaya: Rp 0</p>
+                 </div>
+              </div>
+            ))}
+            {paymentChannels.length === 0 && manualBanks.length === 0 && (
+               <p className="text-sm text-red-500 col-span-full">Gateway pembayaran atau rekening manual belum dikonfigurasi oleh sekolah.</p>
+            )}
+         </div>
+        </CardContent>
+      </Card>
 
-      <div className="pt-6 border-t border-border">
+      <div className="pt-2 pb-24">
          <Button 
-            className="w-full rounded-xl h-14 text-lg font-bold" 
-            disabled={loading || paymentChannels.length === 0} 
+            className="w-full rounded-2xl h-14 text-lg font-bold shadow-lg shadow-primary/30" 
+            disabled={loading || !selectedChannel} 
             onClick={handleTopUp}
          >
             {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Lanjutkan Pembayaran"}
          </Button>
+         <p className="text-center text-[10px] text-muted-foreground mt-3 flex items-center justify-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            Transaksi aman dan terenkripsi.
+         </p>
       </div>
     </div>
   )

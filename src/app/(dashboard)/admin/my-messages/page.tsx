@@ -37,7 +37,7 @@ export default function AdminMessagesPage() {
   const { branding } = useTenantBranding()
   const tenantId = branding.id
 
-  const [activeTab, setActiveTab] = useState<"internal" | "website">("internal")
+  const [activeTab, setActiveTab] = useState<"internal" | "website" | "pengumuman">("internal")
   
   // Internal Messages State
   const [messages, setMessages] = useState<Message[]>([])
@@ -48,6 +48,10 @@ export default function AdminMessagesPage() {
   const [loadingWebsite, setLoadingWebsite] = useState(true)
   const [unread, setUnread] = useState(0)
   const [expandedId, setExpandedId] = useState<string | null>(null)
+
+  // Pengumuman State
+  const [announcements, setAnnouncements] = useState<any[]>([])
+  const [loadingAnnouncements, setLoadingAnnouncements] = useState(true)
 
   useEffect(() => {
     if (!tenantId) return
@@ -75,6 +79,21 @@ export default function AdminMessagesPage() {
           setLoadingWebsite(false)
         })
         .catch(() => setLoadingWebsite(false))
+    }
+
+    // Fetch Pengumuman
+    if (activeTab === "pengumuman") {
+      setLoadingAnnouncements(true)
+      fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN`)
+        .then(r => {
+           if(!r.ok) throw new Error("Failed to fetch")
+           return r.json()
+        })
+        .then(d => {
+          setAnnouncements(d.data || [])
+          setLoadingAnnouncements(false)
+        })
+        .catch(() => setLoadingAnnouncements(false))
     }
   }, [tenantId, activeTab])
 
@@ -110,16 +129,16 @@ export default function AdminMessagesPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Kotak Masuk</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Kelola pesan masuk internal maupun dari pengunjung website.</p>
+          <h1 className="text-2xl font-bold tracking-tight">Kotak Masuk & Pengumuman</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Kelola pesan masuk internal, pengunjung website, dan papan pengumuman.</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-xl border p-1 w-fit">
+      <div className="flex flex-wrap gap-1 rounded-xl border p-1 w-fit">
         <button onClick={() => setActiveTab("internal")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
             activeTab === "internal" ? "bg-primary text-white" : "hover:bg-muted")}>
@@ -137,6 +156,12 @@ export default function AdminMessagesPage() {
               {unread}
             </span>
           )}
+        </button>
+        <button onClick={() => setActiveTab("pengumuman")}
+          className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
+            activeTab === "pengumuman" ? "bg-primary text-white" : "hover:bg-muted")}>
+          <MessageSquare className="h-4 w-4" />
+          Pengumuman
         </button>
       </div>
 
@@ -296,6 +321,59 @@ export default function AdminMessagesPage() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+          </CardContent>
+      {activeTab === "pengumuman" && (
+        <Card className="glass border-0">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                  <MessageSquare className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Papan Pengumuman</CardTitle>
+                  <CardDescription>
+                    Pesan siaran untuk dibaca oleh seluruh civitas akademika
+                  </CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loadingAnnouncements ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : announcements.length === 0 ? (
+              <div className="text-center py-12">
+                <MessageSquare className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
+                <p className="text-sm text-muted-foreground">Belum ada pengumuman yang diterbitkan.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {announcements.map((post) => (
+                  <div key={post.id} className="p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                          A
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">Admin Sekolah</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            {format(new Date(post.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">PENGUMUMAN</span>
+                    </div>
+                    <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
+                    <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
+                  </div>
+                ))
+              }
               </div>
             )}
           </CardContent>

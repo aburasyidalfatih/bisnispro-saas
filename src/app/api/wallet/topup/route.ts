@@ -32,6 +32,46 @@ export async function POST(req: Request) {
        return NextResponse.json({ error: "Wallet tidak ditemukan atau Anda tidak memiliki akses" }, { status: 403 })
     }
 
+    // Handle Manual Bank Transfer
+    if (method.startsWith("MANUAL_")) {
+       const tenantData = await db.tenant.findUnique({
+          where: { id: wallet.tenantId },
+          select: { settings: true }
+       })
+       const manualBanks = (tenantData?.settings as any)?.manualBanks || []
+       const idx = parseInt(method.split("_")[1])
+       const selectedBank = manualBanks[idx]
+
+       if (!selectedBank) {
+          return NextResponse.json({ error: "Rekening manual tidak ditemukan" }, { status: 400 })
+       }
+
+       const payment = await db.payment.create({
+          data: {
+             tenantId: wallet.tenantId,
+             reference: `MANUAL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+             amount: amount,
+             method: `MANUAL_TRANSFER`,
+             status: "UNPAID",
+             plan: "WALLET_TOPUP",
+             metadata: {
+                walletId: wallet.id,
+                customerName,
+                customerEmail,
+                bankName: selectedBank.bank,
+                accountNumber: selectedBank.account,
+                accountName: selectedBank.name,
+                isManual: true
+             }
+          }
+       })
+
+       return NextResponse.json({
+          message: "Transaksi manual berhasil dibuat",
+          redirectUrl: `/ortu/wallet/topup/manual/${payment.id}`
+       })
+    }
+
     // Buat transaksi via Tripay
     const tripayResult = await createTransaction({
       tenantId: wallet.tenantId,

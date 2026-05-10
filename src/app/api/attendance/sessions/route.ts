@@ -31,7 +31,7 @@ export async function GET(req: Request) {
     where.date = { gte: d, lt: nextDay }
   }
 
-  const [sessions, total] = await Promise.all([
+  const [sessionsData, total] = await Promise.all([
     db.attendanceSession.findMany({
       where,
       include: {
@@ -44,6 +44,21 @@ export async function GET(req: Request) {
     }),
     db.attendanceSession.count({ where }),
   ])
+
+  // Fetch creators manually to avoid changing Prisma schema
+  const userIds = [...new Set(sessionsData.map((s) => s.createdBy))]
+  const users = await db.user.findMany({
+    where: { id: { in: userIds } },
+    select: { id: true, name: true }
+  })
+  
+  const userMap = new Map(users.map(u => [u.id, u.name]))
+
+  const sessions = sessionsData.map(s => ({
+    ...s,
+    creatorName: userMap.get(s.createdBy) || "System",
+    subjectName: s.type === "DAILY" ? "Harian (Wali Kelas)" : s.type === "EXAM" ? "Ujian" : "Ekstrakurikuler"
+  }))
 
   return NextResponse.json({ data: sessions, meta: { total, page, totalPages: Math.ceil(total / 20) } })
 }

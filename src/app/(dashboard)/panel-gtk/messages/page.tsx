@@ -28,12 +28,13 @@ export default function GuruMessagesPage() {
 
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<"inbox" | "sent" | "compose">("inbox")
+  const [activeTab, setActiveTab] = useState<"inbox" | "sent" | "compose" | "pengumuman">("inbox")
 
   // Form State
   const [body, setBody] = useState("")
   const [subject, setSubject] = useState("")
   const [sending, setSending] = useState(false)
+  const [announcements, setAnnouncements] = useState<any[]>([])
 
   const fetchMessages = (type: "inbox" | "sent") => {
     if (!tenantId) return
@@ -47,9 +48,27 @@ export default function GuruMessagesPage() {
       .catch(() => setLoading(false))
   }
 
+  const fetchAnnouncements = () => {
+    if (!tenantId) return
+    setLoading(true)
+    // Fetch announcements from posts endpoint
+    fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN`)
+      .then(r => {
+         if(!r.ok) throw new Error("Failed to fetch")
+         return r.json()
+      })
+      .then(d => {
+        setAnnouncements(d.data || [])
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }
+
   useEffect(() => {
     if (activeTab === "inbox" || activeTab === "sent") {
       fetchMessages(activeTab)
+    } else if (activeTab === "pengumuman") {
+      fetchAnnouncements()
     }
   }, [activeTab, tenantId])
 
@@ -90,15 +109,22 @@ export default function GuruMessagesPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Pesan Internal</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Berkomunikasi langsung dengan Admin / Pihak Sekolah.</p>
+          <h1 className="text-2xl font-bold tracking-tight">Pesan Internal & Pengumuman</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Berkomunikasi langsung dengan Admin atau lihat papan pengumuman.</p>
         </div>
       </div>
 
-      <div className="flex gap-2 p-1 bg-muted/50 rounded-xl w-fit">
+      <div className="flex flex-wrap gap-2 p-1 bg-muted/50 rounded-xl w-fit">
+        <Button 
+          variant={activeTab === "pengumuman" ? "default" : "ghost"} 
+          className={activeTab === "pengumuman" ? "shadow-sm rounded-lg" : "rounded-lg"}
+          onClick={() => setActiveTab("pengumuman")}
+        >
+          Pengumuman
+        </Button>
         <Button 
           variant={activeTab === "inbox" ? "default" : "ghost"} 
           className={activeTab === "inbox" ? "shadow-sm rounded-lg" : "rounded-lg"}
@@ -157,6 +183,42 @@ export default function GuruMessagesPage() {
                 Kirim Pesan
               </Button>
             </form>
+          ) : activeTab === "pengumuman" ? (
+            <div className="space-y-4">
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : announcements.length === 0 ? (
+                <div className="text-center py-16 flex flex-col items-center">
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-3">
+                    <MessageSquare className="h-6 w-6 text-muted-foreground/50" />
+                  </div>
+                  <p className="text-muted-foreground">Tidak ada pengumuman saat ini.</p>
+                </div>
+              ) : (
+                announcements.map((post) => (
+                  <div key={post.id} className="p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                          A
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">Admin Sekolah</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            {format(new Date(post.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">PENGUMUMAN</span>
+                    </div>
+                    <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
+                    <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
+                  </div>
+                ))
+              )}
+            </div>
           ) : (
             <div className="space-y-4">
               {loading ? (

@@ -7,25 +7,43 @@ import { Calendar, Users, FileText, MessageSquare, ArrowRight, Clock, MapPin, Bo
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+import { id } from "date-fns/locale"
 
 export default function GuruDashboard() {
   const { data: session } = useSession()
   const userName = session?.user?.name || "Guru"
+  const tenantId = session?.user?.tenants?.[0]?.id
+
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
+  const [announcements, setAnnouncements] = useState<any[]>([])
 
   useEffect(() => {
     setCurrentTime(new Date())
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+
+    if (tenantId) {
+      fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN&limit=2`)
+        .then(r => {
+           if(!r.ok) throw new Error("Failed to fetch")
+           return r.json()
+        })
+        .then(d => {
+           if (d.data) setAnnouncements(d.data.slice(0, 2))
+        })
+        .catch(console.error)
+    }
+
     return () => clearInterval(timer)
-  }, [])
+  }, [tenantId])
 
   const quickActions = [
-    { label: "Absen Kehadiran", desc: "Check-in GPS harian", icon: Clock, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", href: "/panel-gtk/absensi" },
-    { label: "Jadwal Mengajar", desc: "Lihat roster mingguan", icon: Calendar, color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500/20", href: "/panel-gtk/jadwal" },
-    { label: "Jurnal & Absen Siswa", desc: "Isi agenda & presensi kelas", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", href: "/panel-gtk/jurnal" },
-    { label: "Input Nilai", desc: "Rekap nilai ujian & tugas", icon: Award, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", href: "/panel-gtk/nilai" },
-    { label: "Buku Poin Siswa", desc: "Catat pelanggaran/prestasi", icon: AlertCircle, color: "text-rose-500", bg: "bg-rose-500/10", border: "border-rose-500/20", href: "/panel-gtk/poin" },
-    { label: "Tulis Artikel", desc: "Bagikan tulisan ke web", icon: FileText, color: "text-violet-500", bg: "bg-violet-500/10", border: "border-violet-500/20", href: "/panel-gtk/posts" },
+    { label: "Absen Kehadiran", desc: "Check-in GPS harian", icon: Clock, color: "text-white", bg: "bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-md shadow-emerald-500/30 border-0", href: "/panel-gtk/absensi" },
+    { label: "Jadwal Mengajar", desc: "Lihat roster mingguan", icon: Calendar, color: "text-white", bg: "bg-gradient-to-br from-indigo-400 to-indigo-600 shadow-md shadow-indigo-500/30 border-0", href: "/panel-gtk/jadwal" },
+    { label: "Jurnal & Absen Siswa", desc: "Isi agenda & presensi kelas", icon: BookOpen, color: "text-white", bg: "bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-500/30 border-0", href: "/panel-gtk/jurnal" },
+    { label: "Input Nilai", desc: "Rekap nilai ujian & tugas", icon: Award, color: "text-white", bg: "bg-gradient-to-br from-amber-400 to-amber-600 shadow-md shadow-amber-500/30 border-0", href: "/panel-gtk/nilai" },
+    { label: "Buku Poin Siswa", desc: "Catat pelanggaran/prestasi", icon: AlertCircle, color: "text-white", bg: "bg-gradient-to-br from-rose-400 to-rose-600 shadow-md shadow-rose-500/30 border-0", href: "/panel-gtk/poin" },
+    { label: "Tulis Artikel", desc: "Bagikan tulisan ke web", icon: FileText, color: "text-white", bg: "bg-gradient-to-br from-violet-400 to-violet-600 shadow-md shadow-violet-500/30 border-0", href: "/panel-gtk/posts" },
   ]
 
   const scheduleToday = [
@@ -139,18 +157,23 @@ export default function GuruDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {[
-                { title: "Rapat Paripurna Kenaikan Kelas", date: "Besok, 13:00 WIB", type: "Penting" },
-                { title: "Batas Akhir Input Nilai PTS", date: "Lusa, 23:59 WIB", type: "Reminder" }
-              ].map((item, i) => (
-                <Link href="/panel-gtk/messages" key={i} className="flex gap-3 group cursor-pointer outline-none">
-                  <div className="w-1.5 rounded-full shrink-0 bg-primary/20 group-hover:bg-primary transition-colors"></div>
-                  <div className="py-1">
-                    <p className="font-semibold text-sm group-hover:text-primary transition-colors">{item.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{item.date}</p>
-                  </div>
-                </Link>
-              ))}
+              {announcements.length === 0 ? (
+                 <div className="text-center py-4">
+                    <p className="text-xs text-muted-foreground">Belum ada pengumuman.</p>
+                 </div>
+              ) : (
+                announcements.map((item, i) => (
+                  <Link href="/panel-gtk/messages" key={item.id} className="flex gap-3 group cursor-pointer outline-none">
+                    <div className="w-1.5 rounded-full shrink-0 bg-primary/20 group-hover:bg-primary transition-colors"></div>
+                    <div className="py-1">
+                      <p className="font-semibold text-sm group-hover:text-primary transition-colors line-clamp-2">{item.title}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        {format(new Date(item.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
+                      </p>
+                    </div>
+                  </Link>
+                ))
+              )}
             </div>
             <Button variant="ghost" className="w-full mt-4 text-xs font-medium text-primary hover:bg-primary/5" asChild>
               <Link href="/panel-gtk/messages">Lihat Semua Pengumuman</Link>

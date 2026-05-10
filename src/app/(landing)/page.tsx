@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { db } from "@/lib/db"
 import {
   ArrowRight,
@@ -180,7 +181,7 @@ export default async function LandingPage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <img src={appLogo} alt={`${platformName} Logo`} className="h-8 w-auto object-contain" />
+            <Image src={appLogo} alt={`${platformName} Logo`} width={120} height={32} className="h-8 w-auto object-contain" />
             <span className="font-bold text-base md:text-lg tracking-tight">{platformName}</span>
           </Link>
 
@@ -283,7 +284,7 @@ export default async function LandingPage() {
                 return (
                   <div key={`${tenant.id}-${idx}`} className="flex items-center gap-3 shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
                     {tenant.logo ? (
-                      <img src={tenant.logo} alt={tenant.name} className="h-10 w-10 md:h-12 md:w-12 object-contain rounded-full border bg-white p-1" />
+                      <Image src={tenant.logo} alt={tenant.name} width={48} height={48} className="h-10 w-10 md:h-12 md:w-12 object-contain rounded-full border bg-white p-1" />
                     ) : (
                       <div className="h-10 w-10 md:h-12 md:w-12 rounded-full border bg-muted flex items-center justify-center shrink-0">
                         <School className="h-5 w-5 text-muted-foreground" />

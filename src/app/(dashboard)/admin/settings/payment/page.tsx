@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import { CreditCard, Save, Eye, EyeOff, Info, CheckCircle, ExternalLink, RefreshCw } from "lucide-react"
+import { CreditCard, Save, Eye, EyeOff, Info, CheckCircle, ExternalLink, RefreshCw, Landmark, Plus, Trash2 } from "lucide-react"
 
 interface TripayConfig {
   tripayApiKey: string
@@ -33,6 +33,9 @@ export default function PaymentSettingsPage() {
     tripayMerchantCode: "",
     tripayApiUrl: "https://tripay.co.id/api-sandbox",
   })
+  
+  // Manual Bank Accounts State
+  const [manualBanks, setManualBanks] = useState<{bank: string, account: string, name: string}[]>([])
 
   useEffect(() => {
     const id = session?.user?.tenants?.[0]?.id
@@ -58,6 +61,9 @@ export default function PaymentSettingsPage() {
           setConfig(data.tripay)
           setUseCustom(true)
           setUseSandbox(data.tripay.tripayApiUrl?.includes("sandbox") ?? true)
+        }
+        if (data.manualBanks) {
+          setManualBanks(data.manualBanks)
         }
         setLoading(false)
       })
@@ -91,7 +97,10 @@ export default function PaymentSettingsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         tenantId,
-        settings: useCustom ? { tripay: config } : { tripay: null },
+        settings: { 
+          tripay: useCustom ? config : null,
+          manualBanks: manualBanks
+        },
       }),
     })
     setSaving(false)
@@ -123,6 +132,20 @@ export default function PaymentSettingsPage() {
       toast({ title: "❌ Error", description: err.message, variant: "destructive" })
     }
     setTesting(false)
+  }
+
+  const addManualBank = () => {
+    setManualBanks([...manualBanks, { bank: "", account: "", name: "" }])
+  }
+
+  const updateManualBank = (index: number, field: string, value: string) => {
+    const newBanks = [...manualBanks]
+    newBanks[index] = { ...newBanks[index], [field]: value }
+    setManualBanks(newBanks)
+  }
+
+  const removeManualBank = (index: number) => {
+    setManualBanks(manualBanks.filter((_, i) => i !== index))
   }
 
   if (loading) return <div className="space-y-4">{[1, 2].map(i => <div key={i} className="skeleton h-48 rounded-2xl" />)}</div>
@@ -171,6 +194,78 @@ export default function PaymentSettingsPage() {
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ? "translate-x-6" : "translate-x-1"}`} />
             </button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Manual Bank Accounts Section */}
+      <Card className="glass border-0">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <Landmark className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Transfer Manual (Rekening Sekolah)</CardTitle>
+                <CardDescription>Tambahkan nomor rekening sekolah untuk pembayaran manual oleh orang tua.</CardDescription>
+              </div>
+            </div>
+            <Button onClick={addManualBank} variant="outline" size="sm" className="gap-2 rounded-xl">
+              <Plus className="h-4 w-4" /> Tambah Rekening
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {manualBanks.length === 0 ? (
+            <div className="text-center py-6 border-2 border-dashed rounded-xl">
+              <Landmark className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Belum ada rekening manual.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {manualBanks.map((bank, index) => (
+                <div key={index} className="grid sm:grid-cols-12 gap-3 items-start bg-muted/30 p-3 rounded-xl border">
+                  <div className="sm:col-span-3 space-y-1.5">
+                    <Label className="text-xs">Nama Bank/Dompet</Label>
+                    <Input 
+                      placeholder="BCA / Mandiri / Dana" 
+                      value={bank.bank} 
+                      onChange={(e) => updateManualBank(index, "bank", e.target.value)}
+                      className="rounded-lg h-9 text-sm bg-background"
+                    />
+                  </div>
+                  <div className="sm:col-span-4 space-y-1.5">
+                    <Label className="text-xs">No. Rekening</Label>
+                    <Input 
+                      placeholder="1234567890" 
+                      value={bank.account} 
+                      onChange={(e) => updateManualBank(index, "account", e.target.value)}
+                      className="rounded-lg h-9 text-sm bg-background"
+                    />
+                  </div>
+                  <div className="sm:col-span-4 space-y-1.5">
+                    <Label className="text-xs">Atas Nama (A/N)</Label>
+                    <Input 
+                      placeholder="Yayasan Sekolah / Budi" 
+                      value={bank.name} 
+                      onChange={(e) => updateManualBank(index, "name", e.target.value)}
+                      className="rounded-lg h-9 text-sm bg-background"
+                    />
+                  </div>
+                  <div className="sm:col-span-1 pt-6 text-right sm:text-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => removeManualBank(index)}
+                      className="h-9 w-9 p-0 text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
