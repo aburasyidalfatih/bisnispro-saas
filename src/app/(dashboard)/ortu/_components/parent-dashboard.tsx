@@ -22,6 +22,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
     { label: "Akademik", icon: BookOpen, color: "bg-indigo-500/10 text-indigo-600", href: "/ortu/akademik" },
     { label: "Kehadiran", icon: ClipboardList, color: "bg-emerald-500/10 text-emerald-600", href: "/ortu/absensi" },
     { label: "Izin/Sakit", icon: FileCheck, color: "bg-amber-500/10 text-amber-600", href: "/ortu/izin" },
+    { label: "KTM / Kartu", icon: Award, color: "bg-purple-500/10 text-purple-600", href: "/ortu/student-card" },
     { label: "Donasi", icon: Award, color: "bg-pink-500/10 text-pink-600", href: "/ortu/donasi" },
     { label: "PPDB", icon: Users, color: "bg-cyan-500/10 text-cyan-600", href: "/ortu/ppdb" },
   ]

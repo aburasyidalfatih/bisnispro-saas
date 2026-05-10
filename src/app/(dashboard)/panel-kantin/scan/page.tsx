@@ -9,8 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
   QrCode, Wallet, ShoppingCart, Plus, Minus, Trash2,
-  CheckCircle, Loader2, Search, User, Receipt
+  CheckCircle, Loader2, Search, User, Receipt, Lock
 } from "lucide-react"
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
+} from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
 type StudentInfo = {
@@ -37,6 +40,8 @@ export default function ScanKasirPage() {
   const [cart, setCart] = useState<CartItem[]>([])
   const [processing, setProcessing] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [pinDialogOpen, setPinDialogOpen] = useState(false)
+  const [pin, setPin] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Fetch produk merchant
@@ -90,6 +95,9 @@ export default function ScanKasirPage() {
     if (studentInfo.wallet.balance < total) {
       return toast({ title: "Saldo tidak cukup", description: `Saldo: Rp ${studentInfo.wallet.balance.toLocaleString("id-ID")}`, variant: "destructive" })
     }
+    if (pin.length !== 6) {
+      return toast({ title: "PIN tidak valid", description: "PIN harus 6 digit angka", variant: "destructive" })
+    }
 
     setProcessing(true)
     try {
@@ -100,6 +108,7 @@ export default function ScanKasirPage() {
           tenantId: tenant.id,
           merchantId: merchant.id,
           studentWalletId: studentInfo.wallet.id,
+          pin,
           items: cart.map(i => ({ productId: i.id, quantity: i.quantity })),
         }),
       })
@@ -107,11 +116,14 @@ export default function ScanKasirPage() {
       if (!res.ok) throw new Error(data.error)
 
       setSuccess(true)
+      setPinDialogOpen(false)
+      setPin("")
       setStudentInfo(prev => prev ? { ...prev, wallet: { ...prev.wallet, balance: data.balanceAfter } } : null)
       setCart([])
       toast({ title: "✅ Transaksi Berhasil!", description: `Total Rp ${total.toLocaleString("id-ID")} berhasil dipotong dari wallet.` })
     } catch (err: any) {
       toast({ title: "Transaksi gagal", description: err.message, variant: "destructive" })
+      setPin("")
     } finally {
       setProcessing(false)
     }
@@ -275,18 +287,48 @@ export default function ScanKasirPage() {
                 <Button
                   className="w-full h-14 text-lg font-bold rounded-xl"
                   disabled={!studentInfo || cart.length === 0 || processing || success || studentInfo.wallet.balance < total}
-                  onClick={handleCheckout}
+                  onClick={() => setPinDialogOpen(true)}
                 >
-                  {processing
-                    ? <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    : <><Receipt className="mr-2 h-5 w-5" /> Proses Pembayaran</>
-                  }
+                  <Receipt className="mr-2 h-5 w-5" /> Proses Pembayaran
                 </Button>
               </div>
             )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal PIN */}
+      <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="w-5 h-5 text-primary" /> Validasi PIN Siswa
+            </DialogTitle>
+            <DialogDescription>
+              Silakan minta siswa <strong>{studentInfo?.student.name}</strong> untuk memasukkan 6-digit PIN keamanan.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6 flex flex-col items-center">
+            <p className="text-sm text-muted-foreground mb-4">Total Tagihan: <strong className="text-xl text-primary">Rp {total.toLocaleString("id-ID")}</strong></p>
+            <Input
+              type="password"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="******"
+              value={pin}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+              className="w-48 text-center tracking-[0.5em] text-2xl h-14 font-bold rounded-xl"
+              autoFocus
+            />
+          </div>
+          <DialogFooter className="sm:justify-between">
+            <Button variant="ghost" onClick={() => { setPinDialogOpen(false); setPin("") }}>Batal</Button>
+            <Button onClick={handleCheckout} disabled={pin.length !== 6 || processing}>
+              {processing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Konfirmasi Bayar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

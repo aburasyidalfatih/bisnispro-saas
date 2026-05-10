@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Wallet, ArrowDownLeft, ArrowUpRight, Loader2, History, Plus } from "lucide-react"
+import { Wallet, ArrowDownLeft, ArrowUpRight, Loader2, History, Plus, Settings } from "lucide-react"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 import Link from "next/link"
@@ -49,14 +49,13 @@ export default function OrtuWalletHistoryPage() {
 
       <div className="px-5 -mt-10 space-y-4">
         {/* Quick actions */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <Link href="/ortu/wallet/topup">
             <div className="glass rounded-2xl p-4 text-center cursor-pointer hover:border-primary/30 hover:shadow-md transition-all border border-transparent">
               <div className="h-12 w-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center mx-auto mb-2">
                 <Plus className="h-6 w-6 text-indigo-600" />
               </div>
-              <p className="font-bold text-sm">Top Up</p>
-              <p className="text-xs text-muted-foreground">Isi saldo wallet</p>
+              <p className="font-bold text-xs">Top Up</p>
             </div>
           </Link>
           <Link href="/ortu/tagihan">
@@ -64,8 +63,15 @@ export default function OrtuWalletHistoryPage() {
               <div className="h-12 w-12 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-2">
                 <ArrowUpRight className="h-6 w-6 text-red-600" />
               </div>
-              <p className="font-bold text-sm">Tagihan</p>
-              <p className="text-xs text-muted-foreground">Bayar tagihan</p>
+              <p className="font-bold text-xs">Tagihan</p>
+            </div>
+          </Link>
+          <Link href="/ortu/wallet/settings">
+            <div className="glass rounded-2xl p-4 text-center cursor-pointer hover:border-primary/30 hover:shadow-md transition-all border border-transparent">
+              <div className="h-12 w-12 rounded-2xl bg-slate-500/10 flex items-center justify-center mx-auto mb-2">
+                <Settings className="h-6 w-6 text-slate-600" />
+              </div>
+              <p className="font-bold text-xs">Pengaturan</p>
             </div>
           </Link>
         </div>

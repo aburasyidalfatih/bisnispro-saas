@@ -8,6 +8,7 @@ const orderSchema = z.object({
   tenantId: z.string(),
   merchantId: z.string(),
   studentWalletId: z.string(), // ID WalletAccount siswa
+  pin: z.string().length(6, "PIN harus 6 digit"),
   items: z.array(z.object({
     productId: z.string(),
     quantity: z.number().min(1),
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
   const parsed = orderSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
 
-  const { tenantId, merchantId, studentWalletId, items } = parsed.data
+  const { tenantId, merchantId, studentWalletId, pin, items } = parsed.data
 
   // 1. Verifikasi merchant milik user yang login
   const merchant = await db.canteenMerchant.findFirst({
@@ -79,14 +80,52 @@ export async function POST(req: Request) {
       error: `Saldo tidak cukup. Saldo: Rp ${wallet.balance.toLocaleString("id-ID")}, Total: Rp ${total.toLocaleString("id-ID")}`,
     }, { status: 400 })
   }
+  if (!wallet.pin) {
+    return NextResponse.json({ error: "Siswa belum mengatur PIN keamanan. Harap atur PIN di Dashboard Orang Tua." }, { status: 400 })
+  }
+  if (wallet.pin !== pin) {
+    return NextResponse.json({ error: "PIN yang dimasukkan salah!" }, { status: 400 })
+  }
+
+  // Cek Daily Limit
+  if (wallet.dailyLimit && wallet.dailyLimit > 0) {
+    // Hitung total pengeluaran hari ini
+    const startOfDay = new Date()
+    startOfDay.setHours(0, 0, 0, 0)
+    const endOfDay = new Date()
+    endOfDay.setHours(23, 59, 59, 999)
+
+    const todayExpenses = await db.walletTransaction.aggregate({
+      where: {
+        walletId: wallet.id,
+        type: "PAYMENT",
+        status: "SUCCESS",
+        createdAt: { gte: startOfDay, lte: endOfDay }
+      },
+      _sum: { amount: true }
+    })
+
+    const spentToday = todayExpenses._sum.amount || 0
+    if (spentToday + total > wallet.dailyLimit) {
+      return NextResponse.json({
+        error: `Transaksi melebihi limit harian. Sisa limit hari ini: Rp ${(wallet.dailyLimit - spentToday).toLocaleString("id-ID")}`
+      }, { status: 400 })
+    }
+  }
 
   // 5. Transaksi atomik
   const order = await db.$transaction(async (tx) => {
-    const newBalance = wallet.balance - total
-    const newMerchantBalance = merchant.balance + total
+    // Debet wallet siswa secara atomik untuk cegah race condition
+    const updatedWallet = await tx.walletAccount.update({ 
+      where: { id: wallet.id }, 
+      data: { balance: { decrement: total } } 
+    })
 
-    // Debet wallet siswa
-    await tx.walletAccount.update({ where: { id: wallet.id }, data: { balance: newBalance } })
+    if (updatedWallet.balance < 0) {
+      throw new Error("Saldo tidak cukup setelah divalidasi") // Akan membatalkan transaksi
+    }
+
+    const newMerchantBalance = merchant.balance + total
 
     // Catat WalletTransaction
     await tx.walletTransaction.create({
@@ -95,8 +134,8 @@ export async function POST(req: Request) {
         tenantId,
         type: "PAYMENT",
         amount: total,
-        balanceBefore: wallet.balance,
-        balanceAfter: newBalance,
+        balanceBefore: wallet.balance, // Snapshot the previous known balance
+        balanceAfter: updatedWallet.balance,
         description: `Kantin: ${merchant.name}`,
         status: "SUCCESS",
       },

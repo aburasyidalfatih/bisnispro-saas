@@ -979,8 +979,9 @@ model WalletAccount {
   tenantId  String
   studentId String   @unique
   balance   Float    @default(0)
-  pin       String? // 6-digit PIN untuk transaksi
-  isActive  Boolean  @default(true)
+  pin        String? // 6-digit PIN untuk transaksi
+  dailyLimit Float?  // Limit batas jajan harian
+  isActive   Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
