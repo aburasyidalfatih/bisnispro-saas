@@ -1,14 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Infinity, Landmark, Sparkles, TrendingUp, Users } from "lucide-react"
 import { CommissionSimulator } from "./_components/commission-simulator"
-import { db } from "@/lib/db"
+import { getPricingConfig } from "@/lib/services/billing"
 
 export default async function AffiliateGuidePage() {
-  const proPlan = await db.subscriptionPlan.findFirst({
-    where: { slug: "pro" },
-    select: { price: true }
-  })
-  const pricePerStudent = proPlan?.price || 30000
+  const pricing = await getPricingConfig()
+  const pricePerStudent = pricing.PRICE_PER_STUDENT
 
   return (
     <div className="space-y-6">
