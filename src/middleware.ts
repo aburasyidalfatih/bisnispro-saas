@@ -10,6 +10,7 @@ import NextAuth from "next-auth"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { authConfig } from "@/lib/auth.config"
+import { edgeRateLimit } from "@/lib/edge-rate-limit"
 
 const { auth } = NextAuth(authConfig)
 
@@ -57,6 +58,13 @@ export default async function middleware(request: NextRequest) {
   
   // Hapus port jika ada untuk memastikan deteksi domain akurat di mode development
   hostname = hostname.split(':')[0]
+
+  // ENTERPRISE RATE LIMITING (DDoS Protection)
+  const ip = (request as any).ip ?? request.headers.get("x-forwarded-for") ?? "127.0.0.1"
+  const { success } = await edgeRateLimit.limit(ip)
+  if (!success) {
+    return new NextResponse("Too Many Requests. Enterprise DDoS Protection active.", { status: 429 })
+  }
   
   let rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
   if (hostname.endsWith("schoolpro.my.id") || hostname === "schoolpro.my.id") {
@@ -99,7 +107,7 @@ export default async function middleware(request: NextRequest) {
   if (isMainDomain) {
     // Cek Affiliate Shortlink (contoh: /bdi123, /ref-abc, /mitra123)
     // Hindari rute sistem yang valid
-    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/forgot-password", "/reset-password", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy"]
+    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/forgot-password", "/reset-password", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy", "/panel-siswa", "/ujian"]
     const isSystemRoute = systemRoutes.some(r => pathname.startsWith(r))
     
     // Tangkap path apa saja yang bukan system route dan panjangnya antara 5-15 karakter alfanumerik (atau hyphen)
@@ -111,7 +119,7 @@ export default async function middleware(request: NextRequest) {
       return res
     }
 
-    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk")
+    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/panel-siswa") || pathname.startsWith("/ujian")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
     if (isProtected && !session) {
@@ -128,7 +136,8 @@ export default async function middleware(request: NextRequest) {
       if (pathname.startsWith("/admin")) {
         if (!isSuperAdmin && !isAffiliate && activeRole !== "owner" && activeRole !== "admin") {
           if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-          if (activeRole === "siswa" || activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+          if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-siswa", request.url)))
           return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
         }
       }
@@ -136,15 +145,26 @@ export default async function middleware(request: NextRequest) {
       if (pathname.startsWith("/panel-gtk")) {
         if (!isSuperAdmin && activeRole !== "guru") {
           if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
-          if (activeRole === "siswa" || activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+          if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-siswa", request.url)))
           return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
         }
       }
 
       if (pathname.startsWith("/ortu")) {
-        if (!isSuperAdmin && activeRole !== "siswa" && activeRole !== "orangtua") {
+        if (!isSuperAdmin && activeRole !== "orangtua") {
           if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
           if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-siswa", request.url)))
+          return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+        }
+      }
+
+      if (pathname.startsWith("/panel-siswa")) {
+        if (!isSuperAdmin && activeRole !== "siswa") {
+          if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
+          if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+          if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
           return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
         }
       }
@@ -172,8 +192,10 @@ export default async function middleware(request: NextRequest) {
         return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
       } else if (session.user?.tenants?.[0]?.role === "guru") {
         return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-      } else if (session.user?.tenants?.[0]?.role === "siswa" || session.user?.tenants?.[0]?.role === "orangtua") {
+      } else if (session.user?.tenants?.[0]?.role === "orangtua") {
         return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+      } else if (session.user?.tenants?.[0]?.role === "siswa") {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/panel-siswa", request.url)))
       } else {
         return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
       }
@@ -197,7 +219,9 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/invite") ||
       pathname.startsWith("/api") ||
       pathname.startsWith("/invoice") ||
-      pathname.startsWith("/panel-gtk")
+      pathname.startsWith("/panel-gtk") ||
+      pathname.startsWith("/panel-siswa") ||
+      pathname.startsWith("/ujian")
     ) {
       const response = NextResponse.next()
       response.headers.set("x-tenant-slug", subdomain)
@@ -231,7 +255,9 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/invite") ||
       pathname.startsWith("/api") ||
       pathname.startsWith("/invoice") ||
-      pathname.startsWith("/panel-gtk")
+      pathname.startsWith("/panel-gtk") ||
+      pathname.startsWith("/panel-siswa") ||
+      pathname.startsWith("/ujian")
     ) {
       const response = NextResponse.next()
       response.headers.set("x-tenant-slug", slug)

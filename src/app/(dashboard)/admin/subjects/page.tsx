@@ -14,6 +14,8 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+import { createSubject, updateSubject, deleteSubject } from "@/lib/actions/academic"
+
 interface Subject {
   id: string; name: string; code: string | null; description: string | null; isActive: boolean
 }
@@ -52,23 +54,10 @@ export default function SubjectsPage() {
     setSaving(true)
     try {
       if (editing) {
-        const res = await fetch(`/api/subjects/${editing.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...form }),
-        })
-        if (!res.ok) throw new Error()
+        await updateSubject(editing.id, { tenantId: tenant.id, ...form })
         toast({ title: "Berhasil diperbarui" })
       } else {
-        const res = await fetch("/api/subjects", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tenantId: tenant.id, ...form }),
-        })
-        if (!res.ok) {
-          const d = await res.json()
-          throw new Error(d.error || "Gagal")
-        }
+        await createSubject({ tenantId: tenant.id, ...form })
         toast({ title: "Mata pelajaran ditambahkan" })
       }
       await load()
@@ -80,11 +69,15 @@ export default function SubjectsPage() {
   }
 
   const handleDelete = async () => {
-    if (!deleteId) return
-    await fetch(`/api/subjects/${deleteId}`, { method: "DELETE" })
-    toast({ title: "Mata pelajaran dihapus" })
-    setDeleteId(null)
-    await load()
+    if (!deleteId || !tenant) return
+    try {
+      await deleteSubject(deleteId, tenant.id)
+      toast({ title: "Mata pelajaran dihapus" })
+      setDeleteId(null)
+      await load()
+    } catch(e: any) {
+      toast({ title: "Gagal menghapus", description: e.message, variant: "destructive" })
+    }
   }
 
   const filtered = subjects.filter(s =>

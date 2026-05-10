@@ -8,8 +8,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try {
+    await requireTenantAccess(tenantId)
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 403 })
+  }
 
   const invoice = await db.invoice.findFirst({
     where: { id, tenantId, deletedAt: null },
@@ -38,8 +41,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { tenantId, ...data } = body
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try {
+    await requireTenantAccess(tenantId)
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 403 })
+  }
 
   const invoice = await db.invoice.update({
     where: { id },
@@ -55,8 +61,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try {
+    await requireTenantAccess(tenantId)
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 403 })
+  }
 
   await db.invoice.update({ where: { id }, data: { deletedAt: new Date(), status: "CANCELLED" } })
   return NextResponse.json({ message: "Tagihan dibatalkan" })

@@ -44,8 +44,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       _count: {
         select: {
           invoices: { where: { deletedAt: null } },
-          AttendanceRecord: true,
-          CanteenOrder: true,
+          attendanceRecords: true,
+          canteenOrders: true,
         }
       }
     },

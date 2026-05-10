@@ -23,7 +23,7 @@ export async function GET(
       where: {
         tenantId,
         classroomId: params.id,
-        status: "AKTIF"
+        isActive: true
       },
       select: {
         id: true,

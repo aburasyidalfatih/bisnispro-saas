@@ -1,0 +1,82 @@
+// @ts-nocheck
+import { inngest } from "./client"
+import { ImportService } from "@/lib/services/import-service"
+import { FinanceService } from "@/lib/services/finance-service"
+import { db } from "@/lib/db"
+
+/**
+ * Enterprise Job Queue Functions (Fase 2)
+ * Fungsi-fungsi di sini berjalan secara Asynchronous (di Background) 
+ * untuk mencegah blocking pada Event Loop Node.js saat melayani ribuan tenant.
+ */
+
+// 1. Job Import Siswa Massal
+// @ts-ignore
+export const importStudentsJob = inngest.createFunction(
+  { id: "import-students-job", name: "Import Students Async" },
+  { event: "tenant/students.import" },
+  async ({ event, step }: any) => {
+    const { tenantId, students } = event.data
+
+    const result = await step.run("import-to-database", async () => {
+      return await ImportService.importStudents({ tenantId, students })
+    })
+
+    await step.run("log-audit", async () => {
+      await db.auditLog.create({
+        data: {
+          tenantId,
+          action: "IMPORT_STUDENTS_ASYNC",
+          entity: "System",
+          userId: "SYSTEM"
+          // details di-skip karena schema belum memiliki property ini
+        }
+      })
+    })
+
+    return result
+  }
+)
+
+// 2. Job Import GTK/Users Massal
+// @ts-ignore
+export const importUsersJob = inngest.createFunction(
+  { id: "import-users-job", name: "Import GTK Async" },
+  { event: "tenant/users.import" },
+  async ({ event, step }: any) => {
+    const { tenantId, users } = event.data
+
+    const result = await step.run("import-users-to-database", async () => {
+      return await ImportService.importUsers({ tenantId, users })
+    })
+
+    await step.run("log-audit", async () => {
+      await db.auditLog.create({
+        data: {
+          tenantId,
+          action: "IMPORT_USERS_ASYNC",
+          entity: "System",
+          userId: "SYSTEM"
+        }
+      })
+    })
+
+    return result
+  }
+)
+
+// 3. Job Generate Tagihan Massal (Invoices)
+// @ts-ignore
+export const generateInvoicesJob = inngest.createFunction(
+  { id: "generate-invoices-job", name: "Generate Invoices Async" },
+  { event: "finance/invoices.generate" },
+  async ({ event, step }: any) => {
+    const { data } = event.data // DTO payload for FinanceService.createInvoice
+
+    const result = await step.run("generate-invoices", async () => {
+      return await FinanceService.createInvoice(data)
+    })
+
+    return result
+  }
+)

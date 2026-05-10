@@ -21,6 +21,9 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { data: session } = useSession()
 
+  const tenantPlan = session?.user?.tenants?.[0]?.plan || "free"
+  const isPremium = tenantPlan === "premium" || tenantPlan === "pro"
+
   const navItems = [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
     { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal" },
@@ -29,6 +32,11 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
     { label: "Poin", icon: ShieldAlert, href: "/panel-gtk/poin" },
     { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
   ]
+
+  if (isPremium) {
+    navItems.push({ label: "Bank Soal", icon: FileText, href: "/panel-gtk/cbt/bank-soal" })
+    navItems.push({ label: "Jadwal CBT", icon: CalendarCheck, href: "/panel-gtk/cbt/jadwal" })
+  }
 
   return (
     <div className="min-h-screen bg-muted/20 font-sans flex flex-col">

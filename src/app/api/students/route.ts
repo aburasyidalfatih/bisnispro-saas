@@ -14,8 +14,11 @@ export async function GET(req: Request) {
   const isActive = url.searchParams.get("isActive") !== "false" // default: hanya aktif
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try {
+    await requireTenantAccess(tenantId)
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 403 })
+  }
 
   const where: any = {
     tenantId,
@@ -63,8 +66,11 @@ export async function POST(req: Request) {
     phone, email, fatherName, motherName, guardianName, classroomId } = body
 
   if (!tenantId || !name) return NextResponse.json({ error: "tenantId dan name wajib" }, { status: 400 })
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try {
+    await requireTenantAccess(tenantId)
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 403 })
+  }
 
   const student = await db.student.create({
     data: {

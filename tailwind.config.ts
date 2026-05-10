@@ -65,6 +65,8 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "saas-card": "1.5rem", // 24px - Standard for main dashboard cards
+        "saas-widget": "1rem", // 16px - Standard for inner widgets
       },
       keyframes: {
         "accordion-down": {

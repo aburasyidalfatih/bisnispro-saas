@@ -70,5 +70,11 @@ export const logger = {
       errorMeta.error = String(error)
     }
     output(formatEntry("error", message, errorMeta))
+
+    // ENTERPRISE TELEMETRY (Fase 1)
+    // TODO: Integrate @sentry/nextjs or Datadog tracing here for production
+    if (IS_PROD && process.env.SENTRY_DSN) {
+      // Sentry.captureException(error || new Error(message), { extra: errorMeta });
+    }
   },
 }

@@ -94,10 +94,13 @@ model Tenant {
   teacherJournals      TeacherJournal[]
   disciplineRecords    DisciplineRecord[]
   partnerships         Partnership[]
+  cbtExams             CbtExam[]
+  cbtQuestionBanks     CbtQuestionBank[]
 
   @@index([isActive])
   @@index([plan])
   @@index([planId])
+  @@index([createdAt])
   @@map("tenants")
 }
 
@@ -114,6 +117,7 @@ model User {
   twoFactorEnabled     Boolean               @default(false)
   twoFactorSecret      String?
   twoFactorBackupCodes Json?
+  deletedAt            DateTime?
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   affiliateProfile     AffiliateProfile?
@@ -136,6 +140,7 @@ model User {
 
   @@index([isActive])
   @@index([isSuperAdmin])
+  @@index([createdAt])
   @@map("users")
 }
 
@@ -151,6 +156,7 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([createdAt])
   @@map("sessions")
 }
 
@@ -179,6 +185,7 @@ model Invitation {
 
   @@index([tenantId])
   @@index([expiresAt])
+  @@index([createdAt])
   @@map("invitations")
 }
 
@@ -193,6 +200,7 @@ model VerificationToken {
 
   @@index([userId])
   @@index([expiresAt])
+  @@index([createdAt])
   @@map("verification_tokens")
 }
 
@@ -266,8 +274,9 @@ model DiscountCode {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  payments    Payment[]
+  payments Payment[]
 
+  @@index([createdAt])
   @@map("discount_codes")
 }
 
@@ -303,6 +312,7 @@ model FileUpload {
   createdAt DateTime @default(now())
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("file_uploads")
 }
 
@@ -356,6 +366,7 @@ model TenantApplication {
   affiliate     AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 
   @@index([status])
+  @@index([createdAt])
   @@map("tenant_applications")
 }
 
@@ -384,6 +395,7 @@ model Post {
   @@index([categoryId])
   @@index([type])
   @@index([status])
+  @@index([createdAt])
   @@map("posts")
 }
 
@@ -400,6 +412,7 @@ model Category {
 
   @@unique([tenantId, slug])
   @@index([tenantId])
+  @@index([createdAt])
   @@map("categories")
 }
 
@@ -421,6 +434,7 @@ model Document {
   @@index([tenantId])
   @@index([uploaderId])
   @@index([type])
+  @@index([createdAt])
   @@map("documents")
 }
 
@@ -439,6 +453,7 @@ model Event {
 
   @@index([tenantId])
   @@index([startDate])
+  @@index([createdAt])
   @@map("events")
 }
 
@@ -455,6 +470,7 @@ model Achievement {
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("achievements")
 }
 
@@ -470,6 +486,7 @@ model DripCampaign {
 
   logs DripLog[]
 
+  @@index([createdAt])
   @@map("drip_campaigns")
 }
 
@@ -506,6 +523,7 @@ model Facility {
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("facilities")
 }
 
@@ -523,6 +541,7 @@ model Extracurricular {
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("extracurriculars")
 }
 
@@ -539,6 +558,7 @@ model Program {
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("programs")
 }
 
@@ -559,19 +579,21 @@ model Alumni {
 
   @@index([tenantId])
   @@index([userId])
+  @@index([createdAt])
   @@map("alumni")
 }
 
 model Staff {
-  id              String            @id @default(cuid())
+  id              String             @id @default(cuid())
   tenantId        String
   name            String
   role            String
   imageUrl        String?
   bio             String?
-  sortOrder       Int               @default(0)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  sortOrder       Int                @default(0)
+  deletedAt       DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
   email           String?
   phone           String?
   subject         String?
@@ -581,17 +603,19 @@ model Staff {
   tiktok          String?
   youtube         String?
   userId          String?
-  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user            User?             @relation(fields: [userId], references: [id])
+  tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user            User?              @relation(fields: [userId], references: [id])
   classrooms      Classroom[]
   StaffAttendance StaffAttendance[]
   schedules       Schedule[]
   journals        TeacherJournal[]
   gradeInputs     Grade[]
   disciplines     DisciplineRecord[]
+  cbtExams        CbtExam[]
 
   @@index([tenantId])
   @@index([userId])
+  @@index([createdAt])
   @@map("staff")
 }
 
@@ -611,6 +635,7 @@ model Popup {
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("popups")
 }
 
@@ -629,6 +654,7 @@ model Slider {
   tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("sliders")
 }
 
@@ -650,6 +676,7 @@ model SubscriptionPlan {
   subscriptions Subscription[]
   tenants       Tenant[]
 
+  @@index([createdAt])
   @@map("subscription_plans")
 }
 
@@ -671,6 +698,7 @@ model Subscription {
   @@index([tenantId])
   @@index([planId])
   @@index([status])
+  @@index([createdAt])
   @@map("subscriptions")
 }
 
@@ -690,6 +718,7 @@ model PeriodePpdb {
 
   @@index([tenantId])
   @@index([isActive])
+  @@index([createdAt])
   @@map("periode_ppdbs")
 }
 
@@ -705,6 +734,7 @@ model PersyaratanBerkas {
   periode   PeriodePpdb  @relation(fields: [periodeId], references: [id], onDelete: Cascade)
 
   @@index([periodeId])
+  @@index([createdAt])
   @@map("persyaratan_berkas")
 }
 
@@ -730,6 +760,7 @@ model PendaftarPpdb {
   @@index([userId])
   @@index([periodeId])
   @@index([status])
+  @@index([createdAt])
   @@map("pendaftar_ppdbs")
 }
 
@@ -747,6 +778,7 @@ model BerkasPpdb {
 
   @@index([pendaftarId])
   @@index([requirementId])
+  @@index([createdAt])
   @@map("berkas_ppdbs")
 }
 
@@ -763,6 +795,7 @@ model TagihanPpdb {
   pendaftar   PendaftarPpdb    @relation(fields: [pendaftarId], references: [id], onDelete: Cascade)
 
   @@index([pendaftarId])
+  @@index([createdAt])
   @@map("tagihan_ppdbs")
 }
 
@@ -779,6 +812,7 @@ model PembayaranPpdb {
   tagihan   TagihanPpdb @relation(fields: [tagihanId], references: [id], onDelete: Cascade)
 
   @@index([tagihanId])
+  @@index([createdAt])
   @@map("pembayaran_ppdbs")
 }
 
@@ -793,48 +827,53 @@ model Rekening {
   tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("rekenings")
 }
 
 model Student {
-  id               String             @id @default(cuid())
-  tenantId         String
-  userId           String?
-  noPendaftaran    String?
-  nis              String?            @unique
-  nisn             String?            @unique
-  name             String
-  gender           String?
-  birthPlace       String?
-  birthDate        DateTime?
-  address          String?
-  phone            String?
-  email            String?
-  fatherName       String?
-  motherName       String?
-  guardianName     String?
-  metadata         Json?
-  isActive         Boolean            @default(true)
-  syncedAt         DateTime?
-  classroomId      String?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user             User?              @relation(fields: [userId], references: [id])
-  classroom        Classroom?         @relation(fields: [classroomId], references: [id])
-  parents          StudentParent[]
-  walletAccount    WalletAccount?
-  invoices         Invoice[]
-  canteenOrders    CanteenOrder[]
+  id                String             @id @default(cuid())
+  tenantId          String
+  userId            String?
+  noPendaftaran     String?
+  nis               String?            @unique
+  nisn              String?            @unique
+  name              String
+  gender            String?
+  birthPlace        String?
+  birthDate         DateTime?
+  address           String?
+  phone             String?
+  email             String?
+  fatherName        String?
+  motherName        String?
+  guardianName      String?
+  metadata          Json?
+  isActive          Boolean            @default(true)
+  syncedAt          DateTime?
+  classroomId       String?
+  deletedAt         DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User?              @relation(fields: [userId], references: [id])
+  classroom         Classroom?         @relation(fields: [classroomId], references: [id])
+  parents           StudentParent[]
+  walletAccount     WalletAccount?
+  invoices          Invoice[]
+  canteenOrders     CanteenOrder[]
   attendanceRecords AttendanceRecord[]
   attendancePermits AttendancePermit[]
   grades            Grade[]
   journalPresences  JournalPresence[]
   disciplines       DisciplineRecord[]
+  cbtSessions       CbtSession[]
+  cbtAnswers        CbtAnswer[]
 
   @@index([tenantId])
   @@index([userId])
   @@index([isActive])
+  @@index([createdAt])
   @@map("students")
 }
 
@@ -855,6 +894,7 @@ model AffiliateProfile {
   user               User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   withdrawals        AffiliateWithdrawal[]
 
+  @@index([createdAt])
   @@map("affiliate_profiles")
 }
 
@@ -874,6 +914,7 @@ model AffiliateCommission {
   @@index([affiliateId])
   @@index([tenantId])
   @@index([status])
+  @@index([createdAt])
   @@map("affiliate_commissions")
 }
 
@@ -894,6 +935,7 @@ model AffiliateWithdrawal {
 
   @@index([affiliateId])
   @@index([status])
+  @@index([createdAt])
   @@map("affiliate_withdrawals")
 }
 
@@ -910,6 +952,7 @@ model WaSession {
   tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("wa_sessions")
 }
 
@@ -924,15 +967,16 @@ model Classroom {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  waliKelas         Staff?              @relation(fields: [waliKelasId], references: [id])
-  students          Student[]
+  tenant             Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  waliKelas          Staff?              @relation(fields: [waliKelasId], references: [id])
+  students           Student[]
   attendanceSessions AttendanceSession[]
-  schedules         Schedule[]
-  journals          TeacherJournal[]
-  grades            Grade[]
+  schedules          Schedule[]
+  journals           TeacherJournal[]
+  grades             Grade[]
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("classrooms")
 }
 
@@ -950,6 +994,7 @@ model StudentParent {
   @@unique([studentId, userId])
   @@index([studentId])
   @@index([userId])
+  @@index([createdAt])
   @@map("student_parents")
 }
 
@@ -967,6 +1012,7 @@ model WaMessage {
   // Tapi untuk konsistensi kita tambahkan index saja
   @@index([tenantId])
   @@index([status])
+  @@index([createdAt])
   @@map("wa_messages")
 }
 
@@ -975,21 +1021,22 @@ model WaMessage {
 // ----------------------------------------------------------------------
 
 model WalletAccount {
-  id        String   @id @default(cuid())
-  tenantId  String
-  studentId String   @unique
-  balance   Float    @default(0)
+  id         String   @id @default(cuid())
+  tenantId   String
+  studentId  String   @unique
+  balance    Float    @default(0)
   pin        String? // 6-digit PIN untuk transaksi
-  dailyLimit Float?  // Limit batas jajan harian
+  dailyLimit Float? // Limit batas jajan harian
   isActive   Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   student      Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
   transactions WalletTransaction[]
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("wallet_accounts")
 }
 
@@ -1013,6 +1060,7 @@ model WalletTransaction {
   @@index([walletId])
   @@index([tenantId])
   @@index([type])
+  @@index([createdAt])
   @@map("wallet_transactions")
 }
 
@@ -1033,6 +1081,7 @@ model Cashflow {
   @@index([tenantId])
   @@index([type])
   @@index([category])
+  @@index([createdAt])
   @@map("cashflows")
 }
 
@@ -1054,6 +1103,7 @@ model InternalMessage {
   @@index([tenantId])
   @@index([senderId])
   @@index([receiverId])
+  @@index([createdAt])
   @@map("internal_messages")
 }
 
@@ -1078,6 +1128,7 @@ model BillingType {
   invoices Invoice[]
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("billing_types")
 }
 
@@ -1112,6 +1163,7 @@ model Invoice {
   @@index([studentId])
   @@index([status])
   @@index([dueDate])
+  @@index([createdAt])
   @@map("invoices")
 }
 
@@ -1138,6 +1190,7 @@ model InvoicePayment {
   @@index([invoiceId])
   @@index([tenantId])
   @@index([status])
+  @@index([createdAt])
   @@map("invoice_payments")
 }
 
@@ -1157,6 +1210,7 @@ model Installment {
 
   @@index([invoiceId])
   @@index([tenantId])
+  @@index([createdAt])
   @@map("installments")
 }
 
@@ -1184,6 +1238,7 @@ model CanteenMerchant {
   withdrawals CanteenWithdrawal[]
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("canteen_merchants")
 }
 
@@ -1207,6 +1262,7 @@ model CanteenProduct {
 
   @@index([merchantId])
   @@index([tenantId])
+  @@index([createdAt])
   @@map("canteen_products")
 }
 
@@ -1229,6 +1285,7 @@ model CanteenOrder {
   @@index([tenantId])
   @@index([merchantId])
   @@index([studentId])
+  @@index([createdAt])
   @@map("canteen_orders")
 }
 
@@ -1264,6 +1321,7 @@ model CanteenWithdrawal {
 
   @@index([tenantId])
   @@index([merchantId])
+  @@index([createdAt])
   @@map("canteen_withdrawals")
 }
 
@@ -1288,6 +1346,7 @@ model AttendanceSession {
   @@unique([tenantId, classroomId, date])
   @@index([tenantId])
   @@index([date])
+  @@index([createdAt])
   @@map("attendance_sessions")
 }
 
@@ -1311,6 +1370,7 @@ model AttendanceRecord {
   @@unique([sessionId, studentId])
   @@index([tenantId])
   @@index([studentId])
+  @@index([createdAt])
   @@map("attendance_records")
 }
 
@@ -1336,6 +1396,7 @@ model StaffAttendance {
   @@unique([tenantId, staffId, date])
   @@index([tenantId])
   @@index([staffId])
+  @@index([createdAt])
   @@map("staff_attendances")
 }
 
@@ -1361,6 +1422,7 @@ model AttendancePermit {
 
   @@index([tenantId])
   @@index([studentId])
+  @@index([createdAt])
   @@map("attendance_permits")
 }
 
@@ -1390,6 +1452,7 @@ model DonationCampaign {
 
   @@index([tenantId])
   @@index([isActive])
+  @@index([createdAt])
   @@map("donation_campaigns")
 }
 
@@ -1415,6 +1478,7 @@ model Donation {
   @@index([campaignId])
   @@index([tenantId])
   @@index([status])
+  @@index([createdAt])
   @@map("donations")
 }
 
@@ -1440,6 +1504,7 @@ model Subject {
 
   @@unique([tenantId, code])
   @@index([tenantId])
+  @@index([createdAt])
   @@map("subjects")
 }
 
@@ -1450,9 +1515,9 @@ model Schedule {
   classroomId String
   subjectId   String
   staffId     String
-  dayOfWeek   Int      // 1=Senin, 2=Selasa, ..., 6=Sabtu
-  startTime   String   // "07:00"
-  endTime     String   // "08:30"
+  dayOfWeek   Int // 1=Senin, 2=Selasa, ..., 6=Sabtu
+  startTime   String // "07:00"
+  endTime     String // "08:30"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -1464,6 +1529,7 @@ model Schedule {
   @@index([tenantId])
   @@index([classroomId])
   @@index([staffId])
+  @@index([createdAt])
   @@map("schedules")
 }
 
@@ -1475,9 +1541,9 @@ model Grade {
   subjectId   String
   classroomId String
   staffId     String
-  type        String   // HARIAN, PTS, PAS, PRAKTEK
-  semester    Int      // 1 atau 2
-  year        Int      // Tahun ajaran (misal 2024)
+  type        String // HARIAN, PTS, PAS, PRAKTEK
+  semester    Int // 1 atau 2
+  year        Int // Tahun ajaran (misal 2024)
   score       Float
   notes       String?
   createdAt   DateTime @default(now())
@@ -1493,6 +1559,7 @@ model Grade {
   @@index([tenantId])
   @@index([studentId])
   @@index([classroomId])
+  @@index([createdAt])
   @@map("grades")
 }
 
@@ -1518,6 +1585,7 @@ model TeacherJournal {
   @@unique([staffId, classroomId, subjectId, date])
   @@index([tenantId])
   @@index([staffId])
+  @@index([createdAt])
   @@map("teacher_journals")
 }
 
@@ -1526,7 +1594,7 @@ model JournalPresence {
   id        String  @id @default(cuid())
   journalId String
   studentId String
-  status    String  // HADIR, IZIN, SAKIT, ALPHA
+  status    String // HADIR, IZIN, SAKIT, ALPHA
   notes     String?
 
   journal TeacherJournal @relation(fields: [journalId], references: [id], onDelete: Cascade)
@@ -1543,8 +1611,8 @@ model DisciplineRecord {
   tenantId    String
   studentId   String
   staffId     String
-  type        String   // PELANGGARAN, PENGHARGAAN
-  category    String   // KEDISIPLINAN, AKADEMIK, ATRIBUT, PERILAKU
+  type        String // PELANGGARAN, PENGHARGAAN
+  category    String // KEDISIPLINAN, AKADEMIK, ATRIBUT, PERILAKU
   description String
   points      Int      @default(0)
   date        DateTime @db.Date
@@ -1557,6 +1625,7 @@ model DisciplineRecord {
 
   @@index([tenantId])
   @@index([studentId])
+  @@index([createdAt])
   @@map("discipline_records")
 }
 
@@ -1573,5 +1642,128 @@ model Partnership {
   tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([createdAt])
   @@map("partnerships")
+}
+
+// ======================================================================
+// EPIC 4: CBT (COMPUTER BASED TEST)
+// ======================================================================
+
+model CbtQuestionBank {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  description String?
+  level       String? // SD, SMP, SMA, KELAS_10, dll
+  subject     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  questions CbtQuestion[]
+  exams     CbtExam[]
+
+  @@index([tenantId])
+  @@index([createdAt])
+  @@map("cbt_question_banks")
+}
+
+model CbtQuestion {
+  id             String   @id @default(cuid())
+  questionBankId String
+  type           String   @default("MULTIPLE_CHOICE") // MULTIPLE_CHOICE, ESSAY
+  content        String   @db.Text
+  options        Json? // Array of objects { id, text, isCorrect }
+  explanation    String?  @db.Text
+  points         Int      @default(1)
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  questionBank CbtQuestionBank @relation(fields: [questionBankId], references: [id], onDelete: Cascade)
+  answers      CbtAnswer[]
+
+  @@index([questionBankId])
+  @@map("cbt_questions")
+}
+
+model CbtExam {
+  id             String   @id @default(cuid())
+  tenantId       String
+  questionBankId String
+  authorId       String // ID Guru/Staff yang membuat
+  title          String
+  description    String?
+  type           String   @default("UTS") // UTS, UAS, KUIS, TUGAS
+  startTime      DateTime
+  endTime        DateTime
+  duration       Int // Durasi ujian dalam menit
+  passingGrade   Int      @default(0)
+  randomize      Boolean  @default(true) // Acak urutan soal
+  randomizeOpts  Boolean  @default(true) // Acak urutan opsi jawaban (A,B,C,D)
+  showResult     Boolean  @default(false)
+  pin            String? // PIN Opsional untuk masuk ujian
+  status         String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant       Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  questionBank CbtQuestionBank @relation(fields: [questionBankId], references: [id])
+  author       Staff           @relation(fields: [authorId], references: [id])
+  sessions     CbtSession[]
+
+  @@index([tenantId])
+  @@index([authorId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("cbt_exams")
+}
+
+model CbtSession {
+  id         String    @id @default(cuid())
+  examId     String
+  studentId  String
+  status     String    @default("ONGOING") // ONGOING, FINISHED, BLOCKED
+  startTime  DateTime  @default(now())
+  endTime    DateTime?
+  score      Float?
+  ipAddress  String?
+  userAgent  String?
+  cheatCount Int       @default(0) // Berapa kali terdeteksi pindah tab
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  exam    CbtExam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  student Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answers CbtAnswer[]
+
+  @@unique([examId, studentId])
+  @@index([studentId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("cbt_sessions")
+}
+
+model CbtAnswer {
+  id         String   @id @default(cuid())
+  sessionId  String
+  studentId  String
+  questionId String
+  answer     String?  @db.Text // Bisa ID opsi ganda, atau teks essay
+  isCorrect  Boolean  @default(false)
+  points     Float    @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  session  CbtSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student  Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  question CbtQuestion @relation(fields: [questionId], references: [id])
+
+  @@unique([sessionId, questionId])
+  @@index([studentId])
+  @@index([sessionId])
+  @@index([questionId])
+  @@index([createdAt])
+  @@map("cbt_answers")
 }

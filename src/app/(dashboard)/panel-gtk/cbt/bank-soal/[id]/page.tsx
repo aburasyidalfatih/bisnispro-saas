@@ -1,0 +1,243 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { useParams, useRouter } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { useToast } from "@/hooks/use-toast"
+import { Loader2, Plus, ArrowLeft, Trash2, CheckCircle2, GripVertical, FileText } from "lucide-react"
+import Link from "next/link"
+
+export default function KelolaSoalPage() {
+  const { id } = useParams()
+  const router = useRouter()
+  const { toast } = useToast()
+  
+  const [bank, setBank] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  const [questionText, setQuestionText] = useState("")
+  const [options, setOptions] = useState([
+    { id: "A", text: "", isCorrect: true },
+    { id: "B", text: "", isCorrect: false },
+    { id: "C", text: "", isCorrect: false },
+    { id: "D", text: "", isCorrect: false },
+    { id: "E", text: "", isCorrect: false },
+  ])
+
+  const fetchBank = async () => {
+    try {
+      const res = await fetch(`/api/cbt/bank-soal/${id}`)
+      if (!res.ok) throw new Error("Gagal memuat bank soal")
+      const data = await res.json()
+      setBank(data)
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchBank()
+  }, [id])
+
+  const handleOptionChange = (idx: number, text: string) => {
+    const newOptions = [...options]
+    newOptions[idx].text = text
+    setOptions(newOptions)
+  }
+
+  const handleSetCorrect = (idx: number) => {
+    const newOptions = options.map((opt, i) => ({
+      ...opt,
+      isCorrect: i === idx
+    }))
+    setOptions(newOptions)
+  }
+
+  const handleSubmit = async () => {
+    if (!questionText.trim()) return toast({ title: "Soal tidak boleh kosong", variant: "destructive" })
+    
+    const validOptions = options.filter(o => o.text.trim() !== "")
+    if (validOptions.length < 2) return toast({ title: "Minimal 2 opsi jawaban harus diisi", variant: "destructive" })
+    if (!validOptions.some(o => o.isCorrect)) return toast({ title: "Pilih minimal 1 jawaban benar", variant: "destructive" })
+
+    setIsSubmitting(true)
+    try {
+      const res = await fetch("/api/cbt/questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questionBankId: id,
+          type: "MULTIPLE_CHOICE",
+          content: questionText,
+          options: validOptions,
+          points: 1
+        })
+      })
+      if (!res.ok) throw new Error("Gagal menyimpan soal")
+      
+      toast({ title: "Soal berhasil ditambahkan!" })
+      setIsDialogOpen(false)
+      setQuestionText("")
+      setOptions([
+        { id: "A", text: "", isCorrect: true },
+        { id: "B", text: "", isCorrect: false },
+        { id: "C", text: "", isCorrect: false },
+        { id: "D", text: "", isCorrect: false },
+        { id: "E", text: "", isCorrect: false },
+      ])
+      fetchBank()
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleDelete = async (questionId: string) => {
+    if (!confirm("Yakin ingin menghapus soal ini?")) return
+    try {
+      const res = await fetch(`/api/cbt/questions?id=${questionId}`, { method: "DELETE" })
+      if (!res.ok) throw new Error("Gagal menghapus")
+      toast({ title: "Soal dihapus" })
+      fetchBank()
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    }
+  }
+
+  if (loading) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+  if (!bank) return <div className="text-center py-20">Bank Soal tidak ditemukan.</div>
+
+  return (
+    <div className="space-y-6">
+      {/* Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <Link href="/panel-gtk/cbt/bank-soal">
+            <Button variant="outline" size="icon" className="rounded-xl"><ArrowLeft className="w-4 h-4" /></Button>
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">{bank.name}</h1>
+            <div className="flex gap-2 mt-1">
+              {bank.subject && <span className="text-xs uppercase font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{bank.subject}</span>}
+              {bank.level && <span className="text-xs uppercase font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{bank.level}</span>}
+              <span className="text-xs uppercase font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">{bank.questions.length} Soal</span>
+            </div>
+          </div>
+        </div>
+        <Button onClick={() => setIsDialogOpen(true)} className="rounded-xl shadow-lg shadow-primary/20">
+          <Plus className="w-4 h-4 mr-2" /> Tambah Soal
+        </Button>
+      </div>
+
+      {/* Question List */}
+      <div className="space-y-4">
+        {bank.questions.length === 0 ? (
+          <Card className="glass border-dashed">
+            <CardContent className="py-20 text-center flex flex-col items-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
+                <FileText className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Belum Ada Soal</h3>
+              <p className="text-muted-foreground mb-6">Mulai tambahkan soal pilihan ganda atau essay ke dalam bank soal ini.</p>
+              <Button onClick={() => setIsDialogOpen(true)} variant="outline" className="rounded-xl">Tambah Soal Pertama</Button>
+            </CardContent>
+          </Card>
+        ) : (
+          bank.questions.map((q: any, i: number) => (
+            <Card key={q.id} className="glass relative group">
+              <CardContent className="p-6">
+                <div className="flex gap-4">
+                  <div className="flex flex-col items-center gap-2 text-slate-400 mt-1">
+                    <GripVertical className="w-4 h-4 cursor-move hover:text-slate-600" />
+                    <span className="font-bold text-lg text-slate-800">{i + 1}</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-slate-800 whitespace-pre-wrap leading-relaxed">{q.content}</p>
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {q.options?.map((opt: any) => (
+                        <div key={opt.id} className={`flex items-start gap-2 p-3 rounded-lg border ${opt.isCorrect ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-100'}`}>
+                          <div className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-xs font-bold ${opt.isCorrect ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                            {opt.id}
+                          </div>
+                          <span className={`text-sm ${opt.isCorrect ? 'font-semibold text-emerald-900' : 'text-slate-600'}`}>{opt.text}</span>
+                          {opt.isCorrect && <CheckCircle2 className="w-4 h-4 text-emerald-500 ml-auto shrink-0" />}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => handleDelete(q.id)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Dialog Add Question */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Tambah Soal Pilihan Ganda</DialogTitle>
+            <DialogDescription>Masukkan teks soal dan tentukan opsi jawabannya. Centang opsi yang merupakan kunci jawaban.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label>Pertanyaan <span className="text-red-500">*</span></Label>
+              <Textarea 
+                placeholder="Ketik soal disini..." 
+                className="min-h-[120px] resize-none" 
+                value={questionText} 
+                onChange={(e) => setQuestionText(e.target.value)} 
+              />
+            </div>
+            
+            <div className="space-y-3">
+              <Label>Pilihan Jawaban (Minimal 2)</Label>
+              {options.map((opt, idx) => (
+                <div key={opt.id} className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${opt.isCorrect ? 'border-primary bg-primary/5' : 'border-border'}`}>
+                  <button 
+                    onClick={() => handleSetCorrect(idx)}
+                    className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${opt.isCorrect ? 'bg-primary text-primary-foreground' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                  >
+                    {opt.id}
+                  </button>
+                  <Textarea 
+                    placeholder={`Teks pilihan ${opt.id}...`} 
+                    className="min-h-[40px] h-[40px] resize-none" 
+                    value={opt.text}
+                    onChange={(e) => handleOptionChange(idx, e.target.value)}
+                  />
+                  {opt.isCorrect && (
+                    <div className="flex items-center gap-1 text-primary text-xs font-bold pt-3 shrink-0">
+                      <CheckCircle2 className="w-4 h-4" /> KUNCI
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setIsDialogOpen(false)}>Batal</Button>
+            <Button onClick={handleSubmit} disabled={isSubmitting || !questionText}>
+              {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Simpan Soal
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}

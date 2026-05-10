@@ -82,8 +82,8 @@ export default async function BeritaPage({
                 className="group relative flex flex-col lg:flex-row bg-white rounded-[2.5rem] overflow-hidden border border-border/50 hover:shadow-2xl transition-all duration-500"
               >
                 <div className="w-full lg:w-3/5 aspect-[16/10] lg:aspect-auto relative overflow-hidden bg-muted">
-                  {posts[0].image ? (
-                    <Image src={posts[0].image} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                  {posts[0].featuredImage ? (
+                    <Image src={posts[0].featuredImage} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-primary/5">
                        <span className="text-primary/20 font-bold text-4xl">NO IMAGE</span>
@@ -101,7 +101,7 @@ export default async function BeritaPage({
                     {posts[0].title}
                   </h3>
                   <p className="text-muted-foreground text-lg leading-relaxed mb-8 line-clamp-4">
-                    {posts[0].excerpt || posts[0].content.replace(/<[^>]*>/g, '').substring(0, 200) + "..."}
+                    {posts[0].seoDesc || posts[0].content.replace(/<[^>]*>/g, '').substring(0, 200) + "..."}
                   </p>
                   <div className="inline-flex items-center gap-3 text-white bg-primary px-6 py-3 rounded-full font-bold text-sm w-fit group-hover:shadow-lg transition-all">
                     Baca Selengkapnya <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -120,8 +120,8 @@ export default async function BeritaPage({
                     className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-border/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="aspect-[16/10] relative overflow-hidden bg-muted">
-                      {post.image ? (
-                        <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                      {post.featuredImage ? (
+                        <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       ) : (
                         <div className="flex items-center justify-center h-full bg-primary/5 text-primary/20 font-bold">NO IMAGE</div>
                       )}
@@ -135,7 +135,7 @@ export default async function BeritaPage({
                       </div>
                       <h3 className="text-xl font-bold mb-3 line-clamp-2 leading-snug group-hover:text-primary transition-colors">{post.title}</h3>
                       <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed mb-6 flex-1">
-                        {post.excerpt || post.content.replace(/<[^>]*>/g, '').substring(0, 120) + "..."}
+                        {post.seoDesc || post.content.replace(/<[^>]*>/g, '').substring(0, 120) + "..."}
                       </p>
                       <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
                         Selengkapnya <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />

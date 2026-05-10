@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 
+import { getAdminStatsCached } from "@/lib/services/dashboard-cache"
+
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
@@ -10,11 +12,7 @@ export async function GET(req: Request) {
   const { error } = await (await import("@/lib/api-utils")).requireTenantMembership(tenantId)
   if (error) return error
 
-  const [userCount, notifCount, auditCount] = await Promise.all([
-    db.tenantUser.count({ where: { tenantId } }),
-    db.notification.count({ where: { tenantId, isRead: false } }),
-    db.auditLog.count({ where: { tenantId } }),
-  ])
+  const stats = await getAdminStatsCached(tenantId)
 
-  return NextResponse.json({ userCount, notifCount, auditCount })
+  return NextResponse.json(stats)
 }

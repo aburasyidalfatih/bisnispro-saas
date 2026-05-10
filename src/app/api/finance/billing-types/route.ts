@@ -18,8 +18,7 @@ export async function GET(req: Request) {
   const showAll = url.searchParams.get("showAll") === "true"
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
 
   const data = await db.billingType.findMany({
     where: { tenantId, ...(showAll ? {} : {}) }, // Admin UI fetches all, tidak filter isActive
@@ -34,8 +33,7 @@ export async function POST(req: Request) {
   const { tenantId, ...rest } = body
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
 
   const parsed = billingTypeSchema.safeParse(rest)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })

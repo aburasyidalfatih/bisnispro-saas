@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { z } from "zod"
 import { nanoid } from "nanoid"
+import { sendNotification } from "@/lib/services/notification"
+import { format } from "date-fns"
+import { id as localeId } from "date-fns/locale"
+import { FinanceService } from "@/lib/services/finance-service"
 
 const invoiceSchema = z.object({
   studentId: z.string().min(1),
@@ -30,15 +34,19 @@ export async function GET(req: Request) {
   const perPage = 20
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try {
+    await requireTenantAccess(tenantId)
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 403 })
+  }
 
-  const where: any = { tenantId, deletedAt: null }
+  const tenantDb = withTenant(tenantId)
+  const where: any = { deletedAt: null }
   if (status) where.status = status
   if (studentId) where.studentId = studentId
 
   const [invoices, total] = await Promise.all([
-    db.invoice.findMany({
+    tenantDb.invoice.findMany({
       where,
       include: {
         student: { select: { id: true, name: true, nis: true, classroom: { select: { name: true } } } },
@@ -49,7 +57,7 @@ export async function GET(req: Request) {
       skip: (page - 1) * perPage,
       take: perPage,
     }),
-    db.invoice.count({ where }),
+    tenantDb.invoice.count({ where }),
   ])
 
   return NextResponse.json({
@@ -63,44 +71,34 @@ export async function POST(req: Request) {
   const { tenantId, ...rest } = body
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try {
+    await requireTenantAccess(tenantId)
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 403 })
+  }
 
   const parsed = invoiceSchema.safeParse(rest)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
 
-  const { installments, ...invoiceData } = parsed.data
+  const { installments, dueDate, ...invoiceData } = parsed.data
 
-  // Generate kode unik
-  const code = `INV-${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${nanoid(6).toUpperCase()}`
-
-  const invoice = await db.$transaction(async (tx) => {
-    const inv = await tx.invoice.create({
-      data: {
-        tenantId,
-        code,
-        amountDue: invoiceData.amount,
-        dueDate: new Date(invoiceData.dueDate),
-        ...invoiceData,
-        month: invoiceData.month,
-        year: invoiceData.year ?? new Date().getFullYear(),
-      },
+  try {
+    const invoice = await FinanceService.createInvoice({
+      tenantId,
+      studentId: invoiceData.studentId,
+      billingTypeId: invoiceData.billingTypeId,
+      title: invoiceData.title,
+      amount: invoiceData.amount,
+      dueDate,
+      month: invoiceData.month,
+      year: invoiceData.year,
+      notes: invoiceData.notes,
+      installments
     })
 
-    // Buat cicilan jika ada
-    if (installments && installments.length > 0) {
-      await tx.installment.createMany({
-        data: installments.map((ins) => ({
-          invoiceId: inv.id,
-          tenantId,
-          dueDate: new Date(ins.dueDate),
-          amount: ins.amount,
-        })),
-      })
-    }
-
-    return inv
-  })
-
-  return NextResponse.json(invoice, { status: 201 })
+    return NextResponse.json(invoice, { status: 201 })
+  } catch (error: any) {
+    console.error("Gagal membuat invoice:", error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
 }

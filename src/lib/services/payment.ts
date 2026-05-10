@@ -176,7 +176,7 @@ export async function handleCallback(body: TripayCallbackBody) {
     },
   })
 
-  // Step 4: Upgrade tenant plan atau TopUp Wallet jika pembayaran berhasil
+  // Step 4: Upgrade tenant plan, TopUp Wallet, or Pay Invoice jika pembayaran berhasil
   if (body.status === "PAID") {
     if (payment.plan === "WALLET_TOPUP") {
       await retryAsync(
@@ -210,6 +210,27 @@ export async function handleCallback(body: TripayCallbackBody) {
            })
         },
         "topup-wallet"
+      )
+    } else if (payment.plan === "INVOICE") {
+      await retryAsync(
+        async () => {
+           const metadata = payment.metadata as any
+           if (!metadata?.invoiceId) throw new Error("Invoice ID not found in payment metadata")
+           
+           const invoice = await db.invoice.findUnique({ where: { id: metadata.invoiceId }})
+           if (!invoice) throw new Error("Invoice not found")
+
+           // Update Invoice to PAID
+           await db.invoice.update({
+             where: { id: invoice.id },
+             data: { 
+               status: "PAID",
+               amountPaid: invoice.amount,
+               amountDue: 0,
+             }
+           })
+        },
+        "pay-invoice"
       )
     } else {
       const plan = await db.subscriptionPlan.findFirst({

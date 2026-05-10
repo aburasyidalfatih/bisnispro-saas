@@ -1,82 +1,34 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import bcrypt from "bcryptjs"
+import { inngest } from "@/lib/inngest/client"
 
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    const { tenantId, users } = await req.json()
-    if (!tenantId || !users || !Array.isArray(users)) {
-      return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Verify tenant access
-    const hasAccess = session.user.tenants?.some((t: any) => t.id === tenantId && ["owner", "admin"].includes(t.role))
-    if (!hasAccess && session.user.role !== "SUPER_ADMIN") {
+    const { tenantId, users } = await req.json()
+
+    // Cek tenant akses & role (harus admin/owner)
+    const activeTenant = session.user.tenants?.find((t: any) => t.id === tenantId)
+    if (!activeTenant || (activeTenant.role !== "admin" && activeTenant.role !== "owner")) {
       return NextResponse.json({ error: "Forbidden. Admin access required." }, { status: 403 })
     }
 
-    let successCount = 0
-    const defaultPassword = await bcrypt.hash("admin123", 12)
+    // ENTERPRISE: Kirim pekerjaan ke Background Job Queue (Non-Blocking)
+    await inngest.send({
+      name: "tenant/users.import",
+      data: { tenantId, users }
+    })
 
-    // Process sequentially to handle relation upserts safely
-    for (const row of users) {
-      const email = row["Email"]?.trim()
-      if (!email) continue
-
-      const name = row["Nama Lengkap"] || "User Tanpa Nama"
-      const phone = row["No HP (Opsional)"] || null
-      let role = row["Role (guru/admin/staff)"]?.toLowerCase() || "guru"
-      if (!["guru", "admin", "staff"].includes(role)) {
-        role = "guru"
-      }
-
-      // Check if user exists
-      let user = await db.user.findUnique({ where: { email } })
-
-      if (!user) {
-         // Create new user
-         user = await db.user.create({
-            data: {
-               name,
-               email,
-               phone,
-               password: defaultPassword, // default pass
-               isActive: true
-            }
-         })
-      }
-
-      // Check if they are already in this tenant
-      const existingTu = await db.tenantUser.findUnique({
-         where: { tenantId_userId: { tenantId, userId: user.id } }
-      })
-
-      if (!existingTu) {
-         await db.tenantUser.create({
-            data: {
-               tenantId,
-               userId: user.id,
-               role
-            }
-         })
-         successCount++
-      } else if (existingTu.role !== role) {
-         // Update role if changed
-         await db.tenantUser.update({
-            where: { id: existingTu.id },
-            data: { role }
-         })
-         successCount++ // Treat as updated
-      }
-    }
-
-    return NextResponse.json({ success: true, count: successCount })
+    return NextResponse.json({ 
+      success: true, 
+      message: "Proses import GTK/Staff sedang berjalan di latar belakang. Silakan periksa halaman beberapa saat lagi." 
+    })
   } catch (error: any) {
     console.error("Import GTK Error:", error)
-    return NextResponse.json({ error: "Terjadi kesalahan saat memproses data. Cek log sistem." }, { status: 500 })
+    return NextResponse.json({ error: "Terjadi kesalahan server saat memulai job import." }, { status: 500 })
   }
 }

@@ -57,6 +57,24 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
       {/* Main Content Area overlapping header */}
       <div className="px-5 -mt-24 relative z-10 space-y-5">
         
+        {/* Banner Alert Tagihan */}
+        {unpaidInvoices.length > 0 && (
+          <div className="bg-rose-500 rounded-[1.5rem] p-4 text-white shadow-lg shadow-rose-500/30 flex items-center justify-between border-2 border-white/20 animate-in slide-in-from-top-4 duration-500">
+             <div className="flex items-center gap-3">
+                <div className="h-10 w-10 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                   <Bell className="h-5 w-5 animate-bounce" />
+                </div>
+                <div>
+                   <h3 className="font-bold text-sm">Pemberitahuan Tagihan</h3>
+                   <p className="text-[10px] text-white/80">Anda memiliki {unpaidInvoices.length} tagihan yang belum dilunasi.</p>
+                </div>
+             </div>
+             <Link href="/ortu/tagihan" className="h-8 px-3 bg-white text-rose-600 font-bold text-xs rounded-xl flex items-center justify-center hover:bg-white/90 transition-colors shrink-0">
+                Bayar
+             </Link>
+          </div>
+        )}
+
         {/* Status Anak & Keuangan (Bird's Eye View) */}
         <div className="space-y-4">
            {childrenData.map((child: any) => {
@@ -69,7 +87,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                               latestAttendance ? latestAttendance.status : "Belum Ada Info"
               
               return (
-                <div key={child.id} className="bg-card rounded-[2rem] p-5 shadow-sm border border-border relative overflow-hidden">
+                <div key={child.id} className="bg-card rounded-saas-card p-5 shadow-sm border border-border relative overflow-hidden">
                    {/* Header Anak */}
                    <div className="flex items-center gap-4 mb-5">
                      <div className="h-14 w-14 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
@@ -134,7 +152,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
            })}
 
            {childrenData.length === 0 && (
-             <div className="bg-card rounded-[2rem] p-8 text-center shadow-sm border border-border">
+             <div className="bg-card rounded-saas-card p-8 text-center shadow-sm border border-border">
                <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                   <User className="h-8 w-8 text-muted-foreground" />
                </div>

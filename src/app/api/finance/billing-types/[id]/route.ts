@@ -18,8 +18,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
 
   const record = await db.billingType.findFirst({ where: { id, tenantId } })
   if (!record) return NextResponse.json({ error: "Tidak ditemukan" }, { status: 404 })
@@ -32,8 +31,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { tenantId, ...rest } = body
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
 
   const parsed = schema.safeParse(rest)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
@@ -51,8 +49,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
-  const { error } = await requireTenantAccess(tenantId)
-  if (error) return error
+  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
 
   await db.billingType.update({ where: { id }, data: { isActive: false } })
   return NextResponse.json({ message: "Berhasil dinonaktifkan" })

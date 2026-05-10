@@ -23,7 +23,7 @@ export async function GET(req: Request) {
 
     // Ambil daftar siswa di kelas tersebut beserta nilai mereka jika ada
     const students = await db.student.findMany({
-      where: { tenantId, classroomId, status: "AKTIF" },
+      where: { tenantId, classroomId, isActive: true },
       select: {
         id: true,
         name: true,

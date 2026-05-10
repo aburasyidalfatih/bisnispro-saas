@@ -17,12 +17,15 @@ export default function GuruDashboard() {
 
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
   const [announcements, setAnnouncements] = useState<any[]>([])
+  const [scheduleToday, setScheduleToday] = useState<any[]>([])
+  const [loadingSchedule, setLoadingSchedule] = useState(true)
 
   useEffect(() => {
     setCurrentTime(new Date())
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
 
     if (tenantId) {
+      // Fetch Announcements
       fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN&limit=2`)
         .then(r => {
            if(!r.ok) throw new Error("Failed to fetch")
@@ -32,6 +35,19 @@ export default function GuruDashboard() {
            if (d.data) setAnnouncements(d.data.slice(0, 2))
         })
         .catch(console.error)
+
+      // Fetch Today's Schedule
+      const dayOfWeek = new Date().getDay() || 7
+      fetch(`/api/gtk/schedule?tenantId=${tenantId}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.schedules) {
+            const todays = data.schedules.filter((s: any) => s.dayOfWeek === dayOfWeek)
+            setScheduleToday(todays)
+          }
+        })
+        .catch(console.error)
+        .finally(() => setLoadingSchedule(false))
     }
 
     return () => clearInterval(timer)
@@ -44,12 +60,6 @@ export default function GuruDashboard() {
     { label: "Input Nilai", desc: "Rekap nilai ujian & tugas", icon: Award, color: "text-white", bg: "bg-gradient-to-br from-amber-400 to-amber-600 shadow-md shadow-amber-500/30 border-0", href: "/panel-gtk/nilai" },
     { label: "Buku Poin Siswa", desc: "Catat pelanggaran/prestasi", icon: AlertCircle, color: "text-white", bg: "bg-gradient-to-br from-rose-400 to-rose-600 shadow-md shadow-rose-500/30 border-0", href: "/panel-gtk/poin" },
     { label: "Tulis Artikel", desc: "Bagikan tulisan ke web", icon: FileText, color: "text-white", bg: "bg-gradient-to-br from-violet-400 to-violet-600 shadow-md shadow-violet-500/30 border-0", href: "/panel-gtk/posts" },
-  ]
-
-  const scheduleToday = [
-    { time: "07:00 - 08:30", subject: "Matematika Wajib", class: "X MIPA 1", room: "Ruang 12" },
-    { time: "08:30 - 10:00", subject: "Matematika Peminatan", class: "XI MIPA 2", room: "Ruang 15" },
-    { time: "10:30 - 12:00", subject: "Matematika Wajib", class: "X IPS 1", room: "Ruang 04" },
   ]
 
   return (
@@ -200,31 +210,37 @@ export default function GuruDashboard() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-border/50">
-                {scheduleToday.map((schedule, idx) => (
-                  <div key={idx} className="p-4 sm:p-5 flex items-start gap-4 hover:bg-muted/20 transition-colors group">
-                    <div className="flex flex-col items-center justify-center bg-primary/5 border border-primary/10 rounded-xl py-2 px-3 min-w-[90px] group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                      <span className="text-xs font-bold">{schedule.time.split(' - ')[0]}</span>
-                      <span className="text-[10px] opacity-70">s/d</span>
-                      <span className="text-xs font-bold">{schedule.time.split(' - ')[1]}</span>
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-base sm:text-lg truncate">{schedule.subject}</h4>
-                      <div className="flex flex-wrap items-center gap-3 mt-2 text-xs font-medium text-muted-foreground">
-                        <span className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md text-foreground">
-                          <Users className="h-3 w-3" /> {schedule.class}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" /> {schedule.room}
-                        </span>
+                {loadingSchedule ? (
+                  <div className="p-6 text-center text-sm text-muted-foreground">Memuat jadwal...</div>
+                ) : scheduleToday.length === 0 ? (
+                  <div className="p-6 text-center text-sm text-muted-foreground">Tidak ada jadwal hari ini.</div>
+                ) : (
+                  scheduleToday.map((schedule, idx) => (
+                    <div key={schedule.id || idx} className="p-4 sm:p-5 flex items-start gap-4 hover:bg-muted/20 transition-colors group">
+                      <div className="flex flex-col items-center justify-center bg-primary/5 border border-primary/10 rounded-xl py-2 px-3 min-w-[90px] group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                        <span className="text-xs font-bold">{schedule.startTime || "00:00"}</span>
+                        <span className="text-[10px] opacity-70">s/d</span>
+                        <span className="text-xs font-bold">{schedule.endTime || "00:00"}</span>
                       </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-base sm:text-lg truncate">{schedule.subject?.name || "Mata Pelajaran"}</h4>
+                        <div className="flex flex-wrap items-center gap-3 mt-2 text-xs font-medium text-muted-foreground">
+                          <span className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md text-foreground">
+                            <Users className="h-3 w-3" /> {schedule.classroom?.name || "-"}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" /> {schedule.roomId || "Ruang Kelas"}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8 text-muted-foreground group-hover:text-primary rounded-full">
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
                     </div>
-                    
-                    <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8 text-muted-foreground group-hover:text-primary rounded-full">
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>

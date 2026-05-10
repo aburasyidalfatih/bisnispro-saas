@@ -38,6 +38,10 @@ async function getEmailTransporter(tenantId?: string) {
   const pass = map.SMTP_PASS || process.env.SMTP_PASS
   const from = map.SMTP_FROM || process.env.SMTP_FROM || user
 
+  if (!host || !user || !pass) {
+    return null
+  }
+
   return {
     transporter: nodemailer.createTransport({
       host,
@@ -51,13 +55,21 @@ async function getEmailTransporter(tenantId?: string) {
 }
 
 export async function sendEmail(to: string, subject: string, html: string, tenantId?: string) {
-  const { transporter, from, fromName } = await getEmailTransporter(tenantId)
-  return transporter.sendMail({
-    from: fromName ? `"${fromName}" <${from}>` : from,
-    to,
-    subject,
-    html,
-  })
+  const config = await getEmailTransporter(tenantId)
+  if (!config) return { success: false, error: "SMTP belum dikonfigurasi" }
+  
+  try {
+    const res = await config.transporter.sendMail({
+      from: config.fromName ? `"${config.fromName}" <${config.from}>` : config.from,
+      to,
+      subject,
+      html,
+    })
+    return { success: true, res }
+  } catch (error: any) {
+    logger.error("Email send failed", error)
+    return { success: false, error: error.message }
+  }
 }
 
 // ==================== WHATSAPP (Platform Gateway) ====================
@@ -129,7 +141,6 @@ export async function sendWhatsApp(
   // 0. META OFFICIAL API
   if (config.provider === "meta") {
     if (!config.metaPhoneId || !config.metaToken) {
-      logger.warn("Meta WA credentials not configured", { phone })
       return { success: false, error: "Meta API credentials not configured" }
     }
     try {
@@ -194,13 +205,12 @@ export async function sendWhatsApp(
         }
       }
     } catch (err) {
-      logger.error("Internal WA gateway check failed, falling back to StarSender", err)
+      // Abaikan jika tidak ada tabel atau error koneksi DB saat cari session
     }
   }
 
   // 2. Fallback ke StarSender (Legacy / starsender provider)
   if (!config.apiKey) {
-    logger.warn("WA gateway not configured — message not sent", { phone })
     return { success: false, error: "WA gateway belum dikonfigurasi" }
   }
 
@@ -307,8 +317,6 @@ export async function sendNotification(params: {
             `${params.title}\n\n${params.message}`,
             params.tenantId
           )
-        } else {
-          logger.warn("WA notification skipped — user has no phone number", { userId: params.userId })
         }
         break
     }

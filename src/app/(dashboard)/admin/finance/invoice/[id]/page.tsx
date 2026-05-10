@@ -77,9 +77,18 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
           <Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="h-5 w-5" /></Button>
         </Link>
         <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold">{invoice.title}</h1>
-            <Badge className={`${cfg.color} border text-xs`}>{cfg.label}</Badge>
+          <div className="flex items-center justify-between gap-3">
+             <div className="flex items-center gap-3">
+               <h1 className="text-xl font-bold">{invoice.title}</h1>
+               <Badge className={`${cfg.color} border text-xs`}>{cfg.label}</Badge>
+             </div>
+             {invoice.status === "PAID" && (
+               <Link href={`/admin/finance/invoice/${id}/print`} target="_blank">
+                 <Button variant="outline" size="sm" className="rounded-xl shadow-sm hidden sm:flex">
+                   <FileCheck className="mr-2 h-4 w-4" /> Cetak Kwitansi (PDF)
+                 </Button>
+               </Link>
+             )}
           </div>
           <p className="text-sm text-muted-foreground font-mono">{invoice.code}</p>
         </div>
@@ -173,8 +182,13 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
                     }>
                       {p.status === "VERIFIED" ? "Terverifikasi" : p.status === "REJECTED" ? "Ditolak" : "Menunggu"}
                     </Badge>
-                    {p.status === "PENDING" && (
+                    {(p.status === "PENDING" || p.status === "PENDING_VERIFICATION") && (
                       <div className="flex gap-1">
+                        {p.proofUrl && (
+                          <a href={p.proofUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground rounded-md h-8 px-2 text-xs text-blue-600 border-blue-200 mr-1">
+                             Bukti
+                          </a>
+                        )}
                         <Button size="sm" variant="outline" className="h-8 px-2 text-xs text-emerald-600 border-emerald-200" disabled={paying} onClick={() => handleVerify(p.id, "VERIFIED")}>
                           <CheckCircle className="h-3.5 w-3.5 mr-1" /> Verifikasi
                         </Button>
