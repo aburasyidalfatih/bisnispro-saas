@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { TrendingUp, TrendingDown, Wallet, Plus, Search, Loader2 } from "lucide-react"
+import { TrendingUp, TrendingDown, Wallet, Plus, Search, Loader2, Download, FileSpreadsheet } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+
+import * as XLSX from "xlsx"
 
 export default function CashflowPage() {
   const { data: session } = useSession()
@@ -19,6 +21,7 @@ export default function CashflowPage() {
   const { toast } = useToast()
 
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
   const [data, setData] = useState<any[]>([])
   const [summary, setSummary] = useState({ income: 0, expense: 0, balance: 0 })
   const [filterType, setFilterType] = useState("ALL")
@@ -46,6 +49,31 @@ export default function CashflowPage() {
       toast({ title: "Gagal memuat data", variant: "destructive" })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleExport = () => {
+    if (data.length === 0) return
+    setExporting(true)
+    try {
+      const formattedData = data.map(item => ({
+        "Tanggal": format(new Date(item.recordedAt), 'dd MMM yyyy', { locale: localeId }),
+        "Tipe": item.type === "INCOME" ? "Pemasukan" : "Pengeluaran",
+        "Kategori": item.category.replace(/_/g, ' '),
+        "Keterangan": item.description,
+        "Nominal (Rp)": item.amount,
+      }))
+      
+      const worksheet = XLSX.utils.json_to_sheet(formattedData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Arus Kas")
+      
+      XLSX.writeFile(workbook, `Laporan_Cashflow_${format(new Date(), 'yyyyMMdd')}.xlsx`)
+      toast({ title: "Berhasil", description: "Laporan berhasil diunduh" })
+    } catch (e: any) {
+      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -181,6 +209,15 @@ export default function CashflowPage() {
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <CardTitle className="text-lg">Riwayat Transaksi</CardTitle>
             <div className="flex gap-2">
+              <Button 
+                onClick={handleExport} 
+                disabled={exporting || data.length === 0}
+                variant="outline" 
+                className="hidden sm:flex border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+              >
+                {exporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <FileSpreadsheet className="h-4 w-4 mr-2" />} 
+                Ekspor Excel
+              </Button>
               <Select value={filterType} onValueChange={setFilterType}>
                 <SelectTrigger className="w-[180px] bg-background">
                   <SelectValue placeholder="Filter Tipe" />

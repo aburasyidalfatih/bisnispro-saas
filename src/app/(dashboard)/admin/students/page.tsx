@@ -10,12 +10,14 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   GraduationCap, Search, Filter, Plus, Loader2,
-  Wallet, BookOpen, MoreHorizontal, UserCheck, ChevronRight, Printer
+  Wallet, BookOpen, MoreHorizontal, UserCheck, ChevronRight, Printer, Download
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+
+import * as XLSX from "xlsx"
 
 export default function StudentsPage() {
   const { data: session } = useSession()
@@ -24,6 +26,7 @@ export default function StudentsPage() {
   const [students, setStudents] = useState<any[]>([])
   const [classrooms, setClassrooms] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
   const [search, setSearch] = useState("")
   const [classFilter, setClassFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("active")
@@ -64,6 +67,44 @@ export default function StudentsPage() {
     fetchStudents()
   }
 
+  const handleExport = async () => {
+    if (!tenant) return
+    setExporting(true)
+    try {
+      // Fetch ALL students for export without pagination
+      const params = new URLSearchParams({
+        tenantId: tenant.id,
+        take: "99999", // get all
+        ...(search ? { search } : {}),
+        ...(classFilter !== "all" ? { classroomId: classFilter } : {}),
+      })
+      const res = await fetch(`/api/students?${params}`)
+      const json = await res.json()
+      const allData = json.data || []
+      
+      const formattedData = allData.map((s: any) => ({
+        "NIS": s.nis || "",
+        "NISN": s.nisn || "",
+        "Nama Lengkap": s.name,
+        "Gender": s.gender === "L" ? "Laki-laki" : s.gender === "P" ? "Perempuan" : "-",
+        "Kelas": s.classroom?.name || "-",
+        "Status": s.isActive ? "Aktif" : "Nonaktif",
+        "Saldo Tabungan (Rp)": s.walletAccount?.balance || 0,
+      }))
+      
+      const worksheet = XLSX.utils.json_to_sheet(formattedData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Data Siswa")
+      
+      XLSX.writeFile(workbook, `Data_Siswa_${tenant.name.replace(/\s+/g, '_')}_${format(new Date(), 'yyyyMMdd')}.xlsx`)
+      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+    } catch (e: any) {
+      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+    } finally {
+      setExporting(false)
+    }
+  }
+
   const totalStudents = students.length
   const withWallet = students.filter(s => s.walletAccount).length
   const totalBalance = students.reduce((a: number, s: any) => a + (s.walletAccount?.balance || 0), 0)
@@ -77,6 +118,15 @@ export default function StudentsPage() {
           <p className="text-sm text-muted-foreground">Kelola seluruh data siswa aktif dan riwayatnya.</p>
         </div>
         <div className="flex gap-2">
+          <Button 
+            onClick={handleExport} 
+            disabled={exporting}
+            variant="outline" 
+            className="rounded-xl gap-2 hidden sm:flex border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+          >
+            {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} 
+            Ekspor Excel
+          </Button>
           <Link href="/admin/students/print-cards">
             <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex border-indigo-200 text-indigo-700 hover:bg-indigo-50"><Printer className="h-4 w-4" /> Cetak ID Card (QR)</Button>
           </Link>

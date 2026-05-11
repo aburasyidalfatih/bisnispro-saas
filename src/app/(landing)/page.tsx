@@ -60,8 +60,8 @@ const featureModules = [
       { name: "Kelola Data Petugas (Admin/Guru/Staf)", status: "ready" },
       { name: "Kelola Data Siswa, Kelas & Tahun Ajaran", status: "ready" },
       { name: "Manajemen Akun Hak Akses", status: "ready" },
-      { name: "Proses Kenaikan & Pindah Kelas", status: "coming_soon" },
-      { name: "Ekspor/Impor Data via Excel", status: "coming_soon" },
+      { name: "Proses Kenaikan & Pindah Kelas", status: "ready" },
+      { name: "Ekspor/Impor Data via Excel", status: "ready" },
     ],
   },
   {
@@ -74,7 +74,7 @@ const featureModules = [
       { name: "Pembayaran Online (Payment Gateway)", status: "ready" },
       { name: "Rekap Transaksi & Arus Kas", status: "ready" },
       { name: "Pengingat Tagihan via WhatsApp", status: "ready" },
-      { name: "Cetak Nota & Kwitansi PDF", status: "coming_soon" },
+      { name: "Cetak Nota & Kwitansi PDF", status: "ready" },
     ],
   },
   {

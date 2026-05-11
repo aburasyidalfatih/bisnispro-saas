@@ -7,11 +7,13 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Receipt, Plus, Search, Filter, Loader2, AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react"
+import { Receipt, Plus, Search, Filter, Loader2, AlertCircle, CheckCircle, Clock, XCircle, Download } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+
+import * as XLSX from "xlsx"
 
 type Invoice = {
   id: string
@@ -38,6 +40,7 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [meta, setMeta] = useState({ total: 0, page: 1, totalPages: 1 })
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [page, setPage] = useState(1)
@@ -59,6 +62,46 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
       toast({ title: "Gagal memuat data tagihan", variant: "destructive" })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      // Fetch all without pagination
+      const params = new URLSearchParams({
+        tenantId,
+        page: "1",
+        limit: "9999", // assuming limit is supported or we just export the current page if not? Wait, the API usually respects `take` or `limit`. Let's just use `limit=99999`. Wait, the API uses `take` probably. Let's pass `take=9999`.
+        ...(statusFilter !== "all" ? { status: statusFilter } : {}),
+      })
+      const res = await fetch(`/api/finance/invoices?${params}`)
+      const json = await res.json()
+      const allInvoices = json.data || []
+
+      const formattedData = allInvoices.map((inv: Invoice) => ({
+        "Kode": inv.code,
+        "Siswa": inv.student.name,
+        "NIS": inv.student.nis || "-",
+        "Kelas": inv.student.classroom?.name || "-",
+        "Judul Tagihan": inv.title,
+        "Total Tagihan (Rp)": inv.amount,
+        "Sudah Dibayar (Rp)": inv.amountPaid,
+        "Sisa Tagihan (Rp)": inv.amountDue,
+        "Jatuh Tempo": format(new Date(inv.dueDate), "dd MMM yyyy", { locale: localeId }),
+        "Status": statusConfig[inv.status]?.label || inv.status,
+      }))
+      
+      const worksheet = XLSX.utils.json_to_sheet(formattedData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Data Tagihan")
+      
+      XLSX.writeFile(workbook, `Laporan_Tagihan_${format(new Date(), 'yyyyMMdd')}.xlsx`)
+      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+    } catch (e: any) {
+      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -119,11 +162,22 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
             </SelectContent>
           </Select>
         </div>
-        <Link href="/admin/finance/invoice/create">
-          <Button className="rounded-xl gap-2">
-            <Plus className="h-4 w-4" /> Buat Tagihan
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleExport} 
+            disabled={exporting}
+            variant="outline" 
+            className="rounded-xl gap-2 hidden sm:flex border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+          >
+            {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} 
+            Ekspor Excel
           </Button>
-        </Link>
+          <Link href="/admin/finance/invoice/create">
+            <Button className="rounded-xl gap-2">
+              <Plus className="h-4 w-4" /> Buat Tagihan
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Table */}
