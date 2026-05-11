@@ -61,7 +61,7 @@ export default async function UnduhanPage({ params }: { params: Promise<{ slug: 
                 
                 <div className="flex items-center gap-3">
                    <a 
-                    href={doc.url} 
+                    href={doc.fileUrl} 
                     target="_blank" 
                     rel="noopener"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto"
