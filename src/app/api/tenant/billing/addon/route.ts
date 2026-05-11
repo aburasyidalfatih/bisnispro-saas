@@ -1,0 +1,47 @@
+import { NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
+import { createAddonInvoice } from "@/lib/services/billing"
+import { headers } from "next/headers"
+import { z } from "zod"
+import { parseBody } from "@/lib/api-utils"
+
+const addonSchema = z.object({
+  studentCount: z.number().min(1, "Jumlah siswa minimal 1"),
+  discountCode: z.string().optional()
+})
+
+export async function POST(req: Request) {
+  const session = await auth() as any
+  const headersList = await headers()
+  
+  let slug = headersList.get("x-tenant-slug")
+  if (!slug) {
+    const host = headersList.get("host") || ""
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.test"
+    if (host.endsWith(`.${rootDomain}`)) {
+      slug = host.replace(`.${rootDomain}`, "")
+    } else if (host !== rootDomain && !host.startsWith("www.")) {
+      slug = host.split(".")[0]
+    }
+  }
+
+  const tenantUser = session?.user?.tenants?.find((t: any) => t.slug === slug)
+  if (!tenantUser || !["owner", "admin"].includes(tenantUser.role)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const parsed = await parseBody(req, addonSchema)
+  if (parsed.error) return parsed.error
+
+  try {
+    const invoice = await createAddonInvoice(tenantUser.id, parsed.data.studentCount, parsed.data.discountCode)
+    return NextResponse.json({
+      success: true,
+      message: "Tagihan penambahan kuota berhasil dibuat",
+      data: invoice
+    })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || "Gagal membuat tagihan penambahan kuota" }, { status: 400 })
+  }
+}

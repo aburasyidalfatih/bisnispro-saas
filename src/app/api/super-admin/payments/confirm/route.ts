@@ -29,13 +29,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Transaksi sudah dikonfirmasi sebelumnya" }, { status: 409 })
     }
 
-    // Ambil jumlah siswa dari metadata
+    // Ambil jumlah siswa dan tipe pembayaran dari metadata
     const meta = payment.metadata as any
     const studentCount = meta?.studentCount || 0
+    const isAddon = meta?.type === "ADDON_QUOTA"
 
-    // Hitung masa aktif: 1 tahun dari sekarang
-    const expiresAt = new Date()
-    expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+    // Hitung masa aktif: 1 tahun dari sekarang (HANYA untuk UPGRADE/RENEWAL)
+    let expiresAt = new Date()
+    if (!isAddon) {
+      expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+    }
 
     // Jalankan update secara transaksional
     await db.$transaction([
@@ -47,21 +50,30 @@ export async function POST(req: Request) {
           paidAt: new Date(),
         },
       }),
-      // 2. Upgrade tenant ke PRO
+      // 2. Upgrade tenant ke PRO / Tambah Kuota
       db.tenant.update({
         where: { id: payment.tenantId },
         data: {
           plan: "pro",
           isActive: true,
-          studentQuota: studentCount > 0 ? studentCount : undefined,
-          expiresAt,
+          ...(isAddon
+            ? {
+                studentQuota: { increment: studentCount },
+                // expiresAt tidak diubah
+              }
+            : {
+                studentQuota: studentCount > 0 ? studentCount : undefined,
+                expiresAt,
+              }),
         },
       }),
     ])
 
     return NextResponse.json({
       success: true,
-      message: `Tenant "${payment.tenant.name}" berhasil diupgrade ke PRO hingga ${expiresAt.toLocaleDateString("id-ID")}.`,
+      message: isAddon 
+        ? `Berhasil menambah ${studentCount} kuota siswa untuk Tenant "${payment.tenant.name}".`
+        : `Tenant "${payment.tenant.name}" berhasil diupgrade ke PRO hingga ${expiresAt.toLocaleDateString("id-ID")}.`,
     })
   } catch (error) {
     logger.error("Confirm payment failed", error, { path: "/api/super-admin/payments/confirm" })

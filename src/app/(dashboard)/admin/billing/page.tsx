@@ -78,10 +78,24 @@ export default function BillingPage() {
   }, [])
 
   const pricing = billing?.pricing || { PRICE_PER_STUDENT: 30000, MIN_STUDENTS: 50 }
-  const subTotal = studentCount * pricing.PRICE_PER_STUDENT
+  const isPro = billing?.plan === "pro"
+  const minStudents = isPro ? 1 : pricing.MIN_STUDENTS
+
+  let proratedRatio = 1
+  let daysRemaining = 365
+  if (isPro && billing?.expiresAt) {
+    const msPerDay = 24 * 60 * 60 * 1000
+    const now = new Date()
+    const expires = new Date(billing.expiresAt)
+    daysRemaining = Math.max(0, Math.ceil((expires.getTime() - now.getTime()) / msPerDay))
+    proratedRatio = Math.min(daysRemaining / 365, 1)
+  }
+
+  const baseSubTotal = studentCount * pricing.PRICE_PER_STUDENT
+  const subTotal = baseSubTotal * proratedRatio
   const discountAmount = appliedDiscount ? subTotal * (appliedDiscount.percentage / 100) : 0
   const totalCost = subTotal - discountAmount
-  const isPro = billing?.plan === "pro"
+
   const proFeatures = proPlan?.features || []
   const currentPlanFeatures = isPro ? (proPlan?.features || []) : (freePlan?.features || [])
 
@@ -112,13 +126,14 @@ export default function BillingPage() {
   }
 
   const handleCheckout = async () => {
-    if (studentCount < pricing.MIN_STUDENTS) {
-      toast({ title: "Gagal", description: `Minimal upgrade ${pricing.MIN_STUDENTS} siswa`, variant: "destructive" })
+    if (studentCount < minStudents) {
+      toast({ title: "Gagal", description: `Minimal ${minStudents} siswa`, variant: "destructive" })
       return
     }
     setCheckingOut(true)
+    const endpoint = isPro ? "/api/tenant/billing/addon" : "/api/tenant/billing/checkout"
     try {
-      const res = await fetch("/api/tenant/billing/checkout", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ studentCount, discountCode: appliedDiscount?.code }),
@@ -292,8 +307,12 @@ export default function BillingPage() {
                 <ShieldCheck className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <CardTitle>Upgrade ke Paket PRO</CardTitle>
-                <CardDescription>{proPlan?.description || "Bayar sesuai jumlah siswa aktif (Pay-per-Student)"}</CardDescription>
+                <CardTitle>{isPro ? "Tambah Kuota Siswa" : "Upgrade ke Paket PRO"}</CardTitle>
+                <CardDescription>
+                  {isPro 
+                    ? `Biaya penambahan kuota akan disesuaikan (Pro-rata) dengan sisa masa aktif langganan Anda (${daysRemaining} hari).` 
+                    : (proPlan?.description || "Bayar sesuai jumlah siswa aktif (Pay-per-Student)")}
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -303,20 +322,27 @@ export default function BillingPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2 text-sm font-semibold">
-                    <Users className="h-4 w-4 text-primary" /> Jumlah Siswa Aktif
+                    <Users className="h-4 w-4 text-primary" /> {isPro ? "Jumlah Tambah Siswa" : "Jumlah Siswa Aktif"}
                   </Label>
                   <Input
-                    type="number" min={pricing.MIN_STUDENTS}
+                    type="number" min={minStudents}
                     value={studentCount}
                     onChange={(e) => setStudentCount(Number(e.target.value))}
                     className="rounded-xl h-12 text-lg font-semibold"
                   />
                   <p className="text-[11px] text-muted-foreground">
-                    Minimal upgrade: <strong>{pricing.MIN_STUDENTS} siswa</strong>
+                    Minimal {isPro ? "tambah" : "upgrade"}: <strong>{minStudents} siswa</strong>
                   </p>
                 </div>
                 <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 space-y-1.5">
-                  <p className="text-xs text-muted-foreground font-medium">Estimasi Biaya</p>
+                  <p className="text-xs text-muted-foreground font-medium">Estimasi Biaya {isPro && "(Pro-rata)"}</p>
+                  
+                  {isPro && (
+                    <div className="flex justify-between text-[11px] text-muted-foreground mb-1">
+                      <span>Harga Normal ({studentCount} siswa)</span>
+                      <span>Rp {baseSubTotal.toLocaleString("id-ID")}</span>
+                    </div>
+                  )}
                   
                   {appliedDiscount && (
                     <div className="flex items-center justify-between text-xs mb-1">
@@ -397,10 +423,10 @@ export default function BillingPage() {
 
             <Button
               className="w-full h-12 rounded-xl btn-gradient text-white border-0 gap-2 text-base font-semibold shadow-lg shadow-primary/20"
-              disabled={checkingOut || studentCount < pricing.MIN_STUDENTS || billing?.hasPendingInvoice}
+              disabled={checkingOut || studentCount < minStudents || billing?.hasPendingInvoice}
               onClick={handleCheckout}
             >
-              {checkingOut ? "Membuat Invoice..." : "Upgrade Sekarang"}
+              {checkingOut ? "Membuat Invoice..." : (isPro ? "Buat Tagihan Penambahan Kuota" : "Upgrade Sekarang")}
               <ArrowRight className="h-5 w-5" />
             </Button>
           </CardContent>
