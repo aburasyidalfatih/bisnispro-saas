@@ -114,6 +114,38 @@ export default function NotificationsPage() {
       variables: ["studentName", "nis", "schoolName"],
       defaultTitle: "Selamat Bergabung di {{schoolName}}!",
       defaultMessage: "Selamat! Proses daftar ulang selesai. Ananda {{studentName}} dengan NIS {{nis}} telah terdaftar secara resmi sebagai siswa di {{schoolName}}."
+    },
+    {
+      id: "invoice_overdue",
+      name: "Keuangan: Pengingat Jatuh Tempo",
+      desc: "Dikirim (otomatis) saat tagihan SPP/biaya lain sudah mendekati atau melewati tenggat waktu.",
+      variables: ["studentName", "invoiceTitle", "amountDue", "dueDate", "schoolName"],
+      defaultTitle: "Peringatan Jatuh Tempo: {{invoiceTitle}}",
+      defaultMessage: "Pemberitahuan dari {{schoolName}}. Tagihan {{invoiceTitle}} ananda {{studentName}} sebesar Rp {{amountDue}} telah/akan jatuh tempo pada {{dueDate}}. Mohon segera lakukan pembayaran."
+    },
+    {
+      id: "canteen_transaction",
+      name: "E-Kantin: Pemotongan Saldo (Jajan)",
+      desc: "Dikirim saat siswa melakukan transaksi jajan di kantin menggunakan ID Card/QR.",
+      variables: ["studentName", "merchantName", "amount", "newBalance", "schoolName"],
+      defaultTitle: "Transaksi E-Kantin",
+      defaultMessage: "Info Transaksi: Ananda {{studentName}} baru saja melakukan pembelian di {{merchantName}} sebesar Rp {{amount}}. Sisa saldo dompet saat ini: Rp {{newBalance}}."
+    },
+    {
+      id: "discipline_alert",
+      name: "Konseling: Catatan Kedisiplinan/Pelanggaran",
+      desc: "Dikirim ke wali murid saat ada penambahan poin pelanggaran atau catatan BK.",
+      variables: ["studentName", "violation", "points", "schoolName"],
+      defaultTitle: "Pemberitahuan Kedisiplinan Siswa",
+      defaultMessage: "Bapak/Ibu Wali Murid, menginformasikan bahwa ananda {{studentName}} mendapat catatan terkait: {{violation}} (Poin: {{points}}). Harap hubungi pihak BK {{schoolName}} untuk detail lebih lanjut."
+    },
+    {
+      id: "parent_portal_activation",
+      name: "Portal Wali: Aktivasi Akun",
+      desc: "Dikirim saat Admin mendaftarkan nomor WA/Email orang tua agar mereka bisa login.",
+      variables: ["parentName", "studentName", "username", "password", "loginUrl"],
+      defaultTitle: "Akses Portal Wali Murid",
+      defaultMessage: "Halo {{parentName}}, akun portal akademik untuk memantau ananda {{studentName}} telah aktif. Login di: {{loginUrl}} menggunakan Username: {{username}} dan Password: {{password}}."
     }
   ]
 
