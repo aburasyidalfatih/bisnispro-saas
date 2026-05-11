@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
+import { sendTemplateNotification } from "@/lib/services/notification"
 
 const orderSchema = z.object({
   tenantId: z.string(),
@@ -171,6 +172,29 @@ export async function POST(req: Request) {
 
     return newOrder
   })
+
+  // Get parent user ID
+  const student = await db.student.findUnique({
+    where: { id: wallet.studentId },
+    include: { parents: { select: { userId: true } } }
+  })
+  
+  const targetUserId = student?.parents?.[0]?.userId || undefined
+
+  if (targetUserId) {
+    // Send background notification
+    sendTemplateNotification({
+      tenantId,
+      templateId: "canteen_transaction",
+      variables: {
+        studentName: wallet.student.name,
+        merchantName: merchant.name,
+        amount: total.toLocaleString("id-ID"),
+        newBalance: (wallet.balance - total).toLocaleString("id-ID"),
+      },
+      targetUserId,
+    }).catch(console.error) // don't block
+  }
 
   return NextResponse.json({
     message: "Transaksi berhasil",

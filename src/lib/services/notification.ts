@@ -350,3 +350,92 @@ export async function notifyTenantAdmins(tenantId: string, params: {
     }
   }
 }
+
+export async function sendTemplateNotification({
+  tenantId,
+  templateId,
+  variables,
+  targetUserId,
+}: {
+  tenantId: string
+  templateId: string
+  variables: Record<string, string>
+  targetUserId?: string
+}) {
+  const tenant = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { settings: true, name: true },
+  })
+
+  if (!tenant) return
+
+  const settings = (tenant.settings as Record<string, any>) || {}
+  
+  const defaults: Record<string, {title: string, message: string}> = {
+    invoice_created: {
+      title: "Tagihan Baru: {{invoiceTitle}}",
+      message: "Halo, ada tagihan baru untuk ananda {{studentName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
+    },
+    payment_success: {
+      title: "Pembayaran Berhasil: {{invoiceTitle}}",
+      message: "Terima kasih, pembayaran sebesar Rp {{amountPaid}} untuk tagihan {{invoiceTitle}} ananda {{studentName}} telah berhasil kami terima."
+    },
+    wallet_topup: {
+      title: "Top-up Saldo Berhasil",
+      message: "Top-up saldo E-Kantin ananda {{studentName}} sebesar Rp {{amount}} telah berhasil. Saldo saat ini: Rp {{newBalance}}."
+    },
+    attendance_alert: {
+      title: "Info Kehadiran: {{studentName}}",
+      message: "Ananda {{studentName}} tercatat dengan status: {{status}} pada pukul {{time}}."
+    },
+    canteen_transaction: {
+      title: "Transaksi E-Kantin",
+      message: "Info Transaksi: Ananda {{studentName}} baru saja melakukan pembelian di {{merchantName}} sebesar Rp {{amount}}. Sisa saldo dompet saat ini: Rp {{newBalance}}."
+    },
+    discipline_alert: {
+      title: "Pemberitahuan Kedisiplinan Siswa",
+      message: "Bapak/Ibu Wali Murid, menginformasikan bahwa ananda {{studentName}} mendapat catatan terkait: {{violation}} (Poin: {{points}}). Harap hubungi pihak BK {{schoolName}} untuk detail lebih lanjut."
+    },
+    invoice_overdue: {
+      title: "Peringatan Jatuh Tempo: {{invoiceTitle}}",
+      message: "Pemberitahuan dari {{schoolName}}. Tagihan {{invoiceTitle}} ananda {{studentName}} sebesar Rp {{amountDue}} telah/akan jatuh tempo pada {{dueDate}}. Mohon segera lakukan pembayaran."
+    }
+  }
+
+  let titleTemplate = settings[`${templateId}_title`] || defaults[templateId]?.title || "Pemberitahuan"
+  let messageTemplate = settings[`${templateId}_message`] || defaults[templateId]?.message || ""
+
+  const enableEmail = settings[`${templateId}_enable_email`] ?? true
+  const enableWa = settings[`${templateId}_enable_wa`] ?? true
+  const enableApp = settings[`${templateId}_enable_app`] ?? true
+
+  const channels: ("email" | "whatsapp" | "inapp")[] = []
+  if (enableEmail) channels.push("email")
+  if (enableWa) channels.push("whatsapp")
+  if (enableApp) channels.push("inapp")
+
+  if (channels.length === 0 || !targetUserId) return
+
+  // Automatically inject schoolName
+  if (!variables["schoolName"]) {
+    variables["schoolName"] = tenant.name
+  }
+
+  // Replace variables
+  let title = titleTemplate
+  let message = messageTemplate
+  for (const [key, value] of Object.entries(variables)) {
+    const regex = new RegExp(`{{\\s*${key}\\s*}}`, "g")
+    title = title.replace(regex, value)
+    message = message.replace(regex, value)
+  }
+
+  await sendNotification({
+    tenantId,
+    userId: targetUserId,
+    title,
+    message,
+    type: "info",
+    channels
+  })
+}

@@ -89,3 +89,63 @@ export const generateInvoicesJob = inngest.createFunction(
     return result
   }
 )
+
+// 4. Job Cron: Cek Tagihan Jatuh Tempo (Berjalan setiap jam 8 pagi)
+export const checkOverdueInvoicesJob = inngest.createFunction(
+  {
+    id: "check-overdue-invoices",
+    name: "Check Overdue Invoices (Daily)",
+  },
+  { cron: "TZ=Asia/Jakarta 0 8 * * *" }, // Jam 8 Pagi WIB
+  async ({ step }: any) => {
+    // 1. Cari semua invoice yang overdue dan belum lunas
+    const overdueInvoices = await step.run("fetch-overdue-invoices", async () => {
+      const today = new Date()
+      // Kita anggap overdue jika dueDate < besok (artinya hari ini atau kemarin)
+      return await db.invoice.findMany({
+        where: {
+          status: { in: ["UNPAID", "PARTIAL"] },
+          dueDate: { lte: today },
+        },
+        include: {
+          student: {
+            include: { parents: true, tenant: true }
+          }
+        }
+      })
+    })
+
+    if (overdueInvoices.length === 0) return { message: "No overdue invoices found" }
+
+    // 2. Loop & Kirim Notifikasi (dalam batch untuk menghindari timeout, atau panggil inngest function lain)
+    // Di sini kita langsung proses satu per satu via service
+    const { sendTemplateNotification } = await import("@/lib/services/notification")
+    const { format } = await import("date-fns")
+    const { id: localeId } = await import("date-fns/locale")
+
+    let sentCount = 0
+
+    await step.run("send-overdue-notifications", async () => {
+      for (const inv of overdueInvoices) {
+        const parentUserId = inv.student.parents?.[0]?.userId
+        if (parentUserId) {
+          await sendTemplateNotification({
+            tenantId: inv.tenantId,
+            templateId: "invoice_overdue",
+            variables: {
+              studentName: inv.student.name,
+              invoiceTitle: inv.title,
+              amountDue: inv.amountDue.toLocaleString("id-ID"),
+              dueDate: format(new Date(inv.dueDate), "dd MMM yyyy", { locale: localeId }),
+              schoolName: inv.student.tenant?.name || "Sekolah",
+            },
+            targetUserId: parentUserId,
+          })
+          sentCount++
+        }
+      }
+    })
+
+    return { message: `Sent ${sentCount} overdue notifications` }
+  }
+)
