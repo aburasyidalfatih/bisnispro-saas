@@ -41,13 +41,58 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true)
   const limit = 20
 
-  // Templates state
+  // Templates constants
+  const DEFAULT_TEMPLATES = [
+    {
+      id: "invoice_created",
+      name: "Tagihan Baru (SPP)",
+      desc: "Dikirim saat tagihan baru diterbitkan.",
+      variables: ["studentName", "invoiceTitle", "amount", "dueDate", "schoolName"],
+      defaultTitle: "Tagihan Baru: {{invoiceTitle}}",
+      defaultMessage: "Halo, ada tagihan baru untuk ananda {{studentName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
+    },
+    {
+      id: "payment_success",
+      name: "Pembayaran Berhasil",
+      desc: "Dikirim saat pembayaran tagihan berhasil diverifikasi.",
+      variables: ["studentName", "invoiceTitle", "amountPaid", "schoolName"],
+      defaultTitle: "Pembayaran Berhasil: {{invoiceTitle}}",
+      defaultMessage: "Terima kasih, pembayaran sebesar Rp {{amountPaid}} untuk tagihan {{invoiceTitle}} ananda {{studentName}} telah berhasil kami terima."
+    },
+    {
+      id: "wallet_topup",
+      name: "Top-up Saldo E-Kantin",
+      desc: "Dikirim saat saldo tabungan/wallet bertambah.",
+      variables: ["studentName", "amount", "newBalance", "schoolName"],
+      defaultTitle: "Top-up Saldo Berhasil",
+      defaultMessage: "Top-up saldo E-Kantin ananda {{studentName}} sebesar Rp {{amount}} telah berhasil. Saldo saat ini: Rp {{newBalance}}."
+    },
+    {
+      id: "attendance_alert",
+      name: "Notifikasi Kehadiran",
+      desc: "Dikirim saat absensi harian siswa dicatat.",
+      variables: ["studentName", "status", "time", "schoolName"],
+      defaultTitle: "Info Kehadiran: {{studentName}}",
+      defaultMessage: "Ananda {{studentName}} tercatat dengan status: {{status}} pada pukul {{time}}."
+    }
+  ]
+
+  // Initialize form state dynamically
+  const getInitialFormState = (dataSettings: any = {}) => {
+    const state: any = {}
+    DEFAULT_TEMPLATES.forEach(tpl => {
+      state[`${tpl.id}_title`] = dataSettings[`${tpl.id}_title`] || tpl.defaultTitle
+      state[`${tpl.id}_message`] = dataSettings[`${tpl.id}_message`] || tpl.defaultMessage
+      state[`${tpl.id}_enable_email`] = dataSettings[`${tpl.id}_enable_email`] ?? true
+      state[`${tpl.id}_enable_wa`] = dataSettings[`${tpl.id}_enable_wa`] ?? true
+      state[`${tpl.id}_enable_app`] = dataSettings[`${tpl.id}_enable_app`] ?? true
+    })
+    return state
+  }
+
   const [settings, setSettings] = useState<any>({})
   const [savingTemplates, setSavingTemplates] = useState(false)
-  const [templatesForm, setTemplatesForm] = useState({
-    invoice_created_title: "Tagihan Baru: {{invoiceTitle}}",
-    invoice_created_message: "Halo, ada tagihan baru untuk ananda {{studentName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
-  })
+  const [templatesForm, setTemplatesForm] = useState(getInitialFormState())
 
   // Fetch Settings
   useEffect(() => {
@@ -57,10 +102,7 @@ export default function NotificationsPage() {
       .then(data => {
         if (data.settings) {
           setSettings(data.settings)
-          setTemplatesForm({
-            invoice_created_title: data.settings.invoice_created_title || "Tagihan Baru: {{invoiceTitle}}",
-            invoice_created_message: data.settings.invoice_created_message || "Halo, ada tagihan baru untuk ananda {{studentName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
-          })
+          setTemplatesForm(getInitialFormState(data.settings))
         }
       })
       .catch(console.error)
@@ -219,72 +261,89 @@ export default function NotificationsPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="templates" className="m-0 focus-visible:outline-none focus-visible:ring-0">
-          <Card className="glass border-0">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                Template Pesan Tagihan (SPP)
-              </CardTitle>
-              <CardDescription>
-                Sesuaikan isi pesan notifikasi yang akan dikirim melalui Email, WhatsApp, dan Dashboard Orang Tua. 
-                Gunakan variabel <code className="bg-muted px-1 rounded">{"{{...}}"}</code> agar data otomatis terisi.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 space-y-4">
-                  <div className="space-y-2">
-                    <Label className="font-bold text-amber-600">Judul / Subjek Pesan</Label>
-                    <Input 
-                      value={templatesForm.invoice_created_title}
-                      onChange={(e) => setTemplatesForm({...templatesForm, invoice_created_title: e.target.value})}
-                      placeholder="Tagihan Baru: {{invoiceTitle}}"
-                      className="rounded-xl font-mono text-sm"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="font-bold text-blue-600">Isi Pesan Notifikasi</Label>
-                    <Textarea 
-                      value={templatesForm.invoice_created_message}
-                      onChange={(e) => setTemplatesForm({...templatesForm, invoice_created_message: e.target.value})}
-                      placeholder="Halo, ada tagihan baru untuk ananda {{studentName}}..."
-                      className="min-h-[150px] rounded-xl font-mono text-sm"
-                    />
-                  </div>
-                  
-                  <Button 
-                    className="w-full sm:w-auto gap-2 btn-gradient text-white border-0 rounded-xl mt-4" 
-                    onClick={handleSaveTemplates}
-                    disabled={savingTemplates}
-                  >
-                    {savingTemplates ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    {savingTemplates ? "Menyimpan..." : "Simpan Template"}
-                  </Button>
-                </div>
-                
-                <div>
-                  <div className="bg-amber-500/10 border border-amber-500/20 text-amber-800 rounded-2xl p-4 text-sm space-y-3">
-                    <h4 className="font-semibold flex items-center gap-2">
-                      <Info className="h-4 w-4" /> Variabel Dinamis
-                    </h4>
-                    <p className="text-xs text-amber-700/80">
-                      Anda dapat memasukkan variabel berikut ke dalam template. Variabel akan otomatis diganti dengan data siswa.
-                    </p>
-                    <ul className="text-xs space-y-2">
-                      <li><code className="bg-white/50 px-1 rounded font-mono font-bold">{"{{studentName}}"}</code> : Nama Siswa</li>
-                      <li><code className="bg-white/50 px-1 rounded font-mono font-bold">{"{{invoiceTitle}}"}</code> : Judul Tagihan</li>
-                      <li><code className="bg-white/50 px-1 rounded font-mono font-bold">{"{{amount}}"}</code> : Nominal Tagihan (Rp)</li>
-                      <li><code className="bg-white/50 px-1 rounded font-mono font-bold">{"{{dueDate}}"}</code> : Tanggal Jatuh Tempo</li>
-                      <li><code className="bg-white/50 px-1 rounded font-mono font-bold">{"{{schoolName}}"}</code> : Nama Sekolah</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+        <TabsContent value="templates" className="m-0 focus-visible:outline-none focus-visible:ring-0 space-y-6">
+          <div className="flex justify-end">
+            <Button 
+              className="gap-2 btn-gradient text-white border-0 rounded-xl" 
+              onClick={handleSaveTemplates}
+              disabled={savingTemplates}
+            >
+              {savingTemplates ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {savingTemplates ? "Menyimpan..." : "Simpan Semua Template"}
+            </Button>
+          </div>
 
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 gap-6">
+            {DEFAULT_TEMPLATES.map(tpl => (
+              <Card key={tpl.id} className="glass border-0 shadow-sm overflow-hidden border-l-4 border-l-primary">
+                <CardHeader className="bg-muted/20 pb-4 border-b">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-primary" />
+                        {tpl.name}
+                      </CardTitle>
+                      <CardDescription className="mt-1">{tpl.desc}</CardDescription>
+                    </div>
+                    <div className="flex gap-4 p-3 bg-background rounded-xl border">
+                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                        <input type="checkbox" className="rounded text-primary" checked={templatesForm[`${tpl.id}_enable_email`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_email`]: e.target.checked})} />
+                        Email
+                      </label>
+                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                        <input type="checkbox" className="rounded text-emerald-500" checked={templatesForm[`${tpl.id}_enable_wa`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_wa`]: e.target.checked})} />
+                        WhatsApp
+                      </label>
+                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                        <input type="checkbox" className="rounded text-amber-500" checked={templatesForm[`${tpl.id}_enable_app`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_app`]: e.target.checked})} />
+                        App Notif
+                      </label>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 space-y-4">
+                      <div className="space-y-2">
+                        <Label className="font-bold text-slate-700">Judul / Subjek Pesan</Label>
+                        <Input 
+                          value={templatesForm[`${tpl.id}_title`] || ""}
+                          onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_title`]: e.target.value})}
+                          placeholder={tpl.defaultTitle}
+                          className="rounded-xl font-mono text-sm"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="font-bold text-slate-700">Isi Pesan Notifikasi</Label>
+                        <Textarea 
+                          value={templatesForm[`${tpl.id}_message`] || ""}
+                          onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_message`]: e.target.value})}
+                          placeholder={tpl.defaultMessage}
+                          className="min-h-[120px] rounded-xl font-mono text-sm"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="bg-indigo-50 border border-indigo-100 text-indigo-900 rounded-2xl p-4 text-sm space-y-3 h-full">
+                        <h4 className="font-semibold flex items-center gap-2">
+                          <Info className="h-4 w-4" /> Variabel Dinamis
+                        </h4>
+                        <p className="text-xs text-indigo-700/80">
+                          Gunakan format <code className="bg-white/60 px-1 rounded font-bold font-mono">{"{{nama_variabel}}"}</code>
+                        </p>
+                        <ul className="text-xs space-y-2 mt-2">
+                          {tpl.variables.map(v => (
+                            <li key={v}><code className="bg-white/80 px-1.5 py-0.5 rounded font-mono font-bold text-indigo-700">{"{{"}{v}{"}}"}</code></li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
