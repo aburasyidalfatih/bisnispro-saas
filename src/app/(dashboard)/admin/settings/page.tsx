@@ -152,7 +152,7 @@ export default function SettingsGeneralPage() {
   }
 
   // Profile
-  const [profileForm, setProfileForm] = useState({ name: "", phone: "" })
+  const [profileForm, setProfileForm] = useState({ name: "", phone: "", email: "" })
   const [savingProfile, setSavingProfile] = useState(false)
   const [avatarPreview, setAvatarPreview] = useState("")
   const [avatarUrl, setAvatarUrl] = useState("")
@@ -187,7 +187,7 @@ export default function SettingsGeneralPage() {
 
   useEffect(() => {
     if (!session?.user) return
-    setProfileForm({ name: session.user.name || "", phone: (session.user as any).phone || "" })
+    setProfileForm({ name: session.user.name || "", phone: (session.user as any).phone || "", email: session.user.email || "" })
     setAvatarPreview(session.user.image || "")
     setAvatarUrl(session.user.image || "")
   }, [session?.user])
@@ -219,7 +219,7 @@ export default function SettingsGeneralPage() {
     setSavingProfile(true)
     const res = await fetch("/api/user/profile", {
       method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: profileForm.name, phone: profileForm.phone, avatar: avatarUrl || null }),
+      body: JSON.stringify({ name: profileForm.name, phone: profileForm.phone, email: profileForm.email, avatar: avatarUrl || null }),
     })
     setSavingProfile(false)
     if (res.ok) {
@@ -363,8 +363,11 @@ export default function SettingsGeneralPage() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Email</Label>
-              <Input value={session?.user?.email || ""} disabled className="rounded-xl h-9 text-sm opacity-60" />
-              <p className="text-[11px] text-muted-foreground -mt-1">Email tidak dapat diubah</p>
+              <Input value={profileForm.email} onChange={e => setProfileForm(p => ({ ...p, email: e.target.value }))} placeholder="email@contoh.com" className="rounded-xl h-9 text-sm" />
+              <p className="text-[11px] text-muted-foreground -mt-1 flex items-center gap-1">
+                <Info className="h-3 w-3 text-primary" />
+                Gunakan email yang paling sering digunakan. Update rutin terkait SchoolPro akan disampaikan melalui email.
+              </p>
             </div>
             <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveProfile} disabled={savingProfile}>
               {savingProfile ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
