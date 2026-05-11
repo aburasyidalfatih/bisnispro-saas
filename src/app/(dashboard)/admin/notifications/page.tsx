@@ -74,6 +74,46 @@ export default function NotificationsPage() {
       variables: ["studentName", "status", "time", "schoolName"],
       defaultTitle: "Info Kehadiran: {{studentName}}",
       defaultMessage: "Ananda {{studentName}} tercatat dengan status: {{status}} pada pukul {{time}}."
+    },
+    {
+      id: "ppdb_registered",
+      name: "PPDB: Pendaftaran Akun",
+      desc: "Dikirim setelah calon siswa membuat akun pendaftaran.",
+      variables: ["applicantName", "registrationNumber", "schoolName", "loginUrl"],
+      defaultTitle: "Pendaftaran Akun PPDB Berhasil",
+      defaultMessage: "Halo {{applicantName}}, akun pendaftaran PPDB Anda di {{schoolName}} telah dibuat dengan Nomor Registrasi: {{registrationNumber}}. Silakan login di {{loginUrl}} untuk melanjutkan."
+    },
+    {
+      id: "ppdb_form_fee",
+      name: "PPDB: Tagihan Formulir",
+      desc: "Dikirim saat tagihan biaya pendaftaran/formulir dibuat.",
+      variables: ["applicantName", "amount", "dueDate", "schoolName"],
+      defaultTitle: "Tagihan Biaya Formulir PPDB",
+      defaultMessage: "Halo {{applicantName}}, silakan lakukan pembayaran formulir pendaftaran PPDB sebesar Rp {{amount}} sebelum {{dueDate}} agar dapat melanjutkan pengisian data."
+    },
+    {
+      id: "ppdb_document_submitted",
+      name: "PPDB: Berkas Terkirim",
+      desc: "Dikirim saat calon siswa menyelesaikan pengisian biodata dan submit berkas.",
+      variables: ["applicantName", "registrationNumber", "schoolName"],
+      defaultTitle: "Berkas PPDB Berhasil Dikirim",
+      defaultMessage: "Terima kasih {{applicantName}} (No. {{registrationNumber}}). Seluruh berkas pendaftaran Anda telah kami terima dan sedang dalam proses verifikasi oleh panitia {{schoolName}}."
+    },
+    {
+      id: "ppdb_announcement",
+      name: "PPDB: Pengumuman Kelulusan",
+      desc: "Dikirim saat panitia mengumumkan hasil seleksi diterima/ditolak.",
+      variables: ["applicantName", "registrationNumber", "status", "schoolName"],
+      defaultTitle: "Pengumuman Seleksi PPDB",
+      defaultMessage: "Halo {{applicantName}}, hasil seleksi PPDB di {{schoolName}} telah diumumkan. Status Anda: {{status}}. Silakan login ke dashboard untuk melihat detail selengkapnya."
+    },
+    {
+      id: "ppdb_official_student",
+      name: "PPDB: Resmi Menjadi Siswa",
+      desc: "Dikirim saat siswa telah diverifikasi daftar ulang dan resmi diterima di kelas.",
+      variables: ["studentName", "nis", "schoolName"],
+      defaultTitle: "Selamat Bergabung di {{schoolName}}!",
+      defaultMessage: "Selamat! Proses daftar ulang selesai. Ananda {{studentName}} dengan NIS {{nis}} telah terdaftar secara resmi sebagai siswa di {{schoolName}}."
     }
   ]
 
