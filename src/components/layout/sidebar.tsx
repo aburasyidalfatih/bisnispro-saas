@@ -238,6 +238,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
       items: [
         { label: "Notifikasi", href: `${basePath}/notifications`, icon: Bell },
         { label: "Pesan", href: `${basePath}/my-messages`, icon: Mail },
+        { label: "Broadcast WA", href: `${basePath}/broadcast`, icon: Megaphone },
       ],
     },
     {
