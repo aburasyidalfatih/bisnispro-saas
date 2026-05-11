@@ -26,128 +26,140 @@ import { ReferralCapture } from "@/components/shared/referral-capture"
 const featureModules = [
   {
     id: "website",
-    title: "Website Gratis",
+    title: "Website Terintegrasi",
     icon: Globe,
-    description: "Sekolah go-online dalam hitungan menit dengan portal website gratis terintegrasi.",
+    description: "Infrastruktur portal digital sekolah masa depan dengan performa tinggi dan pengelolaan cerdas.",
     features: [
-      { name: "Portal Profil Lembaga Pendidikan", status: "ready" },
-      { name: "Tema Halaman Portal (CMS)", status: "ready" },
-      { name: "Portal Berita & Artikel Terbaru", status: "ready" },
-      { name: "Pusat Informasi & Pengumuman", status: "ready" },
-      { name: "Galeri & Prestasi Sekolah", status: "ready" },
+      { name: "Portal Profil Lembaga Profesional", status: "ready" },
+      { name: "Sistem Manajemen Konten (CMS) Cepat", status: "ready" },
+      { name: "SEO-Optimized untuk Visibilitas Tinggi", status: "ready" },
+      { name: "Pusat Informasi & Pengumuman Dinamis", status: "ready" },
+      { name: "Isolasi Tenant & Domain Terpusat", status: "ready" },
     ],
   },
   {
     id: "ppdb",
-    title: "PPDB Online",
+    title: "PPDB Online Pro",
     icon: Users,
-    description: "Penerimaan peserta didik baru terpusat, mulai dari pendaftaran hingga seleksi.",
+    description: "Sistem otomasi rekrutmen siswa baru dari pendaftaran mandiri hingga konversi siswa aktif.",
     features: [
-      { name: "Portal PPDB Online Mandiri", status: "ready" },
-      { name: "Manajemen Data Pendaftar & Berkas", status: "ready" },
-      { name: "Verifikasi Pendaftar & Persyaratan", status: "ready" },
-      { name: "Tagihan Pendaftaran & Daftar Ulang", status: "ready" },
-      { name: "Sinkronisasi ke Data Master Siswa", status: "coming_soon" },
+      { name: "Portal Pendaftaran & Verifikasi Mandiri", status: "ready" },
+      { name: "Auto-Generate Tagihan Formulir & Daftar Ulang", status: "ready" },
+      { name: "Sistem Kelulusan & Notifikasi Hasil Seleksi", status: "ready" },
+      { name: "Sinkronisasi Langsung ke Data Master Siswa", status: "ready" },
       { name: "Kustomisasi Formulir Pendaftaran", status: "coming_soon" },
     ],
   },
   {
-    id: "data",
-    title: "Data Master",
-    icon: Database,
-    description: "Kelola seluruh data sekolah dengan mudah, terstruktur, dan terpusat.",
-    features: [
-      { name: "Kelola Data Petugas (Admin/Guru/Staf)", status: "ready" },
-      { name: "Kelola Data Siswa, Kelas & Tahun Ajaran", status: "ready" },
-      { name: "Manajemen Akun Hak Akses", status: "ready" },
-      { name: "Proses Kenaikan & Pindah Kelas", status: "ready" },
-      { name: "Ekspor/Impor Data via Excel", status: "ready" },
-    ],
-  },
-  {
     id: "keuangan",
-    title: "Tagihan & Kas",
+    title: "Core Banking Keuangan",
     icon: Wallet,
-    description: "Otomatisasi tagihan siswa dan pembukuan arus kas masuk/keluar.",
+    description: "Ekosistem finansial tingkat lanjut untuk menekan tunggakan dan memantau arus kas real-time.",
     features: [
-      { name: "Pembuatan Tagihan Otomatis (SPP, dll)", status: "ready" },
-      { name: "Pembayaran Online (Payment Gateway)", status: "ready" },
-      { name: "Rekap Transaksi & Arus Kas", status: "ready" },
-      { name: "Pengingat Tagihan via WhatsApp", status: "ready" },
-      { name: "Cetak Nota & Kwitansi PDF", status: "ready" },
+      { name: "Pembuatan Tagihan Otomatis Massal (SPP)", status: "ready" },
+      { name: "Auto-Reminder Jatuh Tempo via WA & Email", status: "ready" },
+      { name: "Pembayaran Online via Payment Gateway", status: "ready" },
+      { name: "Cetak Nota PDF & Rekap Excel Profesional", status: "ready" },
+      { name: "Pembukuan Buku Kas Umum (BKU)", status: "ready" },
     ],
   },
   {
     id: "tabungan",
-    title: "Tabungan",
+    title: "E-Kantin & Tabungan",
     icon: PiggyBank,
-    description: "Digitalisasi tabungan siswa dengan teknologi QR Code untuk E-Kantin.",
+    description: "Digitalisasi ekosistem sekolah tanpa uang tunai (Cashless) berbasis QR Code pintar.",
     features: [
-      { name: "Transaksi Setoran & Penarikan Saldo", status: "ready" },
-      { name: "Log Aktivitas Transaksi Tabungan", status: "ready" },
-      { name: "Rekap & Cetak Laporan Saldo", status: "coming_soon" },
-      { name: "Cetak Kode QR Tabungan (E-Kantin)", status: "coming_soon" },
+      { name: "Dompet Digital (Wallet) per Siswa", status: "ready" },
+      { name: "Limit Belanja Harian & Verifikasi PIN", status: "ready" },
+      { name: "Transaksi Canteen via QR Code Scanner", status: "ready" },
+      { name: "Notifikasi Instan Saldo Terpotong", status: "ready" },
+      { name: "Cetak ID Card Barcode Cerdas", status: "coming_soon" },
+    ],
+  },
+  {
+    id: "enterprise",
+    title: "Arsitektur Enterprise",
+    icon: Zap,
+    description: "Dibangun dengan fondasi teknologi level korporasi yang tahan banting untuk puluhan ribu sekolah.",
+    features: [
+      { name: "Inngest Queue untuk Background Tasks", status: "ready" },
+      { name: "Isolasi Kredensial (Bring Your Own SMTP/WA)", status: "ready" },
+      { name: "Pengiriman Notifikasi Asynchronous Massal", status: "ready" },
+      { name: "Isolasi Database & Proteksi Data Anti-Bocor", status: "ready" },
+      { name: "Export/Import Massal Ribuan Data via Excel", status: "ready" },
     ],
   },
   {
     id: "portal",
-    title: "Portal Wali",
+    title: "Akses Multi-Portal",
     icon: MonitorSmartphone,
-    description: "Transparansi untuk orang tua siswa dan kemudahan cetak laporan untuk petugas.",
+    description: "Ekosistem terhubung untuk transparansi total antara pengurus yayasan, staf, dan orang tua.",
     features: [
-      { name: "Dasbor Wali/Siswa (Tagihan & Saldo)", status: "ready" },
-      { name: "Notifikasi Otomatis (WhatsApp/Email)", status: "ready" },
-      { name: "Dasbor Monitoring Terpadu", status: "ready" },
-      { name: "Cetak Laporan Tagihan & Transaksi", status: "coming_soon" },
+      { name: "Dasbor Wali (Pantau SPP & Tabungan)", status: "ready" },
+      { name: "Notifikasi Real-time WA, Email & In-App", status: "ready" },
+      { name: "Hak Akses & Role-Based Control (RBAC)", status: "ready" },
+      { name: "Manajemen Catatan Kedisiplinan Siswa", status: "ready" },
+    ],
+  },
+  {
+    id: "data",
+    title: "Big Data & Keamanan",
+    icon: Database,
+    description: "Pusat komando data institusi Anda dengan sistem proteksi ketat dan migrasi mulus.",
+    features: [
+      { name: "Kelola Ribuan Data Petugas & Siswa", status: "ready" },
+      { name: "Proses Kenaikan Kelas Massal 1-Klik", status: "ready" },
+      { name: "Log Aktivitas (Audit Trail) Keamanan", status: "ready" },
+      { name: "Ekspor/Impor Data via Excel", status: "ready" },
     ],
   },
   {
     id: "ai",
-    title: "AI Assistant",
+    title: "AI & Analisis Prediktif",
     icon: Bot,
-    description: "Asisten AI untuk menganalisis data, merangkum laporan, dan menjawab pertanyaan.",
+    description: "Asisten kecerdasan buatan untuk membantu pengambilan keputusan strategis manajemen.",
     features: [
-      { name: "Isolasi Privasi Data per Tenant", status: "ready" },
-      { name: "Tanya Jawab Status Keuangan", status: "coming_soon" },
-      { name: "Analisis Perkembangan Nilai Siswa", status: "coming_soon" },
-      { name: "Ringkasan Absensi Guru & Staf", status: "coming_soon" },
-      { name: "Generator Draf Pesan & Pengumuman", status: "coming_soon" },
+      { name: "Chatbot Analis Status Keuangan", status: "coming_soon" },
+      { name: "Prediksi Penurunan Nilai Akademik", status: "coming_soon" },
+      { name: "Generator Draf Surat Resmi", status: "coming_soon" },
+      { name: "Natural Language Database Query", status: "coming_soon" },
     ],
   },
 ]
 
 const plans = [
   {
-    name: "Gratis",
+    name: "Starter",
     price: "Rp 0",
     period: "selamanya",
-    description: "Untuk sekolah yang baru ingin go-online",
-    features: ["Website Sekolah Gratis", "Akses CMS Terbatas", "Notifikasi In-App", "Dukungan Komunitas"],
+    description: "Untuk sekolah yang baru memulai digitalisasi",
+    features: ["Portal Website Terintegrasi", "Akses Data Master Dasar", "Notifikasi In-App", "Dukungan Komunitas"],
   },
   {
     name: "Pro",
     price: "Rp 149.000",
     period: "/bulan",
     popular: true,
-    description: "Solusi lengkap untuk administrasi & tagihan",
+    description: "Sistem operasional lengkap untuk otomasi tagihan",
     features: [
-      "Website Sekolah & CMS Lengkap",
-      "Modul PPDB & Data Master",
-      "Tagihan Otomatis & Kas",
-      "Notifikasi WhatsApp & Email",
-      "Export Laporan Excel & PDF",
+      "PPDB Online & Sinkronisasi Data",
+      "Core Banking Keuangan & Kas",
+      "Auto-Reminder WhatsApp & Email",
+      "Akses Multi-Portal (Orang Tua & Guru)",
+      "Log Aktivitas & Audit Trail",
     ],
   },
   {
     name: "Enterprise",
     price: "Custom",
     period: "/bulan",
-    description: "Skala besar dengan kebutuhan khusus",
+    description: "Arsitektur khusus untuk yayasan skala besar",
     features: [
       "Domain Sekolah Kustom (.sch.id)",
-      "Modul Tabungan E-Kantin",
+      "Ekosistem Tabungan & E-Kantin",
+      "Bring Your Own SMTP & WA API",
+      "Dedicated Background Queue",
       "Prioritas Bantuan (Dedicated Support)",
-      "Setup Data Awal Gratis",
     ],
   },
 ]
@@ -218,12 +230,12 @@ export default async function LandingPage() {
 
             {/* Hero Title — smaller base size for mobile */}
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15]">
-              Transformasi <span className="text-gradient">Digital</span> Sekolah Anda
+              Core Banking & ERP <span className="text-gradient">Digital</span> Pendidikan
             </h1>
 
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
-              Sistem informasi terpadu tanpa biaya setup.{" "}
-              Kelola administrasi, tagihan otomatis, PPDB online, hingga ekosistem E-Kantin cerdas dalam satu platform.
+              Sistem operasi institusi pendidikan berstandar Enterprise.{" "}
+              Otomatisasi tagihan massal, ekosistem Cashless E-Kantin, hingga background worker untuk notifikasi cerdas dalam satu platform.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
