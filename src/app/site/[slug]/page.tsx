@@ -60,14 +60,21 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   )
 
   // Build stats from tenant data
-  const staffCount = tenant.staff?.length || 0
-  const programCount = tenant.programs?.length || 0
-  const establishedYear = (tenant.settings as any)?.establishedYear || new Date(tenant.createdAt).getFullYear()
+  const staffCount = tenant._count?.staff || tenant.staff?.length || 0
+  const programCount = tenant._count?.programs || tenant.programs?.length || 0
+  const achievementCount = tenant._count?.achievements || tenant.achievements?.length || 0
+  
+  let establishedYear = new Date().getFullYear()
+  if ((tenant.settings as any)?.establishedYear) {
+    establishedYear = parseInt((tenant.settings as any).establishedYear, 10)
+  } else if (tenant.createdAt) {
+    establishedYear = new Date(tenant.createdAt).getFullYear()
+  }
 
   const stats = [
-    { value: staffCount > 0 ? `${staffCount}+` : "20+", label: "Tenaga Pendidik", icon: "users" },
-    { value: programCount > 0 ? `${programCount}` : "6+", label: "Program Keahlian", icon: "book" },
-    { value: tenant.achievements?.length ? `${tenant.achievements.length}+` : "50+", label: "Prestasi Diraih", icon: "award" },
+    { value: staffCount > 0 ? `${staffCount}+` : "0", label: "Tenaga Pendidik", icon: "users" },
+    { value: programCount > 0 ? `${programCount}` : "0", label: "Program Keahlian", icon: "book" },
+    { value: achievementCount > 0 ? `${achievementCount}+` : "0", label: "Prestasi Diraih", icon: "award" },
     { value: `${establishedYear}`, label: "Tahun Berdiri", icon: "clock" },
   ]
 

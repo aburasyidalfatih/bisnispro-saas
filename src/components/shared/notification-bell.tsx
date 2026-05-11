@@ -111,7 +111,7 @@ export function NotificationBell() {
         </div>
         
         <DropdownMenuSeparator className="m-0" />
-        <Link href={pathname.startsWith("/super-admin") ? "/super-admin/notifications" : "/dashboard/notifications"} onClick={() => setIsOpen(false)}>
+        <Link href={pathname.startsWith("/super-admin") ? "/super-admin/notifications" : "/admin/notifications"} onClick={() => setIsOpen(false)}>
           <div className="p-2 text-center text-xs font-medium text-primary hover:bg-muted/50 transition-colors cursor-pointer rounded-b-xl">
             Lihat Semua Notifikasi
           </div>

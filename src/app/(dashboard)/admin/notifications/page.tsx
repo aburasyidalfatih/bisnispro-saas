@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback, useOptimistic } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ServerPagination } from "@/components/shared/server-pagination"
@@ -45,38 +45,39 @@ export default function NotificationsPage() {
 
   useEffect(() => { fetchNotifs() }, [fetchNotifs])
 
-  // Optimistic UI — mark as read instantly, sync in background
-  const [optimisticNotifs, setOptimisticNotif] = useOptimistic(
-    notifs,
-    (state: NotifRow[], action: { type: "read" | "readAll"; id?: string }) => {
-      if (action.type === "readAll") return state.map((n) => ({ ...n, isRead: true }))
-      return state.map((n) => n.id === action.id ? { ...n, isRead: true } : n)
-    }
-  )
-
   const markAllRead = async () => {
-    setOptimisticNotif({ type: "readAll" })
-    await fetch("/api/tenant/notifications", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ all: true }),
-    })
+    // Optimistic: update UI immediately
     setNotifs((prev) => prev.map((n) => ({ ...n, isRead: true })))
-    toast({ title: "Semua notifikasi ditandai dibaca" })
+    try {
+      await fetch("/api/tenant/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true }),
+      })
+      toast({ title: "Semua notifikasi ditandai dibaca" })
+    } catch {
+      // Rollback on failure
+      fetchNotifs()
+      toast({ title: "Gagal menandai notifikasi", variant: "destructive" })
+    }
   }
 
   const markRead = async (id: string) => {
-    setOptimisticNotif({ type: "read", id })
-    await fetch("/api/tenant/notifications", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    })
+    // Optimistic: update UI immediately
     setNotifs((prev) => prev.map((n) => n.id === id ? { ...n, isRead: true } : n))
+    try {
+      await fetch("/api/tenant/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      })
+    } catch {
+      fetchNotifs()
+    }
   }
 
   const totalPages = Math.ceil(total / limit)
-  const unreadCount = optimisticNotifs.filter((n) => !n.isRead).length
+  const unreadCount = notifs.filter((n) => !n.isRead).length
 
   return (
     <div className="space-y-6">
@@ -107,7 +108,7 @@ export default function NotificationsPage() {
           </div>
         ) : (
           <div className="divide-y">
-            {optimisticNotifs.map((n) => {
+            {notifs.map((n) => {
               const typeInfo = typeIcons[n.type] || typeIcons.info
               const Icon = typeInfo.icon
               return (
@@ -143,3 +144,4 @@ export default function NotificationsPage() {
     </div>
   )
 }
+
