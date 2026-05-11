@@ -137,12 +137,8 @@ export function StudentCardGenerator({ students }: { students: any[] }) {
                   </p>
                 </div>
                 <div className="relative z-10 bg-white p-1.5 rounded-xl shadow-lg transform -rotate-2">
-                  {/* Generate QR based on NISN or NIS */}
-                  {activeStudent.nisn || activeStudent.nis ? (
-                    <QRCode value={activeStudent.nisn || activeStudent.nis || ""} size={64} level="H" />
-                  ) : (
-                    <QrIcon className="w-16 h-16 text-slate-300" />
-                  )}
+                  {/* Generate QR based on student.id (Primary Key) */}
+                  <QRCode value={activeStudent.id} size={64} level="H" />
                 </div>
               </div>
 
