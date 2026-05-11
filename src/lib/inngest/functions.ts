@@ -126,26 +126,65 @@ export const checkOverdueInvoicesJob = inngest.createFunction(
     let sentCount = 0
 
     await step.run("send-overdue-notifications", async () => {
+      const events: any[] = []
+      
       for (const inv of overdueInvoices) {
         const parentUserId = inv.student.parents?.[0]?.userId
         if (parentUserId) {
-          await sendTemplateNotification({
-            tenantId: inv.tenantId,
-            templateId: "invoice_overdue",
-            variables: {
-              studentName: inv.student.name,
-              invoiceTitle: inv.title,
-              amountDue: inv.amountDue.toLocaleString("id-ID"),
-              dueDate: format(new Date(inv.dueDate), "dd MMM yyyy", { locale: localeId }),
-              schoolName: inv.student.tenant?.name || "Sekolah",
-            },
-            targetUserId: parentUserId,
+          events.push({
+            name: "tenant/notification.send",
+            data: {
+              tenantId: inv.tenantId,
+              templateId: "invoice_overdue",
+              variables: {
+                studentName: inv.student.name,
+                invoiceTitle: inv.title,
+                amountDue: inv.amountDue.toLocaleString("id-ID"),
+                dueDate: format(new Date(inv.dueDate), "dd MMM yyyy", { locale: localeId }),
+                schoolName: inv.student.tenant?.name || "Sekolah",
+              },
+              targetUserId: parentUserId,
+            }
           })
           sentCount++
         }
       }
+
+      // Batch send to Inngest queue (Max 1000 per request recommended, but Inngest handles chunking)
+      if (events.length > 0) {
+        const { inngest } = await import("@/lib/inngest/client")
+        // Chunk array to 500 per batch to be safe against HTTP payload limits
+        const chunkSize = 500
+        for (let i = 0; i < events.length; i += chunkSize) {
+          const chunk = events.slice(i, i + chunkSize)
+          await inngest.send(chunk)
+        }
+      }
     })
 
-    return { message: `Sent ${sentCount} overdue notifications` }
+    return { message: `Enqueued ${sentCount} overdue notifications to queue` }
+  }
+)
+
+// 5. Job Async: Kirim Notifikasi Template
+export const sendTemplateNotificationJob = inngest.createFunction(
+  {
+    id: "send-template-notification-job",
+    name: "Send Template Notification Async",
+    triggers: [{ event: "tenant/notification.send" }],
+    concurrency: {
+      limit: 10, // Maksimal 10 notifikasi berjalan bersamaan untuk mencegah rate limit SMTP/WA
+    }
+  },
+  async ({ event, step }: any) => {
+    const payload = event.data
+
+    const result = await step.run("process-notification", async () => {
+      const { processTemplateNotification } = await import("@/lib/services/notification")
+      await processTemplateNotification(payload)
+      return { success: true }
+    })
+
+    return result
   }
 )
