@@ -32,6 +32,7 @@ interface TenantRow {
   isActive: boolean
   createdAt: string
   studentQuota: number
+  aiTokens: number
   userCount: number
   owner: { name: string; email: string; phone: string | null } | null
 }
@@ -58,6 +59,7 @@ export default function TenantsPage() {
     domain: "",
     plan: "free",
     studentQuota: 0,
+    aiTokens: 0,
     isActive: true
   })
 
@@ -102,6 +104,7 @@ export default function TenantsPage() {
       domain: tenant.domain || "",
       plan: tenant.plan,
       studentQuota: tenant.studentQuota || 0,
+      aiTokens: tenant.aiTokens || 0,
       isActive: tenant.isActive
     })
     setEditModalOpen(true)
@@ -387,6 +390,11 @@ export default function TenantsPage() {
                 <Label>Kuota Siswa</Label>
                 <Input type="number" value={editForm.studentQuota} onChange={(e) => setEditForm({...editForm, studentQuota: Number(e.target.value)})} className="rounded-xl" />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Kuota Token AI</Label>
+              <Input type="number" value={editForm.aiTokens} onChange={(e) => setEditForm({...editForm, aiTokens: Number(e.target.value)})} className="rounded-xl" />
+              <p className="text-[10px] text-muted-foreground">Isi manual untuk memberikan kuota token AI gratis/bonus (misal: 1000).</p>
             </div>
             <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border">
               <div className="space-y-0.5">

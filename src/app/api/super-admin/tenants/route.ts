@@ -52,6 +52,7 @@ export async function GET(req: Request) {
     isActive: t.isActive,
     createdAt: t.createdAt,
     studentQuota: t.studentQuota,
+    aiTokens: t.aiTokens,
     userCount: t._count.users,
     owner: t.users[0]?.user || null,
   }))
@@ -80,7 +81,7 @@ export async function PUT(req: Request) {
   }
 
   const body = await req.json()
-  const { id, name, slug, domain, plan, isActive, studentQuota } = body
+  const { id, name, slug, domain, plan, isActive, studentQuota, aiTokens } = body
 
   if (!id) return NextResponse.json({ error: "ID Tenant diperlukan" }, { status: 400 })
 
@@ -93,7 +94,8 @@ export async function PUT(req: Request) {
         domain: domain || null,
         plan,
         isActive,
-        studentQuota: Number(studentQuota || 0)
+        studentQuota: Number(studentQuota || 0),
+        aiTokens: Number(aiTokens || 0)
       }
     })
 
