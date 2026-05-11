@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import nodemailer from "nodemailer"
 import { logger } from "@/lib/logger"
+import { inngest } from "@/lib/inngest/client"
 
 // ==================== EMAIL ====================
 
@@ -351,7 +352,7 @@ export async function notifyTenantAdmins(tenantId: string, params: {
   }
 }
 
-export async function sendTemplateNotification({
+export async function processTemplateNotification({
   tenantId,
   templateId,
   variables,
@@ -437,5 +438,19 @@ export async function sendTemplateNotification({
     message,
     type: "info",
     channels
+  })
+}
+
+export async function sendTemplateNotification(payload: {
+  tenantId: string
+  templateId: string
+  variables: Record<string, string>
+  targetUserId?: string
+}) {
+  if (!payload.targetUserId) return
+  // Offload to Inngest Background Queue
+  await inngest.send({
+    name: "tenant/notification.send",
+    data: payload
   })
 }

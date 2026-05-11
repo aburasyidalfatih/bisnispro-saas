@@ -1,6 +1,6 @@
 import { serve } from "inngest/next"
 import { inngest } from "@/lib/inngest/client"
-import { importStudentsJob, importUsersJob, generateInvoicesJob, checkOverdueInvoicesJob } from "@/lib/inngest/functions"
+import { importStudentsJob, importUsersJob, generateInvoicesJob, checkOverdueInvoicesJob, sendTemplateNotificationJob } from "@/lib/inngest/functions"
 
 // Serve the Inngest functions as an API route
 export const { GET, POST, PUT } = serve({
@@ -10,5 +10,6 @@ export const { GET, POST, PUT } = serve({
     importUsersJob,
     generateInvoicesJob,
     checkOverdueInvoicesJob,
+    sendTemplateNotificationJob,
   ],
 })

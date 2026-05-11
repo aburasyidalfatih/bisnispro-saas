@@ -95,8 +95,8 @@ export const checkOverdueInvoicesJob = inngest.createFunction(
   {
     id: "check-overdue-invoices",
     name: "Check Overdue Invoices (Daily)",
+    triggers: [{ cron: "TZ=Asia/Jakarta 0 8 * * *" }]
   },
-  { cron: "TZ=Asia/Jakarta 0 8 * * *" }, // Jam 8 Pagi WIB
   async ({ step }: any) => {
     // 1. Cari semua invoice yang overdue dan belum lunas
     const overdueInvoices = await step.run("fetch-overdue-invoices", async () => {
