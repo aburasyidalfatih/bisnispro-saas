@@ -9,13 +9,25 @@ import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
+  const type = url.searchParams.get("type")
+
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
 
   const { session, error } = await requireTenantMembership(tenantId)
   if (error) return error
 
+  const whereClause: any = { tenantId }
+  
+  if (type) {
+    if (type === "PENGUMUMAN") {
+      whereClause.type = { startsWith: "PENGUMUMAN" }
+    } else {
+      whereClause.type = type
+    }
+  }
+
   const posts = await db.post.findMany({
-    where: { tenantId },
+    where: whereClause,
     orderBy: { createdAt: 'desc' },
     include: {
       author: {

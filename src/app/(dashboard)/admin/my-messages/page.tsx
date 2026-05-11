@@ -10,6 +10,10 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Plus } from "lucide-react"
 
 interface Message {
   id: string
@@ -37,7 +41,12 @@ export default function AdminMessagesPage() {
   const { branding } = useTenantBranding()
   const tenantId = branding.id
 
-  const [activeTab, setActiveTab] = useState<"internal" | "website" | "pengumuman">("internal")
+  const [activeTab, setActiveTab] = useState<"internal" | "website" | "pengumuman">("pengumuman")
+  
+  // Pengumuman Form State
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addForm, setAddForm] = useState({ title: "", content: "", target: "PENGUMUMAN_SEMUA" })
+  const [submittingAnnounce, setSubmittingAnnounce] = useState(false)
   
   // Internal Messages State
   const [messages, setMessages] = useState<Message[]>([])
@@ -90,12 +99,38 @@ export default function AdminMessagesPage() {
            return r.json()
         })
         .then(d => {
-          setAnnouncements(d.data || [])
+          setAnnouncements(d.data || d || [])
           setLoadingAnnouncements(false)
         })
         .catch(() => setLoadingAnnouncements(false))
     }
   }, [tenantId, activeTab])
+
+  const submitAnnouncement = async () => {
+    if (!addForm.title || !addForm.content) return toast({ title: "Judul dan isi wajib diisi", variant: "destructive" })
+    setSubmittingAnnounce(true)
+    try {
+      const slug = addForm.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") + "-" + Date.now();
+      const res = await fetch("/api/tenant/posts", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tenantId, title: addForm.title, slug, content: addForm.content,
+          type: addForm.target, status: "PUBLISHED"
+        })
+      })
+      if (!res.ok) throw new Error("Gagal membuat pengumuman")
+      toast({ title: "Berhasil", description: "Pengumuman berhasil diterbitkan." })
+      setShowAddModal(false)
+      setAddForm({ title: "", content: "", target: "PENGUMUMAN_SEMUA" })
+      setLoadingAnnouncements(true)
+      const d = await fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN`).then(r => r.json())
+      setAnnouncements(d.data || d || [])
+    } catch (error: any) {
+      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+    } finally {
+      setSubmittingAnnounce(false)
+    }
+  }
 
   // Website Messages Actions
   const markRead = async (id: string) => {
@@ -139,6 +174,12 @@ export default function AdminMessagesPage() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-1 rounded-xl border p-1 w-fit">
+        <button onClick={() => setActiveTab("pengumuman")}
+          className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
+            activeTab === "pengumuman" ? "bg-primary text-white" : "hover:bg-muted")}>
+          <MessageSquare className="h-4 w-4" />
+          Pengumuman
+        </button>
         <button onClick={() => setActiveTab("internal")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
             activeTab === "internal" ? "bg-primary text-white" : "hover:bg-muted")}>
@@ -156,12 +197,6 @@ export default function AdminMessagesPage() {
               {unread}
             </span>
           )}
-        </button>
-        <button onClick={() => setActiveTab("pengumuman")}
-          className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
-            activeTab === "pengumuman" ? "bg-primary text-white" : "hover:bg-muted")}>
-          <MessageSquare className="h-4 w-4" />
-          Pengumuman
         </button>
       </div>
 
@@ -337,10 +372,56 @@ export default function AdminMessagesPage() {
                 <div>
                   <CardTitle className="text-lg">Papan Pengumuman</CardTitle>
                   <CardDescription>
-                    Pesan siaran untuk dibaca oleh seluruh civitas akademika
+                    Pesan siaran untuk dibaca oleh target civitas akademika
                   </CardDescription>
                 </div>
               </div>
+              <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="gap-2 rounded-xl">
+                    <Plus className="h-4 w-4" /> Tambah Pengumuman
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Tambah Pengumuman Baru</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label>Tujuan Pengumuman</Label>
+                      <select 
+                        value={addForm.target} 
+                        onChange={e => setAddForm(p => ({...p, target: e.target.value}))}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <option value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</option>
+                        <option value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</option>
+                        <option value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</option>
+                        <option value="PENGUMUMAN_SISWA">Khusus Siswa</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Judul Pengumuman</Label>
+                      <Input value={addForm.title} onChange={e => setAddForm(p => ({...p, title: e.target.value}))} placeholder="Contoh: Libur Nasional..." />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Isi Pengumuman</Label>
+                      <textarea 
+                        value={addForm.content} 
+                        onChange={e => setAddForm(p => ({...p, content: e.target.value}))}
+                        className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        placeholder="Tulis detail pengumuman..."
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowAddModal(false)}>Batal</Button>
+                    <Button onClick={submitAnnouncement} disabled={submittingAnnounce}>
+                      {submittingAnnounce ? "Menyimpan..." : "Terbitkan"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardHeader>
           <CardContent>
@@ -360,16 +441,21 @@ export default function AdminMessagesPage() {
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                          A
+                          {post.author?.name?.charAt(0) || "A"}
                         </div>
                         <div>
-                          <p className="font-semibold text-sm">Admin Sekolah</p>
+                          <p className="font-semibold text-sm">{post.author?.name || "Admin Sekolah"}</p>
                           <p className="text-[11px] text-muted-foreground">
                             {format(new Date(post.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
                           </p>
                         </div>
                       </div>
-                      <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">PENGUMUMAN</span>
+                      <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                        {post.type === "PENGUMUMAN_SEMUA" ? "TARGET: SEMUA" :
+                         post.type === "PENGUMUMAN_GTK" ? "TARGET: GTK" :
+                         post.type === "PENGUMUMAN_ORTU" ? "TARGET: ORANGTUA" :
+                         post.type === "PENGUMUMAN_SISWA" ? "TARGET: SISWA" : "PENGUMUMAN"}
+                      </span>
                     </div>
                     <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
                     <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
