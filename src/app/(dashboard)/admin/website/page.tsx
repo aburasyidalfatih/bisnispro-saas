@@ -9,7 +9,7 @@ import {
   Briefcase, Info, LayoutTemplate, ArrowRight, Eye,
   CheckCircle, AlertCircle, ShieldCheck, ShieldOff, Download,
   Building2, Award, GraduationCap, Activity, Megaphone, BookOpen,
-  BarChart3, MessageSquare
+  BarChart3, MessageSquare, SlidersHorizontal, Handshake, CalendarDays
 } from "lucide-react"
 import { cn, getRootDomain } from "@/lib/utils"
 import Link from "next/link"
@@ -42,6 +42,9 @@ interface WebsiteData {
     extracurriculars: number
     programs: number
     popups: number
+    sliders: number
+    events: number
+    partnerships: number
     contactSubmissions: number
   }
 }
@@ -158,13 +161,6 @@ export default function WebsiteOverviewPage() {
       href: `${base}/documents`,
     },
     {
-      label: "Kontak",
-      value: data?.phone || data?.email ? "Lengkap" : "Belum diisi",
-      icon: <Phone className="h-5 w-5" />,
-      status: data?.phone || data?.email ? "ok" : "empty",
-      href: `${base}/contact`,
-    },
-    {
       label: "Fasilitas",
       value: data?._count?.facilities ? `${data._count.facilities} fasilitas` : "Belum ada",
       icon: <Building2 className="h-5 w-5" />,
@@ -212,6 +208,27 @@ export default function WebsiteOverviewPage() {
       icon: <Megaphone className="h-5 w-5" />,
       status: data?._count?.popups && data._count.popups > 0 ? "ok" : "empty",
       href: `${base}/popups`,
+    },
+    {
+      label: "Hero Slider",
+      value: data?._count?.sliders ? `${data._count.sliders} slide` : "Belum ada",
+      icon: <SlidersHorizontal className="h-5 w-5" />,
+      status: getColStatus(data?._count?.sliders),
+      href: `${base}/sliders`,
+    },
+    {
+      label: "Mitra Kerjasama",
+      value: data?._count?.partnerships ? `${data._count.partnerships} mitra` : "Belum ada",
+      icon: <Handshake className="h-5 w-5" />,
+      status: getColStatus(data?._count?.partnerships),
+      href: `${base}/partners`,
+    },
+    {
+      label: "Agenda Kegiatan",
+      value: data?._count?.events ? `${data._count.events} agenda` : "Belum ada",
+      icon: <CalendarDays className="h-5 w-5" />,
+      status: getColStatus(data?._count?.events),
+      href: `${base}/events`,
     },
   ]
 

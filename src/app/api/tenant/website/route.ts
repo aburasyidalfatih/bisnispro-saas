@@ -64,6 +64,9 @@ export async function GET(req: Request) {
           extracurriculars: true,
           programs: true,
           popups: true,
+          sliders: true,
+          events: true,
+          partnerships: true,
           contactSubmissions: {
             where: { isRead: false }
           },
