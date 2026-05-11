@@ -7,9 +7,14 @@ export async function GET(req: Request) {
   
   const tenantId = session?.user?.tenants?.[0]?.tenantId
   const role = session?.user?.tenants?.[0]?.role
+  const plan = (session?.user as any)?.tenants?.[0]?.plan || "free"
   
   if (!tenantId || (role !== "owner" && role !== "admin")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  if (plan === "free") {
+    return NextResponse.json({ error: "Fitur Broadcast WhatsApp hanya tersedia untuk paket Premium/Pro." }, { status: 403 })
   }
 
   try {

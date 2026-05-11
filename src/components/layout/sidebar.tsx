@@ -296,6 +296,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
       // Aktivitas & Pesan
       if (section.title === "Aktivitas & Pesan") {
         section.items = section.items.filter(item => {
+          if (item.label === "Broadcast WA") return false; // Fitur PRO saja
           return true;
         });
       }

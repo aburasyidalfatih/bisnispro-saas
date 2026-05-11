@@ -97,6 +97,25 @@ export default function BroadcastPage() {
   const tenantRole = session?.user?.tenants?.[0]?.role
   if (tenantRole !== "owner" && tenantRole !== "admin") return null
 
+  // Batasi akses hanya untuk pengguna berbayar (Premium/Pro)
+  const tenantPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
+  if (tenantPlan === "free") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
+        <div className="p-4 bg-primary/10 rounded-full text-primary">
+          <Megaphone className="h-12 w-12" />
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight">Fitur Premium</h2>
+        <p className="text-muted-foreground max-w-md">
+          Fitur Broadcast WhatsApp hanya tersedia untuk pelanggan paket Premium atau Pro. Silakan tingkatkan paket langganan Anda untuk menikmati fitur ini.
+        </p>
+        <Button asChild className="mt-4 btn-gradient text-white border-0">
+          <a href="/admin/billing">Upgrade Paket Sekarang</a>
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
