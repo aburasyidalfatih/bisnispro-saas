@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
-import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins } from "lucide-react"
+import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins, History, User } from "lucide-react"
 
 export default function AiSettingsPage() {
   const { data: session } = useSession()
@@ -23,6 +23,9 @@ export default function AiSettingsPage() {
     customOpenAiKey: "",
     aiTokens: 0,
   })
+
+  const [logs, setLogs] = useState<any[]>([])
+  const [logsLoading, setLogsLoading] = useState(true)
 
   // Resolve tenantId
   useEffect(() => {
@@ -51,6 +54,14 @@ export default function AiSettingsPage() {
         toast({ title: "Error", description: "Gagal memuat pengaturan AI", variant: "destructive" })
         setLoading(false)
       })
+      
+    fetch(`/api/tenant/ai-settings/logs?limit=20`)
+      .then(res => res.json())
+      .then(data => {
+        setLogs(data.data || [])
+        setLogsLoading(false)
+      })
+      .catch(() => setLogsLoading(false))
   }, [tenantId])
 
   const handleSave = async () => {
@@ -180,6 +191,64 @@ export default function AiSettingsPage() {
             {saving ? "Menyimpan..." : "Simpan Pengaturan"}
           </Button>
         </CardFooter>
+      </Card>
+
+      <Card className="glass">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <History className="h-5 w-5 text-primary" />
+            Riwayat Penggunaan AI
+          </CardTitle>
+          <CardDescription>Catatan aktivitas penggunaan fitur AI oleh guru dan staf.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-xl border overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50 border-b">
+                <tr>
+                  <th className="text-left font-medium p-3 text-muted-foreground">Waktu</th>
+                  <th className="text-left font-medium p-3 text-muted-foreground">Pengguna</th>
+                  <th className="text-left font-medium p-3 text-muted-foreground">Fitur</th>
+                  <th className="text-right font-medium p-3 text-muted-foreground">Token Digunakan</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {logsLoading ? (
+                  <tr><td colSpan={4} className="p-4 text-center text-muted-foreground">Memuat data...</td></tr>
+                ) : logs.length === 0 ? (
+                  <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic">Belum ada riwayat penggunaan AI.</td></tr>
+                ) : (
+                  logs.map((log) => (
+                    <tr key={log.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="p-3 whitespace-nowrap">
+                        {new Date(log.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                      <td className="p-3">
+                        <div className="flex items-center gap-2">
+                          <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
+                            <User className="h-3 w-3 text-primary" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{log.user?.name || "Unknown"}</span>
+                            <span className="text-[10px] text-muted-foreground">{log.user?.email}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                          {log.feature}
+                        </span>
+                      </td>
+                      <td className="p-3 text-right font-mono font-medium text-primary">
+                        {log.tokens.toLocaleString('id-ID')}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
       </Card>
     </div>
   )
