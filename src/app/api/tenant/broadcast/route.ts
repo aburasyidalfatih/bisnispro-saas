@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { sendWhatsApp } from "@/lib/services/notification"
+import { sendWhatsApp, getWaConfig } from "@/lib/services/notification"
 import { logger } from "@/lib/logger"
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { target, channel, message, delaySeconds } = body
+    const { target, channel, message } = body
 
     if (!message) {
       return NextResponse.json({ error: "Pesan wajib diisi" }, { status: 400 })
@@ -61,8 +61,10 @@ export async function POST(req: Request) {
       recipients.map(r => [r.phone, r])
     ).values())
 
-    // 2. Background Processing
-    const delayMs = (delaySeconds || 5) * 1000
+    // 2. Ambil config WA dari tenant untuk mendapatkan delay yang diset admin
+    const waConfig = await getWaConfig(tenantId)
+    const delayMin = waConfig.delayMin || 3
+    const delayMax = waConfig.delayMax || 5
 
     const processBroadcast = async () => {
       logger.info(`Starting tenant broadcast to ${uniqueRecipients.length} recipients`, { target, channel, tenantId })
@@ -77,12 +79,23 @@ export async function POST(req: Request) {
             .replace(/{{phone}}/g, recipient.phone || "")
 
           if (recipient.phone) {
-            await sendWhatsApp(recipient.phone, finalMessage)
+            await sendWhatsApp(recipient.phone, finalMessage, tenantId)
             successCount++
           }
 
+          // Delay antar pesan agar tidak spam (menggunakan setting dari menu pengaturan)
+          // Jika provider starsender, sendWhatsApp sudah menerapkan delay.
+          // Tapi kita tambahkan fallback delay kecil di sini untuk keamanan.
           if (index < uniqueRecipients.length - 1) {
-            await sleep(delayMs)
+            if (waConfig.provider !== "starsender") {
+              const minMs = delayMin * 1000
+              const maxMs = delayMax * 1000
+              const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs
+              if (delay > 0) await sleep(delay)
+            } else {
+               // Beri jeda sangat kecil agar thread tidak blocking sepenuhnya walau starsender sudah mem-blok delay di dalamnya
+               await sleep(500)
+            }
           }
 
         } catch (error) {

@@ -139,20 +139,6 @@ export default function BroadcastPage() {
                   </p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Delay Pengiriman WhatsApp (Detik)</Label>
-                  <Input 
-                    type="number"
-                    min="1"
-                    max="60"
-                    placeholder="Contoh: 5" 
-                    value={form.delaySeconds}
-                    onChange={(e) => setForm({ ...form, delaySeconds: e.target.value })}
-                    className="bg-background max-w-[150px]"
-                  />
-                  <p className="text-xs text-muted-foreground">Jeda waktu antar pesan untuk menghindari pemblokiran WhatsApp (Spam Detection).</p>
-                </div>
-
                 <Button 
                   type="submit" 
                   className="w-full sm:w-auto gap-2 btn-gradient text-white border-0" 
