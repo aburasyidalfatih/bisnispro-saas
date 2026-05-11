@@ -308,6 +308,7 @@ function SlideBackground({ slide, isPriority }: { slide: Slide, isPriority?: boo
           fill
           priority={isPriority}
           sizes="100vw"
+          quality={100}
           className="object-cover object-center"
           style={{ animation: "kenburns 20s ease-in-out infinite alternate" }}
         />
