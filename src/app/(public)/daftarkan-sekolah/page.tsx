@@ -20,6 +20,7 @@ export default function RegisterSchoolPage() {
   const [submitted, setSubmitted] = useState(false)
   const [isChecking, setIsChecking] = useState(false)
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null)
+  const [affiliateName, setAffiliateName] = useState<string | null>(null)
   
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
@@ -52,14 +53,26 @@ export default function RegisterSchoolPage() {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search)
       const ref = urlParams.get('ref')
+      let activeRef = ref
+
       if (ref) {
         setForm(prev => ({ ...prev, referralCode: ref }))
         localStorage.setItem('schoolpro_ref', ref)
       } else {
         const storedRef = localStorage.getItem('schoolpro_ref')
         if (storedRef) {
+          activeRef = storedRef
           setForm(prev => ({ ...prev, referralCode: storedRef }))
         }
+      }
+
+      if (activeRef) {
+        fetch(`/api/public/affiliate-info?ref=${activeRef}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.name) setAffiliateName(data.name)
+          })
+          .catch(console.error)
       }
     }
   }, [])
@@ -449,6 +462,12 @@ export default function RegisterSchoolPage() {
           <p className="text-center text-xs text-muted-foreground">
             Dengan mendaftar, Anda menyetujui <a href="#" className="underline">Syarat & Ketentuan</a> Platform SchoolPro.
           </p>
+
+          {affiliateName && (
+            <p className="text-center text-[11px] text-muted-foreground/60">
+              Direkomendasikan oleh {affiliateName}
+            </p>
+          )}
         </form>
       </div>
     </div>
