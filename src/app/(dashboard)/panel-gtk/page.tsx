@@ -26,13 +26,14 @@ export default function GuruDashboard() {
 
     if (tenantId) {
       // Fetch Announcements
-      fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN&limit=2`)
+      fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN_GTK&limit=2`)
         .then(r => {
            if(!r.ok) throw new Error("Failed to fetch")
            return r.json()
         })
         .then(d => {
-           if (d.data) setAnnouncements(d.data.slice(0, 2))
+           const data = d.data || d || []
+           if (Array.isArray(data)) setAnnouncements(data.slice(0, 2))
         })
         .catch(console.error)
 

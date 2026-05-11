@@ -52,13 +52,14 @@ export default function GuruMessagesPage() {
     if (!tenantId) return
     setLoading(true)
     // Fetch announcements from posts endpoint
-    fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN`)
+    fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN_GTK`)
       .then(r => {
          if(!r.ok) throw new Error("Failed to fetch")
          return r.json()
       })
       .then(d => {
-        setAnnouncements(d.data || [])
+        const data = d.data || d || []
+        setAnnouncements(Array.isArray(data) ? data : [])
         setLoading(false)
       })
       .catch(() => setLoading(false))

@@ -21,6 +21,12 @@ export async function GET(req: Request) {
   if (type) {
     if (type === "PENGUMUMAN") {
       whereClause.type = { startsWith: "PENGUMUMAN" }
+    } else if (type === "PENGUMUMAN_GTK") {
+      whereClause.type = { in: ["PENGUMUMAN_GTK", "PENGUMUMAN_SEMUA"] }
+    } else if (type === "PENGUMUMAN_ORTU") {
+      whereClause.type = { in: ["PENGUMUMAN_ORTU", "PENGUMUMAN_SEMUA"] }
+    } else if (type === "PENGUMUMAN_SISWA") {
+      whereClause.type = { in: ["PENGUMUMAN_SISWA", "PENGUMUMAN_SEMUA"] }
     } else {
       whereClause.type = type
     }
