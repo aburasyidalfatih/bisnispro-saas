@@ -36,17 +36,12 @@ export default function PanelSiswaDashboard() {
     { icon: Wallet, label: "Tabungan", color: "text-indigo-500", bg: "bg-indigo-50", border: "border-indigo-100", href: "/panel-siswa/wallet" },
     { icon: FileText, label: "Tugas", color: "text-pink-500", bg: "bg-pink-50", border: "border-pink-100", href: "/panel-siswa/tugas" },
     { icon: QrCode, label: "E-KTM", color: "text-purple-500", bg: "bg-purple-50", border: "border-purple-100", href: "/panel-siswa/kartu" },
-    { icon: BookOpen, label: "Materi", color: "text-cyan-500", bg: "bg-cyan-50", border: "border-cyan-100", href: "#" },
+    { icon: BookOpen, label: "Materi", color: "text-cyan-500", bg: "bg-cyan-50", border: "border-cyan-100", href: "/panel-siswa/jadwal" },
   ]
 
-  const jadwalEsok = data?.tomorrowSchedules?.length ? data.tomorrowSchedules : [
-    { time: "07:15 - 08:45", subject: "Matematika Wajib", teacher: "Bpk. Budi Santoso" },
-    { time: "08:45 - 10:15", subject: "Fisika", teacher: "Ibu Siti Aminah" },
-  ]
+  const jadwalEsok = data?.tomorrowSchedules || []
 
-  const announcements = data?.announcements?.length ? data.announcements : [
-    { title: "Ujian CBT PAI Dimulai!", excerpt: "Persiapkan diri Anda. Ujian Pendidikan Agama Islam akan dimulai siang ini pukul 10:45. Pastikan koneksi stabil.", timeAgo: "1 Jam yang lalu" }
-  ]
+  const announcements = data?.announcements || []
 
   if (loading) {
     return <DashboardSkeleton />
@@ -124,20 +119,27 @@ export default function PanelSiswaDashboard() {
           </h3>
         </div>
         <div className="space-y-3">
-          {announcements.map((ann: any, idx: number) => (
-            <Card key={idx} className="glass border-l-4 border-l-amber-500 shadow-sm overflow-hidden bg-gradient-to-r from-amber-50/50 to-white">
+          {announcements.length > 0 ? announcements.map((ann: any, idx: number) => (
+            <Card key={idx} className="glass border-l-4 border-l-amber-500 shadow-sm overflow-hidden bg-gradient-to-r from-amber-50/50 to-white dark:from-amber-500/5 dark:to-card">
               <CardContent className="p-4 flex gap-3 items-start">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm border border-amber-100">
+                <div className="w-10 h-10 bg-white dark:bg-card rounded-full flex items-center justify-center shrink-0 shadow-sm border border-amber-100 dark:border-amber-500/20">
                   <MonitorSmartphone className="w-5 h-5 text-amber-600" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-800 text-sm">{ann.title}</h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">{ann.excerpt}</p>
+                  <h4 className="font-bold text-foreground text-sm">{ann.title}</h4>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{ann.excerpt}</p>
                   <p className="text-[10px] text-muted-foreground font-semibold mt-2">{ann.timeAgo || "Baru saja"} • Tata Usaha</p>
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )) : (
+            <Card className="glass border-0 shadow-sm">
+              <CardContent className="py-8 text-center">
+                <Bell className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                <p className="text-xs text-muted-foreground">Belum ada pengumuman terbaru.</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
@@ -153,34 +155,34 @@ export default function PanelSiswaDashboard() {
         </div>
         
         <div className="space-y-3">
-          {jadwalEsok.map((item, idx) => (
+        {jadwalEsok.length > 0 ? jadwalEsok.map((item: any, idx: number) => (
             <Card key={idx} className="glass border-0 shadow-sm overflow-hidden">
               <CardContent className="p-0">
-                <div className="p-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
+                <div className="p-4 flex items-center justify-between bg-card hover:bg-muted/40 transition-colors">
                   <div className="flex items-start gap-3">
-                    <div className="bg-slate-100 px-2 py-1.5 rounded-lg text-center min-w-[60px] border">
-                      <div className="text-[10px] font-bold text-slate-500 uppercase">Jam Ke</div>
-                      <div className="text-sm font-black text-slate-800">{idx + 1}</div>
+                    <div className="bg-muted px-2 py-1.5 rounded-lg text-center min-w-[60px] border">
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase">Jam Ke</div>
+                      <div className="text-sm font-black text-foreground">{idx + 1}</div>
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-800 text-sm">{item.subject}</h4>
+                      <h4 className="font-bold text-foreground text-sm">{item.subject}</h4>
                       <p className="text-xs font-medium text-muted-foreground mt-0.5">{item.teacher}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs font-bold text-slate-600">{item.time}</span>
+                    <span className="text-xs font-bold text-muted-foreground">{item.time}</span>
                   </div>
-                </div>
-                {/* Tombol Lihat Materi (Jurnal Guru) */}
-                <div className="bg-slate-50 border-t border-slate-100 p-2.5 px-4 flex justify-between items-center cursor-pointer hover:bg-slate-100 transition-colors">
-                  <span className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
-                    <BookOpen className="w-3.5 h-3.5 text-primary" /> Lihat Materi Sebelumnya
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )) : (
+            <Card className="glass border-0 shadow-sm">
+              <CardContent className="py-8 text-center">
+                <Calendar className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                <p className="text-xs text-muted-foreground">Jadwal besok belum tersedia.</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 

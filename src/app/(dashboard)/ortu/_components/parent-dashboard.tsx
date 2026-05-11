@@ -1,7 +1,7 @@
-"use client"
+﻿"use client"
 
 import { useSession } from "next-auth/react"
-import { Bell, CreditCard, CalendarDays, FileText, CheckCircle, Clock, BookOpen, MessageSquare, Award, MonitorSmartphone, Calendar, FileCheck, ClipboardList, Megaphone, User, ArrowRight, Receipt, Activity, Users } from "lucide-react"
+import { Bell, CreditCard, CalendarDays, FileText, CheckCircle, Clock, BookOpen, MessageSquare, Award, MonitorSmartphone, Calendar, FileCheck, ClipboardList, Megaphone, User, ArrowRight, Receipt, Activity, Users, UtensilsCrossed } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -22,8 +22,9 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
     { label: "Akademik", icon: BookOpen, color: "bg-indigo-500/10 text-indigo-600", href: "/ortu/akademik" },
     { label: "Kehadiran", icon: ClipboardList, color: "bg-emerald-500/10 text-emerald-600", href: "/ortu/absensi" },
     { label: "Izin/Sakit", icon: FileCheck, color: "bg-amber-500/10 text-amber-600", href: "/ortu/izin" },
+    { label: "Kantin", icon: UtensilsCrossed, color: "bg-orange-500/10 text-orange-600", href: "/ortu/kantin" },
     { label: "KTM / Kartu", icon: Award, color: "bg-purple-500/10 text-purple-600", href: "/ortu/student-card" },
-    { label: "Donasi", icon: Award, color: "bg-pink-500/10 text-pink-600", href: "/ortu/donasi" },
+    { label: "Rapor", icon: FileText, color: "bg-teal-500/10 text-teal-600", href: "/ortu/rapor" },
     { label: "PPDB", icon: Users, color: "bg-cyan-500/10 text-cyan-600", href: "/ortu/ppdb" },
   ]
 
@@ -46,10 +47,10 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
              </div>
           </div>
           <div className="flex gap-2">
-             <button className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-primary-foreground relative backdrop-blur-sm">
+             <Link href="/ortu/tagihan" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-primary-foreground relative backdrop-blur-sm">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-2 right-2 h-2 w-2 bg-destructive rounded-full border border-primary"></span>
-             </button>
+             </Link>
           </div>
         </div>
       </div>
@@ -140,7 +141,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                        </div>
                        <div>
                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Progress Akademik</p>
-                         <h4 className="text-sm font-bold text-foreground">Sangat Baik <span className="text-emerald-500 text-xs ml-1">↑</span></h4>
+                         <h4 className="text-sm font-bold text-foreground">Sangat Baik <span className="text-emerald-500 text-xs ml-1">â†‘</span></h4>
                        </div>
                      </div>
                      <Link href="/ortu/akademik" className="text-[11px] font-bold text-indigo-600 bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-lg transition-colors">
@@ -183,7 +184,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
              <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
                <Receipt className="h-4 w-4 text-rose-500" /> Tagihan Belum Dibayar
              </h3>
-             <a href="/ortu/tagihan" className="text-[10px] font-bold text-primary hover:underline">Lihat Semua →</a>
+             <a href="/ortu/tagihan" className="text-[10px] font-bold text-primary hover:underline">Lihat Semua â†’</a>
           </div>
           <div className="space-y-3">
              {unpaidInvoices.length > 0 ? unpaidInvoices.map((inv: any) => (
@@ -238,3 +239,4 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
     </div>
   )
 }
+

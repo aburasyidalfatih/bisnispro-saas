@@ -10,16 +10,67 @@ import { unstable_cache } from "next/cache"
 // 1. Cache untuk Admin/Tenant Stats
 export const getAdminStatsCached = unstable_cache(
   async (tenantId: string) => {
-    const [userCount, notifCount, auditCount] = await Promise.all([
+    const now = new Date()
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1)
+
+    const [userCount, notifCount, auditCount, studentCount, totalRevenue, totalDue, recentPayments] = await Promise.all([
       db.tenantUser.count({ where: { tenantId } }),
       db.notification.count({ where: { tenantId, isRead: false } }),
       db.auditLog.count({ where: { tenantId } }),
+      db.student.count({ where: { tenantId, isActive: true } }),
+      // Total pendapatan (semua invoice PAID)
+      db.invoice.aggregate({
+        where: { tenantId, status: "PAID", deletedAt: null },
+        _sum: { amountPaid: true },
+      }),
+      // Total tunggakan
+      db.invoice.aggregate({
+        where: { tenantId, status: { in: ["UNPAID", "PARTIAL", "OVERDUE"] }, deletedAt: null },
+        _sum: { amountDue: true },
+      }),
+      // Data pembayaran 6 bulan terakhir untuk chart
+      db.invoice.findMany({
+        where: {
+          tenantId,
+          status: "PAID",
+          deletedAt: null,
+          paidAt: { gte: sixMonthsAgo },
+        },
+        select: { amountPaid: true, paidAt: true },
+      }),
     ])
-    return { userCount, notifCount, auditCount }
+
+    // Hitung data chart bulanan
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
+    const chartData = []
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const month = d.getMonth()
+      const year = d.getFullYear()
+      const monthPayments = recentPayments.filter((p: any) => {
+        if (!p.paidAt) return false
+        const pd = new Date(p.paidAt)
+        return pd.getMonth() === month && pd.getFullYear() === year
+      })
+      chartData.push({
+        bulan: monthNames[month],
+        pendapatan: monthPayments.reduce((sum: number, p: any) => sum + (p.amountPaid || 0), 0),
+      })
+    }
+
+    return {
+      userCount,
+      notifCount,
+      auditCount,
+      studentCount,
+      totalRevenue: totalRevenue._sum.amountPaid || 0,
+      totalDue: totalDue._sum.amountDue || 0,
+      chartData,
+    }
   },
   ['admin-dashboard-stats'],
   {
-    revalidate: 60, // revalidate every 60 seconds
+    revalidate: 60,
     tags: ['dashboard', 'admin-stats']
   }
 )
