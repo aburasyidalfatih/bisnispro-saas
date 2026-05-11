@@ -25,6 +25,8 @@ export default function CashflowPage() {
   const [data, setData] = useState<any[]>([])
   const [summary, setSummary] = useState({ income: 0, expense: 0, balance: 0 })
   const [filterType, setFilterType] = useState("ALL")
+  const [filterMonth, setFilterMonth] = useState(String(new Date().getMonth() + 1))
+  const [filterYear, setFilterYear] = useState(String(new Date().getFullYear()))
   
   // Form State
   const [open, setOpen] = useState(false)
@@ -41,7 +43,7 @@ export default function CashflowPage() {
     if (!tenantId) return
     setLoading(true)
     try {
-      const res = await fetch(`/api/finance/cashflow?tenantId=${tenantId}&type=${filterType}`)
+      const res = await fetch(`/api/finance/cashflow?tenantId=${tenantId}&type=${filterType}&month=${filterMonth}&year=${filterYear}`)
       const json = await res.json()
       setData(json.data || [])
       setSummary(json.summary || { income: 0, expense: 0, balance: 0 })
@@ -79,7 +81,7 @@ export default function CashflowPage() {
 
   useEffect(() => {
     fetchData()
-  }, [tenantId, filterType])
+  }, [tenantId, filterType, filterMonth, filterYear])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -208,7 +210,7 @@ export default function CashflowPage() {
         <CardHeader className="border-b bg-muted/20 pb-4">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <CardTitle className="text-lg">Riwayat Transaksi</CardTitle>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button 
                 onClick={handleExport} 
                 disabled={exporting || data.length === 0}
@@ -218,6 +220,27 @@ export default function CashflowPage() {
                 {exporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <FileSpreadsheet className="h-4 w-4 mr-2" />} 
                 Ekspor Excel
               </Button>
+              <Select value={filterMonth} onValueChange={setFilterMonth}>
+                <SelectTrigger className="w-[130px] bg-background">
+                  <SelectValue placeholder="Bulan" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"].map((m, i) => (
+                    <SelectItem key={i} value={String(i + 1)}>{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterYear} onValueChange={setFilterYear}>
+                <SelectTrigger className="w-[100px] bg-background">
+                  <SelectValue placeholder="Tahun" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[0, 1, 2].map(d => {
+                    const y = String(new Date().getFullYear() - d)
+                    return <SelectItem key={y} value={y}>{y}</SelectItem>
+                  })}
+                </SelectContent>
+              </Select>
               <Select value={filterType} onValueChange={setFilterType}>
                 <SelectTrigger className="w-[180px] bg-background">
                   <SelectValue placeholder="Filter Tipe" />

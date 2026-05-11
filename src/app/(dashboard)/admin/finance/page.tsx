@@ -18,24 +18,25 @@ export default function FinanceDashboardPage() {
   const tenant = session?.user?.tenants?.[0]
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [financeSummary, setFinanceSummary] = useState<any>(null)
 
   useEffect(() => {
     if (!tenant) return
     Promise.all([
       fetch(`/api/finance/invoices?tenantId=${tenant.id}&take=5`).then(r => r.json()),
       fetch(`/api/finance/billing-types?tenantId=${tenant.id}`).then(r => r.json()),
-    ]).then(([invoicesData, typesData]) => {
+      fetch(`/api/finance/summary?tenantId=${tenant.id}`).then(r => r.json()),
+    ]).then(([invoicesData, typesData, summaryData]) => {
       setData({ invoices: invoicesData, billingTypes: typesData })
+      setFinanceSummary(summaryData)
     }).catch(console.error).finally(() => setLoading(false))
   }, [tenant])
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
 
   const invoices = data?.invoices?.data || []
-  const allInvoices = data?.invoices || {}
-  const unpaidInvoices = invoices.filter((i: any) => ["UNPAID", "PARTIAL", "OVERDUE"].includes(i.status))
-  const totalDue = unpaidInvoices.reduce((a: number, i: any) => a + i.amountDue, 0)
-  const totalCollected = invoices.filter((i: any) => i.status === "PAID").reduce((a: number, i: any) => a + i.amountPaid, 0)
+  const totalDue = financeSummary?.totalDue || 0
+  const totalCollected = financeSummary?.totalRevenue || 0
 
   const quickLinks = [
     { label: "Tagihan Siswa", href: "/admin/finance/invoice", icon: Receipt, color: "text-primary bg-primary/10", desc: "Kelola semua tagihan" },
@@ -61,9 +62,9 @@ export default function FinanceDashboardPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Tagihan Aktif", value: allInvoices?.meta?.total || invoices.length, icon: Receipt, color: "text-primary bg-primary/10", trend: null },
+          { label: "Total Tagihan", value: financeSummary?.totalInvoices ?? 0, icon: Receipt, color: "text-primary bg-primary/10", trend: null },
           { label: "Menunggak", value: `Rp ${totalDue.toLocaleString("id-ID")}`, icon: AlertCircle, color: "text-red-600 bg-red-500/10", trend: "down" },
-          { label: "Terkumpul (Tampil)", value: `Rp ${totalCollected.toLocaleString("id-ID")}`, icon: TrendingUp, color: "text-emerald-600 bg-emerald-500/10", trend: "up" },
+          { label: "Terkumpul", value: `Rp ${totalCollected.toLocaleString("id-ID")}`, icon: TrendingUp, color: "text-emerald-600 bg-emerald-500/10", trend: "up" },
           { label: "Jenis Tagihan", value: data?.billingTypes?.length || 0, icon: BadgeDollarSign, color: "text-indigo-600 bg-indigo-500/10", trend: null },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
@@ -83,11 +84,11 @@ export default function FinanceDashboardPage() {
       </div>
 
       {/* Alert menunggak */}
-      {unpaidInvoices.length > 0 && (
+      {(financeSummary?.unpaidCount > 0 || financeSummary?.overdueCount > 0) && (
         <div className="flex items-center gap-4 p-4 rounded-2xl bg-red-500/10 border border-red-200">
           <AlertCircle className="h-8 w-8 text-red-500 shrink-0" />
           <div className="flex-1">
-            <p className="font-bold text-red-700">{unpaidInvoices.length} tagihan menunggak</p>
+            <p className="font-bold text-red-700">{(financeSummary?.unpaidCount || 0) + (financeSummary?.overdueCount || 0)} tagihan menunggak</p>
             <p className="text-sm text-red-600">Total Rp {totalDue.toLocaleString("id-ID")} belum dilunasi.</p>
           </div>
           <Link href="/admin/finance/invoice?status=UNPAID">

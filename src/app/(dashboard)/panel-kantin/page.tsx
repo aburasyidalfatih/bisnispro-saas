@@ -19,12 +19,13 @@ export default function PanelKantinPage() {
 
   useEffect(() => {
     if (!tenant) return
+    const todayStr = new Date().toISOString().slice(0, 10)
     Promise.all([
       fetch(`/api/canteen/products?tenantId=${tenant.id}`).then(r => r.json()),
-      fetch(`/api/canteen/orders?tenantId=${tenant.id}&limit=5`).then(r => r.json()),
+      fetch(`/api/canteen/orders?tenantId=${tenant.id}&limit=10&date=${todayStr}`).then(r => r.json()),
     ]).then(([merchantData, ordersData]) => {
       setData(merchantData)
-      setOrders(ordersData.data?.slice(0, 5) || [])
+      setOrders(ordersData.data || [])
     }).catch(console.error).finally(() => setLoading(false))
   }, [tenant])
 
