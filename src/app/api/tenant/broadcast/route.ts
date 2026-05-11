@@ -79,13 +79,34 @@ export async function POST(req: Request) {
             .replace(/{{phone}}/g, recipient.phone || "")
 
           if (recipient.phone) {
-            await sendWhatsApp(recipient.phone, finalMessage, tenantId)
-            successCount++
+            // Log ke WaMessage dengan status PENDING
+            const waLog = await db.waMessage.create({
+              data: {
+                tenantId: tenantId,
+                to: recipient.phone,
+                content: finalMessage,
+                status: "PENDING"
+              }
+            })
+
+            const sendRes = await sendWhatsApp(recipient.phone, finalMessage, tenantId)
+            
+            if (sendRes.success) {
+              await db.waMessage.update({
+                where: { id: waLog.id },
+                data: { status: "SENT" }
+              })
+              successCount++
+            } else {
+              await db.waMessage.update({
+                where: { id: waLog.id },
+                data: { status: "FAILED", error: sendRes.error }
+              })
+              failCount++
+            }
           }
 
-          // Delay antar pesan agar tidak spam (menggunakan setting dari menu pengaturan)
-          // Jika provider starsender, sendWhatsApp sudah menerapkan delay.
-          // Tapi kita tambahkan fallback delay kecil di sini untuk keamanan.
+          // Delay antar pesan agar tidak spam
           if (index < uniqueRecipients.length - 1) {
             if (waConfig.provider !== "starsender") {
               const minMs = delayMin * 1000
@@ -93,12 +114,11 @@ export async function POST(req: Request) {
               const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs
               if (delay > 0) await sleep(delay)
             } else {
-               // Beri jeda sangat kecil agar thread tidak blocking sepenuhnya walau starsender sudah mem-blok delay di dalamnya
                await sleep(500)
             }
           }
 
-        } catch (error) {
+        } catch (error: any) {
           failCount++
           logger.error("Tenant Broadcast recipient failed", error, { recipient })
         }
