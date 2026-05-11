@@ -36,11 +36,7 @@ export async function POST(req: Request) {
 
   try {
     const invoice = await createAddonInvoice(tenantUser.id, parsed.data.studentCount, parsed.data.discountCode)
-    return NextResponse.json({
-      success: true,
-      message: "Tagihan penambahan kuota berhasil dibuat",
-      data: invoice
-    })
+    return NextResponse.json(invoice)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Gagal membuat tagihan penambahan kuota" }, { status: 400 })
   }
