@@ -92,38 +92,46 @@ export default function AiSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Pengaturan Kecerdasan Buatan (AI)</h1>
         <p className="text-muted-foreground mt-1">Kelola penggunaan AI dan API Key untuk fitur otomatisasi sekolah.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="glass border-primary/20 bg-primary/5">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="glass border-0">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Coins className="h-5 w-5 text-primary" />
-              Sisa Kuota Token AI
-            </CardTitle>
-            <CardDescription>Digunakan untuk membuat soal CBT dan asisten RPP.</CardDescription>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <Coins className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Sisa Kuota Token AI</CardTitle>
+                <CardDescription>Digunakan untuk membuat soal CBT dan asisten RPP.</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold text-primary">{formData.aiTokens.toLocaleString("id-ID")}</div>
           </CardContent>
           <CardFooter>
-            <Button variant="outline" className="w-full bg-background" onClick={() => router.push("/admin/billing")}>
+            <Button variant="outline" className="w-full bg-background rounded-xl h-9" onClick={() => router.push("/admin/billing")}>
               Beli Kuota Add-on
             </Button>
           </CardFooter>
         </Card>
 
-        <Card className="glass">
+        <Card className="glass border-0">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <BrainCircuit className="h-5 w-5 text-muted-foreground" />
-              Fitur AI Aktif
-            </CardTitle>
-            <CardDescription>Modul SchoolPro yang menggunakan AI.</CardDescription>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <BrainCircuit className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Fitur AI Aktif</CardTitle>
+                <CardDescription>Modul SchoolPro yang menggunakan AI.</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between p-3 border rounded-xl bg-background/50">
@@ -144,15 +152,19 @@ export default function AiSettingsPage() {
         </Card>
       </div>
 
-      <Card className="glass border-orange-500/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Key className="h-5 w-5 text-orange-500" />
-            Bring Your Own Key (BYOK)
-          </CardTitle>
-          <CardDescription>
-            Gunakan API Key OpenAI milik sekolah Anda sendiri untuk mendapatkan penggunaan *unlimited* tanpa memotong saldo Kuota Token SchoolPro.
-          </CardDescription>
+      <Card className="glass border-0">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
+              <Key className="h-4 w-4 text-orange-500" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Bring Your Own Key (BYOK)</CardTitle>
+              <CardDescription>
+                Gunakan API Key OpenAI milik sekolah Anda sendiri untuk mendapatkan penggunaan *unlimited* tanpa memotong saldo Kuota Token SchoolPro.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between rounded-xl border p-4 bg-background">
@@ -169,14 +181,14 @@ export default function AiSettingsPage() {
           {formData.useCustomApiKey && (
             <div className="space-y-3 p-4 rounded-xl bg-orange-500/5 border border-orange-500/20 animate-in fade-in slide-in-from-top-2">
               <div className="space-y-1">
-                <Label htmlFor="apiKey">OpenAI API Key (sk-...)</Label>
+                <Label htmlFor="apiKey" className="text-xs">OpenAI API Key (sk-...)</Label>
                 <Input
                   id="apiKey"
                   type="password"
                   placeholder="sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx"
                   value={formData.customOpenAiKey}
                   onChange={(e) => setFormData({ ...formData, customOpenAiKey: e.target.value })}
-                  className="bg-background"
+                  className="bg-background rounded-xl h-9 text-sm font-mono"
                 />
               </div>
               <p className="text-xs text-muted-foreground">
@@ -184,22 +196,25 @@ export default function AiSettingsPage() {
               </p>
             </div>
           )}
-        </CardContent>
-        <CardFooter className="bg-muted/30 pt-6">
-          <Button onClick={handleSave} disabled={saving} className="gap-2">
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          
+          <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSave} disabled={saving}>
+            {saving ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
             {saving ? "Menyimpan..." : "Simpan Pengaturan"}
           </Button>
-        </CardFooter>
+        </CardContent>
       </Card>
 
-      <Card className="glass">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <History className="h-5 w-5 text-primary" />
-            Riwayat Penggunaan AI
-          </CardTitle>
-          <CardDescription>Catatan aktivitas penggunaan fitur AI oleh guru dan staf.</CardDescription>
+      <Card className="glass border-0">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+              <History className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Riwayat Penggunaan AI</CardTitle>
+              <CardDescription>Catatan aktivitas penggunaan fitur AI oleh guru dan staf.</CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="rounded-xl border overflow-hidden">
