@@ -9,6 +9,16 @@ function CaptureLogic() {
   useEffect(() => {
     const ref = searchParams.get("ref")
     if (ref) {
+      // Hanya track klik sekali per sesi (untuk menghindari spam reload)
+      const trackedKey = `tracked_ref_${ref}`
+      if (!sessionStorage.getItem(trackedKey)) {
+        sessionStorage.setItem(trackedKey, "true")
+        fetch("/api/public/track-referral", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ref })
+        }).catch(console.error)
+      }
       localStorage.setItem("schoolpro_ref", ref)
     }
   }, [searchParams])
