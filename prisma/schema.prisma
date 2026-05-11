@@ -42,6 +42,9 @@ model Tenant {
   studentQuota         Int                   @default(0)
   googleClientId       String?
   googleClientSecret   String?
+  aiTokens             Int                   @default(0)
+  useCustomApiKey      Boolean               @default(false)
+  customOpenAiKey      String?
   achievements         Achievement[]
   affiliateCommissions AffiliateCommission[]
   alumni               Alumni[]
@@ -96,6 +99,7 @@ model Tenant {
   partnerships         Partnership[]
   cbtExams             CbtExam[]
   cbtQuestionBanks     CbtQuestionBank[]
+  aiUsageLogs          AiUsageLog[]
 
   @@index([isActive])
   @@index([plan])
@@ -137,6 +141,7 @@ model User {
   sentMessages         InternalMessage[]     @relation("MessageSender")
   receivedMessages     InternalMessage[]     @relation("MessageReceiver")
   canteenMerchant      CanteenMerchant?
+  aiUsageLogs          AiUsageLog[]
 
   @@index([isActive])
   @@index([isSuperAdmin])
@@ -1767,4 +1772,21 @@ model CbtAnswer {
   @@index([questionId])
   @@index([createdAt])
   @@map("cbt_answers")
+}
+
+model AiUsageLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String
+  feature   String
+  tokens    Int
+  createdAt DateTime @default(now())
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("ai_usage_logs")
 }

@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, Plus, ArrowLeft, Trash2, CheckCircle2, GripVertical, FileText } from "lucide-react"
+import { Loader2, Plus, ArrowLeft, Trash2, CheckCircle2, GripVertical, FileText, Sparkles } from "lucide-react"
 import Link from "next/link"
 
 export default function KelolaSoalPage() {
@@ -20,7 +20,10 @@ export default function KelolaSoalPage() {
   const [bank, setBank] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isAiDialogOpen, setIsAiDialogOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [aiPrompt, setAiPrompt] = useState({ topic: "", difficulty: "Sedang", count: "5" })
   
   const [questionText, setQuestionText] = useState("")
   const [options, setOptions] = useState([
@@ -114,6 +117,34 @@ export default function KelolaSoalPage() {
     }
   }
 
+  const handleGenerateAi = async () => {
+    if (!aiPrompt.topic.trim()) return toast({ title: "Topik materi tidak boleh kosong", variant: "destructive" })
+    setIsGenerating(true)
+    try {
+      const res = await fetch("/api/cbt/questions/generate-ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questionBankId: id,
+          topic: aiPrompt.topic,
+          difficulty: aiPrompt.difficulty,
+          count: parseInt(aiPrompt.count)
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Gagal membuat soal")
+      
+      toast({ title: "Sukses!", description: `${data.count} soal berhasil di-generate dan ditambahkan.` })
+      setIsAiDialogOpen(false)
+      setAiPrompt({ topic: "", difficulty: "Sedang", count: "5" })
+      fetchBank()
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
   if (!bank) return <div className="text-center py-20">Bank Soal tidak ditemukan.</div>
 
@@ -134,9 +165,14 @@ export default function KelolaSoalPage() {
             </div>
           </div>
         </div>
-        <Button onClick={() => setIsDialogOpen(true)} className="rounded-xl shadow-lg shadow-primary/20">
-          <Plus className="w-4 h-4 mr-2" /> Tambah Soal
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setIsAiDialogOpen(true)} variant="outline" className="rounded-xl border-emerald-500 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700">
+            <Sparkles className="w-4 h-4 mr-2" /> Generate Soal AI
+          </Button>
+          <Button onClick={() => setIsDialogOpen(true)} className="rounded-xl shadow-lg shadow-primary/20">
+            <Plus className="w-4 h-4 mr-2" /> Tambah Manual
+          </Button>
+        </div>
       </div>
 
       {/* Question List */}
@@ -234,6 +270,67 @@ export default function KelolaSoalPage() {
             <Button variant="ghost" onClick={() => setIsDialogOpen(false)}>Batal</Button>
             <Button onClick={handleSubmit} disabled={isSubmitting || !questionText}>
               {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Simpan Soal
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog AI Generator */}
+      <Dialog open={isAiDialogOpen} onOpenChange={setIsAiDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-emerald-500" />
+              Generate Soal dengan AI
+            </DialogTitle>
+            <DialogDescription>AI akan membuatkan soal pilihan ganda berdasarkan topik yang Anda tentukan secara otomatis.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Topik Materi <span className="text-red-500">*</span></Label>
+              <Textarea 
+                placeholder="Contoh: Sistem pencernaan manusia dan enzim yang terlibat" 
+                className="resize-none" 
+                value={aiPrompt.topic} 
+                onChange={(e) => setAiPrompt({ ...aiPrompt, topic: e.target.value })} 
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tingkat Kesulitan</Label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={aiPrompt.difficulty}
+                  onChange={(e) => setAiPrompt({ ...aiPrompt, difficulty: e.target.value })}
+                >
+                  <option value="Mudah">Mudah</option>
+                  <option value="Sedang">Sedang</option>
+                  <option value="Sulit (HOTS)">Sulit (HOTS)</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>Jumlah Soal</Label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={aiPrompt.count}
+                  onChange={(e) => setAiPrompt({ ...aiPrompt, count: e.target.value })}
+                >
+                  <option value="1">1 Soal</option>
+                  <option value="3">3 Soal</option>
+                  <option value="5">5 Soal</option>
+                  <option value="10">10 Soal</option>
+                </select>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground bg-slate-50 p-3 rounded-lg border">
+              Info: Proses ini membutuhkan saldo Token AI dari sekolah Anda. Waktu proses bergantung pada jumlah soal (± 10-30 detik).
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setIsAiDialogOpen(false)} disabled={isGenerating}>Batal</Button>
+            <Button onClick={handleGenerateAi} disabled={isGenerating || !aiPrompt.topic} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />} 
+              {isGenerating ? "Menganalisis & Membuat..." : "Generate Sekarang"}
             </Button>
           </DialogFooter>
         </DialogContent>

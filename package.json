@@ -19,6 +19,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.63",
     "@auth/prisma-adapter": "^2.0.0",
     "@aws-sdk/client-s3": "^3.1045.0",
     "@hookform/resolvers": "^3.3.4",
@@ -46,6 +47,7 @@
     "@types/leaflet": "^1.9.21",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
+    "ai": "^6.0.177",
     "bcryptjs": "^2.4.3",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.0",
