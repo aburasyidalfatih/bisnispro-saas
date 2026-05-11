@@ -109,13 +109,22 @@ export default function OrtuTagihanPage() {
                       <p className="text-xs text-muted-foreground">
                         Jatuh Tempo: {format(new Date(inv.dueDate), "d MMM yyyy", { locale: localeId })}
                       </p>
-                      {canPay && (
-                        <Link href={`/ortu/tagihan/${inv.id}`}>
-                          <Button size="sm" className="rounded-xl h-8 text-xs">
-                            Bayar <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                          </Button>
-                        </Link>
-                      )}
+                      <div className="flex gap-2">
+                        {inv.amountPaid > 0 && (
+                          <Link href={`/ortu/tagihan/${inv.id}/print`} target="_blank">
+                            <Button variant="outline" size="sm" className="rounded-xl h-8 text-xs border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-800">
+                              Kwitansi
+                            </Button>
+                          </Link>
+                        )}
+                        {canPay && (
+                          <Link href={`/ortu/tagihan/${inv.id}`}>
+                            <Button size="sm" className="rounded-xl h-8 text-xs">
+                              Bayar <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

@@ -82,7 +82,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
                <h1 className="text-xl font-bold">{invoice.title}</h1>
                <Badge className={`${cfg.color} border text-xs`}>{cfg.label}</Badge>
              </div>
-             {invoice.status === "PAID" && (
+             {invoice.amountPaid > 0 && (
                <Link href={`/admin/finance/invoice/${id}/print`} target="_blank">
                  <Button variant="outline" size="sm" className="rounded-xl shadow-sm hidden sm:flex">
                    <FileCheck className="mr-2 h-4 w-4" /> Cetak Kwitansi (PDF)
