@@ -100,7 +100,7 @@ export default function AiSettingsPage() {
             <div className="text-4xl font-bold text-primary">{formData.aiTokens.toLocaleString("id-ID")}</div>
           </CardContent>
           <CardFooter>
-            <Button variant="outline" className="w-full bg-background" onClick={() => router.push("/admin/settings/payment")}>
+            <Button variant="outline" className="w-full bg-background" onClick={() => router.push("/admin/billing")}>
               Beli Kuota Add-on
             </Button>
           </CardFooter>

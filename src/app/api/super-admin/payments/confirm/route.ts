@@ -33,11 +33,25 @@ export async function POST(req: Request) {
     const meta = payment.metadata as any
     const studentCount = meta?.studentCount || 0
     const isAddon = meta?.type === "ADDON_QUOTA"
+    const isAiAddon = meta?.type === "AI_QUOTA"
 
     // Hitung masa aktif: 1 tahun dari sekarang (HANYA untuk UPGRADE/RENEWAL)
     let expiresAt = new Date()
-    if (!isAddon) {
+    if (!isAddon && !isAiAddon) {
       expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+    }
+
+    // Tenant update payload
+    let tenantUpdateData: any = { isActive: true }
+    if (isAiAddon) {
+      tenantUpdateData.aiTokens = { increment: meta?.aiTokens || 0 }
+    } else if (isAddon) {
+      tenantUpdateData.plan = "pro"
+      tenantUpdateData.studentQuota = { increment: studentCount }
+    } else {
+      tenantUpdateData.plan = "pro"
+      if (studentCount > 0) tenantUpdateData.studentQuota = studentCount
+      tenantUpdateData.expiresAt = expiresAt
     }
 
     // Jalankan update secara transaksional
@@ -53,19 +67,7 @@ export async function POST(req: Request) {
       // 2. Upgrade tenant ke PRO / Tambah Kuota
       db.tenant.update({
         where: { id: payment.tenantId },
-        data: {
-          plan: "pro",
-          isActive: true,
-          ...(isAddon
-            ? {
-                studentQuota: { increment: studentCount },
-                // expiresAt tidak diubah
-              }
-            : {
-                studentQuota: studentCount > 0 ? studentCount : undefined,
-                expiresAt,
-              }),
-        },
+        data: tenantUpdateData,
       }),
     ]
 

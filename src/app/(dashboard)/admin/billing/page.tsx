@@ -33,11 +33,17 @@ interface PlanInfo {
   features: string[]; isPopular: boolean
 }
 interface InvoiceData {
-  id: string; reference: string; amount: number; studentCount: number
-  pricePerStudent: number; tenantName: string
+  id: string; reference: string; amount: number; studentCount?: number; aiTokens?: number
+  pricePerStudent?: number; tenantName: string
   expiredAt: string; status: string; createdAt: string
   subTotal?: number; discountAmount?: number
 }
+
+const AI_PACKAGES = [
+  { id: "pkg_5k", label: "5.000 Token", tokens: 5000, price: 25000 },
+  { id: "pkg_10k", label: "10.000 Token", tokens: 10000, price: 45000 },
+  { id: "pkg_50k", label: "50.000 Token", tokens: 50000, price: 200000 },
+]
 
 export default function BillingPage() {
   const [loading, setLoading] = useState(true)
@@ -49,6 +55,9 @@ export default function BillingPage() {
   const [invoice, setInvoice] = useState<InvoiceData | null>(null)
   const [showInvoice, setShowInvoice] = useState(false)
   const [copied, setCopied] = useState(false)
+
+  const [checkingOutAi, setCheckingOutAi] = useState(false)
+  const [selectedAiPkg, setSelectedAiPkg] = useState<string>("pkg_5k")
 
   // Discount states
   const [discountCodeInput, setDiscountCodeInput] = useState("")
@@ -146,6 +155,25 @@ export default function BillingPage() {
       toast({ title: "Error", description: err.message, variant: "destructive" })
     } finally {
       setCheckingOut(false)
+    }
+  }
+
+  const handleCheckoutAi = async () => {
+    setCheckingOutAi(true)
+    try {
+      const res = await fetch("/api/tenant/billing/ai-addon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ packageKey: selectedAiPkg }),
+      })
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.error || "Gagal membuat invoice AI")
+      setInvoice(result)
+      setShowInvoice(true)
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" })
+    } finally {
+      setCheckingOutAi(false)
     }
   }
 
@@ -444,6 +472,61 @@ export default function BillingPage() {
         )}
       </div>
 
+      {/* ── Card Top Up Token AI ── */}
+      <Card className="glass border-0 overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+          <Zap className="h-40 w-40" />
+        </div>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10">
+              <Zap className="h-5 w-5 text-blue-500" />
+            </div>
+            <div>
+              <CardTitle>Top-Up Token AI</CardTitle>
+              <CardDescription>Beli kuota tambahan untuk layanan Kecerdasan Buatan (AI) di SchoolPro.</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            {AI_PACKAGES.map((pkg) => (
+              <div 
+                key={pkg.id}
+                onClick={() => setSelectedAiPkg(pkg.id)}
+                className={cn(
+                  "cursor-pointer rounded-2xl border-2 p-5 transition-all relative overflow-hidden group",
+                  selectedAiPkg === pkg.id 
+                    ? "border-blue-500 bg-blue-500/5 shadow-md shadow-blue-500/10" 
+                    : "border-border/40 hover:border-blue-500/50 hover:bg-muted/50"
+                )}
+              >
+                {selectedAiPkg === pkg.id && (
+                  <div className="absolute top-3 right-3 text-blue-500">
+                    <CheckCircle2 className="h-5 w-5" />
+                  </div>
+                )}
+                <p className="text-muted-foreground font-semibold text-sm mb-1">{pkg.label}</p>
+                <div className="flex items-end gap-1 text-foreground">
+                  <span className="text-sm font-semibold">Rp</span>
+                  <span className="text-2xl font-bold">{pkg.price.toLocaleString("id-ID")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end">
+            <Button 
+              className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2 font-semibold min-w-[200px]"
+              disabled={checkingOutAi || billing?.hasPendingInvoice}
+              onClick={handleCheckoutAi}
+            >
+              {checkingOutAi ? "Memproses..." : "Beli Token AI"}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* ── Invoice Dialog ── */}
       <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
@@ -480,14 +563,23 @@ export default function BillingPage() {
                 <span className="text-muted-foreground">Nama Sekolah</span>
                 <span className="font-semibold">{invoice?.tenantName}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Jumlah Siswa</span>
-                <span className="font-semibold">{invoice?.studentCount} siswa</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Harga per Siswa</span>
-                <span className="font-semibold">Rp {Number(invoice?.pricePerStudent || 0).toLocaleString("id-ID")}</span>
-              </div>
+              {invoice?.aiTokens ? (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Pembelian</span>
+                  <span className="font-semibold text-blue-600">{invoice.aiTokens.toLocaleString("id-ID")} Token AI</span>
+                </div>
+              ) : (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Jumlah Siswa</span>
+                    <span className="font-semibold">{invoice?.studentCount} siswa</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Harga per Siswa</span>
+                    <span className="font-semibold">Rp {Number(invoice?.pricePerStudent || 0).toLocaleString("id-ID")}</span>
+                  </div>
+                </>
+              )}
               {invoice?.discountAmount && invoice.discountAmount > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Diskon</span>
