@@ -350,7 +350,7 @@ export default function GTKAttendancePage() {
                   variant="outline"
                   className={cn("w-full rounded-xl gap-2", geoState === "success" && "border-emerald-400 text-emerald-600")}
                   onClick={getLocation}
-                  disabled={geoState === "loading"}
+                  disabled={geoState === "loading" || geoState === "success"}
                 >
                   {geoState === "loading" ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
