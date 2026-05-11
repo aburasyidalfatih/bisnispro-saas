@@ -230,12 +230,12 @@ export default async function LandingPage() {
 
             {/* Hero Title — smaller base size for mobile */}
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15]">
-              Core Banking & ERP <span className="text-gradient">Digital</span> Pendidikan
+              Sistem ERP & Keuangan <span className="text-gradient">Enterprise</span> Sekolah
             </h1>
 
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
-              Sistem operasi institusi pendidikan berstandar Enterprise.{" "}
-              Otomatisasi tagihan massal, ekosistem Cashless E-Kantin, hingga background worker untuk notifikasi cerdas dalam satu platform.
+              Satu platform cerdas untuk menyatukan seluruh ekosistem pendidikan.{" "}
+              Nikmati analitik keuangan real-time, otomatisasi tagihan massal, e-Kantin cashless, dan portal terintegrasi (Ortu, Guru, Siswa) tanpa batasan skalabilitas.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
@@ -323,16 +323,16 @@ export default async function LandingPage() {
             {/* Left */}
             <div className="space-y-5">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Otomatisasi Administrasi, Selamat Tinggal Proses Manual
+                Tinggalkan Proses Manual, Sambut Akurasi Real-Time
               </h2>
               <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                Tingkatkan efisiensi lembaga pendidikan Anda. Kami mendigitalisasi proses kompleks mulai dari pencatatan pembayaran, pengelolaan akademik, hingga komunikasi wali murid menjadi sangat sederhana dan real-time.
+                Tingkatkan efisiensi lembaga pendidikan Anda ke level korporasi. Kami mendigitalisasi proses kompleks mulai dari pencatatan BKU (Buku Kas Umum), pelaporan arus kas, hingga komunikasi presisi ke wali murid.
               </p>
               <ul className="space-y-3 pt-1">
                 {[
-                  "Portal sekolah elegan & kustomisasi dinamis.",
-                  "Penagihan & kuitansi instan terintegrasi WhatsApp.",
-                  "Sinkronisasi data master siswa & staf secara real-time.",
+                  "Dasbor analitik keuangan real-time & tanpa mock data.",
+                  "Sistem e-Kantin cashless dengan akurasi harian terjamin.",
+                  "Sinkronisasi data master guru, siswa & ortu bebas repot.",
                   "Penerimaan Siswa Baru (PPDB) end-to-end terstruktur.",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
