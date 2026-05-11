@@ -100,7 +100,7 @@ export default function ImportGTKPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link href="/admin/users?role=guru">
@@ -193,7 +193,7 @@ export default function ImportGTKPage() {
                                  <Button 
                                     onClick={handleImport} 
                                     disabled={loading}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg shadow-emerald-500/20"
+                                    className="btn-gradient text-white border-0 rounded-xl shadow-lg"
                                  >
                                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Mulai Import"}
                                  </Button>
