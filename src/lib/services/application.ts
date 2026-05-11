@@ -227,6 +227,7 @@ export async function approveApplication(id: string) {
         address: app.address,
         logo: app.logo,
         isActive: true,
+        affiliateId: app.affiliateId,
         settings: {
           npsn: app.npsn,
           province: app.province,
@@ -248,6 +249,7 @@ export async function approveApplication(id: string) {
         logo: app.logo,
         isActive: true,
         plan: "free",
+        affiliateId: app.affiliateId,
         settings: {
           npsn: app.npsn,
           province: app.province,

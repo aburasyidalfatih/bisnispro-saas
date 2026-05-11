@@ -77,8 +77,8 @@ export async function POST(req: Request) {
       const affiliate = await db.affiliateProfile.findFirst({
         where: {
           OR: [
-            { referralCode },
-            { referralCode: `ref-${referralCode}` }
+            { referralCode: { equals: referralCode, mode: "insensitive" } },
+            { referralCode: { equals: `ref-${referralCode}`, mode: "insensitive" } }
           ]
         }
       })

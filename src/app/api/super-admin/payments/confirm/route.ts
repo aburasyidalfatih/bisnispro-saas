@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     }
 
     // Jalankan update secara transaksional
-    await db.$transaction([
+    const transactionOperations: any[] = [
       // 1. Update status payment
       db.payment.update({
         where: { id: paymentId },
@@ -67,7 +67,34 @@ export async function POST(req: Request) {
               }),
         },
       }),
-    ])
+    ]
+
+    // 3. Berikan Komisi ke Afiliasi (20%) jika tenant mendaftar via referal
+    if (payment.tenant.affiliateId) {
+      const commissionAmount = payment.amount * 0.20
+      transactionOperations.push(
+        db.affiliateCommission.create({
+          data: {
+            affiliateId: payment.tenant.affiliateId,
+            tenantId: payment.tenantId,
+            paymentId: payment.id,
+            amount: commissionAmount,
+            status: "PAID"
+          }
+        })
+      )
+      transactionOperations.push(
+        db.affiliateProfile.update({
+          where: { id: payment.tenant.affiliateId },
+          data: {
+            balance: { increment: commissionAmount },
+            totalEarnings: { increment: commissionAmount }
+          }
+        })
+      )
+    }
+
+    await db.$transaction(transactionOperations)
 
     return NextResponse.json({
       success: true,
