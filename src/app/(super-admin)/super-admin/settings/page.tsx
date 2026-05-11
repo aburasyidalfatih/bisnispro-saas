@@ -44,6 +44,7 @@ export default function SuperAdminSettingsPage() {
     enable_billing_upgrade: "false",
     enable_custom_domain: "false",
     contact_email: "support@schoolpro.id",
+    OPENAI_API_KEY: "",
     
     // Email
     SMTP_HOST: "",
@@ -277,6 +278,7 @@ export default function SuperAdminSettingsPage() {
             <TabsTrigger value="storage" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Penyimpanan</TabsTrigger>
             <TabsTrigger value="google" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Google Login</TabsTrigger>
             <TabsTrigger value="plan_access" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kendali Fitur</TabsTrigger>
+            <TabsTrigger value="ai" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kecerdasan Buatan (AI)</TabsTrigger>
             <TabsTrigger value="backup" onClick={() => { if (!backupData) fetchBackupData() }} className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">🔒 Backup DB</TabsTrigger>
           </TabsList>
         </div>
@@ -1087,6 +1089,36 @@ export default function SuperAdminSettingsPage() {
                   </button>
                 ))
               })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* --- TAB: AI & LLM --- */}
+        <TabsContent value="ai" className="grid gap-6 outline-none">
+          <Card className="glass border-0">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Settings2 className="h-4 w-4 text-primary" /></div>
+                  <CardTitle className="text-lg">Konfigurasi Kecerdasan Buatan</CardTitle>
+                </div>
+                <Button onClick={() => handleSaveBatch(["OPENAI_API_KEY"])} disabled={saving} className="rounded-xl shadow-lg shadow-primary/20">
+                  <Save className="mr-2 h-4 w-4" /> Simpan Pengaturan
+                </Button>
+              </div>
+              <CardDescription>Atur Master API Key dari OpenAI yang akan digunakan oleh tenant yang tidak memiliki API Key sendiri (Tidak menggunakan BYOK).</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2 max-w-2xl">
+                <Label>Master OpenAI API Key</Label>
+                <Input 
+                  type="password"
+                  placeholder="sk-proj-..." 
+                  value={form.OPENAI_API_KEY} 
+                  onChange={e => setForm({ ...form, OPENAI_API_KEY: e.target.value })} 
+                />
+                <p className="text-xs text-muted-foreground">Kunci ini akan disimpan di database <code>platform_settings</code> dan digunakan sebagai fallback jika <code>process.env.OPENAI_API_KEY</code> tidak tersedia dan tenant tidak memasukkan API Key sendiri.</p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

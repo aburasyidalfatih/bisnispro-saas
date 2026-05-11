@@ -10,6 +10,11 @@ export async function getAiProvider(tenantId: string) {
 
   // Determine which key to use
   let apiKey = process.env.OPENAI_API_KEY
+  if (!apiKey) {
+    const globalKey = await db.platformSetting.findUnique({ where: { key: "OPENAI_API_KEY" } })
+    if (globalKey) apiKey = globalKey.value
+  }
+
   if (tenant?.useCustomApiKey && tenant?.customOpenAiKey) {
     apiKey = tenant.customOpenAiKey
   }
