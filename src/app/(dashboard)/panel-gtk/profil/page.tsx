@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { User } from "lucide-react"
 import { ProfilGTKForm } from "./_components/profil-gtk-form"
+import { GtkLogoutButton } from "./_components/gtk-logout-button"
 
 export default async function ProfilGTKPage() {
   const session = await auth()
@@ -26,20 +27,24 @@ export default async function ProfilGTKPage() {
           <User className="h-10 w-10 text-muted-foreground" />
         </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Profil Belum Ditautkan</h2>
-        <p className="text-muted-foreground max-w-md">
+        <p className="text-muted-foreground max-w-md mb-8">
           Akun Anda belum ditautkan dengan data Guru/Tenaga Kependidikan oleh Admin Sekolah. Silakan hubungi Admin untuk sinkronisasi data pertama kali.
         </p>
+        <GtkLogoutButton />
       </div>
     )
   }
 
   return (
-    <div className="max-w-3xl mx-auto w-full pb-8">
+    <div className="max-w-3xl mx-auto w-full pb-8 space-y-6">
       <ProfilGTKForm 
         staff={staff} 
         sessionImage={session.user.image || undefined}
         sessionEmail={session.user.email || undefined} 
       />
+      <div className="flex justify-center mt-8">
+        <GtkLogoutButton />
+      </div>
     </div>
   )
 }

@@ -102,7 +102,13 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600 cursor-pointer" onClick={() => signOut({ callbackUrl: "/login" })}>
+                <DropdownMenuItem 
+                  className="text-red-600 cursor-pointer" 
+                  onClick={async () => {
+                    await signOut({ redirect: false })
+                    window.location.href = "/login"
+                  }}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Keluar</span>
                 </DropdownMenuItem>
