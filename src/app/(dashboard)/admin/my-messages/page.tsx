@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { MessageSquare, Loader2, Inbox, Mail, Check, Trash2, ChevronDown, ChevronUp, Users, Globe } from "lucide-react"
+import { MessageSquare, Loader2, Inbox, Mail, Check, Trash2, ChevronDown, ChevronUp, Users, Globe, Pencil } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { cn } from "@/lib/utils"
@@ -61,6 +61,11 @@ export default function AdminMessagesPage() {
   // Pengumuman State
   const [announcements, setAnnouncements] = useState<any[]>([])
   const [loadingAnnouncements, setLoadingAnnouncements] = useState(true)
+
+  // Edit Pengumuman State
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editForm, setEditForm] = useState({ id: "", title: "", content: "", target: "PENGUMUMAN_SEMUA" })
+  const [submittingEdit, setSubmittingEdit] = useState(false)
 
   useEffect(() => {
     if (!tenantId) return
@@ -129,6 +134,46 @@ export default function AdminMessagesPage() {
       toast({ title: "Gagal", description: error.message, variant: "destructive" })
     } finally {
       setSubmittingAnnounce(false)
+    }
+  }
+
+  const openEditModal = (post: any) => {
+    setEditForm({ id: post.id, title: post.title, content: post.content, target: post.type })
+    setShowEditModal(true)
+  }
+
+  const submitEditAnnouncement = async () => {
+    if (!editForm.title || !editForm.content) return toast({ title: "Judul dan isi wajib diisi", variant: "destructive" })
+    setSubmittingEdit(true)
+    try {
+      const slug = editForm.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") + "-" + Date.now();
+      const res = await fetch(`/api/tenant/posts/${editForm.id}`, {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tenantId, title: editForm.title, slug, content: editForm.content, type: editForm.target
+        })
+      })
+      if (!res.ok) throw new Error("Gagal memperbarui pengumuman")
+      toast({ title: "Berhasil", description: "Pengumuman diperbarui." })
+      setShowEditModal(false)
+      setLoadingAnnouncements(true)
+      const d = await fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN`).then(r => r.json())
+      setAnnouncements(d.data || d || [])
+    } catch (error: any) {
+      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+    } finally {
+      setSubmittingEdit(false)
+    }
+  }
+
+  const deleteAnnouncement = async (id: string) => {
+    try {
+      const res = await fetch(`/api/tenant/posts/${id}?tenantId=${tenantId}`, { method: "DELETE" })
+      if (!res.ok) throw new Error("Gagal menghapus pengumuman")
+      toast({ title: "Berhasil", description: "Pengumuman dihapus." })
+      setAnnouncements(p => p.filter(x => x.id !== id))
+    } catch (error: any) {
+      toast({ title: "Gagal", description: error.message, variant: "destructive" })
     }
   }
 
@@ -422,6 +467,48 @@ export default function AdminMessagesPage() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+
+              <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Pengumuman</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label>Tujuan Pengumuman</Label>
+                      <select 
+                        value={editForm.target} 
+                        onChange={e => setEditForm(p => ({...p, target: e.target.value}))}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <option value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</option>
+                        <option value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</option>
+                        <option value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</option>
+                        <option value="PENGUMUMAN_SISWA">Khusus Siswa</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Judul Pengumuman</Label>
+                      <Input value={editForm.title} onChange={e => setEditForm(p => ({...p, title: e.target.value}))} placeholder="Contoh: Libur Nasional..." />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Isi Pengumuman</Label>
+                      <textarea 
+                        value={editForm.content} 
+                        onChange={e => setEditForm(p => ({...p, content: e.target.value}))}
+                        className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        placeholder="Tulis detail pengumuman..."
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowEditModal(false)}>Batal</Button>
+                    <Button onClick={submitEditAnnouncement} disabled={submittingEdit}>
+                      {submittingEdit ? "Menyimpan..." : "Simpan Perubahan"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardHeader>
           <CardContent>
@@ -450,12 +537,28 @@ export default function AdminMessagesPage() {
                           </p>
                         </div>
                       </div>
-                      <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
-                        {post.type === "PENGUMUMAN_SEMUA" ? "TARGET: SEMUA" :
-                         post.type === "PENGUMUMAN_GTK" ? "TARGET: GTK" :
-                         post.type === "PENGUMUMAN_ORTU" ? "TARGET: ORANGTUA" :
-                         post.type === "PENGUMUMAN_SISWA" ? "TARGET: SISWA" : "PENGUMUMAN"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                          {post.type === "PENGUMUMAN_SEMUA" ? "TARGET: SEMUA" :
+                           post.type === "PENGUMUMAN_GTK" ? "TARGET: GTK" :
+                           post.type === "PENGUMUMAN_ORTU" ? "TARGET: ORANGTUA" :
+                           post.type === "PENGUMUMAN_SISWA" ? "TARGET: SISWA" : "PENGUMUMAN"}
+                        </span>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEditModal(post)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <ConfirmDialog
+                          trigger={
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          }
+                          title="Hapus pengumuman ini?"
+                          description="Pengumuman akan dihapus secara permanen dari sistem."
+                          confirmText="Ya, hapus"
+                          onConfirm={() => deleteAnnouncement(post.id)}
+                        />
+                      </div>
                     </div>
                     <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
                     <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
