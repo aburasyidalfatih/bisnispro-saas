@@ -45,6 +45,13 @@ export async function POST(req: Request) {
       }
     })
 
+    const { notifyTenantAdmins } = await import("@/lib/services/notification")
+    await notifyTenantAdmins(payment.tenantId, {
+      title: "Verifikasi Top-Up Manual",
+      message: `Ada pengajuan Top-Up manual senilai Rp ${payment.amount.toLocaleString("id-ID")} yang menunggu verifikasi Anda.`,
+      type: "info"
+    })
+
     return NextResponse.json({ success: true, url: proofUrl })
   } catch (error: any) {
     console.error("Upload proof error:", error)

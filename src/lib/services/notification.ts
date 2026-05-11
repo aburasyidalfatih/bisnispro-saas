@@ -322,3 +322,31 @@ export async function sendNotification(params: {
     }
   }
 }
+
+export async function notifyTenantAdmins(tenantId: string, params: {
+  title: string
+  message: string
+  type?: "info" | "success" | "warning" | "error"
+  channels?: ("inapp" | "email" | "whatsapp")[]
+}) {
+  const admins = await db.tenantUser.findMany({
+    where: {
+      tenantId,
+      role: { in: ["admin", "owner"] }
+    },
+    include: { user: true }
+  })
+
+  for (const admin of admins) {
+    if (admin.userId) {
+      await sendNotification({
+        tenantId,
+        userId: admin.userId,
+        title: params.title,
+        message: params.message,
+        type: params.type || "info",
+        channels: params.channels || ["inapp", "email", "whatsapp"]
+      })
+    }
+  }
+}

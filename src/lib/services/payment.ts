@@ -208,6 +208,14 @@ export async function handleCallback(body: TripayCallbackBody) {
                status: "SUCCESS"
              }
            })
+
+           // 3. Notify Admin
+           const { notifyTenantAdmins } = await import("@/lib/services/notification");
+           await notifyTenantAdmins(payment.tenantId, {
+             title: "Top-Up Saldo Berhasil",
+             message: `Wali murid telah berhasil melakukan top-up saldo sebesar Rp ${payment.amount.toLocaleString("id-ID")}.`,
+             type: "success"
+           })
         },
         "topup-wallet"
       )
@@ -228,6 +236,14 @@ export async function handleCallback(body: TripayCallbackBody) {
                amountPaid: invoice.amount,
                amountDue: 0,
              }
+           })
+
+           // Notify Admin
+           const { notifyTenantAdmins } = await import("@/lib/services/notification");
+           await notifyTenantAdmins(payment.tenantId, {
+             title: "Pembayaran Tagihan Berhasil",
+             message: `Tagihan '${invoice.title}' senilai Rp ${payment.amount.toLocaleString("id-ID")} telah berhasil dibayar.`,
+             type: "success"
            })
         },
         "pay-invoice"
