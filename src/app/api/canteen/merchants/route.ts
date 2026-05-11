@@ -45,3 +45,24 @@ export async function POST(req: Request) {
   const merchant = await db.canteenMerchant.create({ data: { tenantId, ...data } })
   return NextResponse.json(merchant, { status: 201 })
 }
+
+export async function DELETE(req: Request) {
+  const url = new URL(req.url)
+  const tenantId = url.searchParams.get("tenantId")
+  const id = url.searchParams.get("id")
+  
+  if (!tenantId || !id) return NextResponse.json({ error: "tenantId dan id diperlukan" }, { status: 400 })
+  
+  const { error } = await requireTenantMembership(tenantId)
+  if (error) return error
+
+  try {
+    await db.canteenMerchant.delete({
+      where: { id }
+    })
+    return NextResponse.json({ message: "Merchant dihapus" })
+  } catch (e: any) {
+    return NextResponse.json({ error: "Gagal menghapus merchant" }, { status: 500 })
+  }
+}
+
