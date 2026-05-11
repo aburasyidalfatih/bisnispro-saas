@@ -51,13 +51,27 @@ export default function GTKAttendancePage() {
   const [requireSelfie, setRequireSelfie] = useState(false)
   const [photoPreview, setPhotoPreview] = useState("")
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
-  const photoInputRef = useRef<HTMLInputElement>(null)
+  const [isCameraOpen, setIsCameraOpen] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop())
+      streamRef.current = null
+    }
+    setIsCameraOpen(false)
+  }, [])
 
   // Live clock
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(t)
-  }, [])
+    return () => {
+      clearInterval(t)
+      stopCamera() // Ensure camera is stopped on unmount
+    }
+  }, [stopCamera])
 
   // Fetch staff profile linked to current user
   useEffect(() => {
@@ -117,24 +131,62 @@ export default function GTKAttendancePage() {
     )
   }
 
-  // Handle Photo Upload
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploadingPhoto(true)
+  // Camera Handlers
+  const startCamera = async () => {
+    setPhotoPreview("")
     try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" },
+        audio: false,
+      })
+      streamRef.current = stream
+      setIsCameraOpen(true)
+      // Small timeout to ensure video element is rendered before attaching stream
+      setTimeout(() => {
+        if (videoRef.current) videoRef.current.srcObject = stream
+      }, 100)
+    } catch (err) {
+      toast({ title: "Gagal akses kamera", description: "Pastikan izin kamera diberikan di browser", variant: "destructive" })
+    }
+  }
+
+  const capturePhoto = async () => {
+    if (!videoRef.current || !canvasRef.current) return
+    const video = videoRef.current
+    const canvas = canvasRef.current
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.8)
+    
+    stopCamera()
+    setUploadingPhoto(true)
+    
+    try {
+      const res = await fetch(dataUrl)
+      const blob = await res.blob()
+      const file = new File([blob], "selfie.jpg", { type: "image/jpeg" })
+      
       const fd = new FormData()
       fd.append("file", file)
       fd.append("subDir", "attendance")
       if (tenant?.id) fd.append("tenantId", tenant.id)
-      const res = await fetch("/api/upload", { method: "POST", body: fd })
-      const d = await res.json()
-      if (res.ok && d.url) { 
+      
+      const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+      const d = await uploadRes.json()
+      if (uploadRes.ok && d.url) { 
          setPhotoPreview(d.url) 
+      } else {
+         toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
       }
-      else toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
-    } catch { toast({ title: "Gagal upload foto", variant: "destructive" }) }
-    finally { setUploadingPhoto(false); e.target.value = "" }
+    } catch { 
+      toast({ title: "Gagal memproses foto", variant: "destructive" }) 
+    } finally { 
+      setUploadingPhoto(false) 
+    }
   }
 
   // Check-in
@@ -323,7 +375,7 @@ export default function GTKAttendancePage() {
                       height="100%"
                       frameBorder="0"
                       style={{ border: 0 }}
-                      src={`https://maps.google.com/maps?q=${coords.lat},${coords.lng}&z=16&output=embed`}
+                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng-0.005},${coords.lat-0.005},${coords.lng+0.005},${coords.lat+0.005}&layer=mapnik&marker=${coords.lat},${coords.lng}`}
                       allowFullScreen
                     ></iframe>
                   </div>
@@ -331,40 +383,47 @@ export default function GTKAttendancePage() {
                   {requireSelfie && !alreadyCheckedIn && (
                     <div className="rounded-xl border p-3 bg-muted/30">
                       <p className="text-xs font-bold mb-2 flex items-center gap-1.5"><Camera className="h-3.5 w-3.5 text-primary"/> Foto Selfie (Wajib)</p>
-                      {photoPreview ? (
+                      
+                      {/* Hidden canvas for image capture */}
+                      <canvas ref={canvasRef} className="hidden" />
+                      
+                      {isCameraOpen ? (
+                        <div className="relative w-full rounded-lg overflow-hidden border border-border bg-black">
+                          <video ref={videoRef} autoPlay playsInline className="w-full h-auto min-h-[200px] object-cover scale-x-[-1]" />
+                          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
+                            <Button size="icon" variant="destructive" className="h-12 w-12 rounded-full shadow-lg" onClick={stopCamera}>
+                              <X className="h-5 w-5" />
+                            </Button>
+                            <Button size="icon" className="h-12 w-12 rounded-full shadow-lg bg-emerald-500 hover:bg-emerald-600" onClick={capturePhoto}>
+                              <Camera className="h-5 w-5 text-white" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : photoPreview ? (
                         <div className="relative w-full h-48 rounded-lg overflow-hidden border border-border bg-black">
-                          <img src={photoPreview} alt="Selfie" className="w-full h-full object-cover" />
+                          <img src={photoPreview} alt="Selfie" className="w-full h-full object-cover scale-x-[-1]" />
                           <button onClick={() => setPhotoPreview("")} className="absolute top-2 right-2 bg-destructive text-white p-1.5 rounded-full shadow-md hover:bg-destructive/90">
                             <X className="h-4 w-4" />
                           </button>
                         </div>
                       ) : (
                         <div 
-                          onClick={() => photoInputRef.current?.click()}
+                          onClick={uploadingPhoto ? undefined : startCamera}
                           className="w-full h-32 rounded-lg border-2 border-dashed border-primary/40 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors"
                         >
                           {uploadingPhoto ? (
                             <div className="flex flex-col items-center">
                                <Loader2 className="h-8 w-8 text-primary animate-spin mb-2" />
-                               <span className="text-xs font-medium text-muted-foreground">Mengunggah...</span>
+                               <span className="text-xs font-medium text-muted-foreground">Memproses...</span>
                             </div>
                           ) : (
                             <>
                               <Camera className="h-8 w-8 text-primary mb-2 opacity-80" />
-                              <span className="text-xs font-medium text-muted-foreground">Ketuk untuk ambil foto</span>
+                              <span className="text-xs font-medium text-muted-foreground">Ketuk untuk buka kamera</span>
                             </>
                           )}
                         </div>
                       )}
-                      <input 
-                        ref={photoInputRef} 
-                        type="file" 
-                        accept="image/*" 
-                        capture="user" 
-                        className="hidden" 
-                        onChange={handlePhotoUpload} 
-                        disabled={uploadingPhoto}
-                      />
                     </div>
                   )}
                 </div>
