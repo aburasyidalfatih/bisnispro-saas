@@ -19,12 +19,23 @@ export default function GuruDashboard() {
   const [announcements, setAnnouncements] = useState<any[]>([])
   const [scheduleToday, setScheduleToday] = useState<any[]>([])
   const [loadingSchedule, setLoadingSchedule] = useState(true)
+  const [academicYear, setAcademicYear] = useState("2024/2025")
+  const [academicSemester, setAcademicSemester] = useState("Ganjil")
 
   useEffect(() => {
     setCurrentTime(new Date())
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
 
     if (tenantId) {
+      // Fetch Academic Settings
+      fetch(`/api/tenant/website?tenantId=${tenantId}`)
+        .then(r => r.json())
+        .then(d => {
+           if (d.settings?.academicYear) setAcademicYear(d.settings.academicYear)
+           if (d.settings?.academicSemester) setAcademicSemester(d.settings.academicSemester)
+        })
+        .catch(console.error)
+
       // Fetch Announcements
       fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN_GTK&limit=2`)
         .then(r => {
@@ -74,7 +85,7 @@ export default function GuruDashboard() {
           <div className="space-y-3 text-center sm:text-left">
             <div className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium backdrop-blur-md border border-white/10">
               <span className="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
-              Tahun Ajaran 2024/2025
+              Semester {academicSemester} • Tahun Ajaran {academicYear}
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               Halo, {userName.split(' ')[0]}! 👋
