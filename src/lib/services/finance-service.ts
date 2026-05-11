@@ -87,10 +87,27 @@ export class FinanceService {
       include: { parents: true }
     })
 
+    const tenant = await db.tenant.findUnique({
+      where: { id: invoice.tenantId },
+      select: { settings: true, name: true }
+    })
+    
+    const settings: any = tenant?.settings || {}
+
     if (student && student.parents.length > 0) {
-      const title = `Tagihan Baru: ${invoice.title}`
-      const message = `Halo, ada tagihan baru untuk ananda ${student.name} sebesar Rp ${invoice.amountDue.toLocaleString('id-ID')}. Jatuh tempo pada ${format(invoice.dueDate, "d MMMM yyyy", { locale: localeId })}. Silakan lakukan pembayaran melalui aplikasi.`
+      let title = settings.invoice_created_title || "Tagihan Baru: {{invoiceTitle}}"
+      let message = settings.invoice_created_message || "Halo, ada tagihan baru untuk ananda {{studentName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
       
+      // Replace variables
+      title = title.replace(/{{invoiceTitle}}/g, invoice.title)
+      
+      message = message
+        .replace(/{{studentName}}/g, student.name)
+        .replace(/{{amount}}/g, invoice.amountDue.toLocaleString('id-ID'))
+        .replace(/{{dueDate}}/g, format(new Date(invoice.dueDate), "d MMMM yyyy", { locale: localeId }))
+        .replace(/{{schoolName}}/g, tenant?.name || "Sekolah")
+        .replace(/{{invoiceTitle}}/g, invoice.title)
+
       for (const parent of student.parents) {
           await sendNotification({
             tenantId: invoice.tenantId,
