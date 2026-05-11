@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
-import { Building2, User, Bell, Phone, Mail, Save, Globe, ShieldCheck, ShieldOff, ArrowRight, Upload, X, Eye, EyeOff, KeyRound, Camera, Check, Info, CheckCircle, AlertTriangle, XCircle } from "lucide-react"
+import { Building2, User, Bell, Phone, Mail, Save, Globe, ShieldCheck, ShieldOff, ArrowRight, Upload, X, Eye, EyeOff, KeyRound, Camera, Check, Info, CheckCircle, AlertTriangle, XCircle, BookOpen } from "lucide-react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 
 // ==================== NOTIF RECENT LIST ====================
