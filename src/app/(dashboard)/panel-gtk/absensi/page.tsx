@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
   MapPin, Clock, CheckCircle, LogIn, LogOut, Loader2,
-  Navigation, AlertCircle, Calendar, History, Camera
+  Navigation, AlertCircle, Calendar, History, Camera, X
 } from "lucide-react"
 import { format, isToday } from "date-fns"
 import { id as localeId } from "date-fns/locale"
@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils"
 type AttendanceRecord = {
   id: string; date: string; status: string
   checkInAt?: string; checkOutAt?: string
-  checkInLat?: number; checkInLng?: number; notes?: string
+  checkInLat?: number; checkInLng?: number; checkInPhoto?: string; notes?: string
 }
 
 type GeoState = "idle" | "loading" | "success" | "error"
@@ -47,6 +47,12 @@ export default function GTKAttendancePage() {
   const [notes, setNotes] = useState("")
   const [now, setNow] = useState(new Date())
 
+  // Selfie state
+  const [requireSelfie, setRequireSelfie] = useState(false)
+  const [photoPreview, setPhotoPreview] = useState("")
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const photoInputRef = useRef<HTMLInputElement>(null)
+
   // Live clock
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
@@ -69,14 +75,18 @@ export default function GTKAttendancePage() {
   const fetchAttendance = useCallback(async () => {
     if (!tenant || !staff) return
     try {
-      const [todayRes, histRes] = await Promise.all([
+      const [todayRes, histRes, websiteRes] = await Promise.all([
         fetch(`/api/gtk/attendance/today?tenantId=${tenant.id}&staffId=${staff.id}`),
         fetch(`/api/gtk/attendance?tenantId=${tenant.id}&staffId=${staff.id}&take=30`),
+        fetch(`/api/tenant/website?tenantId=${tenant.id}`)
       ])
       const todayData = await todayRes.json()
       const histData = await histRes.json()
+      const websiteData = await websiteRes.json()
+
       setTodayRecord(todayData.record || null)
       setHistory(histData.data || [])
+      setRequireSelfie(websiteData?.settings?.attendanceRequireSelfie || false)
     } catch (err) {
       console.error(err)
     } finally {
@@ -107,11 +117,35 @@ export default function GTKAttendancePage() {
     )
   }
 
+  // Handle Photo Upload
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingPhoto(true)
+    try {
+      const fd = new FormData()
+      fd.append("file", file)
+      fd.append("subDir", "attendance")
+      if (tenant?.id) fd.append("tenantId", tenant.id)
+      const res = await fetch("/api/upload", { method: "POST", body: fd })
+      const d = await res.json()
+      if (res.ok && d.url) { 
+         setPhotoPreview(d.url) 
+      }
+      else toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
+    } catch { toast({ title: "Gagal upload foto", variant: "destructive" }) }
+    finally { setUploadingPhoto(false); e.target.value = "" }
+  }
+
   // Check-in
   const handleCheckIn = async () => {
     if (!staff || !tenant) return
     if (geoState !== "success" || !coords) {
       toast({ title: "Aktifkan GPS terlebih dahulu", variant: "destructive" })
+      return
+    }
+    if (requireSelfie && !photoPreview) {
+      toast({ title: "Wajib mengambil foto selfie", variant: "destructive" })
       return
     }
     setCheckingIn(true)
@@ -124,6 +158,7 @@ export default function GTKAttendancePage() {
           staffId: staff.id,
           checkInLat: coords.lat,
           checkInLng: coords.lng,
+          checkInPhoto: photoPreview || undefined,
           notes,
         }),
       })
@@ -277,9 +312,61 @@ export default function GTKAttendancePage() {
 
               {/* Lokasi info */}
               {geoState === "success" && coords && (
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-emerald-500/10 border border-emerald-200">
-                  <MapPin className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <p className="text-xs text-emerald-700 font-mono truncate">{locationName}</p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 p-2 rounded-xl bg-emerald-500/10 border border-emerald-200">
+                    <MapPin className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <p className="text-xs text-emerald-700 font-mono truncate">{locationName}</p>
+                  </div>
+                  <div className="w-full h-48 rounded-xl overflow-hidden border shadow-sm">
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      frameBorder="0"
+                      style={{ border: 0 }}
+                      src={`https://maps.google.com/maps?q=${coords.lat},${coords.lng}&z=16&output=embed`}
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                  
+                  {requireSelfie && !alreadyCheckedIn && (
+                    <div className="rounded-xl border p-3 bg-muted/30">
+                      <p className="text-xs font-bold mb-2 flex items-center gap-1.5"><Camera className="h-3.5 w-3.5 text-primary"/> Foto Selfie (Wajib)</p>
+                      {photoPreview ? (
+                        <div className="relative w-full h-48 rounded-lg overflow-hidden border border-border bg-black">
+                          <img src={photoPreview} alt="Selfie" className="w-full h-full object-cover" />
+                          <button onClick={() => setPhotoPreview("")} className="absolute top-2 right-2 bg-destructive text-white p-1.5 rounded-full shadow-md hover:bg-destructive/90">
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div 
+                          onClick={() => photoInputRef.current?.click()}
+                          className="w-full h-32 rounded-lg border-2 border-dashed border-primary/40 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors"
+                        >
+                          {uploadingPhoto ? (
+                            <div className="flex flex-col items-center">
+                               <Loader2 className="h-8 w-8 text-primary animate-spin mb-2" />
+                               <span className="text-xs font-medium text-muted-foreground">Mengunggah...</span>
+                            </div>
+                          ) : (
+                            <>
+                              <Camera className="h-8 w-8 text-primary mb-2 opacity-80" />
+                              <span className="text-xs font-medium text-muted-foreground">Ketuk untuk ambil foto</span>
+                            </>
+                          )}
+                        </div>
+                      )}
+                      <input 
+                        ref={photoInputRef} 
+                        type="file" 
+                        accept="image/*" 
+                        capture="user" 
+                        className="hidden" 
+                        onChange={handlePhotoUpload} 
+                        disabled={uploadingPhoto}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -381,6 +468,11 @@ export default function GTKAttendancePage() {
                           {rec.checkInAt && <span className="flex items-center gap-1"><LogIn className="h-3 w-3" />{format(new Date(rec.checkInAt), "HH:mm")}</span>}
                           {rec.checkOutAt && <span className="flex items-center gap-1"><LogOut className="h-3 w-3" />{format(new Date(rec.checkOutAt), "HH:mm")}</span>}
                           {rec.checkInLat && <span className="flex items-center gap-1 text-emerald-600"><MapPin className="h-3 w-3" />GPS</span>}
+                          {rec.checkInPhoto && (
+                            <a href={rec.checkInPhoto} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary hover:underline" onClick={e => e.stopPropagation()}>
+                              <Camera className="h-3 w-3" />Foto
+                            </a>
+                          )}
                         </div>
                         {rec.notes && <p className="text-xs text-muted-foreground italic mt-0.5 truncate">"{rec.notes}"</p>}
                       </div>
