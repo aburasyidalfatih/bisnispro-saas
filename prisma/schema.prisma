@@ -363,6 +363,7 @@ model TenantApplication {
   address       String?
   status        String            @default("PENDING")
   adminMessage  String?
+  emailOpenedAt DateTime?
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   npsn          String?

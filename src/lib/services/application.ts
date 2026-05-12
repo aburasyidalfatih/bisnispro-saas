@@ -103,6 +103,7 @@ export async function sendApplicationNotification(applicationId: string) {
         html: `<div style="font-family: sans-serif; padding: 20px; color: #333;">
                 <h2 style="color: #4f46e5;">${platformName}</h2>
                 <p>${message.replace(/\n/g, "<br>")}</p>
+                <img src="https://${rootDomain}/api/public/track-email/${app.id}" width="1" height="1" style="display:none;" alt="" />
               </div>`,
       })
       logger.info("Application email sent", { applicationId, status: app.status })

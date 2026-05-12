@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
 import { 
   CheckCircle, XCircle, Clock, RefreshCcw, Trash2,
-  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User, Search, MessageSquareOff, MessageSquare
+  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User, Search, MessageSquareOff, MessageSquare, MailOpen, MailX
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { checkDataCompleteness, type CompletenessLevel } from "@/lib/utils/data-completeness"
@@ -36,6 +36,7 @@ interface Application {
   address: string
   status: string
   adminMessage: string
+  emailOpenedAt?: string | null
   createdAt: string
   updatedAt: string
   logo?: string | null
@@ -208,6 +209,28 @@ export default function SuperAdminApplicationsPage() {
       fetchApps()
     } catch (error) {
       toast({ title: "Error", description: "Gagal memproses permintaan.", variant: "destructive" })
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const handleResendEmail = async (id: string) => {
+    setIsUpdating(true)
+    try {
+      const res = await fetch("/api/super-admin/applications/resend-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      })
+      if (res.ok) {
+        toast({ title: "Berhasil", description: "Email sedang dikirim ulang." })
+        fetchApps()
+      } else {
+        const err = await res.json()
+        toast({ title: "Error", description: err.error || "Gagal mengirim ulang", variant: "destructive" })
+      }
+    } catch (e) {
+      toast({ title: "Error", description: "Terjadi kesalahan sistem.", variant: "destructive" })
     } finally {
       setIsUpdating(false)
     }
@@ -400,7 +423,20 @@ export default function SuperAdminApplicationsPage() {
                     )}
                   </td>
                   <td className="px-4 py-4">
-                    {getStatusBadge(app.status)}
+                    <div className="flex flex-col gap-1.5 items-start">
+                      {getStatusBadge(app.status)}
+                      {app.status === 'APPROVED' && (
+                        app.emailOpenedAt ? (
+                          <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1 text-[10px] px-1.5 py-0" title={`Dibaca pada: ${new Date(app.emailOpenedAt).toLocaleString('id-ID')}`}>
+                            <MailOpen className="h-3 w-3" /> Dibaca
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 gap-1 text-[10px] px-1.5 py-0" title="Email belum dibuka">
+                            <MailX className="h-3 w-3" /> Belum Dibaca
+                          </Badge>
+                        )
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-4 text-right">
                     <DropdownMenu>
@@ -415,6 +451,11 @@ export default function SuperAdminApplicationsPage() {
                         <DropdownMenuItem onClick={() => viewDetail(app)}>
                           <Eye className="h-4 w-4 mr-2 text-primary" /> Lihat Detail
                         </DropdownMenuItem>
+                        {app.status === 'APPROVED' && !app.emailOpenedAt && (
+                          <DropdownMenuItem onClick={() => handleResendEmail(app.id)}>
+                            <Mail className="h-4 w-4 mr-2 text-blue-500" /> Kirim Ulang Email
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => openActionModal(app, "APPROVED")}>
                           <CheckCircle className="h-4 w-4 mr-2 text-emerald-500" /> Setujui
