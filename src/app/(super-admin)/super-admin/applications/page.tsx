@@ -53,7 +53,7 @@ export default function SuperAdminApplicationsPage() {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null)
   const [detailModalOpen, setDetailModalOpen] = useState(false)
   const [actionModalOpen, setActionModalOpen] = useState(false)
-  const [actionType, setActionType] = useState<"APPROVED" | "REVISION" | "REJECTED" | "DELETE" | null>(null)
+  const [actionType, setActionType] = useState<"APPROVED" | "REVISION" | "REJECTED" | "DELETE" | "RESEND_EMAIL" | null>(null)
   const [adminMessage, setAdminMessage] = useState("")
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -133,31 +133,9 @@ export default function SuperAdminApplicationsPage() {
     
     setIsUpdating(true)
     const isBulk = selectedIds.length > 0 && !selectedApp
+    const targetIds = isBulk ? selectedIds : [selectedApp?.id as string]
 
     try {
-      if (actionType === "DELETE") {
-        const res = await fetch("/api/super-admin/applications", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ids: isBulk ? selectedIds : [selectedApp?.id] }),
-        })
-
-        if (res.ok) {
-          toast({ title: "Berhasil", description: "Pengajuan berhasil dihapus." })
-          setSelectedApp(null)
-          setActionModalOpen(false)
-          setBulkActionModalOpen(false)
-          if (isBulk) setSelectedIds([])
-          fetchApps()
-        } else {
-          const errorData = await res.json()
-          toast({ title: "Error", description: errorData.error || "Terjadi kesalahan", variant: "destructive" })
-        }
-        return
-      }
-
-      const targetIds = isBulk ? selectedIds : [selectedApp?.id as string]
-      
       if (isBulk) {
         setBulkProgress({ total: targetIds.length, current: 0, show: true })
         let successCount = 0
@@ -166,11 +144,27 @@ export default function SuperAdminApplicationsPage() {
         for (let i = 0; i < targetIds.length; i++) {
           const id = targetIds[i]
           try {
-            const res = await fetch("/api/super-admin/applications", {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ id, status: actionType, adminMessage }),
-            })
+            let res;
+            if (actionType === "DELETE") {
+              res = await fetch("/api/super-admin/applications", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ids: [id] }),
+              })
+            } else if (actionType === "RESEND_EMAIL") {
+              res = await fetch("/api/super-admin/applications/resend-email", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id }),
+              })
+            } else {
+              res = await fetch("/api/super-admin/applications", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, status: actionType, adminMessage }),
+              })
+            }
+
             if (res.ok) successCount++
             else failCount++
           } catch (e) {
@@ -184,17 +178,33 @@ export default function SuperAdminApplicationsPage() {
           description: `${successCount} berhasil, ${failCount} gagal.` 
         })
       } else {
-        const res = await fetch("/api/super-admin/applications", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: targetIds[0], status: actionType, adminMessage }),
-        })
+        let res;
+        const id = targetIds[0]
+        if (actionType === "DELETE") {
+          res = await fetch("/api/super-admin/applications", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ids: [id] }),
+          })
+        } else if (actionType === "RESEND_EMAIL") {
+          res = await fetch("/api/super-admin/applications/resend-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+          })
+        } else {
+          res = await fetch("/api/super-admin/applications", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, status: actionType, adminMessage }),
+          })
+        }
 
         if (res.ok) {
-          toast({ title: "Berhasil", description: `Pengajuan telah di-${actionType.toLowerCase()}.` })
+          toast({ title: "Berhasil", description: actionType === "DELETE" ? "Pengajuan berhasil dihapus." : actionType === "RESEND_EMAIL" ? "Email sedang dikirim ulang." : `Pengajuan telah di-${actionType.toLowerCase()}.` })
         } else {
           const errorData = await res.json()
-          toast({ title: "Error", description: errorData.error || "Terjadi kesalahan", variant: "destructive" })
+          toast({ title: "Error", description: errorData?.error || "Terjadi kesalahan", variant: "destructive" })
         }
       }
 
@@ -213,6 +223,7 @@ export default function SuperAdminApplicationsPage() {
       setIsUpdating(false)
     }
   }
+
 
   const handleResendEmail = async (id: string) => {
     setIsUpdating(true)
@@ -236,30 +247,6 @@ export default function SuperAdminApplicationsPage() {
     }
   }
 
-  const handleBulkResendEmail = async () => {
-    if (selectedIds.length === 0) return
-    setIsUpdating(true)
-    try {
-      const res = await fetch("/api/super-admin/applications/resend-email-bulk", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: selectedIds })
-      })
-      if (res.ok) {
-        const data = await res.json()
-        toast({ title: "Berhasil", description: data.message || "Email masal sedang dikirim ulang." })
-        setSelectedIds([])
-        fetchApps()
-      } else {
-        const err = await res.json()
-        toast({ title: "Error", description: err.error || "Gagal mengirim ulang email masal", variant: "destructive" })
-      }
-    } catch (e) {
-      toast({ title: "Error", description: "Terjadi kesalahan sistem.", variant: "destructive" })
-    } finally {
-      setIsUpdating(false)
-    }
-  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -287,7 +274,7 @@ export default function SuperAdminApplicationsPage() {
     }
   }
 
-  const openActionModal = (app: Application | null, type: "APPROVED" | "REVISION" | "REJECTED" | "DELETE", isBulk: boolean = false) => {
+  const openActionModal = (app: Application | null, type: "APPROVED" | "REVISION" | "REJECTED" | "DELETE" | "RESEND_EMAIL", isBulk: boolean = false) => {
     setActionType(type)
     setAdminMessage(app?.adminMessage || "")
     if (!isBulk) {
@@ -361,7 +348,7 @@ export default function SuperAdminApplicationsPage() {
           <Button size="sm" variant="outline" className="h-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50" onClick={() => openActionModal(null, "APPROVED", true)}>
             <CheckCircle className="h-4 w-4 mr-1.5" /> Setujui Masal
           </Button>
-          <Button size="sm" variant="outline" className="h-8 border-purple-200 text-purple-600 hover:bg-purple-50" onClick={() => handleBulkResendEmail()} disabled={isUpdating}>
+          <Button size="sm" variant="outline" className="h-8 border-purple-200 text-purple-600 hover:bg-purple-50" onClick={() => openActionModal(null, "RESEND_EMAIL", true)} disabled={isUpdating}>
             <Mail className="h-4 w-4 mr-1.5" /> Kirim Ulang Email Masal
           </Button>
           <Button size="sm" variant="outline" className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50" onClick={() => openActionModal(null, "REVISION", true)}>
@@ -513,7 +500,7 @@ export default function SuperAdminApplicationsPage() {
         <DialogContent className="glass border-0">
           <DialogHeader>
             <DialogTitle>
-              {actionType === "APPROVED" ? "Setujui Pendaftaran" : actionType === "REVISION" ? "Minta Revisi" : actionType === "DELETE" ? "Hapus Pengajuan" : "Tolak Pendaftaran"}
+              {actionType === "APPROVED" ? "Setujui Pendaftaran" : actionType === "REVISION" ? "Minta Revisi" : actionType === "DELETE" ? "Hapus Pengajuan" : actionType === "RESEND_EMAIL" ? "Kirim Ulang Email" : "Tolak Pendaftaran"}
             </DialogTitle>
             <DialogDescription>
               {actionType === "DELETE" 
@@ -537,13 +524,13 @@ export default function SuperAdminApplicationsPage() {
             <Button variant="outline" onClick={() => setActionModalOpen(false)}>Batal</Button>
             <Button 
               className={cn(
-                actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : "bg-rose-500 hover:bg-rose-600",
+                actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : actionType === "RESEND_EMAIL" ? "bg-purple-500 hover:bg-purple-600" : "bg-rose-500 hover:bg-rose-600",
                 "text-white"
               )}
               onClick={handleUpdateStatus}
               disabled={isUpdating || ((actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim())}
             >
-              {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus" : "Konfirmasi"}
+              {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus" : actionType === "RESEND_EMAIL" ? "Ya, Kirim" : "Konfirmasi"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -554,11 +541,13 @@ export default function SuperAdminApplicationsPage() {
         <DialogContent className="glass border-0">
           <DialogHeader>
             <DialogTitle>
-              Konfirmasi Masal: {actionType === "APPROVED" ? "Setujui" : actionType === "REVISION" ? "Revisi" : actionType === "DELETE" ? "Hapus" : "Tolak"} ({selectedIds.length} Sekolah)
+              Konfirmasi Masal: {actionType === "APPROVED" ? "Setujui" : actionType === "REVISION" ? "Revisi" : actionType === "DELETE" ? "Hapus" : actionType === "RESEND_EMAIL" ? "Kirim Ulang Email" : "Tolak"} ({selectedIds.length} Sekolah)
             </DialogTitle>
             <DialogDescription>
               {actionType === "DELETE" 
                 ? `Apakah Anda yakin ingin menghapus ${selectedIds.length} pengajuan secara permanen?`
+                : actionType === "RESEND_EMAIL"
+                ? `Apakah Anda yakin ingin mengirim ulang email konfirmasi ke ${selectedIds.length} pengajuan yang dipilih secara masal?`
                 : `Tindakan ini akan diproses untuk seluruh ${selectedIds.length} pengajuan yang dipilih secara masal.`}
             </DialogDescription>
           </DialogHeader>
@@ -594,13 +583,13 @@ export default function SuperAdminApplicationsPage() {
                 <Button variant="outline" onClick={() => setBulkActionModalOpen(false)} disabled={isUpdating}>Batal</Button>
                 <Button 
                   className={cn(
-                    actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : "bg-rose-500 hover:bg-rose-600",
+                    actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : actionType === "RESEND_EMAIL" ? "bg-purple-500 hover:bg-purple-600" : "bg-rose-500 hover:bg-rose-600",
                     "text-white"
                   )}
                   onClick={handleUpdateStatus}
                   disabled={isUpdating || ((actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim())}
                 >
-                  {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus Masal" : "Proses Masal"}
+                  {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus Masal" : actionType === "RESEND_EMAIL" ? "Kirim Masal" : "Proses Masal"}
                 </Button>
               </DialogFooter>
             </>

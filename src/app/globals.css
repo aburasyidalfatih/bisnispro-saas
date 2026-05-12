@@ -27,7 +27,7 @@
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 221 83% 53%;
-    --radius: 1rem;
+    --radius: 0.75rem;
     
     /* Glassmorphism khusus EduTech */
     --glass-bg: rgba(255, 255, 255, 0.7);
