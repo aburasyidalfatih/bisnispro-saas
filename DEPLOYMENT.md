@@ -1,36 +1,36 @@
 # Panduan Deployment SchoolPro (Docker + GHCR Architecture)
 
-Dokumen ini menjelaskan alur deployment terbaru yang telah dioptimasi menggunakan **GitHub Actions** dan **GitHub Container Registry (GHCR)**. Arsitektur ini menjamin server VPS Anda aman dari *Out of Memory* saat rilis.
+Dokumen ini menjelaskan alur deployment terbaru yang telah dioptimasi menggunakan **GitHub Actions (Self-Hosted Runner di PC Lokal)** dan **GitHub Container Registry (GHCR)**. Arsitektur ini menjamin VPS Anda aman dari *Out of Memory* sekaligus menghapus biaya *billing* GitHub Actions.
 
 ## 1. Arsitektur & Lingkungan
 | Lingkungan | Domain / URL | Cara Deploy | Variabel Lingkungan Utama |
 | :--- | :--- | :--- | :--- |
 | **Local Dev** | `localhost:3000` | `npm run dev` | `NEXT_PUBLIC_ROOT_DOMAIN="localhost"` |
 | **Development VPS** | `schoolpro.my.id` | **Otomatis** (Push ke `develop`) | `NEXT_PUBLIC_ROOT_DOMAIN="schoolpro.my.id"` |
-| **Production VPS** | `schoolpro.id` | **Manual** (via GitHub Actions UI) | `NEXT_PUBLIC_ROOT_DOMAIN="schoolpro.id"` |
+| **Production VPS** | `schoolpro.id` | **Otomatis** (Merge ke `main`) | `NEXT_PUBLIC_ROOT_DOMAIN="schoolpro.id"` |
 
 > [!IMPORTANT]
 > Sistem *routing multi-tenant* bergantung pada variabel `NEXT_PUBLIC_ROOT_DOMAIN` di file `.env` server Anda. Pastikan ini diatur dengan benar agar deteksi subdomain berfungsi.
 
 ## 2. Alur Kerja (Workflow) CI/CD Terbaru
 
-Seluruh proses kompilasi kode (NPM Install & Next.js Build) kini dilakukan oleh **Server GitHub**, bukan di VPS. 
+Seluruh proses kompilasi kode (NPM Install & Next.js Build) kini dilakukan oleh **PC Lokal Anda (Self-Hosted Runner)**, bukan di VPS maupun Server GitHub.
 
 ### A. Deployment ke Lingkungan Development (`develop`)
 Proses ini berjalan 100% otomatis:
 1. Lakukan *commit* dan *push* ke branch `develop`.
-2. GitHub Actions akan otomatis mem-*build* Docker Image dan menyisipkan ID Versi (Commit SHA) ke dalam aplikasi agar Anda bisa melacak rilis mana yang sedang aktif.
-3. Image yang sudah jadi akan diunggah ke GHCR secara tertutup (privat).
-4. GitHub Actions masuk ke VPS Anda dan memerintahkan VPS untuk mengunduh (*pull*) image tersebut.
-5. VPS akan menjalankan `docker compose up -d app db redis` (Service Nginx sengaja dilewati agar tidak terjadi konflik *port* dengan server produksi).
+2. PC Anda (Runner) akan otomatis mem-*build* Docker Image.
+3. Image yang sudah jadi diunggah ke GHCR secara tertutup.
+4. PC Anda akan masuk ke VPS secara siluman via *Native SSH* dan memerintahkan VPS untuk mengunduh (*pull*) image tersebut.
+5. VPS akan me-restart container `app` (Tanpa menjalankan ulang WA Gateway).
 
 ### B. Deployment ke Lingkungan Production (`main`)
-Demi keamanan ekstra agar aplikasi *live* tidak berubah tanpa persetujuan Anda, deployment ke `main` dibuat **Manual**:
-1. Pastikan fitur dari `develop` sudah di-*merge* ke branch `main`.
-2. Buka repository GitHub di *browser*.
-3. Masuk ke tab **Actions** -> Pilih workflow **"Deploy SchoolPro SaaS"**.
-4. Klik tombol **Run workflow**, pastikan branch yang dipilih adalah **`main`**, lalu jalankan.
-5. GitHub akan mem-*build* image dan menginstruksikan VPS untuk me-*restart* seluruh layanan (`docker compose up -d`).
+Deployment ke `main` kini juga **Otomatis** setelah branch digabungkan:
+1. Pastikan fitur dari `develop` sudah stabil dan di-*merge* ke branch `main`.
+2. Setelah *Merge*, PC Anda (Runner) akan menangkap antrean dan meracik Docker Image untuk *Production*.
+3. Image diunggah ke GHCR dengan *tag* terbaru.
+4. PC Anda memerintahkan VPS untuk me-*restart* seluruh layanan (`docker compose up -d app db redis wa-gateway`). 
+5. *(Catatan: `wa-gateway` didesain untuk otomatis menyala eksklusif di Production agar terhubung ke server WhatsApp aktif).*
 
 ### C. Manual Build di VPS (Darurat / Troubleshooting)
 Jika GitHub Actions sedang gangguan, Anda tetap bisa melakukan update manual:
@@ -55,10 +55,11 @@ docker compose up -d --build
 ```
 *(Catatan: Anda tetap bisa mem-build lokal dengan perintah di atas. Override `image` di docker-compose.yml tidak akan menghalangi fungsi build lokal).*
 
-## 4. Aturan Emas
-1. **Dilarang keras memakai `git reset --hard` manual di VPS.** Hal ini akan menghapus modifikasi VPS seperti penyesuaian file Nginx. Alur GitHub Actions terbaru kita sudah pintar merawat konfigurasi tersebut.
-2. **Dynamic Alias:** Kita menggunakan teknik alias dinamis (`${APP_ALIAS}`) agar satu file `docker-compose.yml` bisa dipakai secara bersamaan oleh environment Dev dan Prod di VPS yang sama tanpa bentrok rute jaringan.
-3. Jangan lagi menggunakan **PM2**. Seluruh aplikasi berjalan mandiri di dalam ekosistem container.
+## 4. Aturan Emas Arsitektur
+1. **Runner Wajib Aktif:** Pastikan PowerShell di PC Anda menjalankan `.\run.cmd` sebelum melakukan `git push` atau `merge`. Jika aplikasi ini mati, tugas *deploy* dari GitHub akan berstatus `Queued` dan menggantung.
+2. **Kinerja WA Gateway:** Modul WhatsApp (Baileys) telah dibekali dengan sistem *Lazy Connection* (Tidur Otomatis saat 1 jam menganggur) dan *History Pruning*. Ini memastikan RAM VPS Anda aman meski menangani ratusan *tenant*.
+3. **Dynamic Alias:** Kita menggunakan teknik alias dinamis (`${APP_ALIAS}`) agar satu file `docker-compose.yml` bisa dipakai secara bersamaan oleh environment Dev dan Prod tanpa bentrok rute jaringan Nginx.
+4. **Keamanan Script:** Baris perintah (*Bash*) untuk mengeksekusi VPS dikirim secara teliti menggunakan format penulisan Windows (*LF Line Endings*) agar Linux VPS tidak gagal memahaminya.
 
 ---
-*Diperbarui: Mei 2026 - Optimized with GHCR CI/CD Pipeline*
+*Diperbarui: Mei 2026 - Optimized with Self-Hosted Runner, Native SSH & WA Gateway Enterprise Architecture*
