@@ -171,7 +171,7 @@ jobs:
           Set-Content -Path deploy_script.sh -Value $script -Encoding utf8
           
           # 3. Execute script over SSH natively
-          ssh -o StrictHostKeyChecking=no -i $keyPath "$env:REMOTE_USER@$env:REMOTE_HOST" "bash -s" < deploy_script.sh
+          cmd.exe /c "ssh -o StrictHostKeyChecking=no -i $keyPath ""$env:REMOTE_USER@$env:REMOTE_HOST"" ""bash -s"" < deploy_script.sh"
           
           # Clean up key
           Remove-Item -Path $keyPath -Force
