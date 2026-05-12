@@ -141,9 +141,9 @@ jobs:
             
             # Restart container dengan image baru (Gunakan --no-build agar app tidak dibuild ulang di VPS)
             if [ "$BRANCH" = "main" ]; then
-              docker compose up -d --no-build app db redis wa-gateway
+              docker compose up -d --no-build app db redis wa-gateway --remove-orphans
             else
-              docker compose up -d --no-build app db redis wa-gateway
+              docker compose up -d --no-build app --remove-orphans
             fi
             
             # Tunggu container ready (max 30s)
