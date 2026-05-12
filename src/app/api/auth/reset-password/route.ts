@@ -26,10 +26,21 @@ export async function POST(req: Request) {
     }
 
     const hashed = await bcrypt.hash(password, 12)
-    await db.user.update({ where: { id: record.userId }, data: { password: hashed } })
+    const updatedUser = await db.user.update({ 
+      where: { id: record.userId }, 
+      data: { password: hashed },
+      include: { tenants: { include: { tenant: true } } }
+    })
     await consumeToken(token)
 
-    return NextResponse.json({ message: "Password berhasil direset" })
+    let loginUrl = "/login"
+    if (!updatedUser.isSuperAdmin && updatedUser.tenants && updatedUser.tenants.length > 0) {
+      const protocol = process.env.NODE_ENV === "production" ? "https" : "http"
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      loginUrl = `${protocol}://${updatedUser.tenants[0].tenant.slug}.${rootDomain}/login`
+    }
+
+    return NextResponse.json({ message: "Password berhasil direset", loginUrl })
   } catch (error) {
     logger.error("Reset password failed", error, { path: "/api/auth/reset-password" })
     return NextResponse.json({ error: "Terjadi kesalahan" }, { status: 500 })

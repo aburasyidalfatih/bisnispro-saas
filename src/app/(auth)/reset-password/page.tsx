@@ -17,6 +17,7 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [isMainDomain, setIsMainDomain] = useState(true)
   const [tenantNameDisplay, setTenantNameDisplay] = useState<string | null>(null)
+  const [loginUrl, setLoginUrl] = useState("/login")
 
   useEffect(() => {
     const rootDomain = getRootDomain()
@@ -54,6 +55,7 @@ export default function ResetPasswordPage() {
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error); setLoading(false); return }
+    if (data.loginUrl) setLoginUrl(data.loginUrl)
     setSuccess(true)
     setLoading(false)
   }
@@ -91,7 +93,7 @@ export default function ResetPasswordPage() {
 
           {success ? (
             <div className="text-center">
-              <Link href="/login"><Button className="rounded-xl btn-gradient text-white border-0 glow-primary">Masuk Sekarang</Button></Link>
+              <Link href={loginUrl}><Button className="rounded-xl btn-gradient text-white border-0 glow-primary">Masuk Sekarang</Button></Link>
             </div>
           ) : (
             <form onSubmit={onSubmit} className="space-y-5">

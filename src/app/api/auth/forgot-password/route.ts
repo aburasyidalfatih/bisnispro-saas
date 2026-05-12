@@ -26,7 +26,8 @@ export async function POST(req: Request) {
     if (!user) return NextResponse.json({ message: "Jika email terdaftar, link reset akan dikirim." })
 
     const { token } = await createToken(user.id, "password_reset", 1)
-    const resetUrl = `${process.env.AUTH_URL}/reset-password?token=${token}`
+    const origin = req.headers.get("origin") || process.env.AUTH_URL || "https://schoolpro.id"
+    const resetUrl = `${origin}/reset-password?token=${token}`
 
     const emailResult = await sendEmail(
       user.email,
