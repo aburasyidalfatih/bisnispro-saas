@@ -8,6 +8,8 @@ import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import DOMPurify from "isomorphic-dompurify"
 import Image from "next/image"
+import { ReadingProgress } from "./_components/reading-progress"
+import { ShareButtons } from "./_components/share-buttons"
 
 export const revalidate = 3600 // Edge Caching ISR (1 jam)
 export const dynamicParams = true
@@ -58,6 +60,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
   return (
     <div className="bg-background min-h-screen pt-20 pb-24 font-sans text-foreground">
+      <ReadingProgress />
       {/* JSON-LD for Article Rich Snippets */}
       <script
         type="application/ld+json"
@@ -131,16 +134,22 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
         {/* Content */}
         <div
-          className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-img:rounded-3xl prose-img:shadow-sm"
+          className="prose prose-lg prose-primary max-w-none mx-auto prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl prose-img:shadow-md mt-10 md:mt-16"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }}
         />
 
         {/* If content is plain text (no HTML), render as paragraphs */}
         {post.content && !post.content.includes("<") && (
-          <div className="text-muted-foreground leading-relaxed text-lg whitespace-pre-wrap mt-8">
-            {post.content}
+          <div className="prose prose-lg prose-primary max-w-none mx-auto text-muted-foreground leading-relaxed mt-8">
+            <p className="whitespace-pre-wrap">{post.content}</p>
           </div>
         )}
+
+        {/* Share Buttons */}
+        <ShareButtons 
+          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.id}`} 
+          title={post.title} 
+        />
       </article>
 
       {/* Related Posts */}
