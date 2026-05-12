@@ -17,6 +17,7 @@ import { ExtracurricularsSection } from "./_components/extracurriculars-section"
 import { StaffHighlight } from "./_components/staff-highlight"
 import { AlumniTestimonials } from "./_components/alumni-testimonials"
 import { PartnershipsSection } from "./_components/partnerships-section"
+import { ScrollReveal } from "@/components/ui/scroll-reveal"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -122,22 +123,33 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
 
       {/* ── 6. Program Keahlian ── */}
-      <ProgramsSection programs={tenant.programs || []} />
+      <ScrollReveal>
+        <ProgramsSection programs={tenant.programs || []} />
+      </ScrollReveal>
 
       {/* ── 7. Prestasi ── */}
-      <AchievementsSection achievements={tenant.achievements || []} />
+      <ScrollReveal delay={0.1}>
+        <AchievementsSection achievements={tenant.achievements || []} />
+      </ScrollReveal>
 
       {/* ── 8. Fasilitas Sekolah ── */}
-      <FacilitiesSection facilities={tenant.facilities || []} />
+      <ScrollReveal delay={0.1}>
+        <FacilitiesSection facilities={tenant.facilities || []} />
+      </ScrollReveal>
 
       {/* ── 9. Ekstrakurikuler ── */}
-      <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
+      <ScrollReveal delay={0.2}>
+        <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
+      </ScrollReveal>
 
       {/* ── 10. Guru & Staff Highlight ── */}
-      <StaffHighlight staff={tenant.staff || []} />
+      <ScrollReveal delay={0.1}>
+        <StaffHighlight staff={tenant.staff || []} />
+      </ScrollReveal>
 
       {/* ── 11. Galeri ── */}
       {gallery.length > 0 && (
+        <ScrollReveal>
         <section className="py-10 md:py-16 bg-background">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
@@ -171,16 +183,22 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             </div>
           </div>
         </section>
+        </ScrollReveal>
       )}
 
       {/* ── 12. Testimonial Alumni ── */}
-      <AlumniTestimonials alumni={tenant.alumni || []} />
+      <ScrollReveal>
+        <AlumniTestimonials alumni={tenant.alumni || []} />
+      </ScrollReveal>
 
       {/* ── 12.5. Kerjasama Lembaga ── */}
-      <PartnershipsSection partnerships={tenant.partnerships || []} />
+      <ScrollReveal delay={0.1}>
+        <PartnershipsSection partnerships={tenant.partnerships || []} />
+      </ScrollReveal>
 
       {/* ── 13. Kontak CTA ── */}
       {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
+        <ScrollReveal delay={0.2}>
         <section className="py-10 md:py-16 bg-muted/30">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="rounded-3xl bg-primary p-8 md:p-12 text-white relative overflow-hidden">
@@ -224,6 +242,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             </div>
           </div>
         </section>
+        </ScrollReveal>
       )}
     </main>
   )
