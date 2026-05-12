@@ -422,7 +422,7 @@ export default function RegisterSchoolPage() {
                       required type="email"
                       value={form.adminEmail} 
                       onChange={(e) => setForm({...form, adminEmail: e.target.value})}
-                      placeholder="admin@sekolah.sch.id" 
+                      placeholder="emailanda@gmail.com" 
                       className="rounded-xl h-11 pl-10"
                     />
                   </div>
