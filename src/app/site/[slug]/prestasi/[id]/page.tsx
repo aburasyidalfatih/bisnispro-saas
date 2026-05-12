@@ -7,6 +7,7 @@ import Image from "next/image"
 import { ArrowLeft, Trophy, Calendar, Medal } from "lucide-react"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
+import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
 export const dynamic = "force-dynamic"
 
@@ -84,6 +85,12 @@ export default async function AchievementDetailPage({ params }: { params: Promis
             <p className="italic">Tidak ada detail deskripsi untuk prestasi ini.</p>
           )}
         </div>
+
+        {/* Share Buttons */}
+        <ShareButtons 
+          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/prestasi/${achievement.id}`} 
+          title={achievement.title} 
+        />
       </article>
     </div>
   )

@@ -5,6 +5,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, BookOpen } from "lucide-react"
+import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
 export const dynamic = "force-dynamic"
 
@@ -124,6 +125,12 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
               </div>
            </div>
         </div>
+
+        {/* Share Buttons */}
+        <ShareButtons 
+          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/program/${program.id}`} 
+          title={program.name} 
+        />
       </article>
     </div>
   )

@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Calendar, ArrowLeft, Clock, MapPin, User } from "lucide-react"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
+import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
 export const dynamic = "force-dynamic"
 
@@ -109,6 +110,12 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
             <p className="italic">Tidak ada deskripsi detail untuk agenda ini.</p>
           )}
         </div>
+
+        {/* Share Buttons */}
+        <ShareButtons 
+          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/agenda/${event.id}`} 
+          title={event.title} 
+        />
       </article>
     </div>
   )
