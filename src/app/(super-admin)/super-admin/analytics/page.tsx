@@ -70,7 +70,7 @@ export default function AnalyticsPage() {
               <GraduationCap className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Siswa Terdata</p>
+              <p className="text-sm text-muted-foreground">Estimasi Siswa Didaftarkan</p>
               <h3 className="text-2xl font-bold">{data.totalStudents.toLocaleString('id-ID')}</h3>
             </div>
           </CardContent>

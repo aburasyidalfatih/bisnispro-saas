@@ -9,8 +9,11 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // 1. Total Siswa Seluruh Sekolah
-    const totalStudents = await db.student.count()
+    // 1. Total Siswa Seluruh Sekolah (Estimasi)
+    const studentsAgg = await db.tenantApplication.aggregate({
+      _sum: { studentCount: true }
+    })
+    const totalStudents = studentsAgg._sum.studentCount || 0
 
     // 2. Breakdown Status Sekolah (Negeri vs Swasta)
     const schoolStatusGroups = await db.tenantApplication.groupBy({
