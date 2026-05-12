@@ -35,12 +35,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
-                    <Image src={partner.imageUrl} alt={partner.name} fill className="object-contain" />
+                    <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" loading="eager" />
                   </div>
                 </Link>
               ) : (
                 <div className="relative aspect-video w-full">
-                  <Image src={partner.imageUrl} alt={partner.name} fill className="object-contain" />
+                  <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" loading="eager" />
                 </div>
               )}
             </div>
@@ -53,12 +53,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
-                    <Image src={partner.imageUrl} alt={partner.name} fill className="object-contain" />
+                    <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" loading="eager" />
                   </div>
                 </Link>
               ) : (
                 <div className="relative aspect-video w-full">
-                  <Image src={partner.imageUrl} alt={partner.name} fill className="object-contain" />
+                  <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" loading="eager" />
                 </div>
               )}
             </div>
