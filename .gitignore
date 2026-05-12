@@ -22,3 +22,10 @@ dummy.txt
 query.sql
 test-auth.js
 src/app/scratch.ts
+
+# Ignore temp large files
+*.zip
+*.tar
+*.exe
+*rclone*
+*.sql

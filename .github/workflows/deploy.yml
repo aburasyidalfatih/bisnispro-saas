@@ -129,7 +129,7 @@ jobs:
           docker compose pull app
           
           if [ "${env:BRANCH}" = "main" ]; then
-            docker compose up -d --no-build app db redis wa-gateway --remove-orphans
+            docker compose up -d --no-build app db redis --remove-orphans
           else
             docker compose up -d --no-build app --remove-orphans
           fi
