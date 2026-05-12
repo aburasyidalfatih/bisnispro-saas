@@ -21,8 +21,7 @@ export default function BroadcastPage() {
     target: "all_tenants",
     channel: "whatsapp",
     subject: "",
-    message: "",
-    delaySeconds: "5"
+    message: ""
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,22 +34,14 @@ export default function BroadcastPage() {
       toast({ title: "Subjek email harus diisi", variant: "destructive" })
       return
     }
-    
-    const delay = parseInt(form.delaySeconds)
-    if (isNaN(delay) || delay < 0) {
-      toast({ title: "Delay pesan harus berupa angka positif", variant: "destructive" })
-      return
-    }
+
 
     setLoading(true)
     try {
       const res = await fetch("/api/super-admin/broadcast", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          delaySeconds: delay
-        })
+        body: JSON.stringify(form)
       })
 
       const data = await res.json()
@@ -151,21 +142,7 @@ export default function BroadcastPage() {
                   </p>
                 </div>
 
-                {form.channel !== "email" && (
-                  <div className="space-y-2">
-                    <Label>Delay Pengiriman WhatsApp (Detik)</Label>
-                    <Input 
-                      type="number"
-                      min="1"
-                      max="60"
-                      placeholder="Contoh: 5" 
-                      value={form.delaySeconds}
-                      onChange={(e) => setForm({ ...form, delaySeconds: e.target.value })}
-                      className="bg-background max-w-[150px]"
-                    />
-                    <p className="text-xs text-muted-foreground">Jeda waktu antar pesan untuk menghindari pemblokiran WhatsApp (Spam Detection).</p>
-                  </div>
-                )}
+
 
                 <Button 
                   type="submit" 
@@ -186,9 +163,7 @@ export default function BroadcastPage() {
               <CardTitle className="text-lg text-amber-600">Panduan Broadcast</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-sm text-muted-foreground">
-              <p>
-                <strong>WhatsApp Anti-Banned:</strong> Pastikan Anda menggunakan Delay Pengiriman minimal <strong>3-5 detik</strong> jika mengirim lebih dari 50 pesan sekaligus agar nomor Anda tidak ditandai sebagai spam oleh WhatsApp.
-              </p>
+                <strong>WhatsApp Anti-Banned:</strong> Pengiriman pesan massal menggunakan antrean pintar secara otomatis. Delay pengiriman akan menyesuaikan dengan pengaturan WhatsApp di Pengaturan Super Admin.
               <p>
                 <strong>Pengiriman Asinkron:</strong> Proses ini berjalan di latar belakang VPS. Anda dapat menutup halaman ini setelah menekan tombol kirim, proses tidak akan terhenti.
               </p>

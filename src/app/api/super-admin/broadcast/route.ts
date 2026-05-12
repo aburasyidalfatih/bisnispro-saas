@@ -4,8 +4,6 @@ import { db } from "@/lib/db"
 import { sendEmail, sendWhatsApp } from "@/lib/services/notification"
 import { logger } from "@/lib/logger"
 
-// Fungsi utilitas untuk penundaan (delay)
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -15,7 +13,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { target, channel, subject, message, delaySeconds } = body
+    const { target, channel, subject, message } = body
 
     if (!message) {
       return NextResponse.json({ error: "Pesan wajib diisi" }, { status: 400 })
@@ -93,9 +91,6 @@ export async function POST(req: Request) {
       recipients.map(r => [r.email || r.phone || r.name, r])
     ).values())
 
-    // 2. Jalankan proses di background (tanpa await untuk response utama)
-    const delayMs = (delaySeconds || 5) * 1000
-
     const processBroadcast = async () => {
       logger.info(`Starting broadcast to ${uniqueRecipients.length} recipients`, { target, channel })
       
@@ -148,11 +143,6 @@ export async function POST(req: Request) {
           // Tunggu pengiriman untuk user ini selesai
           await Promise.allSettled(sendPromises)
           successCount++
-
-          // Terapkan delay jika ini bukan pengiriman terakhir dan menggunakan WA
-          if (index < uniqueRecipients.length - 1 && channel !== "email") {
-            await sleep(delayMs)
-          }
 
         } catch (error) {
           failCount++
