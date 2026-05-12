@@ -78,118 +78,100 @@ jobs:
           $repo = "${{ github.repository }}".ToLower()
           Add-Content -Path $env:GITHUB_ENV -Value "REPO=$repo"
 
-      - name: Execute Deployment via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Execute Deployment via Native SSH
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACTOR: ${{ github.actor }}
-          BRANCH: ${{ env.BRANCH }}
-          REPO: ${{ env.REPO }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          command_timeout: 60m
-          envs: GITHUB_TOKEN,ACTOR,BRANCH,REPO,CRON_SECRET
-          script: |
-            set -e
-            
-            # Login to GHCR so the VPS can pull the private image
-            echo "$GITHUB_TOKEN" | docker login ghcr.io -u $ACTOR --password-stdin
-            
-            # Tentukan direktori berdasarkan branch (main untuk prod, develop untuk dev)
-            if [ "$BRANCH" = "main" ]; then
-              APP_DIR="/home/${{ secrets.REMOTE_USER }}/schoolpro-prod"
-            else
-              APP_DIR="/home/${{ secrets.REMOTE_USER }}/schoolpro-dev"
-            fi
-            
-            echo "Deploying branch $BRANCH to $APP_DIR"
-            cd $APP_DIR
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          # 1. Setup SSH Key with correct permissions
+          $sshDir = "$env:USERPROFILE\.ssh"
+          if (-not (Test-Path -Path $sshDir)) { New-Item -ItemType Directory -Path $sshDir -Force | Out-Null }
+          $keyPath = "$sshDir\deploy_key"
+          Set-Content -Path $keyPath -Value $env:SSH_PRIVATE_KEY
+          icacls $keyPath /inheritance:r /grant "$($env:USERNAME):F" | Out-Null
+          
+          # 2. Build the bash script to execute on the VPS
+          $script = @"
+          set -e
+          echo `"$env:GITHUB_TOKEN`" | docker login ghcr.io -u $env:ACTOR --password-stdin
+          if [ `"$env:BRANCH`" = `"main`" ]; then
+            APP_DIR=`"/home/$env:REMOTE_USER/schoolpro-prod`"
+          else
+            APP_DIR=`"/home/$env:REMOTE_USER/schoolpro-dev`"
+          fi
+          echo `"Deploying branch $env:BRANCH to `$APP_DIR`"
+          cd `$APP_DIR
 
-            # Inject CRON_SECRET into VPS .env automatically
-            if [ -n "$CRON_SECRET" ]; then
-              if ! grep -q "^CRON_SECRET=" .env; then
-                echo -e "\nCRON_SECRET=\"$CRON_SECRET\"" >> .env
-              else
-                sed -i "s|^CRON_SECRET=.*|CRON_SECRET=\"$CRON_SECRET\"|g" .env
-              fi
-            fi
-            
-            # Konfigurasi remote URL menggunakan GITHUB_TOKEN agar git fetch tidak error pada repo private
-            git remote set-url origin https://oauth2:$GITHUB_TOKEN@github.com/$REPO.git
-            
-            # Ambil konfigurasi (docker-compose.yml dll) terbaru dari GitHub
-            git fetch --all
-            git reset --hard origin/$BRANCH
-            
-            # Pastikan network external 'shared-proxy' ada
-            docker network ls | grep -q "shared-proxy" || docker network create shared-proxy
-            
-            # Ekspor URL dan Alias
-            export APP_IMAGE="ghcr.io/$REPO:$BRANCH"
-            if [ "$BRANCH" = "main" ]; then
-              export APP_ALIAS="schoolpro-prod-app"
+          if [ -n `"$env:CRON_SECRET`" ]; then
+            if ! grep -q `"^CRON_SECRET=`" .env; then
+              echo -e `"\nCRON_SECRET=\`"$env:CRON_SECRET\`"`" >> .env
             else
-              export APP_ALIAS="schoolpro-dev-app"
+              sed -i `"s|^CRON_SECRET=.*|CRON_SECRET=\`"$env:CRON_SECRET\`"|g`" .env
             fi
-            
-            # Pull image yang sudah di-build oleh GitHub Actions
-            docker compose pull app
-            
-            # Build wa-gateway secara eksplisit di VPS (Dihapus karena menyebabkan VPS Hang/Stuck)
-            # docker compose build wa-gateway
-            
-            # Restart container dengan image baru (Gunakan --no-build agar app tidak dibuild ulang di VPS)
-            if [ "$BRANCH" = "main" ]; then
-              docker compose up -d --no-build app db redis wa-gateway --remove-orphans
-            else
-              docker compose up -d --no-build app --remove-orphans
+          fi
+
+          git remote set-url origin https://oauth2:$env:GITHUB_TOKEN@github.com/$env:REPO.git
+          git fetch --all
+          git reset --hard origin/$env:BRANCH
+          
+          docker network ls | grep -q `"shared-proxy`" || docker network create shared-proxy
+          
+          export APP_IMAGE=`"ghcr.io/$env:REPO:$env:BRANCH`"
+          if [ `"$env:BRANCH`" = `"main`" ]; then
+            export APP_ALIAS=`"schoolpro-prod-app`"
+          else
+            export APP_ALIAS=`"schoolpro-dev-app`"
+          fi
+          
+          docker compose pull app
+          
+          if [ `"$env:BRANCH`" = `"main`" ]; then
+            docker compose up -d --no-build app db redis wa-gateway --remove-orphans
+          else
+            docker compose up -d --no-build app --remove-orphans
+          fi
+          
+          echo `"Waiting for container to be ready...`"
+          sleep 10
+          
+          echo `"Running database synchronization...`"
+          docker compose exec -T app node node_modules/prisma/build/index.js db push --accept-data-loss --skip-generate 2>&1 || echo `"⚠️ Synchronization failed!`"
+          
+          if [ `"$env:BRANCH`" = `"main`" ]; then
+            echo `"Restarting Nginx proxy to flush DNS cache...`"
+            docker compose restart nginx
+          fi
+          
+          echo `"Running health check...`"
+          HEALTH_OK=false
+          for i in `$(seq 1 12); do
+            RESULT=`$(docker compose exec -T app wget -qO- http://localhost:3000/api/health 2>/dev/null || echo `"fail`")
+            if echo `"$RESULT`" | grep -q `"healthy`"; then
+              echo `"✅ Health check passed!`"
+              HEALTH_OK=true
+              break
             fi
-            
-            # Tunggu container ready (max 30s)
-            echo "Waiting for container to be ready..."
-            sleep 10
-            
-            # Jalankan database synchronization otomatis (menggunakan Prisma yang sudah bundled di image)
-            echo "Running database synchronization..."
-            docker compose exec -T app node node_modules/prisma/build/index.js db push --accept-data-loss --skip-generate 2>&1
-            if [ $? -ne 0 ]; then
-              echo "⚠️ Synchronization failed! Check logs above."
-            else
-              echo "✅ Synchronization applied successfully."
-            fi
-            
-            # OPTIMASI: Restart Nginx agar mengenali IP internal container App yang baru
-            # Ini mencegah error 502 Bad Gateway setelah deploy
-            if [ "$BRANCH" = "main" ]; then
-              echo "Restarting Nginx proxy to flush DNS cache..."
-              docker compose restart nginx
-            fi
-            
-            # Health check via docker exec (tidak tergantung port expose)
-            echo "Running health check..."
-            HEALTH_OK=false
-            for i in $(seq 1 12); do
-              RESULT=$(docker compose exec -T app wget -qO- http://localhost:3000/api/health 2>/dev/null || echo "fail")
-              if echo "$RESULT" | grep -q "healthy"; then
-                echo "✅ Health check passed!"
-                HEALTH_OK=true
-                break
-              fi
-              echo "Attempt $i/12 — waiting 5s..."
-              sleep 5
-            done
-            
-            if [ "$HEALTH_OK" = "false" ]; then
-              echo "⚠️ Health check did not pass, but container is running. Check logs with: docker compose logs app"
-            fi
-            
-            # Logout dari GHCR demi keamanan
-            docker logout ghcr.io
-            
-            # Bersihkan image/container lama
-            docker image prune -f
-            
-            echo "✅ Deployment completed!"
+            echo `"Attempt `$i/12 — waiting 5s...`"
+            sleep 5
+          done
+          
+          if [ `"$HEALTH_OK`" = `"false`" ]; then
+            echo `"⚠️ Health check did not pass, but container is running.`"
+          fi
+          
+          docker logout ghcr.io
+          docker image prune -f
+          echo `"✅ Deployment completed!`"
+          "@
+          
+          Set-Content -Path deploy_script.sh -Value $script -Encoding utf8
+          
+          # 3. Execute script over SSH natively
+          ssh -o StrictHostKeyChecking=no -i $keyPath "$env:REMOTE_USER@$env:REMOTE_HOST" "bash -s" < deploy_script.sh
+          
+          # Clean up key
+          Remove-Item -Path $keyPath -Force
