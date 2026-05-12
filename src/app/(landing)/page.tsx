@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ReferralCapture } from "@/components/shared/referral-capture"
 import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp"
+import { SocialProofPopup } from "@/components/shared/social-proof-popup"
 
 const featureModules = [
   {
@@ -194,6 +195,7 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-mesh">
       <ReferralCapture />
       <FloatingWhatsApp supportNumbers={supportWaNumbers} />
+      <SocialProofPopup />
       {/* ====== NAVBAR ====== */}
       <nav className="glass sticky top-0 z-50 border-b">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
