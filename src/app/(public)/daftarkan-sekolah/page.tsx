@@ -178,7 +178,7 @@ export default function RegisterSchoolPage() {
             <CardTitle className="text-2xl font-bold">Pengajuan Terkirim!</CardTitle>
             <CardDescription className="text-base">
               Pendaftaran <strong>{form.schoolName}</strong> sedang kami tinjau. 
-              Hasil verifikasi akan kami kirim ke <strong>{form.adminEmail}</strong> dan WhatsApp Anda.
+              Silakan periksa kotak masuk <strong>Email</strong> Anda ({form.adminEmail}) secara berkala untuk menerima tautan akses setelah permohonan disetujui oleh admin SchoolPro.
             </CardDescription>
           </div>
           <Button className="w-full rounded-xl btn-gradient text-white border-0" onClick={() => window.location.href = "/"}> 
@@ -426,6 +426,7 @@ export default function RegisterSchoolPage() {
                       className="rounded-xl h-11 pl-10"
                     />
                   </div>
+                  <p className="text-[10px] text-primary/80 mt-1 font-medium">Pastikan memasukkan email utama Anda, karena persetujuan akan dikirim ke email ini.</p>
                 </div>
                 <div className="space-y-2">
                   <Label>Nomor WhatsApp (Aktif)</Label>
@@ -439,7 +440,6 @@ export default function RegisterSchoolPage() {
                       className="rounded-xl h-11 pl-10"
                     />
                   </div>
-                  <p className="text-[10px] text-muted-foreground">Nomor ini akan digunakan untuk notifikasi status pengajuan.</p>
                 </div>
               </div>
             </CardContent>
