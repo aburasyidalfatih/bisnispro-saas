@@ -9,7 +9,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
-import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins, History, User } from "lucide-react"
+import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins, History, User, Zap, CheckCircle2, ArrowRight } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const AI_PACKAGES = [
+  { id: "pkg_5k", label: "5.000 Token", tokens: 5000, price: 25000 },
+  { id: "pkg_10k", label: "10.000 Token", tokens: 10000, price: 45000 },
+  { id: "pkg_50k", label: "50.000 Token", tokens: 50000, price: 200000 },
+]
 
 export default function AiSettingsPage() {
   const { data: session } = useSession()
@@ -23,6 +30,9 @@ export default function AiSettingsPage() {
     customOpenAiKey: "",
     aiTokens: 0,
   })
+
+  const [checkingOutAi, setCheckingOutAi] = useState(false)
+  const [selectedAiPkg, setSelectedAiPkg] = useState<string>("pkg_5k")
 
   const [logs, setLogs] = useState<any[]>([])
   const [logsLoading, setLogsLoading] = useState(true)
@@ -87,6 +97,26 @@ export default function AiSettingsPage() {
     }
   }
 
+  const handleCheckoutAi = async () => {
+    setCheckingOutAi(true)
+    try {
+      const res = await fetch("/api/tenant/billing/ai-addon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ packageKey: selectedAiPkg }),
+      })
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.error || "Gagal membuat invoice AI")
+      
+      toast({ title: "Berhasil", description: "Invoice Top Up Token AI berhasil dibuat. Silakan selesaikan pembayaran." })
+      router.push("/admin/billing/history")
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" })
+    } finally {
+      setCheckingOutAi(false)
+    }
+  }
+
   if (loading) {
     return <div className="flex h-40 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
   }
@@ -115,9 +145,7 @@ export default function AiSettingsPage() {
             <div className="text-4xl font-bold text-primary">{formData.aiTokens.toLocaleString("id-ID")}</div>
           </CardContent>
           <CardFooter>
-            <Button variant="outline" className="w-full bg-background rounded-xl h-9" onClick={() => router.push("/admin/billing")}>
-              Beli Kuota Add-on
-            </Button>
+            {/* Tombol dihapus karena pindah ke card topup */}
           </CardFooter>
         </Card>
 
@@ -151,6 +179,61 @@ export default function AiSettingsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* ── Card Top Up Token AI ── */}
+      <Card className="glass border-0 overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+          <Zap className="h-40 w-40" />
+        </div>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10">
+              <Zap className="h-5 w-5 text-blue-500" />
+            </div>
+            <div>
+              <CardTitle>Top-Up Token AI</CardTitle>
+              <CardDescription>Beli kuota tambahan untuk layanan Kecerdasan Buatan (AI) di SchoolPro.</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            {AI_PACKAGES.map((pkg) => (
+              <div 
+                key={pkg.id}
+                onClick={() => setSelectedAiPkg(pkg.id)}
+                className={cn(
+                  "cursor-pointer rounded-2xl border-2 p-5 transition-all relative overflow-hidden group",
+                  selectedAiPkg === pkg.id 
+                    ? "border-blue-500 bg-blue-500/5 shadow-md shadow-blue-500/10" 
+                    : "border-border/40 hover:border-blue-500/50 hover:bg-muted/50"
+                )}
+              >
+                {selectedAiPkg === pkg.id && (
+                  <div className="absolute top-3 right-3 text-blue-500">
+                    <CheckCircle2 className="h-5 w-5" />
+                  </div>
+                )}
+                <p className="text-muted-foreground font-semibold text-sm mb-1">{pkg.label}</p>
+                <div className="flex items-end gap-1 text-foreground">
+                  <span className="text-sm font-semibold">Rp</span>
+                  <span className="text-2xl font-bold">{pkg.price.toLocaleString("id-ID")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end">
+            <Button 
+              className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2 font-semibold min-w-[200px]"
+              disabled={checkingOutAi}
+              onClick={handleCheckoutAi}
+            >
+              {checkingOutAi ? "Memproses..." : "Beli Token AI"}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="glass border-0">
         <CardHeader className="pb-3">
