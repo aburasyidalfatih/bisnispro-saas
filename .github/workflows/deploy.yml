@@ -66,16 +66,17 @@ jobs:
 
   deploy:
     needs: build-and-push
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Set target variables
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
-          else
-            echo "BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-          fi
-          echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+            Add-Content -Path $env:GITHUB_ENV -Value "BRANCH=${{ github.event.inputs.branch }}"
+          } else {
+            Add-Content -Path $env:GITHUB_ENV -Value "BRANCH=${{ github.ref_name }}"
+          }
+          $repo = "${{ github.repository }}".ToLower()
+          Add-Content -Path $env:GITHUB_ENV -Value "REPO=$repo"
 
       - name: Execute Deployment via SSH
         uses: appleboy/ssh-action@v1.0.3
