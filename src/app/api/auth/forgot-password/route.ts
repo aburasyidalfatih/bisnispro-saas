@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     const { token } = await createToken(user.id, "password_reset", 1)
     const resetUrl = `${process.env.AUTH_URL}/reset-password?token=${token}`
 
-    await sendEmail(
+    const emailResult = await sendEmail(
       user.email,
       "Reset Password — SchoolPro",
       `<div style="font-family:sans-serif;max-width:480px;margin:0 auto">
@@ -38,9 +38,14 @@ export async function POST(req: Request) {
         <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#6c47ff;color:#fff;border-radius:8px;text-decoration:none;margin:16px 0">Reset Password</a>
         <p style="color:#888;font-size:13px">Jika Anda tidak meminta reset password, abaikan email ini.</p>
       </div>`
-    ).catch(() => {}) // Jangan gagalkan response jika email gagal kirim
+    ).catch((e) => ({ success: false, error: e.message }))
+    
+    logger.info("Forgot Password Email Result:", emailResult)
 
-    return NextResponse.json({ message: "Jika email terdaftar, link reset akan dikirim." })
+    return NextResponse.json({ 
+      message: "Jika email terdaftar, link reset akan dikirim.",
+      debug: emailResult
+    })
   } catch (error) {
     logger.error("Forgot password failed", error, { path: "/api/auth/forgot-password" })
     return NextResponse.json({ error: "Terjadi kesalahan" }, { status: 500 })
