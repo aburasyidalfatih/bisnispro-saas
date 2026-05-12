@@ -11,16 +11,24 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { authConfig } from "@/lib/auth.config"
 import { edgeRateLimit } from "@/lib/edge-rate-limit"
+import { Redis } from "@upstash/redis"
 
 const { auth } = NextAuth(authConfig)
 
 const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
 
+const redis = process.env.UPSTASH_REDIS_REST_URL ? Redis.fromEnv() : null
+
 /**
- * Resolve custom domain via internal API
+ * Resolve custom domain via internal API with Edge Redis Cache
  */
 async function resolveCustomDomain(domain: string, requestUrl: string): Promise<string | null> {
   try {
+    if (redis) {
+      const cached = await redis.get(`domain:${domain}`)
+      if (cached) return cached as string
+    }
+
     const base = new URL(requestUrl).origin
     const res = await fetch(
       `${base}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
@@ -31,7 +39,13 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
     )
     if (!res.ok) return null
     const data = await res.json()
-    return data.slug ?? null
+    const slug = data.slug ?? null
+
+    if (redis && slug) {
+      await redis.set(`domain:${domain}`, slug, { ex: 300 })
+    }
+
+    return slug
   } catch {
     return null
   }

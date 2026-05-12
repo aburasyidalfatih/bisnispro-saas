@@ -3,7 +3,7 @@ import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { headers } from "next/headers"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 3600 // Edge Caching ISR (1 jam)
 
 export default async function sitemap({ params }: { params: Promise<{ slug: string }> }): Promise<MetadataRoute.Sitemap> {
   const { slug } = await params

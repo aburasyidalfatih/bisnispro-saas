@@ -8,22 +8,24 @@ Susun dokumen tersebut dengan struktur sebagai berikut:
 - **SaaS UX Score:** Berikan penilaian objektif (Skor 1-10) berdasarkan standar *Premium B2B/B2C SaaS* (seperti Vercel, Linear, Stripe).
 - **Critical Friction Points:** 3-5 daftar masalah UX paling fatal yang menyebabkan pengguna (guru/ortu) bingung, frustrasi, atau melakukan kesalahan fatal (misal: tombol hapus tanpa konfirmasi).
 
-## 2. Visual & Interaction Audit (Tabel Temuan Desain)
+## 2. Visual, Interaction & Cognitive Audit (Tabel Temuan Desain)
 Sajikan temuan dalam bentuk **Tabel Audit** (Kategori, Temuan, Tingkat Keparahan UX, Dampak Bisnis). Kategori wajib:
-- **Design System Consistency:** Apakah elemen (Tombol, Input, Modal, Warna, Tipografi, Jarak/Spacing) konsisten di seluruh halaman? Apakah ada variasi warna '*primary*' yang tidak perlu?
-- **Micro-interactions & Feedback:** Apakah setiap aksi *mutational* (Submit, Delete, Edit) memiliki *Loading State* yang jelas? Apakah ada *Toast/Snackbar* untuk status Berhasil/Gagal?
-- **Empty States & Onboarding:** Bagaimana tampilan tabel atau halaman saat data kosong? Apakah layarnya hanya "putih kosong" (Buruk) atau ada ilustrasi indah dengan *Call-to-Action* yang jelas (Premium)?
-- **Responsive & Mobile-First:** Evaluasi kegunaan panel *Dashboard* (khususnya Panel Siswa & Ortu) saat diakses melalui *smartphone* (tabel meluap, tombol terlalu kecil, navigasi tertutup).
-- **Accessibility (a11y) & Contrast:** Apakah kontras teks memadai untuk dibaca oleh orang tua murid? Apakah form input bisa diakses menggunakan `Tab` keyboard secara berurutan?
+- **Information Architecture (IA) & Click-Depth:** Apakah hierarki menu logis? Evaluasi seberapa banyak klik yang dibutuhkan (friction) untuk menyelesaikan tugas krusial (misal: pendaftaran siswa atau pembuatan tagihan).
+- **Cognitive Load & Data Visualization:** Untuk dasbor yang padat (tabel jutaan baris), apakah antarmuka memicu kelelahan mata (*Cognitive Overload*)? Apakah *Data Grid* mendukung *Advanced Filtering*, *Pagination*, dan penyortiran tanpa merusak *layout* seluler?
+- **Design System Consistency:** Apakah elemen (Tombol, Input, Modal, Warna, Tipografi, Jarak/Spacing) selaras sempurna di seluruh halaman? Apakah rasio warna "*primary*" digunakan dengan elegan?
+- **Perceived Performance & Micro-interactions:** Apakah aplikasi mengimplementasikan *Optimistic UI* untuk tugas ringan, atau terus memaksa pengguna menatap *Loading Spinner*? Apakah aksi mutasional memiliki *Toast* sukses/gagal yang komunikatif?
+- **Empty States & Onboarding:** Bagaimana sistem menangani *zero-data*? Apakah menampilkan ruang putih ("*Dead End*") atau menyajikan ilustrasi *Onboarding* yang mengarahkan pengguna melakukan *Call-to-Action* (CTA) layaknya *Premium SaaS*?
+- **Responsive & Mobile-First Data:** Evaluasi keandalan Dasbor Ortu & Siswa di perangkat seluler terkecil (resolusi 320px). Apakah tabel ditransformasi menjadi *Card List* yang *touch-friendly*?
+- **Accessibility (WCAG 2.1 AA/AAA) & Contrast:** Apakah aplikasi lolos audit kontras untuk kelompok orang tua lanjut usia? Apakah navigasi murni menggunakan *Keyboard* (`Tab`, `Space`, `Enter`) didukung secara *native* pada komponen *form* dan *modal*?
 
 ## 3. Deep Dive & UI Polish Recommendations
 - Untuk setiap kelemahan *UI/UX*, berikan analisis mengapa itu menurunkan kepercayaan klien (sekolah).
 - Sertakan **Blok Kode (Refactor Shadcn UI/TailwindCSS)** atau saran struktur komponen untuk menyelaraskan desain dengan *Best Practices* Modern Web App.
 
 ## 4. UI/UX Refactoring Roadmap (Peta Jalan Pemolesan Visual)
-- **Fase 1: Feedback & Skeleton (H+1 - H+3):** Penambahan *Loading Skeleton*, *Spinners*, dan standardisasi *Toast Notifications* di seluruh aplikasi.
-- **Fase 2: Layout & Empty States (H+4 - H+7):** Standarisasi jarak komponen (`spacing`), pembuatan komponen khusus *Empty State*, dan *Mobile-responsive Table*.
-- **Fase 3: Premium Polish (H+8 - H+14):** Penambahan transisi/animasi transparan (Framer Motion / CSS transition), penyempurnaan tipografi (`Inter`/`Geist`), dan standardisasi mode gelap (*Dark Mode*).
+- **Fase 1: Information Architecture & Skeleton (H+1 - H+3):** Restrukturisasi kedalaman klik navigasi, implementasi *Skeleton Loading* vs *Optimistic UI*, dan standardisasi *Toast Notifications* global.
+- **Fase 2: Layout, Empty States, & Data Grids (H+4 - H+7):** Standarisasi metrik spasial (`spacing`), penciptaan komponen `<EmptyState />` premium, dan konversi tabel *desktop* ke *Mobile Cards*.
+- **Fase 3: Silicon Valley Polish (H+8 - H+14):** Eksekusi transisi *hardware-accelerated* via Framer Motion, lokalisasi tipografi (*Inter/Geist*), penyempurnaan skala kontras *Dark Mode*, dan dukungan a11y *screen-reader*.
 
 ## 5. Conclusion (Kesimpulan Penutup)
 - Kesimpulan: Apakah antarmuka saat ini terasa seperti "Aplikasi Murahan" atau sudah layak dijual secara masif sebagai "SaaS Enterprise Premium"?

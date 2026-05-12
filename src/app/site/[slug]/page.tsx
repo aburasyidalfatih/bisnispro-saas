@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 3600 // Edge Caching ISR (1 jam)
+export const dynamicParams = true
 import Link from "next/link"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
 import { HeroSlider } from "./_components/hero-slider"

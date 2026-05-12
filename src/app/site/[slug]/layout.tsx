@@ -54,6 +54,27 @@ export default async function WebsiteLayout({
   return (
     <RoutingProvider value={routingValue}>
       <div className="min-h-screen flex flex-col">
+        {/* JSON-LD Structured Data untuk Rich Snippets */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              "name": tenant.name,
+              "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}`,
+              "logo": tenant.logo || "https://schoolpro.id/logo-schoolpro.png",
+              "telephone": tenant.phone || "",
+              "email": tenant.email || "",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": tenant.address || "",
+                "addressCountry": "ID"
+              }
+            })
+          }}
+        />
+
         <ThemeInjector theme={tenant.theme} />
         <WebsiteNavbar tenant={tenant} />
         <main className="flex-1">{children}</main>

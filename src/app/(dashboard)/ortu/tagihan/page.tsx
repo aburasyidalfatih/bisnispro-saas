@@ -11,6 +11,7 @@ import Link from "next/link"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 import { useRouter } from "next/navigation"
+import { EmptyState } from "@/components/ui/empty-state"
 
 type Invoice = {
   id: string; code: string; title: string; amount: number
@@ -72,12 +73,11 @@ export default function OrtuTagihanPage() {
         {loading ? (
           <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
         ) : invoices.length === 0 ? (
-          <Card className="glass border-0">
-            <CardContent className="py-16 text-center">
-              <Receipt className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Belum ada tagihan.</p>
-            </CardContent>
-          </Card>
+          <EmptyState
+            icon={Receipt}
+            title="Tidak Ada Tagihan"
+            description="Wah, hebat! Semua tagihan pendidikan ananda sudah lunas atau belum ada tagihan baru yang diterbitkan sekolah."
+          />
         ) : (
           <div className="space-y-3">
             {invoices.map(inv => {

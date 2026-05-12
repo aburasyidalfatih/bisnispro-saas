@@ -1,4 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client"
+import { withAccelerate } from "@prisma/extension-accelerate"
 export type { Prisma }
 
 const globalForPrisma = globalThis as unknown as {
@@ -9,9 +10,9 @@ export const db =
   globalForPrisma.prisma ??
   new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  })
+  }).$extends(withAccelerate()) as unknown as PrismaClient
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db as unknown as PrismaClient
 
 /**
  * Creates a scoped Prisma client that automatically injects tenantId 

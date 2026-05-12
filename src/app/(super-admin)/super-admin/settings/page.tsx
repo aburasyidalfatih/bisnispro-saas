@@ -43,6 +43,7 @@ export default function SuperAdminSettingsPage() {
     allow_impersonate_user: "true",
     enable_billing_upgrade: "false",
     enable_custom_domain: "false",
+    block_search_indexing: "false",
     contact_email: "support@schoolpro.id",
     OPENAI_API_KEY: "",
     
@@ -417,6 +418,29 @@ export default function SuperAdminSettingsPage() {
                     </div>
                   </div>
                   <div className={cn("h-2.5 w-2.5 rounded-full", form.enable_custom_domain === "true" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
+                </button>
+
+                <button
+                  onClick={() => {
+                    const newVal = form.block_search_indexing === "true" ? "false" : "true"
+                    setForm({...form, block_search_indexing: newVal})
+                    handleSaveBatch(['block_search_indexing'], { block_search_indexing: newVal })
+                  }}
+                  className={cn(
+                    "flex w-full items-center justify-between rounded-xl border-2 p-4 transition-all duration-200 text-left",
+                    form.block_search_indexing === "true" ? "border-amber-500 bg-amber-500/5" : "border-transparent bg-muted/50 hover:bg-muted"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", form.block_search_indexing === "true" ? "bg-amber-500/10" : "bg-muted")}>
+                      <Globe className={cn("h-5 w-5", form.block_search_indexing === "true" ? "text-amber-500" : "text-muted-foreground")} />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm text-amber-600">Block Search Indexing (Dev Mode)</p>
+                      <p className="text-xs text-muted-foreground">Cegah Google mengindeks seluruh platform ini (X-Robots-Tag: noindex)</p>
+                    </div>
+                  </div>
+                  <div className={cn("h-2.5 w-2.5 rounded-full", form.block_search_indexing === "true" ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" : "bg-muted-foreground/30")} />
                 </button>
               </CardContent>
             </Card>

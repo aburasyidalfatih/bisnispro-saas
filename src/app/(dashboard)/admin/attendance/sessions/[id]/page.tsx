@@ -42,31 +42,51 @@ export default function AttendanceSessionDetailPage({ params }: { params: Promis
 
   useEffect(() => { fetch_data() }, [fetch_data])
 
-  const handleSetAll = (status: string) => {
-    setRecords(prev => {
-      const updated = { ...prev }
-      Object.keys(updated).forEach(k => { updated[k] = status })
-      return updated
-    })
-  }
-
-  const handleSave = async () => {
+  const handleSetAll = async (status: string) => {
     if (!tenant) return
-    setSaving(true)
+    const previousRecords = { ...records }
+    
+    // 1. Optimistic UI Update (Instant 0ms)
+    const updated: Record<string, string> = {}
+    Object.keys(records).forEach(k => { updated[k] = status })
+    setRecords(updated)
+    
+    // 2. Background Save
     try {
-      const recordsArr = Object.entries(records).map(([studentId, status]) => ({ studentId, status }))
+      const recordsArr = Object.keys(updated).map(studentId => ({ studentId, status }))
       const res = await fetch(`/api/attendance/sessions/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tenantId: tenant.id, records: recordsArr }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-      toast({ title: "Absensi berhasil disimpan!" })
+      if (!res.ok) throw new Error("Gagal sinkronisasi ke server")
+      toast({ title: "Absensi tersimpan", description: "Semua siswa ditandai " + status, className: "bg-emerald-50 text-emerald-600 border-emerald-200" })
     } catch (err: any) {
+      // 3. Rollback on Error
+      setRecords(previousRecords)
       toast({ title: "Gagal", description: err.message, variant: "destructive" })
-    } finally {
-      setSaving(false)
+    }
+  }
+
+  const handleStatusChange = async (studentId: string, status: string) => {
+    if (!tenant) return
+    const previousStatus = records[studentId]
+    
+    // 1. Optimistic UI Update (Instant 0ms)
+    setRecords(prev => ({ ...prev, [studentId]: status }))
+    
+    // 2. Background Save
+    try {
+      const res = await fetch(`/api/attendance/sessions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantId: tenant.id, records: [{ studentId, status }] }),
+      })
+      if (!res.ok) throw new Error("Gagal sinkronisasi")
+    } catch (err: any) {
+      // 3. Rollback on Error
+      setRecords(prev => ({ ...prev, [studentId]: previousStatus }))
+      toast({ title: "Koneksi Terputus", description: "Status dibatalkan.", variant: "destructive" })
     }
   }
 
@@ -93,10 +113,10 @@ export default function AttendanceSessionDetailPage({ params }: { params: Promis
             {format(new Date(sessionData.date), "EEEE, d MMMM yyyy", { locale: localeId })}
           </p>
         </div>
-        <Button onClick={handleSave} disabled={saving} className="rounded-xl gap-2">
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          Simpan
-        </Button>
+        <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100 font-medium">
+          <CheckCircle className="h-4 w-4" />
+          Auto-Save Aktif
+        </div>
       </div>
 
       {/* Summary chips */}
@@ -141,7 +161,7 @@ export default function AttendanceSessionDetailPage({ params }: { params: Promis
                   {STATUS_OPTIONS.map(opt => (
                     <button
                       key={opt.value}
-                      onClick={() => setRecords(prev => ({ ...prev, [rec.studentId]: opt.value }))}
+                      onClick={() => handleStatusChange(rec.studentId, opt.value)}
                       className={cn(
                         "h-8 px-3 rounded-lg text-xs font-semibold border transition-all",
                         currentStatus === opt.value
@@ -159,12 +179,7 @@ export default function AttendanceSessionDetailPage({ params }: { params: Promis
         })}
       </div>
 
-      {sessionData.records?.length > 5 && (
-        <Button className="w-full rounded-xl" onClick={handleSave} disabled={saving}>
-          {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-          Simpan Absensi
-        </Button>
-      )}
+      {/* Simpan Button Dihapus karena sudah pakai Auto-Save Optimistic UI */}
     </div>
   )
 }

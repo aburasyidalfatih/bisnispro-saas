@@ -138,11 +138,13 @@ export class FinanceService {
       if (wallet.balance < amount) throw new Error("Saldo tidak mencukupi")
 
       await db.$transaction(async (tx) => {
-        const newBalance = wallet.balance - amount
-        await tx.walletAccount.update({
+        // Atomic decrement to prevent Race Conditions
+        const updatedWallet = await tx.walletAccount.update({
           where: { id: wallet.id },
-          data: { balance: newBalance },
+          data: { balance: { decrement: amount } },
         })
+        const newBalance = updatedWallet.balance
+        const balanceBefore = newBalance + amount
 
         await tx.walletTransaction.create({
           data: {
@@ -150,7 +152,7 @@ export class FinanceService {
             tenantId,
             type: "PAYMENT",
             amount,
-            balanceBefore: wallet.balance,
+            balanceBefore: balanceBefore,
             balanceAfter: newBalance,
             referenceId: invoice.code,
             description: `Pembayaran: ${invoice.title}`,
@@ -158,9 +160,22 @@ export class FinanceService {
           },
         })
 
-        const totalPaid = invoice.amountPaid + amount
-        const isDone = totalPaid >= invoice.amount
+        const updatedInvoice = await tx.invoice.update({
+          where: { id: invoiceId },
+          data: {
+            amountPaid: { increment: amount },
+            amountDue: { decrement: amount },
+          },
+        })
 
+        // Atomic Status Update
+        if (updatedInvoice.amountPaid >= updatedInvoice.amount && updatedInvoice.status !== "PAID") {
+           await tx.invoice.update({ where: { id: invoiceId }, data: { status: "PAID" } })
+        } else if (updatedInvoice.amountPaid < updatedInvoice.amount && updatedInvoice.status === "UNPAID") {
+           await tx.invoice.update({ where: { id: invoiceId }, data: { status: "PARTIAL" } })
+        }
+
+        // Memastikan InvoicePayment dicatat untuk pembayaran Wallet
         await tx.invoicePayment.create({
           data: {
             invoiceId,
@@ -172,15 +187,6 @@ export class FinanceService {
             verifiedBy: userId,
             paidAt: new Date(),
             notes,
-          },
-        })
-
-        await tx.invoice.update({
-          where: { id: invoiceId },
-          data: {
-            amountPaid: totalPaid,
-            amountDue: invoice.amount - totalPaid,
-            status: isDone ? "PAID" : "PARTIAL",
           },
         })
 
@@ -226,6 +232,7 @@ export class FinanceService {
 
     if (!payment) throw new Error("Data pembayaran tidak ditemukan")
     if (payment.tenantId !== tenantId) throw new Error("Unauthorized")
+    if (payment.status !== "PENDING") throw new Error("Pembayaran sudah diproses sebelumnya (Idempotency Protected)")
 
     await db.$transaction(async (tx) => {
       await tx.invoicePayment.update({
@@ -240,17 +247,20 @@ export class FinanceService {
 
       if (action === "VERIFIED") {
         const invoice = payment.invoice
-        const newAmountPaid = invoice.amountPaid + payment.amount
-        const isDone = newAmountPaid >= invoice.amount
 
-        await tx.invoice.update({
+        const updatedInvoice = await tx.invoice.update({
           where: { id: invoice.id },
           data: {
-            amountPaid: newAmountPaid,
-            amountDue: invoice.amount - newAmountPaid,
-            status: isDone ? "PAID" : "PARTIAL",
+            amountPaid: { increment: payment.amount },
+            amountDue: { decrement: payment.amount },
           },
         })
+
+        if (updatedInvoice.amountPaid >= updatedInvoice.amount && updatedInvoice.status !== "PAID") {
+           await tx.invoice.update({ where: { id: invoice.id }, data: { status: "PAID" } })
+        } else if (updatedInvoice.amountPaid < updatedInvoice.amount && updatedInvoice.status === "UNPAID") {
+           await tx.invoice.update({ where: { id: invoice.id }, data: { status: "PARTIAL" } })
+        }
 
         await tx.cashflow.create({
           data: {

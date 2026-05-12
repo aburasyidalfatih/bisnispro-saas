@@ -4,6 +4,7 @@ import { db, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { requireTenantMembership } from "@/lib/api-utils"
+import { z } from "zod"
 
 // Helper
 async function checkAccess(tenantId: string) {
@@ -18,15 +19,24 @@ async function checkAccess(tenantId: string) {
 // SUBJECTS ACTIONS
 // ========================
 
+const subjectSchema = z.object({
+  tenantId: z.string().min(1),
+  name: z.string().min(1, "Nama mata pelajaran wajib diisi").max(100),
+  code: z.string().max(20).optional().nullable(),
+  description: z.string().max(500).optional().nullable(),
+})
+
 export async function createSubject(data: { tenantId: string, name: string, code?: string, description?: string }) {
-  await checkAccess(data.tenantId)
+  const parsed = subjectSchema.parse(data)
+  await checkAccess(parsed.tenantId)
   
-  const subject = await db.subject.create({
+  const tenantDb = withTenant(parsed.tenantId)
+  const subject = await tenantDb.subject.create({
     data: {
-      tenantId: data.tenantId,
-      name: data.name,
-      code: data.code,
-      description: data.description,
+      tenantId: parsed.tenantId, // Tetap disertakan untuk Create
+      name: parsed.name,
+      code: parsed.code,
+      description: parsed.description,
       isActive: true
     }
   })
@@ -36,14 +46,16 @@ export async function createSubject(data: { tenantId: string, name: string, code
 }
 
 export async function updateSubject(id: string, data: { tenantId: string, name: string, code?: string, description?: string }) {
-  await checkAccess(data.tenantId)
+  const parsed = subjectSchema.parse(data)
+  await checkAccess(parsed.tenantId)
 
-  const subject = await db.subject.update({
-    where: { id, tenantId: data.tenantId },
+  const tenantDb = withTenant(parsed.tenantId)
+  const subject = await tenantDb.subject.update({
+    where: { id }, // tenantId tidak perlu dimasukkan ke where lagi karena dengan withTenant sudah terlindungi
     data: {
-      name: data.name,
-      code: data.code,
-      description: data.description
+      name: parsed.name,
+      code: parsed.code,
+      description: parsed.description
     }
   })
 
@@ -52,10 +64,12 @@ export async function updateSubject(id: string, data: { tenantId: string, name: 
 }
 
 export async function deleteSubject(id: string, tenantId: string) {
-  await checkAccess(tenantId)
+  const parsedTenantId = z.string().min(1).parse(tenantId)
+  await checkAccess(parsedTenantId)
 
-  await db.subject.delete({
-    where: { id, tenantId }
+  const tenantDb = withTenant(parsedTenantId)
+  await tenantDb.subject.delete({
+    where: { id }
   })
 
   revalidatePath('/admin/subjects')
@@ -67,10 +81,12 @@ export async function deleteSubject(id: string, tenantId: string) {
 // ========================
 
 export async function deleteClassroom(id: string, tenantId: string) {
-  await checkAccess(tenantId)
+  const parsedTenantId = z.string().min(1).parse(tenantId)
+  await checkAccess(parsedTenantId)
 
-  await db.classroom.delete({
-    where: { id, tenantId }
+  const tenantDb = withTenant(parsedTenantId)
+  await tenantDb.classroom.delete({
+    where: { id }
   })
 
   revalidatePath('/admin/students/classrooms')
@@ -82,10 +98,12 @@ export async function deleteClassroom(id: string, tenantId: string) {
 // ========================
 
 export async function deleteSchedule(id: string, tenantId: string) {
-  await checkAccess(tenantId)
+  const parsedTenantId = z.string().min(1).parse(tenantId)
+  await checkAccess(parsedTenantId)
 
-  await db.schedule.delete({
-    where: { id, tenantId }
+  const tenantDb = withTenant(parsedTenantId)
+  await tenantDb.schedule.delete({
+    where: { id }
   })
 
   revalidatePath('/admin/schedules')

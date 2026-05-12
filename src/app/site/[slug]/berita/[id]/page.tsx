@@ -6,8 +6,11 @@ import Link from "next/link"
 import { Calendar, User, ArrowLeft, Clock, Tag } from "lucide-react"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
+import DOMPurify from "isomorphic-dompurify"
+import Image from "next/image"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 3600 // Edge Caching ISR (1 jam)
+export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
@@ -15,9 +18,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tenant) return {}
   const post = (tenant.posts || []).find((p: any) => p.id === id)
   if (!post) return {}
+  const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
+  const imageUrl = post.featuredImage || post.image || "https://schoolpro.id/default-og.jpg"
+
   return {
     title: `${post.title} - ${tenant.name}`,
-    description: post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160),
+    description,
+    openGraph: {
+      title: `${post.title} - ${tenant.name}`,
+      description,
+      url: `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.id}`,
+      siteName: tenant.name,
+      images: [{ url: imageUrl, width: 1200, height: 630 }],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: [imageUrl],
+    },
   }
 }
 
@@ -38,6 +58,34 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
   return (
     <div className="bg-background min-h-screen pb-16">
+      <div className="bg-background min-h-screen pt-20 pb-24 font-sans text-foreground">
+      {/* JSON-LD for Article Rich Snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": post.title,
+            "image": post.featuredImage || post.image || "https://schoolpro.id/logo-schoolpro.png",
+            "datePublished": post.createdAt,
+            "dateModified": post.updatedAt || post.createdAt,
+            "author": {
+              "@type": "Person",
+              "name": post.author?.name || "Admin"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": tenant.name,
+              "logo": {
+                "@type": "ImageObject",
+                "url": tenant.logo || "https://schoolpro.id/logo-schoolpro.png"
+              }
+            }
+          })
+        }}
+      />
+
       {/* ── HEADER SECTION ── */}
       <div className="bg-muted/30 pt-8 pb-12 border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,10 +119,13 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
         {(post.featuredImage || post.image) && (
           <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
-            <img
+            <Image
               src={post.featuredImage || post.image}
               alt={post.title}
-              className="w-full h-full object-cover"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         )}
@@ -82,7 +133,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
         {/* Content */}
         <div
           className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-img:rounded-3xl prose-img:shadow-sm"
-          dangerouslySetInnerHTML={{ __html: post.content || "" }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }}
         />
 
         {/* If content is plain text (no HTML), render as paragraphs */}
@@ -106,10 +157,12 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
               >
                 <div className="aspect-[16/10] relative overflow-hidden bg-muted">
                   {(related.featuredImage || related.image) ? (
-                    <img
+                    <Image
                       src={related.featuredImage || related.image}
                       alt={related.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-primary/5">

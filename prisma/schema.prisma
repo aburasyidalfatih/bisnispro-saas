@@ -264,6 +264,8 @@ model Payment {
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, status])
+  @@index([tenantId, createdAt])
   @@map("payments")
 }
 
@@ -304,6 +306,8 @@ model AuditLog {
   @@index([userId])
   @@index([entity])
   @@index([createdAt])
+  @@index([tenantId, entity])
+  @@index([tenantId, createdAt])
   @@map("audit_logs")
 }
 
@@ -766,6 +770,8 @@ model PendaftarPpdb {
   @@index([periodeId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, status])
+  @@index([tenantId, periodeId])
   @@map("pendaftar_ppdbs")
 }
 
@@ -1170,6 +1176,9 @@ model Invoice {
   @@index([status])
   @@index([dueDate])
   @@index([createdAt])
+  @@index([tenantId, status])
+  @@index([tenantId, dueDate])
+  @@index([tenantId, studentId])
   @@map("invoices")
 }
 
@@ -1362,6 +1371,7 @@ model AttendanceRecord {
   sessionId String
   tenantId  String
   studentId String
+  academicYear String? // Untuk partitioning
   status    String // HADIR, IZIN, SAKIT, ALPHA
   notes     String?
   checkinAt DateTime?
@@ -1377,6 +1387,8 @@ model AttendanceRecord {
   @@index([tenantId])
   @@index([studentId])
   @@index([createdAt])
+  @@index([tenantId, academicYear])
+  @@index([tenantId, createdAt])
   @@map("attendance_records")
 }
 
