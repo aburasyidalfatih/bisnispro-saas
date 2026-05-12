@@ -57,8 +57,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
     .slice(0, 3)
 
   return (
-    <div className="bg-background min-h-screen pb-16">
-      <div className="bg-background min-h-screen pt-20 pb-24 font-sans text-foreground">
+    <div className="bg-background min-h-screen pt-20 pb-24 font-sans text-foreground">
       {/* JSON-LD for Article Rich Snippets */}
       <script
         type="application/ld+json"
