@@ -61,7 +61,9 @@ export default function AchievementsPage() {
 
   const getLevelLabel = (level: string) => {
     switch (level) {
-      case "LOKAL": return "Tingkat Lokal"
+      case "LOKAL": return "Tingkat Lokal / Sekolah"
+      case "KABUPATEN": return "Tingkat Kabupaten/Kota"
+      case "PROVINSI": return "Tingkat Provinsi"
       case "NASIONAL": return "Tingkat Nasional"
       case "INTERNASIONAL": return "Tingkat Internasional"
       default: return level
