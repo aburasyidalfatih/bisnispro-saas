@@ -290,7 +290,7 @@ export default function WebsiteAboutPage() {
                 onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                 placeholder="Deskripsi singkat lembaga Anda (maks. 300 karakter)"
                 maxLength={300} rows={4}
-                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
               <p className="text-xs text-muted-foreground">{form.description.length}/300 karakter</p>
             </div>
 
@@ -338,7 +338,7 @@ export default function WebsiteAboutPage() {
               <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Alamat Lengkap</Label>
               <textarea value={form.address} onChange={(e) => setForm(p => ({ ...p, address: e.target.value }))}
                 placeholder="Jl. Contoh No. 123" rows={3}
-                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -413,7 +413,7 @@ export default function WebsiteAboutPage() {
               onChange={e => setForm(p => ({ ...p, about: e.target.value }))}
               placeholder="Ceritakan tentang lembaga Anda, sejarah panjang..."
               rows={6}
-              className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+              className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
             
             <div className="space-y-1.5 mt-4">
               <Label>Link Video Profil (YouTube)</Label>
@@ -440,7 +440,7 @@ export default function WebsiteAboutPage() {
                 <Label>Jam Operasional</Label>
                 <textarea value={form.settings?.operationalHours || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, operationalHours: e.target.value } }))}
                   placeholder="Senin - Jumat: 07.00 - 16.00&#10;Sabtu: 07.00 - 12.00" rows={3}
-                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
               </div>
             </div>
 
@@ -449,13 +449,13 @@ export default function WebsiteAboutPage() {
                 <Label>Visi</Label>
                 <textarea value={form.settings?.visi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, visi: e.target.value } }))}
                   placeholder="Visi sekolah..." rows={3}
-                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
               </div>
               <div className="space-y-1.5">
                 <Label>Misi</Label>
                 <textarea value={form.settings?.misi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, misi: e.target.value } }))}
                   placeholder="Gunakan enter untuk memisahkan misi..." rows={4}
-                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
               </div>
             </div>
 
@@ -537,7 +537,7 @@ export default function WebsiteAboutPage() {
                 onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalMessage: e.target.value } }))}
                 placeholder="Puji syukur ke hadirat Tuhan YME..."
                 rows={6}
-                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
             </div>
 
             <div className="space-y-2">
@@ -593,7 +593,7 @@ export default function WebsiteAboutPage() {
                 <textarea value={form.seoDesc} onChange={e => setForm(p => ({ ...p, seoDesc: e.target.value }))}
                   placeholder="Deskripsi singkat untuk hasil pencarian Google (maks. 160 karakter)"
                   maxLength={160} rows={3}
-                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none" />
+                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
                 <p className="text-xs text-muted-foreground">{form.seoDesc.length}/160 · Kosongkan untuk pakai deskripsi lembaga</p>
               </div>
             </div>
