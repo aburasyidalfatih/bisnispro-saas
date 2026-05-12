@@ -94,43 +94,8 @@ export default function AppearancePage() {
         </CardContent>
       </Card>
 
-      {/* Mode Tampilan + Preview — satu baris */}
-      <div className="grid gap-4 lg:grid-cols-2">
-
-        {/* Mode Tampilan — compact row */}
-        <Card className="glass border-0">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                <Sun className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-base">Mode Tampilan</CardTitle>
-                <CardDescription className="text-xs">Terang, gelap, atau ikuti sistem</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2">
-              {[
-                { id: "light", label: "Terang", icon: Sun },
-                { id: "dark", label: "Gelap", icon: Moon },
-                { id: "system", label: "Sistem", icon: Monitor },
-              ].map(mode => (
-                <button key={mode.id} onClick={() => setDarkMode(mode.id)}
-                  className={cn(
-                    "flex flex-1 items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-medium transition-all",
-                    darkMode === mode.id
-                      ? "border-primary bg-primary/5 text-primary"
-                      : "border-transparent bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}>
-                  <mode.icon className="h-4 w-4" />
-                  {mode.label}
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      {/* Preview Tema — satu baris */}
+      <div className="grid gap-4">
 
         {/* Preview Tema */}
         <Card className="glass border-0">
