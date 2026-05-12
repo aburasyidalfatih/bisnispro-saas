@@ -168,7 +168,9 @@ jobs:
           echo `"✅ Deployment completed!`"
           "@
           
-          Set-Content -Path deploy_script.sh -Value $script -Encoding utf8
+          # Force LF line endings for bash compatibility
+          $script = $script.Replace("`r`n", "`n")
+          [IO.File]::WriteAllText("deploy_script.sh", $script)
           
           # 3. Execute script over SSH natively
           cmd.exe /c "ssh -o StrictHostKeyChecking=no -i $keyPath ""$env:REMOTE_USER@$env:REMOTE_HOST"" ""bash -s"" < deploy_script.sh"
