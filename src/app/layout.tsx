@@ -28,6 +28,18 @@ export async function generateMetadata(): Promise<Metadata> {
     // Abaikan error DB
   }
 
+  let platformLogo = "/logo-schoolpro.png"
+  try {
+    const logoSetting = await db.platformSetting.findUnique({
+      where: { key: "app_logo" }
+    })
+    if (logoSetting && logoSetting.value) {
+      platformLogo = logoSetting.value
+    }
+  } catch (error) {
+    // Abaikan error DB
+  }
+
   return {
     title: "SchoolPro - Platform Manajemen & Website Sekolah Terpadu",
     description: "SchoolPro adalah platform SaaS terbaik untuk digitalisasi sekolah. Tersedia fitur pembuatan website sekolah otomatis, PPDB Online, manajemen data master, hingga tagihan siswa.",
@@ -46,6 +58,10 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: "SchoolPro - Digitalisasi Sekolah Tanpa Ribet",
       description: "Satu platform untuk seluruh kebutuhan administrasi, pendaftaran, dan operasional lembaga pendidikan Anda.",
+    },
+    icons: {
+      icon: platformLogo,
+      apple: platformLogo,
     },
     manifest: "/manifest.json",
   }
