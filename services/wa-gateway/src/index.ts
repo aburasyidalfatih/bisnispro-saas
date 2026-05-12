@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 import express from 'express'
 import dotenv from 'dotenv'
-import { startWhatsAppSession, getSession, initAllSessions, sessions } from './baileys/connection'
+import { startWhatsAppSession, getSession, initAllSessions, sessions, updateActivity } from './baileys/connection'
 import prisma from './prisma'
 
 dotenv.config({ path: '../../.env' }) // Load the root env
@@ -123,8 +123,13 @@ async function processQueue() {
     for (const tenantId of Object.keys(grouped)) {
       if (processingTenants.has(tenantId)) continue // Tenant ini masih sibuk mengirim antrean sebelumnya
       
-      const sock = getSession(tenantId)
-      if (!sock) continue // Lewati jika WA tenant belum terhubung
+      let sock = getSession(tenantId)
+      if (!sock) {
+        // LAZY CONNECTION: Bangunkan sesi yang sedang tertidur!
+        console.log(`[Tenant ${tenantId}] Waking up from sleep to process queue...`)
+        sock = await startWhatsAppSession(tenantId)
+        await wait(5000) // Tunggu sebentar agar koneksi stabil
+      }
       
       processingTenants.add(tenantId)
       
@@ -144,6 +149,9 @@ async function processQueue() {
             try {
               // Kirim Pesan
               await sock.sendMessage(msg.to, { text: msg.content })
+              
+              // Perbarui waktu aktivitas terakhir agar tidak terputus (Auto-Disconnect di reset)
+              updateActivity(tenantId)
               
               // Update status
               await prisma.waMessage.update({

@@ -10,6 +10,27 @@ const logger = pino({ level: 'silent' })
 
 // In-memory store for active connections
 export const sessions = new Map<string, any>()
+export const lastActivity = new Map<string, number>()
+
+export const updateActivity = (tenantId: string) => {
+  lastActivity.set(tenantId, Date.now())
+}
+
+// Garbage collection for idle sessions (Lazy Connection)
+setInterval(() => {
+  const now = Date.now()
+  const IDLE_TIMEOUT = 60 * 60 * 1000 // 1 hour
+  
+  for (const [tenantId, sock] of sessions.entries()) {
+    const lastActive = lastActivity.get(tenantId) || now
+    if (now - lastActive > IDLE_TIMEOUT) {
+      console.log(`[Tenant ${tenantId}] Idle for 1 hour. Disconnecting to save memory...`)
+      sock.end(undefined) // Disconnect silently without logging out
+      sessions.delete(tenantId)
+      lastActivity.delete(tenantId)
+    }
+  }
+}, 5 * 60 * 1000) // Check every 5 minutes
 
 export const startWhatsAppSession = async (tenantId: string) => {
   const { state, saveState } = await usePrismaAuthState(tenantId)
@@ -27,6 +48,7 @@ export const startWhatsAppSession = async (tenantId: string) => {
   })
 
   sessions.set(tenantId, sock)
+  updateActivity(tenantId) // Initialize activity
 
   sock.ev.on('creds.update', saveState)
 
