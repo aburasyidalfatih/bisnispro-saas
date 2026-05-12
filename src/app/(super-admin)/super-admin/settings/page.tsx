@@ -34,6 +34,9 @@ export default function SuperAdminSettingsPage() {
   const [showTripayKey, setShowTripayKey] = useState(false)
   const [showS3Secret, setShowS3Secret] = useState(false)
   
+  // WhatsApp Support List
+  const [waSupportList, setWaSupportList] = useState<{id: string, name: string, number: string}[]>([])
+  
   // Form State
   const [form, setForm] = useState({
     // General
@@ -111,6 +114,9 @@ export default function SuperAdminSettingsPage() {
     S3_SECRET_KEY: "",
     S3_BUCKET: "",
     S3_PUBLIC_URL: "https://pub-<id>.r2.dev",
+    
+    // WA Support Landing Page
+    SUPPORT_WA_NUMBERS: "[]",
   })
 
   const [testEmail, setTestEmail] = useState("")
@@ -150,6 +156,9 @@ export default function SuperAdminSettingsPage() {
       .then((r) => r.json())
       .then((data) => {
         setForm((prev) => ({ ...prev, ...data }))
+        if (data.SUPPORT_WA_NUMBERS) {
+          try { setWaSupportList(JSON.parse(data.SUPPORT_WA_NUMBERS)) } catch {}
+        }
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -286,7 +295,8 @@ export default function SuperAdminSettingsPage() {
 
         {/* --- TAB: UMUM --- */}
         <TabsContent value="general" className="grid gap-6 lg:grid-cols-2 outline-none">
-          <Card className="glass border-0">
+          <div className="space-y-6">
+            <Card className="glass border-0">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Globe className="h-4 w-4 text-primary" /></div>
@@ -341,6 +351,45 @@ export default function SuperAdminSettingsPage() {
               </Button>
             </CardContent>
           </Card>
+
+          <Card className="glass border-0">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
+                <CardTitle className="text-lg">WhatsApp Support (Landing Page)</CardTitle>
+              </div>
+              <CardDescription>Nomor WhatsApp ini akan tampil sebagai popup chat di landing page utama.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {waSupportList.map((wa, i) => (
+                <div key={wa.id} className="flex gap-2 items-center">
+                  <Input value={wa.name} onChange={(e) => {
+                    const newWa = [...waSupportList]; newWa[i].name = e.target.value; setWaSupportList(newWa);
+                  }} placeholder="Nama (Cth: CS Sales)" className="rounded-xl flex-1" />
+                  <Input value={wa.number} onChange={(e) => {
+                    const newWa = [...waSupportList]; newWa[i].number = e.target.value; setWaSupportList(newWa);
+                  }} placeholder="628123..." className="rounded-xl flex-1" />
+                  <Button variant="destructive" size="icon" className="rounded-xl shrink-0" onClick={() => {
+                    setWaSupportList(waSupportList.filter(item => item.id !== wa.id));
+                  }}><XCircle className="h-4 w-4" /></Button>
+                </div>
+              ))}
+              <Button variant="outline" className="w-full rounded-xl" onClick={() => {
+                setWaSupportList([...waSupportList, { id: Math.random().toString(), name: "", number: "" }]);
+              }}>
+                + Tambah Nomor WA
+              </Button>
+              <Button 
+                className="w-full gap-2 btn-gradient text-white border-0 rounded-xl"
+                onClick={() => handleSaveBatch(['SUPPORT_WA_NUMBERS'], { SUPPORT_WA_NUMBERS: JSON.stringify(waSupportList) })}
+                disabled={saving}
+              >
+                {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
+                Simpan WhatsApp Support
+              </Button>
+            </CardContent>
+          </Card>
+          </div>
 
           <div className="space-y-6">
             <Card className="glass border-0">

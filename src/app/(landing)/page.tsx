@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ReferralCapture } from "@/components/shared/referral-capture"
+import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp"
 
 const featureModules = [
   {
@@ -166,17 +167,21 @@ const plans = [
 
 export default async function LandingPage() {
   const settings = await db.platformSetting.findMany({
-    where: { key: { in: ["app_logo", "platform_name", "platform_tagline"] } },
+    where: { key: { in: ["app_logo", "platform_name", "platform_tagline", "SUPPORT_WA_NUMBERS"] } },
   })
 
   let appLogo = "/logo-schoolpro.png"
   let platformName = "SchoolPro"
   let platformTagline = "Solusi Manajemen Sekolah Digital"
+  let supportWaNumbers: any[] = []
 
   settings.forEach((s) => {
     if (s.key === "app_logo" && s.value) appLogo = s.value
     if (s.key === "platform_name" && s.value) platformName = s.value
     if (s.key === "platform_tagline" && s.value) platformTagline = s.value
+    if (s.key === "SUPPORT_WA_NUMBERS" && s.value) {
+      try { supportWaNumbers = JSON.parse(s.value) } catch {}
+    }
   })
 
   const activeTenants = await db.tenant.findMany({
@@ -188,6 +193,7 @@ export default async function LandingPage() {
   return (
     <div className="min-h-screen bg-mesh">
       <ReferralCapture />
+      <FloatingWhatsApp supportNumbers={supportWaNumbers} />
       {/* ====== NAVBAR ====== */}
       <nav className="glass sticky top-0 z-50 border-b">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
