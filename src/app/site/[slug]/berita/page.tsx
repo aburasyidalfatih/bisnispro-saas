@@ -44,12 +44,14 @@ export default async function BeritaPage({
 
   const base = await getPublicBasePath(slug)
   
+  const internalTypes = ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"]
+
   // Fetch paginated posts directly from DB
   const posts = await db.post.findMany({
     where: { 
       tenantId: tenant.id, 
       status: 'PUBLISHED',
-      ...(typeFilter ? { type: typeFilter } : {})
+      type: typeFilter ? typeFilter : { notIn: internalTypes }
     },
     orderBy: { createdAt: 'desc' },
     skip: (page - 1) * perPage,
@@ -60,7 +62,7 @@ export default async function BeritaPage({
     where: { 
       tenantId: tenant.id, 
       status: 'PUBLISHED',
-      ...(typeFilter ? { type: typeFilter } : {})
+      type: typeFilter ? typeFilter : { notIn: internalTypes }
     }
   })
   const totalPages = Math.ceil(totalPosts / perPage)

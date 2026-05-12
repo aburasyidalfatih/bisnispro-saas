@@ -67,6 +67,13 @@ export default function AdminMessagesPage() {
   const [editForm, setEditForm] = useState({ id: "", title: "", content: "", target: "PENGUMUMAN_SEMUA" })
   const [submittingEdit, setSubmittingEdit] = useState(false)
 
+  // Compose Internal Message State
+  const [showComposeModal, setShowComposeModal] = useState(false)
+  const [composeForm, setComposeForm] = useState({ receiverId: "", subject: "", body: "" })
+  const [submittingCompose, setSubmittingCompose] = useState(false)
+  const [tenantUsers, setTenantUsers] = useState<any[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+
   useEffect(() => {
     if (!tenantId) return
 
@@ -110,6 +117,46 @@ export default function AdminMessagesPage() {
         .catch(() => setLoadingAnnouncements(false))
     }
   }, [tenantId, activeTab])
+
+  useEffect(() => {
+    if (showComposeModal && tenantUsers.length === 0 && tenantId) {
+      setLoadingUsers(true)
+      fetch(`/api/tenant/users?tenantId=${tenantId}`)
+        .then(r => r.json())
+        .then(d => {
+          const validUsers = (d.data || []).filter((u: any) => ["guru", "admin", "owner"].includes(u.role))
+          setTenantUsers(validUsers)
+          setLoadingUsers(false)
+        })
+        .catch(() => setLoadingUsers(false))
+    }
+  }, [showComposeModal, tenantId, tenantUsers.length])
+
+  const submitComposeMessage = async () => {
+    if (!composeForm.receiverId || !composeForm.body) return toast({ title: "Penerima dan pesan wajib diisi", variant: "destructive" })
+    setSubmittingCompose(true)
+    try {
+      const res = await fetch("/api/tenant/messages", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tenantId, receiverId: composeForm.receiverId, subject: composeForm.subject, body: composeForm.body
+        })
+      })
+      if (!res.ok) throw new Error("Gagal mengirim pesan")
+      toast({ title: "Berhasil", description: "Pesan terkirim." })
+      setShowComposeModal(false)
+      setComposeForm({ receiverId: "", subject: "", body: "" })
+      
+      setLoadingInternal(true)
+      const d = await fetch(`/api/tenant/messages?tenantId=${tenantId}&type=inbox`).then(r => r.json())
+      setMessages(Array.isArray(d) ? d : [])
+      setLoadingInternal(false)
+    } catch (error: any) {
+      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+    } finally {
+      setSubmittingCompose(false)
+    }
+  }
 
   const submitAnnouncement = async () => {
     if (!addForm.title || !addForm.content) return toast({ title: "Judul dan isi wajib diisi", variant: "destructive" })
@@ -247,6 +294,64 @@ export default function AdminMessagesPage() {
 
       {activeTab === "internal" && (
         <Card className="glass border-0 min-h-[400px]">
+          <CardHeader className="pb-3 border-b border-border/50 flex flex-row items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <Users className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Pesan Internal</CardTitle>
+                <CardDescription>Komunikasi antar guru dan staf</CardDescription>
+              </div>
+            </div>
+            <Dialog open={showComposeModal} onOpenChange={setShowComposeModal}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="gap-2 rounded-xl">
+                  <Plus className="h-4 w-4" /> Tulis Pesan
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Tulis Pesan Internal</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Kirim Ke</Label>
+                    <select 
+                      value={composeForm.receiverId} 
+                      onChange={e => setComposeForm(p => ({...p, receiverId: e.target.value}))}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      disabled={loadingUsers}
+                    >
+                      <option value="">-- Pilih Penerima --</option>
+                      {tenantUsers.map(u => (
+                        <option key={u.id} value={u.id}>{u.name} ({u.role.toUpperCase()})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Subjek (Opsional)</Label>
+                    <Input value={composeForm.subject} onChange={e => setComposeForm(p => ({...p, subject: e.target.value}))} placeholder="Contoh: Rapat Koordinasi" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Pesan</Label>
+                    <textarea 
+                      value={composeForm.body} 
+                      onChange={e => setComposeForm(p => ({...p, body: e.target.value}))}
+                      className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      placeholder="Tulis pesan..."
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowComposeModal(false)}>Batal</Button>
+                  <Button onClick={submitComposeMessage} disabled={submittingCompose}>
+                    {submittingCompose ? "Mengirim..." : "Kirim Pesan"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
               {loadingInternal ? (

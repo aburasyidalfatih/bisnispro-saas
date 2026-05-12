@@ -36,6 +36,9 @@ export default function GuruMessagesPage() {
   const [sending, setSending] = useState(false)
   const [announcements, setAnnouncements] = useState<any[]>([])
 
+  const [tenantUsers, setTenantUsers] = useState<any[]>([])
+  const [receiverId, setReceiverId] = useState<string>("admin")
+
   const fetchMessages = (type: "inbox" | "sent") => {
     if (!tenantId) return
     setLoading(true)
@@ -70,8 +73,18 @@ export default function GuruMessagesPage() {
       fetchMessages(activeTab)
     } else if (activeTab === "pengumuman") {
       fetchAnnouncements()
+    } else if (activeTab === "compose") {
+      if (tenantId && tenantUsers.length === 0) {
+        fetch(`/api/tenant/users?tenantId=${tenantId}`)
+          .then(r => r.json())
+          .then(d => {
+            const validUsers = (d.data || []).filter((u: any) => ["guru", "admin", "owner"].includes(u.role))
+            setTenantUsers(validUsers)
+          })
+          .catch(console.error)
+      }
     }
-  }, [activeTab, tenantId])
+  }, [activeTab, tenantId, tenantUsers.length])
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -87,16 +100,17 @@ export default function GuruMessagesPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tenantId,
-          receiverId: null, // Mengirim ke Admin
+          receiverId: receiverId === "admin" ? null : receiverId,
           subject,
           body
         })
       })
 
       if (res.ok) {
-        toast({ title: "Pesan terkirim ke Admin" })
+        toast({ title: receiverId === "admin" ? "Pesan terkirim ke Admin" : "Pesan terkirim" })
         setBody("")
         setSubject("")
+        setReceiverId("admin")
         setActiveTab("sent")
       } else {
         const d = await res.json()
@@ -155,10 +169,16 @@ export default function GuruMessagesPage() {
             <form onSubmit={handleSend} className="space-y-4 max-w-2xl">
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Kepada</label>
-                <div className="p-3 bg-muted/30 rounded-xl border border-border/50 text-sm flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-semibold text-foreground">Admin Sekolah</span> (Broadcast ke semua admin)
-                </div>
+                <select 
+                  value={receiverId} 
+                  onChange={e => setReceiverId(e.target.value)}
+                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="admin">Admin Sekolah (Semua Admin)</option>
+                  {tenantUsers.map(u => (
+                    <option key={u.id} value={u.id}>{u.name} ({u.role.toUpperCase()})</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Subjek (Opsional)</label>

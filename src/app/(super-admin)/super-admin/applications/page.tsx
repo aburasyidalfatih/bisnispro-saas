@@ -302,7 +302,7 @@ export default function SuperAdminApplicationsPage() {
             <Button 
               variant={isWaDisabled ? "destructive" : "outline"} 
               size="sm" 
-              className={cn("h-7 rounded-full text-[10px] px-3 gap-1.5 transition-all", !isWaDisabled && "border-emerald-200 text-emerald-600 hover:bg-emerald-50 bg-emerald-50/50")}
+              className={cn("h-7 rounded-full text-[10px] px-3 gap-1.5 transition-all", !isWaDisabled && "border-emerald-200 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 bg-emerald-50/50")}
               onClick={toggleWa}
               title="Klik untuk mengubah pengaturan WA"
             >
@@ -345,19 +345,19 @@ export default function SuperAdminApplicationsPage() {
       {selectedIds.length > 0 && (
         <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-2xl border flex-wrap">
           <span className="text-sm font-semibold ml-2">{selectedIds.length} Dipilih</span>
-          <Button size="sm" variant="outline" className="h-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50" onClick={() => openActionModal(null, "APPROVED", true)}>
+          <Button size="sm" variant="outline" className="h-8 border-emerald-200 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50" onClick={() => openActionModal(null, "APPROVED", true)}>
             <CheckCircle className="h-4 w-4 mr-1.5" /> Setujui Masal
           </Button>
-          <Button size="sm" variant="outline" className="h-8 border-purple-200 text-purple-600 hover:bg-purple-50" onClick={() => openActionModal(null, "RESEND_EMAIL", true)} disabled={isUpdating}>
+          <Button size="sm" variant="outline" className="h-8 border-purple-200 text-purple-600 hover:text-purple-700 hover:bg-purple-50" onClick={() => openActionModal(null, "RESEND_EMAIL", true)} disabled={isUpdating}>
             <Mail className="h-4 w-4 mr-1.5" /> Kirim Ulang Email Masal
           </Button>
-          <Button size="sm" variant="outline" className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50" onClick={() => openActionModal(null, "REVISION", true)}>
+          <Button size="sm" variant="outline" className="h-8 border-blue-200 text-blue-600 hover:text-blue-700 hover:bg-blue-50" onClick={() => openActionModal(null, "REVISION", true)}>
             <RefreshCcw className="h-4 w-4 mr-1.5" /> Revisi Masal
           </Button>
-          <Button size="sm" variant="outline" className="h-8 border-rose-200 text-rose-600 hover:bg-rose-50" onClick={() => openActionModal(null, "REJECTED", true)}>
+          <Button size="sm" variant="outline" className="h-8 border-rose-200 text-rose-600 hover:text-rose-700 hover:bg-rose-50" onClick={() => openActionModal(null, "REJECTED", true)}>
             <XCircle className="h-4 w-4 mr-1.5" /> Tolak Masal
           </Button>
-          <Button size="sm" variant="outline" className="h-8 border-red-200 text-red-600 hover:bg-red-50" onClick={() => openActionModal(null, "DELETE", true)}>
+          <Button size="sm" variant="outline" className="h-8 border-red-200 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => openActionModal(null, "DELETE", true)}>
             <Trash2 className="h-4 w-4 mr-1.5" /> Hapus Masal
           </Button>
         </div>
