@@ -122,14 +122,19 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
     deviceId: map.STARSENDER_DEVICE_ID || process.env.STARSENDER_DEVICE_ID,
     metaPhoneId: map.META_WA_PHONE_NUMBER_ID,
     metaToken: map.META_WA_ACCESS_TOKEN,
-    delayMin: Number(map.STARSENDER_DELAY_MIN || 0),
-    delayMax: Number(map.STARSENDER_DELAY_MAX || 0),
+    delayMin: Number(map.WA_DELAY_MIN) || Number(map.STARSENDER_DELAY_MIN) || 0,
+    delayMax: Number(map.WA_DELAY_MAX) || Number(map.STARSENDER_DELAY_MAX) || 0,
   }
 }
 
 
+// Antrean global untuk memastikan pengiriman berurutan
+let waQueuePromise = Promise.resolve<{success: boolean; error?: string}>({ success: true });
+
 /**
  * Fungsi pengiriman WA terpusat — Memprioritaskan Internal Gateway, fallback ke StarSender.
+ * Seluruh pengiriman antre secara berurutan agar jeda (delay) teraplikasi dengan benar
+ * antar pesan, menghindari deteksi spam oleh WhatsApp.
  */
 export async function sendWhatsApp(
   phone: string,
@@ -137,122 +142,139 @@ export async function sendWhatsApp(
   tenantId?: string
 ): Promise<{ success: boolean; error?: string }> {
   
-  const config = await getWaConfig(tenantId)
+  // Bungkus dalam antrean promise
+  const resultPromise = new Promise<{ success: boolean; error?: string }>((resolve) => {
+    waQueuePromise = waQueuePromise.then(async () => {
+      try {
+        const config = await getWaConfig(tenantId)
 
-  // 0. META OFFICIAL API
-  if (config.provider === "meta") {
-    if (!config.metaPhoneId || !config.metaToken) {
-      return { success: false, error: "Meta API credentials not configured" }
-    }
-    try {
-      let toPhone = phone.replace(/\D/g, "")
-      if (toPhone.startsWith("0")) toPhone = "62" + toPhone.slice(1)
-      
-      const res = await fetch(`https://graph.facebook.com/v18.0/${config.metaPhoneId}/messages`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${config.metaToken}`,
-        },
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to: toPhone,
-          type: "text",
-          text: { body: message },
-        }),
-      })
+        // 0. META OFFICIAL API
+        if (config.provider === "meta") {
+          if (!config.metaPhoneId || !config.metaToken) {
+            return resolve({ success: false, error: "Meta API credentials not configured" })
+          }
+          try {
+            let toPhone = phone.replace(/\D/g, "")
+            if (toPhone.startsWith("0")) toPhone = "62" + toPhone.slice(1)
+            
+            const res = await fetch(`https://graph.facebook.com/v18.0/${config.metaPhoneId}/messages`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${config.metaToken}`,
+              },
+              body: JSON.stringify({
+                messaging_product: "whatsapp",
+                to: toPhone,
+                type: "text",
+                text: { body: message },
+              }),
+            })
 
-      if (!res.ok) {
-        const errText = await res.text()
-        logger.error("Meta WA send failed", { phone, status: res.status, body: errText })
-        return { success: false, error: `Meta API error: ${res.status}` }
-      }
-      return { success: true }
-    } catch (err: any) {
-      logger.error("Meta WA exception", err, { phone })
-      return { success: false, error: err.message }
-    }
-  }
-
-  // 1. Coba gunakan Internal Gateway jika ada sesi yang CONNECTED (dan provider = internal)
-  if (!config.provider || config.provider === "internal") {
-    try {
-      const session = await db.waSession.findUnique({
-        where: { tenantId: tenantId || "platform" }
-      })
-
-      if (session?.status === "CONNECTED") {
-        const WA_GATEWAY_URL = process.env.WA_GATEWAY_URL || "http://localhost:4000"
-        const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
-
-        const res = await fetch(`${WA_GATEWAY_URL}/api/wa/send`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-internal-secret": INTERNAL_SECRET
-          },
-          body: JSON.stringify({
-            tenantId: tenantId || "platform",
-            to: phone,
-            text: message
-          })
-        })
-
-        if (res.ok) {
-          return { success: true }
-        } else {
-          const errText = await res.text()
-          logger.error("Internal WA Gateway send failed", { phone, status: res.status, body: errText })
+            if (!res.ok) {
+              const errText = await res.text()
+              logger.error("Meta WA send failed", { phone, status: res.status, body: errText })
+              return resolve({ success: false, error: `Meta API error: ${res.status}` })
+            }
+            return resolve({ success: true })
+          } catch (err: any) {
+            logger.error("Meta WA exception", err, { phone })
+            return resolve({ success: false, error: err.message })
+          }
         }
+
+        // 1. Coba gunakan Internal Gateway jika ada sesi yang CONNECTED (dan provider = internal)
+        if (!config.provider || config.provider === "internal") {
+          try {
+            const session = await db.waSession.findUnique({
+              where: { tenantId: tenantId || "platform" }
+            })
+
+            if (session?.status === "CONNECTED") {
+              const WA_GATEWAY_URL = process.env.WA_GATEWAY_URL || "http://localhost:4000"
+              const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
+
+              const res = await fetch(`${WA_GATEWAY_URL}/api/wa/send`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-internal-secret": INTERNAL_SECRET
+                },
+                body: JSON.stringify({
+                  tenantId: tenantId || "platform",
+                  to: phone,
+                  text: message
+                })
+              })
+
+              if (res.ok) {
+                return resolve({ success: true })
+              } else {
+                const errText = await res.text()
+                logger.error("Internal WA Gateway send failed", { phone, status: res.status, body: errText })
+              }
+            }
+          } catch (err) {
+            // Abaikan jika tidak ada tabel atau error koneksi DB saat cari session
+          }
+        }
+
+        // 2. Fallback ke StarSender (Legacy / starsender provider)
+        if (!config.apiKey) {
+          return resolve({ success: false, error: "WA gateway belum dikonfigurasi" })
+        }
+
+        try {
+          // Implement random delay if configured
+          if (config.delayMin && config.delayMax && config.delayMax > 0) {
+            const minMs = config.delayMin * 1000;
+            const maxMs = config.delayMax * 1000;
+            const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+            if (delay > 0) {
+              await new Promise(r => setTimeout(r, delay));
+            }
+          }
+
+          const body: Record<string, string> = {
+            messageType: "text",
+            to: phone,
+            body: message,
+          }
+          if (config.deviceId) body.deviceId = config.deviceId
+
+          const res = await fetch(`${config.apiUrl}/send`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: config.apiKey,
+            },
+            body: JSON.stringify(body),
+          })
+
+          if (!res.ok) {
+            const errText = await res.text()
+            logger.error("WA send failed (StarSender)", { phone, status: res.status, body: errText })
+            return resolve({ success: false, error: `StarSender error: ${res.status}` })
+          }
+
+          return resolve({ success: true })
+        } catch (err: any) {
+          logger.error("WA send exception (StarSender)", err, { phone })
+          return resolve({ success: false, error: err.message })
+        }
+      } catch (err: any) {
+        logger.error("Fatal queue exception", err)
+        resolve({ success: false, error: err.message })
       }
-    } catch (err) {
-      // Abaikan jika tidak ada tabel atau error koneksi DB saat cari session
-    }
-  }
-
-  // 2. Fallback ke StarSender (Legacy / starsender provider)
-  if (!config.apiKey) {
-    return { success: false, error: "WA gateway belum dikonfigurasi" }
-  }
-
-  try {
-    // Implement random delay if configured
-    if (config.delayMin && config.delayMax && config.delayMax > 0) {
-      const minMs = config.delayMin * 1000;
-      const maxMs = config.delayMax * 1000;
-      const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-      if (delay > 0) {
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-    }
-
-    const body: Record<string, string> = {
-      messageType: "text",
-      to: phone,
-      body: message,
-    }
-    if (config.deviceId) body.deviceId = config.deviceId
-
-    const res = await fetch(`${config.apiUrl}/send`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: config.apiKey,
-      },
-      body: JSON.stringify(body),
+      return { success: false } // Supaya rantai promise tetap berlanjut
+    }).catch(err => {
+      logger.error("Queue rejected", err)
+      resolve({ success: false, error: "Queue rejected" })
+      return { success: false }
     })
+  })
 
-    if (!res.ok) {
-      const errText = await res.text()
-      logger.error("WA send failed (StarSender)", { phone, status: res.status, body: errText })
-      return { success: false, error: `StarSender error: ${res.status}` }
-    }
-
-    return { success: true }
-  } catch (err: any) {
-    logger.error("WA send exception (StarSender)", err, { phone })
-    return { success: false, error: err.message }
-  }
+  return resultPromise
 }
 
 // ==================== IN-APP NOTIFICATION ====================
