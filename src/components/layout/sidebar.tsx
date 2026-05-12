@@ -311,6 +311,8 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
               if (child.label === "Custom Domain") return access.enable_custom_domain === true;
               if (child.label === "WhatsApp Gateway") return access.enable_whatsapp === true;
               if (child.label === "Payment Gateway") return access.enable_finance === true;
+              if (child.label === "Kecerdasan Buatan (AI)") return false; // Fitur PRO
+              if (child.label === "Email (SMTP)") return false; // Fitur PRO
               return true;
             });
           }
