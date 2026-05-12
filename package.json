@@ -51,6 +51,7 @@
     "@upstash/redis": "^1.38.0",
     "ai": "^6.0.177",
     "bcryptjs": "^2.4.3",
+    "bullmq": "^5.76.8",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

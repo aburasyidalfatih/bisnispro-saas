@@ -52,6 +52,7 @@ const nextConfig: NextConfig = {
     remotePatterns: ALLOWED_IMAGE_DOMAINS,
   },
   experimental: {
+    instrumentationHook: true,
     // Membatasi penggunaan memori saat kompilasi
     cpus: 1, 
     workerThreads: false,

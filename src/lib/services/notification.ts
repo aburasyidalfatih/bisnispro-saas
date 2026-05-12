@@ -128,30 +128,36 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
 }
 
 
-// Antrean global untuk memastikan pengiriman berurutan
-let waQueuePromise = Promise.resolve<{success: boolean; error?: string}>({ success: true });
+import { enqueueWhatsApp } from "./wa-queue"
 
 /**
  * Fungsi pengiriman WA terpusat — Memprioritaskan Internal Gateway, fallback ke StarSender.
- * Seluruh pengiriman antre secara berurutan agar jeda (delay) teraplikasi dengan benar
- * antar pesan, menghindari deteksi spam oleh WhatsApp.
+ * Fungsi ini melempar pesan ke dalam BullMQ agar aman dari restart server.
  */
 export async function sendWhatsApp(
   phone: string,
   message: string,
   tenantId?: string
 ): Promise<{ success: boolean; error?: string }> {
+  return enqueueWhatsApp(phone, message, tenantId);
+}
+
+/**
+ * Fungsi eksekusi asli yang akan dipanggil oleh Worker BullMQ atau untuk Uji Coba langsung.
+ */
+export async function sendWhatsAppDirect(
+  phone: string,
+  message: string,
+  tenantId?: string | null
+): Promise<{ success: boolean; error?: string }> {
   
-  // Bungkus dalam antrean promise
-  const resultPromise = new Promise<{ success: boolean; error?: string }>((resolve) => {
-    waQueuePromise = waQueuePromise.then(async () => {
-      try {
+  try {
         const config = await getWaConfig(tenantId)
 
         // 0. META OFFICIAL API
         if (config.provider === "meta") {
           if (!config.metaPhoneId || !config.metaToken) {
-            return resolve({ success: false, error: "Meta API credentials not configured" })
+            return { success: false, error: "Meta API credentials not configured" }
           }
           try {
             let toPhone = phone.replace(/\D/g, "")
@@ -174,12 +180,12 @@ export async function sendWhatsApp(
             if (!res.ok) {
               const errText = await res.text()
               logger.error("Meta WA send failed", { phone, status: res.status, body: errText })
-              return resolve({ success: false, error: `Meta API error: ${res.status}` })
+              return { success: false, error: `Meta API error: ${res.status}` }
             }
-            return resolve({ success: true })
+            return { success: true }
           } catch (err: any) {
             logger.error("Meta WA exception", err, { phone })
-            return resolve({ success: false, error: err.message })
+            return { success: false, error: err.message }
           }
         }
 
@@ -208,7 +214,7 @@ export async function sendWhatsApp(
               })
 
               if (res.ok) {
-                return resolve({ success: true })
+                return { success: true }
               } else {
                 const errText = await res.text()
                 logger.error("Internal WA Gateway send failed", { phone, status: res.status, body: errText })
@@ -221,7 +227,7 @@ export async function sendWhatsApp(
 
         // 2. Fallback ke StarSender (Legacy / starsender provider)
         if (!config.apiKey) {
-          return resolve({ success: false, error: "WA gateway belum dikonfigurasi" })
+          return { success: false, error: "WA gateway belum dikonfigurasi" }
         }
 
         try {
@@ -254,27 +260,18 @@ export async function sendWhatsApp(
           if (!res.ok) {
             const errText = await res.text()
             logger.error("WA send failed (StarSender)", { phone, status: res.status, body: errText })
-            return resolve({ success: false, error: `StarSender error: ${res.status}` })
+            return { success: false, error: `StarSender error: ${res.status}` }
           }
 
-          return resolve({ success: true })
+          return { success: true }
         } catch (err: any) {
           logger.error("WA send exception (StarSender)", err, { phone })
-          return resolve({ success: false, error: err.message })
+          return { success: false, error: err.message }
         }
       } catch (err: any) {
         logger.error("Fatal queue exception", err)
-        resolve({ success: false, error: err.message })
+        return { success: false, error: err.message }
       }
-      return { success: false } // Supaya rantai promise tetap berlanjut
-    }).catch(err => {
-      logger.error("Queue rejected", err)
-      resolve({ success: false, error: "Queue rejected" })
-      return { success: false }
-    })
-  })
-
-  return resultPromise
 }
 
 // ==================== IN-APP NOTIFICATION ====================
