@@ -22,6 +22,7 @@ export default function RegisterSchoolPage() {
   const [isChecking, setIsChecking] = useState(false)
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null)
   const [affiliateName, setAffiliateName] = useState<string | null>(null)
+  const [csPhone, setCsPhone] = useState<string | null>(null)
   
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
@@ -160,6 +161,7 @@ export default function RegisterSchoolPage() {
     setLoading(false)
 
     if (res.ok) {
+      if (data.csPhone) setCsPhone(data.csPhone)
       setSubmitted(true)
       toast({ title: "Berhasil!", description: "Pengajuan sekolah telah kami terima." })
     } else {
@@ -181,9 +183,23 @@ export default function RegisterSchoolPage() {
               Silakan periksa kotak masuk <strong>Email</strong> Anda ({form.adminEmail}) secara berkala untuk menerima tautan akses setelah permohonan disetujui oleh admin SchoolPro.
             </CardDescription>
           </div>
-          <Button className="w-full rounded-xl btn-gradient text-white border-0" onClick={() => window.location.href = "/"}> 
-            Selesai 
-          </Button>
+          {csPhone ? (
+            <Button 
+              className="w-full rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white border-0" 
+              onClick={() => {
+                const text = encodeURIComponent(`halo admin saya sudah isi formulir pengajuan website untuk sekolah saya ${form.schoolName}`)
+                const phoneStr = csPhone.startsWith('0') ? '62' + csPhone.substring(1) : csPhone
+                window.open(`https://wa.me/${phoneStr}?text=${text}`, '_blank')
+                window.location.href = "/"
+              }}
+            > 
+              Chat Admin Sekarang 
+            </Button>
+          ) : (
+            <Button className="w-full rounded-xl btn-gradient text-white border-0" onClick={() => window.location.href = "/"}> 
+              Selesai 
+            </Button>
+          )}
         </Card>
       </div>
     )

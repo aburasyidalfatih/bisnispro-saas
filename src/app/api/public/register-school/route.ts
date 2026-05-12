@@ -111,7 +111,21 @@ export async function POST(req: Request) {
     await sendApplicationNotification(application.id)
     await sendNewApplicationAlerts(application.id, affiliateId)
 
-    return NextResponse.json({ message: "Pengajuan berhasil dikirim", id: application.id })
+    // Ambil nomor CS dari pengaturan platform
+    let csPhone = ""
+    try {
+      const csSetting = await db.platformSetting.findUnique({ where: { key: "SUPPORT_WA_NUMBERS" } })
+      if (csSetting && csSetting.value) {
+        const parsed = JSON.parse(csSetting.value)
+        if (parsed.length > 0 && parsed[0].number) {
+          csPhone = parsed[0].number
+        }
+      }
+    } catch (e) {
+      logger.error("Gagal parse SUPPORT_WA_NUMBERS", e)
+    }
+
+    return NextResponse.json({ message: "Pengajuan berhasil dikirim", id: application.id, csPhone })
   } catch (error) {
     logger.error("Registration error", error, { path: "/api/public/register-school" })
     return NextResponse.json({ error: "Gagal mengirim pengajuan" }, { status: 500 })
