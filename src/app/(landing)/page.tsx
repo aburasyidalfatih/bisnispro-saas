@@ -220,6 +220,35 @@ export default async function LandingPage() {
         <div className="absolute -top-20 right-0 h-80 w-80 rounded-full orb-2 opacity-15 blur-3xl" />
         <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full orb-3 opacity-10 blur-3xl" />
 
+        {/* Floating Technology Elements */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[15%] left-[10%] animate-float-slow opacity-30 md:opacity-40">
+            <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center backdrop-blur-sm border border-blue-500/20 shadow-xl shadow-blue-500/5">
+              <Database className="h-6 w-6 text-blue-500" />
+            </div>
+          </div>
+          <div className="absolute top-[25%] right-[15%] animate-float-delayed opacity-30 md:opacity-40">
+            <div className="h-16 w-16 rounded-3xl bg-indigo-500/10 flex items-center justify-center backdrop-blur-sm border border-indigo-500/20 shadow-xl shadow-indigo-500/5">
+              <Globe className="h-8 w-8 text-indigo-500" />
+            </div>
+          </div>
+          <div className="absolute bottom-[25%] left-[20%] animate-float opacity-30 md:opacity-40">
+            <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center backdrop-blur-sm border border-emerald-500/20 shadow-xl shadow-emerald-500/5">
+              <Bot className="h-7 w-7 text-emerald-500" />
+            </div>
+          </div>
+          <div className="absolute bottom-[35%] right-[10%] animate-float-slow opacity-30 md:opacity-40">
+            <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center backdrop-blur-sm border border-amber-500/20 shadow-xl shadow-amber-500/5">
+              <Zap className="h-5 w-5 text-amber-500" />
+            </div>
+          </div>
+          <div className="absolute top-[45%] left-[5%] animate-float opacity-20 md:opacity-30">
+            <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center backdrop-blur-sm border border-purple-500/20 shadow-xl shadow-purple-500/5">
+              <Shield className="h-5 w-5 text-purple-500" />
+            </div>
+          </div>
+        </div>
+
         <div className="container relative mx-auto px-4 py-14 text-center lg:py-20">
           <div className="mx-auto max-w-4xl space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-xs md:text-sm">
