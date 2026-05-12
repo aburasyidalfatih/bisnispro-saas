@@ -6,7 +6,7 @@ import { usePrismaAuthState } from './auth-store'
 import prisma from '../prisma'
 import qrcode from 'qrcode'
 
-const logger = pino({ level: 'silent' })
+const logger = pino({ level: 'error' })
 
 // In-memory store for active connections
 export const sessions = new Map<string, any>()
@@ -41,8 +41,7 @@ export const startWhatsAppSession = async (tenantId: string) => {
     logger,
     printQRInTerminal: false,
     auth: state,
-    browser: ['SchoolPro WA Gateway', 'Chrome', '1.0.0'],
-    syncFullHistory: false,
+    browser: ['Windows', 'Chrome', '122.0.0.0'],
     markOnlineOnConnect: false,
     generateHighQualityLinkPreviews: false
   })
