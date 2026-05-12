@@ -313,9 +313,7 @@ export default function RegisterSchoolPage() {
                       <span className="text-xs font-medium text-muted-foreground">.schoolpro.id</span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
-                    <Globe className="h-3 w-3" /> Anda bisa menambahkan Custom Domain (misal: .sch.id) setelah disetujui.
-                  </p>
+
                 </div>
               </div>
 
