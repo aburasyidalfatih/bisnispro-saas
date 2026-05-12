@@ -20,7 +20,10 @@ export const startWhatsAppSession = async (tenantId: string) => {
     logger,
     printQRInTerminal: false,
     auth: state,
-    browser: ['SchoolPro WA Gateway', 'Chrome', '1.0.0']
+    browser: ['SchoolPro WA Gateway', 'Chrome', '1.0.0'],
+    syncFullHistory: false,
+    markOnlineOnConnect: false,
+    generateHighQualityLinkPreviews: false
   })
 
   sessions.set(tenantId, sock)
