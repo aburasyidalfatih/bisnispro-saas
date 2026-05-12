@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function RegisterSchoolPage() {
   const [loading, setLoading] = useState(false)
@@ -392,13 +393,24 @@ export default function RegisterSchoolPage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Jabatan di Sekolah</Label>
-                  <Input 
-                    required 
-                    value={form.adminPosition} 
-                    onChange={(e) => setForm({...form, adminPosition: e.target.value})}
-                    placeholder="Contoh: Kepala Sekolah, Operator, dll" 
-                    className="rounded-xl h-11"
-                  />
+                  <Select
+                    required
+                    value={form.adminPosition}
+                    onValueChange={(v) => setForm({...form, adminPosition: v})}
+                  >
+                    <SelectTrigger className="rounded-xl h-11">
+                      <SelectValue placeholder="Pilih jabatan..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Operator">Operator</SelectItem>
+                      <SelectItem value="Kepala Sekolah">Kepala Sekolah</SelectItem>
+                      <SelectItem value="Wakil Kepala Sekolah">Wakil Kepala Sekolah</SelectItem>
+                      <SelectItem value="Yayasan">Yayasan</SelectItem>
+                      <SelectItem value="Pimpinan Lembaga">Pimpinan Lembaga</SelectItem>
+                      <SelectItem value="Guru Mapel">Guru Mapel</SelectItem>
+                      <SelectItem value="Tata Usaha">Tata Usaha</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
