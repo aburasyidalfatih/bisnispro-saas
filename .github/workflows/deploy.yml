@@ -97,39 +97,39 @@ jobs:
           # 2. Build the bash script to execute on the VPS
           $script = @"
           set -e
-          echo `"$env:GITHUB_TOKEN`" | docker login ghcr.io -u $env:ACTOR --password-stdin
-          if [ `"$env:BRANCH`" = `"main`" ]; then
-            APP_DIR=`"/home/$env:REMOTE_USER/schoolpro-prod`"
+          echo "${env:GITHUB_TOKEN}" | docker login ghcr.io -u ${env:ACTOR} --password-stdin
+          if [ "${env:BRANCH}" = "main" ]; then
+            APP_DIR="/home/${env:REMOTE_USER}/schoolpro-prod"
           else
-            APP_DIR=`"/home/$env:REMOTE_USER/schoolpro-dev`"
+            APP_DIR="/home/${env:REMOTE_USER}/schoolpro-dev"
           fi
-          echo `"Deploying branch $env:BRANCH to `$APP_DIR`"
+          echo "Deploying branch ${env:BRANCH} to `$APP_DIR"
           cd `$APP_DIR
 
-          if [ -n `"$env:CRON_SECRET`" ]; then
-            if ! grep -q `"^CRON_SECRET=`" .env; then
-              echo -e `"\nCRON_SECRET=\`"$env:CRON_SECRET\`"`" >> .env
+          if [ -n "${env:CRON_SECRET}" ]; then
+            if ! grep -q "^CRON_SECRET=" .env; then
+              echo -e "\nCRON_SECRET=\"${env:CRON_SECRET}\"" >> .env
             else
-              sed -i `"s|^CRON_SECRET=.*|CRON_SECRET=\`"$env:CRON_SECRET\`"|g`" .env
+              sed -i "s|^CRON_SECRET=.*|CRON_SECRET=\"${env:CRON_SECRET}\"|g" .env
             fi
           fi
 
-          git remote set-url origin https://oauth2:$env:GITHUB_TOKEN@github.com/$env:REPO.git
+          git remote set-url origin https://oauth2:${env:GITHUB_TOKEN}@github.com/${env:REPO}.git
           git fetch --all
-          git reset --hard origin/$env:BRANCH
+          git reset --hard origin/${env:BRANCH}
           
-          docker network ls | grep -q `"shared-proxy`" || docker network create shared-proxy
+          docker network ls | grep -q "shared-proxy" || docker network create shared-proxy
           
-          export APP_IMAGE=`"ghcr.io/$env:REPO:$env:BRANCH`"
-          if [ `"$env:BRANCH`" = `"main`" ]; then
-            export APP_ALIAS=`"schoolpro-prod-app`"
+          export APP_IMAGE="ghcr.io/${env:REPO}:${env:BRANCH}"
+          if [ "${env:BRANCH}" = "main" ]; then
+            export APP_ALIAS="schoolpro-prod-app"
           else
-            export APP_ALIAS=`"schoolpro-dev-app`"
+            export APP_ALIAS="schoolpro-dev-app"
           fi
           
           docker compose pull app
           
-          if [ `"$env:BRANCH`" = `"main`" ]; then
+          if [ "${env:BRANCH}" = "main" ]; then
             docker compose up -d --no-build app db redis wa-gateway --remove-orphans
           else
             docker compose up -d --no-build app --remove-orphans
