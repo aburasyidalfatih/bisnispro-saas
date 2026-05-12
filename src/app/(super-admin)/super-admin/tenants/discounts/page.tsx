@@ -65,9 +65,15 @@ export default function DiscountsPage() {
   }
 
   const openEdit = (discount: DiscountCode) => {
+    let localDatetime = null;
+    if (discount.expiresAt) {
+      const d = new Date(discount.expiresAt);
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      localDatetime = d.toISOString().slice(0, 16);
+    }
     setEditingDiscount({
       ...discount,
-      expiresAt: discount.expiresAt ? new Date(discount.expiresAt).toISOString().split('T')[0] : null
+      expiresAt: localDatetime
     })
     setIsDialogOpen(true)
   }
@@ -158,7 +164,7 @@ export default function DiscountsPage() {
             <CardContent>
               <div className="flex justify-between text-sm text-muted-foreground mb-4">
                 <span>Digunakan: {discount.usedCount} / {discount.maxUses || "∞"}</span>
-                {discount.expiresAt && <span>Exp: {new Date(discount.expiresAt).toLocaleDateString('id-ID')}</span>}
+                {discount.expiresAt && <span>Exp: {new Date(discount.expiresAt).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}</span>}
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" size="sm" className="rounded-lg h-8 px-3" onClick={() => openEdit(discount)}>
@@ -243,7 +249,7 @@ export default function DiscountsPage() {
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold">Batas Waktu (Expired)</Label>
                 <Input
-                  type="date"
+                  type="datetime-local"
                   value={editingDiscount.expiresAt || ""}
                   onChange={e => setEditingDiscount({ ...editingDiscount, expiresAt: e.target.value || null })}
                   className="rounded-xl"

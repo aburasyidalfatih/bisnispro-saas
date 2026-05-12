@@ -56,7 +56,37 @@ export default function BillingPage() {
   // Discount states
   const [discountCodeInput, setDiscountCodeInput] = useState("")
   const [validatingDiscount, setValidatingDiscount] = useState(false)
-  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, percentage: number } | null>(null)
+  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, percentage: number, expiresAt?: string | null } | null>(null)
+  const [discountTimeLeft, setDiscountTimeLeft] = useState<string | null>(null)
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    if (appliedDiscount?.expiresAt) {
+      const updateTimer = () => {
+        const now = new Date().getTime()
+        const target = new Date(appliedDiscount.expiresAt!).getTime()
+        const diff = target - now
+        if (diff <= 0) {
+          setDiscountTimeLeft("Diskon sudah berakhir")
+          setAppliedDiscount(null)
+        } else {
+          const hours = Math.floor(diff / (1000 * 60 * 60))
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+          let timeString = ""
+          if (hours > 0) timeString += `${hours} jam `
+          if (minutes > 0 || hours > 0) timeString += `${minutes} menit `
+          timeString += `${seconds} detik`
+          setDiscountTimeLeft(timeString + " Lagi")
+        }
+      }
+      updateTimer()
+      timer = setInterval(updateTimer, 1000)
+    } else {
+      setDiscountTimeLeft(null)
+    }
+    return () => clearInterval(timer)
+  }, [appliedDiscount])
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -113,7 +143,7 @@ export default function BillingPage() {
       })
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Kode tidak valid")
-      setAppliedDiscount({ code: result.code, percentage: result.percentage })
+      setAppliedDiscount({ code: result.code, percentage: result.percentage, expiresAt: result.expiresAt })
       toast({ title: "Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
     } catch (err: any) {
       setAppliedDiscount(null)
@@ -389,9 +419,16 @@ export default function BillingPage() {
                     )}
                   </div>
                   {appliedDiscount && (
-                    <p className="text-xs text-emerald-600 flex items-center gap-1 mt-1 font-medium">
-                      <CheckCircle2 className="h-3 w-3" /> Kode {appliedDiscount.code} berhasil diterapkan!
-                    </p>
+                    <div className="flex flex-col gap-1 mt-1">
+                      <p className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
+                        <CheckCircle2 className="h-3 w-3" /> Kode {appliedDiscount.code} berhasil diterapkan!
+                      </p>
+                      {discountTimeLeft && (
+                        <p className="text-[10px] text-amber-600 font-medium ml-4">
+                          kode diskon akan berakhir {discountTimeLeft}.
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
