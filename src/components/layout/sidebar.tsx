@@ -454,6 +454,16 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
       ],
     },
     {
+      title: "Analitik",
+      items: [
+        {
+          label: "Analitik Platform",
+          href: "/super-admin/analytics",
+          icon: BarChart3,
+        },
+      ],
+    },
+    {
       title: "Kemitraan",
       items: [
         {
