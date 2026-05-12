@@ -24,9 +24,8 @@ services:
     env_file:
       - .env
     environment:
-      # Override agar mengarah ke service 'db', bukan localhost
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-saasmasterpro}
-      - WA_GATEWAY_URL=http://wa-gateway:4000
+      - DATABASE_URL=${DATABASE_URL}
+      - WA_GATEWAY_URL=${WA_GATEWAY_URL:-http://wa-gateway:4000}
     volumes:
       - uploads:/app/uploads
       - ./backups:/app/backups
@@ -87,7 +86,7 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-saasmasterpro}
+      - DATABASE_URL=${DATABASE_URL}
       - WA_GATEWAY_PORT=4000
     depends_on:
       db:
