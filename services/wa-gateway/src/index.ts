@@ -156,13 +156,13 @@ async function processQueue() {
               // Update status
               await prisma.waMessage.update({
                 where: { id: msg.id },
-                data: { status: 'SENT', processedAt: new Date() }
+                data: { status: 'SENT' }
               })
             } catch (err: any) {
               console.error(`Failed to send message ${msg.id}:`, err)
               await prisma.waMessage.update({
                 where: { id: msg.id },
-                data: { status: 'FAILED', processedAt: new Date() } // Kolom error dicatat jika ada schema support, jika tidak biarkan
+                data: { status: 'FAILED', error: err.message || 'Unknown error' } 
               })
             }
 
