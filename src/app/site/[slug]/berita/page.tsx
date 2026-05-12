@@ -8,6 +8,23 @@ import Link from "next/link"
 import { Calendar, User, ArrowRight } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import { cn } from "@/lib/utils"
+
+function SmartPlaceholder({ title, type }: { title: string, type: string }) {
+  const hash = title.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  const hue1 = hash % 360
+  const hue2 = (hash + 60) % 360
+  return (
+    <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-6 overflow-hidden" 
+         style={{ background: `linear-gradient(135deg, hsl(${hue1}, 70%, 90%), hsl(${hue2}, 70%, 85%))` }}>
+      <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, black 2px, transparent 0)", backgroundSize: "32px 32px" }} />
+      <div className="relative z-10 w-16 h-16 rounded-full bg-white/40 backdrop-blur-md flex items-center justify-center mb-3 shadow-sm border border-white/50">
+        <Image className="opacity-40" src="/logo-schoolpro.png" alt="Logo" width={32} height={32} />
+      </div>
+      <p className="relative z-10 text-center font-bold text-foreground/60 text-lg sm:text-xl line-clamp-2 max-w-[80%] leading-tight mix-blend-color-burn">{title}</p>
+    </div>
+  )
+}
 
 export default async function BeritaPage({ 
   params,
@@ -64,7 +81,34 @@ export default async function BeritaPage({
         ]}
       />
 
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        {/* Category Pills Filter */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10 md:mb-14">
+          {[
+            { label: "Semua", value: null },
+            { label: "Berita", value: "BERITA" },
+            { label: "Pengumuman", value: "PENGUMUMAN" },
+            { label: "Prestasi", value: "PRESTASI" },
+          ].map((cat) => {
+            const isActive = typeFilter === cat.value || (!typeFilter && cat.value === null)
+            const href = cat.value ? `${base}/berita?type=${cat.value}` : `${base}/berita`
+            return (
+              <Link
+                key={cat.label}
+                href={href}
+                className={cn(
+                  "px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300",
+                  isActive
+                    ? "bg-primary text-white shadow-lg shadow-primary/25 scale-105"
+                    : "bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent hover:border-border/50"
+                )}
+              >
+                {cat.label}
+              </Link>
+            )
+          })}
+        </div>
+
         {posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 bg-white/50 rounded-[3rem] border border-dashed border-border/60">
              <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
@@ -85,9 +129,7 @@ export default async function BeritaPage({
                   {posts[0].featuredImage ? (
                     <Image src={posts[0].featuredImage} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   ) : (
-                    <div className="flex items-center justify-center h-full bg-primary/5">
-                       <span className="text-primary/20 font-bold text-4xl">NO IMAGE</span>
-                    </div>
+                    <SmartPlaceholder title={posts[0].title} type={posts[0].type || "BERITA"} />
                   )}
                   <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm text-primary text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
                      TERBARU
@@ -123,7 +165,7 @@ export default async function BeritaPage({
                       {post.featuredImage ? (
                         <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       ) : (
-                        <div className="flex items-center justify-center h-full bg-primary/5 text-primary/20 font-bold">NO IMAGE</div>
+                        <SmartPlaceholder title={post.title} type={post.type || "BERITA"} />
                       )}
                       <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
                          {post.type || "BERITA"}
