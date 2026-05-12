@@ -236,6 +236,31 @@ export default function SuperAdminApplicationsPage() {
     }
   }
 
+  const handleBulkResendEmail = async () => {
+    if (selectedIds.length === 0) return
+    setIsUpdating(true)
+    try {
+      const res = await fetch("/api/super-admin/applications/resend-email-bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds })
+      })
+      if (res.ok) {
+        const data = await res.json()
+        toast({ title: "Berhasil", description: data.message || "Email masal sedang dikirim ulang." })
+        setSelectedIds([])
+        fetchApps()
+      } else {
+        const err = await res.json()
+        toast({ title: "Error", description: err.error || "Gagal mengirim ulang email masal", variant: "destructive" })
+      }
+    } catch (e) {
+      toast({ title: "Error", description: "Terjadi kesalahan sistem.", variant: "destructive" })
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "PENDING": return <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 gap-1"><Clock className="h-3 w-3" /> Pending</Badge>
@@ -331,10 +356,13 @@ export default function SuperAdminApplicationsPage() {
       </div>
 
       {selectedIds.length > 0 && (
-        <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-2xl border">
+        <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-2xl border flex-wrap">
           <span className="text-sm font-semibold ml-2">{selectedIds.length} Dipilih</span>
           <Button size="sm" variant="outline" className="h-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50" onClick={() => openActionModal(null, "APPROVED", true)}>
             <CheckCircle className="h-4 w-4 mr-1.5" /> Setujui Masal
+          </Button>
+          <Button size="sm" variant="outline" className="h-8 border-purple-200 text-purple-600 hover:bg-purple-50" onClick={() => handleBulkResendEmail()} disabled={isUpdating}>
+            <Mail className="h-4 w-4 mr-1.5" /> Kirim Ulang Email Masal
           </Button>
           <Button size="sm" variant="outline" className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50" onClick={() => openActionModal(null, "REVISION", true)}>
             <RefreshCcw className="h-4 w-4 mr-1.5" /> Revisi Masal
