@@ -41,6 +41,18 @@ export default function AnalyticsPage() {
 
   if (!data) return <div>Gagal memuat data analitik.</div>
 
+  // Pre-process bar chart data to show top 6 and others
+  const sortedPositions = [...data.positionBreakdown].sort((a, b) => b.value - a.value)
+  const topPositions = sortedPositions.slice(0, 6).map(p => ({
+    name: p.name.length > 15 ? p.name.substring(0, 15) + "..." : p.name,
+    value: p.value
+  }))
+  const othersValue = sortedPositions.slice(6).reduce((acc, curr) => acc + curr.value, 0)
+  
+  if (othersValue > 0) {
+    topPositions.push({ name: "Lainnya", value: othersValue })
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -112,26 +124,24 @@ export default function AnalyticsPage() {
             <CardDescription>Proporsi jenis sekolah dari total lembaga yang mendaftar.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
-            <div className="h-[250px] w-full">
+            <div className="h-[320px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={data.schoolStatusBreakdown}
                     cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={90}
+                    cy="45%"
+                    innerRadius={70}
+                    outerRadius={105}
                     paddingAngle={5}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    labelLine={false}
                   >
                     {data.schoolStatusBreakdown.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <RechartsTooltip />
-                  <Legend verticalAlign="bottom" height={36} />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -147,9 +157,9 @@ export default function AnalyticsPage() {
             <CardDescription>Posisi atau jabatan orang yang mendaftarkan sekolahnya ke SchoolPro.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[250px] w-full mt-4">
+            <div className="h-[320px] w-full mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.positionBreakdown} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                <BarChart data={topPositions} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e5e7eb" />
                   <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} width={100} />
@@ -157,8 +167,8 @@ export default function AnalyticsPage() {
                     cursor={{ fill: 'rgba(0,0,0,0.05)' }}
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
-                  <Bar dataKey="value" name="Jumlah" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={20}>
-                    {data.positionBreakdown.map((entry, index) => (
+                  <Bar dataKey="value" name="Jumlah" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={24}>
+                    {topPositions.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Bar>
