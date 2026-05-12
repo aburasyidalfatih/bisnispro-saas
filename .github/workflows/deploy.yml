@@ -16,13 +16,14 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
     steps:
       - name: Set target branch name
         id: vars
+        shell: bash
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
@@ -36,6 +37,7 @@ jobs:
           ref: ${{ env.BRANCH }}
 
       - name: Set lowercase repository name
+        shell: bash
         run: |
           echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
