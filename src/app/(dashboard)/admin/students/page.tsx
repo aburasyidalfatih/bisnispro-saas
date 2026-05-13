@@ -136,6 +136,9 @@ export default function StudentsPage() {
           <Link href="/admin/students/import">
             <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex">Import</Button>
           </Link>
+          <Link href="/admin/students/new">
+            <Button className="rounded-xl gap-2 hidden sm:flex btn-gradient text-white border-0"><Plus className="h-4 w-4" /> Tambah Siswa</Button>
+          </Link>
         </div>
       </div>
 
