@@ -43,6 +43,7 @@ export default function SuperAdminSettingsPage() {
     app_logo: "",
     platform_name: "SchoolPro",
     platform_tagline: "Solusi Manajemen Sekolah Digital",
+    platform_address: "",
     allow_impersonate_user: "true",
     enable_billing_upgrade: "false",
     enable_custom_domain: "false",
@@ -342,6 +343,11 @@ export default function SuperAdminSettingsPage() {
                 <Input value={form.contact_email} onChange={e => setForm({...form, contact_email: e.target.value})} placeholder="support@schoolpro.id" className="rounded-xl" />
               </div>
               <div className="space-y-2">
+                <Label>Alamat Platform</Label>
+                <Input value={form.platform_address} onChange={e => setForm({...form, platform_address: e.target.value})} placeholder="Jl. Contoh No. 123, Jakarta, Indonesia" className="rounded-xl" />
+                <p className="text-[10px] text-muted-foreground mt-1">Alamat ini akan ditampilkan di halaman Invoice.</p>
+              </div>
+              <div className="space-y-2">
                 <Label>Meta Pixel ID (Facebook Pixel)</Label>
                 <Input value={form.META_PIXEL_ID} onChange={e => setForm({...form, META_PIXEL_ID: e.target.value})} placeholder="Misal: 123456789012345" className="rounded-xl" />
                 <p className="text-[10px] text-muted-foreground mt-1">Kosongkan jika tidak ingin menggunakan Meta Pixel tracking.</p>
@@ -349,7 +355,7 @@ export default function SuperAdminSettingsPage() {
 
               <Button 
                 className="w-full gap-2 btn-gradient text-white border-0 rounded-xl"
-                onClick={() => handleSaveBatch(['platform_name', 'platform_tagline', 'contact_email', 'META_PIXEL_ID'])}
+                onClick={() => handleSaveBatch(['platform_name', 'platform_tagline', 'platform_address', 'contact_email', 'META_PIXEL_ID'])}
                 disabled={saving || uploadingLogo}
               >
                 {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
