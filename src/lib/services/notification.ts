@@ -154,6 +154,18 @@ export async function sendWhatsAppDirect(
   try {
         const config = await getWaConfig(tenantId)
 
+        // Implement random delay for ALL providers (Enforce safe defaults if 0)
+        const safeMin = config.delayMin && config.delayMin > 0 ? config.delayMin : 3;
+        const safeMax = config.delayMax && config.delayMax > 0 ? config.delayMax : 8;
+        
+        const minMs = safeMin * 1000;
+        const maxMs = Math.max(minMs, safeMax * 1000); // Ensure max is always >= min
+        
+        const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+        if (delay > 0) {
+          await new Promise(r => setTimeout(r, delay));
+        }
+
         // 0. META OFFICIAL API
         if (config.provider === "meta") {
           if (!config.metaPhoneId || !config.metaToken) {
@@ -231,15 +243,6 @@ export async function sendWhatsAppDirect(
         }
 
         try {
-          // Implement random delay if configured
-          if (config.delayMin && config.delayMax && config.delayMax > 0) {
-            const minMs = config.delayMin * 1000;
-            const maxMs = config.delayMax * 1000;
-            const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-            if (delay > 0) {
-              await new Promise(r => setTimeout(r, delay));
-            }
-          }
 
           const body: Record<string, string> = {
             messageType: "text",
