@@ -140,13 +140,23 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
     throw new Error("Masa aktif paket sudah habis, silakan perpanjang (upgrade/renew) terlebih dahulu")
   }
 
+  // Gunakan harga dari payment PAID terakhir (harga kontrak aktif)
+  // Jika tidak ada, fallback ke harga global terbaru
+  const lastPaidPayment = await db.payment.findFirst({
+    where: { tenantId, status: "paid", plan: "pro" },
+    orderBy: { paidAt: "desc" },
+    select: { metadata: true }
+  })
+  const lockedPrice = (lastPaidPayment?.metadata as any)?.pricePerStudent
+  const pricePerStudent = lockedPrice && lockedPrice > 0 ? lockedPrice : pricing.PRICE_PER_STUDENT
+
   const msPerDay = 24 * 60 * 60 * 1000
   const daysRemaining = Math.ceil((expiresAt.getTime() - now.getTime()) / msPerDay)
   
   // Asumsikan 1 tahun = 365 hari untuk base calculation
   const ratio = Math.min(daysRemaining / 365, 1)
 
-  const fullSubTotal = studentCount * pricing.PRICE_PER_STUDENT
+  const fullSubTotal = studentCount * pricePerStudent
   const subTotal = fullSubTotal * ratio // prorated
 
   let amount = subTotal
@@ -190,7 +200,7 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
       expiredAt: expiredAtInvoice,
       metadata: {
         studentCount,
-        pricePerStudent: pricing.PRICE_PER_STUDENT,
+        pricePerStudent,
         tenantName: tenant.name,
         tenantSlug: tenant.slug,
         subTotal,
@@ -199,7 +209,8 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
         discountPercentage: validDiscountId ? (discountAmount / subTotal) * 100 : 0,
         type: "ADDON_QUOTA",
         daysRemaining,
-        ratio
+        ratio,
+        isLockedPrice: !!lockedPrice
       }
     }
   })
@@ -211,13 +222,14 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
     subTotal,
     discountAmount,
     studentCount,
-    pricePerStudent: pricing.PRICE_PER_STUDENT,
+    pricePerStudent,
     tenantName: tenant.name,
     expiredAt: payment.expiredAt,
     status: payment.status,
     createdAt: payment.createdAt,
     daysRemaining,
-    ratio
+    ratio,
+    isLockedPrice: !!lockedPrice
   }
 }
 

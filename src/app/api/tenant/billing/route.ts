@@ -67,6 +67,18 @@ export async function GET() {
     })
   ])
 
+  // Untuk tenant PRO aktif: cari harga dari payment PAID terakhir (harga kontrak)
+  let lockedPricePerStudent: number | null = null
+  if (tenant?.plan === "pro" && tenant.isActive && tenant.expiresAt && new Date(tenant.expiresAt) > new Date()) {
+    const lastPaid = await db.payment.findFirst({
+      where: { tenantId, status: "paid", plan: "pro" },
+      orderBy: { paidAt: "desc" },
+      select: { metadata: true }
+    })
+    const metaPrice = (lastPaid?.metadata as any)?.pricePerStudent
+    if (metaPrice && metaPrice > 0) lockedPricePerStudent = metaPrice
+  }
+
   const proFeatures = normalizeFeatures(proPlan?.features)
 
   const upgradeEnabled = platformSettings.find(s => s.key === "enable_billing_upgrade")?.value === "true"
@@ -83,6 +95,7 @@ export async function GET() {
     proFeatures,
     hasPendingInvoice: !!pendingPayment,
     upgradeEnabled,
-    manualPayment
+    manualPayment,
+    lockedPricePerStudent
   })
 }

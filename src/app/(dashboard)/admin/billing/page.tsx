@@ -26,6 +26,7 @@ interface TenantBilling {
   hasPendingInvoice?: boolean
   upgradeEnabled?: boolean
   manualPayment?: { bank: string; number: string; name: string; waNumber: string }
+  lockedPricePerStudent?: number | null
 }
 interface PlanInfo {
   slug: string; name: string; description: string; price: number
@@ -114,6 +115,12 @@ export default function BillingPage() {
   const isPro = billing?.plan === "pro"
   const minStudents = isPro ? 1 : pricing.MIN_STUDENTS
 
+  // Harga efektif: PRO aktif → harga kontrak (locked), lainnya → harga terbaru
+  const effectivePricePerStudent = (isPro && billing?.lockedPricePerStudent)
+    ? billing.lockedPricePerStudent
+    : pricing.PRICE_PER_STUDENT
+  const isUsingLockedPrice = isPro && !!billing?.lockedPricePerStudent && billing.lockedPricePerStudent !== pricing.PRICE_PER_STUDENT
+
   let proratedRatio = 1
   let daysRemaining = 365
   if (isPro && billing?.expiresAt) {
@@ -124,7 +131,7 @@ export default function BillingPage() {
     proratedRatio = Math.min(daysRemaining / 365, 1)
   }
 
-  const baseSubTotal = studentCount * pricing.PRICE_PER_STUDENT
+  const baseSubTotal = studentCount * effectivePricePerStudent
   const subTotal = baseSubTotal * proratedRatio
   const discountAmount = appliedDiscount ? subTotal * (appliedDiscount.percentage / 100) : 0
   const totalCost = subTotal - discountAmount
@@ -391,7 +398,10 @@ export default function BillingPage() {
                     <span className="text-3xl font-bold">{totalCost.toLocaleString("id-ID")}</span>
                   </div>
                   <p className="text-[11px] text-primary/70 italic">
-                    Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")} / siswa / tahun
+                    Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / siswa / tahun
+                    {isUsingLockedPrice && (
+                      <span className="ml-1.5 text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-semibold not-italic dark:bg-blue-900/30 dark:text-blue-400">Harga Kontrak</span>
+                    )}
                   </p>
                 </div>
 
