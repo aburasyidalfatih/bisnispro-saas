@@ -170,7 +170,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
         ]),
         ...(isFree ? [] : [
           {
-            label: "Kehadiran & Presensi",
+            label: "Kehadiran",
             href: `${basePath}/attendance`,
             icon: CalendarCheck,
             children: [
