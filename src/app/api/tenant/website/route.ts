@@ -133,6 +133,17 @@ export async function PUT(req: Request) {
         console.error("[website/route] Gagal sync principal ke staff:", error)
       }
     }
+
+    if (settings.studentCount !== undefined) {
+      try {
+        await db.tenantApplication.update({
+          where: { schoolSlug: updated.slug },
+          data: { studentCount: Number(settings.studentCount) }
+        })
+      } catch (error) {
+        console.error("[website/route] Gagal sync studentCount ke application:", error)
+      }
+    }
   }
 
   // Invalidate Redis cache so public site reflects changes immediately
