@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       percentage: discount.percentage,
       description: discount.description,
       expiresAt: discount.expiresAt,
+      bonusMonths: discount.bonusMonths,
     })
   } catch (error) {
     console.error("Validate discount error:", error)

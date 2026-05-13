@@ -56,7 +56,7 @@ export default function BillingPage() {
   // Discount states
   const [discountCodeInput, setDiscountCodeInput] = useState("")
   const [validatingDiscount, setValidatingDiscount] = useState(false)
-  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, percentage: number, expiresAt?: string | null } | null>(null)
+  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, percentage: number, expiresAt?: string | null, bonusMonths?: number } | null>(null)
   const [discountTimeLeft, setDiscountTimeLeft] = useState<string | null>(null)
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function BillingPage() {
       })
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Kode tidak valid")
-      setAppliedDiscount({ code: result.code, percentage: result.percentage, expiresAt: result.expiresAt })
+      setAppliedDiscount({ code: result.code, percentage: result.percentage, expiresAt: result.expiresAt, bonusMonths: result.bonusMonths })
       toast({ title: "Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
     } catch (err: any) {
       setAppliedDiscount(null)
@@ -423,8 +423,13 @@ export default function BillingPage() {
                       <p className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
                         <CheckCircle2 className="h-3 w-3" /> Kode {appliedDiscount.code} berhasil diterapkan!
                       </p>
+                      {(appliedDiscount.bonusMonths ?? 0) > 0 && (
+                        <p className="text-[11px] text-blue-600 font-medium ml-4 mt-0.5">
+                          + Gratis Perpanjangan {appliedDiscount.bonusMonths} Bulan
+                        </p>
+                      )}
                       {discountTimeLeft && (
-                        <p className="text-[10px] text-amber-600 font-medium ml-4">
+                        <p className="text-[10px] text-amber-600 font-medium ml-4 mt-0.5">
                           kode diskon akan berakhir {discountTimeLeft}.
                         </p>
                       )}

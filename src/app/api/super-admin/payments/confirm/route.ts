@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     // Ambil data payment + tenant
     const payment = await db.payment.findUnique({
       where: { id: paymentId },
-      include: { tenant: true },
+      include: { tenant: true, discountCode: true },
     })
 
     if (!payment) {
@@ -39,6 +39,9 @@ export async function POST(req: Request) {
     let expiresAt = new Date()
     if (!isAddon && !isAiAddon) {
       expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+      if (payment.discountCode && payment.discountCode.bonusMonths > 0) {
+        expiresAt.setMonth(expiresAt.getMonth() + payment.discountCode.bonusMonths)
+      }
     }
 
     // Tenant update payload

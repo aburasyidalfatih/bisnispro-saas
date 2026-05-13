@@ -24,6 +24,7 @@ interface DiscountCode {
   description: string | null
   percentage: number
   isActive: boolean
+  bonusMonths: number
   maxUses: number | null
   usedCount: number
   expiresAt: string | null
@@ -58,6 +59,7 @@ export default function DiscountsPage() {
       description: "",
       percentage: 10,
       isActive: true,
+      bonusMonths: 0,
       maxUses: null,
       expiresAt: null
     })
@@ -156,9 +158,16 @@ export default function DiscountsPage() {
                   <CardTitle className="text-xl font-bold font-mono tracking-widest">{discount.code}</CardTitle>
                   <CardDescription className="mt-1">{discount.description || "Tanpa deskripsi"}</CardDescription>
                 </div>
-                <Badge variant={discount.isActive ? "default" : "secondary"} className={cn(discount.isActive && "bg-emerald-500 hover:bg-emerald-600")}>
-                  {discount.percentage}% OFF
-                </Badge>
+                <div className="flex gap-2">
+                  {discount.bonusMonths > 0 && (
+                    <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
+                      + {discount.bonusMonths} Bulan
+                    </Badge>
+                  )}
+                  <Badge variant={discount.isActive ? "default" : "secondary"} className={cn(discount.isActive && "bg-emerald-500 hover:bg-emerald-600")}>
+                    {discount.percentage}% OFF
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -231,6 +240,16 @@ export default function DiscountsPage() {
                     max={100}
                     value={editingDiscount.percentage || 0}
                     onChange={e => setEditingDiscount({ ...editingDiscount, percentage: Number(e.target.value) })}
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold">Bonus Perpanjangan (Bulan)</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={editingDiscount.bonusMonths || 0}
+                    onChange={e => setEditingDiscount({ ...editingDiscount, bonusMonths: Number(e.target.value) })}
                     className="rounded-xl"
                   />
                 </div>

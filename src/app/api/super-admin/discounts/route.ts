@@ -27,9 +27,9 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { code, description, percentage, isActive, maxUses, expiresAt } = body
+    const { code, description, percentage, isActive, maxUses, expiresAt, bonusMonths } = body
 
-    if (!code || !percentage) {
+    if (!code || percentage === undefined) {
       return NextResponse.json({ error: "Code dan percentage wajib diisi." }, { status: 400 })
     }
 
@@ -44,6 +44,7 @@ export async function POST(req: Request) {
         description,
         percentage: Number(percentage),
         isActive: Boolean(isActive),
+        bonusMonths: bonusMonths ? Number(bonusMonths) : 0,
         maxUses: maxUses ? Number(maxUses) : null,
         expiresAt: expiresAt ? new Date(expiresAt) : null,
       },
