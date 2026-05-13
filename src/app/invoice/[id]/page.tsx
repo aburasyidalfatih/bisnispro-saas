@@ -11,7 +11,10 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
   const payment = await db.payment.findUnique({
     where: { id },
     include: {
-      tenant: true
+      tenant: true,
+      discountCode: {
+        select: { code: true, percentage: true, bonusMonths: true }
+      }
     }
   })
 
@@ -46,9 +49,15 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
   const meta = payment.metadata as any || {}
   const studentCount = meta.studentCount ?? 1
   const pricePerStudent = meta.pricePerStudent ?? (payment.amount / studentCount)
-  const discountPercent = meta.discountPercent ?? 0
+  const discountPercentage = meta.discountPercentage ?? meta.discountPercent ?? 0
   const discountAmount = meta.discountAmount ?? 0
-  const subtotalBeforeDiscount = meta.subTotal ?? payment.amount + discountAmount
+  const subTotal = meta.subTotal ?? payment.amount + discountAmount
+  const fullSubTotal = meta.fullSubTotal ?? subTotal // untuk prorated
+  const invoiceType = meta.type ?? "UPGRADE"
+  const daysRemaining = meta.daysRemaining ?? null
+  const ratio = meta.ratio ?? 1
+  const isProrated = invoiceType === "ADDON_QUOTA" && ratio < 1
+  const discountCode = payment.discountCode
 
   const invoiceDate = new Date(payment.createdAt).toLocaleDateString("id-ID", {
     day: "numeric", month: "long", year: "numeric"
@@ -169,13 +178,31 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
             <tbody>
               <tr className="border-b border-gray-100">
                 <td className="py-5 px-4">
-                  <p className="font-semibold text-gray-900">Upgrade / Perpanjang Paket PRO</p>
-                  <p className="text-sm text-gray-500 mt-0.5">Biaya berlangganan per siswa (Tahunan)</p>
+                  <p className="font-semibold text-gray-900">
+                    {invoiceType === "ADDON_QUOTA" ? "Penambahan Kuota Siswa" : 
+                     invoiceType === "AI_QUOTA" ? "Top-Up Token AI" : 
+                     "Upgrade / Perpanjang Paket PRO"}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {invoiceType === "AI_QUOTA" ? "Pembelian token AI" : "Biaya berlangganan per siswa (Tahunan)"}
+                  </p>
+                  {meta.isLockedPrice && (
+                    <p className="text-[10px] text-blue-600 bg-blue-50 inline-block px-2 py-0.5 rounded mt-1">Harga Kontrak Aktif</p>
+                  )}
                 </td>
                 <td className="py-5 px-4 text-center text-gray-700 font-medium">{studentCount}</td>
                 <td className="py-5 px-4 text-right text-gray-700 font-medium">Rp {Number(pricePerStudent).toLocaleString("id-ID")}</td>
-                <td className="py-5 px-4 text-right text-gray-900 font-bold">Rp {Number(subtotalBeforeDiscount).toLocaleString("id-ID")}</td>
+                <td className="py-5 px-4 text-right text-gray-900 font-bold">Rp {Number(studentCount * pricePerStudent).toLocaleString("id-ID")}</td>
               </tr>
+              {isProrated && (
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4" colSpan={3}>
+                    <p className="text-sm text-gray-600">Prorata sisa masa aktif ({daysRemaining} hari / 365 hari)</p>
+                    <p className="text-xs text-gray-400">Harga disesuaikan dengan sisa masa aktif paket</p>
+                  </td>
+                  <td className="py-3 px-4 text-right text-gray-700 font-medium">× {(ratio * 100).toFixed(1)}%</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -184,14 +211,29 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         <div className="px-8 sm:px-10 pb-8">
           <div className="flex justify-end">
             <div className="w-full sm:w-80">
-              <div className="flex justify-between py-2.5 text-sm">
-                <span className="text-gray-500">Subtotal</span>
-                <span className="text-gray-800 font-medium">Rp {Number(subtotalBeforeDiscount).toLocaleString("id-ID")}</span>
-              </div>
-              {discountPercent > 0 && (
+              {/* Harga Asli (sebelum prorata/diskon) */}
+              {isProrated && (
                 <div className="flex justify-between py-2.5 text-sm">
-                  <span className="text-emerald-600">Diskon ({discountPercent}%)</span>
+                  <span className="text-gray-500">Harga Penuh ({studentCount} × Rp {Number(pricePerStudent).toLocaleString("id-ID")})</span>
+                  <span className="text-gray-800 font-medium">Rp {Number(studentCount * pricePerStudent).toLocaleString("id-ID")}</span>
+                </div>
+              )}
+              <div className="flex justify-between py-2.5 text-sm">
+                <span className="text-gray-500">{isProrated ? `Subtotal (Prorata ${(ratio * 100).toFixed(1)}%)` : "Subtotal"}</span>
+                <span className="text-gray-800 font-medium">Rp {Number(subTotal).toLocaleString("id-ID")}</span>
+              </div>
+              {discountPercentage > 0 && (
+                <div className="flex justify-between py-2.5 text-sm">
+                  <span className="text-emerald-600">
+                    Diskon {discountCode ? `(${discountCode.code}) ` : ""}{discountPercentage.toFixed(0)}%
+                  </span>
                   <span className="text-emerald-600 font-medium">- Rp {Number(discountAmount).toLocaleString("id-ID")}</span>
+                </div>
+              )}
+              {discountCode?.bonusMonths && discountCode.bonusMonths > 0 && (
+                <div className="flex justify-between py-2.5 text-sm">
+                  <span className="text-blue-600">Bonus Masa Aktif</span>
+                  <span className="text-blue-600 font-medium">+{discountCode.bonusMonths} bulan</span>
                 </div>
               )}
               <div className="flex justify-between py-2.5 text-sm border-b border-gray-200">
@@ -202,6 +244,20 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
                 <span className="text-lg font-black text-gray-900">Total Tagihan</span>
                 <span className="text-xl font-black" style={{ color: "#4F46E5" }}>Rp {payment.amount.toLocaleString("id-ID")}</span>
               </div>
+
+              {/* Harga per siswa setelah diskon */}
+              {discountPercentage > 0 && studentCount > 0 && (
+                <div className="rounded-lg border border-dashed border-gray-200 p-3 mt-1 space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-500">Harga asli per siswa</span>
+                    <span className="text-gray-500 line-through">Rp {Number(pricePerStudent).toLocaleString("id-ID")}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-emerald-600 font-semibold">Harga setelah diskon per siswa</span>
+                    <span className="text-emerald-600 font-bold">Rp {Math.round(payment.amount / studentCount).toLocaleString("id-ID")}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
