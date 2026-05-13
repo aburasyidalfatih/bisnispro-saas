@@ -4,7 +4,8 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Building, Filter, Printer, ArrowLeft, ShieldCheck, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import QRCode from "react-qr-code"
+import QRCodeClient from "@/components/ui/qr-code"
+import { PrintButton } from "./_components/print-button"
 
 export default async function PrintCardsPage({
   searchParams,
@@ -65,9 +66,7 @@ export default async function PrintCardsPage({
            </form>
 
            {students.length > 0 && (
-             <Button onClick={() => window.print()} className="rounded-lg border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 gap-2 w-full sm:w-auto">
-                <Printer className="h-4 w-4" /> Cetak {students.length} Kartu
-             </Button>
+             <PrintButton count={students.length} />
            )}
         </div>
       </div>
@@ -109,13 +108,13 @@ export default async function PrintCardsPage({
                             </p>
                          </div>
                       </div>
-                      <div className="shrink-0 bg-white p-1.5 rounded-lg border shadow-sm">
-                         <QRCode
+                       <div className="shrink-0 bg-white p-1.5 rounded-lg border shadow-sm">
+                         <QRCodeClient
                            value={student.id}
                            size={60}
                            level="M"
                          />
-                      </div>
+                       </div>
                    </div>
 
                    {/* Footer */}
