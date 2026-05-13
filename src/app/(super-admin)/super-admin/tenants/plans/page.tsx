@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "@/hooks/use-toast"
 import {
   Zap, Star, CheckCircle2,
-  Users, ShieldCheck, Edit, X, HardDrive, ArrowUpDown, CreditCard, Save
+  Users, ShieldCheck, Edit, X, HardDrive, ArrowUpDown, CreditCard, Save, Timer
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -47,7 +47,7 @@ export default function PlansPage() {
   const [featureInput, setFeatureInput] = useState("")
 
   // PRO pricing config (only relevant when editing PRO plan)
-  const [pricing, setPricing] = useState({ PRICE_PER_STUDENT: "30000", MIN_STUDENTS: "50" })
+  const [pricing, setPricing] = useState({ PRICE_PER_STUDENT: "30000", MIN_STUDENTS: "50", INVOICE_EXPIRY_DAYS: "1" })
 
   const fetchAll = async () => {
     setLoading(true)
@@ -67,6 +67,7 @@ export default function PlansPage() {
       setPricing({
         PRICE_PER_STUDENT: settingsData.PRICE_PER_STUDENT || "30000",
         MIN_STUDENTS: settingsData.MIN_STUDENTS || "50",
+        INVOICE_EXPIRY_DAYS: settingsData.INVOICE_EXPIRY_DAYS || "1",
       })
     } catch {
       toast({ title: "Error", description: "Gagal memuat data.", variant: "destructive" })
@@ -136,6 +137,13 @@ export default function PlansPage() {
           body: JSON.stringify(pricing),
         })
         if (!pricingRes.ok) throw new Error("Gagal menyimpan konfigurasi harga")
+        const pricingResult = await pricingRes.json()
+        if (pricingResult.affectedInvoices > 0) {
+          toast({
+            title: "Invoice Diperbarui",
+            description: `${pricingResult.affectedInvoices} invoice pending telah diperbarui masa aktifnya menjadi ${pricing.INVOICE_EXPIRY_DAYS} hari.`,
+          })
+        }
       }
 
       toast({ title: "Berhasil", description: "Paket berhasil diperbarui." })
@@ -362,6 +370,29 @@ export default function PlansPage() {
                       />
                       <p className="text-[10px] text-muted-foreground">
                         Minimal <strong>{pricing.MIN_STUDENTS}</strong> siswa per upgrade.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Masa Aktif Invoice */}
+                  <div className="mt-4 pt-4 border-t border-primary/15">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Timer className="h-4 w-4 text-amber-500" />
+                      <p className="text-sm font-bold text-amber-600">Masa Aktif Invoice</p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold">Batas Waktu Pembayaran (Hari)</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={30}
+                        value={pricing.INVOICE_EXPIRY_DAYS}
+                        onChange={e => setPricing({ ...pricing, INVOICE_EXPIRY_DAYS: e.target.value })}
+                        className="rounded-xl font-bold w-full md:w-1/2"
+                      />
+                      <p className="text-[10px] text-muted-foreground leading-relaxed">
+                        Invoice yang dibuat akan berlaku selama <strong>{pricing.INVOICE_EXPIRY_DAYS} hari</strong> sejak tanggal pembuatan.
+                        Mengubah nilai ini akan <strong>memperbarui semua invoice pending</strong> yang ada saat ini.
                       </p>
                     </div>
                   </div>

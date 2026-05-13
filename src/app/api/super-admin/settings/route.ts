@@ -28,7 +28,37 @@ export async function PUT(req: Request) {
       })
     )
     await Promise.all(updates)
-    return NextResponse.json({ message: "Pengaturan batch berhasil disimpan" })
+
+    // Jika INVOICE_EXPIRY_DAYS diubah, update semua invoice PENDING
+    let affectedInvoices = 0
+    if (body.INVOICE_EXPIRY_DAYS !== undefined) {
+      const days = Math.max(1, Number(body.INVOICE_EXPIRY_DAYS) || 1)
+      const msPerDay = 24 * 60 * 60 * 1000
+
+      const pendingPayments = await db.payment.findMany({
+        where: { status: "pending" },
+        select: { id: true, createdAt: true }
+      })
+
+      if (pendingPayments.length > 0) {
+        await Promise.all(
+          pendingPayments.map(p =>
+            db.payment.update({
+              where: { id: p.id },
+              data: {
+                expiredAt: new Date(p.createdAt.getTime() + days * msPerDay)
+              }
+            })
+          )
+        )
+        affectedInvoices = pendingPayments.length
+      }
+    }
+
+    return NextResponse.json({ 
+      message: "Pengaturan batch berhasil disimpan",
+      affectedInvoices
+    })
   }
 
   // Support single update (legacy)

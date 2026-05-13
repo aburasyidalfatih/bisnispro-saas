@@ -24,6 +24,17 @@ export async function getPricingConfig() {
 }
 
 /**
+ * Mendapatkan konfigurasi masa aktif invoice (dalam hari) dari Platform Settings
+ */
+export async function getInvoiceExpiryDays(): Promise<number> {
+  const setting = await db.platformSetting.findUnique({
+    where: { key: 'INVOICE_EXPIRY_DAYS' }
+  })
+  const days = setting ? Number(setting.value) : 1 // default 1 hari
+  return days > 0 ? days : 1
+}
+
+/**
  * Membuat Invoice untuk Upgrade ke PRO (tanpa Tripay - manual confirm)
  */
 export async function createUpgradeInvoice(tenantId: string, studentCount: number, discountCodeStr?: string) {
@@ -65,7 +76,8 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
   }
 
   const reference = `INV-${Date.now()}-${tenant.slug.toUpperCase()}`
-  const expiredAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 jam
+  const expiryDays = await getInvoiceExpiryDays()
+  const expiredAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)
 
   // Catat ke tabel Payment sebagai PENDING
   const payment = await db.payment.create({
@@ -164,7 +176,8 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
   }
 
   const reference = `INV-ADDON-${Date.now()}-${tenant.slug.toUpperCase()}`
-  const expiredAtInvoice = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+  const expiryDays = await getInvoiceExpiryDays()
+  const expiredAtInvoice = new Date(now.getTime() + expiryDays * 24 * 60 * 60 * 1000)
 
   const payment = await db.payment.create({
     data: {
@@ -225,7 +238,8 @@ export async function createAiAddonInvoice(tenantId: string, packageKey: string)
   if (!pkg) throw new Error("Paket AI tidak ditemukan")
 
   const reference = `INV-AI-${Date.now()}-${tenant.slug.toUpperCase()}`
-  const expiredAtInvoice = new Date(Date.now() + 24 * 60 * 60 * 1000)
+  const expiryDays = await getInvoiceExpiryDays()
+  const expiredAtInvoice = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)
 
   const payment = await db.payment.create({
     data: {
