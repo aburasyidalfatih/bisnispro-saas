@@ -53,7 +53,11 @@ export async function POST(req: Request) {
       tenantUpdateData.studentQuota = { increment: studentCount }
     } else {
       tenantUpdateData.plan = "pro"
-      if (studentCount > 0) tenantUpdateData.studentQuota = studentCount
+      // Untuk renewal: pertahankan kuota tertinggi (jangan timpa addon)
+      if (studentCount > 0) {
+        const currentQuota = payment.tenant.studentQuota || 0
+        tenantUpdateData.studentQuota = Math.max(currentQuota, studentCount)
+      }
       tenantUpdateData.expiresAt = expiresAt
     }
 

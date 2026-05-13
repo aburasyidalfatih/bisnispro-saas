@@ -3,6 +3,13 @@ import { auth } from "@/lib/auth"
 import { createUpgradeInvoice } from "@/lib/services/billing"
 import { headers } from "next/headers"
 import { logger } from "@/lib/logger"
+import { z } from "zod"
+import { parseBody } from "@/lib/api-utils"
+
+const checkoutSchema = z.object({
+  studentCount: z.number().int().min(1, "Jumlah siswa minimal 1"),
+  discountCode: z.string().optional()
+})
 
 export async function POST(req: Request) {
   const session = await auth() as any
@@ -23,13 +30,15 @@ export async function POST(req: Request) {
   if (!tenant) return NextResponse.json({ error: "Unauthorized", slug_detected: slug }, { status: 401 })
   const tenantId = tenant.id
 
+  const parsed = await parseBody(req, checkoutSchema)
+  if (parsed.error) return parsed.error
+
   try {
-    const { studentCount, discountCode } = await req.json()
-    const result = await createUpgradeInvoice(tenantId, studentCount, discountCode)
+    const result = await createUpgradeInvoice(tenantId, parsed.data.studentCount, parsed.data.discountCode)
     
     return NextResponse.json(result)
-  } catch (error) {
+  } catch (error: any) {
     logger.error("Billing checkout failed", error, { path: "/api/tenant/billing/checkout" })
-    return NextResponse.json({ error: "Terjadi kesalahan saat memproses pembayaran" }, { status: 500 })
+    return NextResponse.json({ error: error.message || "Terjadi kesalahan saat memproses pembayaran" }, { status: 400 })
   }
 }

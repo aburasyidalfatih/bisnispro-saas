@@ -47,11 +47,21 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
   const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
   if (!tenant) throw new Error("Tenant tidak ditemukan")
 
+  // Guard: cegah duplikasi invoice pending
+  const existingPending = await db.payment.findFirst({
+    where: { tenantId, status: "pending" }
+  })
+  if (existingPending) {
+    throw new Error("Masih ada invoice pending yang belum diselesaikan. Silakan batalkan atau selesaikan terlebih dahulu.")
+  }
+
   const subTotal = studentCount * pricing.PRICE_PER_STUDENT
   let amount = subTotal
   let discountAmount = 0
-  let validDiscountId = null
+  let discountPercentage = 0
+  let validDiscountId: string | null = null
 
+  // Validasi kupon (read-only, belum increment)
   if (discountCodeStr) {
     const discount = await db.discountCode.findUnique({
       where: { code: discountCodeStr.toUpperCase() }
@@ -63,15 +73,10 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
       (!discount.maxUses || discount.usedCount < discount.maxUses) &&
       (!discount.expiresAt || new Date(discount.expiresAt) > new Date())
     ) {
-      discountAmount = subTotal * (discount.percentage / 100)
+      discountPercentage = discount.percentage
+      discountAmount = subTotal * (discountPercentage / 100)
       amount = subTotal - discountAmount
       validDiscountId = discount.id
-      
-      // Increment usedCount
-      await db.discountCode.update({
-        where: { id: discount.id },
-        data: { usedCount: { increment: 1 } }
-      })
     }
   }
 
@@ -79,28 +84,43 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
   const expiryDays = await getInvoiceExpiryDays()
   const expiredAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)
 
-  // Catat ke tabel Payment sebagai PENDING
-  const payment = await db.payment.create({
-    data: {
-      tenantId: tenant.id,
-      reference,
-      amount,
-      discountCodeId: validDiscountId,
-      plan: "pro",
-      status: "pending",
-      expiredAt,
-      metadata: {
-        studentCount,
-        pricePerStudent: pricing.PRICE_PER_STUDENT,
-        tenantName: tenant.name,
-        tenantSlug: tenant.slug,
-        subTotal,
-        discountAmount,
-        discountPercentage: validDiscountId ? (discountAmount / subTotal) * 100 : 0,
-        type: "UPGRADE"
+  // Gunakan transaksi: buat payment + increment kupon secara atomic
+  const operations: any[] = []
+
+  operations.push(
+    db.payment.create({
+      data: {
+        tenantId: tenant.id,
+        reference,
+        amount,
+        discountCodeId: validDiscountId,
+        plan: "pro",
+        status: "pending",
+        expiredAt,
+        metadata: {
+          studentCount,
+          pricePerStudent: pricing.PRICE_PER_STUDENT,
+          tenantName: tenant.name,
+          tenantSlug: tenant.slug,
+          subTotal,
+          discountAmount,
+          discountPercentage,
+          type: "UPGRADE"
+        }
       }
-    }
-  })
+    })
+  )
+
+  if (validDiscountId) {
+    operations.push(
+      db.discountCode.update({
+        where: { id: validDiscountId },
+        data: { usedCount: { increment: 1 } }
+      })
+    )
+  }
+
+  const [payment] = await db.$transaction(operations)
 
   return {
     id: payment.id,
@@ -133,6 +153,14 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
     throw new Error("Penambahan kuota hanya berlaku untuk paket PRO yang aktif")
   }
 
+  // Guard: cegah duplikasi invoice pending
+  const existingPending = await db.payment.findFirst({
+    where: { tenantId, status: "pending" }
+  })
+  if (existingPending) {
+    throw new Error("Masih ada invoice pending yang belum diselesaikan. Silakan batalkan atau selesaikan terlebih dahulu.")
+  }
+
   const now = new Date()
   const expiresAt = new Date(tenant.expiresAt)
   
@@ -161,8 +189,10 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
 
   let amount = subTotal
   let discountAmount = 0
-  let validDiscountId = null
+  let discountPercentage = 0
+  let validDiscountId: string | null = null
 
+  // Validasi kupon (read-only, belum increment)
   if (discountCodeStr) {
     const discount = await db.discountCode.findUnique({
       where: { code: discountCodeStr.toUpperCase() }
@@ -174,14 +204,10 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
       (!discount.maxUses || discount.usedCount < discount.maxUses) &&
       (!discount.expiresAt || new Date(discount.expiresAt) > now)
     ) {
-      discountAmount = subTotal * (discount.percentage / 100)
+      discountPercentage = discount.percentage
+      discountAmount = subTotal * (discountPercentage / 100)
       amount = subTotal - discountAmount
       validDiscountId = discount.id
-      
-      await db.discountCode.update({
-        where: { id: discount.id },
-        data: { usedCount: { increment: 1 } }
-      })
     }
   }
 
@@ -189,31 +215,47 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
   const expiryDays = await getInvoiceExpiryDays()
   const expiredAtInvoice = new Date(now.getTime() + expiryDays * 24 * 60 * 60 * 1000)
 
-  const payment = await db.payment.create({
-    data: {
-      tenantId: tenant.id,
-      reference,
-      amount,
-      discountCodeId: validDiscountId,
-      plan: "pro", // tetap di label 'pro'
-      status: "pending",
-      expiredAt: expiredAtInvoice,
-      metadata: {
-        studentCount,
-        pricePerStudent,
-        tenantName: tenant.name,
-        tenantSlug: tenant.slug,
-        subTotal,
-        fullSubTotal,
-        discountAmount,
-        discountPercentage: validDiscountId ? (discountAmount / subTotal) * 100 : 0,
-        type: "ADDON_QUOTA",
-        daysRemaining,
-        ratio,
-        isLockedPrice: !!lockedPrice
+  // Gunakan transaksi: buat payment + increment kupon secara atomic
+  const operations: any[] = []
+
+  operations.push(
+    db.payment.create({
+      data: {
+        tenantId: tenant.id,
+        reference,
+        amount,
+        discountCodeId: validDiscountId,
+        plan: "pro",
+        status: "pending",
+        expiredAt: expiredAtInvoice,
+        metadata: {
+          studentCount,
+          pricePerStudent,
+          tenantName: tenant.name,
+          tenantSlug: tenant.slug,
+          subTotal,
+          fullSubTotal,
+          discountAmount,
+          discountPercentage,
+          type: "ADDON_QUOTA",
+          daysRemaining,
+          ratio,
+          isLockedPrice: !!lockedPrice
+        }
       }
-    }
-  })
+    })
+  )
+
+  if (validDiscountId) {
+    operations.push(
+      db.discountCode.update({
+        where: { id: validDiscountId },
+        data: { usedCount: { increment: 1 } }
+      })
+    )
+  }
+
+  const [payment] = await db.$transaction(operations)
 
   return {
     id: payment.id,
