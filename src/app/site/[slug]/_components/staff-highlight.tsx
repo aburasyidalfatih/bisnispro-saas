@@ -22,7 +22,8 @@ export function StaffHighlight({ staff }: StaffHighlightProps) {
 
   if (!staff || staff.length === 0) return null
 
-  const displayed = staff.slice(0, 6)
+  // Duplicate the array to guarantee seamless infinite scrolling
+  const displayStaff = Array.from({ length: Math.max(4, Math.ceil(12 / staff.length)) }).flatMap(() => staff)
 
   return (
     <section className="py-16 md:py-20 bg-muted/30 relative overflow-hidden">
@@ -43,23 +44,48 @@ export function StaffHighlight({ staff }: StaffHighlightProps) {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5">
-          {displayed.map((member) => (
-            <Link key={member.id} href={resolveHref(`/gtk/${member.id}`)} className="group text-center">
-              <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover:shadow-xl group-hover:border-primary/30 transition-all duration-300">
-                {member.imageUrl ? (
-                  <Image src={member.imageUrl} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center">
-                    <span className="text-4xl font-bold text-sky-300">{member.name.charAt(0).toUpperCase()}</span>
-                  </div>
-                )}
-                <div className="absolute inset-0 rounded-2xl ring-2 ring-primary/0 group-hover:ring-primary/20 transition-all duration-300" />
-              </div>
-              <h3 className="font-bold text-sm line-clamp-1 group-hover:text-primary transition-colors">{member.name}</h3>
-              <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{member.role}</p>
-            </Link>
-          ))}
+        <div className="relative flex overflow-hidden group/slider -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-4">
+          <div className="flex animate-marquee gap-5 shrink-0 items-center pr-5 group-hover/slider:[animation-play-state:paused]">
+            {displayStaff.map((member, i) => (
+              <Link key={`${member.id}-${i}`} href={resolveHref(`/gtk/${member.id}`)} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px]">
+                <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover/card:shadow-xl group-hover/card:border-primary/30 transition-all duration-300">
+                  {member.imageUrl ? (
+                    <Image src={member.imageUrl} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover/card:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center">
+                      <span className="text-4xl font-bold text-sky-300">{member.name.charAt(0).toUpperCase()}</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 rounded-2xl ring-2 ring-primary/0 group-hover/card:ring-primary/20 transition-all duration-300" />
+                </div>
+                <h3 className="font-bold text-sm line-clamp-1 group-hover/card:text-primary transition-colors px-2">{member.name}</h3>
+                <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1 px-2">{member.role}</p>
+              </Link>
+            ))}
+          </div>
+          
+          <div aria-hidden="true" className="flex animate-marquee gap-5 shrink-0 items-center pr-5 group-hover/slider:[animation-play-state:paused]">
+            {displayStaff.map((member, i) => (
+              <Link key={`${member.id}-clone-${i}`} href={resolveHref(`/gtk/${member.id}`)} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px]">
+                <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover/card:shadow-xl group-hover/card:border-primary/30 transition-all duration-300">
+                  {member.imageUrl ? (
+                    <Image src={member.imageUrl} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover/card:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center">
+                      <span className="text-4xl font-bold text-sky-300">{member.name.charAt(0).toUpperCase()}</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 rounded-2xl ring-2 ring-primary/0 group-hover/card:ring-primary/20 transition-all duration-300" />
+                </div>
+                <h3 className="font-bold text-sm line-clamp-1 group-hover/card:text-primary transition-colors px-2">{member.name}</h3>
+                <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1 px-2">{member.role}</p>
+              </Link>
+            ))}
+          </div>
+
+          {/* Optional: Gradient fades to make it look seamless */}
+          <div className="absolute inset-y-0 left-0 w-8 md:w-16 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none opacity-50"></div>
+          <div className="absolute inset-y-0 right-0 w-8 md:w-16 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none opacity-50"></div>
         </div>
       </div>
     </section>
