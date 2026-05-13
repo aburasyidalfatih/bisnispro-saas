@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { trackMetaEvent } from "@/components/shared/meta-pixel"
 
 export default function RegisterSchoolPage() {
   const [loading, setLoading] = useState(false)
@@ -163,6 +164,7 @@ export default function RegisterSchoolPage() {
     if (res.ok) {
       if (data.csPhone) setCsPhone(data.csPhone)
       setSubmitted(true)
+      trackMetaEvent('Lead')
       toast({ title: "Berhasil!", description: "Pengajuan sekolah telah kami terima." })
     } else {
       toast({ title: "Gagal", description: data.error, variant: "destructive" })

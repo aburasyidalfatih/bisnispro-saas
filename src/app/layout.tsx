@@ -7,6 +7,7 @@ import { SessionProvider } from "@/components/providers/session-provider"
 import { ColorThemeProvider } from "@/components/providers/color-theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { ImpersonateBanner } from "@/components/shared/impersonate-banner"
+import { MetaPixel } from "@/components/shared/meta-pixel"
 
 import { ConfirmProvider } from "@/components/providers/confirm-provider"
 
@@ -77,6 +78,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const cookieStore = await cookies()
   const colorTheme = cookieStore.get("color-theme")?.value || "aurora"
 
+  let metaPixelId = ""
+  try {
+    const pixelSetting = await db.platformSetting.findUnique({
+      where: { key: "META_PIXEL_ID" }
+    })
+    if (pixelSetting && pixelSetting.value) {
+      metaPixelId = pixelSetting.value
+    }
+  } catch (e) {
+    // Abaikan error DB
+  }
+
   return (
     <html lang="id" data-theme={colorTheme} suppressHydrationWarning>
       <head />
@@ -86,6 +99,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <ColorThemeProvider>
               <ConfirmProvider>
                 <ImpersonateBanner />
+                <MetaPixel pixelId={metaPixelId} />
                 {children}
                 <Toaster />
               </ConfirmProvider>

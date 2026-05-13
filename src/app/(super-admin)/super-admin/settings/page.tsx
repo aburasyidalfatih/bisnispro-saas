@@ -48,6 +48,7 @@ export default function SuperAdminSettingsPage() {
     enable_custom_domain: "false",
     block_search_indexing: "false",
     contact_email: "support@schoolpro.id",
+    META_PIXEL_ID: "",
     OPENAI_API_KEY: "",
     
     // Email
@@ -340,10 +341,15 @@ export default function SuperAdminSettingsPage() {
                 <Label>Email Kontak</Label>
                 <Input value={form.contact_email} onChange={e => setForm({...form, contact_email: e.target.value})} placeholder="support@schoolpro.id" className="rounded-xl" />
               </div>
+              <div className="space-y-2">
+                <Label>Meta Pixel ID (Facebook Pixel)</Label>
+                <Input value={form.META_PIXEL_ID} onChange={e => setForm({...form, META_PIXEL_ID: e.target.value})} placeholder="Misal: 123456789012345" className="rounded-xl" />
+                <p className="text-[10px] text-muted-foreground mt-1">Kosongkan jika tidak ingin menggunakan Meta Pixel tracking.</p>
+              </div>
 
               <Button 
                 className="w-full gap-2 btn-gradient text-white border-0 rounded-xl"
-                onClick={() => handleSaveBatch(['platform_name', 'platform_tagline', 'contact_email'])}
+                onClick={() => handleSaveBatch(['platform_name', 'platform_tagline', 'contact_email', 'META_PIXEL_ID'])}
                 disabled={saving || uploadingLogo}
               >
                 {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
