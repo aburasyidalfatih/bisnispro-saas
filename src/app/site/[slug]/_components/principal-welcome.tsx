@@ -1,7 +1,9 @@
 "use client"
 
-import { Quote } from "lucide-react"
+import { Quote, ChevronDown, ChevronUp } from "lucide-react"
 import Image from "next/image"
+import { useState } from "react"
+import { cn } from "@/lib/utils"
 
 interface PrincipalWelcomeProps {
   tenantName: string
@@ -21,6 +23,8 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
   const principalBadgeYear = settings?.principalBadgeYear || "2015"
 
   const paragraphs = principalMessage.split("\n").filter((p: string) => p.trim() !== "")
+  const [isExpanded, setIsExpanded] = useState(false)
+  const isLongText = principalMessage.length > 300
 
   return (
     <section className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/10 relative overflow-hidden">
@@ -74,13 +78,34 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
               <div className="h-1.5 w-24 bg-gradient-to-r from-accent to-primary rounded-full" />
             </div>
 
-            <div className="space-y-6 text-muted-foreground text-base md:text-lg leading-relaxed relative">
+            <div 
+              className={cn(
+                "text-muted-foreground text-base md:text-lg leading-relaxed relative transition-all duration-500 ease-in-out",
+                !isExpanded && isLongText ? "max-h-[320px] overflow-hidden" : "max-h-[2000px]"
+              )}
+              style={!isExpanded && isLongText ? { maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' } : {}}
+            >
               <Quote size={64} className="absolute -top-6 -left-8 text-primary/5 -z-10 transform -scale-x-100" />
               
-              {paragraphs.map((p: string, idx: number) => (
-                <p key={idx}>{p}</p>
-              ))}
+              <div className="space-y-6 pb-4">
+                {paragraphs.map((p: string, idx: number) => (
+                  <p key={idx}>{p}</p>
+                ))}
+              </div>
             </div>
+
+            {isLongText && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="inline-flex items-center gap-1.5 text-primary font-bold hover:text-primary/80 transition-colors"
+              >
+                {isExpanded ? (
+                  <>Sembunyikan <ChevronUp className="h-4 w-4" /></>
+                ) : (
+                  <>Baca Selengkapnya <ChevronDown className="h-4 w-4" /></>
+                )}
+              </button>
+            )}
 
             <div className="pt-4 border-t border-border/60 flex items-center justify-between">
               <div>
