@@ -274,6 +274,12 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
   ]
 
   if (isFree) {
+    // Sembunyikan menu Dashboard Utama untuk paket free
+    const dashboardSectionIndex = menu.findIndex(s => s.items.some(i => i.label === "Dashboard"));
+    if (dashboardSectionIndex !== -1) {
+      menu[dashboardSectionIndex].items = menu[dashboardSectionIndex].items.filter(i => i.label !== "Dashboard");
+    }
+
     menu.forEach(section => {
       // Manajemen
       if (section.title === "Manajemen") {

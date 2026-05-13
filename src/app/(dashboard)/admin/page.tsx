@@ -57,6 +57,8 @@ export default function DashboardPage() {
 
   const router = useRouter()
 
+  const currentPlan = currentTenant?.plan || "free"
+
   useEffect(() => {
     if (!isAdminRole) {
       if (currentRole === "guru") {
@@ -64,8 +66,10 @@ export default function DashboardPage() {
       } else {
         router.replace("/ortu")
       }
+    } else if (currentPlan === "free") {
+      router.replace("/admin/website")
     }
-  }, [isAdminRole, router, currentRole])
+  }, [isAdminRole, router, currentRole, currentPlan])
 
   if (!isAdminRole) {
     return null
