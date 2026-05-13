@@ -28,7 +28,8 @@ export async function POST(req: Request) {
     if (!paymentId) return NextResponse.json({ error: "Missing paymentId" }, { status: 400 })
 
     const payment = await db.payment.findUnique({
-      where: { id: paymentId }
+      where: { id: paymentId },
+      select: { id: true, tenantId: true, status: true, discountCodeId: true }
     })
 
     if (!payment || payment.tenantId !== tenantId) {
@@ -39,10 +40,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Only pending payments can be cancelled" }, { status: 400 })
     }
 
-    await db.payment.update({
-      where: { id: paymentId },
-      data: { status: "cancelled" }
-    })
+    // Gunakan transaksi: batalkan invoice + kembalikan kuota kupon
+    const operations: any[] = [
+      db.payment.update({
+        where: { id: paymentId },
+        data: { status: "cancelled" }
+      })
+    ]
+
+    // Kembalikan kuota kupon jika invoice menggunakan discount code
+    if (payment.discountCodeId) {
+      operations.push(
+        db.discountCode.update({
+          where: { id: payment.discountCodeId },
+          data: { usedCount: { decrement: 1 } }
+        })
+      )
+    }
+
+    await db.$transaction(operations)
 
     return NextResponse.json({ success: true })
   } catch (error) {
