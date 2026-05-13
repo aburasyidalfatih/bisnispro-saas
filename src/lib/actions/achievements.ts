@@ -34,6 +34,13 @@ export async function createAchievement(tenantId: string, data: any) {
       tenantId,
     }
   })
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
+
   
   revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
   return achievement
@@ -48,6 +55,13 @@ export async function updateAchievement(id: string, tenantId: string, data: any)
     where: { id, tenantId },
     data: parsed
   })
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
+
   
   revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
 }
@@ -58,6 +72,13 @@ export async function deleteAchievement(id: string, tenantId: string) {
   await db.achievement.delete({
     where: { id, tenantId }
   })
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
+
   
   revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
 }

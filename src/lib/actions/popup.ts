@@ -52,6 +52,13 @@ export async function createPopup(tenantId: string, data: any) {
       tenantId,
     }
   })
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
+
   
   revalidatePath("/(dashboard)/dashboard/website/popups", "page")
   return popup
@@ -73,6 +80,13 @@ export async function updatePopup(id: string, tenantId: string, data: any) {
     where: { id, tenantId },
     data: parsed
   })
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
+
   
   revalidatePath("/(dashboard)/dashboard/website/popups", "page")
 }
@@ -83,6 +97,13 @@ export async function deletePopup(id: string, tenantId: string) {
   await db.popup.delete({
     where: { id, tenantId }
   })
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
+
   
   revalidatePath("/(dashboard)/dashboard/website/popups", "page")
 }
@@ -101,6 +122,13 @@ export async function togglePopupStatus(id: string, tenantId: string, isActive: 
     where: { id, tenantId },
     data: { isActive }
   })
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
+
   
   revalidatePath("/(dashboard)/dashboard/website/popups", "page")
 }
