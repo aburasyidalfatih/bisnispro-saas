@@ -48,7 +48,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             "/admin/website",
             "/admin/users",
             "/admin/settings",
-            "/admin/billing"
+            "/admin/billing",
+            "/admin/notifications",
+            "/admin/my-messages"
           ]
           
           if (freeAccess.enable_ppdb) allowedPaths.push("/admin/ppdb")
