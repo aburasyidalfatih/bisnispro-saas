@@ -7,18 +7,31 @@ import { useEffect, useState } from 'react'
 export const MetaPixel = ({ pixelId }: { pixelId: string }) => {
   const pathname = usePathname()
   const [loaded, setLoaded] = useState(false)
+  const [isPlatform, setIsPlatform] = useState(false)
 
   useEffect(() => {
-    // Only track if loaded and fbq is available
-    if (loaded && typeof window !== 'undefined' && (window as any).fbq) {
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname
+      // Hanya aktifkan pixel di domain utama platform, JANGAN di web tenant (subdomain)
+      const mainDomains = ['schoolpro.id', 'www.schoolpro.id', 'schoolpro.my.id', 'www.schoolpro.my.id', 'localhost']
+      if (mainDomains.includes(hostname)) {
+        setIsPlatform(true)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    // Only track if loaded and fbq is available AND we are on the main platform domain
+    if (loaded && typeof window !== 'undefined' && (window as any).fbq && isPlatform) {
       // Trigger PageView only on Landing Page and Form Page
       if (pathname === '/' || pathname === '/daftarkan-sekolah') {
         (window as any).fbq('track', 'PageView')
       }
     }
-  }, [pathname, loaded])
+  }, [pathname, loaded, isPlatform])
 
-  if (!pixelId) return null
+  // Jangan render script pixel sama sekali jika bukan di domain utama (tenant)
+  if (!pixelId || !isPlatform) return null
 
   // The initial script injection.
   // We don't automatically call fbq('track', 'PageView') in the script string
@@ -59,6 +72,12 @@ export const MetaPixel = ({ pixelId }: { pixelId: string }) => {
 // Utility to trigger events manually
 export const trackMetaEvent = (eventName: string, data: any = {}) => {
   if (typeof window !== 'undefined' && (window as any).fbq) {
-    (window as any).fbq('track', eventName, data);
+    // Pastikan tidak trigger event jika dijalankan di subdomain tenant
+    const hostname = window.location.hostname
+    const mainDomains = ['schoolpro.id', 'www.schoolpro.id', 'schoolpro.my.id', 'www.schoolpro.my.id', 'localhost']
+    
+    if (mainDomains.includes(hostname)) {
+      (window as any).fbq('track', eventName, data);
+    }
   }
 }
