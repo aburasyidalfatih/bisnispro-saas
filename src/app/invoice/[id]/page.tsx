@@ -29,7 +29,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
   // Fetch platform settings for invoice branding
   const platformSettings = await db.platformSetting.findMany({
     where: {
-      key: { in: ['app_logo', 'platform_name', 'platform_tagline', 'platform_address', 'contact_email'] }
+      key: { in: ['app_logo', 'platform_name', 'platform_tagline', 'platform_address', 'contact_email', 'MANUAL_PAYMENT_BANK', 'MANUAL_PAYMENT_NUMBER', 'MANUAL_PAYMENT_NAME'] }
     }
   })
 
@@ -41,6 +41,9 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
   const platformTagline = settingsMap.platform_tagline || "Solusi Manajemen Sekolah Digital"
   const platformAddress = settingsMap.platform_address || ""
   const contactEmail = settingsMap.contact_email || "support@schoolpro.id"
+  const bankName = settingsMap.MANUAL_PAYMENT_BANK || ""
+  const bankAccount = settingsMap.MANUAL_PAYMENT_NUMBER || ""
+  const bankHolder = settingsMap.MANUAL_PAYMENT_NAME || ""
 
   const isPaid = payment.status === "paid"
   const isFailed = payment.status === "failed" || payment.status === "expired" || payment.status === "cancelled"
@@ -52,14 +55,17 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
   const discountPercentage = meta.discountPercentage ?? meta.discountPercent ?? 0
   const discountAmount = meta.discountAmount ?? 0
   const subTotal = meta.subTotal ?? payment.amount + discountAmount
-  const fullSubTotal = meta.fullSubTotal ?? subTotal // untuk prorated
+  const fullSubTotal = meta.fullSubTotal ?? subTotal
   const invoiceType = meta.type ?? "UPGRADE"
   const daysRemaining = meta.daysRemaining ?? null
   const ratio = meta.ratio ?? 1
   const isProrated = invoiceType === "ADDON_QUOTA" && ratio < 1
   const discountCode = payment.discountCode
+  const bonusMonths = discountCode?.bonusMonths ?? 0
 
-  const invoiceDate = new Date(payment.createdAt).toLocaleDateString("id-ID", {
+  // Hitung periode langganan
+  const invoiceDate = new Date(payment.createdAt)
+  const invoiceDateStr = invoiceDate.toLocaleDateString("id-ID", {
     day: "numeric", month: "long", year: "numeric"
   })
   const expiredDate = payment.expiredAt ? new Date(payment.expiredAt).toLocaleDateString("id-ID", {
@@ -69,10 +75,37 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
     day: "numeric", month: "long", year: "numeric"
   }) : null
 
+  // Periode langganan (untuk UPGRADE/RENEWAL)
+  let periodStart = ""
+  let periodEnd = ""
+  if (invoiceType !== "AI_QUOTA") {
+    if (isPaid && payment.paidAt) {
+      const start = new Date(payment.paidAt)
+      periodStart = start.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+      if (invoiceType !== "ADDON_QUOTA") {
+        const end = new Date(start)
+        end.setFullYear(end.getFullYear() + 1)
+        if (bonusMonths > 0) end.setMonth(end.getMonth() + bonusMonths)
+        periodEnd = end.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+      }
+    } else if (invoiceType !== "ADDON_QUOTA") {
+      // Estimasi untuk pending
+      periodStart = "Setelah pembayaran dikonfirmasi"
+      periodEnd = "12 bulan" + (bonusMonths > 0 ? ` + ${bonusMonths} bulan bonus` : "") + " sejak konfirmasi"
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-8 flex items-start sm:items-center justify-center" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
-      <div className="bg-white w-full max-w-3xl shadow-2xl rounded-2xl overflow-hidden" id="invoice-container">
+      <div className="bg-white w-full max-w-3xl shadow-2xl rounded-2xl overflow-hidden relative" id="invoice-container">
         
+        {/* PAID Watermark */}
+        {isPaid && (
+          <div className="paid-watermark" aria-hidden="true">
+            <span>PAID</span>
+          </div>
+        )}
+
         {/* Top Color Bar */}
         <div className="h-2" style={{ background: "linear-gradient(90deg, #4F46E5, #7C3AED, #EC4899)" }} />
 
@@ -124,7 +157,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
             <div className="space-y-1 text-sm">
               <div className="flex justify-end gap-3">
                 <span className="text-gray-500">Tanggal:</span>
-                <span className="font-medium text-gray-800">{invoiceDate}</span>
+                <span className="font-medium text-gray-800">{invoiceDateStr}</span>
               </div>
               {expiredDate && isPending && (
                 <div className="flex justify-end gap-3">
@@ -138,9 +171,38 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
                   <span className="font-medium text-emerald-600">{paidDate}</span>
                 </div>
               )}
+              <div className="flex justify-end gap-3">
+                <span className="text-gray-500">Metode:</span>
+                <span className="font-medium text-gray-800">Transfer Bank</span>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Periode Langganan - hanya untuk non-AI */}
+        {invoiceType !== "AI_QUOTA" && (periodStart || periodEnd) && (
+          <div className="mx-8 sm:mx-10 mb-4 rounded-xl border border-indigo-100 bg-indigo-50/50 px-5 py-3.5">
+            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1.5">
+              {invoiceType === "ADDON_QUOTA" ? "Penambahan Kuota" : "Periode Langganan"}
+            </p>
+            {invoiceType === "ADDON_QUOTA" ? (
+              <p className="text-sm text-gray-700">
+                Kuota <strong>+{studentCount} siswa</strong> ditambahkan ke paket aktif
+                {isPaid && " — berlaku hingga masa aktif paket berakhir"}
+              </p>
+            ) : (
+              <div className="flex items-center gap-2 text-sm text-gray-700">
+                <span className="font-semibold">{periodStart}</span>
+                {periodEnd && (
+                  <>
+                    <span className="text-gray-400">→</span>
+                    <span className="font-semibold">{periodEnd}</span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Status Badge */}
         <div className="px-8 sm:px-10 pb-4">
@@ -208,7 +270,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         </div>
 
         {/* Total Summary */}
-        <div className="px-8 sm:px-10 pb-8">
+        <div className="px-8 sm:px-10 pb-6">
           <div className="flex justify-end">
             <div className="w-full sm:w-80">
               {/* Harga Asli (sebelum prorata/diskon) */}
@@ -262,6 +324,32 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
           </div>
         </div>
 
+        {/* Rekening Pembayaran - hanya tampil jika pending */}
+        {isPending && bankName && (
+          <div className="mx-8 sm:mx-10 mb-6 rounded-xl border border-amber-200 bg-amber-50/50 px-5 py-4">
+            <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-2">Transfer ke Rekening</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-bold text-gray-900 text-sm">{bankName}</p>
+                <p className="text-gray-600 text-xs">a.n {bankHolder}</p>
+              </div>
+              <p className="font-mono font-bold text-gray-900">{bankAccount}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Syarat & Ketentuan */}
+        <div className="mx-8 sm:mx-10 mb-6">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Catatan & Ketentuan</p>
+          <ul className="text-[11px] text-gray-500 space-y-1 list-disc list-inside leading-relaxed">
+            {isPending && <li>Harap lakukan pembayaran sebelum tanggal jatuh tempo yang tertera.</li>}
+            {isPending && <li>Invoice yang melewati batas waktu akan otomatis dibatalkan oleh sistem.</li>}
+            <li>Layanan akan aktif setelah pembayaran dikonfirmasi oleh administrator.</li>
+            <li>Harga sudah termasuk seluruh biaya layanan. Tidak ada biaya tersembunyi.</li>
+            {invoiceType !== "AI_QUOTA" && <li>Kuota siswa berlaku sesuai periode langganan yang tertera.</li>}
+          </ul>
+        </div>
+
         {/* Footer */}
         <div style={{ backgroundColor: "#F8F9FC" }} className="px-8 sm:px-10 py-6">
           <div className="flex items-start gap-4">
@@ -289,12 +377,32 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         }
       `}} />
 
-      {/* Print Styles */}
+      {/* Styles */}
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+        
+        .paid-watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotate(-25deg);
+          z-index: 10;
+          pointer-events: none;
+        }
+        .paid-watermark span {
+          display: block;
+          font-size: 120px;
+          font-weight: 900;
+          color: rgba(16, 185, 129, 0.07);
+          letter-spacing: 20px;
+          font-family: 'Inter', sans-serif;
+          user-select: none;
+        }
+        
         @media print {
           body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           #invoice-container { box-shadow: none !important; max-width: 100%; border-radius: 0; }
+          .paid-watermark span { color: rgba(16, 185, 129, 0.06); }
           @page { margin: 0.8cm; }
         }
       `}} />
