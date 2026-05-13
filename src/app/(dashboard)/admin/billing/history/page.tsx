@@ -41,6 +41,7 @@ export default function BillingHistoryPage() {
   const [loading, setLoading] = useState(true)
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
+  const [manualPayment, setManualPayment] = useState<{ bank: string; number: string; name: string; waNumber: string } | null>(null)
 
   const fetchHistory = () => {
     fetch("/api/tenant/billing/history", { cache: "no-store" })
@@ -54,7 +55,19 @@ export default function BillingHistoryPage() {
 
   useEffect(() => {
     fetchHistory()
+    // Fetch rekening pembayaran dari platform settings
+    fetch("/api/tenant/billing", { cache: "no-store" })
+      .then(r => r.json())
+      .then(data => {
+        if (data.manualPayment) setManualPayment(data.manualPayment)
+      })
+      .catch(() => {})
   }, [])
+
+  const bank = manualPayment?.bank || "Bank Pembayaran"
+  const accNumber = manualPayment?.number || "-"
+  const accName = manualPayment?.name || "Nama Pemilik"
+  const waNumber = manualPayment?.waNumber || "6281234567890"
 
   const copyRef = (ref: string, id: string) => {
     navigator.clipboard.writeText(ref)
@@ -198,28 +211,13 @@ export default function BillingHistoryPage() {
                         
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-bold text-sm">Bank BCA</p>
-                            <p className="text-muted-foreground text-[11px]">a.n PT SchoolPro Indonesia</p>
+                            <p className="font-bold text-sm">{bank}</p>
+                            <p className="text-muted-foreground text-[11px]">a.n {accName}</p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-sm">1234 5678 90</span>
-                            <button onClick={() => copyRef("1234567890", "bca-" + payment.id)} className="text-muted-foreground hover:text-primary transition">
-                              {copiedId === "bca-" + payment.id ? <CheckCheck className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
-                            </button>
-                          </div>
-                        </div>
-                        
-                        <Separator className="bg-slate-200 dark:bg-slate-700" />
-                        
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-bold text-sm">Bank Mandiri</p>
-                            <p className="text-muted-foreground text-[11px]">a.n PT SchoolPro Indonesia</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-sm">098 7654 321</span>
-                            <button onClick={() => copyRef("0987654321", "mandiri-" + payment.id)} className="text-muted-foreground hover:text-primary transition">
-                              {copiedId === "mandiri-" + payment.id ? <CheckCheck className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                            <span className="font-mono font-bold text-sm">{accNumber}</span>
+                            <button onClick={() => copyRef(accNumber.replace(/\s/g, ""), "acc-" + payment.id)} className="text-muted-foreground hover:text-primary transition">
+                              {copiedId === "acc-" + payment.id ? <CheckCheck className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                             </button>
                           </div>
                         </div>
@@ -241,7 +239,7 @@ export default function BillingHistoryPage() {
                             {cancellingId === payment.id ? "Membatalkan..." : "Batalkan"}
                           </Button>
                           <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 h-8 rounded-lg" asChild>
-                            <a href={`https://wa.me/6281234567890?text=Halo%20Admin%2C%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20invoice%20${payment.reference}`} target="_blank" rel="noopener noreferrer">
+                            <a href={`https://wa.me/${waNumber}?text=Halo%20Admin%2C%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20invoice%20${payment.reference}`} target="_blank" rel="noopener noreferrer">
                               <MessageCircle className="h-3.5 w-3.5" /> Konfirmasi WA
                             </a>
                           </Button>
