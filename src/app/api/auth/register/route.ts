@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Jika tenantSlug ada, berarti user mendaftar di subdomain tenant (sebagai member)
+    // Jika tenantSlug ada, berarti user mendaftar di subdomain tenant (sebagai orang tua)
     if (tenantSlug) {
       const existingTenant = await db.tenant.findUnique({ where: { slug: tenantSlug } })
       if (!existingTenant) {
