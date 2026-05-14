@@ -12,7 +12,7 @@ import { Wallet, PlusCircle } from "lucide-react"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 
-export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recentPosts = [] }: { childrenData?: any[], unpaidInvoices?: any[], recentPosts?: any[] }) {
+export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recentPosts = [], userRole = "orangtua" }: { childrenData?: any[], unpaidInvoices?: any[], recentPosts?: any[], userRole?: string }) {
   const { data: session } = useSession()
   const tenant = session?.user?.tenants?.[0]
   
@@ -44,7 +44,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
              )}
              <div>
                 <p className="text-primary-foreground/80 text-xs">Selamat datang kembali,</p>
-                <h2 className="text-primary-foreground font-bold text-lg leading-tight">Bpk/Ibu {session?.user?.name || "Orang Tua"}</h2>
+                <h2 className="text-primary-foreground font-bold text-lg leading-tight">{userRole === "siswa" ? (session?.user?.name || "Siswa") : `Bpk/Ibu ${session?.user?.name || "Orang Tua"}`}</h2>
              </div>
           </div>
           <div className="flex gap-2">
@@ -158,8 +158,8 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                   <User className="h-8 w-8 text-muted-foreground" />
                </div>
-               <h3 className="font-bold text-lg mb-1">Belum Ada Data Anak</h3>
-               <p className="text-sm text-muted-foreground">Silakan hubungi admin sekolah untuk menghubungkan akun Anda dengan data siswa.</p>
+               <h3 className="font-bold text-lg mb-1">{userRole === "siswa" ? "Data Belum Terhubung" : "Belum Ada Data Anak"}</h3>
+               <p className="text-sm text-muted-foreground">{userRole === "siswa" ? "Akun Anda belum terhubung dengan data siswa. Silakan hubungi admin sekolah." : "Silakan hubungi admin sekolah untuk menghubungkan akun Anda dengan data siswa."}</p>
              </div>
            )}
         </div>
