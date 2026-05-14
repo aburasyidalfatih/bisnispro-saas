@@ -57,7 +57,8 @@ export default function WebsiteAboutPage() {
         setForm({
           name: d.name || "", logo: d.logo || "", tagline: d.tagline || "",
           description: d.description || "", about: d.about || "",
-          seoTitle: d.seoTitle || "", seoDesc: d.seoDesc || "",
+          seoTitle: d.seoTitle || (d.name ? `Website Resmi ${d.name}` : ""), 
+          seoDesc: d.seoDesc || d.description || (d.name ? `Selamat datang di website resmi ${d.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` : ""),
           address: d.address || "", phone: d.phone || "", email: d.email || "",
           website: d.website || "", whatsapp: d.whatsapp || "",
           instagram: d.instagram || "", facebook: d.facebook || "",
@@ -583,18 +584,24 @@ export default function WebsiteAboutPage() {
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>Meta Title</Label>
+                <div className="flex items-center justify-between">
+                  <Label>Meta Title</Label>
+                  <button type="button" onClick={() => setForm(p => ({ ...p, seoTitle: p.name ? `Website Resmi ${p.name}` : "" }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</button>
+                </div>
                 <Input value={form.seoTitle} onChange={e => setForm(p => ({ ...p, seoTitle: e.target.value }))}
                   placeholder="Judul halaman untuk Google (maks. 70 karakter)" className="rounded-xl" maxLength={70} />
-                <p className="text-xs text-muted-foreground">{form.seoTitle.length}/70 · Kosongkan untuk pakai nama lembaga</p>
+                <p className="text-xs text-muted-foreground">{form.seoTitle?.length || 0}/70 · Kosongkan untuk pakai nama lembaga</p>
               </div>
               <div className="space-y-2">
-                <Label>Meta Description</Label>
+                <div className="flex items-center justify-between">
+                  <Label>Meta Description</Label>
+                  <button type="button" onClick={() => setForm(p => ({ ...p, seoDesc: p.description || (p.name ? `Selamat datang di website resmi ${p.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` : "") }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</button>
+                </div>
                 <textarea value={form.seoDesc} onChange={e => setForm(p => ({ ...p, seoDesc: e.target.value }))}
                   placeholder="Deskripsi singkat untuk hasil pencarian Google (maks. 160 karakter)"
                   maxLength={160} rows={3}
                   className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
-                <p className="text-xs text-muted-foreground">{form.seoDesc.length}/160 · Kosongkan untuk pakai deskripsi lembaga</p>
+                <p className="text-xs text-muted-foreground">{form.seoDesc?.length || 0}/160 · Kosongkan untuk pakai deskripsi lembaga</p>
               </div>
             </div>
             {/* Preview */}
