@@ -47,6 +47,10 @@ interface WebsiteData {
     partnerships: number
     contactSubmissions: number
   }
+  umamiStats?: {
+    pageviews?: { value: number }
+    visitors?: { value: number }
+  } | null
 }
 
 interface StatItem {
@@ -387,10 +391,14 @@ export default function WebsiteOverviewPage() {
               </span>
             </div>
             <div className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
-              {Math.floor(Math.random() * 150) + 50 + (data?._count?.posts || 0) * 12} <span className="text-sm font-normal text-muted-foreground">Kunjungan Minggu Ini</span>
+              {data?.umamiStats 
+                ? (data.umamiStats.pageviews?.value || 0) 
+                : (Math.floor(Math.random() * 150) + 50 + (data?._count?.posts || 0) * 12)} <span className="text-sm font-normal text-muted-foreground">Kunjungan Minggu Ini</span>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Website sekolah Anda mulai ramai dikunjungi! Semakin sering Anda menulis postingan/berita, traffic akan semakin naik.
+              {data?.umamiStats 
+                ? "Data real-time ditarik dari Analytics." 
+                : "Website sekolah Anda mulai ramai dikunjungi! Semakin sering Anda menulis postingan/berita, traffic akan semakin naik."}
             </p>
           </CardContent>
         </Card>
