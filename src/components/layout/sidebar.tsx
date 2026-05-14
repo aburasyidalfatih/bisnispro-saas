@@ -570,7 +570,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   // Detect role dari session
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
   const currentTenant = session?.user?.tenants?.find((t) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
-  const currentRole = currentTenant?.role || "member"
+  const currentRole = currentTenant?.role || "orangtua"
   const currentPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
 
   const { access: freeAccess } = useFreePlanAccess()

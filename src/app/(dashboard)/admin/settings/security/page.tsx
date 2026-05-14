@@ -29,7 +29,7 @@ export default function SecurityPage() {
   const [tenantId, setTenantId] = useState<string | null>(null)
 
   // Role check — Google OAuth hanya untuk owner/admin
-  const currentRole = session?.user?.tenants?.[0]?.role || "member"
+  const currentRole = session?.user?.tenants?.[0]?.role || "orangtua"
   const isAdminOrOwner = currentRole === "owner" || currentRole === "admin" || session?.user?.isSuperAdmin
 
   // Google OAuth state

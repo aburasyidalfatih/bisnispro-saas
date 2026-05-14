@@ -1,4 +1,4 @@
-﻿import { ComingSoon } from "@/components/shared/coming-soon"
+import { ComingSoon } from "@/components/shared/coming-soon"
 import { UserCheck } from "lucide-react"
 
 export default function Page() {

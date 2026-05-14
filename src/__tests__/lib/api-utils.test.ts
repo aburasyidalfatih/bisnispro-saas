@@ -45,7 +45,7 @@ describe('API Utils: requireTenantMembership', () => {
     vi.mocked(auth).mockResolvedValue({
       user: { id: 'user-1', isSuperAdmin: false },
     } as any)
-    db.tenantUser.findUnique.mockResolvedValue({ role: 'member' } as any)
+    db.tenantUser.findUnique.mockResolvedValue({ role: 'orangtua' } as any)
 
     const { session, error } = await requireTenantMembership('tenant-1')
     expect(error).toBeNull()

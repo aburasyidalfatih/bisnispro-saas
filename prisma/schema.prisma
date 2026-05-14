@@ -171,7 +171,7 @@ model TenantUser {
   id       String @id @default(cuid())
   tenantId String
   userId   String
-  role     String @default("member")
+  role     String @default("orangtua")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -184,7 +184,7 @@ model Invitation {
   id        String   @id @default(cuid())
   tenantId  String
   email     String
-  role      String   @default("member")
+  role      String   @default("orangtua")
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())

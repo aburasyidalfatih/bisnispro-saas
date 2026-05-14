@@ -196,7 +196,7 @@ export const authOptions: NextAuthConfig = {
               const tenant = await tx.tenant.findUnique({ where: { slug: targetTenantSlug } })
               if (tenant) {
                 await tx.tenantUser.create({
-                  data: { tenantId: tenant.id, userId: newUser.id, role: "member" },
+                  data: { tenantId: tenant.id, userId: newUser.id, role: "orangtua" },
                 })
               }
             } else {
@@ -235,7 +235,7 @@ export const authOptions: NextAuthConfig = {
               })
               if (!alreadyMember) {
                 await db.tenantUser.create({
-                  data: { tenantId: tenant.id, userId: existing.id, role: "member" },
+                  data: { tenantId: tenant.id, userId: existing.id, role: "orangtua" },
                 })
               }
             }

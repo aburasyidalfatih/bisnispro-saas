@@ -9,7 +9,7 @@ export default async function WebsiteLayout({ children }: { children: React.Reac
     redirect("/login")
   }
   
-  const currentRole = session.user.tenants?.[0]?.role || "member"
+  const currentRole = session.user.tenants?.[0]?.role || "orangtua"
   
   const cookieStore = await cookies()
   const isImpersonatingUser = cookieStore.has("impersonate-user")

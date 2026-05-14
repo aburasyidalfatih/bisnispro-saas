@@ -111,7 +111,7 @@ export default function UsersPage() {
         name: fd.get("name"),
         email: fd.get("email"),
         phone: fd.get("phone"),
-        role: fd.get("role") || "member",
+        role: fd.get("role") || "orangtua",
         password: fd.get("password"),
       }),
     })
@@ -218,12 +218,11 @@ export default function UsersPage() {
             </div>
             <div className="space-y-2">
               <Label>Role</Label>
-              <select name="role" defaultValue={roleParam || "member"} className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm">
+              <select name="role" defaultValue={roleParam || "orangtua"} className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm">
                 <option value="admin">Admin</option>
                 <option value="guru">Guru</option>
                 <option value="siswa">Siswa</option>
                 <option value="orangtua">Orang Tua</option>
-                <option value="member">Member Umum</option>
               </select>
             </div>
             <div className="flex items-end gap-2">
@@ -285,8 +284,8 @@ export default function UsersPage() {
                     <td className="px-4 py-3 text-sm">{u.email}</td>
                     <td className="px-4 py-3 text-sm hidden md:table-cell">{u.phone || "-"}</td>
                     <td className="px-4 py-3">
-                      <span className={cn("text-[11px] font-semibold uppercase rounded-full px-2 py-0.5", roleBadge[u.role] || roleBadge.member)}>
-                        {u.role}
+                      <span className={cn("text-[11px] font-semibold uppercase rounded-full px-2 py-0.5", roleBadge[u.role] || roleBadge.orangtua)}>
+                        {u.role === "member" ? "Orang Tua" : u.role}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{formatDate(u.createdAt)}</td>

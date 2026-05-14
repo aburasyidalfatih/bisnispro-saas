@@ -65,7 +65,7 @@ export async function POST(req: Request) {
 
   // Verifikasi peran
   const isSuperAdmin = session.user.isSuperAdmin
-  let userRole = "member"
+  let userRole = "orangtua"
   if (!isSuperAdmin) {
     const tu = await db.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: session.user.id } },
