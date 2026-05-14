@@ -8,9 +8,10 @@ export async function POST(req: Request) {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
-    const { walletId, amount, method, customerName, customerEmail, customerPhone } = await req.json()
+    let { walletId, amount, method, customerName, customerEmail, customerPhone } = await req.json()
+    amount = Math.round(Number(amount))
 
-    if (!walletId || !amount || !method) {
+    if (!walletId || !amount || isNaN(amount) || !method) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 })
     }
 

@@ -74,7 +74,7 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
       (!discount.expiresAt || new Date(discount.expiresAt) > new Date())
     ) {
       discountPercentage = discount.percentage
-      discountAmount = subTotal * (discountPercentage / 100)
+      discountAmount = Math.round(subTotal * (discountPercentage / 100))
       amount = subTotal - discountAmount
       validDiscountId = discount.id
     }
@@ -185,7 +185,7 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
   const ratio = Math.min(daysRemaining / 365, 1)
 
   const fullSubTotal = studentCount * pricePerStudent
-  const subTotal = fullSubTotal * ratio // prorated
+  const subTotal = Math.round(fullSubTotal * ratio) // prorated, rounded to Int
 
   let amount = subTotal
   let discountAmount = 0
@@ -205,7 +205,7 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
       (!discount.expiresAt || new Date(discount.expiresAt) > now)
     ) {
       discountPercentage = discount.percentage
-      discountAmount = subTotal * (discountPercentage / 100)
+      discountAmount = Math.round(subTotal * (discountPercentage / 100))
       amount = subTotal - discountAmount
       validDiscountId = discount.id
     }
