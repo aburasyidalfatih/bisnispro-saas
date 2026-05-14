@@ -289,7 +289,8 @@ export async function approveApplication(id: string) {
   }
 
   // 2. Cek apakah user admin sudah ada
-  let user = await db.user.findUnique({ where: { email: app.adminEmail } })
+  const adminEmail = app.adminEmail.toLowerCase()
+  let user = await db.user.findUnique({ where: { email: adminEmail } })
   let tempPassword = ""
 
   if (!user) {
@@ -298,7 +299,7 @@ export async function approveApplication(id: string) {
     user = await db.user.create({
       data: {
         name: app.adminName,
-        email: app.adminEmail,
+        email: adminEmail,
         password: hashedPassword,
         phone: app.adminPhone,
       },

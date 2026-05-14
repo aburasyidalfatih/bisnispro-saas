@@ -35,7 +35,7 @@ export async function createStaff(tenantId: string, data: any) {
 
   // Jika email diisi, buat akun User untuk "Data Master -> Menu Guru"
   if (parsed.email && parsed.email.trim() !== '') {
-    const email = parsed.email.trim()
+    const email = parsed.email.trim().toLowerCase()
     let user = await db.user.findUnique({ where: { email } })
 
     if (!user) {
@@ -112,7 +112,7 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
   let userId: string | null = null
 
   if (parsed.email && parsed.email.trim() !== '') {
-    const email = parsed.email.trim()
+    const email = parsed.email.trim().toLowerCase()
     let user = await db.user.findUnique({ where: { email } })
 
     if (!user) {

@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     if (!app) return NextResponse.json({ error: "Pengajuan tidak ditemukan" }, { status: 404 });
     if (app.status !== "APPROVED") return NextResponse.json({ error: "Hanya bisa kirim ulang untuk status APPROVED" }, { status: 400 });
 
-    const user = await db.user.findUnique({ where: { email: app.adminEmail } });
+    const user = await db.user.findUnique({ where: { email: app.adminEmail.toLowerCase() } });
     if (!user) return NextResponse.json({ error: "User admin belum dibuat" }, { status: 404 });
 
     // Generate new temporary password

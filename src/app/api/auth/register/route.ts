@@ -18,7 +18,8 @@ export async function POST(req: Request) {
 
     const parsed = await parseBody(req, registerSchema)
     if (parsed.error) return parsed.error
-    const { name, email, password, tenantName, tenantSlug } = parsed.data
+    const { name, password, tenantName, tenantSlug } = parsed.data
+    const email = parsed.data.email.toLowerCase()
 
     const existingUser = await db.user.findUnique({ where: { email } })
     if (existingUser) {

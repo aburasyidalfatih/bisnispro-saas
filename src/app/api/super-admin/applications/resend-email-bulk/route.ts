@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     let successCount = 0;
 
     for (const app of apps) {
-      const user = await db.user.findUnique({ where: { email: app.adminEmail } });
+      const user = await db.user.findUnique({ where: { email: app.adminEmail.toLowerCase() } });
       if (!user) continue;
 
       const tempPassword = crypto.randomBytes(8).toString("base64url");
