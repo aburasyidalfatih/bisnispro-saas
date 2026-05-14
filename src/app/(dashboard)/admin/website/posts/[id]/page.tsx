@@ -264,9 +264,14 @@ export default function PostFormPage() {
                   {...register("type")} 
                   className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
                 >
-                  <option value="BLOG_GURU">Standar (Blog Guru)</option>
-                  <option value="EDITORIAL">Editorial Khusus</option>
-                  <option value="PENGUMUMAN">Pengumuman Publik (Web)</option>
+                  {(typeQuery === "PENGUMUMAN" || watch("type") === "PENGUMUMAN") ? (
+                    <option value="PENGUMUMAN">Pengumuman Publik (Web)</option>
+                  ) : (
+                    <>
+                      <option value="BLOG_GURU">Standar (Blog Guru)</option>
+                      <option value="EDITORIAL">Editorial Khusus</option>
+                    </>
+                  )}
                 </select>
                 {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
               </div>

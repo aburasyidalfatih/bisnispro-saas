@@ -106,7 +106,7 @@ export default function AdminMessagesPage() {
     // Fetch Pengumuman
     if (activeTab === "pengumuman") {
       setLoadingAnnouncements(true)
-      fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN`)
+      fetch(`/api/tenant/posts?tenantId=${tenantId}&type=INTERNAL_ANNOUNCEMENTS`)
         .then(r => {
            if(!r.ok) throw new Error("Failed to fetch")
            return r.json()
@@ -176,7 +176,7 @@ export default function AdminMessagesPage() {
       setShowAddModal(false)
       setAddForm({ title: "", content: "", target: "PENGUMUMAN_SEMUA" })
       setLoadingAnnouncements(true)
-      const d = await fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN`).then(r => r.json())
+      const d = await fetch(`/api/tenant/posts?tenantId=${tenantId}&type=INTERNAL_ANNOUNCEMENTS`).then(r => r.json())
       setAnnouncements(d.data || d || [])
     } catch (error: any) {
       toast({ title: "Gagal", description: error.message, variant: "destructive" })
@@ -205,7 +205,7 @@ export default function AdminMessagesPage() {
       toast({ title: "Berhasil", description: "Pengumuman diperbarui." })
       setShowEditModal(false)
       setLoadingAnnouncements(true)
-      const d = await fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN`).then(r => r.json())
+      const d = await fetch(`/api/tenant/posts?tenantId=${tenantId}&type=INTERNAL_ANNOUNCEMENTS`).then(r => r.json())
       setAnnouncements(d.data || d || [])
     } catch (error: any) {
       toast({ title: "Gagal", description: error.message, variant: "destructive" })

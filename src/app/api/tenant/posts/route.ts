@@ -19,17 +19,20 @@ export async function GET(req: Request) {
   const whereClause: any = { tenantId }
   
   if (type) {
-    if (type === "PENGUMUMAN") {
-      whereClause.type = { startsWith: "PENGUMUMAN" }
-    } else if (type === "PENGUMUMAN_GTK") {
+    if (type === "PENGUMUMAN_GTK") {
       whereClause.type = { in: ["PENGUMUMAN_GTK", "PENGUMUMAN_SEMUA"] }
     } else if (type === "PENGUMUMAN_ORTU") {
       whereClause.type = { in: ["PENGUMUMAN_ORTU", "PENGUMUMAN_SEMUA"] }
     } else if (type === "PENGUMUMAN_SISWA") {
       whereClause.type = { in: ["PENGUMUMAN_SISWA", "PENGUMUMAN_SEMUA"] }
+    } else if (type === "INTERNAL_ANNOUNCEMENTS") {
+      whereClause.type = { in: ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
     } else {
       whereClause.type = type
     }
+  } else {
+    // Default Artikel & Pos: Jangan tampilkan pengumuman apapun
+    whereClause.type = { notIn: ["PENGUMUMAN", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA", "PENGUMUMAN_SEMUA"] }
   }
 
   const posts = await db.post.findMany({
