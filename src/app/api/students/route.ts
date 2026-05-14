@@ -85,6 +85,7 @@ export async function POST(req: Request) {
   let userId: string | undefined = undefined
 
   if (email && password) {
+    email = email.toLowerCase()
     const bcrypt = await import("bcryptjs")
     let user = await db.user.findUnique({ where: { email } })
     

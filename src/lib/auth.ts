@@ -65,8 +65,9 @@ export const authOptions: NextAuthConfig = {
         }
         // -----------------------------------------
 
+        const email = (credentials.email as string).toLowerCase()
         const user = await db.user.findUnique({
-          where: { email: credentials.email as string },
+          where: { email },
           include: { tenants: { include: { tenant: true } }, affiliateProfile: true },
         })
 

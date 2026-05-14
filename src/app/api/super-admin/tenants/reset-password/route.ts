@@ -24,7 +24,8 @@ export async function POST(req: Request) {
         role: { in: ["owner", "admin"] },
         user: { isSuperAdmin: false }
       },
-      include: { user: true }
+      include: { user: true },
+      orderBy: { role: 'desc' } // 'owner' comes after 'admin' alphabetically, so desc means owner first
     })
 
     if (!targetUser) {

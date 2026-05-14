@@ -50,7 +50,8 @@ export async function POST(req: Request) {
   const { parseBody } = await import("@/lib/api-utils")
   const parsed = await parseBody(req, addUserSchema)
   if (parsed.error) return parsed.error
-  const { tenantId, name, email, phone, role, password } = parsed.data
+  let { tenantId, name, email, phone, role, password } = parsed.data
+  email = email.toLowerCase()
 
   // Cek izin (owner/admin)
   if (!session.user.isSuperAdmin) {
@@ -80,9 +81,8 @@ export async function POST(req: Request) {
       })
     }
   } else {
-    // Gunakan password yang diberikan atau generate random secure string (agar tidak ada default password yang bisa ditebak)
-    const crypto = await import("crypto")
-    const fallbackPassword = crypto.randomBytes(16).toString("hex")
+    // Gunakan password yang diberikan atau default "12345678" agar admin bisa memberitahu user
+    const fallbackPassword = "12345678"
     const hashedPassword = await bcrypt.hash(password || fallbackPassword, 12)
     user = await db.user.create({
       data: { name, email, phone, password: hashedPassword },

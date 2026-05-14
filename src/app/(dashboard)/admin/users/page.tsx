@@ -112,7 +112,7 @@ export default function UsersPage() {
         email: fd.get("email"),
         phone: fd.get("phone"),
         role: fd.get("role") || "orangtua",
-        password: fd.get("password"),
+        password: fd.get("password") || undefined,
       }),
     })
     const data = await res.json()
@@ -214,7 +214,7 @@ export default function UsersPage() {
             </div>
             <div className="space-y-2">
               <Label>Password</Label>
-              <Input name="password" type="password" placeholder="Biarkan kosong untuk random password" className="rounded-xl" />
+              <Input name="password" type="password" placeholder="Biarkan kosong untuk default: 12345678" className="rounded-xl" />
             </div>
             <div className="space-y-2">
               <Label>Role</Label>

@@ -284,9 +284,10 @@ export async function approveApplication(id: string) {
 
   // 2. Cek apakah user admin sudah ada
   let user = await db.user.findUnique({ where: { email: app.adminEmail } })
-  const tempPassword = crypto.randomBytes(8).toString("base64url")
+  let tempPassword = ""
 
   if (!user) {
+    tempPassword = crypto.randomBytes(8).toString("base64url")
     const hashedPassword = await bcrypt.hash(tempPassword, 12)
     user = await db.user.create({
       data: {
@@ -296,6 +297,8 @@ export async function approveApplication(id: string) {
         phone: app.adminPhone,
       },
     })
+  } else {
+    tempPassword = "(Gunakan password akun Anda sebelumnya)"
   }
 
   // 3. Hubungkan User ke Tenant sebagai Owner (cek duplikat)
