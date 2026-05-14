@@ -81,6 +81,14 @@ export default async function WebsiteLayout({
         <WebsiteFooter tenant={tenant} />
         {activePopup && <PopupRenderer popup={activePopup} />}
         <PwaInstaller tenantName={tenant.name} tenantLogo={tenant.logo} />
+        
+        {tenant.umamiWebsiteId && (
+          <script
+            defer
+            src="https://analytics.schoolpro.my.id/script.js"
+            data-website-id={tenant.umamiWebsiteId}
+          />
+        )}
       </div>
     </RoutingProvider>
   )

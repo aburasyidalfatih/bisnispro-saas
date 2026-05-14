@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import { logger } from "@/lib/logger"
 import { sendWhatsApp, getWaConfig, sendEmail } from "@/lib/services/notification"
+import { createUmamiWebsite } from "@/lib/umami"
 
 /**
  * Mengambil semua pengaturan platform sebagai key-value map.
@@ -260,6 +261,25 @@ export async function approveApplication(id: string) {
         },
       },
     })
+  }
+
+  // 1.5. Otomatisasi Registrasi Analytics Umami
+  try {
+    const settings = await getPlatformSettings()
+    const rootDomain = settings.NEXT_PUBLIC_ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const fullDomain = `${app.schoolSlug}.${rootDomain}`
+    
+    if (!tenant.umamiWebsiteId) {
+      const umamiId = await createUmamiWebsite(fullDomain, app.schoolName)
+      if (umamiId) {
+        tenant = await db.tenant.update({
+          where: { id: tenant.id },
+          data: { umamiWebsiteId: umamiId }
+        })
+      }
+    }
+  } catch (error) {
+    logger.error("Gagal membuat Umami website otomatis:", error, { tenantId: tenant.id })
   }
 
   // 2. Cek apakah user admin sudah ada
