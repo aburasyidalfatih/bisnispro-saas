@@ -70,6 +70,15 @@ export async function POST(req: Request) {
       where: { tenantId_userId: { tenantId, userId: user.id } },
     })
     if (existing) return NextResponse.json({ error: "User sudah menjadi anggota tenant ini" }, { status: 400 })
+    
+    // Jika admin memberikan password baru saat menambahkan ulang user yang sudah ada
+    if (password && !(user as any).isSuperAdmin) {
+      const hashedPassword = await bcrypt.hash(password, 12)
+      await db.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword }
+      })
+    }
   } else {
     // Gunakan password yang diberikan atau generate random secure string (agar tidak ada default password yang bisa ditebak)
     const crypto = await import("crypto")

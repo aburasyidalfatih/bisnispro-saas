@@ -17,28 +17,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 })
     }
 
-    // Cari owner tenant
-    const ownerUser = await db.tenantUser.findFirst({
+    // Cari owner atau admin tenant (kecuali super admin)
+    const targetUser = await db.tenantUser.findFirst({
       where: { 
         tenantId,
-        role: "owner"
+        role: { in: ["owner", "admin"] },
+        user: { isSuperAdmin: false }
       },
       include: { user: true }
     })
 
-    if (!ownerUser) {
-      return NextResponse.json({ error: "Owner tenant tidak ditemukan" }, { status: 404 })
+    if (!targetUser) {
+      return NextResponse.json({ error: "Akun pengelola sekolah tidak ditemukan" }, { status: 404 })
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10)
 
     await db.user.update({
-      where: { id: ownerUser.userId },
+      where: { id: targetUser.userId },
       data: { password: hashedPassword }
     })
 
     return NextResponse.json({ 
-      message: `Password untuk ${ownerUser.user.email} berhasil direset` 
+      message: `Password untuk ${targetUser.user.email} berhasil direset` 
     })
   } catch (error) {
     logger.error("Reset password failed", error, { path: "/api/super-admin/tenants/reset-password" })
