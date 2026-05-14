@@ -31,12 +31,9 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
     { label: "Nilai", icon: Award, href: "/panel-gtk/nilai" },
     { label: "Poin", icon: ShieldAlert, href: "/panel-gtk/poin" },
     { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
+    { label: "Bank Soal", icon: FileText, href: "/panel-gtk/cbt/bank-soal" },
+    { label: "Jadwal CBT", icon: CalendarCheck, href: "/panel-gtk/cbt/jadwal" }
   ]
-
-  if (isPremium) {
-    navItems.push({ label: "Bank Soal", icon: FileText, href: "/panel-gtk/cbt/bank-soal" })
-    navItems.push({ label: "Jadwal CBT", icon: CalendarCheck, href: "/panel-gtk/cbt/jadwal" })
-  }
 
   return (
     <div className="min-h-screen bg-muted/20 font-sans flex flex-col">

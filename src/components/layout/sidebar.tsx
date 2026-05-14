@@ -359,6 +359,13 @@ function getGTKMenu(basePath: string): MenuSection[] {
       ],
     },
     {
+      title: "Ujian CBT (Pro)",
+      items: [
+        { label: "Bank Soal", href: `${basePath}/cbt/bank-soal`, icon: FileText, badge: "Pro" },
+        { label: "Jadwal CBT", href: `${basePath}/cbt/jadwal`, icon: CalendarCheck, badge: "Pro" },
+      ],
+    },
+    {
       title: "Konten & Informasi",
       items: [
         { label: "Tulis Artikel", href: `${basePath}/posts`, icon: FileText, badge: "Pending" },
