@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 
 export const dynamic = "force-dynamic"
+export const maxDuration = 60
 
 /**
  * Cron handler: otomatis expire invoice pending yang melewati jatuh tempo

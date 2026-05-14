@@ -266,6 +266,7 @@ model Payment {
   @@index([createdAt])
   @@index([tenantId, status])
   @@index([tenantId, createdAt])
+  @@index([status, expiredAt])
   @@map("payments")
 }
 

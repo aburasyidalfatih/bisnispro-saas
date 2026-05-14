@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import DOMPurify from "isomorphic-dompurify"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { MessageSquare, Loader2, Inbox, Mail, Check, Trash2, ChevronDown, ChevronUp, Users, Globe, Pencil } from "lucide-react"
@@ -666,7 +667,7 @@ export default function AdminMessagesPage() {
                       </div>
                     </div>
                     <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
-                    <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
+                    <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }} />
                   </div>
                 ))}
               </div>

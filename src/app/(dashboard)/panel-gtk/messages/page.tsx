@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import DOMPurify from "isomorphic-dompurify"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -235,7 +236,7 @@ export default function GuruMessagesPage() {
                       <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">PENGUMUMAN</span>
                     </div>
                     <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
-                    <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
+                    <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }} />
                   </div>
                 ))
               )}
