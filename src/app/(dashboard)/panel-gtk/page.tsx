@@ -209,7 +209,7 @@ export default function GuruDashboard() {
                  </div>
               ) : (
                 announcements.map((item, i) => (
-                  <Link href="/panel-gtk/messages" key={item.id} className="flex gap-3 group cursor-pointer outline-none">
+                  <Link href="/panel-gtk/pengumuman" key={item.id} className="flex gap-3 group cursor-pointer outline-none">
                     <div className="w-1.5 rounded-full shrink-0 bg-primary/20 group-hover:bg-primary transition-colors"></div>
                     <div className="py-1">
                       <p className="font-semibold text-sm group-hover:text-primary transition-colors line-clamp-2">{item.title}</p>
@@ -222,7 +222,7 @@ export default function GuruDashboard() {
               )}
             </div>
             <Button variant="ghost" className="w-full mt-4 text-xs font-medium text-primary hover:bg-primary/5" asChild>
-              <Link href="/panel-gtk/messages">Lihat Semua Pengumuman</Link>
+              <Link href="/panel-gtk/pengumuman">Lihat Semua Pengumuman</Link>
             </Button>
           </CardContent>
         </Card>
