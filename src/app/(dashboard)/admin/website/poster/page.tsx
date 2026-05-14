@@ -63,7 +63,7 @@ export default function WebsitePosterPage() {
       </div>
 
       {/* Printable Poster Area */}
-      <div className="bg-white text-slate-900 w-full aspect-[1/1.414] (A4 ratio) p-12 shadow-2xl rounded-sm print:shadow-none print:p-0 mx-auto max-w-[800px] border relative overflow-hidden flex flex-col justify-between">
+      <div className="poster-print-area bg-white text-slate-900 w-full aspect-[1/1.414] (A4 ratio) p-12 shadow-2xl rounded-sm print:shadow-none print:p-0 mx-auto max-w-[800px] border relative overflow-hidden flex flex-col justify-between">
         
         {/* Background Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-b-[100px] opacity-10" />
@@ -130,8 +130,8 @@ export default function WebsitePosterPage() {
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
           body * { visibility: hidden; }
-          .max-w-4xl > div:last-child, .max-w-4xl > div:last-child * { visibility: visible; }
-          .max-w-4xl > div:last-child { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
+          .poster-print-area, .poster-print-area * { visibility: visible; }
+          .poster-print-area { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
         }
       `}} />
     </div>
