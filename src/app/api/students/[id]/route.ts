@@ -88,35 +88,49 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   if (!student) return NextResponse.json({ error: "Siswa tidak ditemukan" }, { status: 404 })
 
   try {
-    await db.$transaction(async (tx) => {
-      // 1. Delete Attendance records
-      await tx.attendanceRecord.deleteMany({ where: { studentId: id } })
-      await tx.attendancePermit.deleteMany({ where: { studentId: id } })
-      
-      // 2. Delete Canteen related
-      await tx.canteenOrder.deleteMany({ where: { studentId: id } })
-      
-      // 3. Delete Grades & Journals
-      await tx.grade.deleteMany({ where: { studentId: id } })
-      await tx.journalPresence.deleteMany({ where: { studentId: id } })
-      
-      // 4. Delete Discipline records
-      await tx.disciplineRecord.deleteMany({ where: { studentId: id } })
-      
-      // 5. Delete CBT related
-      await tx.cbtAnswer.deleteMany({ where: { studentId: id } })
-      await tx.cbtSession.deleteMany({ where: { studentId: id } })
+    // 1. Cek apakah ada data operasional yang terikat
+    const [
+      attendanceCount, canteenCount, gradeCount,
+      disciplineCount, cbtCount, invoiceCount
+    ] = await Promise.all([
+      db.attendanceRecord.count({ where: { studentId: id } }),
+      db.canteenOrder.count({ where: { studentId: id } }),
+      db.grade.count({ where: { studentId: id } }),
+      db.disciplineRecord.count({ where: { studentId: id } }),
+      db.cbtSession.count({ where: { studentId: id } }),
+      db.invoice.count({ where: { studentId: id } })
+    ])
 
-      // 6. Final student hard delete (Invoice, WalletAccount, StudentParent will cascade if schema allows, but Student is safe to delete now)
+    const hasData = attendanceCount > 0 || canteenCount > 0 || gradeCount > 0 || 
+                    disciplineCount > 0 || cbtCount > 0 || invoiceCount > 0
+
+    if (hasData) {
+      return NextResponse.json({ 
+        error: "Siswa tidak dapat dihapus karena sudah memiliki riwayat data (absensi, nilai, tagihan, dll). Silakan ubah status menjadi Nonaktif jika siswa sudah lulus/pindah." 
+      }, { status: 400 })
+    }
+
+    // 2. Jika aman (hanya sebatas daftar/formulir), lakukan hard delete
+    await db.$transaction(async (tx) => {
+      // Hapus data permit/journal yang mungkin terselip
+      await tx.attendancePermit.deleteMany({ where: { studentId: id } })
+      await tx.journalPresence.deleteMany({ where: { studentId: id } })
+      await tx.cbtAnswer.deleteMany({ where: { studentId: id } })
+
+      // Hapus data Wallet & Orang Tua (Cascade biasanya, tapi lebih aman eksplisit)
+      await tx.walletAccount.deleteMany({ where: { studentId: id } })
+      await tx.studentParent.deleteMany({ where: { studentId: id } })
+
+      // Eksekusi hard delete siswa
       await tx.student.delete({ where: { id } })
 
-      // 7. Delete linked User Account from tenant if exists
+      // Jika ada akun login terikat, cabut dari tenant
       if (student.userId) {
         await tx.tenantUser.deleteMany({ where: { tenantId, userId: student.userId, role: 'siswa' } })
       }
     })
 
-    return NextResponse.json({ message: "Siswa berhasil dihapus permanen beserta seluruh datanya" })
+    return NextResponse.json({ message: "Data siswa berhasil dihapus permanen" })
   } catch (err: any) {
     return NextResponse.json({ error: "Gagal menghapus siswa: " + err.message }, { status: 500 })
   }

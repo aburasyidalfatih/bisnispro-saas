@@ -379,7 +379,7 @@ export default function StudentsPage() {
                             </Button>
                           }
                           title={`Hapus ${student.name}?`}
-                          description={`Anda yakin ingin menghapus permanen data siswa "${student.name}" beserta seluruh datanya (Tabungan, Absensi, Ujian, dll)? Tindakan ini tidak dapat dibatalkan.`}
+                          description={`Anda yakin ingin menghapus data siswa "${student.name}"? Data hanya dapat dihapus jika siswa belum memiliki riwayat absensi, ujian, atau tagihan. Tindakan ini tidak dapat dibatalkan.`}
                           confirmText="Ya, Hapus"
                           onConfirm={() => handleDelete(student.id, student.name)}
                         />
