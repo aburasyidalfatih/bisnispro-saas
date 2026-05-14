@@ -26,13 +26,13 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
-    { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal" },
-    { label: "Jurnal", icon: CalendarCheck, href: "/panel-gtk/jurnal" },
-    { label: "Nilai", icon: Award, href: "/panel-gtk/nilai" },
-    { label: "Poin", icon: ShieldAlert, href: "/panel-gtk/poin" },
+    { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal", badge: "Pro" },
+    { label: "Jurnal", icon: CalendarCheck, href: "/panel-gtk/jurnal", badge: "Pro" },
+    { label: "Nilai", icon: Award, href: "/panel-gtk/nilai", badge: "Pro" },
+    { label: "Poin", icon: ShieldAlert, href: "/panel-gtk/poin", badge: "Pro" },
     { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
-    { label: "Bank Soal", icon: FileText, href: "/panel-gtk/cbt/bank-soal" },
-    { label: "Jadwal CBT", icon: CalendarCheck, href: "/panel-gtk/cbt/jadwal" }
+    { label: "Bank Soal", icon: FileText, href: "/panel-gtk/cbt/bank-soal", badge: "Pro" },
+    { label: "Jadwal CBT", icon: CalendarCheck, href: "/panel-gtk/cbt/jadwal", badge: "Pro" }
   ]
 
   return (
@@ -56,7 +56,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                      "flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-colors",
                       isActive 
                         ? "bg-primary/10 text-primary" 
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -64,6 +64,11 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
+                    {item.badge && (
+                      <span className="ml-1 inline-flex items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10 px-1.5 py-0 text-[9px] font-bold uppercase tracking-widest text-amber-600">
+                        {item.badge}
+                      </span>
+                    )}
                   </Link>
                 )
               })}

@@ -348,14 +348,14 @@ function getGTKMenu(basePath: string): MenuSection[] {
     {
       title: "Kehadiran",
       items: [
-        { label: "Absensi Saya", href: `${basePath}/absensi`, icon: CalendarCheck },
+        { label: "Absensi Saya", href: `${basePath}/absensi`, icon: CalendarCheck, badge: "Pro" },
       ],
     },
     {
       title: "Kelas & KBM",
       items: [
-        { label: "Jurnal & Presensi", href: `${basePath}/jurnal`, icon: FileText },
-        { label: "Input Nilai", href: `${basePath}/nilai`, icon: Award },
+        { label: "Jurnal & Presensi", href: `${basePath}/jurnal`, icon: FileText, badge: "Pro" },
+        { label: "Input Nilai", href: `${basePath}/nilai`, icon: Award, badge: "Pro" },
       ],
     },
     {
@@ -369,7 +369,7 @@ function getGTKMenu(basePath: string): MenuSection[] {
       title: "Konten & Informasi",
       items: [
         { label: "Tulis Artikel", href: `${basePath}/posts`, icon: FileText, badge: "Pending" },
-        { label: "Pesan Internal", href: `${basePath}/messages`, icon: MessageSquare },
+        { label: "Pesan Internal", href: `${basePath}/messages`, icon: MessageSquare, badge: "Pro" },
       ],
     },
     {
