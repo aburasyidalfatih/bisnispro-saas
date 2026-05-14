@@ -70,15 +70,23 @@ export async function POST(req: Request) {
     const existing = await db.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: user.id } },
     })
-    if (existing) return NextResponse.json({ error: "User sudah menjadi anggota tenant ini" }, { status: 400 })
     
     // Jika admin memberikan password baru saat menambahkan ulang user yang sudah ada
+    let passwordUpdated = false
     if (password && !(user as any).isSuperAdmin) {
       const hashedPassword = await bcrypt.hash(password, 12)
       await db.user.update({
         where: { id: user.id },
         data: { password: hashedPassword }
       })
+      passwordUpdated = true
+    }
+
+    if (existing) {
+      if (passwordUpdated) {
+        return NextResponse.json({ message: "User sudah ada, password berhasil diperbarui", userId: user.id })
+      }
+      return NextResponse.json({ error: "User sudah menjadi anggota tenant ini" }, { status: 400 })
     }
   } else {
     // Gunakan password yang diberikan atau default "12345678" agar admin bisa memberitahu user

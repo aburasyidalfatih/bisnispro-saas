@@ -17,6 +17,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 
 import * as XLSX from "xlsx"
 
@@ -106,7 +107,6 @@ export default function StudentsPage() {
 
   const handleDelete = async (studentId: string, studentName: string) => {
     if (!tenant) return
-    if (!window.confirm(`PERINGATAN: Anda yakin ingin menghapus permanen data siswa "${studentName}" beserta seluruh datanya (Tabungan, Absensi, Canteen, dll)?\n\nTindakan ini tidak dapat dibatalkan!`)) return
     
     try {
       const res = await fetch(`/api/students/${studentId}?tenantId=${tenant.id}`, {
@@ -372,9 +372,17 @@ export default function StudentsPage() {
                             Detail <ChevronRight className="h-3 w-3" />
                           </Button>
                         </Link>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-lg shrink-0" onClick={() => handleDelete(student.id, student.name)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <ConfirmDialog
+                          trigger={
+                            <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-lg shrink-0">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          }
+                          title={`Hapus ${student.name}?`}
+                          description={`Anda yakin ingin menghapus permanen data siswa "${student.name}" beserta seluruh datanya (Tabungan, Absensi, Ujian, dll)? Tindakan ini tidak dapat dibatalkan.`}
+                          confirmText="Ya, Hapus"
+                          onConfirm={() => handleDelete(student.id, student.name)}
+                        />
                       </div>
                     </td>
                   </tr>

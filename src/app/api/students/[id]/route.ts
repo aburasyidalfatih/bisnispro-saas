@@ -104,7 +104,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       await tx.disciplineRecord.deleteMany({ where: { studentId: id } })
       
       // 5. Delete CBT related
-      await tx.cbtAnswer.deleteMany({ where: { studentSession: { studentId: id } } })
+      await tx.cbtAnswer.deleteMany({ where: { studentId: id } })
       await tx.cbtSession.deleteMany({ where: { studentId: id } })
 
       // 6. Final student hard delete (Invoice, WalletAccount, StudentParent will cascade if schema allows, but Student is safe to delete now)
