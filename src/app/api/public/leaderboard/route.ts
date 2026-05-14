@@ -4,7 +4,6 @@ import { db } from "@/lib/db"
 export async function GET(req: Request) {
   try {
     const leaderboard = await db.tenantScore.findMany({
-      take: 100,
       orderBy: { totalScore: "desc" },
       include: {
         tenant: {
