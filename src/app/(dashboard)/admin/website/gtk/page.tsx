@@ -66,11 +66,18 @@ export default function StaffPage() {
           <h1 className="text-2xl font-bold tracking-tight">Guru & Tenaga Kependidikan</h1>
           <p className="text-muted-foreground mt-1">Kelola daftar pendidik dan staf sekolah.</p>
         </div>
-        <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
-          <Link href="/admin/website/gtk/new">
-            <Plus className="h-4 w-4" /> Tambah GTK
-          </Link>
-        </Button>
+        <div className="flex gap-3">
+          <Button asChild variant="outline" className="gap-2 rounded-xl text-indigo-600 border-indigo-200 bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-700">
+            <Link href="/admin/website/gtk/id-card">
+              <Users className="h-4 w-4" /> Cetak ID Card
+            </Link>
+          </Button>
+          <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
+            <Link href="/admin/website/gtk/new">
+              <Plus className="h-4 w-4" /> Tambah GTK
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <Card className="glass border-0">
