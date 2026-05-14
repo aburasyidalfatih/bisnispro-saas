@@ -84,7 +84,40 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const { error } = await requireTenantMembership(tenantId)
   if (error) return error
 
-  // Soft-deactivate, jangan hapus permanen
-  await db.student.update({ where: { id }, data: { isActive: false } })
-  return NextResponse.json({ message: "Siswa dinonaktifkan" })
+  const student = await db.student.findUnique({ where: { id, tenantId } })
+  if (!student) return NextResponse.json({ error: "Siswa tidak ditemukan" }, { status: 404 })
+
+  try {
+    await db.$transaction(async (tx) => {
+      // 1. Delete Attendance records
+      await tx.attendanceRecord.deleteMany({ where: { studentId: id } })
+      await tx.attendancePermit.deleteMany({ where: { studentId: id } })
+      
+      // 2. Delete Canteen related
+      await tx.canteenOrder.deleteMany({ where: { studentId: id } })
+      
+      // 3. Delete Grades & Journals
+      await tx.grade.deleteMany({ where: { studentId: id } })
+      await tx.journalPresence.deleteMany({ where: { studentId: id } })
+      
+      // 4. Delete Discipline records
+      await tx.disciplineRecord.deleteMany({ where: { studentId: id } })
+      
+      // 5. Delete CBT related
+      await tx.cbtAnswer.deleteMany({ where: { studentSession: { studentId: id } } })
+      await tx.cbtSession.deleteMany({ where: { studentId: id } })
+
+      // 6. Final student hard delete (Invoice, WalletAccount, StudentParent will cascade if schema allows, but Student is safe to delete now)
+      await tx.student.delete({ where: { id } })
+
+      // 7. Delete linked User Account from tenant if exists
+      if (student.userId) {
+        await tx.tenantUser.deleteMany({ where: { tenantId, userId: student.userId, role: 'siswa' } })
+      }
+    })
+
+    return NextResponse.json({ message: "Siswa berhasil dihapus permanen beserta seluruh datanya" })
+  } catch (err: any) {
+    return NextResponse.json({ error: "Gagal menghapus siswa: " + err.message }, { status: 500 })
+  }
 }

@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   GraduationCap, Search, Filter, Plus, Loader2,
-  Wallet, BookOpen, MoreHorizontal, UserCheck, ChevronRight, Printer, Download
+  Wallet, BookOpen, MoreHorizontal, UserCheck, ChevronRight, Printer, Download, Trash2
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -102,6 +102,25 @@ export default function StudentsPage() {
     e.preventDefault()
     setPage(1)
     fetchStudents()
+  }
+
+  const handleDelete = async (studentId: string, studentName: string) => {
+    if (!tenant) return
+    if (!window.confirm(`PERINGATAN: Anda yakin ingin menghapus permanen data siswa "${studentName}" beserta seluruh datanya (Tabungan, Absensi, Canteen, dll)?\n\nTindakan ini tidak dapat dibatalkan!`)) return
+    
+    try {
+      const res = await fetch(`/api/students/${studentId}?tenantId=${tenant.id}`, {
+        method: "DELETE",
+      })
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || "Gagal menghapus siswa")
+      }
+      toast({ title: "Berhasil", description: `Data siswa ${studentName} telah dihapus permanen.` })
+      fetchStudents()
+    } catch (err: any) {
+      toast({ title: "Gagal Menghapus", description: err.message, variant: "destructive" })
+    }
   }
 
   const handleExport = async () => {
@@ -347,11 +366,16 @@ export default function StudentsPage() {
                       </Badge>
                     </td>
                     <td className="px-4 py-3">
-                      <Link href={`/admin/students/${student.id}`}>
-                        <Button size="sm" variant="outline" className="rounded-lg text-xs h-8 gap-1">
-                          Detail <ChevronRight className="h-3 w-3" />
+                      <div className="flex items-center gap-2 justify-end">
+                        <Link href={`/admin/students/${student.id}`}>
+                          <Button size="sm" variant="outline" className="rounded-lg text-xs h-8 gap-1">
+                            Detail <ChevronRight className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                        <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-lg shrink-0" onClick={() => handleDelete(student.id, student.name)}>
+                          <Trash2 className="h-4 w-4" />
                         </Button>
-                      </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
