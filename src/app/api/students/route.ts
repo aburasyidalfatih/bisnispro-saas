@@ -63,7 +63,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json()
   const { tenantId, name, nis, nisn, gender, birthPlace, birthDate, address,
-    phone, email, fatherName, motherName, guardianName, classroomId } = body
+    phone, email, fatherName, motherName, guardianName, classroomId, password } = body
 
   if (!tenantId || !name) return NextResponse.json({ error: "tenantId dan name wajib" }, { status: 400 })
   try {
@@ -73,10 +73,42 @@ export async function POST(req: Request) {
   }
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
-  if (tenant?.plan === "free") {
+  if (tenant && typeof tenant.studentQuota === 'number') {
     const studentCount = await db.student.count({ where: { tenantId } })
-    if (studentCount >= 1) {
-      return NextResponse.json({ error: "Paket Free maksimal 1 data siswa untuk uji coba. Silakan upgrade paket." }, { status: 403 })
+    if (studentCount >= tenant.studentQuota) {
+      return NextResponse.json({ 
+        error: `Kuota siswa Anda sudah penuh (maksimal ${tenant.studentQuota} siswa). Silakan upgrade paket untuk menambah kuota.` 
+      }, { status: 403 })
+    }
+  }
+
+  let userId: string | undefined = undefined
+
+  if (email && password) {
+    const bcrypt = await import("bcryptjs")
+    let user = await db.user.findUnique({ where: { email } })
+    
+    if (user) {
+      const existingTu = await db.tenantUser.findUnique({
+        where: { tenantId_userId: { tenantId, userId: user.id } },
+      })
+      if (!existingTu) {
+        await db.tenantUser.create({ data: { tenantId, userId: user.id, role: "siswa" } })
+      }
+      if (!(user as any).isSuperAdmin) {
+        const hashedPassword = await bcrypt.hash(password, 12)
+        await db.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
+      }
+      userId = user.id
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 12)
+      const newUser = await db.user.create({
+        data: { name, email, phone, password: hashedPassword },
+      })
+      await db.tenantUser.create({
+        data: { tenantId, userId: newUser.id, role: "siswa" },
+      })
+      userId = newUser.id
     }
   }
 
@@ -87,6 +119,7 @@ export async function POST(req: Request) {
       address, phone, email: email || undefined,
       fatherName, motherName, guardianName,
       classroomId: classroomId || undefined,
+      userId,
     },
   })
 

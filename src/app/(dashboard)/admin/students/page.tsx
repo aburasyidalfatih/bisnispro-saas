@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   GraduationCap, Search, Filter, Plus, Loader2,
@@ -32,6 +33,42 @@ export default function StudentsPage() {
   const [statusFilter, setStatusFilter] = useState("active")
   const [page, setPage] = useState(1)
   const [meta, setMeta] = useState({ total: 0, totalPages: 1 })
+  const [showAdd, setShowAdd] = useState(false)
+  const [addLoading, setAddLoading] = useState(false)
+
+  const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!tenant) return
+    setAddLoading(true)
+    const fd = new FormData(e.currentTarget)
+    try {
+      const res = await fetch("/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tenantId: tenant.id,
+          name: fd.get("name"),
+          email: fd.get("email"),
+          password: fd.get("password"),
+          nis: fd.get("nis"),
+          gender: fd.get("gender") || "L",
+          classroomId: fd.get("classroomId") !== "none" ? fd.get("classroomId") : undefined
+        }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        toast({ title: "Berhasil", description: "Siswa berhasil ditambahkan." })
+        setShowAdd(false)
+        fetchStudents()
+      } else {
+        toast({ title: "Gagal", description: data.error || "Terjadi kesalahan", variant: "destructive" })
+      }
+    } catch {
+      toast({ title: "Gagal", description: "Tidak dapat menghubungi server", variant: "destructive" })
+    } finally {
+      setAddLoading(false)
+    }
+  }
 
   const fetchStudents = async () => {
     if (!tenant) return
@@ -136,9 +173,7 @@ export default function StudentsPage() {
           <Link href="/admin/students/import">
             <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex">Import</Button>
           </Link>
-          <Link href="/admin/students/new">
-            <Button className="rounded-xl gap-2 hidden sm:flex btn-gradient text-white border-0"><Plus className="h-4 w-4" /> Tambah Siswa</Button>
-          </Link>
+          <Button onClick={() => setShowAdd(!showAdd)} className="rounded-xl gap-2 hidden sm:flex btn-gradient text-white border-0"><Plus className="h-4 w-4" /> Tambah Siswa</Button>
         </div>
       </div>
 
@@ -163,6 +198,66 @@ export default function StudentsPage() {
           </Card>
         ))}
       </div>
+
+      {/* Quick Add Form */}
+      {showAdd && (
+        <Card className="glass border-0 p-6 shadow-md">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">Formulir Singkat Siswa</h3>
+            <Link href="/admin/students/new">
+              <Button variant="link" className="text-primary p-0 h-auto text-sm">Buka Form Lengkap &rarr;</Button>
+            </Link>
+          </div>
+          <form onSubmit={handleAdd} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="space-y-2">
+              <Label>Nama Lengkap</Label>
+              <Input name="name" placeholder="Nama lengkap siswa" required className="rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label>NIS</Label>
+              <Input name="nis" placeholder="Nomor Induk Siswa" className="rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label>Jenis Kelamin</Label>
+              <Select name="gender" defaultValue="L">
+                <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="L">Laki-laki</SelectItem>
+                  <SelectItem value="P">Perempuan</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Kelas</Label>
+              <Select name="classroomId" defaultValue="none">
+                <SelectTrigger className="rounded-xl"><SelectValue placeholder="Belum ada kelas" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">-- Belum ada kelas --</SelectItem>
+                  {classrooms.map(c => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Email (Opsional)</Label>
+              <Input name="email" type="email" placeholder="Untuk login aplikasi" className="rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label>Password (Opsional)</Label>
+              <Input name="password" type="password" placeholder="Biarkan kosong untuk random password" className="rounded-xl" />
+            </div>
+            <div className="flex items-end gap-2 lg:col-span-3">
+              <Button type="submit" className="btn-gradient text-white border-0 rounded-xl px-8" disabled={addLoading}>
+                {addLoading ? "Menyimpan..." : "Simpan Cepat"}
+              </Button>
+              <Button type="button" variant="outline" className="rounded-xl" onClick={() => setShowAdd(false)}>
+                Batal
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
 
       {/* Filters */}
       <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
