@@ -66,12 +66,14 @@ export default function GuruDashboard() {
   }, [tenantId])
 
   const quickActions = [
-    { label: "Absen Kehadiran", desc: "Check-in GPS harian", icon: Clock, color: "text-white", bg: "bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-md shadow-emerald-500/30 border-0", href: "/panel-gtk/absensi" },
-    { label: "Jadwal Mengajar", desc: "Lihat roster mingguan", icon: Calendar, color: "text-white", bg: "bg-gradient-to-br from-indigo-400 to-indigo-600 shadow-md shadow-indigo-500/30 border-0", href: "/panel-gtk/jadwal" },
-    { label: "Jurnal & Absen Siswa", desc: "Isi agenda & presensi kelas", icon: BookOpen, color: "text-white", bg: "bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-500/30 border-0", href: "/panel-gtk/jurnal" },
-    { label: "Input Nilai", desc: "Rekap nilai ujian & tugas", icon: Award, color: "text-white", bg: "bg-gradient-to-br from-amber-400 to-amber-600 shadow-md shadow-amber-500/30 border-0", href: "/panel-gtk/nilai" },
-    { label: "Buku Poin Siswa", desc: "Catat pelanggaran/prestasi", icon: AlertCircle, color: "text-white", bg: "bg-gradient-to-br from-rose-400 to-rose-600 shadow-md shadow-rose-500/30 border-0", href: "/panel-gtk/poin" },
+    { label: "Absen Kehadiran", desc: "Check-in GPS harian", icon: Clock, color: "text-white", bg: "bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-md shadow-emerald-500/30 border-0", href: "/panel-gtk/absensi", badge: "PRO" },
+    { label: "Jadwal Mengajar", desc: "Lihat roster mingguan", icon: Calendar, color: "text-white", bg: "bg-gradient-to-br from-indigo-400 to-indigo-600 shadow-md shadow-indigo-500/30 border-0", href: "/panel-gtk/jadwal", badge: "PRO" },
+    { label: "Jurnal & Absen Siswa", desc: "Isi agenda & presensi kelas", icon: BookOpen, color: "text-white", bg: "bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-500/30 border-0", href: "/panel-gtk/jurnal", badge: "PRO" },
+    { label: "Input Nilai", desc: "Rekap nilai ujian & tugas", icon: Award, color: "text-white", bg: "bg-gradient-to-br from-amber-400 to-amber-600 shadow-md shadow-amber-500/30 border-0", href: "/panel-gtk/nilai", badge: "PRO" },
+    { label: "Buku Poin Siswa", desc: "Catat pelanggaran/prestasi", icon: AlertCircle, color: "text-white", bg: "bg-gradient-to-br from-rose-400 to-rose-600 shadow-md shadow-rose-500/30 border-0", href: "/panel-gtk/poin", badge: "PRO" },
     { label: "Tulis Artikel", desc: "Bagikan tulisan ke web", icon: FileText, color: "text-white", bg: "bg-gradient-to-br from-violet-400 to-violet-600 shadow-md shadow-violet-500/30 border-0", href: "/panel-gtk/posts" },
+    { label: "Bank Soal CBT", desc: "Kelola soal ujian online", icon: FileText, color: "text-white", bg: "bg-gradient-to-br from-pink-400 to-pink-600 shadow-md shadow-pink-500/30 border-0", href: "/panel-gtk/cbt/bank-soal", badge: "PRO" },
+    { label: "Jadwal Ujian", desc: "Atur jadwal CBT", icon: CheckCircle2, color: "text-white", bg: "bg-gradient-to-br from-teal-400 to-teal-600 shadow-md shadow-teal-500/30 border-0", href: "/panel-gtk/cbt/jadwal", badge: "PRO" },
   ]
 
   return (
@@ -114,13 +116,18 @@ export default function GuruDashboard() {
          <h3 className="font-bold text-foreground mb-4 text-sm flex items-center gap-2">
            Aksi Cepat <ChevronRight className="h-4 w-4 text-muted-foreground" />
          </h3>
-         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-y-6 gap-x-2">
+         <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-y-6 gap-x-2">
             {quickActions.map((action, i) => (
-               <Link key={i} href={action.href} className="flex flex-col items-center gap-2 group outline-none">
-                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20", action.bg, action.color)}>
-                     <action.icon className="h-6 w-6" />
+               <Link key={i} href={action.href} className="flex flex-col items-center gap-2 group outline-none relative">
+                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20 relative", action.bg, action.color)}>
+                     <action.icon className="h-6 w-6 relative z-10" />
+                     {action.badge && (
+                       <div className="absolute -top-2 -right-2 z-20 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm shadow-amber-500/40 tracking-wider">
+                          {action.badge}
+                       </div>
+                     )}
                   </div>
-                  <span className="text-[11px] sm:text-xs font-semibold text-muted-foreground group-hover:text-primary text-center line-clamp-2 leading-tight px-1 transition-colors">
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-muted-foreground group-hover:text-primary text-center line-clamp-2 leading-tight px-1 transition-colors">
                     {action.label}
                   </span>
                </Link>
