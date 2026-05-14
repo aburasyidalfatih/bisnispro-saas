@@ -85,7 +85,7 @@ export default function LeaderboardPage() {
             <div className="flex-1 text-center sm:text-left">
               <h2 className="text-2xl font-bold mb-2">{myRankEntry.tenant.name}</h2>
               <p className="text-indigo-100 mb-4 max-w-lg">
-                Tingkatkan peringkat Anda dengan rajin memposting berita, melengkapi galeri, dan mengundang pengunjung ke website sekolah!
+                Tingkatkan peringkat Anda dengan rajin memposting berita, melengkapi galeri, dan mengundang pengunjung ke website sekolah dengan membagikan postingan website Anda !
               </p>
               <div className="flex flex-wrap justify-center sm:justify-start gap-4">
                 <div className="bg-black/20 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
