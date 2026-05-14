@@ -47,6 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           const allowedPaths = [
             "/admin/website",
             "/admin/users",
+            "/admin/students",
             "/admin/settings",
             "/admin/billing",
             "/admin/notifications",
