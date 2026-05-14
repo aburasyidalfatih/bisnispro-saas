@@ -73,11 +73,19 @@ export async function POST(req: Request) {
   }
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
-  if (tenant && typeof tenant.studentQuota === 'number') {
+  if (tenant) {
+    let effectiveQuota = tenant.studentQuota || 0
+    
+    // Auto-heal fallback for existing free tenants that might have 0 quota saved in DB
+    if (tenant.plan === "free" && effectiveQuota === 0) {
+      const freePlan = await db.subscriptionPlan.findUnique({ where: { slug: "free" } })
+      effectiveQuota = freePlan?.maxStudents || 1
+    }
+
     const studentCount = await db.student.count({ where: { tenantId } })
-    if (studentCount >= tenant.studentQuota) {
+    if (studentCount >= effectiveQuota) {
       return NextResponse.json({ 
-        error: `Kuota siswa Anda sudah penuh (maksimal ${tenant.studentQuota} siswa). Silakan upgrade paket untuk menambah kuota.` 
+        error: `Kuota siswa Anda sudah penuh (maksimal ${effectiveQuota} siswa). Silakan upgrade paket untuk menambah kuota.` 
       }, { status: 403 })
     }
   }

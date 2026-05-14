@@ -19,12 +19,19 @@ export async function POST(req: NextRequest) {
     // Cek Kuota Siswa
     const { db } = await import("@/lib/db")
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
-    if (tenant && typeof tenant.studentQuota === 'number') {
+    if (tenant) {
+      let effectiveQuota = tenant.studentQuota || 0
+      
+      if (tenant.plan === "free" && effectiveQuota === 0) {
+        const freePlan = await db.subscriptionPlan.findUnique({ where: { slug: "free" } })
+        effectiveQuota = freePlan?.maxStudents || 1
+      }
+
       const currentCount = await db.student.count({ where: { tenantId } })
       const requestedCount = students.length
-      if (currentCount + requestedCount > tenant.studentQuota) {
+      if (currentCount + requestedCount > effectiveQuota) {
         return NextResponse.json({ 
-          error: `Batas kuota tercapai. Anda memiliki sisa kuota ${Math.max(0, tenant.studentQuota - currentCount)} siswa. Harap kurangi jumlah siswa pada file excel atau upgrade paket.` 
+          error: `Batas kuota tercapai. Anda memiliki sisa kuota ${Math.max(0, effectiveQuota - currentCount)} siswa. Harap kurangi jumlah siswa pada file excel atau upgrade paket.` 
         }, { status: 403 })
       }
     }
