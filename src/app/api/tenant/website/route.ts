@@ -127,7 +127,11 @@ export async function PUT(req: Request) {
         const principalStaff = await db.staff.findFirst({
           where: {
             tenantId,
-            role: { contains: "Kepala Sekolah", mode: "insensitive" },
+            OR: [
+              { role: { equals: "Kepala Sekolah", mode: "insensitive" } },
+              { role: { equals: "Kepala Madrasah", mode: "insensitive" } },
+              { role: { equals: "Kepsek", mode: "insensitive" } }
+            ]
           },
         })
 

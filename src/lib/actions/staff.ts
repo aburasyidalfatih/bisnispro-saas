@@ -85,7 +85,8 @@ export async function createStaff(tenantId: string, data: any) {
   })
 
   // Auto-sync: jika role Kepala Sekolah, sinkronkan foto & nama ke tenant.settings
-  if (parsed.role && parsed.role.toLowerCase().includes("kepala sekolah")) {
+  const roleLower = parsed.role?.toLowerCase() || ""
+  if (roleLower === "kepala sekolah" || roleLower === "kepala madrasah" || roleLower === "kepsek") {
     await syncPrincipalToSettings(tenantId, parsed.name, parsed.imageUrl || null)
   }
   
@@ -161,7 +162,8 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
   })
 
   // Auto-sync: jika role Kepala Sekolah, sinkronkan foto & nama ke tenant.settings
-  if (parsed.role && parsed.role.toLowerCase().includes("kepala sekolah")) {
+  const roleLower = parsed.role?.toLowerCase() || ""
+  if (roleLower === "kepala sekolah" || roleLower === "kepala madrasah" || roleLower === "kepsek") {
     await syncPrincipalToSettings(tenantId, parsed.name, parsed.imageUrl || null)
   }
   
@@ -189,7 +191,8 @@ export async function deleteStaff(id: string, tenantId: string) {
   })
 
   // Jika yang dihapus adalah Kepala Sekolah, bersihkan data di settings
-  if (staffToDelete?.role && staffToDelete.role.toLowerCase().includes("kepala sekolah")) {
+  const roleLower = staffToDelete?.role?.toLowerCase() || ""
+  if (roleLower === "kepala sekolah" || roleLower === "kepala madrasah" || roleLower === "kepsek") {
     try {
       const tenantData = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })
       const currentSettings = (tenantData?.settings as Record<string, any>) || {}
