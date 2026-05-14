@@ -74,6 +74,7 @@ export default function GuruDashboard() {
     { label: "Tulis Artikel", desc: "Bagikan tulisan ke web", icon: FileText, color: "text-white", bg: "bg-gradient-to-br from-violet-400 to-violet-600 shadow-md shadow-violet-500/30 border-0", href: "/panel-gtk/posts" },
     { label: "Bank Soal CBT", desc: "Kelola soal ujian online", icon: FileText, color: "text-white", bg: "bg-gradient-to-br from-pink-400 to-pink-600 shadow-md shadow-pink-500/30 border-0", href: "/panel-gtk/cbt/bank-soal", badge: "PRO" },
     { label: "Jadwal Ujian", desc: "Atur jadwal CBT", icon: CheckCircle2, color: "text-white", bg: "bg-gradient-to-br from-teal-400 to-teal-600 shadow-md shadow-teal-500/30 border-0", href: "/panel-gtk/cbt/jadwal", badge: "PRO" },
+    { label: "Pesan", desc: "Chat GTK & Admin", icon: MessageSquare, color: "text-white", bg: "bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-md shadow-cyan-500/30 border-0", href: "/panel-gtk/messages", badge: "PRO" },
   ]
 
   return (
@@ -116,7 +117,7 @@ export default function GuruDashboard() {
          <h3 className="font-bold text-foreground mb-4 text-sm flex items-center gap-2">
            Aksi Cepat <ChevronRight className="h-4 w-4 text-muted-foreground" />
          </h3>
-         <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-y-6 gap-x-2">
+         <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-9 gap-y-6 gap-x-2">
             {quickActions.map((action, i) => (
                <Link key={i} href={action.href} className="flex flex-col items-center gap-2 group outline-none relative">
                   <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20 relative", action.bg, action.color)}>
