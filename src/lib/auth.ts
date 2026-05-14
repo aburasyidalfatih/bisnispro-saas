@@ -42,25 +42,32 @@ export const authOptions: NextAuthConfig = {
 
         // --- CLOUDFLARE TURNSTILE VERIFICATION ---
         const turnstileToken = credentials.turnstileToken as string | undefined
-        const turnstileSetting = await db.platformSetting.findUnique({
-          where: { key: "TURNSTILE_SECRET_KEY" },
+        const turnstileEnabled = await db.platformSetting.findUnique({
+          where: { key: "TURNSTILE_ENABLED" },
         })
-        const secretKey = process.env.TURNSTILE_SECRET_KEY || turnstileSetting?.value
+        const isTurnstileActive = turnstileEnabled?.value === "true"
 
-        if (secretKey) {
-          if (!turnstileToken) {
-            throw new CustomAuthError("Token keamanan tidak ditemukan")
-          }
-          const formData = new URLSearchParams()
-          formData.append("secret", secretKey)
-          formData.append("response", turnstileToken)
-          const result = await fetch(
-            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-            { body: formData, method: "POST" }
-          )
-          const outcome = await result.json()
-          if (!outcome.success) {
-            throw new CustomAuthError("Verifikasi keamanan gagal, silakan coba lagi")
+        if (isTurnstileActive) {
+          const turnstileSetting = await db.platformSetting.findUnique({
+            where: { key: "TURNSTILE_SECRET_KEY" },
+          })
+          const secretKey = process.env.TURNSTILE_SECRET_KEY || turnstileSetting?.value
+
+          if (secretKey) {
+            if (!turnstileToken) {
+              throw new CustomAuthError("Token keamanan tidak ditemukan")
+            }
+            const formData = new URLSearchParams()
+            formData.append("secret", secretKey)
+            formData.append("response", turnstileToken)
+            const result = await fetch(
+              "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+              { body: formData, method: "POST" }
+            )
+            const outcome = await result.json()
+            if (!outcome.success) {
+              throw new CustomAuthError("Verifikasi keamanan gagal, silakan coba lagi")
+            }
           }
         }
         // -----------------------------------------
