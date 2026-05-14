@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, CalendarCheck, FileText, User, Calendar, LogOut, Award, ShieldAlert } from "lucide-react"
+import { Home, CalendarCheck, FileText, User, Calendar, LogOut, Award, ShieldAlert, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MobileBottomNav } from "./mobile-bottom-nav"
 import { Button } from "@/components/ui/button"
@@ -26,13 +26,14 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
-    { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal", badge: "Pro" },
-    { label: "Jurnal", icon: CalendarCheck, href: "/panel-gtk/jurnal", badge: "Pro" },
-    { label: "Nilai", icon: Award, href: "/panel-gtk/nilai", badge: "Pro" },
-    { label: "Poin", icon: ShieldAlert, href: "/panel-gtk/poin", badge: "Pro" },
+    { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal" },
+    { label: "Jurnal", icon: CalendarCheck, href: "/panel-gtk/jurnal" },
+    { label: "Nilai", icon: Award, href: "/panel-gtk/nilai" },
+    { label: "Poin", icon: ShieldAlert, href: "/panel-gtk/poin" },
     { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
-    { label: "Bank Soal", icon: FileText, href: "/panel-gtk/cbt/bank-soal", badge: "Pro" },
-    { label: "Jadwal CBT", icon: CalendarCheck, href: "/panel-gtk/cbt/jadwal", badge: "Pro" }
+    { label: "Bank Soal", icon: FileText, href: "/panel-gtk/cbt/bank-soal" },
+    { label: "Jadwal CBT", icon: CalendarCheck, href: "/panel-gtk/cbt/jadwal" },
+    { label: "Pesan", icon: MessageSquare, href: "/panel-gtk/messages" } // Adding Pesan just in case they meant they want it here too
   ]
 
   return (

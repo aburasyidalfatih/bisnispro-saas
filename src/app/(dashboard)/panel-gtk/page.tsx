@@ -21,6 +21,7 @@ export default function GuruDashboard() {
   const [loadingSchedule, setLoadingSchedule] = useState(true)
   const [academicYear, setAcademicYear] = useState("2024/2025")
   const [academicSemester, setAcademicSemester] = useState("Ganjil")
+  const [unreadMessages, setUnreadMessages] = useState(0)
 
   useEffect(() => {
     setCurrentTime(new Date())
@@ -60,6 +61,16 @@ export default function GuruDashboard() {
         })
         .catch(console.error)
         .finally(() => setLoadingSchedule(false))
+
+      // Fetch Unread Messages
+      fetch(`/api/tenant/messages?tenantId=${tenantId}&type=inbox`)
+        .then(r => r.json())
+        .then(d => {
+           if (Array.isArray(d)) {
+             setUnreadMessages(d.filter(m => !m.isRead).length)
+           }
+        })
+        .catch(console.error)
     }
 
     return () => clearInterval(timer)
@@ -74,7 +85,7 @@ export default function GuruDashboard() {
     { label: "Tulis Artikel", desc: "Bagikan tulisan ke web", icon: FileText, color: "text-white", bg: "bg-gradient-to-br from-violet-400 to-violet-600 shadow-md shadow-violet-500/30 border-0", href: "/panel-gtk/posts" },
     { label: "Bank Soal CBT", desc: "Kelola soal ujian online", icon: FileText, color: "text-white", bg: "bg-gradient-to-br from-pink-400 to-pink-600 shadow-md shadow-pink-500/30 border-0", href: "/panel-gtk/cbt/bank-soal", badge: "PRO" },
     { label: "Jadwal Ujian", desc: "Atur jadwal CBT", icon: CheckCircle2, color: "text-white", bg: "bg-gradient-to-br from-teal-400 to-teal-600 shadow-md shadow-teal-500/30 border-0", href: "/panel-gtk/cbt/jadwal", badge: "PRO" },
-    { label: "Pesan", desc: "Chat GTK & Admin", icon: MessageSquare, color: "text-white", bg: "bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-md shadow-cyan-500/30 border-0", href: "/panel-gtk/messages", badge: "PRO" },
+    { label: "Pesan", desc: "Chat GTK & Admin", icon: MessageSquare, color: "text-white", bg: "bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-md shadow-cyan-500/30 border-0", href: "/panel-gtk/messages", badge: unreadMessages > 0 ? unreadMessages.toString() : undefined, isNotif: true },
   ]
 
   return (
@@ -123,7 +134,10 @@ export default function GuruDashboard() {
                   <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20 relative", action.bg, action.color)}>
                      <action.icon className="h-6 w-6 relative z-10" />
                      {action.badge && (
-                       <div className="absolute -top-2 -right-2 z-20 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm shadow-amber-500/40 tracking-wider">
+                       <div className={cn(
+                         "absolute -top-2 -right-2 z-20 text-white font-bold px-1.5 py-0.5 rounded-full shadow-sm tracking-wider",
+                         (action as any).isNotif ? "bg-red-500 text-[10px] shadow-red-500/40 min-w-[20px] text-center" : "bg-gradient-to-r from-amber-400 to-amber-500 text-[9px] shadow-amber-500/40"
+                       )}>
                           {action.badge}
                        </div>
                      )}
