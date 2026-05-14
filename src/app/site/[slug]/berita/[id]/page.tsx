@@ -74,7 +74,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
             "dateModified": post.updatedAt || post.createdAt,
             "author": {
               "@type": "Person",
-              "name": post.author?.name || "Admin"
+              "name": (post.author && typeof post.author === 'object') ? post.author.name : (post.author || "Admin")
             },
             "publisher": {
               "@type": "Organization",
@@ -83,7 +83,8 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
                 "@type": "ImageObject",
                 "url": tenant.logo || "https://schoolpro.id/logo-schoolpro.png"
               }
-            }
+            },
+            "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.id}`
           })
         }}
       />

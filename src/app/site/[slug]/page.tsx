@@ -24,26 +24,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
   const title = tenant.seoTitle || tenant.name
-  const description = tenant.seoDesc || tenant.description || tenant.tagline || `Website ${tenant.name}`
-  const images = tenant.logo ? [tenant.logo] : []
+  const description = tenant.seoDesc || tenant.description || tenant.tagline || `Website resmi ${tenant.name}`
 
   return {
     title,
     description,
     manifest: `/api/tenant/manifest?slug=${slug}`,
-    openGraph: {
-      title,
-      description,
-      siteName: tenant.name,
-      images,
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images,
-    },
+    alternates: {
+      canonical: "/",
+    }
   }
 }
 

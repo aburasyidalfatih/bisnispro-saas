@@ -34,6 +34,36 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
 
   return (
     <div className="bg-background min-h-screen pb-16">
+      {/* JSON-LD for Event Rich Snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": event.title,
+            "startDate": event.startDate,
+            "endDate": event.endDate || event.startDate,
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "location": {
+              "@type": "Place",
+              "name": event.location || "Sekolah",
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "ID"
+              }
+            },
+            "description": event.description || `Agenda kegiatan ${event.title}`,
+            "organizer": {
+              "@type": "Organization",
+              "name": tenant.name,
+              "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}`
+            }
+          })
+        }}
+      />
+
       {/* ── HEADER SECTION ── */}
       <div className="bg-muted/30 pt-8 pb-12 border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

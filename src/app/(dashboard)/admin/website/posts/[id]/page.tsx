@@ -44,7 +44,7 @@ export default function PostFormPage() {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      type: typeQuery && ["BLOG_GURU", "EDITORIAL", "PENGUMUMAN"].includes(typeQuery) ? typeQuery : "BLOG_GURU",
+      type: (typeQuery && ["BLOG_GURU", "EDITORIAL", "PENGUMUMAN"].includes(typeQuery) ? typeQuery : "BLOG_GURU") as any,
       status: "PUBLISHED",
       featuredImage: "",
       categoryId: "",

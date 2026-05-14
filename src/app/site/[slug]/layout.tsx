@@ -14,8 +14,39 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
+
+  const headerList = await headers()
+  const protocol = headerList.get("x-forwarded-proto") || "https"
+  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
+  host = host.split(':')[0]
+  const domainUrl = `${protocol}://${host}`
+
   return {
+    metadataBase: new URL(domainUrl),
+    title: {
+      template: `%s | ${tenant.name}`,
+      default: tenant.seoTitle || tenant.name,
+    },
     icons: tenant.logo ? { icon: tenant.logo, shortcut: tenant.logo, apple: tenant.logo } : undefined,
+    openGraph: {
+      title: {
+        template: `%s | ${tenant.name}`,
+        default: tenant.seoTitle || tenant.name,
+      },
+      description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
+      siteName: tenant.name,
+      images: tenant.logo ? [{ url: tenant.logo, width: 800, height: 600, alt: tenant.name }] : [],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: {
+        template: `%s | ${tenant.name}`,
+        default: tenant.seoTitle || tenant.name,
+      },
+      description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
+      images: tenant.logo ? [tenant.logo] : [],
+    }
   }
 }
 
