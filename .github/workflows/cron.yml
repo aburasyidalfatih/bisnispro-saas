@@ -2,8 +2,8 @@ name: Scheduled Cron Jobs
 
 on:
   schedule:
-    # 01:00 UTC = 08:00 WIB (Waktu Indonesia Barat)
-    - cron: '0 1 * * *'
+    # 17:00 UTC = 00:00 WIB (Waktu Indonesia Barat)
+    - cron: '0 17 * * *'
   workflow_dispatch: # Memungkinkan eksekusi manual untuk testing
 
 jobs:
@@ -20,4 +20,9 @@ jobs:
         run: |
           curl -X GET "https://schoolpro.id/api/cron/auto-debet-spp" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
+
+      - name: Trigger Leaderboard Sync
+        run: |
+          curl -X GET "https://schoolpro.id/api/cron/leaderboard-sync?key=${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json"

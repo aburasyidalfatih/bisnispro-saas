@@ -64,7 +64,7 @@ export default function LeaderboardPage() {
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
-              <Trophy className="h-8 w-8 text-yellow-500" /> Papan Peringkat Nasional
+              <Trophy className="h-8 w-8 text-yellow-500" /> Papan Peringkat Nasional {new Date().getFullYear()}
             </h1>
           </div>
           <p className="text-muted-foreground">Kompetisi website sekolah paling aktif se-Indonesia.</p>

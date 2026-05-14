@@ -12,6 +12,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const currentYear = new Date().getFullYear()
+    const startOfYear = new Date(currentYear, 0, 1)
+
     // Ambil semua tenant yang aktif
     const tenants = await db.tenant.findMany({
       where: { isActive: true },
@@ -19,12 +22,11 @@ export async function GET(request: Request) {
         id: true,
         _count: {
           select: {
-            posts: { where: { status: "PUBLISHED", deletedAt: null } },
-            staff: true,
-            facilities: true,
-            events: true,
-            achievements: true,
-            gallery: true // Note: gallery is json in Tenant, but _count won't work on json directly
+            posts: { where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear } } },
+            staff: { where: { createdAt: { gte: startOfYear } } },
+            facilities: { where: { createdAt: { gte: startOfYear } } },
+            events: { where: { createdAt: { gte: startOfYear } } },
+            achievements: { where: { createdAt: { gte: startOfYear } } }
           }
         },
         gallery: true,
