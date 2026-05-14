@@ -240,6 +240,10 @@ export async function approveApplication(id: string) {
       },
     })
   } else {
+    // Fetch free plan from database to get the maxStudents quota
+    const freePlan = await db.subscriptionPlan.findUnique({ where: { slug: "free" } })
+    const quota = freePlan ? freePlan.maxStudents : 0
+
     // Buat Tenant Baru
     tenant = await db.tenant.create({
       data: {
@@ -251,6 +255,8 @@ export async function approveApplication(id: string) {
         logo: app.logo,
         isActive: true,
         plan: "free",
+        planId: freePlan ? freePlan.id : undefined,
+        studentQuota: quota,
         affiliateId: app.affiliateId,
         settings: {
           npsn: app.npsn,
