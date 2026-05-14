@@ -65,18 +65,27 @@ export const authOptions: NextAuthConfig = {
         }
         // -----------------------------------------
 
-        const email = (credentials.email as string).toLowerCase()
+        const email = (credentials.email as string).toLowerCase().trim()
+        const password = (credentials.password as string)
+
         const user = await db.user.findUnique({
           where: { email },
           include: { tenants: { include: { tenant: true } }, affiliateProfile: true },
         })
 
         if (!user || !user.isActive) {
+          console.error(`[AUTH DEBUG] Login failed: user not found or inactive. email=${email}, found=${!!user}, isActive=${user?.isActive}`)
           throw new CustomAuthError("Email atau password salah")
         }
 
-        const isValid = await bcrypt.compare(credentials.password as string, user.password)
+        if (!user.password || user.password.length === 0) {
+          console.error(`[AUTH DEBUG] Login failed: empty password in DB. email=${email}, userId=${user.id}`)
+          throw new CustomAuthError("Email atau password salah")
+        }
+
+        const isValid = await bcrypt.compare(password, user.password)
         if (!isValid) {
+          console.error(`[AUTH DEBUG] Login failed: bcrypt.compare returned false. email=${email}, userId=${user.id}, passwordInputLength=${password.length}, hashPrefix=${user.password.substring(0, 7)}, hashLength=${user.password.length}`)
           throw new CustomAuthError("Email atau password salah")
         }
 
