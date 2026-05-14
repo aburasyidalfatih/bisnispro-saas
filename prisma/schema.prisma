@@ -100,6 +100,7 @@ model Tenant {
   cbtExams             CbtExam[]
   cbtQuestionBanks     CbtQuestionBank[]
   aiUsageLogs          AiUsageLog[]
+  tenantScore          TenantScore?
 
   @@index([isActive])
   @@index([plan])
@@ -1808,4 +1809,22 @@ model AiUsageLog {
   @@index([userId])
   @@index([createdAt])
   @@map("ai_usage_logs")
+}
+
+// Leaderboard Tracking Score
+model TenantScore {
+  id             String   @id @default(cuid())
+  tenantId       String   @unique
+  contentScore   Int      @default(0) // Posts, Staff, Facilities, etc.
+  trafficScore   Int      @default(0) // PageViews or Unique Visitors
+  activityScore  Int      @default(0) // Admin logins, etc.
+  totalScore     Int      @default(0)
+  rank           Int      @default(0)
+  lastCalculated DateTime @default(now())
+  
+  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([totalScore(sort: Desc)])
+  @@index([rank])
+  @@map("tenant_scores")
 }

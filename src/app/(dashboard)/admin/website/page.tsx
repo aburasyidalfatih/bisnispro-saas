@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import {
   Globe, ExternalLink, Users, FileText, Image, Phone,
-  Briefcase, Info, LayoutTemplate, ArrowRight, Eye,
+  Briefcase, Info, LayoutTemplate, ArrowRight, Eye, Trophy,
   CheckCircle, AlertCircle, ShieldCheck, ShieldOff, Download,
   Building2, Award, GraduationCap, Activity, Megaphone, BookOpen,
   BarChart3, MessageSquare, SlidersHorizontal, Handshake, CalendarDays
@@ -244,6 +244,11 @@ export default function WebsiteOverviewPage() {
           <p className="text-muted-foreground mt-1">Ringkasan dan status konten website Anda.</p>
         </div>
         <div className="flex items-center gap-2">
+          <Link href="/admin/website/leaderboard">
+            <Button variant="outline" className="gap-2 border-yellow-500 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-500 dark:bg-yellow-500/10">
+              <Trophy className="h-4 w-4" /> Leaderboard Nasional
+            </Button>
+          </Link>
           {websiteUrl && (
             <a href={websiteUrl} target="_blank" rel="noopener"
               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">

@@ -71,7 +71,8 @@ export async function GET(req: Request) {
             where: { isRead: false }
           },
         }
-      }
+      },
+      tenantScore: true
     },
   })
 
