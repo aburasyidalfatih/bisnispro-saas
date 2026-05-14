@@ -21,8 +21,13 @@ interface Post {
   category?: { name: string } | null
 }
 
+import { useSearchParams } from "next/navigation"
+
 export default function PostsPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
+  const searchParams = useSearchParams()
+  const typeFilter = searchParams.get("type") || ""
+  
   const [loading, setLoading] = useState(true)
   const [posts, setPosts] = useState<Post[]>([])
 
@@ -31,7 +36,8 @@ export default function PostsPage() {
   const loadPosts = () => {
     if (!tenantId) return
     setLoading(true)
-    fetch(`/api/tenant/posts?tenantId=${tenantId}`)
+    const url = `/api/tenant/posts?tenantId=${tenantId}${typeFilter ? `&type=${typeFilter}` : ""}`
+    fetch(url)
       .then(r => r.json())
       .then(d => {
         setPosts(Array.isArray(d) ? d : [])
@@ -44,7 +50,7 @@ export default function PostsPage() {
     if (!isLoadingTenant && tenantId) {
       loadPosts()
     }
-  }, [tenantId, isLoadingTenant])
+  }, [tenantId, isLoadingTenant, typeFilter])
 
   const deletePost = async (id: string) => {
     if (!tenantId) return
@@ -69,20 +75,20 @@ export default function PostsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Artikel & Pos</h1>
-          <p className="text-muted-foreground mt-1">Kelola pos editorial, blog guru, dan pengumuman.</p>
+          <h1 className="text-2xl font-bold tracking-tight">{typeFilter === "PENGUMUMAN" ? "Pengumuman" : "Artikel & Pos"}</h1>
+          <p className="text-muted-foreground mt-1">{typeFilter === "PENGUMUMAN" ? "Kelola papan pengumuman sekolah untuk siswa dan publik." : "Kelola pos editorial, blog guru, dan pengumuman."}</p>
         </div>
         <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
-          <Link href="/admin/website/posts/new">
-            <Plus className="h-4 w-4" /> Tulis Pos Baru
+          <Link href={`/admin/website/posts/new${typeFilter ? `?type=${typeFilter}` : ""}`}>
+            <Plus className="h-4 w-4" /> Tulis {typeFilter === "PENGUMUMAN" ? "Pengumuman" : "Pos"} Baru
           </Link>
         </Button>
       </div>
 
       <Card className="glass border-0">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Daftar Artikel</CardTitle>
-          <CardDescription className="text-xs">Daftar semua tulisan yang ada di website sekolah.</CardDescription>
+          <CardTitle className="text-base">Daftar {typeFilter === "PENGUMUMAN" ? "Pengumuman" : "Artikel"}</CardTitle>
+          <CardDescription className="text-xs">Daftar semua {typeFilter === "PENGUMUMAN" ? "pengumuman" : "tulisan"} yang ada di website sekolah.</CardDescription>
         </CardHeader>
         <CardContent>
           {posts.length === 0 ? (

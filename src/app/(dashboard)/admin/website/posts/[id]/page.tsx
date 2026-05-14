@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useRouter, useParams, useSearchParams } from "next/navigation"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -23,6 +23,8 @@ type FormData = z.infer<typeof postSchema>
 export default function PostFormPage() {
   const router = useRouter()
   const params = useParams()
+  const searchParams = useSearchParams()
+  const typeQuery = searchParams.get("type")
   const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
@@ -42,7 +44,7 @@ export default function PostFormPage() {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      type: "BLOG_GURU",
+      type: typeQuery && ["BLOG_GURU", "EDITORIAL", "PENGUMUMAN", "PENGUMUMAN_GTK"].includes(typeQuery) ? typeQuery : "BLOG_GURU",
       status: "PUBLISHED",
       featuredImage: "",
       categoryId: "",
@@ -264,7 +266,8 @@ export default function PostFormPage() {
                 >
                   <option value="BLOG_GURU">Standar (Blog Guru)</option>
                   <option value="EDITORIAL">Editorial Khusus</option>
-                  <option value="PENGUMUMAN">Pengumuman Terbatas</option>
+                  <option value="PENGUMUMAN">Pengumuman Publik (Web)</option>
+                  <option value="PENGUMUMAN_GTK">Pengumuman Internal (GTK)</option>
                 </select>
                 {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
               </div>
