@@ -72,6 +72,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: e.message }, { status: 403 })
   }
 
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
+  if (tenant?.plan === "free") {
+    const studentCount = await db.student.count({ where: { tenantId } })
+    if (studentCount >= 1) {
+      return NextResponse.json({ error: "Paket Free maksimal 1 data siswa untuk uji coba. Silakan upgrade paket." }, { status: 403 })
+    }
+  }
+
   const student = await db.student.create({
     data: {
       tenantId, name, nis: nis || undefined, nisn: nisn || undefined,
