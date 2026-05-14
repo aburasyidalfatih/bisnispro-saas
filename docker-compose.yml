@@ -8,6 +8,7 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./nginx/schoolpro.id.conf:/etc/nginx/conf.d/schoolpro.id.conf:ro
       - ./nginx/schoolpro.my.id.conf:/etc/nginx/conf.d/schoolpro.my.id.conf:ro
+      - ./nginx/analytics.schoolpro.my.id.conf:/etc/nginx/conf.d/analytics.schoolpro.my.id.conf:ro
       - ./nginx/certs:/etc/nginx/certs:ro
     depends_on:
       - app
