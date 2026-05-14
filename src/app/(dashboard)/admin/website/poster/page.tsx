@@ -130,6 +130,7 @@ export default function WebsitePosterPage() {
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
           body * { visibility: hidden; }
+          html, body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           .poster-print-area, .poster-print-area * { visibility: visible; }
           .poster-print-area { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
         }
