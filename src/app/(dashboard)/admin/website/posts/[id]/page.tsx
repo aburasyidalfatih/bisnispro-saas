@@ -44,7 +44,7 @@ export default function PostFormPage() {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      type: typeQuery && ["BLOG_GURU", "EDITORIAL", "PENGUMUMAN", "PENGUMUMAN_GTK"].includes(typeQuery) ? typeQuery : "BLOG_GURU",
+      type: typeQuery && ["BLOG_GURU", "EDITORIAL", "PENGUMUMAN"].includes(typeQuery) ? typeQuery : "BLOG_GURU",
       status: "PUBLISHED",
       featuredImage: "",
       categoryId: "",
@@ -267,7 +267,6 @@ export default function PostFormPage() {
                   <option value="BLOG_GURU">Standar (Blog Guru)</option>
                   <option value="EDITORIAL">Editorial Khusus</option>
                   <option value="PENGUMUMAN">Pengumuman Publik (Web)</option>
-                  <option value="PENGUMUMAN_GTK">Pengumuman Internal (GTK)</option>
                 </select>
                 {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
               </div>
