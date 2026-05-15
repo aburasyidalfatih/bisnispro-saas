@@ -197,6 +197,13 @@ export const authOptions: NextAuthConfig = {
 
         if (!existing) {
           // --- NEW USER: provision based on context ---
+          if (targetTenantSlug) {
+            // STRICT MODE: Jika user belum ada sama sekali, tolak!
+            return "/login?error=" + encodeURIComponent("Email Anda belum terdaftar di sistem. Silakan hubungi Admin sekolah atau daftar terlebih dahulu.")
+          }
+
+          // Main domain: create Affiliate profile
+          let newUserId = ""
           await db.$transaction(async (tx) => {
             const newUser = await tx.user.create({
               data: {
@@ -208,21 +215,10 @@ export const authOptions: NextAuthConfig = {
               },
             })
 
-            if (targetTenantSlug) {
-              // Subdomain: enroll as tenant member
-              const tenant = await tx.tenant.findUnique({ where: { slug: targetTenantSlug } })
-              if (tenant) {
-                await tx.tenantUser.create({
-                  data: { tenantId: tenant.id, userId: newUser.id, role: "orangtua" },
-                })
-              }
-            } else {
-              // Main domain: create Affiliate profile (because this must be isAffiliateFlow)
-              const referralCode = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-              await tx.affiliateProfile.create({
-                data: { userId: newUser.id, referralCode },
-              })
-            }
+            const referralCode = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+            await tx.affiliateProfile.create({
+              data: { userId: newUser.id, referralCode },
+            })
 
             await tx.notificationSetting.createMany({
               data: [
@@ -232,8 +228,9 @@ export const authOptions: NextAuthConfig = {
               ],
             })
 
-            user.id = newUser.id
+            newUserId = newUser.id
           })
+          user.id = newUserId
         } else {
           // --- EXISTING USER ---
 
@@ -244,17 +241,17 @@ export const authOptions: NextAuthConfig = {
           }
 
           if (targetTenantSlug) {
-            // Subdomain: auto-enroll if not already a member
+            // STRICT MODE: Subdomain - reject if not already a member
             const tenant = await db.tenant.findUnique({ where: { slug: targetTenantSlug } })
             if (tenant) {
               const alreadyMember = await db.tenantUser.findUnique({
                 where: { tenantId_userId: { tenantId: tenant.id, userId: existing.id } },
               })
               if (!alreadyMember) {
-                await db.tenantUser.create({
-                  data: { tenantId: tenant.id, userId: existing.id, role: "orangtua" },
-                })
+                return "/login?error=" + encodeURIComponent("Akses ditolak. Email Anda tidak terdaftar sebagai anggota di sekolah ini.")
               }
+            } else {
+              return "/login?error=" + encodeURIComponent("Sekolah tidak ditemukan.")
             }
           } else {
             // Main domain: ensure Affiliate profile exists (non-super-admin only)
