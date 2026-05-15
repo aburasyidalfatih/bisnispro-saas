@@ -45,7 +45,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-muted/20 font-sans flex flex-col">
       {/* Top Navigation - Desktop Only */}
       <header className="hidden lg:block sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/panel-gtk" className="flex items-center gap-2">
               <div className={cn(
