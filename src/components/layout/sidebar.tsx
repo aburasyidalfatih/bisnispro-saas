@@ -222,7 +222,6 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             { label: "Data Orang Tua", href: `${basePath}/users/orangtua`, icon: Users },
             { label: "Manajemen Kelas", href: `${basePath}/students/classrooms`, icon: BookOpen },
             { label: "Mata Pelajaran", href: `${basePath}/subjects`, icon: BookOpen },
-            { label: "Ekspor/Impor Data", href: `${basePath}/users/guru/import`, icon: Download },
           ],
         },
       ],
