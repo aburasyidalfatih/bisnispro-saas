@@ -37,7 +37,7 @@ export async function createSubject(data: { tenantId: string, name: string, code
   if (tenant?.plan === "free") {
     const subjectCount = await tenantDb.subject.count()
     if (subjectCount >= 1) {
-      throw new Error("Kuota maksimal 1 mata pelajaran untuk paket Free. Silakan upgrade paket untuk menambah.")
+      return { error: "Kuota maksimal 1 mata pelajaran untuk paket Free. Silakan upgrade paket untuk menambah." }
     }
   }
 

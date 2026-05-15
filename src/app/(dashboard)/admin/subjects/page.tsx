@@ -53,13 +53,20 @@ export default function SubjectsPage() {
     if (!form.name.trim() || !tenant) return
     setSaving(true)
     try {
+      let result;
       if (editing) {
-        await updateSubject(editing.id, { tenantId: tenant.id, ...form })
-        toast({ title: "Berhasil diperbarui" })
+        result = await updateSubject(editing.id, { tenantId: tenant.id, ...form })
       } else {
-        await createSubject({ tenantId: tenant.id, ...form })
-        toast({ title: "Mata pelajaran ditambahkan" })
+        result = await createSubject({ tenantId: tenant.id, ...form })
       }
+
+      if (result?.error) {
+        toast({ title: "Gagal", description: result.error, variant: "destructive" })
+        setSaving(false)
+        return
+      }
+
+      toast({ title: editing ? "Berhasil diperbarui" : "Mata pelajaran ditambahkan" })
       await load()
       resetForm()
     } catch (e: any) {
