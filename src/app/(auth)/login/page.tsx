@@ -18,32 +18,55 @@ export default async function LoginPage() {
   if (isMainDomain) {
     try {
       const settings = await db.platformSetting.findMany({
-        where: { key: { in: ["app_logo", "google_auth_enabled", "turnstile_site_key"] } }
+        where: { key: { in: ["app_logo", "GOOGLE_CLIENT_ID", "TURNSTILE_SITE_KEY", "TURNSTILE_ENABLED"] } }
       })
       
       const logoSetting = settings.find(s => s.key === "app_logo")
       if (logoSetting && logoSetting.value) platformLogo = logoSetting.value
       
-      const googleSetting = settings.find(s => s.key === "google_auth_enabled")
-      if (googleSetting && googleSetting.value === "true") googleAuthEnabled = true
+      const googleSetting = settings.find(s => s.key === "GOOGLE_CLIENT_ID")
+      if (googleSetting && googleSetting.value) googleAuthEnabled = true
       
-      const turnstileSetting = settings.find(s => s.key === "turnstile_site_key")
-      if (turnstileSetting && turnstileSetting.value) turnstileSiteKey = turnstileSetting.value
+      const turnstileEnabledSetting = settings.find(s => s.key === "TURNSTILE_ENABLED")
+      const turnstileSiteKeySetting = settings.find(s => s.key === "TURNSTILE_SITE_KEY")
+      if (turnstileEnabledSetting?.value === "true" && turnstileSiteKeySetting?.value) {
+        turnstileSiteKey = turnstileSiteKeySetting.value
+      }
     } catch (e) {
       // ignore db errors during build/static generation
+    }
+
+    if (!googleAuthEnabled && process.env.GOOGLE_CLIENT_ID) {
+      googleAuthEnabled = true
     }
   } else {
     const rootDomain = getRootDomain(host)
     const slug = host.replace(`.${rootDomain}`, "").split('.')[0]
     const tenant = await getPublicTenantBySlug(slug)
     
+    // Fetch tenant auth separately to avoid caching secrets in Redis
+    const tenantAuth = await db.tenant.findUnique({
+      where: { slug },
+      select: { googleClientId: true, googleClientSecret: true }
+    })
+    
+    if (tenantAuth && tenantAuth.googleClientId && tenantAuth.googleClientSecret) {
+      googleAuthEnabled = true
+    }
+
     if (tenant) {
       tenantNameDisplay = tenant.name
       platformLogo = tenant.logo || ""
-      if (tenant.googleAuthEnabled) googleAuthEnabled = true
-      if (tenant.turnstileSiteKey) turnstileSiteKey = tenant.turnstileSiteKey
     } else {
       platformLogo = ""
+    }
+
+    // Fetch global turnstile setting for tenants
+    const turnstileSettings = await db.platformSetting.findMany({
+      where: { key: { in: ["TURNSTILE_SITE_KEY", "TURNSTILE_ENABLED"] } }
+    })
+    if (turnstileSettings.find(s => s.key === "TURNSTILE_ENABLED")?.value === "true") {
+      turnstileSiteKey = process.env.TURNSTILE_SITE_KEY || turnstileSettings.find(s => s.key === "TURNSTILE_SITE_KEY")?.value || null
     }
   }
 

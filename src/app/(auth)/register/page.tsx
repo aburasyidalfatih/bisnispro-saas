@@ -18,27 +18,39 @@ export default async function RegisterPage() {
   if (isMainDomain) {
     try {
       const settings = await db.platformSetting.findMany({
-        where: { key: { in: ["app_logo", "google_auth_enabled"] } }
+        where: { key: { in: ["app_logo", "GOOGLE_CLIENT_ID"] } }
       })
       
       const logoSetting = settings.find(s => s.key === "app_logo")
       if (logoSetting && logoSetting.value) platformLogo = logoSetting.value
       
-      const googleSetting = settings.find(s => s.key === "google_auth_enabled")
-      if (googleSetting && googleSetting.value === "true") googleAuthEnabled = true
+      const googleSetting = settings.find(s => s.key === "GOOGLE_CLIENT_ID")
+      if (googleSetting && googleSetting.value) googleAuthEnabled = true
       
     } catch (e) {
       // ignore
+    }
+
+    if (!googleAuthEnabled && process.env.GOOGLE_CLIENT_ID) {
+      googleAuthEnabled = true
     }
   } else {
     const rootDomain = getRootDomain(host)
     tenantSlug = host.replace(`.${rootDomain}`, "").split('.')[0]
     const tenant = await getPublicTenantBySlug(tenantSlug)
     
+    const tenantAuth = await db.tenant.findUnique({
+      where: { slug: tenantSlug },
+      select: { googleClientId: true, googleClientSecret: true }
+    })
+    
+    if (tenantAuth && tenantAuth.googleClientId && tenantAuth.googleClientSecret) {
+      googleAuthEnabled = true
+    }
+
     if (tenant) {
       tenantNameDisplay = tenant.name
       platformLogo = tenant.logo || ""
-      if (tenant.googleAuthEnabled) googleAuthEnabled = true
     } else {
       platformLogo = ""
     }
