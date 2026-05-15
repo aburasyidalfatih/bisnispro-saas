@@ -62,7 +62,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { tenantId, name, nis, nisn, gender, birthPlace, birthDate, address,
+  let { tenantId, name, nis, nisn, gender, birthPlace, birthDate, address,
     phone, email, fatherName, motherName, guardianName, classroomId, password } = body
 
   if (!tenantId || !name) return NextResponse.json({ error: "tenantId dan name wajib" }, { status: 400 })
