@@ -193,6 +193,7 @@ model Invitation {
   @@index([tenantId])
   @@index([expiresAt])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("invitations")
 }
 
@@ -228,6 +229,7 @@ model Notification {
   @@index([userId, isRead])
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("notifications")
 }
 
@@ -256,7 +258,7 @@ model Payment {
   metadata            Json?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
-  deletedAt           DateTime?            // Soft delete
+  deletedAt           DateTime? // Soft delete
   planId              String?
   affiliateCommission AffiliateCommission?
   tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -327,6 +329,7 @@ model FileUpload {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("file_uploads")
 }
 
@@ -346,6 +349,7 @@ model ContactSubmission {
   @@index([tenantId])
   @@index([tenantId, isRead])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("contact_submissions")
 }
 
@@ -412,6 +416,7 @@ model Post {
   @@index([type])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("posts")
 }
 
@@ -429,6 +434,7 @@ model Category {
   @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("categories")
 }
 
@@ -451,6 +457,7 @@ model Document {
   @@index([uploaderId])
   @@index([type])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("documents")
 }
 
@@ -470,6 +477,7 @@ model Event {
   @@index([tenantId])
   @@index([startDate])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("events")
 }
 
@@ -487,6 +495,7 @@ model Achievement {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("achievements")
 }
 
@@ -540,6 +549,7 @@ model Facility {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("facilities")
 }
 
@@ -558,6 +568,7 @@ model Extracurricular {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("extracurriculars")
 }
 
@@ -575,6 +586,7 @@ model Program {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("programs")
 }
 
@@ -596,6 +608,7 @@ model Alumni {
   @@index([tenantId])
   @@index([userId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("alumni")
 }
 
@@ -632,6 +645,7 @@ model Staff {
   @@index([tenantId])
   @@index([userId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("staff")
 }
 
@@ -652,6 +666,7 @@ model Popup {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("popups")
 }
 
@@ -671,6 +686,7 @@ model Slider {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("sliders")
 }
 
@@ -715,6 +731,7 @@ model Subscription {
   @@index([planId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("subscriptions")
 }
 
@@ -735,6 +752,7 @@ model PeriodePpdb {
   @@index([tenantId])
   @@index([isActive])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("periode_ppdbs")
 }
 
@@ -779,6 +797,7 @@ model PendaftarPpdb {
   @@index([createdAt])
   @@index([tenantId, status])
   @@index([tenantId, periodeId])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("pendaftar_ppdbs")
 }
 
@@ -846,6 +865,7 @@ model Rekening {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("rekenings")
 }
 
@@ -892,6 +912,7 @@ model Student {
   @@index([userId])
   @@index([isActive])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("students")
 }
 
@@ -934,6 +955,7 @@ model AffiliateCommission {
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("affiliate_commissions")
 }
 
@@ -972,6 +994,7 @@ model WaSession {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("wa_sessions")
 }
 
@@ -996,6 +1019,7 @@ model Classroom {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("classrooms")
 }
 
@@ -1032,6 +1056,7 @@ model WaMessage {
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("wa_messages")
 }
 
@@ -1056,6 +1081,7 @@ model WalletAccount {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("wallet_accounts")
 }
 
@@ -1080,6 +1106,7 @@ model WalletTransaction {
   @@index([tenantId])
   @@index([type])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("wallet_transactions")
 }
 
@@ -1101,6 +1128,7 @@ model Cashflow {
   @@index([type])
   @@index([category])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("cashflows")
 }
 
@@ -1123,6 +1151,7 @@ model InternalMessage {
   @@index([senderId])
   @@index([receiverId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("internal_messages")
 }
 
@@ -1148,6 +1177,7 @@ model BillingType {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("billing_types")
 }
 
@@ -1186,6 +1216,7 @@ model Invoice {
   @@index([tenantId, status])
   @@index([tenantId, dueDate])
   @@index([tenantId, studentId])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("invoices")
 }
 
@@ -1213,6 +1244,7 @@ model InvoicePayment {
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("invoice_payments")
 }
 
@@ -1233,6 +1265,7 @@ model Installment {
   @@index([invoiceId])
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("installments")
 }
 
@@ -1261,6 +1294,7 @@ model CanteenMerchant {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("canteen_merchants")
 }
 
@@ -1285,6 +1319,7 @@ model CanteenProduct {
   @@index([merchantId])
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("canteen_products")
 }
 
@@ -1308,6 +1343,7 @@ model CanteenOrder {
   @@index([merchantId])
   @@index([studentId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("canteen_orders")
 }
 
@@ -1344,6 +1380,7 @@ model CanteenWithdrawal {
   @@index([tenantId])
   @@index([merchantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("canteen_withdrawals")
 }
 
@@ -1369,23 +1406,24 @@ model AttendanceSession {
   @@index([tenantId])
   @@index([date])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("attendance_sessions")
 }
 
 // Rekaman absensi per-siswa
 model AttendanceRecord {
-  id        String    @id @default(cuid())
-  sessionId String
-  tenantId  String
-  studentId String
+  id           String    @id @default(cuid())
+  sessionId    String
+  tenantId     String
+  studentId    String
   academicYear String? // Untuk partitioning
-  status    String // HADIR, IZIN, SAKIT, ALPHA
-  notes     String?
-  checkinAt DateTime?
-  proofUrl  String? // Foto/surat keterangan
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime? // Soft delete
+  status       String // HADIR, IZIN, SAKIT, ALPHA
+  notes        String?
+  checkinAt    DateTime?
+  proofUrl     String? // Foto/surat keterangan
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime? // Soft delete
 
   session AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   student Student           @relation(fields: [studentId], references: [id])
@@ -1424,6 +1462,7 @@ model StaffAttendance {
   @@index([tenantId])
   @@index([staffId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("staff_attendances")
 }
 
@@ -1450,6 +1489,7 @@ model AttendancePermit {
   @@index([tenantId])
   @@index([studentId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("attendance_permits")
 }
 
@@ -1480,6 +1520,7 @@ model DonationCampaign {
   @@index([tenantId])
   @@index([isActive])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("donation_campaigns")
 }
 
@@ -1506,6 +1547,7 @@ model Donation {
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("donations")
 }
 
@@ -1532,6 +1574,7 @@ model Subject {
   @@unique([tenantId, code])
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("subjects")
 }
 
@@ -1557,6 +1600,7 @@ model Schedule {
   @@index([classroomId])
   @@index([staffId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("schedules")
 }
 
@@ -1587,6 +1631,7 @@ model Grade {
   @@index([studentId])
   @@index([classroomId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("grades")
 }
 
@@ -1613,6 +1658,7 @@ model TeacherJournal {
   @@index([tenantId])
   @@index([staffId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("teacher_journals")
 }
 
@@ -1653,6 +1699,7 @@ model DisciplineRecord {
   @@index([tenantId])
   @@index([studentId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("discipline_records")
 }
 
@@ -1670,6 +1717,7 @@ model Partnership {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("partnerships")
 }
 
@@ -1693,6 +1741,7 @@ model CbtQuestionBank {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("cbt_question_banks")
 }
 
@@ -1744,6 +1793,7 @@ model CbtExam {
   @@index([authorId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("cbt_exams")
 }
 
@@ -1803,12 +1853,13 @@ model AiUsageLog {
   tokens    Int
   createdAt DateTime @default(now())
 
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([userId])
   @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("ai_usage_logs")
 }
 
@@ -1822,8 +1873,8 @@ model TenantScore {
   totalScore     Int      @default(0)
   rank           Int      @default(0)
   lastCalculated DateTime @default(now())
-  
-  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([totalScore(sort: Desc)])
   @@index([rank])

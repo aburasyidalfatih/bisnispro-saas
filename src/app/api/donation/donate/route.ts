@@ -42,9 +42,9 @@ export async function POST(req: Request) {
     if (wallet.balance < amount) return NextResponse.json({ error: "Saldo wallet tidak mencukupi" }, { status: 400 })
 
     await db.$transaction(async (tx) => {
-      const newBalance = wallet.balance - amount
-
-      await tx.walletAccount.update({ where: { id: wallet.id }, data: { balance: newBalance } })
+      // Potong saldo secara atomic
+      const updatedWallet = await tx.walletAccount.update({ where: { id: wallet.id }, data: { balance: { decrement: amount } } })
+      const newBalance = updatedWallet.balance
 
       await tx.walletTransaction.create({
         data: {

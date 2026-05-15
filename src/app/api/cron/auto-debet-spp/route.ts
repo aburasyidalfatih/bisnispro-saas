@@ -63,13 +63,12 @@ export async function GET(req: Request) {
 
       try {
         await db.$transaction(async (tx) => {
-          const newBalance = wallet.balance - amountToPay
-
-          // 1. Debet Wallet
-          await tx.walletAccount.update({
+          // 1. Debet Wallet secara atomic
+          const updatedWallet = await tx.walletAccount.update({
             where: { id: wallet.id },
-            data: { balance: newBalance },
+            data: { balance: { decrement: amountToPay } },
           })
+          const newBalance = updatedWallet.balance
 
           // 2. Catat WalletTransaction
           await tx.walletTransaction.create({

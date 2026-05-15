@@ -49,11 +49,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       // Perform atomic transaction
       await db.$transaction(async (tx) => {
         // Deduct balance
-        const newBalance = wallet.balance - invoice.amountDue
-        await tx.walletAccount.update({
+        // Gunakan atomic decrement
+        const updatedWallet = await tx.walletAccount.update({
           where: { id: wallet.id },
-          data: { balance: newBalance }
+          data: { balance: { decrement: invoice.amountDue } }
         })
+        const newBalance = updatedWallet.balance
 
         // Add Transaction record
         await tx.walletTransaction.create({

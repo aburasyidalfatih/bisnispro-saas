@@ -67,6 +67,7 @@ export default async function AdminWalletPage() {
       </div>
 
       <WalletManager 
+        tenantId={tenantId}
         wallets={wallets} 
         pendingTopups={pendingTopups} 
         transactions={transactions} 
