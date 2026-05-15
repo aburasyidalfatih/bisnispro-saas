@@ -116,12 +116,12 @@ export default function RegisterPage() {
               )
             )}
             <h1 className="text-2xl font-bold tracking-tight">
-              {isMainDomain ? "Buat akun baru" : "Buat akun untuk wali / wali calon siswa"}
+              {isMainDomain ? "Buat Akun Baru" : "Buat Akun"}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
               {isMainDomain 
                 ? "Daftar dan buat lembaga Anda" 
-                : `Daftar ke portal sistem informasi ${tenantNameDisplay || 'sekolah'}`}
+                : `Formulir ini khusus untuk membuat akun wali / calon wali siswa ${tenantNameDisplay || 'sekolah'}`}
             </p>
           </div>
 
