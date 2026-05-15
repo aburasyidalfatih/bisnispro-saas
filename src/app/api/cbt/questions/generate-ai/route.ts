@@ -86,7 +86,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid question type" }, { status: 400 })
     }
 
-    const prompt = `Buatkan ${count} soal tentang topik: "${topic}".
+    const prompt = `Buatkan ${count} soal berdasarkan kisi-kisi materi berikut: "${topic}".
 Tingkat kesulitan: ${difficulty}.
 Jenjang Pendidikan target: ${educationLevel || "Sekolah Menengah"}. Sesuaikan gaya bahasa dan kompleksitas materi dengan tingkat ini.
 

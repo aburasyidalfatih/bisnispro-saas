@@ -118,7 +118,7 @@ export default function KelolaSoalPage() {
   }
 
   const handleGenerateAi = async () => {
-    if (!aiPrompt.topic.trim()) return toast({ title: "Topik materi tidak boleh kosong", variant: "destructive" })
+    if (!aiPrompt.topic.trim()) return toast({ title: "Kisi-kisi soal tidak boleh kosong", variant: "destructive" })
     setIsGenerating(true)
     try {
       const res = await fetch("/api/cbt/questions/generate-ai", {
@@ -285,13 +285,13 @@ export default function KelolaSoalPage() {
               <Sparkles className="h-5 w-5 text-emerald-500" />
               Generate Soal dengan AI
             </DialogTitle>
-            <DialogDescription>AI akan membuatkan soal pilihan ganda berdasarkan topik yang Anda tentukan secara otomatis.</DialogDescription>
+            <DialogDescription>AI akan membuatkan soal pilihan ganda berdasarkan kisi-kisi yang Anda tentukan secara otomatis.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Topik Materi <span className="text-red-500">*</span></Label>
+              <Label>Kisi-kisi Soal <span className="text-red-500">*</span></Label>
               <Textarea 
-                placeholder="Contoh: Sistem pencernaan manusia dan enzim yang terlibat" 
+                placeholder="Contoh: Peserta didik dapat mengidentifikasi letak dan fungsi enzim amilase pada organ pencernaan manusia." 
                 className="resize-none" 
                 value={aiPrompt.topic} 
                 onChange={(e) => setAiPrompt({ ...aiPrompt, topic: e.target.value })} 
