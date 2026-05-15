@@ -30,22 +30,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
 
       {/* ── ACADEMIC PROGRAMS ── */}
       <section id="academic" className="py-12 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div className="max-w-2xl">
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Program Unggulan</h2>
-            <p className="text-muted-foreground text-lg">
-              Fokus utama kami adalah memberikan pendidikan yang relevan dengan kebutuhan zaman tanpa meninggalkan nilai-nilai karakter.
-            </p>
-          </div>
-          <div className="bg-primary/5 px-6 py-3 rounded-2xl border border-primary/10 flex items-center gap-3">
-             <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                {programs.length}
-             </div>
-             <div className="text-xs font-bold text-primary uppercase tracking-widest leading-tight">
-                Program<br/>Akademik
-             </div>
-          </div>
-        </div>
+
 
         {programs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
