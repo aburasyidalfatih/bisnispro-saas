@@ -412,7 +412,7 @@ export default function WebsiteOverviewPage() {
                 <CardDescription className="text-xs">Tampil di footer dan halaman kontak website</CardDescription>
               </div>
             </div>
-            <Link href={`${base}/contact`} className="text-xs text-primary hover:underline flex items-center gap-1">
+            <Link href={`${base}/about`} className="text-xs text-primary hover:underline flex items-center gap-1">
               Edit <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
