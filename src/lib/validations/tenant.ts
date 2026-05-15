@@ -18,6 +18,14 @@ export const addUserSchema = z.object({
   password: z.string().min(8, "Password minimal 8 karakter").optional(),
 })
 
+export const editUserSchema = z.object({
+  tenantUserId: cuidString,
+  name: z.string().min(2, "Nama minimal 2 karakter").max(100),
+  email: z.string().email("Email tidak valid"),
+  phone: z.string().nullable().optional(),
+  password: z.string().min(8, "Password minimal 8 karakter").optional().or(z.literal('')),
+})
+
 export const deleteUserSchema = z.object({
   tenantUserId: cuidString,
 })

@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Clock, Wallet, Award, FileText, QrCode, MonitorSmartphone, Bell, ChevronRight, BookOpen, ChevronDown } from "lucide-react"
+import { Calendar, Clock, Wallet, Award, FileText, QrCode, MonitorSmartphone, Bell, ChevronRight, BookOpen, ChevronDown, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { DashboardSkeleton } from "@/components/shared/dashboard-skeleton"
 
@@ -11,6 +11,15 @@ export default function PanelSiswaDashboard() {
   const { data: session } = useSession()
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [showBalance, setShowBalance] = useState(true)
+
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 11) return "Selamat Pagi,"
+    if (hour < 15) return "Selamat Siang,"
+    if (hour < 18) return "Selamat Sore,"
+    return "Selamat Malam,"
+  }
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -36,7 +45,7 @@ export default function PanelSiswaDashboard() {
     { icon: Wallet, label: "Tabungan", color: "text-indigo-500", bg: "bg-indigo-50", border: "border-indigo-100", href: "/siswa/wallet" },
     { icon: FileText, label: "Tugas", color: "text-pink-500", bg: "bg-pink-50", border: "border-pink-100", href: "/siswa/tugas" },
     { icon: QrCode, label: "E-KTM", color: "text-purple-500", bg: "bg-purple-50", border: "border-purple-100", href: "/siswa/kartu" },
-    { icon: BookOpen, label: "Materi", color: "text-cyan-500", bg: "bg-cyan-50", border: "border-cyan-100", href: "/siswa/jadwal" },
+    { icon: BookOpen, label: "Materi", color: "text-cyan-500", bg: "bg-cyan-50", border: "border-cyan-100", href: "/siswa/materi" },
   ]
 
   const jadwalEsok = data?.tomorrowSchedules || []
@@ -58,17 +67,22 @@ export default function PanelSiswaDashboard() {
         {/* Identitas */}
         <div className="relative flex justify-between items-start z-10 mb-6">
           <div>
-            <p className="text-sm text-indigo-100 font-medium mb-1">Selamat datang kembali,</p>
+            <p className="text-sm text-indigo-100 font-medium mb-1">{getGreeting()}</p>
             <h2 className="font-bold text-2xl leading-tight">{data?.student?.name || session?.user?.name || "Siswa"}</h2>
             <div className="flex gap-2 mt-2">
               <span className="text-[10px] bg-white/20 border border-white/30 px-2.5 py-0.5 rounded-full font-bold tracking-wider backdrop-blur-sm">
                 {data?.student?.className ? data.student.className.toUpperCase() : "BELUM ADA KELAS"}
               </span>
+              {data?.student?.nis && (
+                <span className="text-[10px] bg-black/20 border border-white/10 px-2.5 py-0.5 rounded-full font-bold tracking-wider backdrop-blur-sm">
+                  NIS: {data.student.nis}
+                </span>
+              )}
             </div>
           </div>
-          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center shrink-0 border-2 border-white/50 backdrop-blur-sm shadow-inner">
+          <Link href="/siswa/kartu" className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center shrink-0 border-2 border-white/50 backdrop-blur-sm shadow-inner cursor-pointer">
             <QrCode className="w-6 h-6 text-white" />
-          </div>
+          </Link>
         </div>
 
         {/* Saldo Tabungan Widget */}
@@ -77,14 +91,19 @@ export default function PanelSiswaDashboard() {
             <span className="text-xs font-semibold text-indigo-100 flex items-center gap-1.5">
               <Wallet className="w-3.5 h-3.5" /> Saldo Tabungan
             </span>
-            <Link href="/siswa/wallet" className="text-xs font-bold text-white hover:underline flex items-center">
-              Riwayat <ChevronRight className="w-3 h-3" />
-            </Link>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setShowBalance(!showBalance)} className="text-indigo-100 hover:text-white transition-colors" title={showBalance ? "Sembunyikan Saldo" : "Tampilkan Saldo"}>
+                {showBalance ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              </button>
+              <Link href="/siswa/wallet" className="text-xs font-bold text-white hover:underline flex items-center">
+                Riwayat <ChevronRight className="w-3 h-3" />
+              </Link>
+            </div>
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-base font-bold text-indigo-50">Rp</span>
-            <span className="text-3xl font-black tracking-tight drop-shadow-sm">
-              {data?.wallet?.balance ? data.wallet.balance.toLocaleString("id-ID") : "0"}
+            <span className="text-3xl font-black tracking-tight drop-shadow-sm transition-all duration-300">
+              {showBalance ? (data?.wallet?.balance ? data.wallet.balance.toLocaleString("id-ID") : "0") : "••••••"}
             </span>
           </div>
         </div>

@@ -41,6 +41,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       } else if (session?.user?.isAffiliate && (!session.user.tenants || session.user.tenants.length === 0)) {
         router.push("/affiliate")
       } else {
+        // DEFENSE IN DEPTH: Client-side role isolation (mencegah bypass middleware)
+        if (!session?.user?.isSuperAdmin) {
+           if (pathname.startsWith("/admin") && currentRole !== "owner" && currentRole !== "admin") {
+             router.replace(currentRole === "guru" ? "/panel-gtk" : currentRole === "orangtua" ? "/ortu" : currentRole === "siswa" ? "/siswa" : "/login")
+             return
+           }
+           if (pathname.startsWith("/panel-gtk") && currentRole !== "guru") {
+             router.replace(currentRole === "owner" || currentRole === "admin" ? "/admin" : currentRole === "orangtua" ? "/ortu" : currentRole === "siswa" ? "/siswa" : "/login")
+             return
+           }
+           if (pathname.startsWith("/ortu") && currentRole !== "orangtua") {
+             router.replace(currentRole === "owner" || currentRole === "admin" ? "/admin" : currentRole === "guru" ? "/panel-gtk" : currentRole === "siswa" ? "/siswa" : "/login")
+             return
+           }
+           if (pathname.startsWith("/siswa") && currentRole !== "siswa") {
+             router.replace(currentRole === "owner" || currentRole === "admin" ? "/admin" : currentRole === "guru" ? "/panel-gtk" : currentRole === "orangtua" ? "/ortu" : "/login")
+             return
+           }
+        }
+
         // Redirect free tenants from the root dashboard to the website dashboard (ONLY FOR ADMINS)
         const plan = currentTenant?.plan || "free"
         if (plan === "free" && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))) {

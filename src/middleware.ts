@@ -116,6 +116,89 @@ export default async function middleware(request: NextRequest) {
   const isCustomDomain = !isMainDomain && !isSubdomain
 
   // ============================================================
+  // GLOBAL AUTHORIZATION & ROLE ISOLATION
+  // ============================================================
+  const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/siswa") || pathname.startsWith("/ujian")
+  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
+
+  if (isProtected && !session) {
+    return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+  }
+
+  // ROLE-BASED STRICT ISOLATION
+  if (session) {
+    const impersonateRole = request.cookies.get("impersonate-user-role")?.value
+    const isSuperAdmin = session.user?.isSuperAdmin
+    const isAffiliate = session.user?.isAffiliate
+    const activeRole = impersonateRole || session.user?.tenants?.[0]?.role
+
+    if (pathname.startsWith("/admin")) {
+      if (!isSuperAdmin && !isAffiliate && activeRole !== "owner" && activeRole !== "admin") {
+        if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+        if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+        if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
+        return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+      }
+    }
+
+    if (pathname.startsWith("/panel-gtk")) {
+      if (!isSuperAdmin && activeRole !== "guru") {
+        if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
+        if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+        if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
+        return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+      }
+    }
+
+    if (pathname.startsWith("/ortu")) {
+      if (!isSuperAdmin && activeRole !== "orangtua") {
+        if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
+        if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+        if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
+        return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+      }
+    }
+
+    if (pathname.startsWith("/siswa")) {
+      if (!isSuperAdmin && activeRole !== "siswa") {
+        if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
+        if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+        if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+        return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
+      }
+    }
+
+    if (pathname.startsWith("/super-admin") && !isSuperAdmin) {
+      const fallback = isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0) ? "/affiliate" : "/admin"
+      return addSecurityHeaders(NextResponse.redirect(new URL(fallback, request.url)))
+    }
+
+    if (pathname.startsWith("/affiliate") && !isAffiliate) {
+      return addSecurityHeaders(NextResponse.redirect(new URL(isSuperAdmin ? "/super-admin" : "/admin", request.url)))
+    }
+
+    if (pathname.startsWith("/admin") && isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0)) {
+      return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
+    }
+
+    if (isAuthPage) {
+      if (isSuperAdmin) {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/super-admin", request.url)))
+      } else if (isAffiliate) {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
+      } else if (activeRole === "guru") {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+      } else if (activeRole === "orangtua") {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+      } else if (activeRole === "siswa") {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
+      } else {
+        return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
+      }
+    }
+  }
+
+  // ============================================================
   // A. MAIN DOMAIN
   // ============================================================
   if (isMainDomain) {
@@ -131,88 +214,6 @@ export default async function middleware(request: NextRequest) {
       redirectUrl.searchParams.set("ref", code)
       const res = addSecurityHeaders(NextResponse.redirect(redirectUrl))
       return res
-    }
-
-    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/siswa") || pathname.startsWith("/ujian")
-    const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
-
-    if (isProtected && !session) {
-      return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
-    }
-
-    // ROLE-BASED STRICT ISOLATION
-    if (session) {
-      const impersonateRole = request.cookies.get("impersonate-user-role")?.value
-      const isSuperAdmin = session.user?.isSuperAdmin
-      const isAffiliate = session.user?.isAffiliate
-      const activeRole = impersonateRole || session.user?.tenants?.[0]?.role
-
-      if (pathname.startsWith("/admin")) {
-        if (!isSuperAdmin && !isAffiliate && activeRole !== "owner" && activeRole !== "admin") {
-          if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-          if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
-          return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
-        }
-      }
-
-      if (pathname.startsWith("/panel-gtk")) {
-        if (!isSuperAdmin && activeRole !== "guru") {
-          if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
-          if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
-          return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
-        }
-      }
-
-      if (pathname.startsWith("/ortu")) {
-        if (!isSuperAdmin && activeRole !== "orangtua") {
-          if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
-          if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
-          return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
-        }
-      }
-
-      if (pathname.startsWith("/siswa")) {
-        if (!isSuperAdmin && activeRole !== "siswa") {
-          if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
-          if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-          if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-          return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
-        }
-      }
-    }
-
-    if (pathname.startsWith("/super-admin") && session && !session.user?.isSuperAdmin) {
-      const fallback = session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0) ? "/affiliate" : "/admin"
-      return addSecurityHeaders(NextResponse.redirect(new URL(fallback, request.url)))
-    }
-
-    if (pathname.startsWith("/affiliate") && session && !session.user?.isAffiliate) {
-      return addSecurityHeaders(NextResponse.redirect(new URL(session.user?.isSuperAdmin ? "/super-admin" : "/admin", request.url)))
-    }
-
-
-
-    if (pathname.startsWith("/admin") && session && session.user?.isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0)) {
-      return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
-    }
-
-    if (isAuthPage && session) {
-      if (session.user?.isSuperAdmin) {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/super-admin", request.url)))
-      } else if (session.user?.isAffiliate) {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
-      } else if (session.user?.tenants?.[0]?.role === "guru") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-      } else if (session.user?.tenants?.[0]?.role === "orangtua") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-      } else if (session.user?.tenants?.[0]?.role === "siswa") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
-      } else {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
-      }
     }
 
     return addSecurityHeaders(NextResponse.next())
