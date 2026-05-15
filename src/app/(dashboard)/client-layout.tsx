@@ -48,6 +48,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             "/admin/website",
             "/admin/users",
             "/admin/students",
+            "/admin/students/classrooms",
+            "/admin/subjects",
             "/admin/settings",
             "/admin/billing",
             "/admin/notifications",

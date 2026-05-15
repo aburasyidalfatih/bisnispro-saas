@@ -20,6 +20,16 @@ export async function POST(req: Request) {
   const { error } = await requireTenantMembership(tenantId)
   if (error) return error
 
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
+  if (tenant?.plan === "free") {
+    const classroomCount = await db.classroom.count({ where: { tenantId } })
+    if (classroomCount >= 1) {
+      return NextResponse.json({ 
+        error: "Kuota maksimal 1 kelas untuk paket Free. Silakan upgrade paket untuk menambah kelas." 
+      }, { status: 403 })
+    }
+  }
+
   const classroom = await db.classroom.create({ data: { tenantId, ...data } })
   return NextResponse.json(classroom, { status: 201 })
 }

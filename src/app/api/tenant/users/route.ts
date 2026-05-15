@@ -62,6 +62,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Tidak punya izin" }, { status: 403 })
     }
   }
+  // Cek kuota admin untuk paket free
+  if (role === "admin") {
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
+    if (tenant?.plan === "free") {
+      const adminCount = await db.tenantUser.count({ where: { tenantId, role: "admin" } })
+      if (adminCount >= 1) {
+        return NextResponse.json({ 
+          error: "Kuota maksimal 1 admin tambahan untuk paket Free. Silakan upgrade paket untuk menambah." 
+        }, { status: 403 })
+      }
+    }
+  }
 
   // Cek apakah email sudah ada
   let user = await db.user.findUnique({ where: { email } })

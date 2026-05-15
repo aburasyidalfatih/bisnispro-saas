@@ -28,6 +28,16 @@ export async function POST(req: Request) {
     const { tenantId, name, code, description } = body
     if (!tenantId || !name) return NextResponse.json({ error: "tenantId & name required" }, { status: 400 })
 
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
+    if (tenant?.plan === "free") {
+      const subjectCount = await db.subject.count({ where: { tenantId } })
+      if (subjectCount >= 1) {
+        return NextResponse.json({ 
+          error: "Kuota maksimal 1 mata pelajaran untuk paket Free. Silakan upgrade paket untuk menambah." 
+        }, { status: 403 })
+      }
+    }
+
     const subject = await db.subject.create({
       data: { tenantId, name, code: code || null, description: description || null },
     })
