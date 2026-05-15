@@ -15,8 +15,9 @@ export async function GET(req: Request) {
       orderBy: { name: "asc" },
     })
     return NextResponse.json({ subjects })
-  } catch {
-    return NextResponse.json({ error: "Gagal memuat mata pelajaran" }, { status: 500 })
+  } catch (e: any) {
+    console.error("GET /api/subjects error:", e)
+    return NextResponse.json({ error: e.message || "Gagal memuat mata pelajaran" }, { status: 500 })
   }
 }
 

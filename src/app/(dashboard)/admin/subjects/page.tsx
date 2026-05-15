@@ -35,10 +35,18 @@ export default function SubjectsPage() {
   const load = async () => {
     if (!tenant) return
     setLoading(true)
-    const res = await fetch(`/api/subjects?tenantId=${tenant.id}`)
-    const data = await res.json()
-    setSubjects(data.subjects || [])
-    setLoading(false)
+    try {
+      const res = await fetch(`/api/subjects?tenantId=${tenant.id}`)
+      const data = await res.json()
+      if (!res.ok) {
+        toast({ title: "Error memuat data", description: data.error, variant: "destructive" })
+      }
+      setSubjects(data.subjects || [])
+    } catch (e: any) {
+      toast({ title: "Error jaringan", description: e.message, variant: "destructive" })
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [tenant?.id])
