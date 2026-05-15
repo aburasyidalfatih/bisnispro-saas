@@ -1,8 +1,9 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import DOMPurify from "isomorphic-dompurify"
-import { Bell, CreditCard, CalendarDays, FileText, CheckCircle, Clock, BookOpen, MessageSquare, Award, MonitorSmartphone, Calendar, FileCheck, ClipboardList, Megaphone, User, ArrowRight, Receipt, Activity, Users, UtensilsCrossed } from "lucide-react"
+import { Bell, CreditCard, CalendarDays, FileText, CheckCircle, Clock, BookOpen, MessageSquare, Award, MonitorSmartphone, Calendar, FileCheck, ClipboardList, Megaphone, User, ArrowRight, Receipt, Activity, Users, UtensilsCrossed, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -16,6 +17,21 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
   const { data: session } = useSession()
   const tenant = session?.user?.tenants?.[0]
   
+  const [showBalance, setShowBalance] = useState(true)
+  const [currentTime, setCurrentTime] = useState<Date | null>(null)
+
+  useEffect(() => {
+    setCurrentTime(new Date())
+  }, [])
+
+  const getGreeting = () => {
+    const hour = currentTime ? currentTime.getHours() : new Date().getHours()
+    if (hour < 11) return "Selamat Pagi,"
+    if (hour < 15) return "Selamat Siang,"
+    if (hour < 18) return "Selamat Sore,"
+    return "Selamat Malam,"
+  }
+
   const totalBalance = childrenData.reduce((acc, child) => acc + (child.walletAccount?.balance || 0), 0)
 
   const layanan = [
@@ -43,7 +59,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                 </div>
              )}
              <div>
-                <p className="text-primary-foreground/80 text-xs">Selamat datang kembali,</p>
+                <p className="text-primary-foreground/80 text-xs">{getGreeting()}</p>
                 <h2 className="text-primary-foreground font-bold text-lg leading-tight">{userRole === "siswa" ? (session?.user?.name || "Siswa") : `Bpk/Ibu ${session?.user?.name || "Orang Tua"}`}</h2>
              </div>
           </div>
@@ -110,8 +126,15 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                      <div className="grid grid-cols-2 gap-3">
                        {child.walletAccount ? (
                          <div className="bg-indigo-500/5 border border-indigo-500/10 rounded-2xl p-4 flex flex-col justify-between">
-                            <p className="text-[10px] font-bold text-indigo-600/80 uppercase tracking-wider mb-1 flex items-center gap-1"><Wallet className="h-3 w-3" /> Tabungan</p>
-                            <h4 className="text-lg font-black text-indigo-700">Rp {child.walletAccount.balance.toLocaleString("id-ID")}</h4>
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-[10px] font-bold text-indigo-600/80 uppercase tracking-wider flex items-center gap-1"><Wallet className="h-3 w-3" /> Tabungan</p>
+                              <button onClick={() => setShowBalance(!showBalance)} className="text-indigo-400 hover:text-indigo-600 transition-colors">
+                                {showBalance ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                              </button>
+                            </div>
+                            <h4 className="text-lg font-black text-indigo-700 transition-all duration-300">
+                              {showBalance ? `Rp ${child.walletAccount.balance.toLocaleString("id-ID")}` : "••••••"}
+                            </h4>
                             <Link href="/ortu/wallet/topup" className="mt-3 text-[10px] font-bold text-white bg-indigo-500 hover:bg-indigo-600 px-3 py-1.5 rounded-lg w-fit transition-colors">
                                + Nabung
                             </Link>
@@ -167,16 +190,16 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
         {/* Layanan Utama */}
         <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
            <h3 className="font-bold text-foreground mb-4 text-sm">Layanan Utama</h3>
-           <div className="grid grid-cols-4 gap-y-6 gap-x-2">
-              {layanan.map((item, i) => (
-                 <a key={i} href={item.href} className="flex flex-col items-center gap-2 group">
-                    <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105", item.color)}>
-                       <item.icon className="h-5 w-5" />
-                    </div>
-                    <span className="text-[10px] font-semibold text-muted-foreground text-center line-clamp-1">{item.label}</span>
-                 </a>
-              ))}
-           </div>
+            <div className="grid grid-cols-4 gap-y-6 gap-x-2">
+               {layanan.map((item, i) => (
+                  <Link key={i} href={item.href} className="flex flex-col items-center gap-2 group">
+                     <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105", item.color)}>
+                        <item.icon className="h-5 w-5" />
+                     </div>
+                     <span className="text-[10px] font-semibold text-muted-foreground text-center line-clamp-1">{item.label}</span>
+                  </Link>
+               ))}
+            </div>
         </div>
 
         {/* Ringkasan Tagihan */}
