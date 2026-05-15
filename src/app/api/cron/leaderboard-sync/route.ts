@@ -26,7 +26,8 @@ export async function GET(request: Request) {
             staff: { where: { createdAt: { gte: startOfYear } } },
             facilities: { where: { createdAt: { gte: startOfYear } } },
             events: { where: { createdAt: { gte: startOfYear } } },
-            achievements: { where: { createdAt: { gte: startOfYear } } }
+            achievements: { where: { createdAt: { gte: startOfYear } } },
+            internalMessages: { where: { receiverId: null, createdAt: { gte: startOfYear } } }
           }
         },
         gallery: true,
@@ -51,7 +52,10 @@ export async function GET(request: Request) {
       // Pertahankan traffic score yang ada, atau mulai dari 0
       const trafficScore = tenant.tenantScore?.trafficScore || 0
       
-      const activityScore = 0 // Dapat dihitung dari AuditLog di iterasi selanjutnya
+      // Aktivitas: pengumuman internal
+      const announcementPoints = (tenant._count.internalMessages || 0) * 2
+      
+      const activityScore = announcementPoints // Login harian belum terhitung di backend
       
       const totalScore = contentScore + trafficScore + activityScore
 

@@ -89,6 +89,9 @@ export default function LeaderboardPage() {
                 <li>Data Fasilitas: <span className="text-white font-bold">+15 Pts</span></li>
                 <li>Profil Guru (GTK): <span className="text-white font-bold">+10 Pts</span></li>
                 <li>Foto Galeri: <span className="text-white font-bold">+5 Pts</span></li>
+                <li>Admin Login Harian: <span className="text-white font-bold">+10 Pts</span></li>
+                <li>Guru Login Harian: <span className="text-white font-bold">+3 Pts</span></li>
+                <li>Buat Pengumuman Internal: <span className="text-white font-bold">+2 Pts</span></li>
               </ul>
             </div>
           </div>
