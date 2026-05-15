@@ -3,6 +3,7 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { authRateLimit } from "@/lib/edge-rate-limit"
 
 async function getDynamicConfig(req: NextRequest) {
   // PENTING: Di belakang reverse proxy (nginx → Docker), req.nextUrl.hostname
@@ -72,6 +73,13 @@ export async function GET(req: NextRequest, ctx: any) {
 }
 
 export async function POST(req: NextRequest, ctx: any) {
+  // Enterprise Security: Rate limit login attempts to prevent Brute Force
+  const ip = (req as any).ip ?? req.headers.get("x-forwarded-for") ?? "127.0.0.1"
+  const { success } = await authRateLimit.limit(ip)
+  if (!success) {
+    return new Response(JSON.stringify({ error: "Terlalu banyak percobaan login. Silakan tunggu beberapa saat." }), { status: 429 })
+  }
+
   const config = await getDynamicConfig(req)
   // @ts-ignore — NextAuth v5 handlers need ctx for dynamic routes
   return NextAuth(config).handlers.POST(req, ctx)

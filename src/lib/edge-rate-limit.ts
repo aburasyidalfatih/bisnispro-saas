@@ -25,3 +25,13 @@ export const edgeRateLimit = isUpstashConfigured
       prefix: "@upstash/edge-ratelimit",
     })
   : mockRatelimit
+
+// Aggressive Rate Limiter for Authentication (Brute Force Protection)
+export const authRateLimit = isUpstashConfigured
+  ? new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.slidingWindow(5, "10 s"), // Max 5 requests per 10 seconds per IP
+      analytics: true,
+      prefix: "@upstash/auth-ratelimit",
+    })
+  : mockRatelimit
