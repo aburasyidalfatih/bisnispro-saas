@@ -80,6 +80,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (!session) return null
 
+  // Mencegah flash UI (render salah) selama proses redirect super admin
+  if (session.user?.isSuperAdmin && !document.cookie.includes("impersonate-tenant=")) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    )
+  }
+
   return (
     <TenantBrandingProvider>
       <TenantCompletenessPopup />
