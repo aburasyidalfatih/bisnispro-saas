@@ -60,8 +60,8 @@ export async function updateSubject(id: string, data: { tenantId: string, name: 
   await checkAccess(parsed.tenantId)
 
   const tenantDb = withTenant(parsed.tenantId)
-  const subject = await tenantDb.subject.update({
-    where: { id }, // tenantId tidak perlu dimasukkan ke where lagi karena dengan withTenant sudah terlindungi
+  const subject = await db.subject.update({
+    where: { id, tenantId: parsed.tenantId }, 
     data: {
       name: parsed.name,
       code: parsed.code,
@@ -78,8 +78,8 @@ export async function deleteSubject(id: string, tenantId: string) {
   await checkAccess(parsedTenantId)
 
   const tenantDb = withTenant(parsedTenantId)
-  await tenantDb.subject.delete({
-    where: { id }
+  await db.subject.delete({
+    where: { id, tenantId: parsedTenantId }
   })
 
   revalidatePath('/admin/subjects')
@@ -95,8 +95,8 @@ export async function deleteClassroom(id: string, tenantId: string) {
   await checkAccess(parsedTenantId)
 
   const tenantDb = withTenant(parsedTenantId)
-  await tenantDb.classroom.delete({
-    where: { id }
+  await db.classroom.delete({
+    where: { id, tenantId: parsedTenantId }
   })
 
   revalidatePath('/admin/students/classrooms')
@@ -112,8 +112,8 @@ export async function deleteSchedule(id: string, tenantId: string) {
   await checkAccess(parsedTenantId)
 
   const tenantDb = withTenant(parsedTenantId)
-  await tenantDb.schedule.delete({
-    where: { id }
+  await db.schedule.delete({
+    where: { id, tenantId: parsedTenantId }
   })
 
   revalidatePath('/admin/schedules')

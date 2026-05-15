@@ -67,7 +67,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (error) return error
 
   const student = await db.student.update({
-    where: { id },
+    where: { id, tenantId },
     data: {
       ...data,
       birthDate: data.birthDate ? new Date(data.birthDate) : undefined,
