@@ -111,7 +111,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           icon: FileText,
           children: [
             { label: "Artikel & Pos", href: `${basePath}/website/posts`, icon: FileText },
-            { label: "Pengumuman", href: `${basePath}/website/posts?type=PENGUMUMAN`, icon: Megaphone },
+            { label: "Pengumuman", href: `${basePath}/website/pengumuman`, icon: Megaphone },
             { label: "Kategori Artikel", href: `${basePath}/website/categories`, icon: Tag },
             { label: "Agenda & Acara", href: `${basePath}/website/events`, icon: Calendar },
             { label: "Pusat Unduhan", href: `${basePath}/website/documents`, icon: Download },
