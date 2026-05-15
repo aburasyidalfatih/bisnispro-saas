@@ -161,10 +161,10 @@ export default function GuruDashboard() {
          <h3 className="font-bold text-foreground mb-4 text-sm flex items-center gap-2">
            Aksi Cepat <ChevronRight className="h-4 w-4 text-muted-foreground" />
          </h3>
-         <div className="flex sm:grid sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-9 gap-4 sm:gap-y-6 sm:gap-x-2 overflow-x-auto pb-4 sm:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+         <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-9 gap-y-6 gap-x-2">
             {quickActions.map((action, i) => (
-               <Link key={i} href={action.href} className="flex flex-col items-center gap-2 group outline-none relative min-w-[72px] sm:min-w-0 snap-center">
-                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20 relative shrink-0", action.bg, action.color)}>
+               <Link key={i} href={action.href} className="flex flex-col items-center gap-2 group outline-none relative">
+                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20 relative", action.bg, action.color)}>
                      <action.icon className="h-6 w-6 relative z-10" />
                      {action.badge && (
                        <div className={cn(
