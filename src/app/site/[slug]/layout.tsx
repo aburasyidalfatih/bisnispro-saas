@@ -9,6 +9,7 @@ import { headers } from "next/headers"
 import { getActivePopup } from "@/lib/actions/popup"
 import { PopupRenderer } from "./_components/popup-renderer"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
+import Script from "next/script"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -114,8 +115,8 @@ export default async function WebsiteLayout({
         <PwaInstaller tenantName={tenant.name} tenantLogo={tenant.logo} />
         
         {tenant.umamiWebsiteId && (
-          <script
-            defer
+          <Script
+            strategy="afterInteractive"
             src="https://analytics.schoolpro.my.id/script.js"
             data-website-id={tenant.umamiWebsiteId}
           />
