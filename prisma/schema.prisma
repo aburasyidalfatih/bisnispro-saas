@@ -798,6 +798,8 @@ model PendaftarPpdb {
   @@index([tenantId, status])
   @@index([tenantId, periodeId])
   @@index([tenantId, createdAt(sort: Desc)])
+  @@index([dataFormulir], type: Gin)
+  @@index([dataOrangtua], type: Gin)
   @@map("pendaftar_ppdbs")
 }
 
