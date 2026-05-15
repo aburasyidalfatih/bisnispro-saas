@@ -28,6 +28,7 @@ export default function LeaderboardPage() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [visibleCount, setVisibleCount] = useState(20)
 
   const myTenantId = session?.user?.tenants?.[0]?.id
 
@@ -42,6 +43,23 @@ export default function LeaderboardPage() {
   }, [])
 
   const filteredEntries = entries.filter(e => e.tenant?.name?.toLowerCase().includes(search.toLowerCase()))
+  const visibleEntries = filteredEntries.slice(0, visibleCount)
+
+  // Reset visible count on search
+  useEffect(() => {
+    setVisibleCount(20)
+  }, [search])
+
+  // Infinite scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 500) {
+        setVisibleCount((prev) => prev + 20)
+      }
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const myRankEntry = entries.find(e => e.tenant.id === myTenantId)
 
@@ -128,10 +146,10 @@ export default function LeaderboardPage() {
       </div>
 
       <div className="space-y-3">
-        {filteredEntries.length === 0 ? (
+        {visibleEntries.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">Belum ada data peringkat.</div>
         ) : (
-          filteredEntries.map((entry, idx) => {
+          visibleEntries.map((entry, idx) => {
             const isTop3 = entry.rank <= 3
             const isMe = entry.tenant.id === myTenantId
             
@@ -182,6 +200,13 @@ export default function LeaderboardPage() {
               </div>
             )
           })
+        )}
+        
+        {/* Loading Indicator for Infinite Scroll */}
+        {visibleCount < filteredEntries.length && (
+          <div className="py-8 flex justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
+          </div>
         )}
       </div>
     </div>
