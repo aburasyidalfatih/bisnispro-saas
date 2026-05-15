@@ -30,8 +30,8 @@ export default function BroadcastPage() {
       toast({ title: "Isi pesan tidak boleh kosong", variant: "destructive" })
       return
     }
-    if ((form.channel === "email" || form.channel === "both") && !form.subject) {
-      toast({ title: "Subjek email harus diisi", variant: "destructive" })
+    if ((form.channel === "email" || form.channel === "both" || form.channel === "notification" || form.channel === "all") && !form.subject) {
+      toast({ title: "Subjek / Judul harus diisi", variant: "destructive" })
       return
     }
 
@@ -109,16 +109,18 @@ export default function BroadcastPage() {
                     <SelectContent>
                       <SelectItem value="whatsapp">WhatsApp Saja</SelectItem>
                       <SelectItem value="email">Email Saja</SelectItem>
+                      <SelectItem value="notification">Notifikasi Aplikasi (Lonceng)</SelectItem>
                       <SelectItem value="both">WhatsApp & Email</SelectItem>
+                      <SelectItem value="all">Semua (WA, Email, Lonceng)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {(form.channel === "email" || form.channel === "both") && (
+                {(form.channel === "email" || form.channel === "both" || form.channel === "notification" || form.channel === "all") && (
                   <div className="space-y-2">
-                    <Label>Subjek Pesan (Email)</Label>
+                    <Label>Subjek / Judul Pesan</Label>
                     <Input 
-                      placeholder="Masukkan subjek email..." 
+                      placeholder="Masukkan subjek atau judul pesan..." 
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
                       className="bg-background"

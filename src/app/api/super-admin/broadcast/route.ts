@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     }
 
     // 1. Ambil data penerima berdasarkan target
-    let recipients: { name: string; email?: string | null; phone?: string | null; schoolName?: string }[] = []
+    let recipients: { name: string; email?: string | null; phone?: string | null; schoolName?: string; userId?: string; tenantId?: string }[] = []
 
     if (target === "all_tenants") {
       const tenants = await db.tenant.findMany({
@@ -35,7 +35,9 @@ export async function POST(req: Request) {
             name: owner.name || "Admin",
             email: owner.email,
             phone: owner.phone,
-            schoolName: tenant.name
+            schoolName: tenant.name,
+            userId: owner.id,
+            tenantId: tenant.id
           })
         }
       })
@@ -64,7 +66,9 @@ export async function POST(req: Request) {
             name: owner.name || "Admin",
             email: owner.email,
             phone: owner.phone,
-            schoolName: tenant.name
+            schoolName: tenant.name,
+            userId: owner.id,
+            tenantId: tenant.id
           })
         }
       })
@@ -78,7 +82,8 @@ export async function POST(req: Request) {
         name: aff.user.name || "Mitra",
         email: aff.user.email,
         phone: aff.user.phone,
-        schoolName: "Afiliasi" // Fallback variable
+        schoolName: "Afiliasi", // Fallback variable
+        userId: aff.userId
       }))
     }
 
@@ -109,7 +114,7 @@ export async function POST(req: Request) {
           const sendPromises = []
 
           // Email
-          if ((channel === "email" || channel === "both") && recipient.email) {
+          if ((channel === "email" || channel === "both" || channel === "all") && recipient.email) {
             let finalSubject = subject
               .replace(/{{name}}/g, recipient.name || "")
               .replace(/{{schoolName}}/g, recipient.schoolName || "")
@@ -129,12 +134,36 @@ export async function POST(req: Request) {
           }
 
           // WhatsApp
-          if ((channel === "whatsapp" || channel === "both") && recipient.phone) {
+          if ((channel === "whatsapp" || channel === "both" || channel === "all") && recipient.phone) {
             sendPromises.push(
               sendWhatsApp(recipient.phone, finalMessage).then(res => {
                 if (!res.success) throw new Error(res.error)
               }).catch(e => {
                 logger.error("Broadcast WA Error", e, { phone: recipient.phone })
+                throw e
+              })
+            )
+          }
+
+          // In-App Notification (Lonceng)
+          if ((channel === "notification" || channel === "all") && recipient.userId) {
+            let finalSubject = subject || "Pengumuman Sistem"
+            finalSubject = finalSubject
+              .replace(/{{name}}/g, recipient.name || "")
+              .replace(/{{schoolName}}/g, recipient.schoolName || "")
+
+            sendPromises.push(
+              db.notification.create({
+                data: {
+                  userId: recipient.userId,
+                  tenantId: recipient.tenantId,
+                  title: finalSubject,
+                  message: finalMessage,
+                  type: "info",
+                  channel: "inapp"
+                }
+              }).catch(e => {
+                logger.error("Broadcast Notification Error", e, { userId: recipient.userId })
                 throw e
               })
             )
