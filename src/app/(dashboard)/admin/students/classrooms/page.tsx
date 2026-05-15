@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Plus, Users, Edit2, Trash2, Loader2, ChevronRight, GraduationCap } from "lucide-react"
+import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -22,6 +23,7 @@ export default function ClassroomsPage() {
   const [form, setForm] = useState({ name: "", level: "", capacity: 30 })
   const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const fetchClassrooms = async () => {
     if (!tenant) return
@@ -75,11 +77,11 @@ export default function ClassroomsPage() {
     setShowForm(true)
   }
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Hapus kelas ini? Siswa akan dipindah ke tanpa kelas.")) return
-    if (!tenant) return
-    await fetch(`/api/classrooms/${id}?tenantId=${tenant.id}`, { method: "DELETE" })
+  const handleDeleteConfirm = async () => {
+    if (!deleteId || !tenant) return
+    await fetch(`/api/classrooms/${deleteId}?tenantId=${tenant.id}`, { method: "DELETE" })
     toast({ title: "Kelas dihapus" })
+    setDeleteId(null)
     fetchClassrooms()
   }
 
@@ -176,7 +178,7 @@ export default function ClassroomsPage() {
                       <Button size="icon" variant="ghost" className="h-8 w-8 rounded-lg" onClick={() => handleEdit(c)}>
                         <Edit2 className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 rounded-lg text-red-500 hover:bg-red-50" onClick={() => handleDelete(c.id)}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 rounded-lg text-red-500 hover:bg-red-50" onClick={() => setDeleteId(c.id)}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
@@ -213,6 +215,16 @@ export default function ClassroomsPage() {
           })}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title="Hapus Kelas?"
+        description="Tindakan ini tidak dapat dibatalkan. Siswa dalam kelas ini akan dipindah menjadi 'Tanpa Kelas'."
+        onConfirm={handleDeleteConfirm}
+        confirmText="Hapus"
+        variant="destructive"
+      />
     </div>
   )
 }

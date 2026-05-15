@@ -15,7 +15,9 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 interface ConfirmDialogProps {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   title?: string
   description?: React.ReactNode
   confirmText?: string
@@ -27,6 +29,8 @@ interface ConfirmDialogProps {
 
 export function ConfirmDialog({
   trigger,
+  open,
+  onOpenChange,
   title = "Apakah Anda yakin?",
   description = "Tindakan ini tidak dapat dibatalkan.",
   confirmText = "Ya, lanjutkan",
@@ -36,8 +40,8 @@ export function ConfirmDialog({
   loading = false,
 }: ConfirmDialogProps) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
       <AlertDialogContent className="rounded-2xl">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
