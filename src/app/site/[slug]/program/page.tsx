@@ -52,12 +52,9 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
             {programs.map((prog: any, index: number) => (
               <div 
                 key={prog.id} 
-                className={cn(
-                  "group relative bg-white rounded-[2.5rem] overflow-hidden border border-border/60 hover:border-primary/40 transition-all duration-500 hover:shadow-2xl flex flex-col md:flex-row",
-                  index % 2 === 1 ? "md:flex-row-reverse" : ""
-                )}
+                className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-border/60 hover:border-primary/40 transition-all duration-500 hover:shadow-2xl flex flex-col"
               >
-                <div className="relative h-64 md:h-auto md:w-2/5 shrink-0 overflow-hidden">
+                <div className="relative h-64 sm:h-72 w-full shrink-0 overflow-hidden">
                   <OptimizedImage 
                     src={prog.imageUrl || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022"} 
                     alt={prog.name} 
@@ -71,7 +68,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                     <BookOpen className="h-6 w-6" />
                   </div>
                   <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">{prog.name}</h3>
-                  <p className="text-muted-foreground leading-relaxed mb-8 flex-grow">
+                  <p className="text-muted-foreground leading-relaxed mb-8 flex-grow line-clamp-6">
                     {prog.description || "Program pendidikan yang dirancang khusus untuk mengoptimalkan potensi intelektual dan keterampilan siswa secara komprehensif."}
                   </p>
                   <Link href={`${base}/program/${prog.id}`} className="flex items-center gap-2 text-primary font-bold text-sm">
