@@ -36,6 +36,11 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
     { label: "Pesan", icon: MessageSquare, href: "/panel-gtk/messages" } // Adding Pesan just in case they meant they want it here too
   ]
 
+  const currentTenant = session?.user?.tenants?.[0]
+  const brandLogo = (currentTenant as any)?.logo
+  const brandName = currentTenant?.name || "SchoolPro"
+  const brandInitial = brandName.charAt(0).toUpperCase()
+
   return (
     <div className="min-h-screen bg-muted/20 font-sans flex flex-col">
       {/* Top Navigation - Desktop Only */}
@@ -43,10 +48,16 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/panel-gtk" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">S</span>
+              <div className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-lg text-white font-bold shadow-sm overflow-hidden",
+                brandLogo ? "bg-transparent shadow-none" : "bg-primary"
+              )}>
+                {brandLogo ? (
+                  <img src={brandLogo} alt={brandName} className="h-full w-full object-contain" />
+                ) : (
+                  <span className="text-primary-foreground font-bold text-lg">{brandInitial}</span>
+                )}
               </div>
-              <span className="font-bold text-lg hidden xl:inline-block">SchoolPro GTK</span>
             </Link>
 
             <nav className="flex items-center gap-1">
