@@ -28,12 +28,10 @@ export async function verifyManualTopup(paymentId: string, tenantId: string) {
 
       if (!wallet) throw new Error("Wallet account tidak ditemukan")
 
-      const newBalance = wallet.balance + payment.amount
-
-      // 3. Update Wallet Balance
+      // 3. Update Wallet Balance atomically
       await tx.walletAccount.update({
         where: { id: wallet.id },
-        data: { balance: newBalance }
+        data: { balance: { increment: payment.amount } }
       })
 
       // 4. Create Wallet Transaction History
@@ -44,7 +42,7 @@ export async function verifyManualTopup(paymentId: string, tenantId: string) {
           type: "DEPOSIT",
           amount: payment.amount,
           balanceBefore: wallet.balance,
-          balanceAfter: newBalance,
+          balanceAfter: wallet.balance + payment.amount,
           description: `Top Up Manual: ${meta.bankName || "Transfer"}`,
           referenceId: payment.reference
         }

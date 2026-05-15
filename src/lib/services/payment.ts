@@ -167,14 +167,22 @@ export async function handleCallback(body: TripayCallbackBody) {
     throw new Error("Invalid callback signature")
   }
 
-  // Step 3: Update payment status
-  const updatedPayment = await db.payment.update({
-    where: { id: payment.id },
+  // Step 3: Optimistic Concurrency Control (Idempotency Lock)
+  const updatedPaymentStatus = await db.payment.updateMany({
+    where: { id: payment.id, status: payment.status }, // Pastikan status belum berubah di thread lain
     data: {
       status: body.status === "PAID" ? "paid" : body.status.toLowerCase(),
       paidAt: body.status === "PAID" ? new Date() : null,
     },
   })
+
+  // Jika count 0, thread lain (dari webhook ganda) sudah lebih dulu update!
+  if (updatedPaymentStatus.count === 0) {
+    logger.info("[payment] Webhook concurrency collision, skipping", {
+      merchantRef: body.merchant_ref,
+    })
+    return payment
+  }
 
   // Step 4: Upgrade tenant plan, TopUp Wallet, or Pay Invoice jika pembayaran berhasil
   if (body.status === "PAID") {
@@ -187,26 +195,28 @@ export async function handleCallback(body: TripayCallbackBody) {
            const wallet = await db.walletAccount.findUnique({ where: { id: metadata.walletId }})
            if (!wallet) throw new Error("Wallet not found")
            
-           // 1. Update Wallet Balance
-           const newBalance = wallet.balance + payment.amount
-           await db.walletAccount.update({
-             where: { id: wallet.id },
-             data: { balance: newBalance }
-           })
-           
-           // 2. Insert WalletTransaction
-           await db.walletTransaction.create({
-             data: {
-               walletId: wallet.id,
-               tenantId: payment.tenantId,
-               type: "DEPOSIT",
-               amount: payment.amount,
-               balanceBefore: wallet.balance,
-               balanceAfter: newBalance,
-               referenceId: payment.reference,
-               description: "Top-Up via Tripay",
-               status: "SUCCESS"
-             }
+           // Gunakan transaksi untuk menjamin integritas uang & log
+           await db.$transaction(async (tx) => {
+             // 1. Update Wallet Balance atomically
+             await tx.walletAccount.update({
+               where: { id: wallet.id },
+               data: { balance: { increment: payment.amount } }
+             })
+             
+             // 2. Insert WalletTransaction
+             await tx.walletTransaction.create({
+               data: {
+                 walletId: wallet.id,
+                 tenantId: payment.tenantId,
+                 type: "DEPOSIT",
+                 amount: payment.amount,
+                 balanceBefore: wallet.balance,
+                 balanceAfter: wallet.balance + payment.amount,
+                 referenceId: payment.reference,
+                 description: "Top-Up via Tripay",
+                 status: "SUCCESS"
+               }
+             })
            })
 
            // 3. Notify Admin
@@ -290,7 +300,7 @@ export async function handleCallback(body: TripayCallbackBody) {
     } // end else
   }
 
-  return updatedPayment
+  return { ...payment, status: body.status === "PAID" ? "paid" : body.status.toLowerCase() }
 }
 
 /**
