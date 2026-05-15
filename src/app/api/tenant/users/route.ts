@@ -95,10 +95,18 @@ export async function POST(req: Request) {
     }
 
     if (existing) {
-      if (passwordUpdated) {
-        return NextResponse.json({ message: "User sudah ada, password berhasil diperbarui", userId: user.id })
+      const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+      const existingRoleLabel = roleMap[existing.role] || existing.role
+      const targetRoleLabel = roleMap[role] || role
+
+      if (existing.role !== role) {
+        return NextResponse.json({ error: `Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat akun ${targetRoleLabel}.` }, { status: 400 })
       }
-      return NextResponse.json({ error: "User sudah menjadi anggota tenant ini" }, { status: 400 })
+
+      if (passwordUpdated) {
+        return NextResponse.json({ message: "User sudah ada, password diperbarui", userId: user.id })
+      }
+      return NextResponse.json({ error: `User sudah terdaftar sebagai ${existingRoleLabel}` }, { status: 400 })
     }
   } else {
     // Gunakan password yang diberikan atau default "12345678" agar admin bisa memberitahu user

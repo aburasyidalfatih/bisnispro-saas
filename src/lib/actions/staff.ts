@@ -63,6 +63,10 @@ export async function createStaff(tenantId: string, data: any) {
       await db.tenantUser.create({
         data: { tenantId, userId: user.id, role: "guru" },
       })
+    } else if (existingTu.role !== "guru") {
+      const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+      const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
+      throw new Error(`Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat profil Guru.`)
     }
 
     userId = user.id
@@ -140,6 +144,10 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
       await db.tenantUser.create({
         data: { tenantId, userId: user.id, role: "guru" },
       })
+    } else if (existingTu.role !== "guru") {
+      const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+      const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
+      throw new Error(`Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat profil Guru.`)
     }
 
     userId = user.id
