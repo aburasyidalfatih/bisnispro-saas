@@ -15,6 +15,9 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
@@ -66,6 +69,8 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
   const [search, setSearch] = useState("")
   const [showAdd, setShowAdd] = useState(false)
   const [addLoading, setAddLoading] = useState(false)
+  const [editUser, setEditUser] = useState<UserRow | null>(null)
+  const [editLoading, setEditLoading] = useState(false)
 
   const tenantId = session?.user?.tenants?.[0]?.id
   const currentRole = session?.user?.tenants?.[0]?.role
@@ -133,6 +138,33 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
     if (res.ok) {
       toast({ title: "Berhasil", description: `${config.label} berhasil ditambahkan.` })
       setShowAdd(false)
+      fetchUsers()
+    } else {
+      toast({ title: "Gagal", description: data.error, variant: "destructive" })
+    }
+  }
+
+  const handleEdit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!editUser) return
+    setEditLoading(true)
+    const fd = new FormData(e.currentTarget)
+    const res = await fetch("/api/tenant/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tenantUserId: editUser.tenantUserId,
+        name: fd.get("name"),
+        email: fd.get("email"),
+        phone: fd.get("phone"),
+        password: fd.get("password") || "",
+      }),
+    })
+    const data = await res.json()
+    setEditLoading(false)
+    if (res.ok) {
+      toast({ title: "Berhasil", description: "Data berhasil diperbarui." })
+      setEditUser(null)
       fetchUsers()
     } else {
       toast({ title: "Gagal", description: data.error, variant: "destructive" })
@@ -246,6 +278,46 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
         </Card>
       )}
 
+      {/* Edit User Dialog */}
+      <Dialog open={!!editUser} onOpenChange={(open) => !open && setEditUser(null)}>
+        <DialogContent className="glass border-0 sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pencil className="h-5 w-5 text-primary" />
+              Edit {config.label}
+            </DialogTitle>
+          </DialogHeader>
+          {editUser && (
+            <form onSubmit={handleEdit} className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label>Nama</Label>
+                <Input name="name" defaultValue={editUser.name} required className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input name="email" type="email" defaultValue={editUser.email} required className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>No. Telepon</Label>
+                <Input name="phone" defaultValue={editUser.phone || ""} className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>Password (Opsional)</Label>
+                <Input name="password" type="password" placeholder="Kosongkan jika tidak diubah" className="rounded-xl" />
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <Button type="button" variant="outline" className="rounded-xl" onClick={() => setEditUser(null)}>
+                  Batal
+                </Button>
+                <Button type="submit" className="btn-gradient text-white border-0 rounded-xl" disabled={editLoading}>
+                  {editLoading ? "Menyimpan..." : "Simpan Perubahan"}
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Search */}
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -321,7 +393,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                                 </Link>
                               </DropdownMenuItem>
                             ) : (
-                              <DropdownMenuItem className="gap-2 rounded-lg" onClick={() => toast({ title: "Edit", description: "Fitur edit segera hadir." })}>
+                              <DropdownMenuItem className="gap-2 rounded-lg cursor-pointer" onClick={() => setEditUser(u)}>
                                 <Pencil className="h-4 w-4" /> Edit
                               </DropdownMenuItem>
                             )}

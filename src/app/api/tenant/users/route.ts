@@ -124,6 +124,56 @@ export async function POST(req: Request) {
   return NextResponse.json({ message: "User berhasil ditambahkan", userId: user.id })
 }
 
+// PATCH: edit user data (name, email, phone, password)
+export async function PATCH(req: Request) {
+  const session = await auth()
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const { editUserSchema } = await import("@/lib/validations/tenant")
+  const { parseBody } = await import("@/lib/api-utils")
+  const parsed = await parseBody(req, editUserSchema)
+  if (parsed.error) return parsed.error
+
+  let { tenantUserId, name, email, phone, password } = parsed.data
+  email = email.toLowerCase()
+
+  const targetTu = await db.tenantUser.findUnique({
+    where: { id: tenantUserId },
+    include: { user: true }
+  })
+
+  if (!targetTu) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 })
+
+  // Cek izin (owner/admin)
+  if (!session.user.isSuperAdmin) {
+    const callerTu = await db.tenantUser.findUnique({
+      where: { tenantId_userId: { tenantId: targetTu.tenantId, userId: session.user.id } }
+    })
+    
+    if (!callerTu || !["owner", "admin"].includes(callerTu.role)) {
+      return NextResponse.json({ error: "Tidak punya izin untuk mengedit user dari tenant ini" }, { status: 403 })
+    }
+  }
+
+  // Cek apakah email sudah ada di user lain
+  const existingEmailUser = await db.user.findUnique({ where: { email } })
+  if (existingEmailUser && existingEmailUser.id !== targetTu.userId) {
+    return NextResponse.json({ error: "Email sudah digunakan oleh user lain" }, { status: 400 })
+  }
+
+  const updateData: any = { name, email, phone }
+  if (password && password.length >= 8) {
+    updateData.password = await bcrypt.hash(password, 12)
+  }
+
+  await db.user.update({
+    where: { id: targetTu.userId },
+    data: updateData
+  })
+
+  return NextResponse.json({ message: "User berhasil diperbarui" })
+}
+
 // DELETE: hapus user dari tenant
 export async function DELETE(req: Request) {
   const session = await auth()
