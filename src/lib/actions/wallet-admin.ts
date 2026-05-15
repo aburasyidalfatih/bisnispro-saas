@@ -3,19 +3,16 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
+import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 
-export async function verifyManualTopup(paymentId: string) {
-  const session = await auth()
-  if (!session?.user) throw new Error("Unauthorized")
-
-  const tenant = session.user.tenants?.[0]
-  if (!tenant) throw new Error("No active tenant")
+export async function verifyManualTopup(paymentId: string, tenantId: string) {
+  await requireTenantAccess(tenantId)
 
   try {
     return await db.$transaction(async (tx) => {
       // 1. Get Payment
       const payment = await tx.payment.findUnique({
-        where: { id: paymentId, tenantId: tenant.id }
+        where: { id: paymentId, tenantId: tenantId }
       })
 
       if (!payment) throw new Error("Pembayaran tidak ditemukan")
@@ -43,7 +40,7 @@ export async function verifyManualTopup(paymentId: string) {
       await tx.walletTransaction.create({
         data: {
           walletId: wallet.id,
-          tenantId: tenant.id,
+          tenantId: tenantId,
           type: "DEPOSIT",
           amount: payment.amount,
           balanceBefore: wallet.balance,
@@ -54,6 +51,7 @@ export async function verifyManualTopup(paymentId: string) {
       })
 
       // 5. Update Payment Status
+      const session = await auth()
       await tx.payment.update({
         where: { id: payment.id },
         data: { 
@@ -61,7 +59,7 @@ export async function verifyManualTopup(paymentId: string) {
            paidAt: new Date(),
            metadata: {
               ...meta,
-              verifiedBy: session.user.name,
+              verifiedBy: session?.user?.name || "Admin",
               verifiedAt: new Date().toISOString()
            }
         }
@@ -76,16 +74,12 @@ export async function verifyManualTopup(paymentId: string) {
   }
 }
 
-export async function rejectManualTopup(paymentId: string, reason: string) {
-  const session = await auth()
-  if (!session?.user) throw new Error("Unauthorized")
-
-  const tenant = session.user.tenants?.[0]
-  if (!tenant) throw new Error("No active tenant")
+export async function rejectManualTopup(paymentId: string, reason: string, tenantId: string) {
+  await requireTenantAccess(tenantId)
 
   try {
     const payment = await db.payment.findUnique({
-      where: { id: paymentId, tenantId: tenant.id }
+      where: { id: paymentId, tenantId: tenantId }
     })
 
     if (!payment) throw new Error("Pembayaran tidak ditemukan")
@@ -93,13 +87,14 @@ export async function rejectManualTopup(paymentId: string, reason: string) {
 
     const meta = payment.metadata as any
 
+    const session = await auth()
     await db.payment.update({
       where: { id: payment.id },
       data: {
         status: "FAILED",
         metadata: {
           ...meta,
-          rejectedBy: session.user.name,
+          rejectedBy: session?.user?.name || "Admin",
           rejectedAt: new Date().toISOString(),
           rejectReason: reason
         }

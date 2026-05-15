@@ -12,7 +12,7 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { verifyManualTopup, rejectManualTopup } from "@/lib/actions/wallet-admin"
 import { toast } from "@/hooks/use-toast"
 
-export function WalletManager({ wallets, pendingTopups, transactions, stats }: any) {
+export function WalletManager({ tenantId, wallets, pendingTopups, transactions, stats }: any) {
   const [activeTab, setActiveTab] = useState<"overview" | "pending" | "history">("overview")
   const [search, setSearch] = useState("")
   const [verifyingId, setVerifyingId] = useState<string | null>(null)
@@ -24,7 +24,7 @@ export function WalletManager({ wallets, pendingTopups, transactions, stats }: a
 
   const handleVerify = async (paymentId: string) => {
     setVerifyingId(paymentId)
-    const res = await verifyManualTopup(paymentId)
+    const res = await verifyManualTopup(paymentId, tenantId)
     setVerifyingId(null)
     if (res.success) {
        toast({ title: "Berhasil", description: "Top up manual telah disetujui. Saldo siswa bertambah." })
@@ -35,7 +35,7 @@ export function WalletManager({ wallets, pendingTopups, transactions, stats }: a
 
   const handleReject = async (paymentId: string) => {
     setVerifyingId(paymentId)
-    const res = await rejectManualTopup(paymentId, "Bukti transfer tidak valid atau dana belum masuk.")
+    const res = await rejectManualTopup(paymentId, "Bukti transfer tidak valid atau dana belum masuk.", tenantId)
     setVerifyingId(null)
     if (res.success) {
        toast({ title: "Ditolak", description: "Top up manual telah ditolak." })
