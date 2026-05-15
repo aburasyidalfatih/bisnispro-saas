@@ -10,9 +10,12 @@ import { ChevronLeft, Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader
 import Link from "next/link"
 import Papa from "papaparse"
 
+import { Crown } from "lucide-react"
+
 export default function ImportGTKPage() {
   const { data: session } = useSession()
   const tenantId = session?.user?.tenants?.[0]?.id
+  const plan = (session?.user as any)?.tenants?.[0]?.plan || "free"
   const router = useRouter()
   const { toast } = useToast()
   
@@ -97,6 +100,25 @@ export default function ImportGTKPage() {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+  }
+
+  if (plan === "free") {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 text-center border-0 shadow-xl rounded-3xl glass min-h-[60vh] max-w-3xl mx-auto">
+        <div className="h-24 w-24 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
+          <Crown className="h-12 w-12 text-amber-500" />
+        </div>
+        <h2 className="text-3xl font-bold tracking-tight mb-3">Fitur Premium</h2>
+        <p className="text-lg text-muted-foreground max-w-md mb-8">
+          Fasilitas Import Data GTK secara massal (Excel/CSV) hanya tersedia untuk sekolah dengan paket berlangganan.
+        </p>
+        <Link href="/admin/billing">
+          <Button size="lg" className="btn-gradient text-white rounded-xl px-10 shadow-lg glow-primary border-0 font-bold text-base h-12">
+            Upgrade Paket Sekarang
+          </Button>
+        </Link>
+      </div>
+    )
   }
 
   return (
