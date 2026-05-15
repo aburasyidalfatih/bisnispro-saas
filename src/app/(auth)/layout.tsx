@@ -1,44 +1,37 @@
-/**
- * Auth pages layout.
- * Secara default menggunakan tema aurora untuk platform (Super Admin).
- * Namun, jika diakses melalui subdomain tenant, akan menggunakan tema tenant.
- */
-"use client";
+import { headers } from "next/headers"
+import { checkIsMainDomain, getRootDomain } from "@/lib/utils"
+import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
 
-import { useEffect } from "react";
-import { checkIsMainDomain } from "@/lib/utils";
-
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    async function applyTheme() {
-      const host = window.location.hostname;
-      
-      if (checkIsMainDomain(host)) {
-        // Main domain (Super Admin)
-        document.documentElement.setAttribute("data-theme", "aurora");
-      } else {
-        // Subdomain (Tenant)
-        const slug = host.split('.')[0];
-        try {
-          const res = await fetch(`/api/website/${slug}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data?.theme) {
-              document.documentElement.setAttribute("data-theme", data.theme);
-              return; // Successfully applied tenant theme
-            }
-          }
-        } catch (error) {
-          console.error("Failed to fetch tenant theme:", error);
-        }
-        
-        // Fallback
-        document.documentElement.setAttribute("data-theme", "aurora");
-      }
-    }
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  const headerList = await headers()
+  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
+  host = host.split(':')[0]
+  
+  const isMainDomain = checkIsMainDomain(host)
+  let theme = "aurora"
+  
+  if (!isMainDomain) {
+    const rootDomain = getRootDomain(host)
+    const slug = host.replace(`.${rootDomain}`, "").split('.')[0]
+    const tenant = await getPublicTenantBySlug(slug)
     
-    applyTheme();
-  }, []);
+    if (tenant && tenant.theme) {
+      theme = tenant.theme
+    }
+  }
 
-  return <>{children}</>;
+  return (
+    <>
+      {/* 
+        Menyuntikkan tema secara sinkron langsung ke DOM HTML sebelum komponen React di-render (Hydration). 
+        Ini akan menghilangkan kedipan tema (Theme Flash) 100%. 
+      */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.setAttribute("data-theme", "${theme}");`
+        }}
+      />
+      {children}
+    </>
+  )
 }
