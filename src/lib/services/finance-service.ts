@@ -89,34 +89,27 @@ export class FinanceService {
 
     const tenant = await db.tenant.findUnique({
       where: { id: invoice.tenantId },
-      select: { settings: true, name: true }
+      select: { name: true }
     })
-    
-    const settings: any = tenant?.settings || {}
 
     if (student && student.parents.length > 0) {
-      let title = settings.invoice_created_title || "Tagihan Baru: {{invoiceTitle}}"
-      let message = settings.invoice_created_message || "Halo, ada tagihan baru untuk ananda {{studentName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
+      const { sendTemplateNotification } = await import("@/lib/services/notification")
       
-      // Replace variables
-      title = title.replace(/{{invoiceTitle}}/g, invoice.title)
-      
-      message = message
-        .replace(/{{studentName}}/g, student.name)
-        .replace(/{{amount}}/g, invoice.amountDue.toLocaleString('id-ID'))
-        .replace(/{{dueDate}}/g, format(new Date(invoice.dueDate), "d MMMM yyyy", { locale: localeId }))
-        .replace(/{{schoolName}}/g, tenant?.name || "Sekolah")
-        .replace(/{{invoiceTitle}}/g, invoice.title)
-
       for (const parent of student.parents) {
-          await sendNotification({
-            tenantId: invoice.tenantId,
-            userId: parent.userId,
-            title,
-            message,
-            type: "warning",
-            channels: ["inapp", "email", "whatsapp"]
-          })
+        if (!parent.userId) continue
+
+        await sendTemplateNotification({
+          tenantId: invoice.tenantId,
+          templateId: "invoice_created",
+          variables: {
+            studentName: student.name,
+            amount: invoice.amountDue.toLocaleString('id-ID'),
+            dueDate: format(new Date(invoice.dueDate), "d MMMM yyyy", { locale: localeId }),
+            schoolName: tenant?.name || "Sekolah",
+            invoiceTitle: invoice.title
+          },
+          targetUserId: parent.userId
+        })
       }
     }
   }
@@ -126,7 +119,7 @@ export class FinanceService {
 
     const invoice = await db.invoice.findFirst({
       where: { id: invoiceId, tenantId, deletedAt: null },
-      include: { student: { include: { walletAccount: true } } },
+      include: { student: { include: { walletAccount: true, parents: true } } },
     })
 
     if (!invoice) throw new Error("Tagihan tidak ditemukan")
@@ -202,6 +195,26 @@ export class FinanceService {
         })
       })
 
+      // Offload Notification to Background Job
+      const parents = invoice.student.parents || []
+      if (parents.length > 0) {
+        import("@/lib/services/notification").then(({ sendTemplateNotification }) => {
+          for (const parent of parents) {
+            if (!parent.userId) continue
+            sendTemplateNotification({
+              tenantId,
+              templateId: "payment_success",
+              variables: {
+                studentName: invoice.student.name,
+                invoiceTitle: invoice.title,
+                amountPaid: amount.toLocaleString("id-ID"),
+              },
+              targetUserId: parent.userId
+            }).catch(err => console.error(err))
+          }
+        })
+      }
+
       return { status: "VERIFIED", message: "Pembayaran via Wallet berhasil" }
     }
 
@@ -227,7 +240,11 @@ export class FinanceService {
 
     const payment = await db.invoicePayment.findUnique({
       where: { id: paymentId },
-      include: { invoice: true },
+      include: { 
+        invoice: {
+          include: { student: { include: { parents: true } } }
+        } 
+      },
     })
 
     if (!payment) throw new Error("Data pembayaran tidak ditemukan")
@@ -274,6 +291,27 @@ export class FinanceService {
         })
       }
     })
+
+    if (action === "VERIFIED") {
+      const student = payment.invoice.student
+      if (student && student.parents.length > 0) {
+        import("@/lib/services/notification").then(({ sendTemplateNotification }) => {
+          for (const parent of student.parents) {
+            if (!parent.userId) continue
+            sendTemplateNotification({
+              tenantId,
+              templateId: "payment_success",
+              variables: {
+                studentName: student.name,
+                invoiceTitle: payment.invoice.title,
+                amountPaid: payment.amount.toLocaleString("id-ID"),
+              },
+              targetUserId: parent.userId
+            }).catch(err => console.error(err))
+          }
+        })
+      }
+    }
 
     return { message: `Pembayaran ${action === "VERIFIED" ? "diverifikasi" : "ditolak"}` }
   }
