@@ -23,7 +23,7 @@ export default function KelolaSoalPage() {
   const [isAiDialogOpen, setIsAiDialogOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [aiPrompt, setAiPrompt] = useState({ topic: "", difficulty: "Sedang", count: "5" })
+  const [aiPrompt, setAiPrompt] = useState({ topic: "", difficulty: "Sedang", count: "5", educationLevel: "SD/Sederajat", questionType: "MULTIPLE_CHOICE_4" })
   
   const [questionText, setQuestionText] = useState("")
   const [options, setOptions] = useState([
@@ -128,7 +128,9 @@ export default function KelolaSoalPage() {
           questionBankId: id,
           topic: aiPrompt.topic,
           difficulty: aiPrompt.difficulty,
-          count: parseInt(aiPrompt.count)
+          count: parseInt(aiPrompt.count),
+          educationLevel: aiPrompt.educationLevel,
+          questionType: aiPrompt.questionType
         })
       })
       const data = await res.json()
@@ -136,7 +138,7 @@ export default function KelolaSoalPage() {
       
       toast({ title: "Sukses!", description: `${data.count} soal berhasil di-generate dan ditambahkan.` })
       setIsAiDialogOpen(false)
-      setAiPrompt({ topic: "", difficulty: "Sedang", count: "5" })
+      setAiPrompt({ ...aiPrompt, topic: "", count: "5" })
       fetchBank()
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" })
@@ -297,9 +299,36 @@ export default function KelolaSoalPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
+                <Label>Jenjang Pendidikan</Label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={aiPrompt.educationLevel}
+                  onChange={(e) => setAiPrompt({ ...aiPrompt, educationLevel: e.target.value })}
+                >
+                  <option value="SD/Sederajat">SD / Sederajat</option>
+                  <option value="SMP/Sederajat">SMP / Sederajat</option>
+                  <option value="SMA/SMK/Sederajat">SMA/SMK / Sederajat</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>Tipe Soal</Label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={aiPrompt.questionType}
+                  onChange={(e) => setAiPrompt({ ...aiPrompt, questionType: e.target.value })}
+                >
+                  <option value="MULTIPLE_CHOICE_4">Pilihan Ganda (A-D)</option>
+                  <option value="MULTIPLE_CHOICE_5">Pilihan Ganda (A-E)</option>
+                  <option value="TRUE_FALSE">Benar / Salah</option>
+                  <option value="ESSAY">Essay (Uraian)</option>
+                </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label>Tingkat Kesulitan</Label>
                 <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   value={aiPrompt.difficulty}
                   onChange={(e) => setAiPrompt({ ...aiPrompt, difficulty: e.target.value })}
                 >
@@ -311,7 +340,7 @@ export default function KelolaSoalPage() {
               <div className="space-y-2">
                 <Label>Jumlah Soal</Label>
                 <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   value={aiPrompt.count}
                   onChange={(e) => setAiPrompt({ ...aiPrompt, count: e.target.value })}
                 >
@@ -319,6 +348,11 @@ export default function KelolaSoalPage() {
                   <option value="3">3 Soal</option>
                   <option value="5">5 Soal</option>
                   <option value="10">10 Soal</option>
+                  <option value="15">15 Soal</option>
+                  <option value="20">20 Soal</option>
+                  <option value="30">30 Soal</option>
+                  <option value="40">40 Soal</option>
+                  <option value="50">50 Soal</option>
                 </select>
               </div>
             </div>
