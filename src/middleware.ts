@@ -121,7 +121,7 @@ export default async function middleware(request: NextRequest) {
   if (isMainDomain) {
     // Cek Affiliate Shortlink (contoh: /bdi123, /ref-abc, /mitra123)
     // Hindari rute sistem yang valid
-    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/forgot-password", "/reset-password", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy", "/panel-siswa", "/ujian"]
+    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/forgot-password", "/reset-password", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy", "/siswa", "/ujian"]
     const isSystemRoute = systemRoutes.some(r => pathname.startsWith(r))
     
     // Tangkap path apa saja yang bukan system route dan panjangnya antara 5-15 karakter alfanumerik (atau hyphen)
@@ -133,7 +133,7 @@ export default async function middleware(request: NextRequest) {
       return res
     }
 
-    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/panel-siswa") || pathname.startsWith("/ujian")
+    const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/siswa") || pathname.startsWith("/ujian")
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
     if (isProtected && !session) {
@@ -151,7 +151,7 @@ export default async function middleware(request: NextRequest) {
         if (!isSuperAdmin && !isAffiliate && activeRole !== "owner" && activeRole !== "admin") {
           if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
           if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-siswa", request.url)))
+          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
           return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
         }
       }
@@ -160,7 +160,7 @@ export default async function middleware(request: NextRequest) {
         if (!isSuperAdmin && activeRole !== "guru") {
           if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
           if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-siswa", request.url)))
+          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
           return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
         }
       }
@@ -169,12 +169,12 @@ export default async function middleware(request: NextRequest) {
         if (!isSuperAdmin && activeRole !== "orangtua") {
           if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
           if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-siswa", request.url)))
+          if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
           return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
         }
       }
 
-      if (pathname.startsWith("/panel-siswa")) {
+      if (pathname.startsWith("/siswa")) {
         if (!isSuperAdmin && activeRole !== "siswa") {
           if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
           if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
@@ -209,7 +209,7 @@ export default async function middleware(request: NextRequest) {
       } else if (session.user?.tenants?.[0]?.role === "orangtua") {
         return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
       } else if (session.user?.tenants?.[0]?.role === "siswa") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/panel-siswa", request.url)))
+        return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
       } else {
         return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
       }
@@ -234,7 +234,7 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/api") ||
       pathname.startsWith("/invoice") ||
       pathname.startsWith("/panel-gtk") ||
-      pathname.startsWith("/panel-siswa") ||
+      pathname.startsWith("/siswa") ||
       pathname.startsWith("/ujian")
     ) {
       const response = NextResponse.next()
@@ -270,7 +270,7 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/api") ||
       pathname.startsWith("/invoice") ||
       pathname.startsWith("/panel-gtk") ||
-      pathname.startsWith("/panel-siswa") ||
+      pathname.startsWith("/siswa") ||
       pathname.startsWith("/ujian")
     ) {
       const response = NextResponse.next()

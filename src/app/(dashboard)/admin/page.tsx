@@ -63,6 +63,8 @@ export default function DashboardPage() {
     if (!isAdminRole) {
       if (currentRole === "guru") {
         router.replace("/panel-gtk")
+      } else if (currentRole === "siswa") {
+        router.replace("/siswa")
       } else {
         router.replace("/ortu")
       }

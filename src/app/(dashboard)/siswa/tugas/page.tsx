@@ -64,7 +64,7 @@ export default function TugasSiswaPage() {
           ) : (
             activeTasks.map((item: any, idx: number) => {
               // Menentukan link: kalau ada PIN, lempar langsung ke ujian, kalau tidak, ke portal CBT umum
-              const href = item.pin ? `/ujian/ruang-ujian?pin=${item.pin}` : `/panel-siswa/cbt`
+              const href = item.pin ? `/ujian/ruang-ujian?pin=${item.pin}` : `/siswa/cbt`
               return (
                 <Link key={idx} href={href} className="block">
                   <Card className="glass border-2 border-slate-200 hover:border-pink-300 transition-colors cursor-pointer group">

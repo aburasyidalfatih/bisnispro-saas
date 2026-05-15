@@ -29,14 +29,14 @@ export default function PanelSiswaDashboard() {
   }, [])
 
   const layananSiswa = [
-    { icon: MonitorSmartphone, label: "Ujian CBT", color: "text-rose-500", bg: "bg-rose-50", border: "border-rose-100", href: "/panel-siswa/cbt" },
-    { icon: Calendar, label: "Jadwal", color: "text-blue-500", bg: "bg-blue-50", border: "border-blue-100", href: "/panel-siswa/jadwal" },
-    { icon: Clock, label: "Kehadiran", color: "text-emerald-500", bg: "bg-emerald-50", border: "border-emerald-100", href: "/panel-siswa/absensi" },
-    { icon: Award, label: "Nilai", color: "text-amber-500", bg: "bg-amber-50", border: "border-amber-100", href: "/panel-siswa/nilai" },
-    { icon: Wallet, label: "Tabungan", color: "text-indigo-500", bg: "bg-indigo-50", border: "border-indigo-100", href: "/panel-siswa/wallet" },
-    { icon: FileText, label: "Tugas", color: "text-pink-500", bg: "bg-pink-50", border: "border-pink-100", href: "/panel-siswa/tugas" },
-    { icon: QrCode, label: "E-KTM", color: "text-purple-500", bg: "bg-purple-50", border: "border-purple-100", href: "/panel-siswa/kartu" },
-    { icon: BookOpen, label: "Materi", color: "text-cyan-500", bg: "bg-cyan-50", border: "border-cyan-100", href: "/panel-siswa/jadwal" },
+    { icon: MonitorSmartphone, label: "Ujian CBT", color: "text-rose-500", bg: "bg-rose-50", border: "border-rose-100", href: "/siswa/cbt" },
+    { icon: Calendar, label: "Jadwal", color: "text-blue-500", bg: "bg-blue-50", border: "border-blue-100", href: "/siswa/jadwal" },
+    { icon: Clock, label: "Kehadiran", color: "text-emerald-500", bg: "bg-emerald-50", border: "border-emerald-100", href: "/siswa/absensi" },
+    { icon: Award, label: "Nilai", color: "text-amber-500", bg: "bg-amber-50", border: "border-amber-100", href: "/siswa/nilai" },
+    { icon: Wallet, label: "Tabungan", color: "text-indigo-500", bg: "bg-indigo-50", border: "border-indigo-100", href: "/siswa/wallet" },
+    { icon: FileText, label: "Tugas", color: "text-pink-500", bg: "bg-pink-50", border: "border-pink-100", href: "/siswa/tugas" },
+    { icon: QrCode, label: "E-KTM", color: "text-purple-500", bg: "bg-purple-50", border: "border-purple-100", href: "/siswa/kartu" },
+    { icon: BookOpen, label: "Materi", color: "text-cyan-500", bg: "bg-cyan-50", border: "border-cyan-100", href: "/siswa/jadwal" },
   ]
 
   const jadwalEsok = data?.tomorrowSchedules || []
@@ -77,7 +77,7 @@ export default function PanelSiswaDashboard() {
             <span className="text-xs font-semibold text-indigo-100 flex items-center gap-1.5">
               <Wallet className="w-3.5 h-3.5" /> Saldo Tabungan
             </span>
-            <Link href="/panel-siswa/wallet" className="text-xs font-bold text-white hover:underline flex items-center">
+            <Link href="/siswa/wallet" className="text-xs font-bold text-white hover:underline flex items-center">
               Riwayat <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
@@ -149,7 +149,7 @@ export default function PanelSiswaDashboard() {
           <h3 className="font-bold text-slate-800 flex items-center gap-2">
             <Calendar className="w-4 h-4 text-primary" /> Jadwal Besok
           </h3>
-          <Link href="/panel-siswa/jadwal" className="text-xs font-bold text-primary flex items-center">
+          <Link href="/siswa/jadwal" className="text-xs font-bold text-primary flex items-center">
             Selengkapnya <ChevronRight className="w-3 h-3" />
           </Link>
         </div>

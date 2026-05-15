@@ -8,15 +8,15 @@ import { cn } from "@/lib/utils"
 export function MobileBottomNav({ className }: { className?: string }) {
   const pathname = usePathname()
 
-  const isSiswa = pathname.startsWith("/panel-siswa")
+  const isSiswa = pathname.startsWith("/siswa")
   const isGTK = pathname.startsWith("/panel-gtk")
-  const baseRoute = isSiswa ? "/panel-siswa" : isGTK ? "/panel-gtk" : "/ortu"
+  const baseRoute = isSiswa ? "/siswa" : isGTK ? "/panel-gtk" : "/ortu"
 
   const navItems = isSiswa ? [
-    { label: "Beranda", icon: Home, href: "/panel-siswa" },
-    { label: "Tugas", icon: FileText, href: "/panel-siswa/tugas" },
-    { label: "Nilai", icon: Wallet, href: "/panel-siswa/nilai" },
-    { label: "Profil", icon: User, href: "/panel-siswa/profil" },
+    { label: "Beranda", icon: Home, href: "/siswa" },
+    { label: "Tugas", icon: FileText, href: "/siswa/tugas" },
+    { label: "Nilai", icon: Wallet, href: "/siswa/nilai" },
+    { label: "Profil", icon: User, href: "/siswa/profil" },
   ] : isGTK ? [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
     { label: "Absensi", icon: CalendarCheck, href: "/panel-gtk/absensi" },
