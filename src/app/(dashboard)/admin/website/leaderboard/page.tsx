@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { Trophy, Medal, Star, TrendingUp, Search, Users, FileText, ArrowLeft } from "lucide-react"
+import { Trophy, Medal, Star, TrendingUp, Search, Users, FileText, ArrowLeft, Info } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -76,6 +76,23 @@ export default function LeaderboardPage() {
           <div className="absolute top-0 right-0 p-8 opacity-10">
             <Trophy className="h-48 w-48" />
           </div>
+
+          {/* Info Icon for Criteria */}
+          <div className="absolute top-4 right-4 z-20 group">
+            <Info className="h-5 w-5 text-indigo-200 hover:text-white cursor-pointer transition-colors" />
+            <div className="absolute right-0 top-8 w-64 p-4 bg-slate-900/95 backdrop-blur-md rounded-xl text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-2xl border border-white/10 text-left">
+              <p className="font-bold mb-2 text-indigo-200">Kriteria Skor Website:</p>
+              <ul className="space-y-1.5 list-disc list-inside text-slate-300">
+                <li>Berita & Artikel: <span className="text-white font-bold">+20 Pts</span></li>
+                <li>Data Prestasi: <span className="text-white font-bold">+20 Pts</span></li>
+                <li>Agenda/Event: <span className="text-white font-bold">+15 Pts</span></li>
+                <li>Data Fasilitas: <span className="text-white font-bold">+15 Pts</span></li>
+                <li>Profil Guru (GTK): <span className="text-white font-bold">+10 Pts</span></li>
+                <li>Foto Galeri: <span className="text-white font-bold">+5 Pts</span></li>
+              </ul>
+            </div>
+          </div>
+
           <CardContent className="p-8 relative z-10 flex flex-col sm:flex-row items-center gap-8">
             <div className="text-center bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/20">
               <p className="text-indigo-100 font-medium mb-1">Peringkat Anda</p>
@@ -85,14 +102,11 @@ export default function LeaderboardPage() {
             <div className="flex-1 text-center sm:text-left">
               <h2 className="text-2xl font-bold mb-2">{myRankEntry.tenant.name}</h2>
               <p className="text-indigo-100 mb-4 max-w-lg">
-                Tingkatkan peringkat Anda dengan rajin memposting berita, melengkapi galeri, dan mengundang pengunjung ke website sekolah dengan membagikan postingan website Anda !
+                Tingkatkan peringkat Anda dengan rajin memposting berita, melengkapi galeri, dan memperbarui profil sekolah secara berkala!
               </p>
               <div className="flex flex-wrap justify-center sm:justify-start gap-4">
                 <div className="bg-black/20 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-                  <FileText className="h-4 w-4" /> Skor Konten: {myRankEntry.contentScore}
-                </div>
-                <div className="bg-black/20 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-                  <Users className="h-4 w-4" /> Skor Trafik: {myRankEntry.trafficScore}
+                  <FileText className="h-4 w-4" /> Total Skor: {myRankEntry.contentScore}
                 </div>
               </div>
             </div>
