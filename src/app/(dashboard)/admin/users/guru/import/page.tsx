@@ -21,7 +21,19 @@ export default function ImportGTKPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
+  const plan = session?.user?.tenants?.[0]?.plan || "free"
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (plan === "free") {
+      toast({ 
+        title: "Fitur Premium", 
+        description: "Fitur import data massal hanya tersedia untuk paket Pro/Enterprise. Silakan upgrade paket Anda.", 
+        variant: "destructive" 
+      })
+      setError("Fitur import data hanya tersedia untuk paket Pro. Silakan upgrade paket Anda untuk menggunakan fitur ini.")
+      return
+    }
+
     const file = e.target.files?.[0]
     if (!file) return
     

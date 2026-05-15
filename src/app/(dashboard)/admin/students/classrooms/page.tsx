@@ -37,21 +37,27 @@ export default function ClassroomsPage() {
     if (!tenant || !form.name) return toast({ title: "Nama kelas wajib diisi", variant: "destructive" })
     setSaving(true)
     try {
+      let res;
       if (editId) {
-        await fetch(`/api/classrooms/${editId}`, {
+        res = await fetch(`/api/classrooms/${editId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ tenantId: tenant.id, ...form, capacity: Number(form.capacity) }),
         })
-        toast({ title: "Kelas diperbarui!" })
       } else {
-        await fetch("/api/classrooms/create", {
+        res = await fetch("/api/classrooms/create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ tenantId: tenant.id, ...form, capacity: Number(form.capacity) }),
         })
-        toast({ title: "Kelas ditambahkan!" })
       }
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal menyimpan kelas")
+      }
+
+      toast({ title: editId ? "Kelas diperbarui!" : "Kelas ditambahkan!" })
       setShowForm(false)
       setEditId(null)
       setForm({ name: "", level: "", capacity: 30 })
