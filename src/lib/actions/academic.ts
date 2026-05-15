@@ -35,7 +35,7 @@ export async function createSubject(data: { tenantId: string, name: string, code
   // Cek Kuota
   const tenant = await db.tenant.findUnique({ where: { id: parsed.tenantId } })
   if (tenant?.plan === "free") {
-    const subjectCount = await tenantDb.subject.count()
+    const subjectCount = await db.subject.count({ where: { tenantId: parsed.tenantId } })
     if (subjectCount >= 1) {
       return { error: "Kuota maksimal 1 mata pelajaran untuk paket Free. Silakan upgrade paket untuk menambah." }
     }
