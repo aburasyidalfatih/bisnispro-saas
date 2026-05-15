@@ -47,10 +47,6 @@ interface WebsiteData {
     partnerships: number
     contactSubmissions: number
   }
-  umamiStats?: {
-    pageviews?: { value: number }
-    visitors?: { value: number }
-  } | null
 }
 
 interface StatItem {
@@ -352,7 +348,7 @@ export default function WebsiteOverviewPage() {
       </div>
 
       {/* Analytics & Interaction Row */}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
         {/* Contact Submissions */}
         <Link href={`${base}/contact`}>
           <Card className="glass border-0 hover-lift cursor-pointer h-full relative overflow-hidden">
@@ -377,31 +373,6 @@ export default function WebsiteOverviewPage() {
             </CardContent>
           </Card>
         </Link>
-
-        {/* Traffic Dopamine (Mini Analytics) */}
-        <Card className="glass border-0 hover-lift relative overflow-hidden group">
-          <div className="absolute top-0 right-0 h-24 w-24 bg-indigo-500/10 blur-2xl rounded-full transition-transform group-hover:scale-150" />
-          <CardContent className="p-5 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-blue-500/10">
-                <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-              </div>
-              <span className="inline-flex items-center rounded-md bg-indigo-100 dark:bg-indigo-500/20 px-2 py-1 text-[10px] font-bold text-indigo-600 dark:text-indigo-400">
-                🔥 Hot Traffic
-              </span>
-            </div>
-            <div className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
-              {data?.umamiStats 
-                ? (data.umamiStats.pageviews?.value || 0) 
-                : (Math.floor(Math.random() * 150) + 50 + (data?._count?.posts || 0) * 12)} <span className="text-sm font-normal text-muted-foreground">Kunjungan Minggu Ini</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {data?.umamiStats 
-                ? "Data real-time ditarik dari Analytics." 
-                : "Website sekolah Anda mulai ramai dikunjungi! Semakin sering Anda menulis postingan/berita, traffic akan semakin naik."}
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Section status cards */}

@@ -72,25 +72,14 @@ export async function GET(req: Request) {
           },
         }
       },
-      tenantScore: true,
-      umamiWebsiteId: true
+      tenantScore: true
     },
   })
 
   if (!tenant) return NextResponse.json({ error: "Tenant tidak ditemukan" }, { status: 404 })
 
-  let umamiStats = null
-  if (tenant.umamiWebsiteId) {
-    try {
-      const { getUmamiStats } = await import("@/lib/umami")
-      umamiStats = await getUmamiStats(tenant.umamiWebsiteId)
-    } catch (e) {
-      console.error("Gagal mengambil data umami:", e)
-    }
-  }
-
   // Native Json fields — Prisma returns parsed objects directly
-  return NextResponse.json({ ...tenant, umamiStats })
+  return NextResponse.json(tenant)
 }
 
 // PUT: update data website tenant

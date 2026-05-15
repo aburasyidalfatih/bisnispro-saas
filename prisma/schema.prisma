@@ -101,7 +101,6 @@ model Tenant {
   cbtQuestionBanks     CbtQuestionBank[]
   aiUsageLogs          AiUsageLog[]
   tenantScore          TenantScore?
-  umamiWebsiteId       String?
 
   @@index([isActive])
   @@index([plan])
