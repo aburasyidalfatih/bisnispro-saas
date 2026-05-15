@@ -27,6 +27,7 @@ export default function EmailSettingsPage() {
   const [testEmail, setTestEmail] = useState("")
   const [tenantId, setTenantId] = useState<string | null>(null)
   const [useCustom, setUseCustom] = useState(false)
+  const [tenantPlan, setTenantPlan] = useState<string>("free")
   const [config, setConfig] = useState<SmtpConfig>({
     smtpHost: "",
     smtpPort: "587",
@@ -37,7 +38,10 @@ export default function EmailSettingsPage() {
   })
 
   useEffect(() => {
-    const id = session?.user?.tenants?.[0]?.id
+    const activeTenant = session?.user?.tenants?.[0]
+    const id = activeTenant?.id
+    if (activeTenant?.plan) setTenantPlan(activeTenant.plan)
+
     if (!id) {
       const match = document.cookie.match(/impersonate-tenant=([^;]+)/)
       const slug = match?.[1]
@@ -137,14 +141,33 @@ export default function EmailSettingsPage() {
           <div className="text-sm">
             <p className="font-medium">Konfigurasi SMTP per-Tenant</p>
             <p className="text-muted-foreground mt-0.5">
-              Jika tidak dikonfigurasi, sistem akan menggunakan SMTP default platform (Mailketing).
-              Aktifkan konfigurasi kustom untuk menggunakan server email Anda sendiri.
+              Jika tidak dikonfigurasi, sistem akan menggunakan SMTP default platform (SchoolPro).
+              Aktifkan konfigurasi kustom untuk menggunakan server email Anda sendiri. 
+              Fitur ini hanya tersedia untuk paket <strong>Pro, Premium, dan Enterprise</strong>.
             </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Toggle custom */}
+      {/* Lock for free plan */}
+      {tenantPlan === "free" || tenantPlan === "basic" ? (
+        <Card className="border border-amber-500/20 bg-amber-500/10">
+          <CardContent className="p-6 text-center space-y-3">
+            <div className="mx-auto w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center mb-4">
+              <Mail className="h-6 w-6 text-amber-600" />
+            </div>
+            <h3 className="font-semibold text-lg text-amber-800 dark:text-amber-500">Fitur Premium</h3>
+            <p className="text-sm text-amber-700/80 dark:text-amber-400/80 max-w-md mx-auto">
+              Konfigurasi SMTP Kustom (menggunakan email pengirim sekolah Anda sendiri) hanya tersedia untuk paket Pro ke atas. Saat ini Anda menggunakan paket {tenantPlan}.
+            </p>
+            <Button variant="default" className="bg-amber-500 hover:bg-amber-600 text-white mt-4">
+              Upgrade Paket
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Toggle custom */}
       <Card className="glass border-0">
         <CardContent className="p-5">
           <div className="flex items-center justify-between">
@@ -303,6 +326,8 @@ export default function EmailSettingsPage() {
           </div>
         </CardContent>
       </Card>
+      </>
+      )}
     </div>
   )
 }

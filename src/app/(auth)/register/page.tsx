@@ -10,7 +10,7 @@ import { registerSchema, type RegisterInput } from "@/lib/validations/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { UserPlus } from "lucide-react"
+import { UserPlus, Info } from "lucide-react"
 import { getRootDomain } from "@/lib/utils"
 
 export default function RegisterPage() {
@@ -115,11 +115,13 @@ export default function RegisterPage() {
                 </div>
               )
             )}
-            <h1 className="text-2xl font-bold tracking-tight">Buat akun baru</h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h1 className="text-2xl font-bold tracking-tight">
+              {isMainDomain ? "Buat Akun Baru" : "Buat Akun"}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
               {isMainDomain 
                 ? "Daftar dan buat lembaga Anda" 
-                : `Daftar ke portal sistem informasi ${tenantNameDisplay || 'sekolah'}`}
+                : `Formulir ini khusus untuk membuat akun wali / calon wali siswa ${tenantNameDisplay || 'sekolah'}`}
             </p>
           </div>
 

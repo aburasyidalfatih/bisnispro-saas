@@ -9,19 +9,24 @@ async function getEmailTransporter(tenantId?: string) {
   if (tenantId) {
     const tenant = await db.tenant.findUnique({
       where: { id: tenantId },
-      select: { settings: true },
+      select: { settings: true, plan: true },
     })
-    const settings = (tenant?.settings as Record<string, any>) || {}
-    if (settings.smtp?.smtpHost && settings.smtp?.smtpUser && settings.smtp?.smtpPass) {
-      return {
-        transporter: nodemailer.createTransport({
-          host: settings.smtp.smtpHost,
-          port: Number(settings.smtp.smtpPort) || 587,
-          secure: Number(settings.smtp.smtpPort) === 465,
-          auth: { user: settings.smtp.smtpUser, pass: settings.smtp.smtpPass },
-        }),
-        from: settings.smtp.smtpFrom || settings.smtp.smtpUser,
-        fromName: settings.smtp.smtpFromName || "",
+    
+    // Hanya paket berbayar (pro/enterprise/premium) yang bisa pakai SMTP sendiri
+    // Jika paket free, maka otomatis jatuh ke SMTP platform
+    if (tenant && (tenant.plan === "pro" || tenant.plan === "enterprise" || tenant.plan === "premium")) {
+      const settings = (tenant.settings as Record<string, any>) || {}
+      if (settings.smtp?.smtpHost && settings.smtp?.smtpUser && settings.smtp?.smtpPass) {
+        return {
+          transporter: nodemailer.createTransport({
+            host: settings.smtp.smtpHost,
+            port: Number(settings.smtp.smtpPort) || 587,
+            secure: Number(settings.smtp.smtpPort) === 465,
+            auth: { user: settings.smtp.smtpUser, pass: settings.smtp.smtpPass },
+          }),
+          from: settings.smtp.smtpFrom || settings.smtp.smtpUser,
+          fromName: settings.smtp.smtpFromName || "",
+        }
       }
     }
   }

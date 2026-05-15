@@ -101,6 +101,11 @@ export async function POST(req: Request) {
       const existingTu = await db.tenantUser.findUnique({
         where: { tenantId_userId: { tenantId, userId: user.id } },
       })
+      if (existingTu && existingTu.role !== "siswa") {
+        const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+        const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
+        return NextResponse.json({ error: `Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat akun Siswa.` }, { status: 400 })
+      }
       if (!existingTu) {
         await db.tenantUser.create({ data: { tenantId, userId: user.id, role: "siswa" } })
       }

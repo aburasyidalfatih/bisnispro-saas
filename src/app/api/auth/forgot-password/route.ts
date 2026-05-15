@@ -18,12 +18,24 @@ export async function POST(req: Request) {
 
     const parsed = await parseBody(req, forgotPasswordSchema)
     if (parsed.error) return parsed.error
-    const { email } = parsed.data
+    const email = parsed.data.email.toLowerCase().trim()
 
     const user = await db.user.findUnique({ where: { email } })
 
     // Selalu return sukses untuk mencegah email enumeration
     if (!user) return NextResponse.json({ message: "Jika email terdaftar, link reset akan dikirim." })
+
+    // Coba dapatkan tenantId dari hostname agar email dikirim dari SMTP sekolah jika ada
+    const host = req.headers.get("host") || ""
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const hostWithoutPort = host.split(":")[0]
+    let tenantId = undefined
+
+    if (hostWithoutPort !== "localhost" && hostWithoutPort !== rootDomain && hostWithoutPort !== `www.${rootDomain}`) {
+      const slug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+      const tenant = await db.tenant.findUnique({ where: { slug }, select: { id: true } })
+      if (tenant) tenantId = tenant.id
+    }
 
     const { token } = await createToken(user.id, "password_reset", 1)
     const origin = req.headers.get("origin") || process.env.AUTH_URL || "https://schoolpro.id"
@@ -38,7 +50,8 @@ export async function POST(req: Request) {
         <p>Klik tombol di bawah untuk mereset password Anda. Link berlaku 1 jam.</p>
         <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#6c47ff;color:#fff;border-radius:8px;text-decoration:none;margin:16px 0">Reset Password</a>
         <p style="color:#888;font-size:13px">Jika Anda tidak meminta reset password, abaikan email ini.</p>
-      </div>`
+      </div>`,
+      tenantId
     ).catch((e) => ({ success: false, error: e.message }))
     
     logger.info("Forgot Password Email Result:", emailResult)
