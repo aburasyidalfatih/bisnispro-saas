@@ -29,7 +29,7 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
       if (cached) return cached as string
     }
 
-    const base = new URL(requestUrl).origin
+    const base = process.env.NEXT_PUBLIC_APP_URL || new URL(requestUrl).origin
     const res = await fetch(
       `${base}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
       {
@@ -95,6 +95,11 @@ export default async function middleware(request: NextRequest) {
     pathname.includes(".") && !pathname.startsWith("/api")
   ) {
     return addSecurityHeaders(NextResponse.next())
+  }
+
+  // 2. Bypass middleware completely for internal APIs to prevent infinite loops
+  if (pathname.startsWith("/api/internal/")) {
+    return NextResponse.next()
   }
 
   // Validasi Session
