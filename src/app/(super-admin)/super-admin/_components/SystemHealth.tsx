@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
+import { useConfirm } from "@/components/providers/confirm-provider"
 
 interface PM2Process {
   name: string
@@ -50,6 +51,7 @@ export function SystemHealth() {
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null)
   const [loading, setLoading] = useState(true)
   const [clearing, setClearing] = useState(false)
+  const { confirm } = useConfirm()
 
   const fetchMetrics = async () => {
     try {
@@ -64,7 +66,10 @@ export function SystemHealth() {
   }
 
   const handleClearCache = async () => {
-    if (!confirm("Hapus semua cache Redis? Ini akan memaksa sistem mengambil data segar dari database.")) return
+    if (!(await confirm({ 
+      title: "Bersihkan Cache Redis?", 
+      description: "Ini akan memaksa sistem mengambil data segar dari database." 
+    }))) return
     
     setClearing(true)
     try {

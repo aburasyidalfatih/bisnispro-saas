@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "@/hooks/use-toast"
 import { Tag, Edit, Plus, Trash2, Save, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useConfirm } from "@/components/providers/confirm-provider"
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ export default function DiscountsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [editingDiscount, setEditingDiscount] = useState<Partial<DiscountCode> | null>(null)
+  const { confirm } = useConfirm()
 
   const fetchDiscounts = async () => {
     setLoading(true)
@@ -81,7 +83,10 @@ export default function DiscountsPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus kode diskon ini?")) return
+    if (!(await confirm({ 
+      title: "Hapus Kode Diskon?", 
+      description: "Yakin ingin menghapus kode diskon ini? Tindakan ini tidak dapat dibatalkan." 
+    }))) return
     try {
       const res = await fetch(`/api/super-admin/discounts/${id}`, { method: "DELETE" })
       if (!res.ok) throw new Error("Gagal menghapus diskon")

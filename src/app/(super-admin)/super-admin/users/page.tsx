@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ServerPagination } from "@/components/shared/server-pagination"
 import { cn } from "@/lib/utils"
+import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 
@@ -37,6 +38,7 @@ export default function UsersPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [deleteId, setDeleteId] = useState<string | null>(null)
   const { toast } = useToast()
   const limit = 20
 
@@ -54,14 +56,15 @@ export default function UsersPage() {
 
   useEffect(() => { fetchUsers() }, [fetchUsers])
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.")) return
+  const handleDeleteConfirm = async () => {
+    if (!deleteId) return
     
     try {
-      const res = await fetch(`/api/super-admin/users/${id}`, { method: "DELETE" })
+      const res = await fetch(`/api/super-admin/users/${deleteId}`, { method: "DELETE" })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Gagal menghapus pengguna")
       toast({ title: "Berhasil", description: "Pengguna telah dihapus." })
+      setDeleteId(null)
       fetchUsers()
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" })
@@ -202,7 +205,7 @@ export default function UsersPage() {
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="gap-2 rounded-xl h-10 cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700"
-                            onClick={() => handleDelete(u.id)}
+                            onClick={() => setDeleteId(u.id)}
                           >
                             <Trash2 className="h-4 w-4" />
                             <span className="font-medium text-sm">Hapus Pengguna</span>
@@ -224,6 +227,16 @@ export default function UsersPage() {
           </div>
         )}
       </Card>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title="Hapus Pengguna?"
+        description="Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan."
+        onConfirm={handleDeleteConfirm}
+        confirmText="Hapus Pengguna"
+        variant="destructive"
+      />
     </div>
   )
 }
