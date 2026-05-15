@@ -18,6 +18,7 @@ import {
 import Link from "next/link"
 import { TenantSwitcher } from "@/components/shared/tenant-switcher"
 import { NotificationBell } from "@/components/shared/notification-bell"
+import { MessageIndicator } from "@/components/shared/message-indicator"
 
 const labelMap: Record<string, string> = {
   dashboard: "Dashboard",
@@ -152,9 +153,11 @@ export function Header() {
           <span className="sr-only">Toggle tema</span>
         </Button>
 
+        {/* Messages */}
+        <MessageIndicator />
+
         {/* Notifications */}
         <NotificationBell />
-
 
         {/* User menu */}
         <DropdownMenu>
