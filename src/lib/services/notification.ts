@@ -157,7 +157,7 @@ export async function sendWhatsAppDirect(
 ): Promise<{ success: boolean; error?: string }> {
   
   try {
-        const config = await getWaConfig(tenantId)
+        const config = await getWaConfig(tenantId || undefined)
 
         // Implement random delay for ALL providers (Enforce safe defaults if 0)
         const safeMin = config.delayMin && config.delayMin > 0 ? config.delayMin : 3;
@@ -206,41 +206,7 @@ export async function sendWhatsAppDirect(
           }
         }
 
-        // 1. Coba gunakan Internal Gateway jika ada sesi yang CONNECTED (dan provider = internal)
-        if (!config.provider || config.provider === "internal") {
-          try {
-            const session = await db.waSession.findUnique({
-              where: { tenantId: tenantId || "platform" }
-            })
-
-            if (session?.status === "CONNECTED") {
-              const WA_GATEWAY_URL = process.env.WA_GATEWAY_URL || "http://localhost:4000"
-              const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
-
-              const res = await fetch(`${WA_GATEWAY_URL}/api/wa/send`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "x-internal-secret": INTERNAL_SECRET
-                },
-                body: JSON.stringify({
-                  tenantId: tenantId || "platform",
-                  to: phone,
-                  text: message
-                })
-              })
-
-              if (res.ok) {
-                return { success: true }
-              } else {
-                const errText = await res.text()
-                logger.error("Internal WA Gateway send failed", { phone, status: res.status, body: errText })
-              }
-            }
-          } catch (err) {
-            // Abaikan jika tidak ada tabel atau error koneksi DB saat cari session
-          }
-        }
+        // Internal Gateway Has Been Removed
 
         // 2. Fallback ke StarSender (Legacy / starsender provider)
         if (!config.apiKey) {

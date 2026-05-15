@@ -15,7 +15,6 @@ import {
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { WhatsappManager } from "@/app/(dashboard)/admin/settings/whatsapp/_components/whatsapp-manager"
 
 export default function SuperAdminSettingsPage() {
   const [loading, setLoading] = useState(true)
@@ -593,14 +592,13 @@ export default function SuperAdminSettingsPage() {
 
         {/* --- TAB: WHATSAPP --- */}
         <TabsContent value="whatsapp" className="space-y-6 outline-none">
-          <Tabs defaultValue="internal" className="w-full">
+          <Tabs defaultValue="starsender" className="w-full">
             <div className="flex items-center justify-between mb-4">
               <div className="space-y-1">
                 <h3 className="text-lg font-medium leading-none">Provider WhatsApp</h3>
                 <p className="text-sm text-muted-foreground">Pilih provider yang akan digunakan untuk mengirim pesan platform.</p>
               </div>
               <TabsList className="bg-muted/50 rounded-xl p-1 border flex-wrap h-auto">
-                <TabsTrigger value="internal" className="rounded-lg">Internal Gateway</TabsTrigger>
                 <TabsTrigger value="starsender" className="rounded-lg">StarSender API</TabsTrigger>
                 <TabsTrigger value="meta" className="rounded-lg">Meta Official API</TabsTrigger>
               </TabsList>
@@ -616,27 +614,11 @@ export default function SuperAdminSettingsPage() {
                  }} 
                  className="flex h-10 w-full md:w-1/3 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                >
-                 <option value="internal">Internal Gateway</option>
                  <option value="starsender">StarSender API</option>
                  <option value="meta">Meta Official API</option>
                </select>
                <p className="text-xs text-muted-foreground mt-2">Pilih gateway mana yang aktif untuk notifikasi otomatis platform (seperti alert pendaftaran baru).</p>
             </div>
-
-            <TabsContent value="internal" className="mt-0 outline-none">
-              <Card className="glass border-0">
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10"><MessageSquare className="h-4 w-4 text-emerald-500" /></div>
-                    <CardTitle className="text-lg">Internal WhatsApp Gateway (Platform)</CardTitle>
-                  </div>
-                  <CardDescription>Hubungkan WhatsApp utama platform untuk mengirim notifikasi pendaftaran, revisi, dan alert sistem.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <WhatsappManager tenantId="platform" />
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="starsender" className="mt-0 outline-none grid gap-6 lg:grid-cols-2">
               <Card className="glass border-0">
