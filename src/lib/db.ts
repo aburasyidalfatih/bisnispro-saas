@@ -54,3 +54,29 @@ export function withTenant(tenantId: string) {
     },
   })
 }
+
+/**
+ * Enterprise RLS (Phase 3): Database-level isolation using PostgreSQL RLS.
+ * This is meant to replace `withTenant` after `scratch/rls-migration.sql` 
+ * is applied to the production database.
+ */
+export function withTenantRLS(tenantId: string) {
+  if (!tenantId) {
+    throw new Error("withTenantRLS requires a valid tenantId")
+  }
+  
+  return db.$extends({
+    query: {
+      $allModels: {
+        async $allOperations({ args, query }) {
+          // Interactive transaction to prevent connection pooling cross-contamination
+          const [, result] = await db.$transaction([
+            db.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,
+            query(args),
+          ])
+          return result
+        },
+      },
+    },
+  })
+}
