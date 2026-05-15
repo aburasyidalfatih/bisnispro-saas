@@ -165,7 +165,7 @@ function ExamContent() {
     if (document.exitFullscreen) {
       document.exitFullscreen().catch(()=>console.log("Not fullscreen"))
     }
-    router.push("/panel-siswa")
+    router.push("/siswa")
   }
 
   if (loading) {
@@ -186,7 +186,7 @@ function ExamContent() {
           </div>
           <h2 className="text-2xl font-black text-slate-800 mb-2">Akses Ditolak</h2>
           <p className="text-muted-foreground mb-8">{error}</p>
-          <Button onClick={() => router.push("/panel-siswa")} className="w-full rounded-xl">Kembali ke Dashboard</Button>
+          <Button onClick={() => router.push("/siswa")} className="w-full rounded-xl">Kembali ke Dashboard</Button>
         </div>
       </div>
     )
