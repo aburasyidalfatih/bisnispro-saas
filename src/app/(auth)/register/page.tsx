@@ -10,7 +10,7 @@ import { registerSchema, type RegisterInput } from "@/lib/validations/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { UserPlus } from "lucide-react"
+import { UserPlus, Info } from "lucide-react"
 import { getRootDomain } from "@/lib/utils"
 
 export default function RegisterPage() {
@@ -124,7 +124,17 @@ export default function RegisterPage() {
           </div>
 
           {!isMainDomain ? (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-6">
+              <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 flex items-start gap-3">
+                <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+                <div className="text-left text-sm text-blue-800 dark:text-blue-300">
+                  <p className="font-semibold mb-0.5">Khusus Orang Tua / Wali Murid</p>
+                  <p className="text-xs opacity-90 leading-relaxed">
+                    Formulir ini hanya diperuntukkan bagi Orang Tua. Akun <strong>Guru</strong> dan <strong>Siswa</strong> wajib didaftarkan oleh Admin melalui dashboard sekolah.
+                  </p>
+                </div>
+              </div>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {error && (
                 <div className="rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive text-center">
                   {error}
@@ -156,7 +166,8 @@ export default function RegisterPage() {
                   </>
                 )}
               </Button>
-            </form>
+              </form>
+            </div>
           ) : (
             <div className="text-center text-sm text-muted-foreground mb-4">
               Silakan daftar menggunakan akun Google Anda untuk bergabung menjadi Mitra Afiliasi.
