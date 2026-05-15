@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import {
   LayoutDashboard,
   Users,
@@ -535,6 +535,10 @@ interface SidebarProps {
 
 export function Sidebar({ isSuperAdmin }: SidebarProps) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const currentQuery = searchParams.toString()
+  const fullPath = currentQuery ? `${pathname}?${currentQuery}` : pathname
+
   const { data: session } = useSession()
   const { branding } = useTenantBranding()
   const [collapsed, setCollapsed] = useState(false)
@@ -607,7 +611,12 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
       section.items.forEach((item) => {
         if (item.children) {
           const isChildActive = item.children.some(
-            (child) => pathname === child.href || pathname.startsWith(child.href + "/")
+            (child) => {
+              if (child.href.includes("?")) {
+                return fullPath === child.href
+              }
+              return pathname === child.href || pathname.startsWith(child.href + "/")
+            }
           )
           if (isChildActive) open[item.label] = true
         }
@@ -691,11 +700,14 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
 
             <div className="space-y-0.5">
               {section.items.map((item) => {
-                const isExactActive = pathname === item.href
+                const isExactActive = item.href.includes("?") ? fullPath === item.href : pathname === item.href
                 const isChildActive = item.children?.some(
-                  (child) => pathname === child.href || pathname.startsWith(child.href + "/")
+                  (child) => {
+                    if (child.href.includes("?")) return fullPath === child.href
+                    return pathname === child.href || pathname.startsWith(child.href + "/")
+                  }
                 )
-                const isActive = isExactActive || (!item.children && pathname.startsWith(item.href + "/"))
+                const isActive = isExactActive || (!item.children && !item.href.includes("?") && pathname.startsWith(item.href + "/"))
                 const isOpen = effectiveOpen[item.label] && !collapsed
                 const hasChildren = item.children && item.children.length > 0
 
@@ -782,7 +794,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                       <div className={cn("overflow-hidden transition-all duration-200 ease-in-out", isOpen ? "max-h-96 opacity-100 mt-0.5" : "max-h-0 opacity-0")}>
                         <div className="ml-[22px] border-l border-border/50 pl-4 space-y-0.5 py-0.5">
                           {item.children!.map((child) => {
-                            const isSubActive = pathname === child.href || pathname.startsWith(child.href + "/")
+                            const isSubActive = child.href.includes("?") ? fullPath === child.href : (pathname === child.href || pathname.startsWith(child.href + "/"))
                             return (
                               <Link
                                 key={child.href}

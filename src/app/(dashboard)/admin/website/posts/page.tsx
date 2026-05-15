@@ -157,7 +157,7 @@ export default function PostsPage() {
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 hover:text-primary">
-                            <Link href={`/admin/website/posts/${post.id}`}>
+                            <Link href={`/admin/website/posts/${post.id}${typeFilter ? `?type=${typeFilter}` : ""}`}>
                               <Edit2 className="h-4 w-4" />
                             </Link>
                           </Button>

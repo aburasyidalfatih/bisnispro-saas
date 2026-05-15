@@ -79,7 +79,7 @@ export default function PostFormPage() {
       .then(d => {
         if (d.error) {
           toast({ title: "Gagal memuat artikel", description: d.error, variant: "destructive" })
-          router.push("/admin/website/posts")
+          router.push(typeQuery ? `/admin/website/posts?type=${typeQuery}` : "/admin/website/posts")
           return
         }
         setValue("title", d.title)
@@ -124,7 +124,7 @@ export default function PostFormPage() {
       const d = await res.json()
       if (res.ok) {
         toast({ title: "Berhasil", description: d.message })
-        router.push("/admin/website/posts")
+        router.push(typeQuery ? `/admin/website/posts?type=${typeQuery}` : "/admin/website/posts")
         router.refresh()
       } else {
         toast({ title: "Gagal menyimpan", description: d.error, variant: "destructive" })
@@ -146,7 +146,7 @@ export default function PostFormPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <Link href="/admin/website/posts">
+            <Link href={typeQuery ? `/admin/website/posts?type=${typeQuery}` : "/admin/website/posts"}>
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -333,7 +333,7 @@ export default function PostFormPage() {
               <span className="text-base font-semibold">{isNew ? "Simpan & Publikasikan" : "Perbarui Artikel"}</span>
             </Button>
             <Button asChild variant="ghost" className="w-full rounded-xl" disabled={loading}>
-              <Link href="/admin/website/posts">Batal</Link>
+              <Link href={typeQuery ? `/admin/website/posts?type=${typeQuery}` : "/admin/website/posts"}>Batal</Link>
             </Button>
           </div>
         </div>
