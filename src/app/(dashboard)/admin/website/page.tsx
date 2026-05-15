@@ -347,33 +347,7 @@ export default function WebsiteOverviewPage() {
         </Card>
       </div>
 
-      {/* Analytics & Interaction Row */}
-      <div className="grid gap-4">
-        {/* Contact Submissions */}
-        <Link href={`${base}/contact`}>
-          <Card className="glass border-0 hover-lift cursor-pointer h-full relative overflow-hidden">
-            <div className="absolute top-0 right-0 h-24 w-24 bg-rose-500/10 blur-2xl rounded-full" />
-            <CardContent className="p-5 relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500/10 to-pink-500/10">
-                  <MessageSquare className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-                </div>
-                {data?._count?.contactSubmissions ? (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white animate-pulse">
-                    {data._count.contactSubmissions}
-                  </span>
-                ) : null}
-              </div>
-              <div className="text-2xl font-bold tracking-tight">
-                {data?._count?.contactSubmissions || 0} <span className="text-sm font-normal text-muted-foreground">Pesan Baru</span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Dari form buku tamu / hubungi kami di website.
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-      </div>
+
 
       {/* Section status cards */}
       <Card className="glass border-0">
