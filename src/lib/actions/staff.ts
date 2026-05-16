@@ -88,11 +88,7 @@ export async function createStaff(tenantId: string, data: any) {
     }
   })
 
-  // Auto-sync: jika role Kepala Sekolah, sinkronkan foto & nama ke tenant.settings
-  const roleLower = parsed.role?.toLowerCase() || ""
-  if (roleLower === "kepala sekolah" || roleLower === "kepala madrasah" || roleLower === "kepsek") {
-    await syncPrincipalToSettings(tenantId, parsed.name, parsed.imageUrl || null)
-  }
+  // Auto-sync logic removed to prevent overriding explicit website settings
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
@@ -169,11 +165,7 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
     }
   })
 
-  // Auto-sync: jika role Kepala Sekolah, sinkronkan foto & nama ke tenant.settings
-  const roleLower = parsed.role?.toLowerCase() || ""
-  if (roleLower === "kepala sekolah" || roleLower === "kepala madrasah" || roleLower === "kepsek") {
-    await syncPrincipalToSettings(tenantId, parsed.name, parsed.imageUrl || null)
-  }
+  // Auto-sync logic removed to prevent overriding explicit website settings
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
@@ -198,21 +190,7 @@ export async function deleteStaff(id: string, tenantId: string) {
     where: { id, tenantId }
   })
 
-  // Jika yang dihapus adalah Kepala Sekolah, bersihkan data di settings
-  const roleLower = staffToDelete?.role?.toLowerCase() || ""
-  if (roleLower === "kepala sekolah" || roleLower === "kepala madrasah" || roleLower === "kepsek") {
-    try {
-      const tenantData = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })
-      const currentSettings = (tenantData?.settings as Record<string, any>) || {}
-      const { principalImage, principalName, ...restSettings } = currentSettings
-      await db.tenant.update({
-        where: { id: tenantId },
-        data: { settings: restSettings },
-      })
-    } catch (error) {
-      console.error("[deleteStaff] Gagal clear principal settings:", error)
-    }
-  }
+  // Clear principal settings logic removed to prevent unintended side effects on website settings
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
