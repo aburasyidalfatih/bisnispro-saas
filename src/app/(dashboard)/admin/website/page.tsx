@@ -65,6 +65,9 @@ export default function WebsiteOverviewPage() {
   const [loading, setLoading] = useState(true)
   const [rootDomain, setRootDomain] = useState("")
   const [appUrl, setAppUrl] = useState("")
+  const [rank, setRank] = useState<number | null>(null)
+  const [totalTenants, setTotalTenants] = useState<number | null>(null)
+  const [score, setScore] = useState<number>(0)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -96,8 +99,19 @@ export default function WebsiteOverviewPage() {
     Promise.all([
       fetch(`/api/tenant/website?tenantId=${tenantId}`).then(r => r.json()),
       fetch(`/api/tenant/domain?tenantId=${tenantId}`).then(r => r.json()).catch(() => ({})),
-    ]).then(([website, domain]) => {
+      fetch(`/api/public/leaderboard`).then(r => r.json()).catch(() => [])
+    ]).then(([website, domain, leaderboard]) => {
       setData({ ...website, domain: domain.domain || null, customDomain: domain.customDomain || null })
+      
+      if (Array.isArray(leaderboard)) {
+        setTotalTenants(leaderboard.length)
+        const myIndex = leaderboard.findIndex((item: any) => item.tenantId === tenantId)
+        if (myIndex !== -1) {
+          setRank(myIndex + 1)
+          setScore(leaderboard[myIndex].totalScore || 0)
+        }
+      }
+      
       setLoading(false)
     }).catch(() => setLoading(false))
   }, [tenantId])
@@ -259,7 +273,7 @@ export default function WebsiteOverviewPage() {
       </div>
 
       {/* Domain status + completion — top row */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Domain card */}
         <Card className="glass border-0">
           <CardContent className="p-5">
@@ -333,7 +347,7 @@ export default function WebsiteOverviewPage() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Pratinjau Website</p>
-                <p className="text-sm font-semibold">{data?.name || "—"}</p>
+                <p className="text-sm font-semibold truncate w-32">{data?.name || "—"}</p>
               </div>
             </div>
             <p className="text-xs text-muted-foreground line-clamp-2">{data?.tagline || "Belum ada tagline"}</p>
@@ -345,6 +359,40 @@ export default function WebsiteOverviewPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Ranking card */}
+        <Link href="/admin/website/leaderboard" className="block">
+          <Card className="glass border-0 hover:bg-muted/50 transition-colors h-full cursor-pointer relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Trophy className="w-24 h-24 text-yellow-500 transform translate-x-4 -translate-y-4" />
+            </div>
+            <CardContent className="p-5 relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10">
+                    <Trophy className="h-5 w-5 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Peringkat Nasional</p>
+                    <p className="text-sm font-semibold">
+                      {rank ? `Ranking #${rank}` : "Belum masuk"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-1 mt-1">
+                  <span className="text-2xl font-bold text-yellow-600">{score.toLocaleString('id-ID')}</span>
+                  <span className="text-xs text-muted-foreground">Poin</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Dari {totalTenants || 0} sekolah yang terdaftar
+                </p>
+              </div>
+              <div className="mt-3 flex items-center gap-1 text-xs text-yellow-600 font-medium">
+                Lihat Leaderboard <ArrowRight className="h-3 w-3" />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
 
