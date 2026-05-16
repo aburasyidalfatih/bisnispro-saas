@@ -18,8 +18,19 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
   const totalStaff = staff.length
 
   // Group staff by role
-  const principal = staff.find((s: any) => s.role && s.role.toLowerCase().includes("kepala sekolah"))
-  const teachers = staff.filter((s: any) => s.role && !s.role.toLowerCase().includes("kepala sekolah"))
+  // Check if there is an explicitly set principal in settings
+  const explicitPrincipalName = (tenant.settings as any)?.principalName
+  let principal = null
+
+  if (explicitPrincipalName) {
+    principal = staff.find((s: any) => s.name === explicitPrincipalName)
+  }
+  
+  if (!principal) {
+    principal = staff.find((s: any) => s.role && (s.role.toLowerCase().includes("kepala") || s.role.toLowerCase().includes("pimpinan") || s.role.toLowerCase().includes("direktur") || s.role.toLowerCase().includes("ketua")))
+  }
+
+  const teachers = staff.filter((s: any) => s.id !== principal?.id)
 
   return (
     <div className="bg-background min-h-screen">
@@ -50,11 +61,10 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
               </Link>
               <div className="flex-1 space-y-6">
                 <div>
-                  <div className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-2">Pimpinan Sekolah</div>
+                  <div className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-2">{principal.role || "Pimpinan"}</div>
                   <Link href={`${base}/gtk/${principalSlug}`}>
                     <h2 className="text-3xl font-extrabold text-foreground hover:text-primary transition-colors">{principal.name}</h2>
                   </Link>
-                  <p className="text-lg font-medium text-muted-foreground">{principal.role}</p>
                 </div>
                 <div className="prose prose-slate italic text-muted-foreground">
                   <p>"{principal.bio || "Pendidikan adalah senjata paling mematikan di dunia, karena dengan pendidikan Anda bisa mengubah dunia. Kami di sini berkomitmen penuh untuk menjaga amanah Bapak/Ibu sekalian."}"</p>
