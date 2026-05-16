@@ -102,6 +102,7 @@ model Tenant {
   aiUsageLogs          AiUsageLog[]
   tenantScore          TenantScore?
   waQueueLogs          WaQueueLog[]
+  TenantNotification   TenantNotification[]
 
   @@index([isActive])
   @@index([plan])
@@ -144,6 +145,7 @@ model User {
   receivedMessages     InternalMessage[]     @relation("MessageReceiver")
   canteenMerchant      CanteenMerchant?
   aiUsageLogs          AiUsageLog[]
+  TenantNotification   TenantNotification[]
 
   @@index([isActive])
   @@index([isSuperAdmin])
@@ -1884,19 +1886,39 @@ model TenantScore {
 }
 
 model WaQueueLog {
-  id          String   @id @default(cuid())
-  tenantId    String?
+  id           String    @id @default(cuid())
+  tenantId     String?
   targetNumber String
-  message     String   @db.Text
-  status      String   @default("PENDING") // PENDING, SENT, FAILED
-  error       String?  @db.Text
-  sentAt      DateTime?
-  createdAt   DateTime @default(now())
+  message      String    @db.Text
+  status       String    @default("PENDING") // PENDING, SENT, FAILED
+  error        String?   @db.Text
+  sentAt       DateTime?
+  createdAt    DateTime  @default(now())
 
-  tenant      Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
   @@map("wa_queue_logs")
+}
+
+model TenantNotification {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String? // Opsional, jika spesifik untuk 1 user
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING, POINTS_UP
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("tenant_notifications")
 }

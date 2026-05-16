@@ -291,3 +291,61 @@ export const whatsappSendJob = inngest.createFunction(
     return result
   }
 )
+
+// 9. Job Async: Pencatatan Poin Gamifikasi (Activity Score) & Notifikasi Kenaikan Peringkat
+export const gamificationPointJob = inngest.createFunction(
+  {
+    id: "gamification-point-job",
+    name: "Calculate Real-Time Gamification Points",
+    triggers: [{ event: "gamification.point.added" }],
+    concurrency: {
+      limit: 1, // Hindari race condition saat update poin untuk tenant yang sama
+      key: "event.data.tenantId",
+    }
+  },
+  async ({ event, step }: any) => {
+    const { tenantId, type, points, description, userId } = event.data
+
+    await step.run("add-activity-score", async () => {
+      const { db } = await import("@/lib/db")
+      
+      // Ambil skor saat ini
+      const currentScore = await db.tenantScore.findUnique({
+        where: { tenantId }
+      })
+
+      if (currentScore) {
+        const oldRank = currentScore.rank
+        
+        // Tambah activityScore dan totalScore
+        await db.tenantScore.update({
+          where: { tenantId },
+          data: {
+            activityScore: { increment: points },
+            totalScore: { increment: points },
+          }
+        })
+
+        // Tembak notifikasi info
+        if (userId) { 
+          await db.notification.create({
+            data: {
+              tenantId,
+              userId,
+              title: `+${points} Poin Pencapaian`,
+              message: description || `Anda mendapatkan poin dari aktivitas: ${type}`,
+              type: "success", 
+              channel: "inapp" 
+            }
+          })
+        }
+        
+        // Pengecekan peringkat menyalip bisa dibuat kompleks, 
+        // namun untuk saat ini kita hanya memberitahu penambahan poin.
+        // Pembaruan rank exact harian masih di-handle cron.
+      }
+    })
+
+    return { success: true, pointsAdded: points }
+  }
+)

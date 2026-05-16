@@ -301,6 +301,21 @@ export const authOptions: NextAuthConfig = {
                     userAgent: headersList.get("user-agent") || undefined,
                 }
             })
+
+            // TRIGGER GAMIFICATION LOGIN POINTS
+            if (tenantId) {
+                const { inngest } = await import("@/lib/inngest/client")
+                await inngest.send({
+                  name: "gamification.point.added",
+                  data: {
+                    tenantId,
+                    userId: user.id,
+                    type: "LOGIN",
+                    points: 10,
+                    description: "Login sistem (Daily Activity)"
+                  }
+                })
+            }
         }
       } catch (error) {
         console.error("Failed to log user login", error)
