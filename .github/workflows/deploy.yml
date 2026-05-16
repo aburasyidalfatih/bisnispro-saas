@@ -26,8 +26,18 @@ jobs:
         run: |
           if ("${{ github.event_name }}" -eq "workflow_dispatch") {
             Add-Content -Path $env:GITHUB_ENV -Value "BRANCH=${{ github.event.inputs.branch }}"
+            if ("${{ github.event.inputs.branch }}" -eq "main") {
+              Add-Content -Path $env:GITHUB_ENV -Value "ROOT_DOMAIN=schoolpro.id"
+            } else {
+              Add-Content -Path $env:GITHUB_ENV -Value "ROOT_DOMAIN=schoolpro.my.id"
+            }
           } else {
             Add-Content -Path $env:GITHUB_ENV -Value "BRANCH=${{ github.ref_name }}"
+            if ("${{ github.ref_name }}" -eq "main") {
+              Add-Content -Path $env:GITHUB_ENV -Value "ROOT_DOMAIN=schoolpro.id"
+            } else {
+              Add-Content -Path $env:GITHUB_ENV -Value "ROOT_DOMAIN=schoolpro.my.id"
+            }
           }
 
       - name: Checkout code
@@ -62,6 +72,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             APP_VERSION=${{ github.sha }}
+            NEXT_PUBLIC_ROOT_DOMAIN=${{ env.ROOT_DOMAIN }}
 
   deploy:
     needs: build-and-push
