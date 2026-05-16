@@ -12,10 +12,10 @@ interface PrincipalWelcomeProps {
 }
 
 export function PrincipalWelcome({ tenantName, settings, staff = [] }: PrincipalWelcomeProps) {
-  const principalStaff = staff.find((s: any) => s.role && s.role.toLowerCase().includes("kepala sekolah"))
+  const principalStaff = staff.find((s: any) => s.role && (s.role.toLowerCase().includes("kepala") || s.role.toLowerCase().includes("pimpinan") || s.role.toLowerCase().includes("direktur") || s.role.toLowerCase().includes("ketua")))
 
-  const principalName = settings?.principalName || (principalStaff ? principalStaff.name : "Ir. Sherly Puspita, M.Pd")
-  const principalTitle = settings?.principalTitle || (principalStaff ? principalStaff.role : "Kepala Sekolah")
+  const principalName = settings?.principalName || (principalStaff ? principalStaff.name : "Nama Pimpinan")
+  const principalTitle = settings?.principalTitle || (principalStaff ? principalStaff.role : "Pimpinan Lembaga")
   const principalImage = settings?.principalImage || (principalStaff ? (principalStaff.imageUrl || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076") : "/principal_portrait.png")
   const principalMessage = settings?.principalMessage || `Puji syukur ke hadirat Tuhan YME atas segala rahmat dan karunia-Nya. Selamat datang di website resmi ${tenantName}. Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara sekolah dengan orang tua, peserta didik, serta masyarakat luas.\n\nMelalui media ini, kami berharap seluruh informasi mengenai kegiatan, prestasi, serta program pendidikan dapat tersampaikan secara transparan, cepat, dan akurat. Kami berkomitmen untuk terus meningkatkan kualitas pendidikan dan mencetak generasi penerus bangsa yang unggul dan berkarakter.`
   const principalBadgeYear = settings?.principalBadgeYear || "2015"

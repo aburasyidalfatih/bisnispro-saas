@@ -471,8 +471,8 @@ export default function WebsiteAboutPage() {
                 <Info className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-lg">Sambutan Kepala Sekolah</CardTitle>
-                <CardDescription>Pesan sambutan dari kepala sekolah untuk beranda website</CardDescription>
+                <CardTitle className="text-lg">Sambutan Utama (Pimpinan / Kepala Sekolah)</CardTitle>
+                <CardDescription>Pesan sambutan dari tokoh utama untuk beranda website</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -506,12 +506,12 @@ export default function WebsiteAboutPage() {
                     <option key={s.id} value={s.id}>{s.name} ({s.role})</option>
                   ))}
                 </select>
-                <p className="text-[11px] text-muted-foreground">Pilih GTK untuk mengisi otomatis Nama, Jabatan, dan Foto Kepala Sekolah.</p>
+                <p className="text-[11px] text-muted-foreground">Pilih GTK untuk mengisi otomatis Nama, Jabatan, dan Foto.</p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Nama Kepala Sekolah</Label>
+                  <Label>Nama Pemberi Sambutan</Label>
                   <Input value={form.settings?.principalName || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalName: e.target.value } }))}
                     placeholder="Contoh: Ir. Sherly Puspita, M.Pd" className="rounded-xl" />
                 </div>
@@ -542,7 +542,7 @@ export default function WebsiteAboutPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Foto Kepala Sekolah</Label>
+              <Label>Foto Profil Utama</Label>
               <div className="flex gap-2">
                 <Input value={form.settings?.principalImage || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalImage: e.target.value } }))}
                   placeholder="https://... atau upload file" className="rounded-xl flex-1" />

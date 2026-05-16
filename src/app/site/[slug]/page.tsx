@@ -101,8 +101,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       {/* ── 2. Stats Bar ── */}
       <StatsBar stats={stats} />
 
-      {/* ── 3. Sambutan Kepala Sekolah ── */}
-      {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage || tenant.staff?.some((s: any) => s.role && s.role.toLowerCase().includes("kepala sekolah"))) && (
+      {/* ── 3. Sambutan Pimpinan ── */}
+      {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage || tenant.staff?.some((s: any) => s.role && (s.role.toLowerCase().includes("kepala") || s.role.toLowerCase().includes("pimpinan") || s.role.toLowerCase().includes("direktur") || s.role.toLowerCase().includes("ketua")))) && (
         <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
       )}
 
