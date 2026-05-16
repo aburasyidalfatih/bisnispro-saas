@@ -7,6 +7,7 @@ interface TenantInfo {
   slug: string
   role: string
   theme: string
+  template?: string
   logo?: string | null
   plan?: string
   planId?: string | null

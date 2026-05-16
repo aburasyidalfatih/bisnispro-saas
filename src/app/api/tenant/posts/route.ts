@@ -98,18 +98,15 @@ export async function POST(req: Request) {
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) await invalidatePublicTenantCache(tenant.slug)
 
-  // TRIGGER GAMIFICATION
+  // TRIGGER GAMIFICATION (Direct DB call)
   try {
-    const { inngest } = await import("@/lib/inngest/client")
-    await inngest.send({
-      name: "gamification.point.added",
-      data: {
-        tenantId,
-        userId: session.user.id,
-        type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
-        points: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5,
-        description: `Membuat postingan: ${data.title}`
-      }
+    const { addGamificationPoints } = await import("@/lib/services/gamification")
+    await addGamificationPoints({
+      tenantId,
+      userId: session.user.id,
+      type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
+      points: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5,
+      description: `Membuat postingan: ${data.title}`
     })
   } catch (error) {
     console.error("Failed to trigger gamification event", error)

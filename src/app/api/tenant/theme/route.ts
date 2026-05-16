@@ -14,11 +14,11 @@ export async function PUT(req: Request) {
 
     const parsed = await parseBody(req, themeSchema)
     if (parsed.error) return parsed.error
-    const { tenantId, theme } = parsed.data
+    const { tenantId, theme, template } = parsed.data
 
-    // Cek apakah user punya akses ke tenant ini (owner/admin)
     const tenantUser = await db.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: session.user.id } },
+      include: { tenant: true }
     })
 
     if (!tenantUser || !["owner", "admin"].includes(tenantUser.role)) {
@@ -27,12 +27,25 @@ export async function PUT(req: Request) {
       }
     }
 
+    if (template && template !== "default") {
+      const tenant = tenantUser?.tenant || await db.tenant.findUnique({ where: { id: tenantId } })
+      if (tenant?.plan === "free") {
+        return NextResponse.json({ error: "Template premium membutuhkan langganan paket Pro/Enterprise" }, { status: 403 })
+      }
+    }
+
+
+
+    const dataToUpdate: any = {}
+    if (theme) dataToUpdate.theme = theme
+    if (template) dataToUpdate.template = template
+
     const updated = await db.tenant.update({
       where: { id: tenantId },
-      data: { theme },
+      data: dataToUpdate,
     })
 
-    return NextResponse.json({ theme: updated.theme })
+    return NextResponse.json({ theme: updated.theme, template: updated.template })
   } catch (error) {
     logger.error("Update theme failed", error, { path: "/api/tenant/theme" })
     return NextResponse.json({ error: "Terjadi kesalahan" }, { status: 500 })
