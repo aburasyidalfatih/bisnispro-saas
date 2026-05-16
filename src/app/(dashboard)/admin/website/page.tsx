@@ -258,11 +258,6 @@ export default function WebsiteOverviewPage() {
           <p className="text-muted-foreground mt-1">Ringkasan dan status konten website Anda.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/admin/website/leaderboard">
-            <Button variant="outline" className="gap-2 border-yellow-500 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-500 dark:bg-yellow-500/10">
-              <Trophy className="h-4 w-4" /> Leaderboard Nasional
-            </Button>
-          </Link>
           {websiteUrl && (
             <a href={websiteUrl} target="_blank" rel="noopener"
               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
@@ -368,20 +363,24 @@ export default function WebsiteOverviewPage() {
             </div>
             <CardContent className="p-5 relative z-10 flex flex-col h-full justify-between">
               <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10">
-                    <Trophy className="h-5 w-5 text-yellow-600" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10">
+                      <Trophy className="h-5 w-5 text-yellow-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Peringkat Nasional</p>
+                      <p className="text-sm font-semibold">
+                        {rank ? `Ranking #${rank}` : "Belum masuk"}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Peringkat Nasional</p>
-                    <p className="text-sm font-semibold">
-                      {rank ? `Ranking #${rank}` : "Belum masuk"}
-                    </p>
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-bold text-yellow-600">{score.toLocaleString('id-ID')}</span>
+                      <span className="text-xs text-muted-foreground">Poin</span>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-baseline gap-1 mt-1">
-                  <span className="text-2xl font-bold text-yellow-600">{score.toLocaleString('id-ID')}</span>
-                  <span className="text-xs text-muted-foreground">Poin</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-1">
                   Dari {totalTenants || 0} sekolah yang terdaftar
