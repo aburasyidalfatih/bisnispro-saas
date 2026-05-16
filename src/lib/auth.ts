@@ -148,6 +148,7 @@ export const authOptions: NextAuthConfig = {
             slug: tu.tenant.slug,
             role: tu.role,
             theme: tu.tenant.theme || "aurora",
+            template: (tu.tenant as any).template || "default",
             logo: tu.tenant.logo || null,
             plan: tu.tenant.plan || "free",
             planId: tu.tenant.planId || null,
@@ -350,6 +351,7 @@ export const authOptions: NextAuthConfig = {
             slug: tu.tenant.slug,
             role: tu.role,
             theme: tu.tenant.theme || "aurora",
+            template: (tu.tenant as any).template || "default",
             logo: tu.tenant.logo || null,
             plan: tu.tenant.plan || "free",
             planId: tu.tenant.planId || null,
@@ -379,7 +381,7 @@ export const authOptions: NextAuthConfig = {
             if (impersonatedSlug) {
               const tenant = await db.tenant.findUnique({
                 where: { slug: impersonatedSlug },
-                select: { id: true, name: true, slug: true, theme: true, logo: true, plan: true, planId: true },
+                select: { id: true, name: true, slug: true, theme: true, template: true, logo: true, plan: true, planId: true },
               })
 
               if (tenant) {
@@ -390,6 +392,7 @@ export const authOptions: NextAuthConfig = {
                     slug: tenant.slug,
                     role: "owner",
                     theme: tenant.theme || "aurora",
+                    template: (tenant as any).template || "default",
                     logo: tenant.logo || null,
                     plan: tenant.plan || "free",
                     planId: tenant.planId || null,

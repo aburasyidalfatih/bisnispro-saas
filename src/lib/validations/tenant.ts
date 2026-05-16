@@ -41,7 +41,8 @@ export const impersonateTenantSchema = z.object({
 
 export const themeSchema = z.object({
   tenantId: cuidString,
-  theme: z.string().min(1).max(50),
+  theme: z.string().min(1).max(50).optional(),
+  template: z.string().min(1).max(50).optional(),
 })
 
 export type InviteInput = z.infer<typeof inviteSchema>

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { useColorTheme } from "@/components/providers/color-theme-provider"
 import { themes } from "@/lib/themes"
-import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw } from "lucide-react"
+import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 
@@ -26,9 +26,11 @@ export default function AppearancePage() {
   const { theme: darkMode, setTheme: setDarkMode } = useTheme()
   const { colorTheme, previewTheme, previewColorTheme, saveColorTheme, resetPreview, hasUnsavedChanges, activeTenantId } = useColorTheme()
   const { data: session } = useSession()
+  const activeTenant = session?.user?.tenants?.find((t: any) => t.id === activeTenantId) || session?.user?.tenants?.[0]
+  
   const [saving, setSaving] = useState(false)
-
-  const activeTenant = session?.user?.tenants?.find(t => t.id === activeTenantId) || session?.user?.tenants?.[0]
+  const [selectedTemplate, setSelectedTemplate] = useState((activeTenant as any)?.template || "default")
+  const hasTemplateChanged = selectedTemplate !== ((activeTenant as any)?.template || "default")
   const isImpersonating = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
   const canChangeTheme = activeTenant?.role === "owner" || activeTenant?.role === "admin" || isImpersonating
   const isSuperAdminOnly = session?.user?.isSuperAdmin && !isImpersonating
@@ -56,7 +58,7 @@ export default function AppearancePage() {
     try {
       const res = await fetch("/api/tenant/theme", {
         method: "PUT", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenantId, theme: previewTheme }),
+        body: JSON.stringify({ tenantId, theme: previewTheme, template: selectedTemplate }),
       })
       setSaving(false)
       if (res.ok) {
@@ -141,6 +143,59 @@ export default function AppearancePage() {
         </Card>
       </div>
 
+      {/* Pilihan Layout Template */}
+      <Card className="glass border-0">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10">
+              <LayoutTemplate className="h-4 w-4 text-blue-600" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Pilih Layout Template</CardTitle>
+              <CardDescription className="text-xs">Ubah struktur dan desain utama website sekolah Anda.</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {[
+            { id: "default", name: "Classic Default", desc: "Desain standar yang lengkap dengan slider lebar." },
+            { id: "modern", name: "Modern Corporate", desc: "Desain elegan dengan elemen melayang dan susunan grid baru." }
+          ].map(tpl => (
+            <button key={tpl.id} onClick={() => {
+              if (!canChangeTheme) {
+                toast({ title: "Tidak punya izin", description: "Hanya Owner/Admin yang dapat mengubah template.", variant: "destructive" })
+                return
+              }
+              setSelectedTemplate(tpl.id)
+            }}
+              className={cn(
+                "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all duration-150 relative overflow-hidden",
+                selectedTemplate === tpl.id
+                  ? "border-blue-500 bg-blue-50/50"
+                  : "border-transparent bg-muted/30 hover:bg-muted/60 hover:border-border"
+              )}>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={cn("text-sm font-bold", selectedTemplate === tpl.id ? "text-blue-700" : "text-foreground")}>
+                    {tpl.name}
+                  </span>
+                  {((activeTenant as any)?.template || "default") === tpl.id && (
+                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">Aktif</span>
+                  )}
+                  {selectedTemplate === tpl.id && ((activeTenant as any)?.template || "default") !== tpl.id && (
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">Belum Disimpan</span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">{tpl.desc}</p>
+              </div>
+              {selectedTemplate === tpl.id && (
+                <div className="absolute top-4 right-4 text-blue-600"><Check className="h-5 w-5" /></div>
+              )}
+            </button>
+          ))}
+        </CardContent>
+      </Card>
+
       {/* Pilihan Tema — satu card memanjang */}
       <Card className="glass border-0">
         <CardHeader className="pb-3">
@@ -203,14 +258,17 @@ export default function AppearancePage() {
             )
           })}
           {/* Tombol simpan di dalam card */}
-          {canChangeTheme && hasUnsavedChanges && (
+          {canChangeTheme && (hasUnsavedChanges || hasTemplateChanged) && (
             <div className="flex items-center justify-end gap-2 pt-2 border-t mt-2">
-              <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={resetPreview}>
+              <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => {
+                resetPreview()
+                setSelectedTemplate((activeTenant as any)?.template || "default")
+              }}>
                 <RotateCcw className="h-3.5 w-3.5" /> Batal
               </Button>
               <Button size="sm" className="rounded-xl gap-2 btn-gradient text-white border-0" onClick={handleSave} disabled={saving}>
                 {saving ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
-                Simpan Tema
+                Simpan Perubahan
               </Button>
             </div>
           )}
