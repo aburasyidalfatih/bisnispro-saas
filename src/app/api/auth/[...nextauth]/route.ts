@@ -5,6 +5,8 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { authRateLimit } from "@/lib/edge-rate-limit"
 
+export const dynamic = "force-dynamic"
+
 async function getDynamicConfig(req: NextRequest) {
   // PENTING: Di belakang reverse proxy (nginx → Docker), req.nextUrl.hostname
   // mengembalikan nama container internal (misal: schoolpro-dev-app), bukan domain asli.
