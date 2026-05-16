@@ -63,7 +63,7 @@ export function PageHeader({ title, description, breadcrumbs }: PageHeaderProps)
 
         {/* Title & Description */}
         <div className="max-w-3xl">
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-primary mb-4">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary mb-4">
             {title}
           </h1>
           {description && (
