@@ -42,6 +42,7 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       seoTitle: true,
       seoDesc: true,
       theme: true,
+      template: true,
       isActive: true,
       instagram: true,
       facebook: true,

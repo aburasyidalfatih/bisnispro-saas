@@ -43,7 +43,14 @@ export async function PUT(req: Request) {
     const updated = await db.tenant.update({
       where: { id: tenantId },
       data: dataToUpdate,
+      select: { theme: true, template: true, slug: true },
     })
+
+    // Invalidate Redis cache agar website publik langsung menampilkan template baru
+    try {
+      const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+      await invalidatePublicTenantCache(updated.slug)
+    } catch {}
 
     return NextResponse.json({ theme: updated.theme, template: updated.template })
   } catch (error) {
