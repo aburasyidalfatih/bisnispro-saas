@@ -87,7 +87,7 @@ export default async function WebsiteLayout({
 
   return (
     <RoutingProvider value={routingValue}>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col overflow-x-hidden w-full max-w-[100vw]">
         {/* JSON-LD Structured Data untuk Rich Snippets */}
         <script
           type="application/ld+json"
