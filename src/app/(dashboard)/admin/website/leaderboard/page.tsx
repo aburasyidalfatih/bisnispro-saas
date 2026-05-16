@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { Trophy, Medal, Star, TrendingUp, Search, Users, FileText, ArrowLeft, Info } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -51,24 +51,19 @@ export default function LeaderboardPage() {
     setVisibleCount(20)
   }, [search])
 
-  // Infinite scroll using IntersectionObserver
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
+  // Infinite scroll using useCallback ref
+  const observer = useRef<IntersectionObserver | null>(null)
+  const observerTarget = useCallback((node: HTMLElement | null) => {
+    if (observer.current) observer.current.disconnect()
+    if (node) {
+      observer.current = new IntersectionObserver(entries => {
         if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => prev + 20)
+          setVisibleCount(prev => prev + 20)
         }
-      },
-      { rootMargin: "200px" }
-    )
-    
-    const target = document.getElementById("scroll-observer")
-    if (target) observer.observe(target)
-      
-    return () => {
-      if (target) observer.unobserve(target)
+      }, { rootMargin: "200px" })
+      observer.current.observe(node)
     }
-  }, [visibleCount])
+  }, [])
 
   const myRankEntry = entries.find(e => e.tenant.id === myTenantId)
 
@@ -226,7 +221,7 @@ export default function LeaderboardPage() {
         
         {/* Loading Indicator for Infinite Scroll */}
         {visibleCount < filteredEntries.length && (
-          <div id="scroll-observer" className="py-8 flex justify-center">
+          <div ref={observerTarget} className="py-8 flex justify-center">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
           </div>
         )}
