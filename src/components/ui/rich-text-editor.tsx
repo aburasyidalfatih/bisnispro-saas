@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Link from "@tiptap/extension-link"
 import Image from "@tiptap/extension-image"
+import TextAlign from "@tiptap/extension-text-align"
 import { 
   Bold, 
   Italic, 
@@ -15,7 +16,11 @@ import {
   Quote, 
   Undo, 
   Redo,
-  Link as LinkIcon
+  Link as LinkIcon,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify
 } from "lucide-react"
 
 interface RichTextEditorProps {
@@ -42,6 +47,9 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         HTMLAttributes: {
           class: 'rounded-lg max-w-full h-auto my-4',
         },
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
       }),
     ],
     content: value,
@@ -163,6 +171,35 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           ariaLabel="Add Link"
         >
           <LinkIcon className="h-4 w-4" />
+        </ToggleButton>
+        <div className="w-[1px] h-6 bg-border mx-1 self-center" />
+        <ToggleButton
+          isActive={editor.isActive({ textAlign: 'left' })}
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          ariaLabel="Align left"
+        >
+          <AlignLeft className="h-4 w-4" />
+        </ToggleButton>
+        <ToggleButton
+          isActive={editor.isActive({ textAlign: 'center' })}
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          ariaLabel="Align center"
+        >
+          <AlignCenter className="h-4 w-4" />
+        </ToggleButton>
+        <ToggleButton
+          isActive={editor.isActive({ textAlign: 'right' })}
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          ariaLabel="Align right"
+        >
+          <AlignRight className="h-4 w-4" />
+        </ToggleButton>
+        <ToggleButton
+          isActive={editor.isActive({ textAlign: 'justify' })}
+          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+          ariaLabel="Justify"
+        >
+          <AlignJustify className="h-4 w-4" />
         </ToggleButton>
         <div className="w-[1px] h-6 bg-border mx-1 self-center" />
         <ToggleButton
