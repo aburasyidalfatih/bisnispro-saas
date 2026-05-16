@@ -106,8 +106,8 @@ export async function POST(req: Request) {
       data: {
         tenantId,
         userId: session.user.id,
-        type: data.type === "ARTICLE" ? "ARTIKEL" : "PENGUMUMAN",
-        points: data.type === "ARTICLE" ? 20 : 5,
+        type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
+        points: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5,
         description: `Membuat postingan: ${data.title}`
       }
     })
