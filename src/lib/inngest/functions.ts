@@ -246,3 +246,48 @@ export const cleanupWaQueueLogsJob = inngest.createFunction(
     return { message: `Deleted ${result} old WA logs.` }
   }
 )
+
+// 8. Job Async: Kirim Pesan WA dengan Rate Limiting Per-Tenant
+export const whatsappSendJob = inngest.createFunction(
+  {
+    id: "whatsapp-send-job",
+    name: "Send WhatsApp Async",
+    triggers: [{ event: "system/whatsapp.send" }],
+    concurrency: {
+      limit: 1, // 1 pesan per tenant pada satu waktu
+      key: "event.data.tenantId", // Kunci Sakti: Isolasi antrean per tenant!
+    }
+  },
+  async ({ event, step }: any) => {
+    const { phone, message, tenantId, logId } = event.data
+
+    const result = await step.run("send-wa", async () => {
+      const { db } = await import("@/lib/db")
+      const { sendWhatsAppDirect } = await import("@/lib/services/notification")
+
+      try {
+        const res = await sendWhatsAppDirect(phone, message, tenantId !== "superadmin" ? tenantId : undefined)
+        
+        if (!res.success) throw new Error(res.error || "Gagal mengirim WA")
+
+        if (logId) {
+          await db.waQueueLog.update({
+            where: { id: logId },
+            data: { status: "SENT", sentAt: new Date() }
+          })
+        }
+        return res
+      } catch (err: any) {
+        if (logId) {
+          await db.waQueueLog.update({
+            where: { id: logId },
+            data: { status: "FAILED", error: err.message, sentAt: new Date() }
+          }).catch(e => console.error("Failed to update WA log", e))
+        }
+        throw err
+      }
+    })
+
+    return result
+  }
+)
