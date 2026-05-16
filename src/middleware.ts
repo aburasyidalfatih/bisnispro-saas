@@ -187,9 +187,17 @@ export default async function middleware(request: NextRequest) {
     }
 
     if (isAuthPage) {
+      // Prioritize school roles if they are on a school domain
+      if (isSubdomain || isCustomDomain) {
+        if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
+        if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
+        if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
+        if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
+      }
+
       if (isSuperAdmin) {
         return addSecurityHeaders(NextResponse.redirect(new URL("/super-admin", request.url)))
-      } else if (isAffiliate) {
+      } else if (isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0 || isMainDomain)) {
         return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
       } else if (activeRole === "guru") {
         return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
@@ -241,7 +249,9 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/invoice") ||
       pathname.startsWith("/panel-gtk") ||
       pathname.startsWith("/siswa") ||
-      pathname.startsWith("/ujian")
+      pathname.startsWith("/ujian") ||
+      pathname.startsWith("/affiliate") ||
+      pathname.startsWith("/super-admin")
     ) {
       const response = NextResponse.next()
       response.headers.set("x-tenant-slug", subdomain)
@@ -277,7 +287,9 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/invoice") ||
       pathname.startsWith("/panel-gtk") ||
       pathname.startsWith("/siswa") ||
-      pathname.startsWith("/ujian")
+      pathname.startsWith("/ujian") ||
+      pathname.startsWith("/affiliate") ||
+      pathname.startsWith("/super-admin")
     ) {
       const response = NextResponse.next()
       response.headers.set("x-tenant-slug", slug)
