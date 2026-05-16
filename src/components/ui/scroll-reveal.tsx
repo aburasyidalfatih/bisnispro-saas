@@ -1,7 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
-import { ReactNode } from "react"
+import { ReactNode, useEffect, useRef, useState } from "react"
+import { cn } from "@/lib/utils"
 
 interface ScrollRevealProps {
   children: ReactNode
@@ -18,34 +18,57 @@ export function ScrollReveal({
   direction = "up",
   duration = 0.5,
 }: ScrollRevealProps) {
-  const directions = {
-    up: { y: 40, x: 0 },
-    down: { y: -40, x: 0 },
-    left: { x: 40, y: 0 },
-    right: { x: -40, y: 0 },
-    none: { x: 0, y: 0 },
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.unobserve(entry.target) // Run once
+        }
+      },
+      {
+        rootMargin: "0px 0px -100px 0px", // Trigger slightly before it comes into view
+        threshold: 0.01,
+      }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
+
+  const directionClasses = {
+    up: "translate-y-10",
+    down: "-translate-y-10",
+    left: "translate-x-10",
+    right: "-translate-x-10",
+    none: "translate-x-0 translate-y-0",
   }
 
   return (
-    <motion.div
-      initial={{ 
-        opacity: 0, 
-        ...directions[direction] 
+    <div
+      ref={ref}
+      className={cn(
+        "transition-all ease-out will-change-[opacity,transform]",
+        isVisible ? "opacity-100 translate-y-0 translate-x-0" : `opacity-0 ${directionClasses[direction]}`,
+        className
+      )}
+      style={{
+        transitionDuration: `${duration}s`,
+        transitionDelay: `${delay}s`,
+        transitionTimingFunction: "cubic-bezier(0.21, 0.47, 0.32, 0.98)", // easeOutCubic
       }}
-      whileInView={{ 
-        opacity: 1, 
-        x: 0, 
-        y: 0 
-      }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{
-        duration: duration,
-        delay: delay,
-        ease: [0.21, 0.47, 0.32, 0.98], // easeOutCubic
-      }}
-      className={className}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }
