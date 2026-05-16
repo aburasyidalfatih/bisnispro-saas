@@ -188,3 +188,37 @@ export const sendTemplateNotificationJob = inngest.createFunction(
     return result
   }
 )
+
+// 6. Job Async: Kirim Notifikasi Persetujuan Tenant (Antrean Anti-SPAM)
+export const applicationNotificationJob = inngest.createFunction(
+  {
+    id: "application-notification-job",
+    name: "Application Notification Async",
+    triggers: [{ event: "superadmin/application.notify" }],
+    concurrency: {
+      limit: 1, // Hanya boleh mengirim 1 notifikasi persetujuan pada satu waktu
+    }
+  },
+  async ({ event, step }: any) => {
+    const { applicationId } = event.data
+
+    // Jeda pengiriman pesan agar tidak dianggap SPAM oleh WhatsApp (Delay 5 detik per antrean)
+    await step.sleep("delay-anti-spam", "5s")
+
+    await step.run("send-application-notification", async () => {
+      const { sendApplicationNotification } = await import("@/lib/services/application")
+      await sendApplicationNotification(applicationId)
+    })
+    
+    // Bersihkan password sementara
+    await step.run("clear-temp-password", async () => {
+      const { db } = await import("@/lib/db")
+      await db.tenantApplication.update({
+        where: { id: applicationId },
+        data: { adminMessage: null },
+      }).catch(e => console.error("Failed to clear temp password", e))
+    })
+
+    return { success: true }
+  }
+)
