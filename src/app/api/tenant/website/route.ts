@@ -107,37 +107,7 @@ export async function PUT(req: Request) {
     data,
   })
 
-  // Auto-sync: jika settings.principalImage atau principalName diubah,
-  // sinkronkan ke Staff record yang ber-role "Kepala Sekolah"
-  if (data.settings) {
-    const settings = data.settings as Record<string, any>
-    if (settings.principalImage || settings.principalName) {
-      try {
-        const principalStaff = await db.staff.findFirst({
-          where: {
-            tenantId,
-            OR: [
-              { role: { equals: "Kepala Sekolah", mode: "insensitive" } },
-              { role: { equals: "Kepala Madrasah", mode: "insensitive" } },
-              { role: { equals: "Kepsek", mode: "insensitive" } }
-            ]
-          },
-        })
-
-        if (principalStaff) {
-          const staffUpdate: Record<string, any> = {}
-          if (settings.principalImage) staffUpdate.imageUrl = settings.principalImage
-          if (settings.principalName) staffUpdate.name = settings.principalName
-
-          await db.staff.update({
-            where: { id: principalStaff.id },
-            data: staffUpdate,
-          })
-        }
-      } catch (error) {
-        console.error("[website/route] Gagal sync principal ke staff:", error)
-      }
-    }
+    // Note: Auto-sync staff logic removed to prevent overwriting existing staff names when changing the principal welcome message.
 
     if (settings.studentCount !== undefined) {
       try {
