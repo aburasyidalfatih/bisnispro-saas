@@ -16,9 +16,9 @@ export async function PUT(req: Request) {
     if (parsed.error) return parsed.error
     const { tenantId, theme, template } = parsed.data
 
-    // Cek apakah user punya akses ke tenant ini (owner/admin)
     const tenantUser = await db.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: session.user.id } },
+      include: { tenant: true }
     })
 
     if (!tenantUser || !["owner", "admin"].includes(tenantUser.role)) {
@@ -26,6 +26,15 @@ export async function PUT(req: Request) {
         return NextResponse.json({ error: "Tidak punya izin" }, { status: 403 })
       }
     }
+
+    if (template && template !== "default") {
+      const tenant = tenantUser?.tenant || await db.tenant.findUnique({ where: { id: tenantId } })
+      if (tenant?.plan === "free") {
+        return NextResponse.json({ error: "Template premium membutuhkan langganan paket Pro/Enterprise" }, { status: 403 })
+      }
+    }
+
+
 
     const dataToUpdate: any = {}
     if (theme) dataToUpdate.theme = theme

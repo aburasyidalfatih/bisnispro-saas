@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { useColorTheme } from "@/components/providers/color-theme-provider"
 import { themes } from "@/lib/themes"
-import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate } from "lucide-react"
+import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate, Lock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 
@@ -158,12 +158,19 @@ export default function AppearancePage() {
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
-            { id: "default", name: "Classic Default", desc: "Desain standar yang lengkap dengan slider lebar." },
-            { id: "modern", name: "Modern Corporate", desc: "Desain elegan dengan elemen melayang dan susunan grid baru." }
-          ].map(tpl => (
+            { id: "default", name: "Classic Default", desc: "Desain standar yang lengkap dengan slider lebar.", isPremium: false },
+            { id: "modern", name: "Modern Corporate", desc: "Desain elegan dengan elemen melayang dan susunan grid baru.", isPremium: true }
+          ].map(tpl => {
+            const isLocked = tpl.isPremium && activeTenant?.plan === "free"
+
+            return (
             <button key={tpl.id} onClick={() => {
               if (!canChangeTheme) {
                 toast({ title: "Tidak punya izin", description: "Hanya Owner/Admin yang dapat mengubah template.", variant: "destructive" })
+                return
+              }
+              if (isLocked) {
+                toast({ title: "Fitur Premium", description: "Silakan upgrade ke paket Pro/Enterprise untuk menggunakan template ini.", variant: "destructive" })
                 return
               }
               setSelectedTemplate(tpl.id)
@@ -172,13 +179,19 @@ export default function AppearancePage() {
                 "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all duration-150 relative overflow-hidden",
                 selectedTemplate === tpl.id
                   ? "border-blue-500 bg-blue-50/50"
-                  : "border-transparent bg-muted/30 hover:bg-muted/60 hover:border-border"
+                  : "border-transparent bg-muted/30 hover:bg-muted/60 hover:border-border",
+                isLocked && "opacity-75 bg-muted/50 grayscale-[0.5]"
               )}>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className={cn("text-sm font-bold", selectedTemplate === tpl.id ? "text-blue-700" : "text-foreground")}>
                     {tpl.name}
                   </span>
+                  {isLocked && (
+                    <span className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                      <Lock className="h-3 w-3" /> Premium
+                    </span>
+                  )}
                   {((activeTenant as any)?.template || "default") === tpl.id && (
                     <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">Aktif</span>
                   )}
@@ -187,12 +200,15 @@ export default function AppearancePage() {
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">{tpl.desc}</p>
+                {isLocked && (
+                  <p className="text-xs font-semibold text-amber-600 mt-2">⭐ Upgrade ke Pro untuk membuka desain ini.</p>
+                )}
               </div>
               {selectedTemplate === tpl.id && (
                 <div className="absolute top-4 right-4 text-blue-600"><Check className="h-5 w-5" /></div>
               )}
             </button>
-          ))}
+          )})}
         </CardContent>
       </Card>
 
