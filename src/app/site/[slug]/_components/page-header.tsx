@@ -15,9 +15,31 @@ interface PageHeaderProps {
 export function PageHeader({ title, description, breadcrumbs }: PageHeaderProps) {
   return (
     <div className="relative bg-primary/5 dark:bg-primary/10 border-b border-border/50 pt-8 pb-10 overflow-hidden">
-      {/* Decorative subtle background elements */}
-      <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      {/* Decorative Ornaments (Dynamic to Theme Color) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Background blobs */}
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-bl from-primary/20 via-primary/5 to-transparent rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-gradient-to-tr from-primary/15 via-primary/5 to-transparent rounded-full blur-3xl" />
+        
+        {/* Premium Grid Pattern */}
+        <svg className="absolute inset-0 h-full w-full opacity-[0.04] dark:opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="header-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+              <path d="M0 32V.5H32" fill="none" className="stroke-primary" strokeWidth="1"></path>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#header-grid)"></rect>
+        </svg>
+
+        {/* Floating Abstract Elements */}
+        <div className="absolute top-[20%] right-[12%] w-4 h-4 rounded-full border-2 border-primary/40 animate-[bounce_4s_infinite]" />
+        <div className="absolute bottom-[25%] left-[10%] w-3 h-3 rounded-full bg-primary/30 animate-pulse" />
+        <div className="absolute top-[60%] right-[25%] w-2 h-2 rounded-full bg-primary/40" />
+        
+        {/* Decorative lines */}
+        <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-primary/10 to-transparent" />
+        <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+      </div>
       
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Breadcrumbs */}
