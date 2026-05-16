@@ -6,6 +6,7 @@ import { Trophy, Medal, Star, TrendingUp, Search, Users, FileText, ArrowLeft, In
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -96,22 +97,35 @@ export default function LeaderboardPage() {
           </div>
 
           {/* Info Icon for Criteria */}
-          <div className="absolute top-4 right-4 z-20 group">
-            <Info className="h-5 w-5 text-indigo-200 hover:text-white cursor-pointer transition-colors" />
-            <div className="absolute right-0 top-8 w-64 p-4 bg-slate-900/95 backdrop-blur-md rounded-xl text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-2xl border border-white/10 text-left">
-              <p className="font-bold mb-2 text-indigo-200">Kriteria Skor Website:</p>
-              <ul className="space-y-1.5 list-disc list-inside text-slate-300">
-                <li>Berita & Artikel: <span className="text-white font-bold">+20 Pts</span></li>
-                <li>Data Prestasi: <span className="text-white font-bold">+20 Pts</span></li>
-                <li>Agenda/Event: <span className="text-white font-bold">+15 Pts</span></li>
-                <li>Data Fasilitas: <span className="text-white font-bold">+15 Pts</span></li>
-                <li>Profil Guru (GTK): <span className="text-white font-bold">+10 Pts</span></li>
-                <li>Foto Galeri: <span className="text-white font-bold">+5 Pts</span></li>
-                <li>Admin Login Harian: <span className="text-white font-bold">+10 Pts</span></li>
-                <li>Guru Login Harian: <span className="text-white font-bold">+3 Pts</span></li>
-                <li>Buat Pengumuman Internal: <span className="text-white font-bold">+2 Pts</span></li>
-              </ul>
-            </div>
+          <div className="absolute top-4 right-4 z-20">
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="text-indigo-200 hover:text-white transition-colors">
+                  <Info className="h-5 w-5" />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Kriteria Skor Website</DialogTitle>
+                </DialogHeader>
+                <div className="p-4 space-y-3">
+                  <ul className="space-y-2.5 list-disc list-inside text-sm text-foreground">
+                    <li>Berita & Artikel: <span className="font-bold text-primary">+20 Pts</span></li>
+                    <li>Data Prestasi: <span className="font-bold text-primary">+20 Pts</span></li>
+                    <li>Agenda/Event: <span className="font-bold text-primary">+15 Pts</span></li>
+                    <li>Data Fasilitas: <span className="font-bold text-primary">+15 Pts</span></li>
+                    <li>Profil Guru (GTK): <span className="font-bold text-primary">+10 Pts</span></li>
+                    <li>Foto Galeri: <span className="font-bold text-primary">+5 Pts</span></li>
+                    <li>Admin Login Harian: <span className="font-bold text-primary">+10 Pts</span></li>
+                    <li>Guru Login Harian: <span className="font-bold text-primary">+3 Pts</span></li>
+                    <li>Buat Pengumuman Internal: <span className="font-bold text-primary">+2 Pts</span></li>
+                  </ul>
+                  <p className="text-xs text-muted-foreground mt-4 italic">
+                    *Poin dihitung secara otomatis oleh sistem setiap hari.
+                  </p>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <CardContent className="p-8 relative z-10 flex flex-col sm:flex-row items-center gap-8">
