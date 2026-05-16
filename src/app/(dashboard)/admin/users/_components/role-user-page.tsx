@@ -124,15 +124,24 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
     setVisibleCount(20)
   }, [search])
 
+  // Infinite scroll using IntersectionObserver
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 500) {
-        setVisibleCount((prev) => prev + 20)
-      }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => prev + 20)
+        }
+      },
+      { rootMargin: "200px" }
+    )
+    
+    const target = document.getElementById("scroll-observer-users")
+    if (target) observer.observe(target)
+      
+    return () => {
+      if (target) observer.unobserve(target)
     }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [visibleCount])
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -434,7 +443,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                 ))
               )}
               {visibleCount < filtered.length && (
-                <tr>
+                <tr id="scroll-observer-users">
                   <td colSpan={6} className="px-4 py-8 text-center">
                     <div className="h-6 w-6 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600 mx-auto"></div>
                   </td>

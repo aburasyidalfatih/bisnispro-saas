@@ -51,16 +51,24 @@ export default function LeaderboardPage() {
     setVisibleCount(20)
   }, [search])
 
-  // Infinite scroll
+  // Infinite scroll using IntersectionObserver
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 500) {
-        setVisibleCount((prev) => prev + 20)
-      }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => prev + 20)
+        }
+      },
+      { rootMargin: "200px" }
+    )
+    
+    const target = document.getElementById("scroll-observer")
+    if (target) observer.observe(target)
+      
+    return () => {
+      if (target) observer.unobserve(target)
     }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [visibleCount])
 
   const myRankEntry = entries.find(e => e.tenant.id === myTenantId)
 
@@ -218,7 +226,7 @@ export default function LeaderboardPage() {
         
         {/* Loading Indicator for Infinite Scroll */}
         {visibleCount < filteredEntries.length && (
-          <div className="py-8 flex justify-center">
+          <div id="scroll-observer" className="py-8 flex justify-center">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
           </div>
         )}
