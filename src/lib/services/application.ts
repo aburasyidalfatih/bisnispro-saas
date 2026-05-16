@@ -306,15 +306,12 @@ export async function approveApplication(id: string) {
     data: { status: "APPROVED", adminMessage: `temp_pwd:${tempPassword}` },
   })
 
-  // 5. Kirim notifikasi secara Asynchronous (Background Job)
-  // Tidak di-await agar response UI sangat cepat.
-  sendApplicationNotification(id).then(async () => {
-    // 6. Hapus temp password dari record setelah notifikasi terkirim di background
-    await db.tenantApplication.update({
-      where: { id },
-      data: { adminMessage: null },
-    }).catch(e => logger.error("Failed to clear temp password", e))
-  }).catch(e => logger.error("Async notification failed", e))
+  // 5. Kirim notifikasi menggunakan Inngest (Job Queue) untuk mencegah SPAM/Rate Limit
+  const { inngest } = await import("@/lib/inngest/client")
+  await inngest.send({
+    name: "superadmin/application.notify",
+    data: { applicationId: id }
+  })
 
   return tenant
 }
