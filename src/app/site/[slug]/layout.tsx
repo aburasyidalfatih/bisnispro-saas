@@ -11,6 +11,8 @@ import { PopupRenderer } from "./_components/popup-renderer"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
 import Script from "next/script"
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)

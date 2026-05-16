@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 
+export const dynamic = 'force-dynamic'
 export const dynamicParams = true
 import Link from "next/link"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
