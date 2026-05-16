@@ -67,6 +67,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
   const [users, setUsers] = useState<UserRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [visibleCount, setVisibleCount] = useState(20)
   const [showAdd, setShowAdd] = useState(false)
   const [addLoading, setAddLoading] = useState(false)
   const [editUser, setEditUser] = useState<UserRow | null>(null)
@@ -116,6 +117,22 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
   const filtered = search
     ? users.filter((u) => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()))
     : users
+
+  const visibleEntries = filtered.slice(0, visibleCount)
+
+  useEffect(() => {
+    setVisibleCount(20)
+  }, [search])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 500) {
+        setVisibleCount((prev) => prev + 20)
+      }
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -343,7 +360,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                 [...Array(3)].map((_, i) => (
                   <tr key={i} className="border-b"><td className="px-4 py-4" colSpan={6}><div className="skeleton h-6 w-full rounded-lg" /></td></tr>
                 ))
-              ) : filtered.length === 0 ? (
+              ) : visibleEntries.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center">
                     <RoleIcon className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
@@ -351,7 +368,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                   </td>
                 </tr>
               ) : (
-                filtered.map((u) => (
+                visibleEntries.map((u) => (
                   <tr key={u.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
@@ -415,6 +432,13 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                     </td>
                   </tr>
                 ))
+              )}
+              {visibleCount < filtered.length && (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center">
+                    <div className="h-6 w-6 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600 mx-auto"></div>
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
