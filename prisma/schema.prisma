@@ -101,6 +101,7 @@ model Tenant {
   cbtQuestionBanks     CbtQuestionBank[]
   aiUsageLogs          AiUsageLog[]
   tenantScore          TenantScore?
+  waQueueLogs          WaQueueLog[]
 
   @@index([isActive])
   @@index([plan])
@@ -1880,4 +1881,22 @@ model TenantScore {
   @@index([totalScore(sort: Desc)])
   @@index([rank])
   @@map("tenant_scores")
+}
+
+model WaQueueLog {
+  id          String   @id @default(cuid())
+  tenantId    String?
+  targetNumber String
+  message     String   @db.Text
+  status      String   @default("PENDING") // PENDING, SENT, FAILED
+  error       String?  @db.Text
+  sentAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("wa_queue_logs")
 }

@@ -30,7 +30,19 @@ export const waQueue = new Queue('whatsapp-messages', {
 // 2. Fungsi untuk memasukkan pesan ke dalam antrean
 export const enqueueWhatsApp = async (phone: string, message: string, tenantId?: string | null) => {
   try {
-    const job = await waQueue.add('send-message', { phone, message, tenantId });
+    const { db } = await import('@/lib/db');
+    
+    // Tulis ke DB sebagai PENDING
+    const log = await db.waQueueLog.create({
+      data: {
+        targetNumber: phone,
+        message,
+        tenantId,
+        status: "PENDING"
+      }
+    });
+
+    const job = await waQueue.add('send-message', { phone, message, tenantId, logId: log.id });
     logger.info(`Message to ${phone} queued with job ID: ${job.id}`);
     return { success: true, jobId: job.id };
   } catch (error: any) {
@@ -44,18 +56,36 @@ export function startWaWorker() {
   logger.info("Starting WhatsApp BullMQ Worker...");
   
   const worker = new Worker('whatsapp-messages', async (job: Job) => {
-    const { phone, message, tenantId } = job.data;
+    const { phone, message, tenantId, logId } = job.data;
     logger.info(`Processing WA Job ${job.id} for phone ${phone}`);
+    const { db } = await import('@/lib/db');
     
-    // Panggil fungsi pengiriman aslinya (yang memiliki delay di dalamnya)
-    // Karena concurrency = 1, delay akan dipatuhi dengan sempurna secara sekuensial.
-    const result = await sendWhatsAppDirect(phone, message, tenantId);
-    
-    if (!result.success) {
-      throw new Error(result.error || "Failed to send message");
+    try {
+      // Panggil fungsi pengiriman aslinya (yang memiliki delay di dalamnya)
+      // Karena concurrency = 1, delay akan dipatuhi dengan sempurna secara sekuensial.
+      const result = await sendWhatsAppDirect(phone, message, tenantId);
+      
+      if (!result.success) {
+        throw new Error(result.error || "Failed to send message");
+      }
+      
+      if (logId) {
+        await db.waQueueLog.update({
+          where: { id: logId },
+          data: { status: "SENT", sentAt: new Date() }
+        });
+      }
+
+      return result;
+    } catch (err: any) {
+      if (logId) {
+        await db.waQueueLog.update({
+          where: { id: logId },
+          data: { status: "FAILED", error: err.message, sentAt: new Date() }
+        }).catch(e => logger.error("Failed to update WA log", e));
+      }
+      throw err;
     }
-    
-    return result;
   }, {
     connection: redisConnection,
     concurrency: 1, // SANGAT PENTING: Paksa berjalan sekuensial 1 per 1 agar delay efektif
