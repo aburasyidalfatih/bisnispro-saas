@@ -107,6 +107,8 @@ export async function PUT(req: Request) {
     data,
   })
 
+  if (data.settings) {
+    const settings = data.settings as Record<string, any>
     // Note: Auto-sync staff logic removed to prevent overwriting existing staff names when changing the principal welcome message.
 
     if (settings.studentCount !== undefined) {
@@ -120,7 +122,6 @@ export async function PUT(req: Request) {
       }
     }
   }
-
   // Invalidate Redis cache so public site reflects changes immediately
   await invalidatePublicTenantCache(updated.slug)
 
