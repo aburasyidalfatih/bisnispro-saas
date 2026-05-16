@@ -40,5 +40,7 @@ export function findCoordinates(provinceName: string, regencyName: string): { la
     rn.includes(r.name.toLowerCase().replace(/^(kabupaten|kota)\s+/, ""))
   )
 
-  return regency ? { lat: regency.lat, lng: regency.lng } : { lat: province.lat, lng: province.lng }
+  return (regency && regency.lat !== 0 && regency.lng !== 0) 
+    ? { lat: regency.lat, lng: regency.lng } 
+    : { lat: province.lat, lng: province.lng }
 }
