@@ -6,7 +6,8 @@ import {
   generateInvoicesJob, 
   checkOverdueInvoicesJob, 
   sendTemplateNotificationJob,
-  applicationNotificationJob 
+  applicationNotificationJob,
+  cleanupWaQueueLogsJob
 } from "@/lib/inngest/functions"
 
 // Serve the Inngest functions as an API route
@@ -19,5 +20,6 @@ export const { GET, POST, PUT } = serve({
     checkOverdueInvoicesJob,
     sendTemplateNotificationJob,
     applicationNotificationJob,
+    cleanupWaQueueLogsJob,
   ],
 })

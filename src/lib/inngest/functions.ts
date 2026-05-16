@@ -222,3 +222,27 @@ export const applicationNotificationJob = inngest.createFunction(
     return { success: true }
   }
 )
+
+// 7. Job Cron: Bersihkan WA Queue Logs yang lebih lama dari 3 hari (agar DB tidak bengkak)
+export const cleanupWaQueueLogsJob = inngest.createFunction(
+  {
+    id: "cleanup-wa-queue-logs",
+    name: "Cleanup WA Queue Logs (Daily)",
+    triggers: [{ cron: "TZ=Asia/Jakarta 0 2 * * *" }] // Setiap jam 2 pagi
+  },
+  async ({ step }: any) => {
+    const result = await step.run("delete-old-logs", async () => {
+      const { db } = await import("@/lib/db")
+      const threeDaysAgo = new Date()
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+      
+      const res = await db.waQueueLog.deleteMany({
+        where: { createdAt: { lt: threeDaysAgo } }
+      })
+      
+      return res.count
+    })
+    
+    return { message: `Deleted ${result} old WA logs.` }
+  }
+)
