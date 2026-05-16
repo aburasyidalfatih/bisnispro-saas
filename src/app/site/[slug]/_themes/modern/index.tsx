@@ -15,6 +15,15 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { ThemeProps } from "../types"
 
 export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
+  const hasPrincipal = (tenant.settings as any)?.principalName 
+    || (tenant.settings as any)?.principalMessage 
+    || tenant.staff?.some((s: any) => s.role && (
+      s.role.toLowerCase().includes("kepala") 
+      || s.role.toLowerCase().includes("pimpinan") 
+      || s.role.toLowerCase().includes("direktur") 
+      || s.role.toLowerCase().includes("ketua")
+    ))
+
   return (
     <main className="bg-muted/30">
       {/* ── 1. Hero Slider ── */}
@@ -44,23 +53,30 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         }
       />
 
-      {/* ── 2. Sambutan Pimpinan (Floating card with dark stats bar) ── */}
-      <div className="-mt-10 relative z-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="bg-card rounded-3xl shadow-xl overflow-hidden border border-border">
-            {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage || tenant.staff?.some((s: any) => s.role && (s.role.toLowerCase().includes("kepala") || s.role.toLowerCase().includes("pimpinan") || s.role.toLowerCase().includes("direktur") || s.role.toLowerCase().includes("ketua")))) && (
+      {/* ── 2. Floating Welcome Card + Stats ── */}
+      {hasPrincipal ? (
+        <div className="-mt-10 relative z-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="bg-card rounded-3xl shadow-xl overflow-hidden border border-border">
               <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
-            )}
-            
-            {/* Stats Bar — dark accent using primary color */}
-            <div className="bg-primary text-primary-foreground rounded-b-3xl">
+              <div className="bg-primary text-primary-foreground rounded-b-3xl">
+                <StatsBar stats={stats} />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Stats Bar standalone ketika tidak ada sambutan pimpinan */
+        <div className="-mt-6 relative z-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="bg-primary text-primary-foreground rounded-2xl shadow-xl overflow-hidden">
               <StatsBar stats={stats} />
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="py-12"></div>
+      <div className="py-8" />
 
       {/* ── 3. Program Keahlian ── */}
       <ScrollReveal>
@@ -68,32 +84,47 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       </ScrollReveal>
 
       {/* ── 4. Fasilitas Sekolah ── */}
-      <ScrollReveal delay={0.1}>
-        <div className="bg-card py-10">
-          <FacilitiesSection facilities={tenant.facilities || []} />
-        </div>
-      </ScrollReveal>
+      {(tenant.facilities?.length ?? 0) > 0 && (
+        <ScrollReveal delay={0.1}>
+          <div className="bg-card py-10 mt-8">
+            <FacilitiesSection facilities={tenant.facilities || []} />
+          </div>
+        </ScrollReveal>
+      )}
 
       {/* ── 5. Info Board (Agenda, Pengumuman, Artikel) ── */}
-      <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
-
-      {/* ── 6. Prestasi & Ekstrakurikuler ── */}
-      <div className="bg-card py-12">
-        <ScrollReveal delay={0.1}>
-          <AchievementsSection achievements={tenant.achievements || []} />
-        </ScrollReveal>
-        <div className="my-10" />
-        <ScrollReveal delay={0.2}>
-          <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
-        </ScrollReveal>
+      <div className="mt-8">
+        <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
       </div>
 
-      {/* ── 7. Guru & Staff Highlight ── */}
-      <ScrollReveal delay={0.1}>
-        <StaffHighlight staff={tenant.staff || []} />
-      </ScrollReveal>
+      {/* ── 6. Prestasi ── */}
+      {(tenant.achievements?.length ?? 0) > 0 && (
+        <ScrollReveal delay={0.1}>
+          <div className="bg-card py-12 mt-8">
+            <AchievementsSection achievements={tenant.achievements || []} />
+          </div>
+        </ScrollReveal>
+      )}
 
-      {/* ── 8. Galeri (Dark section using primary as accent) ── */}
+      {/* ── 7. Ekstrakurikuler ── */}
+      {(tenant.extracurriculars?.length ?? 0) > 0 && (
+        <ScrollReveal delay={0.2}>
+          <div className="py-10">
+            <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
+          </div>
+        </ScrollReveal>
+      )}
+
+      {/* ── 8. Guru & Staff Highlight ── */}
+      {(tenant.staff?.length ?? 0) > 0 && (
+        <ScrollReveal delay={0.1}>
+          <div className="bg-card py-10">
+            <StaffHighlight staff={tenant.staff || []} />
+          </div>
+        </ScrollReveal>
+      )}
+
+      {/* ── 9. Galeri ── */}
       {gallery.length > 0 && (
         <ScrollReveal>
         <section className="py-10 md:py-16 bg-foreground text-background">
@@ -132,19 +163,23 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         </ScrollReveal>
       )}
 
-      {/* ── 9. Testimonial Alumni ── */}
-      <ScrollReveal>
-        <AlumniTestimonials alumni={tenant.alumni || []} />
-      </ScrollReveal>
+      {/* ── 10. Testimonial Alumni ── */}
+      {(tenant.alumni?.length ?? 0) > 0 && (
+        <ScrollReveal>
+          <AlumniTestimonials alumni={tenant.alumni || []} />
+        </ScrollReveal>
+      )}
 
-      {/* ── 10. Kerjasama Lembaga ── */}
-      <ScrollReveal delay={0.1}>
-        <div className="bg-card py-8">
-          <PartnershipsSection partnerships={tenant.partnerships || []} />
-        </div>
-      </ScrollReveal>
+      {/* ── 11. Kerjasama Lembaga ── */}
+      {(tenant.partnerships?.length ?? 0) > 0 && (
+        <ScrollReveal delay={0.1}>
+          <div className="bg-card py-8">
+            <PartnershipsSection partnerships={tenant.partnerships || []} />
+          </div>
+        </ScrollReveal>
+      )}
 
-      {/* ── 11. Kontak CTA (Modern Layout) ── */}
+      {/* ── 12. Kontak CTA ── */}
       {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
         <ScrollReveal delay={0.2}>
         <section className="py-16 md:py-24 bg-background">

@@ -273,23 +273,34 @@ export default function AppearancePage() {
               </button>
             )
           })}
-          {/* Tombol simpan di dalam card */}
-          {canChangeTheme && (hasUnsavedChanges || hasTemplateChanged) && (
-            <div className="flex items-center justify-end gap-2 pt-2 border-t mt-2">
-              <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => {
-                resetPreview()
-                setSelectedTemplate((activeTenant as any)?.template || "default")
-              }}>
-                <RotateCcw className="h-3.5 w-3.5" /> Batal
-              </Button>
-              <Button size="sm" className="rounded-xl gap-2 btn-gradient text-white border-0" onClick={handleSave} disabled={saving}>
-                {saving ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
-                Simpan Perubahan
-              </Button>
-            </div>
-          )}
         </CardContent>
       </Card>
+
+      {/* ── Sticky Save Bar (selalu terlihat saat ada perubahan) ── */}
+      {canChangeTheme && (hasUnsavedChanges || hasTemplateChanged) && (
+        <div className="sticky bottom-0 z-50 -mx-4 sm:-mx-6 lg:-mx-8">
+          <div className="bg-card/95 backdrop-blur-lg border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] px-4 sm:px-6 py-3">
+            <div className="flex items-center justify-between max-w-3xl mx-auto">
+              <p className="text-sm text-muted-foreground hidden sm:block">
+                <span className="inline-block h-2 w-2 rounded-full bg-amber-500 mr-2 animate-pulse" />
+                Ada perubahan yang belum disimpan
+              </p>
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => {
+                  resetPreview()
+                  setSelectedTemplate((activeTenant as any)?.template || "default")
+                }}>
+                  <RotateCcw className="h-3.5 w-3.5" /> Batal
+                </Button>
+                <Button size="sm" className="rounded-xl gap-2 btn-gradient text-white border-0" onClick={handleSave} disabled={saving}>
+                  {saving ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
+                  Simpan Perubahan
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
