@@ -15,7 +15,7 @@ async function getDynamicConfig(req: NextRequest) {
     req.nextUrl.hostname
   const hostWithoutPort = rawHost.split(":")[0]
 
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const rootDomain = process.env.AUTH_URL ? process.env.AUTH_URL.replace("https://", "").replace("http://", "") : (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id")
   const isMainDomain =
     hostWithoutPort === "localhost" ||
     hostWithoutPort === rootDomain ||
