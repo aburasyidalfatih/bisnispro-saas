@@ -303,18 +303,15 @@ export const authOptions: NextAuthConfig = {
                 }
             })
 
-            // TRIGGER GAMIFICATION LOGIN POINTS
+            // TRIGGER GAMIFICATION LOGIN POINTS (Direct DB call)
             if (tenantId) {
-                const { inngest } = await import("@/lib/inngest/client")
-                await inngest.send({
-                  name: "gamification.point.added",
-                  data: {
-                    tenantId,
-                    userId: user.id,
-                    type: "LOGIN",
-                    points: 10,
-                    description: "Login sistem (Daily Activity)"
-                  }
+                const { addGamificationPoints } = await import("@/lib/services/gamification")
+                await addGamificationPoints({
+                  tenantId,
+                  userId: user.id,
+                  type: "LOGIN",
+                  points: 10,
+                  description: "Login sistem (Daily Activity)"
                 })
             }
         }
