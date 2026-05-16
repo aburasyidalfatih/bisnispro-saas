@@ -92,8 +92,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="id" data-theme={colorTheme} suppressHydrationWarning>
-      <head />
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={`${inter.className} overflow-x-hidden w-full`} suppressHydrationWarning>
         <SessionProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
             <ColorThemeProvider>
