@@ -18,17 +18,11 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
   // Agenda Kegiatan (Events)
   const agenda = (events || []).slice(0, 4)
 
-  // Pengumuman (Posts with type PENGUMUMAN or just fallback to some posts if none)
-  let pengumuman = (posts || []).filter((p) => p.type === "PENGUMUMAN").slice(0, 4)
-  if (pengumuman.length === 0) {
-    pengumuman = (posts || []).slice(0, 4)
-  }
+  // Pengumuman (Posts with type PENGUMUMAN)
+  const pengumuman = (posts || []).filter((p) => p.type === "PENGUMUMAN" || p.type === "PENGUMUMAN_SEMUA").slice(0, 4)
 
-  // Artikel & Berita (Posts with type BERITA or BLOG_GURU, excluding pengumuman)
-  let artikel = (posts || []).filter((p) => p.type !== "PENGUMUMAN").slice(0, 4)
-  if (artikel.length === 0 && posts && posts.length > 0) {
-     artikel = (posts || []).slice(0, 4)
-  }
+  // Artikel & Berita (Posts excluding pengumuman)
+  const artikel = (posts || []).filter((p) => p.type !== "PENGUMUMAN" && p.type !== "PENGUMUMAN_SEMUA").slice(0, 4)
 
   return (
     <section className="py-16 bg-muted/30">
