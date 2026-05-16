@@ -16,8 +16,8 @@ import { ThemeProps } from "../types"
 
 export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
   return (
-    <main className="bg-slate-50">
-      {/* ── 1. Hero Slider (Same but wrapping might differ in future) ── */}
+    <main className="bg-muted/30">
+      {/* ── 1. Hero Slider ── */}
       <HeroSlider
         slides={
           tenant.sliders && tenant.sliders.length > 0
@@ -44,16 +44,16 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         }
       />
 
-      {/* ── 2. Sambutan Pimpinan (Moved up for modern corporate feel) ── */}
+      {/* ── 2. Sambutan Pimpinan (Floating card with dark stats bar) ── */}
       <div className="-mt-10 relative z-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+          <div className="bg-card rounded-3xl shadow-xl overflow-hidden border border-border">
             {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage || tenant.staff?.some((s: any) => s.role && (s.role.toLowerCase().includes("kepala") || s.role.toLowerCase().includes("pimpinan") || s.role.toLowerCase().includes("direktur") || s.role.toLowerCase().includes("ketua")))) && (
               <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
             )}
             
-            {/* Stats Bar integrated into the bottom of welcome */}
-            <div className="bg-slate-900 text-white rounded-b-3xl">
+            {/* Stats Bar — dark accent using primary color */}
+            <div className="bg-primary text-primary-foreground rounded-b-3xl">
               <StatsBar stats={stats} />
             </div>
           </div>
@@ -67,9 +67,9 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <ProgramsSection programs={tenant.programs || []} />
       </ScrollReveal>
 
-      {/* ── 4. Fasilitas Sekolah (Moved up) ── */}
+      {/* ── 4. Fasilitas Sekolah ── */}
       <ScrollReveal delay={0.1}>
-        <div className="bg-white py-10">
+        <div className="bg-card py-10">
           <FacilitiesSection facilities={tenant.facilities || []} />
         </div>
       </ScrollReveal>
@@ -78,7 +78,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
 
       {/* ── 6. Prestasi & Ekstrakurikuler ── */}
-      <div className="bg-white py-12">
+      <div className="bg-card py-12">
         <ScrollReveal delay={0.1}>
           <AchievementsSection achievements={tenant.achievements || []} />
         </ScrollReveal>
@@ -93,21 +93,21 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <StaffHighlight staff={tenant.staff || []} />
       </ScrollReveal>
 
-      {/* ── 8. Galeri ── */}
+      {/* ── 8. Galeri (Dark section using primary as accent) ── */}
       {gallery.length > 0 && (
         <ScrollReveal>
-        <section className="py-10 md:py-16 bg-slate-900 text-white">
+        <section className="py-10 md:py-16 bg-foreground text-background">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-xs font-bold tracking-wider uppercase mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-background/10 text-background/80 text-xs font-bold tracking-wider uppercase mb-4">
                 <ImageIcon className="h-3.5 w-3.5" />
                 Galeri
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Dokumentasi Kami</h2>
-              <p className="text-white/60 text-sm md:text-base max-w-xl mx-auto mb-6">
+              <p className="text-background/60 text-sm md:text-base max-w-xl mx-auto mb-6">
                 Kumpulan momen dan kegiatan berharga yang telah kami abadikan.
               </p>
-              <Link href={`${base}/gallery`} className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-primary transition-colors">
+              <Link href={`${base}/gallery`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
                 Lihat Semua <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -139,7 +139,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 10. Kerjasama Lembaga ── */}
       <ScrollReveal delay={0.1}>
-        <div className="bg-white py-8">
+        <div className="bg-card py-8">
           <PartnershipsSection partnerships={tenant.partnerships || []} />
         </div>
       </ScrollReveal>
@@ -149,15 +149,15 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <ScrollReveal delay={0.2}>
         <section className="py-16 md:py-24 bg-background">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl border border-slate-200 bg-white shadow-2xl p-8 md:p-16 relative overflow-hidden">
+            <div className="rounded-3xl border border-border bg-card shadow-2xl p-8 md:p-16 relative overflow-hidden">
               <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
-              <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-blue-500/5 blur-3xl" />
+              <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-primary/10 blur-3xl" />
               
               <div className="relative text-center max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60">
                   Siap Bergabung Bersama Kami?
                 </h2>
-                <p className="text-slate-500 mb-10">
+                <p className="text-muted-foreground mb-10">
                   Kami selalu terbuka untuk menjawab pertanyaan Anda. Jangan ragu untuk menghubungi layanan informasi kami.
                 </p>
                 
@@ -170,18 +170,18 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
                     </a>
                   )}
                   <Link href={`${base}/contact`}
-                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-primary text-white px-8 py-4 text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all hover:-translate-y-1">
+                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground px-8 py-4 text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all hover:-translate-y-1">
                     Halaman Kontak <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-slate-100">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-border">
                   {tenant.phone && (
                     <div className="flex flex-col items-center">
                       <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
                         <Phone className="h-4 w-4" />
                       </div>
-                      <span className="text-sm font-medium text-slate-700">{tenant.phone}</span>
+                      <span className="text-sm font-medium text-foreground">{tenant.phone}</span>
                     </div>
                   )}
                   {tenant.email && (
@@ -189,7 +189,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
                       <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
                         <Mail className="h-4 w-4" />
                       </div>
-                      <span className="text-sm font-medium text-slate-700">{tenant.email}</span>
+                      <span className="text-sm font-medium text-foreground">{tenant.email}</span>
                     </div>
                   )}
                   {tenant.address && (
@@ -197,7 +197,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
                       <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
                         <MapPin className="h-4 w-4" />
                       </div>
-                      <span className="text-sm font-medium text-slate-700 text-center line-clamp-2">{tenant.address}</span>
+                      <span className="text-sm font-medium text-foreground text-center line-clamp-2">{tenant.address}</span>
                     </div>
                   )}
                 </div>

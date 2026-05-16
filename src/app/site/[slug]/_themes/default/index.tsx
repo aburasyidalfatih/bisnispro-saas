@@ -87,7 +87,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
               <div>
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-500/10 text-slate-600 text-xs font-bold tracking-wider uppercase mb-4">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-muted text-muted-foreground text-xs font-bold tracking-wider uppercase mb-4">
                   <ImageIcon className="h-3.5 w-3.5" />
                   Galeri
                 </div>
