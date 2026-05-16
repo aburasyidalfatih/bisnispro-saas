@@ -16,6 +16,7 @@ model Tenant {
   description          String?
   plan                 String                @default("free")
   theme                String                @default("aurora")
+  template             String                @default("default")
   isActive             Boolean               @default(true)
   settings             Json?
   tagline              String?
