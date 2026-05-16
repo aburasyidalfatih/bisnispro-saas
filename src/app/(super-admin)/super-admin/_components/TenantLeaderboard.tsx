@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Trophy, Building2, Activity } from "lucide-react"
+import { Trophy, Building2, TrendingUp } from "lucide-react"
 
 interface LeaderboardTenant {
   id: string
@@ -11,6 +11,9 @@ interface LeaderboardTenant {
   logo: string | null
   address: string | null
   activity_score: number
+  content_score?: number
+  activity_points?: number
+  rank?: number
 }
 
 export function TenantLeaderboard() {
@@ -38,7 +41,7 @@ export function TenantLeaderboard() {
           <div>
             <CardTitle className="text-lg font-bold">Top Aktivitas Kelola Website</CardTitle>
             <CardDescription className="text-xs">
-              Lembaga paling aktif 30 hari terakhir
+              Lembaga paling aktif berdasarkan skor keseluruhan
             </CardDescription>
           </div>
         </div>
@@ -83,9 +86,9 @@ export function TenantLeaderboard() {
                   <div className="text-right flex flex-col items-end shrink-0">
                     <div className="flex items-center gap-1 text-primary font-bold">
                       {tenant.activity_score}
-                      <Activity className="h-3 w-3" />
+                      <TrendingUp className="h-3 w-3" />
                     </div>
-                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Aktivitas</span>
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Total Skor</span>
                   </div>
                 </div>
               )

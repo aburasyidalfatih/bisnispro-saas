@@ -9,32 +9,40 @@ export async function GET() {
   }
 
   try {
-    const leaderboard = await db.$queryRaw`
-      SELECT
-        t.id,
-        t.name,
-        t.slug,
-        t.logo,
-        t.address,
-        (
-          (SELECT COUNT(*)::int FROM posts p WHERE p."tenantId" = t.id AND p."createdAt" >= NOW() - INTERVAL '30 days') +
-          (SELECT COUNT(*)::int FROM staff s WHERE s."tenantId" = t.id AND s."createdAt" >= NOW() - INTERVAL '30 days') +
-          (SELECT COUNT(*)::int FROM facilities f WHERE f."tenantId" = t.id AND f."createdAt" >= NOW() - INTERVAL '30 days') +
-          (SELECT COUNT(*)::int FROM extracurriculars e WHERE e."tenantId" = t.id AND e."createdAt" >= NOW() - INTERVAL '30 days') +
-          (SELECT COUNT(*)::int FROM programs pr WHERE pr."tenantId" = t.id AND pr."createdAt" >= NOW() - INTERVAL '30 days') +
-          (SELECT COUNT(*)::int FROM achievements a WHERE a."tenantId" = t.id AND a."createdAt" >= NOW() - INTERVAL '30 days')
-        ) as activity_score
-      FROM tenants t
-      WHERE t."isActive" = true
-      ORDER BY activity_score DESC
-      LIMIT 10;
-    `
+    // Ambil dari TenantScore (sinkron dengan leaderboard-sync cron)
+    const leaderboard = await db.tenantScore.findMany({
+      where: { totalScore: { gt: 0 } },
+      orderBy: { totalScore: "desc" },
+      take: 10,
+      include: {
+        tenant: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logo: true,
+            address: true,
+          }
+        }
+      }
+    })
 
-    // Filter yang score-nya > 0
-    const filteredLeaderboard = (leaderboard as any[]).filter(t => t.activity_score > 0);
+    // Map ke format yang sama untuk komponen UI
+    const result = leaderboard.map(entry => ({
+      id: entry.tenant.id,
+      name: entry.tenant.name,
+      slug: entry.tenant.slug,
+      logo: entry.tenant.logo,
+      address: entry.tenant.address,
+      activity_score: entry.totalScore,
+      content_score: entry.contentScore,
+      activity_points: entry.activityScore,
+      traffic_score: entry.trafficScore,
+      rank: entry.rank,
+      lastCalculated: entry.lastCalculated,
+    }))
 
-    // Ambil top 7
-    return NextResponse.json(filteredLeaderboard.slice(0, 7))
+    return NextResponse.json(result.slice(0, 7))
   } catch (error) {
     console.error("Failed to fetch leaderboard", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
