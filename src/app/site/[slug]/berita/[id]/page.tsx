@@ -11,7 +11,6 @@ import Image from "next/image"
 import { ReadingProgress } from "./_components/reading-progress"
 import { ShareButtons } from "./_components/share-buttons"
 
-export const revalidate = 3600 // Edge Caching ISR (1 jam)
 export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
