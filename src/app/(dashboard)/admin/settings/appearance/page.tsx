@@ -197,10 +197,6 @@ export default function AppearancePage() {
             id: "default", name: "Classic Default", 
             desc: "Desain standar yang lengkap dengan slider lebar.", 
             isPremium: false 
-          }, { 
-            id: "modern", name: "Modern Corporate", 
-            desc: "Desain elegan dengan elemen melayang dan susunan grid baru.", 
-            isPremium: true 
           }].map(tpl => {
             const isLocked = tpl.isPremium && dbPlan === "free"
             const isActive = dbTemplate === tpl.id

@@ -22,7 +22,6 @@ import { AlumniTestimonials } from "./_components/alumni-testimonials"
 import { PartnershipsSection } from "./_components/partnerships-section"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { DefaultTheme } from "./_themes/default"
-import { ModernTheme } from "./_themes/modern"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -110,8 +109,6 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
   // Router Tema Bawaan React
   switch (tenant.template) {
-    case "modern":
-      return <ModernTheme {...themeProps} />
     case "default":
     default:
       return <DefaultTheme {...themeProps} />
