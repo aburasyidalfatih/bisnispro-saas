@@ -96,31 +96,6 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <ProgramsSection programs={tenant.programs || []} />
       </ScrollReveal>
 
-      {/* ══════════════════════════════════════════════════════════════
-          5. HIGHLIGHT FEATURES BAR (only if admin filled in heroHighlights)
-      ══════════════════════════════════════════════════════════════ */}
-      {tenant.settings?.heroHighlights && Array.isArray(tenant.settings.heroHighlights) && tenant.settings.heroHighlights.some((h: any) => h.title || h.desc) && (
-      <section className="bg-primary text-primary-foreground py-8 mt-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {(() => {
-              const iconMap = [GraduationCap, Building, Award, TreePine];
-              return tenant.settings!.heroHighlights!.map((h: any, idx: number) => (
-                <div key={idx} className="flex items-start gap-3 group">
-                  <div className="shrink-0 h-10 w-10 rounded-xl bg-primary-foreground/15 flex items-center justify-center group-hover:bg-primary-foreground/25 transition-colors">
-                    {(() => { const Icon = iconMap[idx] || CheckCircle2; return <Icon className="h-5 w-5" />; })()}
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="font-bold text-sm mb-0.5">{h.title}</h4>
-                    <p className="text-primary-foreground/70 text-xs leading-relaxed">{h.desc}</p>
-                  </div>
-                </div>
-              ));
-            })()}
-          </div>
-        </div>
-      </section>
-      )}
 
       {/* ══════════════════════════════════════════════════════════════
           6. FASILITAS SEKOLAH
@@ -202,50 +177,16 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          11. TESTIMONIAL ALUMNI + CTA (Side by Side)
+          11. TESTIMONIAL ALUMNI
       ══════════════════════════════════════════════════════════════ */}
       {((tenant.alumni?.length ?? 0) > 0) && (
         <section className="py-10 md:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className={`grid ${tenant.settings?.ppdbCta?.title ? 'lg:grid-cols-2' : ''} gap-8`}>
-              {/* Left: Alumni Testimonial */}
+            <div className="grid gap-8">
+              {/* Alumni Testimonial */}
               <div>
                 <AlumniTestimonials alumni={tenant.alumni || []} />
               </div>
-
-              {/* Right: CTA Card — only if admin filled ppdbCta */}
-              {tenant.settings?.ppdbCta?.title && (
-              <div className="bg-primary text-primary-foreground rounded-3xl p-8 md:p-10 relative overflow-hidden flex flex-col justify-center">
-                <div className="absolute inset-0 opacity-10"
-                  style={{ backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
-                <div className="relative">
-                  <h3 className="text-xl md:text-2xl font-extrabold mb-3">
-                    {tenant.settings.ppdbCta.title}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-3 mb-6 text-primary-foreground/80">
-                    {tenant.settings.ppdbCta.point1 && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      ✅ {tenant.settings.ppdbCta.point1}
-                    </span>
-                    )}
-                    {tenant.settings.ppdbCta.point2 && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      ℹ️ {tenant.settings.ppdbCta.point2}
-                    </span>
-                    )}
-                    {tenant.settings.ppdbCta.point3 && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      📋 {tenant.settings.ppdbCta.point3}
-                    </span>
-                    )}
-                  </div>
-                  <Link href={`${base}/ppdb`}
-                    className="inline-flex items-center gap-2 bg-primary-foreground text-primary font-bold rounded-xl px-6 py-3 text-sm hover:opacity-90 transition-all hover:-translate-y-0.5 shadow-lg">
-                    PPDB Online <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
-              )}
             </div>
           </div>
         </section>
