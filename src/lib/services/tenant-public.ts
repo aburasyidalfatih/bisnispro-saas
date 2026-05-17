@@ -56,6 +56,11 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       extracurriculars: { take: 15 },
       facilities: { take: 15 },
       achievements: { orderBy: { createdAt: 'desc' }, take: 10 },
+      websiteMenus: { 
+        where: { isActive: true, parentId: null },
+        orderBy: { order: 'asc' },
+        include: { children: { where: { isActive: true }, orderBy: { order: 'asc' } } }
+      },
       posts: { 
         where: { 
           status: "PUBLISHED",

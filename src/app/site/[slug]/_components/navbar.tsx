@@ -21,6 +21,7 @@ interface NavbarProps {
     instagram: string | null
     youtube: string | null
     tiktok: string | null
+    websiteMenus?: any[]
   }
 }
 
@@ -33,43 +34,23 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
   const { resolveHref } = useRouting()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Simplified navLinks
-  const navLinks = [
-    { label: "Beranda", href: "", icon: Home },
-    {
-      label: "Profil Sekolah",
-      href: "/profil",
-      icon: Building2,
-      children: [
-        { label: "Profil Lembaga", href: "/profil" },
-        { label: "Guru & Staf (GTK)", href: "/gtk" },
-        { label: "Fasilitas Sekolah", href: "/fasilitas" },
-        { label: "Program Unggulan", href: "/program" },
-        { label: "Ekstrakurikuler", href: "/ekstrakurikuler" },
-      ],
-    },
-    {
-      label: "Informasi",
-      href: "/berita",
-      icon: Info,
-      children: [
-        { label: "Berita & Artikel", href: "/berita" },
-        { label: "Agenda & Acara", href: "/agenda" },
-        { label: "Pusat Unduhan", href: "/unduhan" },
-      ],
-    },
-    {
-      label: "Galeri",
-      href: "/gallery",
-      icon: ImageIcon,
-      children: [
-        { label: "Galeri Foto", href: "/gallery" },
-        { label: "Prestasi Siswa", href: "/prestasi" },
-        { label: "Alumni Success", href: "/alumni" },
-      ],
-    },
-    { label: "Kontak", href: "/contact", icon: PhoneCall },
-  ]
+  // Format website menus from db or fallback to defaults if empty
+  const navLinks = (tenant.websiteMenus && tenant.websiteMenus.length > 0)
+    ? tenant.websiteMenus.map((menu: any) => ({
+        label: menu.label,
+        href: menu.url === "/" ? "" : menu.url,
+        icon: Home, // Fallback icon, could map dynamic icon later
+        children: menu.children?.length > 0 
+          ? menu.children.map((child: any) => ({ label: child.label, href: child.url })) 
+          : undefined
+      }))
+    : [
+        { label: "Beranda", href: "", icon: Home },
+        { label: "Profil Sekolah", href: "/profil", icon: Building2 },
+        { label: "Informasi", href: "/berita", icon: Info },
+        { label: "Galeri", href: "/gallery", icon: ImageIcon },
+        { label: "Kontak", href: "/contact", icon: PhoneCall },
+      ]
 
   const toggleMobileAccordion = (label: string) => {
     setExpandedMobile(prev => 
