@@ -16,6 +16,9 @@ export async function GET(req: Request) {
   try {
     const todayStart = startOfDay(new Date())
     
+    // Ambil nama platform dari settings
+    const platformNameSetting = await db.platformSetting.findUnique({ where: { key: "platform_name" } })
+    const platformName = platformNameSetting?.value || "SchoolPro"
     // 1. Ambil semua template campaign yang aktif, urutkan berdasarkan dayOffset
     const campaigns = await db.dripCampaign.findMany({
       where: { isActive: true },
@@ -115,17 +118,17 @@ export async function GET(req: Request) {
             <head>
               <meta charset="utf-8">
             </head>
-            <body style="margin: 0; padding: 20px; background-color: #f3f4f6; font-family: Arial, sans-serif;">
-              <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
-                <div style="background-color: #2563eb; padding: 30px 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-                  <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: bold;">SchoolPro Edukasi</h1>
+            <body style="margin: 0; padding: 20px; background-color: #f3f4f6; font-family: 'Segoe UI', Arial, sans-serif;">
+              <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden;">
+                <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 30px 20px; text-align: center;">
+                  <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: bold;">${platformName} Edukasi</h1>
                 </div>
                 <div style="padding: 30px; color: #374151; font-size: 16px; line-height: 1.6;">
                   ${formattedContent}
                 </div>
-                <div style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 13px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-top: 1px solid #e5e7eb;">
-                  <p style="margin: 0 0 8px 0;">Email ini dikirim secara otomatis oleh sistem <strong>SchoolPro</strong>.</p>
-                  <p style="margin: 0;">&copy; ${new Date().getFullYear()} SchoolPro Indonesia. All rights reserved.</p>
+                <div style="background-color: #f1f5f9; padding: 20px; text-align: center; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0;">
+                  <p style="margin: 0 0 8px 0;">Email ini dikirim secara otomatis oleh sistem <strong>${platformName}</strong>.</p>
+                  <p style="margin: 0;">&copy; ${new Date().getFullYear()} ${platformName} Indonesia. All rights reserved.</p>
                 </div>
                 <img src="${appUrl}/api/track/open?logId=${dripLog.id}" width="1" height="1" style="display:none;" />
               </div>
