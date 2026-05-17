@@ -1,5 +1,4 @@
 import { db } from "@/lib/db"
-import { PageHeader } from "@/components/page-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, Palette, Download, Trash2, CalendarDays, Lock } from "lucide-react"
@@ -61,10 +60,10 @@ export default async function SuperAdminThemesPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <PageHeader 
-          title="Theme Engine" 
-          description="Kelola tema bawaan dan tema kustom berbasis Handlebars untuk sekolah." 
-        />
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Theme Engine</h1>
+          <p className="text-muted-foreground mt-1">Kelola tema bawaan dan tema kustom berbasis Handlebars untuk sekolah.</p>
+        </div>
         <ThemeUploadModal />
       </div>
 
