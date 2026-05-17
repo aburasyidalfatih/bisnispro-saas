@@ -21,7 +21,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
 
   if (!facilities || facilities.length === 0) return null
 
-  const displayed = facilities.slice(0, 8)
+  const displayed = facilities.slice(0, 6)
 
   return (
     <section className="py-16 md:py-20 bg-secondary/10 relative overflow-hidden">
@@ -42,7 +42,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {displayed.map((facility, idx) => {
             const isLarge = idx < 2
             return (
@@ -50,7 +50,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
                 key={facility.id}
                 href={resolveHref(`/fasilitas/${facility.id}`)}
                 className={`group relative rounded-2xl overflow-hidden border bg-muted/30 transition-all duration-500 hover:shadow-xl ${
-                  isLarge ? "md:col-span-1 lg:col-span-2 aspect-[16/10]" : "aspect-square"
+                  isLarge ? "col-span-1 aspect-[16/10]" : "aspect-square"
                 }`}
               >
                 {facility.imageUrl ? (
