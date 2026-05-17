@@ -77,6 +77,12 @@ export default function SuperAdminSettingsPage() {
     WA_TEMPLATE_REJECTED: `Halo {{adminName}},\n\nMohon maaf, pendaftaran sekolah {{schoolName}} belum dapat kami setujui saat ini.\n\nAlasan: {{adminMessage}}\n\nTerima kasih atas minat Anda.`,
     WA_TEMPLATE_ALERT_SUPERADMIN: `*PENDAFTARAN SEKOLAH BARU*\n\nSekolah: {{schoolName}}\nAdmin: {{adminName}}\nWA: {{adminPhone}}\nSubdomain: {{schoolSlug}}.schoolpro.id\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`,
     WA_TEMPLATE_ALERT_AFFILIATE: `*LEAD SEKOLAH BARU! 🎉*\n\nHalo {{affiliateName}},\nKabar baik! Pendaftaran sekolah baru telah masuk menggunakan kode referral Anda ({{referralCode}}).\n\nSekolah: {{schoolName}}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`,
+
+    // Billing Templates
+    WA_TEMPLATE_INVOICE_CREATED: `*Invoice {{invoiceType}} - SchoolPro*\n\nHalo,\n\nInvoice untuk {{invoiceType}} {{tenantName}} telah dibuat:\n\n📋 No. Invoice: {{reference}}\n💰 Total: Rp {{amount}}\n⏰ Batas Bayar: {{expiredAt}}\n\nSilakan transfer ke:\n🏦 {{bankName}}\n💳 {{bankNumber}}\n📛 a.n. {{bankAccountName}}\n\nSetelah transfer, hubungi admin via WA {{adminWA}} untuk konfirmasi.\n\nTerima kasih! 🙏`,
+    WA_TEMPLATE_PAYMENT_CONFIRMED: `*Pembayaran Dikonfirmasi ✅ - SchoolPro*\n\nHalo,\n\nPembayaran untuk {{tenantName}} telah dikonfirmasi!\n\n📋 No. Invoice: {{reference}}\n💰 Jumlah: Rp {{amount}}\n📦 Tipe: {{invoiceType}}\n👥 Kuota Siswa: {{studentQuota}}\n📅 Aktif Hingga: {{expiresAt}}\n\nSelamat menggunakan fitur premium! 🎉`,
+    WA_TEMPLATE_AFFILIATE_COMMISSION: `*Komisi Masuk! 💰 - SchoolPro*\n\nHalo {{affiliateName}},\n\nSelamat! Anda mendapat komisi dari referral:\n\n🏫 Sekolah: {{tenantName}}\n💰 Komisi: Rp {{commissionAmount}} (20%)\n💳 Saldo Saat Ini: Rp {{currentBalance}}\n\nTerima kasih sudah menjadi mitra SchoolPro! 🤝`,
+    WA_TEMPLATE_SUBSCRIPTION_REMINDER: `*{{urgency}} Pengingat Langganan - SchoolPro*\n\nHalo,\n\nLangganan PRO untuk {{tenantName}} akan berakhir dalam *{{daysRemaining}} hari* ({{expiresAt}}).\n\nSegera perpanjang langganan agar tidak kehilangan akses fitur premium.\n\nKunjungi: Menu Langganan di Dashboard Admin.`,
     
     // Payment
     TRIPAY_API_KEY: "",
@@ -806,9 +812,37 @@ export default function SuperAdminSettingsPage() {
                   <Textarea value={form.WA_TEMPLATE_ALERT_AFFILIATE} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_AFFILIATE: e.target.value})} placeholder={`Halo {{affiliateName}},\nLead baru: {{schoolName}}`} className="min-h-[100px] text-xs font-mono" />
                 </div>
               </div>
+
+              {/* Billing Notification Templates */}
+              <div className="border-t pt-6 mt-6">
+                <div className="flex items-center gap-2 mb-1">
+                  <CreditCard className="h-4 w-4 text-indigo-500" />
+                  <h4 className="font-bold text-base">Template Notifikasi Billing</h4>
+                </div>
+                <p className="text-xs text-muted-foreground mb-4">Variabel: {'{{tenantName}}, {{reference}}, {{amount}}, {{expiredAt}}, {{expiresAt}}, {{invoiceType}}, {{bankName}}, {{bankNumber}}, {{bankAccountName}}, {{adminWA}}, {{studentQuota}}, {{affiliateName}}, {{commissionAmount}}, {{currentBalance}}, {{daysRemaining}}, {{urgency}}'}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-indigo-600 font-bold">7. Invoice Dibuat → Tenant</Label>
+                    <Textarea value={form.WA_TEMPLATE_INVOICE_CREATED} onChange={e => setForm({...form, WA_TEMPLATE_INVOICE_CREATED: e.target.value})} className="min-h-[120px] text-xs font-mono" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-green-600 font-bold">8. Pembayaran Dikonfirmasi → Tenant</Label>
+                    <Textarea value={form.WA_TEMPLATE_PAYMENT_CONFIRMED} onChange={e => setForm({...form, WA_TEMPLATE_PAYMENT_CONFIRMED: e.target.value})} className="min-h-[120px] text-xs font-mono" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-amber-600 font-bold">9. Komisi Masuk → Afiliasi</Label>
+                    <Textarea value={form.WA_TEMPLATE_AFFILIATE_COMMISSION} onChange={e => setForm({...form, WA_TEMPLATE_AFFILIATE_COMMISSION: e.target.value})} className="min-h-[120px] text-xs font-mono" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-red-600 font-bold">10. Pengingat Langganan → Tenant</Label>
+                    <Textarea value={form.WA_TEMPLATE_SUBSCRIPTION_REMINDER} onChange={e => setForm({...form, WA_TEMPLATE_SUBSCRIPTION_REMINDER: e.target.value})} className="min-h-[120px] text-xs font-mono" />
+                  </div>
+                </div>
+              </div>
+
               <Button 
                 className="w-full gap-2 btn-gradient text-white border-0 rounded-xl" 
-                onClick={() => handleSaveBatch(['WA_TEMPLATE_PENDING', 'WA_TEMPLATE_APPROVED', 'WA_TEMPLATE_REVISION', 'WA_TEMPLATE_REJECTED', 'WA_TEMPLATE_ALERT_SUPERADMIN', 'WA_TEMPLATE_ALERT_AFFILIATE'])} 
+                onClick={() => handleSaveBatch(['WA_TEMPLATE_PENDING', 'WA_TEMPLATE_APPROVED', 'WA_TEMPLATE_REVISION', 'WA_TEMPLATE_REJECTED', 'WA_TEMPLATE_ALERT_SUPERADMIN', 'WA_TEMPLATE_ALERT_AFFILIATE', 'WA_TEMPLATE_INVOICE_CREATED', 'WA_TEMPLATE_PAYMENT_CONFIRMED', 'WA_TEMPLATE_AFFILIATE_COMMISSION', 'WA_TEMPLATE_SUBSCRIPTION_REMINDER'])} 
                 disabled={saving}
               >
                 <Save className="h-4 w-4" /> Simpan Semua Template Pesan
