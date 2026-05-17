@@ -1,6 +1,5 @@
 import { db } from "@/lib/db"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function PATCH(
@@ -8,8 +7,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const session = await getServerSession(authOptions)
-  const tenantId = session?.user?.tenants?.[0]?.id
+  const session = await auth()
+  const tenantId = (session?.user as any)?.tenants?.[0]?.id
 
   if (!session || !tenantId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -47,8 +46,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const session = await getServerSession(authOptions)
-  const tenantId = session?.user?.tenants?.[0]?.id
+  const session = await auth()
+  const tenantId = (session?.user as any)?.tenants?.[0]?.id
 
   if (!session || !tenantId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

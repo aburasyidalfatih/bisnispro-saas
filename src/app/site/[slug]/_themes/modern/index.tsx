@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
 import { PrincipalWelcome } from "../../_components/principal-welcome"

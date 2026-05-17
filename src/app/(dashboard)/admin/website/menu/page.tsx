@@ -1,6 +1,5 @@
 import { db } from "@/lib/db"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { MenuBuilder } from "./_components/menu-builder"
 
@@ -10,10 +9,10 @@ export const metadata = {
 }
 
 export default async function WebsiteMenuPage() {
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   if (!session?.user) redirect("/login")
   
-  const tenantId = session.user.tenants?.[0]?.id
+  const tenantId = (session.user as any).tenants?.[0]?.id
   if (!tenantId) redirect("/login")
 
   // Ensure initial data exists
