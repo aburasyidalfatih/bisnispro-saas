@@ -3,13 +3,15 @@ import { logger } from "@/lib/logger"
 import { sendWhatsApp, sendEmail, notifyTenantAdmins } from "@/lib/services/notification"
 
 /**
- * Helper: Ambil platform settings terkait billing
+ * Helper: Ambil platform settings terkait billing + templates
  */
 async function getBillingSettings() {
   const keys = [
     "platform_name", "NEXT_PUBLIC_ROOT_DOMAIN",
     "MANUAL_PAYMENT_BANK", "MANUAL_PAYMENT_NUMBER",
-    "MANUAL_PAYMENT_NAME", "MANUAL_PAYMENT_WA"
+    "MANUAL_PAYMENT_NAME", "MANUAL_PAYMENT_WA",
+    "WA_TEMPLATE_INVOICE_CREATED", "WA_TEMPLATE_PAYMENT_CONFIRMED",
+    "WA_TEMPLATE_AFFILIATE_COMMISSION", "WA_TEMPLATE_SUBSCRIPTION_REMINDER"
   ]
   const settings = await db.platformSetting.findMany({ where: { key: { in: keys } } })
   const map: Record<string, string> = {}
@@ -21,7 +23,23 @@ async function getBillingSettings() {
     bankNumber: map.MANUAL_PAYMENT_NUMBER || "-",
     bankAccountName: map.MANUAL_PAYMENT_NAME || "PT SchoolPro Indonesia",
     adminWA: map.MANUAL_PAYMENT_WA || "-",
+    // Customizable templates (from super-admin settings)
+    tplInvoiceCreated: map.WA_TEMPLATE_INVOICE_CREATED || "",
+    tplPaymentConfirmed: map.WA_TEMPLATE_PAYMENT_CONFIRMED || "",
+    tplAffiliateCommission: map.WA_TEMPLATE_AFFILIATE_COMMISSION || "",
+    tplSubscriptionReminder: map.WA_TEMPLATE_SUBSCRIPTION_REMINDER || "",
   }
+}
+
+/**
+ * Render template: replace {{variable}} placeholders with values
+ */
+function renderTemplate(template: string, vars: Record<string, string>): string {
+  let result = template
+  for (const [key, value] of Object.entries(vars)) {
+    result = result.replace(new RegExp(`{{${key}}}`, "g"), value)
+  }
+  return result
 }
 
 function formatCurrency(amount: number): string {
@@ -51,7 +69,21 @@ export async function notifyInvoiceCreated(paymentId: string) {
               : meta?.type === "AI_QUOTA" ? "Top-Up Token AI"
               : "Upgrade PRO"
 
-    const waMessage = `*Invoice ${type} - ${cfg.platformName}*
+    const templateVars = {
+      invoiceType: type,
+      tenantName: payment.tenant.name,
+      reference: payment.reference,
+      amount: formatCurrency(payment.amount),
+      expiredAt: payment.expiredAt ? formatDate(payment.expiredAt) : "-",
+      bankName: cfg.bankName,
+      bankNumber: cfg.bankNumber,
+      bankAccountName: cfg.bankAccountName,
+      adminWA: cfg.adminWA,
+    }
+
+    const waMessage = cfg.tplInvoiceCreated
+      ? renderTemplate(cfg.tplInvoiceCreated, templateVars)
+      : `*Invoice ${type} - ${cfg.platformName}*
 
 Halo,
 
@@ -186,7 +218,18 @@ export async function notifyPaymentConfirmed(paymentId: string) {
 
     const tenant = payment.tenant
 
-    const waMessage = `*Pembayaran Dikonfirmasi ✅ - ${cfg.platformName}*
+    const templateVars = {
+      tenantName: tenant.name,
+      reference: payment.reference,
+      amount: formatCurrency(payment.amount),
+      invoiceType: type,
+      studentQuota: String(tenant.studentQuota || 0),
+      expiresAt: tenant.expiresAt ? formatDate(tenant.expiresAt) : "-",
+    }
+
+    const waMessage = cfg.tplPaymentConfirmed
+      ? renderTemplate(cfg.tplPaymentConfirmed, templateVars)
+      : `*Pembayaran Dikonfirmasi ✅ - ${cfg.platformName}*
 
 Halo,
 
@@ -278,7 +321,17 @@ export async function notifyAffiliateCommission(affiliateId: string, commissionA
 
     const cfg = await getBillingSettings()
 
-    const waMessage = `*Komisi Masuk! 💰 - ${cfg.platformName}*
+    const templateVars = {
+      affiliateName: affiliate.user.name || "Mitra",
+      tenantName,
+      commissionAmount: formatCurrency(commissionAmount),
+      currentBalance: formatCurrency(affiliate.balance),
+      totalEarnings: formatCurrency(affiliate.totalEarnings),
+    }
+
+    const waMessage = cfg.tplAffiliateCommission
+      ? renderTemplate(cfg.tplAffiliateCommission, templateVars)
+      : `*Komisi Masuk! 💰 - ${cfg.platformName}*
 
 Halo ${affiliate.user.name},
 
@@ -395,6 +448,7 @@ export async function notifySubscriptionExpiring() {
     })
 
     let sentCount = 0
+    const cfg = await getBillingSettings()
 
     for (const tenant of expiringTenants) {
       if (!tenant.expiresAt) continue
@@ -407,7 +461,16 @@ export async function notifySubscriptionExpiring() {
 
       const urgency = diffDays <= 1 ? "🔴" : diffDays <= 7 ? "🟡" : "🟢"
 
-      const waMessage = `*${urgency} Pengingat Langganan - SchoolPro*
+      const templateVars = {
+        urgency,
+        tenantName: tenant.name,
+        daysRemaining: String(diffDays),
+        expiresAt: formatDate(tenant.expiresAt),
+      }
+
+      const waMessage = cfg.tplSubscriptionReminder
+        ? renderTemplate(cfg.tplSubscriptionReminder, templateVars)
+        : `*${urgency} Pengingat Langganan - SchoolPro*
 
 Halo,
 
