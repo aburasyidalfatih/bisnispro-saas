@@ -21,6 +21,43 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
   })
   const base = await getPublicBasePath(slug)
 
+  // Generate perfect asymmetric spans for a 12-column grid
+  const getSpansArray = (total: number): number[] => {
+    if (total <= 0) return []
+    if (total === 1) return [12]
+    if (total === 2) return [6, 6]
+    if (total === 3) return [4, 4, 4]
+    
+    const spans: number[] = []
+    let remaining = total
+    while (remaining > 0) {
+      if (remaining === 1) {
+        spans.push(12)
+        remaining -= 1
+      } else if (remaining === 2) {
+        spans.push(6, 6)
+        remaining -= 2
+      } else if (remaining === 3) {
+        spans.push(4, 4, 4)
+        remaining -= 3
+      } else if (remaining === 4) {
+        spans.push(8, 4, 4, 8)
+        remaining -= 4
+      } else {
+        if (spans.length % 2 === 0) {
+          spans.push(8, 4)
+          remaining -= 2
+        } else {
+          spans.push(4, 4, 4)
+          remaining -= 3
+        }
+      }
+    }
+    return spans
+  }
+
+  const spans = getSpansArray(facilities.length)
+
   return (
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}
@@ -36,42 +73,66 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
       {/* ── MAIN CONTENT ── */}
       <section className="py-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {facilities.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {facilities.map((facility: any, index: number) => (
-              <Link 
-                key={facility.id} 
-                href={`${base}/fasilitas/${facility.id}`}
-                className={cn(
-                  "group relative overflow-hidden rounded-[2rem] flex flex-col h-[380px] shadow-sm hover:shadow-2xl transition-all duration-500",
-                  index % 3 === 0 ? "md:col-span-2 lg:col-span-2" : "col-span-1"
-                )}
-              >
-                <div className="absolute inset-0 bg-muted">
-                  <OptimizedImage
-                    src={facility.imageUrl || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070"}
-                    alt={facility.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  {/* Subtle dark gradient for readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
-                </div>
-                
-                <div className="relative mt-auto p-8 flex flex-col justify-end text-white z-10">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="bg-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-sm">
-                      Fasilitas
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+            {facilities.map((facility: any, index: number) => {
+              const span = spans[index] || 4
+              const spanClass = span === 12 
+                ? "md:col-span-12 h-[450px]" 
+                : span === 8 
+                  ? "md:col-span-8 h-[400px]" 
+                  : span === 6 
+                    ? "md:col-span-6 h-[380px]" 
+                    : "md:col-span-4 h-[350px]"
+
+              return (
+                <Link 
+                  key={facility.id} 
+                  href={`${base}/fasilitas/${facility.id}`}
+                  className={cn(
+                    "group relative overflow-hidden rounded-[2.5rem] flex flex-col shadow-sm hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 border border-border/40",
+                    spanClass
+                  )}
+                >
+                  <div className="absolute inset-0 bg-muted">
+                    <OptimizedImage
+                      src={facility.imageUrl || "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070"}
+                      alt={facility.name}
+                      fill
+                      className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
+                    {/* Glowing color gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent opacity-85 group-hover:opacity-95 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-primary/10 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2 group-hover:text-primary-foreground transition-colors">
-                    {facility.name}
-                  </h3>
-                  <p className="text-white/80 text-sm leading-relaxed mb-0 line-clamp-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    {facility.description || "Klik untuk melihat informasi selengkapnya mengenai fasilitas ini."}
-                  </p>
-                </div>
-              </Link>
-            ))}
+                  
+                  {/* Floating Glassmorphism Specs Badge */}
+                  <div className="absolute top-6 right-6 flex gap-2 z-20">
+                    <span className="px-3 py-1.5 backdrop-blur-md bg-white/10 text-white rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/20 shadow-sm">
+                      {facility.category || "UMUM"}
+                    </span>
+                  </div>
+
+                  <div className="relative mt-auto p-8 flex flex-col justify-end text-white z-10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="bg-primary/95 text-primary-foreground px-3.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">
+                        Fasilitas
+                      </div>
+                      {facility.condition && (
+                        <div className="backdrop-blur-md bg-white/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-sm">
+                          {facility.condition}
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black mb-2 group-hover:text-primary-foreground transition-colors leading-tight">
+                      {facility.name}
+                    </h3>
+                    <p className="text-white/80 text-sm leading-relaxed mb-0 line-clamp-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                      {facility.description || "Klik untuk melihat informasi selengkapnya mengenai sarana prasarana sekolah ini."}
+                    </p>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         ) : (
           <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed border-border">
