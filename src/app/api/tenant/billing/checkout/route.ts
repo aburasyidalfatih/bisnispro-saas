@@ -36,6 +36,12 @@ export async function POST(req: Request) {
   try {
     const result = await createUpgradeInvoice(tenantId, parsed.data.studentCount, parsed.data.discountCode)
     
+    // Kirim notifikasi billing (async, non-blocking)
+    import("@/lib/services/billing-notifications").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
+      notifyInvoiceCreated(result.id).catch(() => {})
+      notifySuperAdminNewInvoice(result.id).catch(() => {})
+    }).catch(() => {})
+
     return NextResponse.json(result)
   } catch (error: any) {
     logger.error("Billing checkout failed", error, { path: "/api/tenant/billing/checkout" })

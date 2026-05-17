@@ -34,6 +34,13 @@ export async function POST(req: Request) {
 
   try {
     const invoice = await createAiAddonInvoice(tenantUser.id, parsed.data.packageKey)
+    
+    // Kirim notifikasi billing (async, non-blocking)
+    import("@/lib/services/billing-notifications").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
+      notifyInvoiceCreated(invoice.id).catch(() => {})
+      notifySuperAdminNewInvoice(invoice.id).catch(() => {})
+    }).catch(() => {})
+
     return NextResponse.json(invoice)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Gagal membuat tagihan top-up AI" }, { status: 400 })

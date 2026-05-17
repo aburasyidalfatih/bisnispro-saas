@@ -105,6 +105,18 @@ export async function POST(req: Request) {
 
     await db.$transaction(transactionOperations)
 
+    // Kirim notifikasi billing (async, non-blocking)
+    import("@/lib/services/billing-notifications").then(async ({ notifyPaymentConfirmed, notifyAffiliateCommission }) => {
+      // Notif ke tenant: pembayaran dikonfirmasi
+      notifyPaymentConfirmed(paymentId).catch(() => {})
+
+      // Notif ke afiliasi: komisi masuk
+      if (payment.tenant.affiliateId) {
+        const commissionAmount = payment.amount * 0.20
+        notifyAffiliateCommission(payment.tenant.affiliateId, commissionAmount, payment.tenant.name).catch(() => {})
+      }
+    }).catch(() => {})
+
     return NextResponse.json({
       success: true,
       message: isAddon 
