@@ -306,12 +306,16 @@ export async function approveApplication(id: string) {
     data: { status: "APPROVED", adminMessage: `temp_pwd:${tempPassword}` },
   })
 
-  // 5. Kirim notifikasi menggunakan Inngest (Job Queue) untuk mencegah SPAM/Rate Limit
-  const { inngest } = await import("@/lib/inngest/client")
-  await inngest.send({
-    name: "superadmin/application.notify",
-    data: { applicationId: id }
-  })
+  // 5. Kirim notifikasi langsung (bypass Inngest yang tidak aktif di Docker)
+  sendApplicationNotification(id)
+    .then(async () => {
+      // Bersihkan password sementara setelah notif terkirim
+      await db.tenantApplication.update({
+        where: { id },
+        data: { adminMessage: null },
+      }).catch(e => logger.error("Failed to clear temp password", e))
+    })
+    .catch(err => logger.error("Application notification failed", err))
 
   return tenant
 }

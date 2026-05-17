@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { inngest } from "@/lib/inngest/client"
+import { logger } from "@/lib/logger"
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,11 +36,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ENTERPRISE: Kirim pekerjaan ke Background Job Queue (Non-Blocking)
-    await inngest.send({
-      name: "tenant/students.import",
-      data: { tenantId, students }
-    })
+    // Jalankan import langsung di background (bypass Inngest)
+    const { ImportService } = await import("@/lib/services/import-service")
+    
+    ImportService.importStudents({ tenantId, students })
+      .then(async (result) => {
+        await db.auditLog.create({
+          data: {
+            tenantId,
+            action: "IMPORT_STUDENTS_ASYNC",
+            entity: "System",
+            userId: session.user.id || "SYSTEM"
+          }
+        }).catch(() => {})
+        logger.info("Student import completed", { tenantId, result })
+      })
+      .catch(err => logger.error("Student import failed", err, { tenantId }))
 
     return NextResponse.json({ 
       success: true, 
