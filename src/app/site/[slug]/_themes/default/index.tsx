@@ -61,34 +61,21 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <ProgramsSection programs={tenant.programs || []} />
       </ScrollReveal>
 
-      {/* ── 5. SOROTAN BERANDA (Highlights Bar) ── */}
+      {/* ── 5. SOROTAN BERANDA (only if admin filled in heroHighlights) ── */}
+      {tenant.settings?.heroHighlights && Array.isArray(tenant.settings.heroHighlights) && tenant.settings.heroHighlights.some((h: any) => h.title || h.desc) && (
       <section className="bg-primary text-primary-foreground py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {(() => {
-              const defaultHighlights = [
-                { icon: GraduationCap, title: "Guru Profesional", desc: "Tenaga pendidik berkualitas dan berdedikasi" },
-                { icon: Building, title: "Fasilitas Lengkap", desc: "Sarana belajar modern dan mendukung" },
-                { icon: Award, title: "Prestasi Membanggakan", desc: "Berbagai prestasi akademik dan non-akademik" },
-                { icon: TreePine, title: "Lingkungan Nyaman", desc: "Lingkungan sekolah yang asri dan ramah anak" },
-              ];
-              const customHighlights = tenant.settings?.heroHighlights;
-              const hasCustom = customHighlights && Array.isArray(customHighlights) && customHighlights.some((h: any) => h.title || h.desc);
-              
-              const items = hasCustom ? customHighlights.map((h: any, idx: number) => ({
-                icon: defaultHighlights[idx]?.icon || CheckCircle2,
-                title: h.title || defaultHighlights[idx]?.title,
-                desc: h.desc || defaultHighlights[idx]?.desc
-              })) : defaultHighlights;
-
-              return items.map((item: any, idx: number) => (
+              const iconMap = [GraduationCap, Building, Award, TreePine];
+              return tenant.settings!.heroHighlights!.map((h: any, idx: number) => (
                 <div key={idx} className="flex items-start gap-3 group">
                   <div className="shrink-0 h-10 w-10 rounded-xl bg-primary-foreground/15 flex items-center justify-center group-hover:bg-primary-foreground/25 transition-colors">
-                    <item.icon className="h-5 w-5" />
+                    {(() => { const Icon = iconMap[idx] || CheckCircle2; return <Icon className="h-5 w-5" />; })()}
                   </div>
                   <div className="min-w-0">
-                    <h4 className="font-bold text-sm mb-0.5">{item.title}</h4>
-                    <p className="text-primary-foreground/70 text-xs leading-relaxed">{item.desc}</p>
+                    <h4 className="font-bold text-sm mb-0.5">{h.title}</h4>
+                    <p className="text-primary-foreground/70 text-xs leading-relaxed">{h.desc}</p>
                   </div>
                 </div>
               ));
@@ -96,6 +83,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── 7. Prestasi ── */}
       <ScrollReveal delay={0.1}>
@@ -161,8 +149,8 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <AlumniTestimonials alumni={tenant.alumni || []} />
       </ScrollReveal>
 
-      {/* ── 12.5. Promosi PPDB CTA ── */}
-      {(tenant.posts?.length > 0 || tenant.events?.length > 0) && (
+      {/* ── 12.5. Promosi PPDB CTA (only if admin filled ppdbCta) ── */}
+      {tenant.settings?.ppdbCta?.title && (
         <ScrollReveal delay={0.1}>
           <section className="py-10 md:py-16 bg-muted/30">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -171,18 +159,24 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
                   style={{ backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
                 <div className="relative text-center max-w-2xl mx-auto">
                   <h3 className="text-xl md:text-2xl font-extrabold mb-3">
-                    {tenant.settings?.ppdbCta?.title || `Daftarkan putra/putri Anda di ${tenant.name} dan raih masa depan gemilang.`}
+                    {tenant.settings.ppdbCta.title}
                   </h3>
                   <div className="flex flex-wrap items-center justify-center gap-3 mb-6 text-primary-foreground/80">
+                    {tenant.settings.ppdbCta.point1 && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      ✅ {tenant.settings?.ppdbCta?.point1 || "Pendaftaran Mudah"}
+                      ✅ {tenant.settings.ppdbCta.point1}
                     </span>
+                    )}
+                    {tenant.settings.ppdbCta.point2 && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      ℹ️ {tenant.settings?.ppdbCta?.point2 || "Informasi Cepat & Akurat"}
+                      ℹ️ {tenant.settings.ppdbCta.point2}
                     </span>
+                    )}
+                    {tenant.settings.ppdbCta.point3 && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      📋 {tenant.settings?.ppdbCta?.point3 || "Kuota Terbatas"}
+                      📋 {tenant.settings.ppdbCta.point3}
                     </span>
+                    )}
                   </div>
                   <Link href={`${base}/ppdb`}
                     className="inline-flex items-center gap-2 bg-primary-foreground text-primary font-bold rounded-xl px-6 py-3 text-sm hover:opacity-90 transition-all hover:-translate-y-0.5 shadow-lg">
