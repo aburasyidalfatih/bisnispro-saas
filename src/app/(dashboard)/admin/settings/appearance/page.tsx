@@ -269,7 +269,7 @@ export default function AppearancePage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-1.5">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {themes.map(t => {
             const isSelected = previewTheme === t.id
             const isSaved = colorTheme === t.id
@@ -283,7 +283,7 @@ export default function AppearancePage() {
                 previewColorTheme(t.id)
               }}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-xl border-2 px-3 py-2.5 text-left transition-all duration-150",
+                  "flex items-center gap-3 rounded-xl border-2 px-3 py-2.5 text-left transition-all duration-150",
                   isSelected
                     ? "border-primary bg-primary/5"
                     : "border-transparent bg-muted/30 hover:bg-muted/60 hover:border-border"
