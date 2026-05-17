@@ -36,6 +36,13 @@ export async function POST(req: Request) {
 
   try {
     const invoice = await createAddonInvoice(tenantUser.id, parsed.data.studentCount, parsed.data.discountCode)
+    
+    // Kirim notifikasi billing (async, non-blocking)
+    import("@/lib/services/billing-notifications").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
+      notifyInvoiceCreated(invoice.id).catch(() => {})
+      notifySuperAdminNewInvoice(invoice.id).catch(() => {})
+    }).catch(() => {})
+
     return NextResponse.json(invoice)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Gagal membuat tagihan penambahan kuota" }, { status: 400 })

@@ -61,7 +61,13 @@ export async function GET(req: Request) {
     await db.$transaction(operations)
 
     const refs = expiredPayments.map(p => p.reference)
+    const ids = expiredPayments.map(p => p.id)
     logger.info(`Auto-expired ${expiredPayments.length} invoices`, { references: refs })
+
+    // Kirim notifikasi ke tenant (async, non-blocking)
+    import("@/lib/services/billing-notifications").then(({ notifyInvoiceExpired }) => {
+      notifyInvoiceExpired(ids).catch(() => {})
+    }).catch(() => {})
 
     return NextResponse.json({
       message: `${expiredPayments.length} invoice berhasil di-expire`,
