@@ -67,6 +67,43 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Tema harus memiliki minimal file layouts/main.hbs dan templates/index.hbs" }, { status: 400 })
     }
 
+    // Validate Handlebars syntax before saving (Linter)
+    try {
+      const Handlebars = (await import("handlebars")).default
+      const templateFiles: Record<string, string> = {
+        "main.hbs": layoutHtml,
+        "index.hbs": indexHtml,
+        ...(facilityHtml ? { "fasilitas.hbs": facilityHtml } : {}),
+        ...(aboutHtml ? { "profil.hbs": aboutHtml } : {}),
+        ...(staffHtml ? { "guru.hbs": staffHtml } : {}),
+        ...(newsHtml ? { "berita.hbs": newsHtml } : {}),
+        ...(galleryHtml ? { "galeri.hbs": galleryHtml } : {}),
+        ...(contactHtml ? { "kontak.hbs": contactHtml } : {}),
+        ...(extracurricularHtml ? { "ekstrakurikuler.hbs": extracurricularHtml } : {}),
+        ...(programHtml ? { "program.hbs": programHtml } : {}),
+        ...(achievementHtml ? { "prestasi.hbs": achievementHtml } : {}),
+      }
+      
+      const syntaxErrors: string[] = []
+      for (const [filename, content] of Object.entries(templateFiles)) {
+        try {
+          Handlebars.precompile(content)
+        } catch (e: any) {
+          syntaxErrors.push(`${filename}: ${e.message}`)
+        }
+      }
+      
+      if (syntaxErrors.length > 0) {
+        return NextResponse.json({ 
+          error: "Template Handlebars mengandung syntax error", 
+          details: syntaxErrors 
+        }, { status: 400 })
+      }
+    } catch (e) {
+      console.error("[THEME_UPLOAD] Handlebars validation error:", e)
+      // Non-fatal: continue if Handlebars module fails to load
+    }
+
     // Save to DB
     const newTheme = await db.customTheme.create({
       data: {

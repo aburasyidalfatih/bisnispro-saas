@@ -49,8 +49,11 @@ export function WebsiteFooter({ tenant }: FooterProps) {
     ...(tenant.youtube ? [{ icon: YoutubeIcon, href: `https://youtube.com/${tenant.youtube}`, label: "YouTube" }] : []),
   ]
 
-  // Build dynamic program/service list from tenant data
-  const programItems = ["Program Unggulan", "Kegiatan Belajar", "Pengembangan Siswa", "Ekstrakurikuler", "Bimbingan Konseling", "Layanan Informasi"]
+  // Build dynamic program/service list from tenant data or fallback
+  const tenantPrograms = (tenant as any)?.programs
+  const programItems = (tenantPrograms && Array.isArray(tenantPrograms) && tenantPrograms.length > 0)
+    ? tenantPrograms.slice(0, 6).map((p: any) => p.name || p.title || "Program")
+    : ["Program Unggulan", "Kegiatan Belajar", "Pengembangan Siswa", "Ekstrakurikuler", "Bimbingan Konseling", "Layanan Informasi"]
 
   return (
     <footer>
@@ -112,24 +115,29 @@ export function WebsiteFooter({ tenant }: FooterProps) {
             <div>
               <h3 className="font-bold text-white text-sm mb-4">Link Cepat</h3>
               <ul className="space-y-2.5">
-                {[
-                  { label: "Beranda", href: "" },
-                  { label: "Tentang Kami", href: "/profil" },
-                  { label: "Guru & Staf", href: "/gtk" },
-                  { label: "PPDB", href: "/contact" },
-                  { label: "Berita & Artikel", href: "/berita" },
-                ].map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={resolveHref(link.href)}
-                      className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
-                      style={{ color: "rgba(255,255,255,0.45)" }}
-                    >
-                      <span style={{ color: "hsl(var(--primary))" }}>›</span>
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+                {(() => {
+                  const menuLinks = (tenant as any)?.websiteMenus && Array.isArray((tenant as any).websiteMenus) && (tenant as any).websiteMenus.length > 0
+                    ? (tenant as any).websiteMenus.slice(0, 5).map((m: any) => ({ label: m.label, href: m.url === "/" ? "" : m.url }))
+                    : [
+                        { label: "Beranda", href: "" },
+                        { label: "Tentang Kami", href: "/profil" },
+                        { label: "Guru & Staf", href: "/gtk" },
+                        { label: "PPDB", href: "/contact" },
+                        { label: "Berita & Artikel", href: "/berita" },
+                      ];
+                  return menuLinks.map((link: any) => (
+                    <li key={link.label}>
+                      <Link
+                        href={resolveHref(link.href)}
+                        className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
+                        style={{ color: "rgba(255,255,255,0.45)" }}
+                      >
+                        <span style={{ color: "hsl(var(--primary))" }}>›</span>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ));
+                })()}
               </ul>
             </div>
 

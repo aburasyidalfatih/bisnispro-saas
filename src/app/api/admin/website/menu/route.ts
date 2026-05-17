@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
+import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 
 // GET: Ambil semua menu website untuk tenant ini
 export async function GET(req: NextRequest) {
@@ -66,6 +67,10 @@ export async function POST(req: NextRequest) {
         isSystem: isSystem || false
       }
     })
+
+    // Invalidate public cache so website reflects changes immediately
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+    if (tenant) await invalidatePublicTenantCache(tenant.slug)
 
     return NextResponse.json(menu)
   } catch (error) {

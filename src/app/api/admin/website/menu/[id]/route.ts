@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
+import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
 
 export async function PATCH(
   req: NextRequest,
@@ -34,6 +35,9 @@ export async function PATCH(
       }
     })
 
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+    if (tenant) await invalidatePublicTenantCache(tenant.slug)
+
     return NextResponse.json(menu)
   } catch (error) {
     console.error("[WEBSITE_MENU_PATCH]", error)
@@ -66,6 +70,9 @@ export async function DELETE(
     await db.websiteMenu.delete({
       where: { id }
     })
+
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+    if (tenant) await invalidatePublicTenantCache(tenant.slug)
 
     return NextResponse.json({ success: true })
   } catch (error) {
