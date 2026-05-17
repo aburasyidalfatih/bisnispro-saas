@@ -42,29 +42,59 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
           {displayed.map((facility, idx) => {
-            const isLarge = idx < 2
+            // Asymmetric spans that sum to exactly 6 per row:
+            // Item 0: span 4
+            // Item 1: span 2
+            // Row 1 = 4 + 2 = 6 (Full)
+            // Item 2: span 2
+            // Item 3: span 2
+            // Item 4: span 2
+            // Row 2 = 2 + 2 + 2 = 6 (Full)
+            // Item 5: span 6 (Full width footer banner card)
+            // Row 3 = 6 (Full)
+            
+            const spanClass = idx === 0
+              ? "md:col-span-4 aspect-[16/10]"
+              : idx === 1
+                ? "md:col-span-2 aspect-[16/20] md:row-span-1"
+                : idx === 5
+                  ? "md:col-span-6 aspect-[21/6]"
+                  : "md:col-span-2 aspect-square"
+
             return (
               <Link
                 key={facility.id}
                 href={resolveHref(`/fasilitas/${facility.id}`)}
-                className={`group relative rounded-2xl overflow-hidden border bg-muted/30 transition-all duration-500 hover:shadow-xl ${
-                  isLarge ? "col-span-1 aspect-[16/10]" : "aspect-square"
-                }`}
+                className={`group relative rounded-[2rem] overflow-hidden border border-border/40 bg-muted/30 transition-all duration-700 hover:shadow-2xl hover:-translate-y-1.5 ${spanClass}`}
               >
                 {facility.imageUrl ? (
-                  <Image src={facility.imageUrl} alt={`Fasilitas: ${facility.name}`} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 50vw, 25vw" />
+                  <Image 
+                    src={facility.imageUrl} 
+                    alt={`Fasilitas: ${facility.name}`} 
+                    fill 
+                    className="object-cover group-hover:scale-110 transition-transform duration-1000" 
+                    sizes="(max-width: 768px) 100vw, 50vw" 
+                  />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
-                    <Building2 className="h-12 w-12 text-emerald-200" />
+                  <div className="w-full h-full bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+                    <Building2 className="h-16 w-16 text-indigo-200" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-12">
-                  <h3 className="text-white font-bold text-sm md:text-base drop-shadow-lg line-clamp-1">{facility.name}</h3>
+                {/* Premium Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-transparent opacity-80 group-hover:opacity-95 transition-all duration-500" />
+                <div className="absolute inset-0 bg-primary/5 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 pt-16 flex flex-col justify-end text-white">
+                  <span className="self-start px-2.5 py-1 mb-3 backdrop-blur-md bg-white/10 text-white rounded-full text-[8px] font-bold uppercase tracking-widest border border-white/15 shadow-sm">
+                    Fasilitas Sekolah
+                  </span>
+                  <h3 className="text-lg md:text-xl lg:text-2xl font-black drop-shadow-md leading-tight group-hover:text-primary-foreground transition-colors">{facility.name}</h3>
                   {facility.description && (
-                    <p className="text-white/70 text-xs mt-1 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{facility.description}</p>
+                    <p className="text-white/80 text-xs mt-2 line-clamp-1 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
+                      {facility.description}
+                    </p>
                   )}
                 </div>
               </Link>
