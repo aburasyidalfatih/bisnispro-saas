@@ -7,6 +7,8 @@ import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { db } from "@/lib/db"
+import Handlebars from "handlebars"
+import parse from "html-react-parser"
 
 export default async function FasilitasPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -14,12 +16,42 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
   
   if (!tenant) notFound()
 
-  // Fetch ALL facilities directly (tanpa limit, tidak tergantung pada getPublicTenantBySlug yang take:15)
+  // Fetch ALL facilities directly
   const facilities = await db.facility.findMany({
     where: { tenantId: tenant.id },
     orderBy: { createdAt: "desc" },
   })
   const base = await getPublicBasePath(slug)
+
+  // Jika sekolah menggunakan Custom Theme dan menyediakan template fasilitas
+  if (tenant.customThemeId && tenant.customTheme?.facilityHtml) {
+    try {
+      const template = Handlebars.compile(tenant.customTheme.facilityHtml)
+      const layoutTemplate = Handlebars.compile(tenant.customTheme.layoutHtml)
+      
+      const themeContext = {
+        tenant: { ...tenant, facilities }, // Override tenant.facilities with full list
+        base,
+        settings: tenant.settings || {},
+      }
+      
+      const pageHtml = template(themeContext)
+      const finalHtml = layoutTemplate({ ...themeContext, body: new Handlebars.SafeString(pageHtml) })
+      
+      return (
+        <div className="custom-theme-wrapper">
+          <style dangerouslySetInnerHTML={{ __html: tenant.customTheme.customCss }} />
+          {parse(finalHtml)}
+          {tenant.customTheme.customJs && (
+            <script dangerouslySetInnerHTML={{ __html: tenant.customTheme.customJs }} />
+          )}
+        </div>
+      )
+    } catch (e: any) {
+      console.error("Gagal merender custom theme fasilitas", e)
+      // Fallback ke bawaan
+    }
+  }
 
   // Generate perfect asymmetric spans for a 12-column grid
   const getSpansArray = (total: number): number[] => {

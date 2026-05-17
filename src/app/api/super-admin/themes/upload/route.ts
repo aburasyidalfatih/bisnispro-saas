@@ -51,6 +51,15 @@ export async function POST(request: Request) {
     const layoutHtml = await getFileContent("main.hbs") || await getFileContent("theme.hbs")
     const indexHtml = await getFileContent("index.hbs")
     const facilityHtml = await getFileContent("fasilitas.hbs")
+    const aboutHtml = await getFileContent("profil.hbs")
+    const staffHtml = await getFileContent("guru.hbs")
+    const newsHtml = await getFileContent("berita.hbs")
+    const newsDetailHtml = await getFileContent("berita-detail.hbs")
+    const galleryHtml = await getFileContent("galeri.hbs")
+    const contactHtml = await getFileContent("kontak.hbs")
+    const extracurricularHtml = await getFileContent("ekstrakurikuler.hbs")
+    const programHtml = await getFileContent("program.hbs")
+    const achievementHtml = await getFileContent("prestasi.hbs")
     const customCss = await getFileContent("styles.css")
     const customJs = await getFileContent("scripts.js")
     
@@ -67,7 +76,16 @@ export async function POST(request: Request) {
         thumbnail: themeMeta.thumbnail || null,
         layoutHtml,
         indexHtml,
-        facilityHtml,
+        facilityHtml: facilityHtml || null,
+        aboutHtml: aboutHtml || null,
+        staffHtml: staffHtml || null,
+        newsHtml: newsHtml || null,
+        newsDetailHtml: newsDetailHtml || null,
+        galleryHtml: galleryHtml || null,
+        contactHtml: contactHtml || null,
+        extracurricularHtml: extracurricularHtml || null,
+        programHtml: programHtml || null,
+        achievementHtml: achievementHtml || null,
         customCss,
         customJs
       }

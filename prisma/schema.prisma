@@ -1936,7 +1936,16 @@ model CustomTheme {
   
   layoutHtml   String   @db.Text
   indexHtml    String   @db.Text
-  facilityHtml String   @db.Text
+  facilityHtml     String?  @db.Text
+  aboutHtml        String?  @db.Text
+  staffHtml        String?  @db.Text
+  newsHtml         String?  @db.Text
+  newsDetailHtml   String?  @db.Text
+  galleryHtml      String?  @db.Text
+  contactHtml      String?  @db.Text
+  extracurricularHtml String? @db.Text
+  programHtml      String?  @db.Text
+  achievementHtml  String?  @db.Text
   customCss    String   @db.Text
   customJs     String   @db.Text
 
