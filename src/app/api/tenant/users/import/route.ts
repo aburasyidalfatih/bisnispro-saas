@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { inngest } from "@/lib/inngest/client"
+import { logger } from "@/lib/logger"
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,11 +17,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden. Admin access required." }, { status: 403 })
     }
 
-    // ENTERPRISE: Kirim pekerjaan ke Background Job Queue (Non-Blocking)
-    await inngest.send({
-      name: "tenant/users.import",
-      data: { tenantId, users }
-    })
+    // Jalankan import langsung di background (bypass Inngest)
+    const { ImportService } = await import("@/lib/services/import-service")
+    const { db } = await import("@/lib/db")
+
+    ImportService.importUsers({ tenantId, users })
+      .then(async (result) => {
+        await db.auditLog.create({
+          data: {
+            tenantId,
+            action: "IMPORT_USERS_ASYNC",
+            entity: "System",
+            userId: session.user.id || "SYSTEM"
+          }
+        }).catch(() => {})
+        logger.info("GTK import completed", { tenantId, result })
+      })
+      .catch(err => logger.error("GTK import failed", err, { tenantId }))
 
     return NextResponse.json({ 
       success: true, 

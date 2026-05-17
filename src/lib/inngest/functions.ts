@@ -126,14 +126,13 @@ export const checkOverdueInvoicesJob = inngest.createFunction(
     let sentCount = 0
 
     await step.run("send-overdue-notifications", async () => {
-      const events: any[] = []
+      const { processTemplateNotification } = await import("@/lib/services/notification")
       
       for (const inv of overdueInvoices) {
         const parentUserId = inv.student.parents?.[0]?.userId
         if (parentUserId) {
-          events.push({
-            name: "tenant/notification.send",
-            data: {
+          try {
+            await processTemplateNotification({
               tenantId: inv.tenantId,
               templateId: "invoice_overdue",
               variables: {
@@ -144,25 +143,16 @@ export const checkOverdueInvoicesJob = inngest.createFunction(
                 schoolName: inv.student.tenant?.name || "Sekolah",
               },
               targetUserId: parentUserId,
-            }
-          })
-          sentCount++
-        }
-      }
-
-      // Batch send to Inngest queue (Max 1000 per request recommended, but Inngest handles chunking)
-      if (events.length > 0) {
-        const { inngest } = await import("@/lib/inngest/client")
-        // Chunk array to 500 per batch to be safe against HTTP payload limits
-        const chunkSize = 500
-        for (let i = 0; i < events.length; i += chunkSize) {
-          const chunk = events.slice(i, i + chunkSize)
-          await inngest.send(chunk)
+            })
+            sentCount++
+          } catch (e) {
+            console.error("Overdue notification failed for invoice", inv.id, e)
+          }
         }
       }
     })
 
-    return { message: `Enqueued ${sentCount} overdue notifications to queue` }
+    return { message: `Sent ${sentCount} overdue notifications` }
   }
 )
 
