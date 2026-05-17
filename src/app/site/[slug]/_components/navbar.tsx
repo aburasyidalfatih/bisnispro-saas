@@ -7,22 +7,13 @@ import { Menu, X, Search, ChevronDown, CheckCircle2, Phone, Mail, MessageCircle,
 import { cn } from "@/lib/utils"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
+import type { PublicTenant } from "../_themes/types"
 
 interface NavbarProps {
-  tenant: {
-    name: string
-    slug: string
-    logo: string | null
-    tagline: string | null
-    phone: string | null
-    email: string | null
-    whatsapp: string | null
-    facebook: string | null
-    instagram: string | null
-    youtube: string | null
-    tiktok: string | null
-    websiteMenus?: any[]
-  }
+  tenant: Pick<PublicTenant, 
+    'name' | 'slug' | 'logo' | 'tagline' | 'phone' | 'email' | 'whatsapp' | 
+    'facebook' | 'instagram' | 'youtube' | 'tiktok' | 'websiteMenus'
+  >
 }
 
 export function WebsiteNavbar({ tenant }: NavbarProps) {

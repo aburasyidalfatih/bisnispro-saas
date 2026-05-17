@@ -3,21 +3,15 @@
 import Link from "next/link"
 import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
+import type { PublicTenant } from "../_themes/types"
 
 interface FooterProps {
-  tenant: {
-    name: string
-    slug: string
-    tagline?: string | null
-    description?: string | null
-    phone: string | null
-    email: string | null
-    whatsapp: string | null
-    address?: string | null
-    instagram?: string | null
-    facebook?: string | null
-    youtube?: string | null
-    settings?: any
+  tenant: Pick<PublicTenant, 
+    'name' | 'slug' | 'tagline' | 'description' | 'phone' | 'email' | 'whatsapp' | 
+    'address' | 'instagram' | 'facebook' | 'youtube' | 'settings'
+  > & { 
+    programs?: { name: string }[]
+    websiteMenus?: { label: string; url: string }[] 
   }
 }
 
