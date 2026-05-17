@@ -21,21 +21,37 @@ export default async function WebsiteMenuPage() {
     orderBy: { order: "asc" }
   })
 
-  // Seed default menus if empty
+  // Seed default menus if empty — full hierarchical structure
   if (menus.length === 0) {
-    const defaultMenus = [
-      { label: "Beranda", url: "/", isSystem: true, order: 0 },
-      { label: "Profil Sekolah", url: "/profil", isSystem: false, order: 1 },
-      { label: "Berita", url: "/berita", isSystem: false, order: 2 },
-      { label: "Galeri", url: "/gallery", isSystem: false, order: 3 },
-      { label: "Kontak", url: "/contact", isSystem: false, order: 4 },
-    ]
-    
-    await db.$transaction(
-      defaultMenus.map(m => db.websiteMenu.create({
-        data: { ...m, tenantId }
-      }))
-    )
+    // Phase 1: Create parent menus
+    const beranda = await db.websiteMenu.create({ data: { tenantId, label: "Beranda", url: "/", isSystem: true, order: 0 } })
+    const profil = await db.websiteMenu.create({ data: { tenantId, label: "Profil Sekolah", url: "/profil", isSystem: false, order: 1 } })
+    const informasi = await db.websiteMenu.create({ data: { tenantId, label: "Informasi", url: "/berita", isSystem: false, order: 2 } })
+    const galeri = await db.websiteMenu.create({ data: { tenantId, label: "Galeri", url: "/gallery", isSystem: false, order: 3 } })
+    await db.websiteMenu.create({ data: { tenantId, label: "Kontak", url: "/contact", isSystem: false, order: 4 } })
+
+    // Phase 2: Create children for "Profil Sekolah"
+    await db.websiteMenu.createMany({ data: [
+      { tenantId, label: "Profil Lembaga", url: "/profil", parentId: profil.id, order: 0 },
+      { tenantId, label: "Guru & Staf (GTK)", url: "/gtk", parentId: profil.id, order: 1 },
+      { tenantId, label: "Fasilitas Sekolah", url: "/fasilitas", parentId: profil.id, order: 2 },
+      { tenantId, label: "Program Unggulan", url: "/program", parentId: profil.id, order: 3 },
+      { tenantId, label: "Ekstrakurikuler", url: "/ekstrakurikuler", parentId: profil.id, order: 4 },
+    ]})
+
+    // Phase 3: Create children for "Informasi"
+    await db.websiteMenu.createMany({ data: [
+      { tenantId, label: "Berita & Artikel", url: "/berita", parentId: informasi.id, order: 0 },
+      { tenantId, label: "Agenda & Acara", url: "/agenda", parentId: informasi.id, order: 1 },
+      { tenantId, label: "Pusat Unduhan", url: "/unduhan", parentId: informasi.id, order: 2 },
+    ]})
+
+    // Phase 4: Create children for "Galeri"
+    await db.websiteMenu.createMany({ data: [
+      { tenantId, label: "Galeri Foto", url: "/gallery", parentId: galeri.id, order: 0 },
+      { tenantId, label: "Prestasi Siswa", url: "/prestasi", parentId: galeri.id, order: 1 },
+      { tenantId, label: "Alumni Success", url: "/alumni", parentId: galeri.id, order: 2 },
+    ]})
   }
 
   return (

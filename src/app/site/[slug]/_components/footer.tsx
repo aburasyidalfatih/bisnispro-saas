@@ -111,13 +111,15 @@ export function WebsiteFooter({ tenant }: FooterProps) {
               <ul className="space-y-2.5">
                 {(() => {
                   const menuLinks = (tenant as any)?.websiteMenus && Array.isArray((tenant as any).websiteMenus) && (tenant as any).websiteMenus.length > 0
-                    ? (tenant as any).websiteMenus.slice(0, 5).map((m: any) => ({ label: m.label, href: m.url === "/" ? "" : m.url }))
+                    ? (tenant as any).websiteMenus.slice(0, 7).map((m: any) => ({ label: m.label, href: m.url === "/" ? "" : m.url }))
                     : [
                         { label: "Beranda", href: "" },
-                        { label: "Tentang Kami", href: "/profil" },
+                        { label: "Profil Lembaga", href: "/profil" },
                         { label: "Guru & Staf", href: "/gtk" },
-                        { label: "PPDB", href: "/contact" },
                         { label: "Berita & Artikel", href: "/berita" },
+                        { label: "Galeri Foto", href: "/gallery" },
+                        { label: "Prestasi", href: "/prestasi" },
+                        { label: "Kontak", href: "/contact" },
                       ];
                   return menuLinks.map((link: any) => (
                     <li key={link.label}>

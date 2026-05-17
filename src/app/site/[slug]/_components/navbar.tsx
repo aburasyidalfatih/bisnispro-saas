@@ -37,9 +37,38 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
       }))
     : [
         { label: "Beranda", href: "", icon: Home },
-        { label: "Profil Sekolah", href: "/profil", icon: Building2 },
-        { label: "Informasi", href: "/berita", icon: Info },
-        { label: "Galeri", href: "/gallery", icon: ImageIcon },
+        {
+          label: "Profil Sekolah",
+          href: "/profil",
+          icon: Building2,
+          children: [
+            { label: "Profil Lembaga", href: "/profil" },
+            { label: "Guru & Staf (GTK)", href: "/gtk" },
+            { label: "Fasilitas Sekolah", href: "/fasilitas" },
+            { label: "Program Unggulan", href: "/program" },
+            { label: "Ekstrakurikuler", href: "/ekstrakurikuler" },
+          ],
+        },
+        {
+          label: "Informasi",
+          href: "/berita",
+          icon: Info,
+          children: [
+            { label: "Berita & Artikel", href: "/berita" },
+            { label: "Agenda & Acara", href: "/agenda" },
+            { label: "Pusat Unduhan", href: "/unduhan" },
+          ],
+        },
+        {
+          label: "Galeri",
+          href: "/gallery",
+          icon: ImageIcon,
+          children: [
+            { label: "Galeri Foto", href: "/gallery" },
+            { label: "Prestasi Siswa", href: "/prestasi" },
+            { label: "Alumni Success", href: "/alumni" },
+          ],
+        },
         { label: "Kontak", href: "/contact", icon: PhoneCall },
       ]
 
