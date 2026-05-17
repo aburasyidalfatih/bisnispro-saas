@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 
-// GET: fetch current theme for a tenant (public for all authenticated users)
-// Used by ColorThemeProvider to sync theme from database
+// GET: fetch current theme + template for a tenant
+// Used by ColorThemeProvider and AppearancePage to sync from database
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
@@ -14,12 +14,16 @@ export async function GET(req: Request) {
 
   const tenant = await db.tenant.findUnique({
     where: tenantId ? { id: tenantId } : { slug: slug! },
-    select: { theme: true },
+    select: { theme: true, template: true, plan: true },
   })
 
   if (!tenant) {
     return NextResponse.json({ error: "Tenant tidak ditemukan" }, { status: 404 })
   }
 
-  return NextResponse.json({ theme: tenant.theme || "aurora" })
+  return NextResponse.json({ 
+    theme: tenant.theme || "aurora",
+    template: tenant.template || "default",
+    plan: tenant.plan || "free",
+  })
 }
