@@ -66,7 +66,7 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
                 
                 {/* Content Details */}
                 <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-white to-muted/20">
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-8 flex-grow">
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-8 flex-grow line-clamp-5">
                     {item.description || "Pencapaian luar biasa yang diraih oleh siswa kami melalui dedikasi dan kerja keras yang tinggi."}
                   </p>
                   
