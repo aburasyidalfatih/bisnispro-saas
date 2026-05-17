@@ -68,17 +68,27 @@ export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCoun
   }
 
   return (
-    <>
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="text-xs"
-        onClick={handleExport}
-        disabled={isExporting}
-      >
-        {isExporting ? <Loader2 className="h-3 w-3 mr-1.5 animate-spin" /> : <Download className="h-3 w-3 mr-1.5" />}
-        Export ZIP
-      </Button>
+    <div className="flex gap-2 w-full justify-between items-center">
+      <div className="flex gap-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="text-xs"
+          onClick={handleExport}
+          disabled={isExporting}
+        >
+          {isExporting ? <Loader2 className="h-3 w-3 mr-1.5 animate-spin" /> : <Download className="h-3 w-3 mr-1.5" />}
+          Export ZIP
+        </Button>
+
+        {!isSystem && (
+          <Button variant="secondary" size="sm" className="text-xs" asChild>
+            <a href={`/theme/${themeId}`} target="_blank" rel="noreferrer">
+              Lihat Demo
+            </a>
+          </Button>
+        )}
+      </div>
 
       {isDeletable ? (
         <Button 
@@ -96,6 +106,6 @@ export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCoun
           Hanya Baca (Inti)
         </div>
       )}
-    </>
+    </div>
   )
 }
