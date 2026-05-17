@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTheme } from "next-themes"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useColorTheme } from "@/components/providers/color-theme-provider"
 import { themes } from "@/lib/themes"
-import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate, Lock } from "lucide-react"
+import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate, Lock, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 
@@ -26,14 +26,40 @@ export default function AppearancePage() {
   const { theme: darkMode, setTheme: setDarkMode } = useTheme()
   const { colorTheme, previewTheme, previewColorTheme, saveColorTheme, resetPreview, hasUnsavedChanges, activeTenantId } = useColorTheme()
   const { data: session } = useSession()
-  const activeTenant = session?.user?.tenants?.find((t: any) => t.id === activeTenantId) || session?.user?.tenants?.[0]
   
   const [saving, setSaving] = useState(false)
-  const [selectedTemplate, setSelectedTemplate] = useState((activeTenant as any)?.template || "default")
-  const hasTemplateChanged = selectedTemplate !== ((activeTenant as any)?.template || "default")
+  const [selectedTemplate, setSelectedTemplate] = useState("default")
+  const [dbTemplate, setDbTemplate] = useState("default")
+  const [dbPlan, setDbPlan] = useState("free")
+  const [loadingConfig, setLoadingConfig] = useState(true)
+  
   const isImpersonating = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
-  const canChangeTheme = activeTenant?.role === "owner" || activeTenant?.role === "admin" || isImpersonating
+  const canChangeTheme = isImpersonating || session?.user?.tenants?.some((t: any) => 
+    t.id === activeTenantId && (t.role === "owner" || t.role === "admin")
+  ) || false
   const isSuperAdminOnly = session?.user?.isSuperAdmin && !isImpersonating
+  const hasTemplateChanged = selectedTemplate !== dbTemplate
+
+  // Fetch template + plan langsung dari database (bukan dari JWT session yang bisa stale)
+  useEffect(() => {
+    const tenantId = activeTenantId || session?.user?.tenants?.[0]?.id
+    if (!tenantId) return
+
+    setLoadingConfig(true)
+    fetch(`/api/tenant/theme/current?tenantId=${tenantId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.template) {
+          setSelectedTemplate(data.template)
+          setDbTemplate(data.template)
+        }
+        if (data.plan) {
+          setDbPlan(data.plan)
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingConfig(false))
+  }, [activeTenantId, session?.user?.tenants])
 
   const handleSave = async () => {
     setSaving(true)
@@ -60,17 +86,22 @@ export default function AppearancePage() {
         method: "PUT", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tenantId, theme: previewTheme, template: selectedTemplate }),
       })
-      setSaving(false)
       if (res.ok) {
-        toast({ title: "Tema disimpan", description: `Tema ${themes.find(t => t.id === previewTheme)?.name} diterapkan.` })
+        const result = await res.json()
+        // Update state lokal langsung tanpa reload
+        setDbTemplate(result.template || selectedTemplate)
+        setDbPlan(dbPlan) // plan tidak berubah
+        toast({ title: "Tema disimpan ✅", description: `Template: ${selectedTemplate === "modern" ? "Modern Corporate" : "Classic Default"} | Warna: ${themes.find(t => t.id === previewTheme)?.name || previewTheme}` })
+        // Reload untuk refresh session dan semua provider
         window.location.reload()
       } else {
         const d = await res.json().catch(() => ({}))
         toast({ title: "Gagal menyimpan", description: d.error || "Terjadi kesalahan.", variant: "destructive" })
       }
     } catch {
-      setSaving(false)
       toast({ title: "Gagal menyimpan", description: "Tidak dapat terhubung ke server.", variant: "destructive" })
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -157,11 +188,23 @@ export default function AppearancePage() {
           </div>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {[
-            { id: "default", name: "Classic Default", desc: "Desain standar yang lengkap dengan slider lebar.", isPremium: false },
-            { id: "modern", name: "Modern Corporate", desc: "Desain elegan dengan elemen melayang dan susunan grid baru.", isPremium: true }
-          ].map(tpl => {
-            const isLocked = tpl.isPremium && activeTenant?.plan === "free"
+          {loadingConfig ? (
+            <div className="col-span-2 flex items-center justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+          [{
+            id: "default", name: "Classic Default", 
+            desc: "Desain standar yang lengkap dengan slider lebar.", 
+            isPremium: false 
+          }, { 
+            id: "modern", name: "Modern Corporate", 
+            desc: "Desain elegan dengan elemen melayang dan susunan grid baru.", 
+            isPremium: true 
+          }].map(tpl => {
+            const isLocked = tpl.isPremium && dbPlan === "free"
+            const isActive = dbTemplate === tpl.id
+            const isSelected = selectedTemplate === tpl.id
 
             return (
             <button key={tpl.id} onClick={() => {
@@ -177,26 +220,26 @@ export default function AppearancePage() {
             }}
               className={cn(
                 "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all duration-150 relative overflow-hidden",
-                selectedTemplate === tpl.id
-                  ? "border-blue-500 bg-blue-50/50"
+                isSelected
+                  ? "border-blue-500 bg-blue-50/50 dark:bg-blue-500/10"
                   : "border-transparent bg-muted/30 hover:bg-muted/60 hover:border-border",
                 isLocked && "opacity-75 bg-muted/50 grayscale-[0.5]"
               )}>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={cn("text-sm font-bold", selectedTemplate === tpl.id ? "text-blue-700" : "text-foreground")}>
+                  <span className={cn("text-sm font-bold", isSelected ? "text-blue-700 dark:text-blue-400" : "text-foreground")}>
                     {tpl.name}
                   </span>
                   {isLocked && (
-                    <span className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                    <span className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
                       <Lock className="h-3 w-3" /> Premium
                     </span>
                   )}
-                  {((activeTenant as any)?.template || "default") === tpl.id && (
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">Aktif</span>
+                  {isActive && (
+                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">Aktif</span>
                   )}
-                  {selectedTemplate === tpl.id && ((activeTenant as any)?.template || "default") !== tpl.id && (
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">Belum Disimpan</span>
+                  {isSelected && !isActive && (
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Belum Disimpan</span>
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">{tpl.desc}</p>
@@ -204,11 +247,12 @@ export default function AppearancePage() {
                   <p className="text-xs font-semibold text-amber-600 mt-2">⭐ Upgrade ke Pro untuk membuka desain ini.</p>
                 )}
               </div>
-              {selectedTemplate === tpl.id && (
+              {isSelected && (
                 <div className="absolute top-4 right-4 text-blue-600"><Check className="h-5 w-5" /></div>
               )}
             </button>
-          )})}
+          )})
+          )}
         </CardContent>
       </Card>
 
@@ -288,7 +332,7 @@ export default function AppearancePage() {
               <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => {
                   resetPreview()
-                  setSelectedTemplate((activeTenant as any)?.template || "default")
+                  setSelectedTemplate(dbTemplate)
                 }}>
                   <RotateCcw className="h-3.5 w-3.5" /> Batal
                 </Button>
