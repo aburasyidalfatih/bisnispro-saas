@@ -5,6 +5,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Building2, Users, CheckCircle, Tag } from "lucide-react"
+import { db } from "@/lib/db"
 
 export const dynamic = "force-dynamic"
 
@@ -12,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, id } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
-  const facility = (tenant.facilities || []).find((f: any) => f.id === id)
+  const facility = await db.facility.findFirst({ where: { id, tenantId: tenant.id } })
   if (!facility) return {}
   return {
     title: `${facility.name} - ${tenant.name}`,
@@ -25,7 +26,7 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
-  const facility = (tenant.facilities || []).find((f: any) => f.id === id)
+  const facility = await db.facility.findFirst({ where: { id, tenantId: tenant.id } })
   if (!facility) notFound()
 
   const base = await getPublicBasePath(slug)

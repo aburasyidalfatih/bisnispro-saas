@@ -6,6 +6,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { db } from "@/lib/db"
 
 export default async function FasilitasPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -13,7 +14,11 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
   
   if (!tenant) notFound()
 
-  const facilities = tenant.facilities || []
+  // Fetch ALL facilities directly (tanpa limit, tidak tergantung pada getPublicTenantBySlug yang take:15)
+  const facilities = await db.facility.findMany({
+    where: { tenantId: tenant.id },
+    orderBy: { createdAt: "desc" },
+  })
   const base = await getPublicBasePath(slug)
 
   return (
