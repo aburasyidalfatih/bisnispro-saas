@@ -1,7 +1,6 @@
 import { db } from "@/lib/db"
 import nodemailer from "nodemailer"
 import { logger } from "@/lib/logger"
-import { inngest } from "@/lib/inngest/client"
 
 // ==================== EMAIL ====================
 
@@ -441,9 +440,10 @@ export async function sendTemplateNotification(payload: {
   targetUserId?: string
 }) {
   if (!payload.targetUserId) return
-  // Offload to Inngest Background Queue
-  await inngest.send({
-    name: "tenant/notification.send",
-    data: payload
-  })
+  // Process langsung (Inngest tidak aktif di Docker)
+  try {
+    await processTemplateNotification(payload)
+  } catch (err: any) {
+    logger.error("sendTemplateNotification failed", err)
+  }
 }
