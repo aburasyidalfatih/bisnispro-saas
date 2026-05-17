@@ -4,6 +4,8 @@ export const dynamic = 'force-dynamic'
 export const dynamicParams = true
 import Link from "next/link"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
+import Handlebars from "handlebars"
+import parse from "html-react-parser"
 import { HeroSlider } from "./_components/hero-slider"
 import { StatsBar } from "./_components/stats-bar"
 import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
@@ -73,7 +75,40 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   ]
   const themeProps = { tenant, base, gallery, stats }
 
-  // Router Tema
+  // Jika sekolah menggunakan Custom Theme dari Super Admin
+  if (tenant.customThemeId && tenant.customTheme) {
+    try {
+      const template = Handlebars.compile(tenant.customTheme.indexHtml)
+      const layoutTemplate = Handlebars.compile(tenant.customTheme.layoutHtml)
+      
+      const themeContext = {
+        tenant,
+        base,
+        gallery,
+        stats,
+        settings: tenant.settings || {},
+      }
+      
+      const pageHtml = template(themeContext)
+      // Wrap in layout if needed (simple implementation)
+      const finalHtml = layoutTemplate({ ...themeContext, body: new Handlebars.SafeString(pageHtml) })
+      
+      return (
+        <div className="custom-theme-wrapper">
+          <style dangerouslySetInnerHTML={{ __html: tenant.customTheme.customCss }} />
+          {parse(finalHtml)}
+          {tenant.customTheme.customJs && (
+            <script dangerouslySetInnerHTML={{ __html: tenant.customTheme.customJs }} />
+          )}
+        </div>
+      )
+    } catch (e: any) {
+      console.error("Gagal merender custom theme", e)
+      // Fallback ke tema bawaan jika terjadi error compile
+    }
+  }
+
+  // Router Tema Bawaan React
   switch (tenant.template) {
     case "modern":
       return <ModernTheme {...themeProps} />

@@ -1,0 +1,81 @@
+import { NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
+import JSZip from "jszip"
+
+export async function POST(request: Request) {
+  try {
+    const session = await auth()
+    if (!session?.user?.isSuperAdmin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const formData = await request.formData()
+    const file = formData.get("file") as File
+    
+    if (!file) {
+      return NextResponse.json({ error: "File tidak ditemukan" }, { status: 400 })
+    }
+
+    if (!file.name.endsWith('.zip')) {
+      return NextResponse.json({ error: "File harus berformat .zip" }, { status: 400 })
+    }
+
+    const arrayBuffer = await file.arrayBuffer()
+    const zip = await JSZip.loadAsync(arrayBuffer)
+    
+    // Check for theme.json
+    const themeJsonFile = Object.values(zip.files).find(f => f.name.endsWith('theme.json') && !f.name.includes('__MACOSX'))
+    if (!themeJsonFile) {
+      return NextResponse.json({ error: "theme.json tidak ditemukan di dalam zip" }, { status: 400 })
+    }
+
+    const themeJsonStr = await themeJsonFile.async("string")
+    let themeMeta
+    try {
+      themeMeta = JSON.parse(themeJsonStr)
+    } catch (e) {
+      return NextResponse.json({ error: "theme.json format tidak valid" }, { status: 400 })
+    }
+
+    if (!themeMeta.name) {
+      return NextResponse.json({ error: "theme.json harus memiliki property 'name'" }, { status: 400 })
+    }
+
+    // Extract HTML templates
+    const getFileContent = async (filename: string) => {
+      const f = Object.values(zip.files).find(file => file.name.endsWith(filename) && !file.name.includes('__MACOSX'))
+      return f ? await f.async("string") : ""
+    }
+
+    const layoutHtml = await getFileContent("main.hbs") || await getFileContent("theme.hbs")
+    const indexHtml = await getFileContent("index.hbs")
+    const facilityHtml = await getFileContent("fasilitas.hbs")
+    const customCss = await getFileContent("styles.css")
+    const customJs = await getFileContent("scripts.js")
+    
+    if (!layoutHtml || !indexHtml) {
+      return NextResponse.json({ error: "Tema harus memiliki minimal file layouts/main.hbs dan templates/index.hbs" }, { status: 400 })
+    }
+
+    // Save to DB
+    const newTheme = await db.customTheme.create({
+      data: {
+        name: themeMeta.name,
+        author: themeMeta.author || "Unknown",
+        version: themeMeta.version || "1.0.0",
+        thumbnail: themeMeta.thumbnail || null,
+        layoutHtml,
+        indexHtml,
+        facilityHtml,
+        customCss,
+        customJs
+      }
+    })
+
+    return NextResponse.json({ success: true, theme: newTheme })
+  } catch (error: any) {
+    console.error("Theme upload error:", error)
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 })
+  }
+}

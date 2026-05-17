@@ -105,6 +105,9 @@ model Tenant {
   waQueueLogs          WaQueueLog[]
   TenantNotification   TenantNotification[]
 
+  customThemeId        String?
+  customTheme          CustomTheme?          @relation(fields: [customThemeId], references: [id])
+
   @@index([isActive])
   @@index([plan])
   @@index([planId])
@@ -1922,4 +1925,25 @@ model TenantNotification {
   @@index([isRead])
   @@index([createdAt])
   @@map("tenant_notifications")
+}
+
+model CustomTheme {
+  id           String   @id @default(cuid())
+  name         String
+  author       String?
+  version      String   @default("1.0.0")
+  thumbnail    String?
+  
+  layoutHtml   String   @db.Text
+  indexHtml    String   @db.Text
+  facilityHtml String   @db.Text
+  customCss    String   @db.Text
+  customJs     String   @db.Text
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  tenants      Tenant[]
+
+  @@map("custom_themes")
 }
