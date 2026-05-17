@@ -1,5 +1,4 @@
 import { db } from "@/lib/db"
-import nodemailer from "nodemailer"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import { logger } from "@/lib/logger"
@@ -86,32 +85,25 @@ export async function sendApplicationNotification(applicationId: string) {
 
   if (!subject) return
 
-  // 1. Kirim Email
-  if (settings.SMTP_HOST && settings.SMTP_USER) {
-    try {
-      const transporter = nodemailer.createTransport({
-        host: settings.SMTP_HOST,
-        port: Number(settings.SMTP_PORT) || 587,
-        secure: Number(settings.SMTP_PORT) === 465,
-        auth: { user: settings.SMTP_USER, pass: settings.SMTP_PASS },
-      })
-      await transporter.sendMail({
-        from: `"${platformName}" <${settings.SMTP_FROM || settings.SMTP_USER}>`,
-        to: app.adminEmail,
-        subject,
-        html: `<div style="font-family: sans-serif; padding: 20px; color: #333;">
-                <h2 style="color: #4f46e5;">${platformName}</h2>
-                <p>${message.replace(/\n/g, "<br>")}</p>
-                <img src="https://${rootDomain}/api/public/track-email/${app.id}" width="1" height="1" style="display:none;" alt="" />
-              </div>`,
-      })
-      logger.info("Application email sent", { applicationId, status: app.status })
-    } catch (err) {
-      logger.error("Application email failed", err, { applicationId })
-    }
-  } else {
-    logger.warn("SMTP not configured — email notification skipped", { applicationId })
-  }
+  // 1. Kirim Email (menggunakan helper terpusat)
+  const emailHtml = `
+    <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
+        <h2 style="margin: 0;">${subject}</h2>
+        <p style="margin: 4px 0 0; opacity: 0.9;">${platformName}</p>
+      </div>
+      <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
+        <p>${message.replace(/\n/g, "<br>")}</p>
+      </div>
+      <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
+        ${platformName} — Platform Edukasi Terintegrasi
+      </div>
+      <img src="https://${rootDomain}/api/public/track-email/${app.id}" width="1" height="1" style="display:none;" alt="" />
+    </div>`
+
+  await sendEmail(app.adminEmail, subject, emailHtml)
+    .then(() => logger.info("Application email sent", { applicationId, status: app.status }))
+    .catch((err) => logger.error("Application email failed", err, { applicationId }))
 
   // 2. Kirim WhatsApp ke pendaftar (menggunakan helper terpusat)
   const disableWa = settings.DISABLE_WA_NOTIFICATION === "true" || process.env.DISABLE_WA_NOTIFICATION === "true"
@@ -164,9 +156,17 @@ export async function sendNewApplicationAlerts(
       await sendEmail(
         admin.email,
         "PENDAFTARAN SEKOLAH BARU",
-        `<div style="font-family: sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #4f46e5;">SchoolPro</h2>
-          <p>${adminMsg.replace(/\n/g, "<br>")}</p>
+        `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #dc2626, #ef4444); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
+            <h2 style="margin: 0;">🏫 Pendaftaran Sekolah Baru</h2>
+            <p style="margin: 4px 0 0; opacity: 0.9;">Super Admin Alert</p>
+          </div>
+          <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
+            <p>${adminMsg.replace(/\n/g, "<br>")}</p>
+          </div>
+          <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
+            SchoolPro — Platform Edukasi Terintegrasi
+          </div>
         </div>`
       ).catch(err => logger.error("Super Admin email alert failed", err, { adminId: admin.id }))
     }
@@ -197,9 +197,17 @@ export async function sendNewApplicationAlerts(
       await sendEmail(
         affiliate.user.email,
         "LEAD SEKOLAH BARU! 🎉",
-        `<div style="font-family: sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #4f46e5;">SchoolPro</h2>
-          <p>${affiliateMsg.replace(/\n/g, "<br>")}</p>
+        `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
+            <h2 style="margin: 0;">🎉 Lead Sekolah Baru!</h2>
+            <p style="margin: 4px 0 0; opacity: 0.9;">Program Mitra Afiliasi</p>
+          </div>
+          <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
+            <p>${affiliateMsg.replace(/\n/g, "<br>")}</p>
+          </div>
+          <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
+            SchoolPro — Program Mitra Afiliasi
+          </div>
         </div>`
       ).catch(err => logger.error("Affiliate email alert failed", err, { affiliateId }))
     }

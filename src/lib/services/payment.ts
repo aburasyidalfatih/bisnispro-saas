@@ -297,6 +297,13 @@ export async function handleCallback(body: TripayCallbackBody) {
       },
       "upgrade-plan"
     )
+    // Notify tenant admin about successful upgrade
+    const { notifyTenantAdmins } = await import("@/lib/services/notification");
+    await notifyTenantAdmins(payment.tenantId, {
+      title: "Upgrade Paket Berhasil ✅",
+      message: `Selamat! Paket berhasil diupgrade ke ${plan?.slug?.toUpperCase() || payment.plan}. Nikmati fitur premium SchoolPro.`,
+      type: "success"
+    })
     } // end else
   }
 
