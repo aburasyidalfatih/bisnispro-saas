@@ -449,6 +449,11 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
             { label: "Super Admin", href: "/super-admin/users/admins", icon: ShieldCheck },
           ],
         },
+        {
+          label: "Theme Engine",
+          href: "/super-admin/themes",
+          icon: Palette,
+        },
       ],
     },
     {
