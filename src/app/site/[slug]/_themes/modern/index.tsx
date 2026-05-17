@@ -101,22 +101,34 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       <section className="bg-primary text-primary-foreground py-8 mt-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { icon: GraduationCap, title: "Guru Profesional", desc: "Tenaga pendidik berkualitas dan berdedikasi" },
-              { icon: Building, title: "Fasilitas Lengkap", desc: "Sarana belajar modern dan mendukung" },
-              { icon: Award, title: "Prestasi Membanggakan", desc: "Berbagai prestasi akademik dan non-akademik" },
-              { icon: TreePine, title: "Lingkungan Nyaman", desc: "Lingkungan sekolah yang asri dan ramah anak" },
-            ].map((item, idx) => (
-              <div key={idx} className="flex items-start gap-3 group">
-                <div className="shrink-0 h-10 w-10 rounded-xl bg-primary-foreground/15 flex items-center justify-center group-hover:bg-primary-foreground/25 transition-colors">
-                  <item.icon className="h-5 w-5" />
+            {(() => {
+              const defaultHighlights = [
+                { icon: GraduationCap, title: "Guru Profesional", desc: "Tenaga pendidik berkualitas dan berdedikasi" },
+                { icon: Building, title: "Fasilitas Lengkap", desc: "Sarana belajar modern dan mendukung" },
+                { icon: Award, title: "Prestasi Membanggakan", desc: "Berbagai prestasi akademik dan non-akademik" },
+                { icon: TreePine, title: "Lingkungan Nyaman", desc: "Lingkungan sekolah yang asri dan ramah anak" },
+              ];
+              const customHighlights = tenant.settings?.heroHighlights;
+              const hasCustomHighlights = customHighlights && Array.isArray(customHighlights) && customHighlights.some(h => h.title || h.desc);
+              
+              const highlightsToRender = hasCustomHighlights ? customHighlights.map((h: any, idx: number) => ({
+                icon: defaultHighlights[idx]?.icon || CheckCircle2,
+                title: h.title || defaultHighlights[idx]?.title,
+                desc: h.desc || defaultHighlights[idx]?.desc
+              })) : defaultHighlights;
+
+              return highlightsToRender.map((item: any, idx: number) => (
+                <div key={idx} className="flex items-start gap-3 group">
+                  <div className="shrink-0 h-10 w-10 rounded-xl bg-primary-foreground/15 flex items-center justify-center group-hover:bg-primary-foreground/25 transition-colors">
+                    <item.icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-sm mb-0.5">{item.title}</h4>
+                    <p className="text-primary-foreground/70 text-xs leading-relaxed">{item.desc}</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h4 className="font-bold text-sm mb-0.5">{item.title}</h4>
-                  <p className="text-primary-foreground/70 text-xs leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
+              ));
+            })()}
           </div>
         </div>
       </section>
@@ -220,17 +232,17 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
                   style={{ backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
                 <div className="relative">
                   <h3 className="text-xl md:text-2xl font-extrabold mb-3">
-                    Daftarkan putra/putri Anda di {tenant.name} dan raih masa depan gemilang.
+                    {tenant.settings?.ppdbCta?.title || `Daftarkan putra/putri Anda di ${tenant.name} dan raih masa depan gemilang.`}
                   </h3>
                   <div className="flex flex-wrap items-center gap-3 mb-6 text-primary-foreground/80">
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      ✅ Pendaftaran Mudah
+                      ✅ {tenant.settings?.ppdbCta?.point1 || "Pendaftaran Mudah"}
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      ℹ️ Informasi Cepat & Akurat
+                      ℹ️ {tenant.settings?.ppdbCta?.point2 || "Informasi Cepat & Akurat"}
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      📋 Kuota Terbatas
+                      📋 {tenant.settings?.ppdbCta?.point3 || "Kuota Terbatas"}
                     </span>
                   </div>
                   <Link href={`${base}/ppdb`}

@@ -568,6 +568,116 @@ export default function WebsiteAboutPage() {
           </CardContent>
         </Card>
 
+        {/* Sorotan Beranda (Hero Highlights) */}
+        <Card className="glass border-0 lg:col-span-2">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <Globe className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Sorotan Beranda (Highlights)</CardTitle>
+                <CardDescription>4 keunggulan utama yang akan ditampilkan di halaman depan</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[0, 1, 2, 3].map((index) => {
+                const highlight = form.settings?.heroHighlights?.[index] || { title: "", desc: "", icon: "" };
+                return (
+                  <div key={index} className="space-y-3 p-4 border rounded-xl bg-muted/20">
+                    <p className="font-semibold text-sm">Sorotan {index + 1}</p>
+                    <div className="space-y-2">
+                      <Label>Judul Utama</Label>
+                      <Input
+                        value={highlight.title}
+                        onChange={(e) => {
+                          const newHighlights = [...(form.settings?.heroHighlights || Array(4).fill({ title: "", desc: "", icon: "" }))];
+                          newHighlights[index] = { ...newHighlights[index], title: e.target.value };
+                          setForm((p) => ({ ...p, settings: { ...p.settings, heroHighlights: newHighlights } }));
+                        }}
+                        placeholder="Contoh: Guru Profesional"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Deskripsi Singkat</Label>
+                      <Input
+                        value={highlight.desc}
+                        onChange={(e) => {
+                          const newHighlights = [...(form.settings?.heroHighlights || Array(4).fill({ title: "", desc: "", icon: "" }))];
+                          newHighlights[index] = { ...newHighlights[index], desc: e.target.value };
+                          setForm((p) => ({ ...p, settings: { ...p.settings, heroHighlights: newHighlights } }));
+                        }}
+                        placeholder="Contoh: Tenaga pendidik berkualitas..."
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-2">Kosongkan field jika ingin menggunakan teks bawaan sistem.</p>
+          </CardContent>
+        </Card>
+
+        {/* Call to Action PPDB */}
+        <Card className="glass border-0 lg:col-span-2">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                <Megaphone className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Promosi PPDB (Footer)</CardTitle>
+                <CardDescription>Teks Call-to-Action untuk mengajak pendaftaran siswa baru</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Teks Ajakan Utama</Label>
+              <textarea
+                value={form.settings?.ppdbCta?.title || ""}
+                onChange={(e) => setForm((p) => ({ ...p, settings: { ...p.settings, ppdbCta: { ...(p.settings?.ppdbCta || {}), title: e.target.value } } }))}
+                placeholder="Daftarkan putra/putri Anda dan raih masa depan gemilang."
+                rows={2}
+                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[60px]"
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3 mt-2">
+              <div className="space-y-2">
+                <Label>Poin Keunggulan 1</Label>
+                <Input
+                  value={form.settings?.ppdbCta?.point1 || ""}
+                  onChange={(e) => setForm((p) => ({ ...p, settings: { ...p.settings, ppdbCta: { ...(p.settings?.ppdbCta || {}), point1: e.target.value } } }))}
+                  placeholder="Contoh: Pendaftaran Mudah"
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Poin Keunggulan 2</Label>
+                <Input
+                  value={form.settings?.ppdbCta?.point2 || ""}
+                  onChange={(e) => setForm((p) => ({ ...p, settings: { ...p.settings, ppdbCta: { ...(p.settings?.ppdbCta || {}), point2: e.target.value } } }))}
+                  placeholder="Contoh: Fasilitas Lengkap"
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Poin Keunggulan 3</Label>
+                <Input
+                  value={form.settings?.ppdbCta?.point3 || ""}
+                  onChange={(e) => setForm((p) => ({ ...p, settings: { ...p.settings, ppdbCta: { ...(p.settings?.ppdbCta || {}), point3: e.target.value } } }))}
+                  placeholder="Contoh: Kuota Terbatas"
+                  className="rounded-xl"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* SEO */}
         <Card className="glass border-0 lg:col-span-2">
           <CardHeader>
