@@ -44,12 +44,22 @@ export async function POST(req: Request) {
     const emailResult = await sendEmail(
       user.email,
       "Reset Password — SchoolPro",
-      `<div style="font-family:sans-serif;max-width:480px;margin:0 auto">
-        <h2>Reset Password</h2>
-        <p>Halo ${user.name},</p>
-        <p>Klik tombol di bawah untuk mereset password Anda. Link berlaku 1 jam.</p>
-        <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#6c47ff;color:#fff;border-radius:8px;text-decoration:none;margin:16px 0">Reset Password</a>
-        <p style="color:#888;font-size:13px">Jika Anda tidak meminta reset password, abaikan email ini.</p>
+      `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
+          <h2 style="margin: 0;">🔐 Reset Password</h2>
+          <p style="margin: 4px 0 0; opacity: 0.9;">SchoolPro</p>
+        </div>
+        <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
+          <p>Halo <strong>${user.name}</strong>,</p>
+          <p>Kami menerima permintaan untuk mereset password akun Anda. Klik tombol di bawah untuk membuat password baru:</p>
+          <div style="text-align: center; margin: 24px 0;">
+            <a href="${resetUrl}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 15px;">Reset Password</a>
+          </div>
+          <p style="color: #64748b; font-size: 13px;">Link ini berlaku selama 1 jam. Jika Anda tidak meminta reset password, abaikan email ini.</p>
+        </div>
+        <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
+          SchoolPro — Platform Edukasi Terintegrasi
+        </div>
       </div>`,
       tenantId
     ).catch((e) => ({ success: false, error: e.message }))
@@ -57,8 +67,7 @@ export async function POST(req: Request) {
     logger.info("Forgot Password Email Result:", emailResult)
 
     return NextResponse.json({ 
-      message: "Jika email terdaftar, link reset akan dikirim.",
-      debug: emailResult
+      message: "Jika email terdaftar, link reset akan dikirim."
     })
   } catch (error) {
     logger.error("Forgot password failed", error, { path: "/api/auth/forgot-password" })
