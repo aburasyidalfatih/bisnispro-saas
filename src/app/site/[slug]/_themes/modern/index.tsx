@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
+import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, ChevronLeft, ChevronRight } from "lucide-react"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
 import { PrincipalWelcome } from "../../_components/principal-welcome"
@@ -26,7 +26,9 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
   return (
     <main className="bg-muted/30">
-      {/* ── 1. Hero Slider ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          1. HERO SLIDER
+      ══════════════════════════════════════════════════════════════ */}
       <HeroSlider
         slides={
           tenant.sliders && tenant.sliders.length > 0
@@ -53,37 +55,75 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         }
       />
 
-      {/* ── 2. Floating Welcome Card + Stats ── */}
-      {hasPrincipal ? (
-        <div className="-mt-10 relative z-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="bg-card rounded-3xl shadow-xl overflow-hidden border border-border">
-              <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
-              <div className="bg-primary text-primary-foreground rounded-b-3xl">
-                <StatsBar stats={stats} />
+      {/* ══════════════════════════════════════════════════════════════
+          2. FLOATING STATS BAR
+      ══════════════════════════════════════════════════════════════ */}
+      <div className="-mt-8 relative z-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="bg-primary text-primary-foreground rounded-2xl shadow-xl overflow-hidden">
+            <StatsBar stats={stats} />
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════
+          3. SAMBUTAN PIMPINAN + INFO BOARD (Combined Row)
+             Layout: [Sambutan | Agenda + Pengumuman + Berita]
+      ══════════════════════════════════════════════════════════════ */}
+      <section className="py-12 md:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+            {/* Left: Sambutan Pimpinan (compact version) */}
+            {hasPrincipal && (
+              <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
+                <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
               </div>
+            )}
+
+            {/* Right: Info Board (Agenda, Pengumuman, Berita stacked) */}
+            <div className="space-y-0">
+              <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
             </div>
           </div>
         </div>
-      ) : (
-        /* Stats Bar standalone ketika tidak ada sambutan pimpinan */
-        <div className="-mt-6 relative z-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="bg-primary text-primary-foreground rounded-2xl shadow-xl overflow-hidden">
-              <StatsBar stats={stats} />
-            </div>
-          </div>
-        </div>
-      )}
+      </section>
 
-      <div className="py-8" />
-
-      {/* ── 3. Program Keahlian ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          4. PROGRAM UNGGULAN
+      ══════════════════════════════════════════════════════════════ */}
       <ScrollReveal>
         <ProgramsSection programs={tenant.programs || []} />
       </ScrollReveal>
 
-      {/* ── 4. Fasilitas Sekolah ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          5. HIGHLIGHT FEATURES BAR (Dark accent bar)
+      ══════════════════════════════════════════════════════════════ */}
+      <section className="bg-primary text-primary-foreground py-8 mt-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {[
+              { icon: GraduationCap, title: "Guru Profesional", desc: "Tenaga pendidik berkualitas dan berdedikasi" },
+              { icon: Building, title: "Fasilitas Lengkap", desc: "Sarana belajar modern dan mendukung" },
+              { icon: Award, title: "Prestasi Membanggakan", desc: "Berbagai prestasi akademik dan non-akademik" },
+              { icon: TreePine, title: "Lingkungan Nyaman", desc: "Lingkungan sekolah yang asri dan ramah anak" },
+            ].map((item, idx) => (
+              <div key={idx} className="flex items-start gap-3 group">
+                <div className="shrink-0 h-10 w-10 rounded-xl bg-primary-foreground/15 flex items-center justify-center group-hover:bg-primary-foreground/25 transition-colors">
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-bold text-sm mb-0.5">{item.title}</h4>
+                  <p className="text-primary-foreground/70 text-xs leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          6. FASILITAS SEKOLAH
+      ══════════════════════════════════════════════════════════════ */}
       {(tenant.facilities?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
           <div className="bg-card py-10 mt-8">
@@ -92,85 +132,121 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         </ScrollReveal>
       )}
 
-      {/* ── 5. Info Board (Agenda, Pengumuman, Artikel) ── */}
-      <div className="mt-8">
-        <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
-      </div>
-
-      {/* ── 6. Prestasi ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          7. PRESTASI
+      ══════════════════════════════════════════════════════════════ */}
       {(tenant.achievements?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <div className="bg-card py-12 mt-8">
-            <AchievementsSection achievements={tenant.achievements || []} />
-          </div>
+          <AchievementsSection achievements={tenant.achievements || []} />
         </ScrollReveal>
       )}
 
-      {/* ── 7. Ekstrakurikuler ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          8. EKSTRAKURIKULER
+      ══════════════════════════════════════════════════════════════ */}
       {(tenant.extracurriculars?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.2}>
-          <div className="py-10">
+          <div className="bg-card py-10">
             <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
           </div>
         </ScrollReveal>
       )}
 
-      {/* ── 8. Guru & Staff Highlight ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          9. GURU & STAFF
+      ══════════════════════════════════════════════════════════════ */}
       {(tenant.staff?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <div className="bg-card py-10">
-            <StaffHighlight staff={tenant.staff || []} />
-          </div>
+          <StaffHighlight staff={tenant.staff || []} />
         </ScrollReveal>
       )}
 
-      {/* ── 9. Galeri ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          10. GALERI SEKOLAH (Horizontal Scroll)
+      ══════════════════════════════════════════════════════════════ */}
       {gallery.length > 0 && (
         <ScrollReveal>
-        <section className="py-10 md:py-16 bg-foreground text-background">
+        <section className="py-10 md:py-16 bg-card">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-background/10 text-background/80 text-xs font-bold tracking-wider uppercase mb-4">
-                <ImageIcon className="h-3.5 w-3.5" />
-                Galeri
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-1">Galeri Sekolah</h2>
+                <p className="text-muted-foreground text-sm">Dokumentasi kegiatan dan momen berharga kami</p>
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Dokumentasi Kami</h2>
-              <p className="text-background/60 text-sm md:text-base max-w-xl mx-auto mb-6">
-                Kumpulan momen dan kegiatan berharga yang telah kami abadikan.
-              </p>
-              <Link href={`${base}/gallery`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
+              <Link href={`${base}/gallery`} className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
                 Lihat Semua <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
             
-            {/* Modern Masonry-like grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {gallery.slice(0, 8).map((item: any, i: number) => (
-                <div key={i} className={`group relative rounded-2xl overflow-hidden ${i === 0 || i === 3 ? 'md:col-span-2 md:row-span-2' : ''} aspect-square`}>
-                  <img src={item.url} alt={item.caption || `Galeri ${i + 1}`}
-                    loading="lazy"
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  {item.caption && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
-                      <p className="text-white text-sm font-medium">{item.caption}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
+            {/* Horizontal scrollable gallery */}
+            <div className="relative group/gallery">
+              <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {gallery.slice(0, 12).map((item: any, i: number) => (
+                  <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-[4/3] relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
+                    <img src={item.url} alt={item.caption || `Galeri ${i + 1}`}
+                      loading="lazy"
+                      className="h-full w-full object-cover group-hover/item:scale-105 transition-transform duration-500" />
+                    {item.caption && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-end">
+                        <p className="text-white text-sm font-medium">{item.caption}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
         </ScrollReveal>
       )}
 
-      {/* ── 10. Testimonial Alumni ── */}
-      {(tenant.alumni?.length ?? 0) > 0 && (
-        <ScrollReveal>
-          <AlumniTestimonials alumni={tenant.alumni || []} />
-        </ScrollReveal>
+      {/* ══════════════════════════════════════════════════════════════
+          11. TESTIMONIAL ALUMNI + CTA (Side by Side)
+      ══════════════════════════════════════════════════════════════ */}
+      {((tenant.alumni?.length ?? 0) > 0 || tenant.whatsapp || tenant.phone) && (
+        <section className="py-10 md:py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Left: Alumni Testimonial */}
+              {(tenant.alumni?.length ?? 0) > 0 && (
+                <div>
+                  <AlumniTestimonials alumni={tenant.alumni || []} />
+                </div>
+              )}
+
+              {/* Right: CTA Card */}
+              <div className="bg-primary text-primary-foreground rounded-3xl p-8 md:p-10 relative overflow-hidden flex flex-col justify-center">
+                <div className="absolute inset-0 opacity-10"
+                  style={{ backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
+                <div className="relative">
+                  <h3 className="text-xl md:text-2xl font-extrabold mb-3">
+                    Daftarkan putra/putri Anda di {tenant.name} dan raih masa depan gemilang.
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-3 mb-6 text-primary-foreground/80">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
+                      ✅ Pendaftaran Mudah
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
+                      ℹ️ Informasi Cepat & Akurat
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
+                      📋 Kuota Terbatas
+                    </span>
+                  </div>
+                  <Link href={`${base}/ppdb`}
+                    className="inline-flex items-center gap-2 bg-primary-foreground text-primary font-bold rounded-xl px-6 py-3 text-sm hover:opacity-90 transition-all hover:-translate-y-0.5 shadow-lg">
+                    PPDB Online <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       )}
 
-      {/* ── 11. Kerjasama Lembaga ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          12. KERJASAMA & DUKUNGAN
+      ══════════════════════════════════════════════════════════════ */}
       {(tenant.partnerships?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
           <div className="bg-card py-8">
@@ -179,10 +255,12 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         </ScrollReveal>
       )}
 
-      {/* ── 12. Kontak CTA ── */}
+      {/* ══════════════════════════════════════════════════════════════
+          13. KONTAK CTA FOOTER
+      ══════════════════════════════════════════════════════════════ */}
       {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
         <ScrollReveal delay={0.2}>
-        <section className="py-16 md:py-24 bg-background">
+        <section className="py-12 md:py-20 bg-background">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="rounded-3xl border border-border bg-card shadow-2xl p-8 md:p-16 relative overflow-hidden">
               <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
@@ -193,7 +271,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
                   Siap Bergabung Bersama Kami?
                 </h2>
                 <p className="text-muted-foreground mb-10">
-                  Kami selalu terbuka untuk menjawab pertanyaan Anda. Jangan ragu untuk menghubungi layanan informasi kami.
+                  Kami selalu terbuka untuk menjawab pertanyaan Anda. Jangan ragu untuk menghubungi kami.
                 </p>
                 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
