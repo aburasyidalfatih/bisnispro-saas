@@ -64,7 +64,14 @@ export default async function SuperAdminThemesPage() {
           <h1 className="text-2xl font-bold tracking-tight">Theme Engine</h1>
           <p className="text-muted-foreground mt-1">Kelola tema bawaan dan tema kustom berbasis Handlebars untuk sekolah.</p>
         </div>
-        <ThemeUploadModal />
+        <div className="flex items-center gap-2">
+          <a href="/theme-starter-kit.zip" download>
+            <Button variant="outline" className="bg-white">
+              <Download className="mr-2 h-4 w-4" /> Export Template Standar
+            </Button>
+          </a>
+          <ThemeUploadModal />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
