@@ -6,14 +6,18 @@ import { Download, Trash2, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+
 interface ThemeActionButtonsProps {
   themeId: string
   isSystem: boolean
   isDeletable: boolean
   tenantsCount: number
+  isActive?: boolean
 }
 
-export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCount }: ThemeActionButtonsProps) {
+export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCount, isActive = true }: ThemeActionButtonsProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
   const { toast } = useToast()
@@ -67,6 +71,25 @@ export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCoun
     }
   }
 
+  const [toggling, setToggling] = useState(false)
+  const handleToggle = async (checked: boolean) => {
+    setToggling(true)
+    try {
+      const res = await fetch(`/api/super-admin/themes/${themeId}/toggle`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: checked })
+      })
+      if (!res.ok) throw new Error("Gagal mengubah status tema")
+      toast({ title: "Berhasil", description: `Tema sekarang ${checked ? 'Aktif' : 'Non-aktif'}` })
+      router.refresh()
+    } catch (e: any) {
+      toast({ title: "Gagal", description: e.message, variant: "destructive" })
+    } finally {
+      setToggling(false)
+    }
+  }
+
   return (
     <div className="flex gap-2 w-full justify-between items-center">
       <div className="flex gap-2">
@@ -90,7 +113,31 @@ export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCoun
         )}
       </div>
 
-      {isDeletable ? (
+      {!isSystem ? (
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Switch 
+              id={`toggle-${themeId}`} 
+              checked={isActive} 
+              onCheckedChange={handleToggle}
+              disabled={toggling}
+            />
+            <Label htmlFor={`toggle-${themeId}`} className="text-xs text-muted-foreground cursor-pointer">
+              {isActive ? 'Aktif' : 'Draft'}
+            </Label>
+          </div>
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            className="text-xs" 
+            disabled={tenantsCount > 0 || isDeleting}
+            onClick={handleDelete}
+          >
+            {isDeleting ? <Loader2 className="h-3 w-3 mr-1.5 animate-spin" /> : <Trash2 className="h-3 w-3 mr-1.5" />}
+            Hapus
+          </Button>
+        </div>
+      ) : isDeletable ? (
         <Button 
           variant="destructive" 
           size="sm" 

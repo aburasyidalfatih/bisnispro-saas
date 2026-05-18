@@ -14,7 +14,7 @@ export async function GET(req: Request) {
 
   const tenant = await db.tenant.findUnique({
     where: tenantId ? { id: tenantId } : { slug: slug! },
-    select: { theme: true, template: true, plan: true },
+    select: { theme: true, template: true, plan: true, customThemeId: true },
   })
 
   if (!tenant) {
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
 
   return NextResponse.json({ 
     theme: tenant.theme || "aurora",
-    template: tenant.template || "default",
+    template: tenant.customThemeId || tenant.template || "default",
     plan: tenant.plan || "free",
   })
 }

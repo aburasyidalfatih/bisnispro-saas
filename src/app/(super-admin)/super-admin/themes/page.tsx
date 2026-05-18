@@ -123,7 +123,8 @@ export default async function SuperAdminThemesPage() {
                 themeId={theme.id} 
                 isSystem={theme.isSystem} 
                 isDeletable={theme.isDeletable}
-                tenantsCount={theme._count.tenants}
+                tenantsCount={theme._count?.tenants || 0}
+                isActive={theme.isActive}
               />
             </CardFooter>
           </Card>

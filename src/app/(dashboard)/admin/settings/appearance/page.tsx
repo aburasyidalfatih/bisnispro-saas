@@ -32,6 +32,7 @@ export default function AppearancePage() {
   const [dbTemplate, setDbTemplate] = useState("default")
   const [dbPlan, setDbPlan] = useState("free")
   const [loadingConfig, setLoadingConfig] = useState(true)
+  const [availableCustomThemes, setAvailableCustomThemes] = useState<any[]>([])
   
   const isImpersonating = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
   const canChangeTheme = isImpersonating || session?.user?.tenants?.some((t: any) => 
@@ -59,6 +60,13 @@ export default function AppearancePage() {
       })
       .catch(() => {})
       .finally(() => setLoadingConfig(false))
+
+    fetch(`/api/tenant/theme/available`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.customThemes) setAvailableCustomThemes(data.customThemes)
+      })
+      .catch(() => {})
   }, [activeTenantId, session?.user?.tenants])
 
   const handleSave = async () => {
@@ -197,7 +205,14 @@ export default function AppearancePage() {
             id: "default", name: "Classic Default", 
             desc: "Desain standar yang lengkap dengan slider lebar.", 
             isPremium: false 
-          }].map(tpl => {
+          },
+          ...availableCustomThemes.map(ct => ({
+            id: ct.id,
+            name: ct.name,
+            desc: `Tema Kustom by ${ct.author || 'Super Admin'}`,
+            isPremium: false // Asumsikan Custom Theme bisa dipakai semua plan, atau atur sesuai kebutuhan
+          }))
+          ].map(tpl => {
             const isLocked = tpl.isPremium && dbPlan === "free"
             const isActive = dbTemplate === tpl.id
             const isSelected = selectedTemplate === tpl.id

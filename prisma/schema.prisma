@@ -1950,6 +1950,8 @@ model CustomTheme {
   customCss           String  @db.Text
   customJs            String  @db.Text
 
+  isActive            Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
