@@ -44,14 +44,14 @@ export default async function BeritaPage({
 
   const base = await getPublicBasePath(slug)
   
-  const internalTypes = ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"]
+  const excludedTypes = ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA", "PENGUMUMAN"]
 
   // Fetch paginated posts directly from DB
   const posts = await db.post.findMany({
     where: { 
       tenantId: tenant.id, 
       status: 'PUBLISHED',
-      type: typeFilter ? typeFilter : { notIn: internalTypes }
+      type: typeFilter ? typeFilter : { notIn: excludedTypes }
     },
     orderBy: { createdAt: 'desc' },
     skip: (page - 1) * perPage,
@@ -62,7 +62,7 @@ export default async function BeritaPage({
     where: { 
       tenantId: tenant.id, 
       status: 'PUBLISHED',
-      type: typeFilter ? typeFilter : { notIn: internalTypes }
+      type: typeFilter ? typeFilter : { notIn: excludedTypes }
     }
   })
   const totalPages = Math.ceil(totalPosts / perPage)
@@ -89,7 +89,7 @@ export default async function BeritaPage({
           {[
             { label: "Semua", value: null },
             { label: "Berita", value: "BERITA" },
-            { label: "Pengumuman", value: "PENGUMUMAN" },
+            { label: "Blog Guru", value: "BLOG_GURU" },
             { label: "Prestasi", value: "PRESTASI" },
           ].map((cat) => {
             const isActive = typeFilter === cat.value || (!typeFilter && cat.value === null)
