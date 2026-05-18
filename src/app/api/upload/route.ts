@@ -63,8 +63,8 @@ export async function POST(req: Request) {
     })
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : ""
-    if (errMsg.includes("batas maksimum")) {
-      return NextResponse.json({ error: "Ukuran file melebihi batas maksimum" }, { status: 400 })
+    if (errMsg.includes("batas maksimum") || errMsg.includes("Quota penyimpanan")) {
+      return NextResponse.json({ error: errMsg }, { status: 400 })
     }
     logger.error("Upload failed", error, { path: "/api/upload" })
     return NextResponse.json({ error: "Upload gagal" }, { status: 500 })
