@@ -110,9 +110,15 @@ export default async function WebsiteLayout({
         />
 
         <ThemeInjector theme={tenant.theme} />
-        <WebsiteNavbar tenant={tenant} />
+        
+        {/* Render Navbar hanya jika tidak menggunakan Custom Theme */}
+        {!tenant.customThemeId && <WebsiteNavbar tenant={tenant} />}
+        
         <main className="flex-1">{children}</main>
-        <WebsiteFooter tenant={tenant} />
+        
+        {/* Render Footer hanya jika tidak menggunakan Custom Theme */}
+        {!tenant.customThemeId && <WebsiteFooter tenant={tenant} />}
+        
         {activePopup && <PopupRenderer popup={activePopup} />}
         <PwaInstaller tenantName={tenant.name} tenantLogo={tenant.logo} />
         

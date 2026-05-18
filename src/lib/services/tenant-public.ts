@@ -43,6 +43,8 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       seoDesc: true,
       theme: true,
       template: true,
+      customThemeId: true,
+      customTheme: true,
       isActive: true,
       instagram: true,
       facebook: true,
@@ -54,6 +56,11 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       extracurriculars: { take: 15 },
       facilities: { take: 15 },
       achievements: { orderBy: { createdAt: 'desc' }, take: 10 },
+      websiteMenus: { 
+        where: { isActive: true, parentId: null },
+        orderBy: { order: 'asc' },
+        include: { children: { where: { isActive: true }, orderBy: { order: 'asc' } } }
+      },
       posts: { 
         where: { 
           status: "PUBLISHED",

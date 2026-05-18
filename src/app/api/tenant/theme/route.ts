@@ -38,12 +38,20 @@ export async function PUT(req: Request) {
 
     const dataToUpdate: any = {}
     if (theme) dataToUpdate.theme = theme
-    if (template) dataToUpdate.template = template
+    if (template) {
+      if (template === "default" || template === "modern") {
+        dataToUpdate.template = template
+        dataToUpdate.customThemeId = null
+      } else {
+        dataToUpdate.template = "custom"
+        dataToUpdate.customThemeId = template
+      }
+    }
 
     const updated = await db.tenant.update({
       where: { id: tenantId },
       data: dataToUpdate,
-      select: { theme: true, template: true, slug: true },
+      select: { theme: true, template: true, customThemeId: true, slug: true },
     })
 
     // Invalidate Redis cache agar website publik langsung menampilkan template baru
@@ -52,7 +60,7 @@ export async function PUT(req: Request) {
       await invalidatePublicTenantCache(updated.slug)
     } catch {}
 
-    return NextResponse.json({ theme: updated.theme, template: updated.template })
+    return NextResponse.json({ theme: updated.theme, template: updated.customThemeId || updated.template })
   } catch (error) {
     logger.error("Update theme failed", error, { path: "/api/tenant/theme" })
     return NextResponse.json({ error: "Terjadi kesalahan" }, { status: 500 })

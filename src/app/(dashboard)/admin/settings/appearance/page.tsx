@@ -32,6 +32,7 @@ export default function AppearancePage() {
   const [dbTemplate, setDbTemplate] = useState("default")
   const [dbPlan, setDbPlan] = useState("free")
   const [loadingConfig, setLoadingConfig] = useState(true)
+  const [availableCustomThemes, setAvailableCustomThemes] = useState<any[]>([])
   
   const isImpersonating = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
   const canChangeTheme = isImpersonating || session?.user?.tenants?.some((t: any) => 
@@ -59,6 +60,13 @@ export default function AppearancePage() {
       })
       .catch(() => {})
       .finally(() => setLoadingConfig(false))
+
+    fetch(`/api/tenant/theme/available`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.customThemes) setAvailableCustomThemes(data.customThemes)
+      })
+      .catch(() => {})
   }, [activeTenantId, session?.user?.tenants])
 
   const handleSave = async () => {
@@ -197,17 +205,20 @@ export default function AppearancePage() {
             id: "default", name: "Classic Default", 
             desc: "Desain standar yang lengkap dengan slider lebar.", 
             isPremium: false 
-          }, { 
-            id: "modern", name: "Modern Corporate", 
-            desc: "Desain elegan dengan elemen melayang dan susunan grid baru.", 
-            isPremium: true 
-          }].map(tpl => {
+          },
+          ...availableCustomThemes.map(ct => ({
+            id: ct.id,
+            name: ct.name,
+            desc: `Tema Kustom by ${ct.author || 'Super Admin'}`,
+            isPremium: false // Asumsikan Custom Theme bisa dipakai semua plan, atau atur sesuai kebutuhan
+          }))
+          ].map(tpl => {
             const isLocked = tpl.isPremium && dbPlan === "free"
             const isActive = dbTemplate === tpl.id
             const isSelected = selectedTemplate === tpl.id
 
             return (
-            <button key={tpl.id} onClick={() => {
+            <div key={tpl.id} onClick={() => {
               if (!canChangeTheme) {
                 toast({ title: "Tidak punya izin", description: "Hanya Owner/Admin yang dapat mengubah template.", variant: "destructive" })
                 return
@@ -219,7 +230,7 @@ export default function AppearancePage() {
               setSelectedTemplate(tpl.id)
             }}
               className={cn(
-                "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all duration-150 relative overflow-hidden",
+                "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all duration-150 relative overflow-hidden cursor-pointer",
                 isSelected
                   ? "border-blue-500 bg-blue-50/50 dark:bg-blue-500/10"
                   : "border-transparent bg-muted/30 hover:bg-muted/60 hover:border-border",
@@ -246,11 +257,24 @@ export default function AppearancePage() {
                 {isLocked && (
                   <p className="text-xs font-semibold text-amber-600 mt-2">⭐ Upgrade ke Pro untuk membuka desain ini.</p>
                 )}
+                {tpl.id !== "default" && (
+                  <div className="mt-3">
+                    <a 
+                      href={`/theme/${tpl.id}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 z-10 relative bg-blue-50 px-2 py-1 rounded-md"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Lihat Demo (Preview)
+                    </a>
+                  </div>
+                )}
               </div>
               {isSelected && (
                 <div className="absolute top-4 right-4 text-blue-600"><Check className="h-5 w-5" /></div>
               )}
-            </button>
+            </div >
           )})
           )}
         </CardContent>

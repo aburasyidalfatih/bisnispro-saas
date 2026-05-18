@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
+import NextImage from "next/image"
+import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, CheckCircle2 } from "lucide-react"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
 import { PrincipalWelcome } from "../../_components/principal-welcome"
@@ -60,6 +61,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <ProgramsSection programs={tenant.programs || []} />
       </ScrollReveal>
 
+
       {/* ── 7. Prestasi ── */}
       <ScrollReveal delay={0.1}>
         <AchievementsSection achievements={tenant.achievements || []} />
@@ -103,9 +105,9 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => (
                 <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
-                  <img src={item.url} alt={item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
-                    loading="lazy"
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <NextImage src={item.url} alt={item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
+                    fill unoptimized
+                    className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   {item.caption && (
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
                       <p className="text-white text-xs line-clamp-1">{item.caption}</p>
@@ -124,7 +126,8 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <AlumniTestimonials alumni={tenant.alumni || []} />
       </ScrollReveal>
 
-      {/* ── 12.5. Kerjasama Lembaga ── */}
+
+      {/* ── 13. Kerjasama Lembaga ── */}
       <ScrollReveal delay={0.1}>
         <PartnershipsSection partnerships={tenant.partnerships || []} />
       </ScrollReveal>

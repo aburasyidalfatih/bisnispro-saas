@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X, Phone, MapPin, Mail, MessageCircle } from "lucide-react"
+import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X, Phone, MapPin, Mail, MessageCircle, Megaphone } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
@@ -567,6 +567,7 @@ export default function WebsiteAboutPage() {
             </div>
           </CardContent>
         </Card>
+
 
         {/* SEO */}
         <Card className="glass border-0 lg:col-span-2">

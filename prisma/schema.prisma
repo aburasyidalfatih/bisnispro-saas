@@ -98,12 +98,16 @@ model Tenant {
   teacherJournals      TeacherJournal[]
   disciplineRecords    DisciplineRecord[]
   partnerships         Partnership[]
+  websiteMenus         WebsiteMenu[]
   cbtExams             CbtExam[]
   cbtQuestionBanks     CbtQuestionBank[]
   aiUsageLogs          AiUsageLog[]
   tenantScore          TenantScore?
   waQueueLogs          WaQueueLog[]
   TenantNotification   TenantNotification[]
+
+  customThemeId String?
+  customTheme   CustomTheme? @relation(fields: [customThemeId], references: [id])
 
   @@index([isActive])
   @@index([plan])
@@ -1922,4 +1926,61 @@ model TenantNotification {
   @@index([isRead])
   @@index([createdAt])
   @@map("tenant_notifications")
+}
+
+model CustomTheme {
+  id        String  @id @default(cuid())
+  name      String
+  author    String?
+  version   String  @default("1.0.0")
+  thumbnail String?
+
+  layoutHtml          String  @db.Text
+  indexHtml           String  @db.Text
+  facilityHtml        String? @db.Text
+  aboutHtml           String? @db.Text
+  staffHtml           String? @db.Text
+  newsHtml            String? @db.Text
+  newsDetailHtml      String? @db.Text
+  galleryHtml         String? @db.Text
+  contactHtml         String? @db.Text
+  extracurricularHtml String? @db.Text
+  programHtml         String? @db.Text
+  achievementHtml     String? @db.Text
+  customCss           String  @db.Text
+  customJs            String  @db.Text
+
+  isActive            Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenants Tenant[]
+
+  @@map("custom_themes")
+}
+
+model WebsiteMenu {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  label String
+  url   String
+  icon  String? // Optional lucide icon name
+
+  parentId String?
+  parent   WebsiteMenu?  @relation("MenuHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children WebsiteMenu[] @relation("MenuHierarchy")
+
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+  isSystem Boolean @default(false) // Jika true, menu bawaan seperti Home tidak bisa dihapus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([parentId])
+  @@map("website_menus")
 }

@@ -35,12 +35,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
-                    <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" loading="eager" />
+                    <Image src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
                   </div>
                 </Link>
               ) : (
                 <div className="relative aspect-video w-full">
-                  <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" loading="eager" />
+                  <Image src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
                 </div>
               )}
             </div>
@@ -53,12 +53,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
-                    <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" loading="eager" />
+                    <Image src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
                   </div>
                 </Link>
               ) : (
                 <div className="relative aspect-video w-full">
-                  <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" loading="eager" />
+                  <Image src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
                 </div>
               )}
             </div>

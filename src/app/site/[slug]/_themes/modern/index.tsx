@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, ChevronLeft, ChevronRight } from "lucide-react"
+import NextImage from "next/image"
+import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
 import { PrincipalWelcome } from "../../_components/principal-welcome"
@@ -95,31 +96,6 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <ProgramsSection programs={tenant.programs || []} />
       </ScrollReveal>
 
-      {/* ══════════════════════════════════════════════════════════════
-          5. HIGHLIGHT FEATURES BAR (Dark accent bar)
-      ══════════════════════════════════════════════════════════════ */}
-      <section className="bg-primary text-primary-foreground py-8 mt-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { icon: GraduationCap, title: "Guru Profesional", desc: "Tenaga pendidik berkualitas dan berdedikasi" },
-              { icon: Building, title: "Fasilitas Lengkap", desc: "Sarana belajar modern dan mendukung" },
-              { icon: Award, title: "Prestasi Membanggakan", desc: "Berbagai prestasi akademik dan non-akademik" },
-              { icon: TreePine, title: "Lingkungan Nyaman", desc: "Lingkungan sekolah yang asri dan ramah anak" },
-            ].map((item, idx) => (
-              <div key={idx} className="flex items-start gap-3 group">
-                <div className="shrink-0 h-10 w-10 rounded-xl bg-primary-foreground/15 flex items-center justify-center group-hover:bg-primary-foreground/25 transition-colors">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="font-bold text-sm mb-0.5">{item.title}</h4>
-                  <p className="text-primary-foreground/70 text-xs leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ══════════════════════════════════════════════════════════════
           6. FASILITAS SEKOLAH
@@ -183,9 +159,9 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
               <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {gallery.slice(0, 12).map((item: any, i: number) => (
                   <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-[4/3] relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
-                    <img src={item.url} alt={item.caption || `Galeri ${i + 1}`}
-                      loading="lazy"
-                      className="h-full w-full object-cover group-hover/item:scale-105 transition-transform duration-500" />
+                    <NextImage src={item.url} alt={item.caption || `Galeri ${i + 1}`}
+                      fill unoptimized
+                      className="object-cover group-hover/item:scale-105 transition-transform duration-500" />
                     {item.caption && (
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-end">
                         <p className="text-white text-sm font-medium">{item.caption}</p>
@@ -201,43 +177,15 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          11. TESTIMONIAL ALUMNI + CTA (Side by Side)
+          11. TESTIMONIAL ALUMNI
       ══════════════════════════════════════════════════════════════ */}
-      {((tenant.alumni?.length ?? 0) > 0 || tenant.whatsapp || tenant.phone) && (
+      {((tenant.alumni?.length ?? 0) > 0) && (
         <section className="py-10 md:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Left: Alumni Testimonial */}
-              {(tenant.alumni?.length ?? 0) > 0 && (
-                <div>
-                  <AlumniTestimonials alumni={tenant.alumni || []} />
-                </div>
-              )}
-
-              {/* Right: CTA Card */}
-              <div className="bg-primary text-primary-foreground rounded-3xl p-8 md:p-10 relative overflow-hidden flex flex-col justify-center">
-                <div className="absolute inset-0 opacity-10"
-                  style={{ backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
-                <div className="relative">
-                  <h3 className="text-xl md:text-2xl font-extrabold mb-3">
-                    Daftarkan putra/putri Anda di {tenant.name} dan raih masa depan gemilang.
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-3 mb-6 text-primary-foreground/80">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      ✅ Pendaftaran Mudah
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      ℹ️ Informasi Cepat & Akurat
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary-foreground/15 rounded-full px-3 py-1">
-                      📋 Kuota Terbatas
-                    </span>
-                  </div>
-                  <Link href={`${base}/ppdb`}
-                    className="inline-flex items-center gap-2 bg-primary-foreground text-primary font-bold rounded-xl px-6 py-3 text-sm hover:opacity-90 transition-all hover:-translate-y-0.5 shadow-lg">
-                    PPDB Online <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
+            <div className="grid gap-8">
+              {/* Alumni Testimonial */}
+              <div>
+                <AlumniTestimonials alumni={tenant.alumni || []} />
               </div>
             </div>
           </div>

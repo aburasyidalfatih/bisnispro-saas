@@ -101,6 +101,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           icon: Home,
           children: [
             { label: "Overview Website", href: `${basePath}/website`, icon: Home },
+            { label: "Menu Navigasi", href: `${basePath}/website/menu`, icon: LayoutTemplate },
             { label: "Slider Beranda", href: `${basePath}/website/sliders`, icon: LayoutTemplate },
             { label: "Popup Pengumuman", href: `${basePath}/website/popups`, icon: Megaphone },
           ],
@@ -448,6 +449,11 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
             { label: "Semua Pengguna", href: "/super-admin/users", icon: UserCog },
             { label: "Super Admin", href: "/super-admin/users/admins", icon: ShieldCheck },
           ],
+        },
+        {
+          label: "Theme Engine",
+          href: "/super-admin/themes",
+          icon: Palette,
         },
       ],
     },
