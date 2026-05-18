@@ -65,7 +65,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
       />
 
       {/* ── HEADER SECTION ── */}
-      <div className="bg-muted/30 pt-8 pb-12 border-b">
+      <div className="bg-muted/30 pt-6 pb-10 border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link 
             href={`${base}/agenda`}

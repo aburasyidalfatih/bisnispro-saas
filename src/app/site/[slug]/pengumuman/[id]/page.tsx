@@ -57,7 +57,7 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
     .slice(0, 3)
 
   return (
-    <div className="bg-background min-h-screen pt-20 pb-24 font-sans text-foreground">
+    <div className="bg-background min-h-screen pt-4 md:pt-12 pb-24 font-sans text-foreground">
       <ReadingProgress />
       {/* JSON-LD for Article Rich Snippets */}
       <script
@@ -88,7 +88,7 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
       />
 
       {/* ── HEADER SECTION ── */}
-      <div className="bg-blue-500/5 pt-8 pb-12 border-b border-blue-500/10">
+      <div className="bg-blue-500/5 pt-6 pb-10 border-b border-blue-500/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link 
             href={`${base}/pengumuman`}
