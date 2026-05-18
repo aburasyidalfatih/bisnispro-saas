@@ -87,20 +87,22 @@ export async function saveFile(
   if (tenantId) {
     const tenant = await db.tenant.findUnique({
       where: { id: tenantId },
-      include: { plan: true },
+      include: { subscriptionPlan: true },
     })
 
-    if (tenant && tenant.plan && tenant.plan.maxStorage > 0) {
+    const maxStorage = tenant?.subscriptionPlan?.maxStorage || (tenant?.plan === "free" ? 100 : 1024)
+
+    if (maxStorage > 0) {
       const usageResult = await db.fileUpload.aggregate({
         where: { tenantId },
         _sum: { size: true }
       })
       
       const currentUsageBytes = usageResult._sum.size || 0
-      const maxStorageBytes = tenant.plan.maxStorage * 1024 * 1024
+      const maxStorageBytes = maxStorage * 1024 * 1024
       
       if (currentUsageBytes + file.size > maxStorageBytes) {
-        const maxLimitStr = tenant.plan.maxStorage >= 1024 ? `${(tenant.plan.maxStorage / 1024).toFixed(0)} GB` : `${tenant.plan.maxStorage} MB`
+        const maxLimitStr = maxStorage >= 1024 ? `${(maxStorage / 1024).toFixed(0)} GB` : `${maxStorage} MB`
         throw new Error(`Quota penyimpanan habis. Paket langganan Anda dibatasi maksimal ${maxLimitStr}. Silakan hapus file lama atau upgrade paket.`)
       }
     }
