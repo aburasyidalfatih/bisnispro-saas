@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
 import {
   Zap, Star, CheckCircle2,
@@ -182,6 +183,27 @@ export default function PlansPage() {
     }
   }
 
+  const handleToggleActive = async (plan: SubscriptionPlan) => {
+    if (plan.slug === "free") return
+    try {
+      const planPayload = {
+        ...plan,
+        isActive: !plan.isActive,
+        features: JSON.stringify(plan.features || []),
+      }
+      const res = await fetch(`/api/super-admin/plans`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(planPayload),
+      })
+      if (!res.ok) throw new Error("Gagal mengubah status paket")
+      toast({ title: "Berhasil", description: `Paket ${plan.name} berhasil di${!plan.isActive ? "aktifkan" : "nonaktifkan"}.` })
+      fetchAll()
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    }
+  }
+
   const isProPlan = editingPlan?.slug === "pro"
 
   if (loading && plans.length === 0) {
@@ -225,9 +247,23 @@ export default function PlansPage() {
                       <CardDescription>{plan.description}</CardDescription>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="gap-1.5 rounded-xl h-8 text-xs" onClick={() => openEdit(plan)}>
-                    <Edit className="h-3.5 w-3.5" /> Edit
-                  </Button>
+                  <div className="flex items-center gap-3">
+                    {plan.slug !== "free" && (
+                      <div className="flex items-center gap-2 mr-1">
+                        <Label htmlFor={`active-${plan.id}`} className="text-[10px] uppercase font-bold text-muted-foreground cursor-pointer">
+                          {plan.isActive ? "Aktif" : "Nonaktif"}
+                        </Label>
+                        <Switch
+                          id={`active-${plan.id}`}
+                          checked={plan.isActive}
+                          onCheckedChange={() => handleToggleActive(plan)}
+                        />
+                      </div>
+                    )}
+                    <Button variant="outline" size="sm" className="gap-1.5 rounded-xl h-8 text-xs" onClick={() => openEdit(plan)}>
+                      <Edit className="h-3.5 w-3.5" /> Edit
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
