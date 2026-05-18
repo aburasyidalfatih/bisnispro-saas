@@ -85,7 +85,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
                 <Megaphone className="h-6 w-6 text-emerald-600" />
                 <h3 className="font-bold text-lg">Pengumuman</h3>
               </div>
-              <Link href={resolveHref("/berita?type=pengumuman")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+              <Link href={resolveHref("/pengumuman")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
@@ -96,7 +96,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
                 const badgeColor = badgeColors[idx % badgeColors.length];
                 
                 return (
-                  <Link key={idx} href={resolveHref(`/berita/${item.id}`)} className="flex gap-4 group cursor-pointer">
+                  <Link key={idx} href={resolveHref(`/pengumuman/${item.id}`)} className="flex gap-4 group cursor-pointer">
                     <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
                       <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
                         {format(new Date(item.createdAt), "dd")}
