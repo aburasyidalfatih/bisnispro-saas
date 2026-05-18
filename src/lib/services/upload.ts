@@ -80,7 +80,30 @@ export async function saveFile(
 ): Promise<{ path: string; name: string; size: number; mimeType: string }> {
   // === Size check ===
   if (file.size > MAX_FILE_SIZE) {
-    throw new Error(`Ukuran file melebihi batas maksimum (${MAX_FILE_SIZE / 1024 / 1024}MB)`)
+    throw new Error(`Ukuran file melebihi batas maksimum per file (${MAX_FILE_SIZE / 1024 / 1024}MB)`)
+  }
+
+  // === Tenant Storage Quota Check ===
+  if (tenantId) {
+    const tenant = await db.tenant.findUnique({
+      where: { id: tenantId },
+      include: { plan: true },
+    })
+
+    if (tenant && tenant.plan && tenant.plan.maxStorage > 0) {
+      const usageResult = await db.fileUpload.aggregate({
+        where: { tenantId },
+        _sum: { size: true }
+      })
+      
+      const currentUsageBytes = usageResult._sum.size || 0
+      const maxStorageBytes = tenant.plan.maxStorage * 1024 * 1024
+      
+      if (currentUsageBytes + file.size > maxStorageBytes) {
+        const maxLimitStr = tenant.plan.maxStorage >= 1024 ? `${(tenant.plan.maxStorage / 1024).toFixed(0)} GB` : `${tenant.plan.maxStorage} MB`
+        throw new Error(`Quota penyimpanan habis. Paket langganan Anda dibatasi maksimal ${maxLimitStr}. Silakan hapus file lama atau upgrade paket.`)
+      }
+    }
   }
 
   // === MIME type check ===
