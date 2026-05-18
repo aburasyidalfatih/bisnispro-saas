@@ -192,6 +192,7 @@ export default function EditStaffPage() {
                     <div className="text-center p-4">
                       <Users className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
                       <p className="text-[10px] font-medium">Klik Foto</p>
+                      <p className="text-[9px] text-primary font-semibold mt-1 bg-primary/10 inline-block px-1 rounded">Rasio 3:4 atau 1:1</p>
                     </div>
                   )}
                 </div>

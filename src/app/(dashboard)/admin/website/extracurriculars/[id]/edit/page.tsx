@@ -180,6 +180,7 @@ export default function EditExtracurricularPage() {
                     <Trophy className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
                     <p className="text-sm font-medium">Klik untuk memilih foto/logo</p>
                     <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP (Max 5MB)</p>
+                    <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">Rekomendasi rasio 16:9 atau 4:3</p>
                   </div>
                 )}
               </div>

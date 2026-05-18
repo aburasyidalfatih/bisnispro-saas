@@ -129,6 +129,7 @@ export default function NewPartnershipPage() {
                     <ImageIcon className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
                     <p className="text-sm font-medium">Klik untuk upload logo</p>
                     <p className="text-xs text-muted-foreground mt-1">Format: PNG, JPG, SVG (Maks 2MB)</p>
+                    <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">Rekomendasi rasio 1:1 atau 2:1</p>
                   </div>
                 )}
               </div>

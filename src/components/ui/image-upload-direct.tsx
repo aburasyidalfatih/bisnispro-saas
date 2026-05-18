@@ -10,9 +10,10 @@ interface ImageUploadDirectProps {
   onChange: (url: string) => void
   tenantId: string
   subDir?: string
+  hint?: string
 }
 
-export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts" }: ImageUploadDirectProps) {
+export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts", hint }: ImageUploadDirectProps) {
   const [uploading, setUploading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(value || null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -170,6 +171,7 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts" 
                 </div>
                 <p className="text-sm font-medium">Klik untuk upload gambar</p>
                 <p className="text-xs text-muted-foreground mt-1">Format: JPG, PNG, WebP (Maks 5MB)</p>
+                {hint && <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">{hint}</p>}
               </>
             )}
           </div>

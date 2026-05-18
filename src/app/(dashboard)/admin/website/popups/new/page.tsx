@@ -184,6 +184,7 @@ export default function NewPopupPage() {
                     <div className="text-center py-4">
                       <ImageIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
                       <p className="text-xs font-medium text-muted-foreground">Klik untuk upload gambar</p>
+                      <p className="text-[11px] text-primary font-semibold mt-2 bg-primary/10 inline-block px-1.5 py-0.5 rounded">Rekomendasi rasio 1:1 atau 4:3</p>
                     </div>
                   )}
                 </div>

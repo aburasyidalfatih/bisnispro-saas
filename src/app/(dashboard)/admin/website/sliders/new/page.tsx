@@ -164,6 +164,7 @@ export default function NewSliderPage() {
                     <ImageIcon className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
                     <p className="text-sm font-medium">Klik untuk upload gambar slider</p>
                     <p className="text-xs text-muted-foreground mt-1">Format: JPG, PNG, WebP (Maks 5MB)</p>
+                    <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">Rekomendasi rasio 21:9 atau 16:9 (Desktop)</p>
                   </div>
                 )}
               </div>
