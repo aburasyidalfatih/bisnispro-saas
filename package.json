@@ -65,7 +65,6 @@
     "handlebars": "^4.7.9",
     "html-react-parser": "^6.1.1",
     "idn-area-data": "^4.0.1",
-    "inngest": "^4.3.0",
     "ioredis": "^5.10.1",
     "isomorphic-dompurify": "^3.12.0",
     "jszip": "^3.10.1",

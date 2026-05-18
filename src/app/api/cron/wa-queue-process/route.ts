@@ -50,7 +50,15 @@ export async function GET(req: Request) {
     }
 
     logger.info(`WA Queue Cron: Done. Enqueued=${enqueued}`)
-    return NextResponse.json({ processed: pendingMessages.length, enqueued })
+
+    // Cleanup logs older than 3 days
+    const threeDaysAgo = new Date()
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+    const cleanupRes = await db.waQueueLog.deleteMany({
+      where: { createdAt: { lt: threeDaysAgo } }
+    })
+    
+    return NextResponse.json({ processed: pendingMessages.length, enqueued, cleanedUp: cleanupRes.count })
   } catch (error: any) {
     logger.error("WA Queue Cron error", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
