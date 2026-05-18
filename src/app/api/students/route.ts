@@ -90,52 +90,67 @@ export async function POST(req: Request) {
     }
   }
 
-  let userId: string | undefined = undefined
+  try {
+    let userId: string | undefined = undefined
 
-  if (email && password) {
-    email = email.toLowerCase()
-    const bcrypt = await import("bcryptjs")
-    let user = await db.user.findUnique({ where: { email } })
-    
-    if (user) {
-      const existingTu = await db.tenantUser.findUnique({
-        where: { tenantId_userId: { tenantId, userId: user.id } },
-      })
-      if (existingTu && existingTu.role !== "siswa") {
-        const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
-        const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
-        return NextResponse.json({ error: `Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat akun Siswa.` }, { status: 400 })
-      }
-      if (!existingTu) {
-        await db.tenantUser.create({ data: { tenantId, userId: user.id, role: "siswa" } })
-      }
-      if (!(user as any).isSuperAdmin) {
+    if (email && password) {
+      email = email.toLowerCase()
+      const bcrypt = await import("bcryptjs")
+      let user = await db.user.findUnique({ where: { email } })
+      
+      if (user) {
+        const existingTu = await db.tenantUser.findUnique({
+          where: { tenantId_userId: { tenantId, userId: user.id } },
+        })
+        if (existingTu && existingTu.role !== "siswa") {
+          const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+          const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
+          return NextResponse.json({ error: `Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat akun Siswa.` }, { status: 400 })
+        }
+        if (!existingTu) {
+          await db.tenantUser.create({ data: { tenantId, userId: user.id, role: "siswa" } })
+        }
+        if (!(user as any).isSuperAdmin) {
+          const hashedPassword = await bcrypt.hash(password, 12)
+          await db.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
+        }
+        userId = user.id
+      } else {
         const hashedPassword = await bcrypt.hash(password, 12)
-        await db.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
+        const newUser = await db.user.create({
+          data: { name, email, phone, password: hashedPassword },
+        })
+        await db.tenantUser.create({
+          data: { tenantId, userId: newUser.id, role: "siswa" },
+        })
+        userId = newUser.id
       }
-      userId = user.id
-    } else {
-      const hashedPassword = await bcrypt.hash(password, 12)
-      const newUser = await db.user.create({
-        data: { name, email, phone, password: hashedPassword },
-      })
-      await db.tenantUser.create({
-        data: { tenantId, userId: newUser.id, role: "siswa" },
-      })
-      userId = newUser.id
     }
+
+    const student = await db.student.create({
+      data: {
+        tenantId, name, nis: nis || undefined, nisn: nisn || undefined,
+        gender, birthPlace, birthDate: birthDate ? new Date(birthDate) : undefined,
+        address, phone, email: email || undefined,
+        fatherName, motherName, guardianName,
+        classroomId: classroomId || undefined,
+        userId,
+      },
+    })
+
+    return NextResponse.json(student, { status: 201 })
+  } catch (error: any) {
+    console.error("Error creating student:", error)
+    if (error.code === 'P2002') {
+      const target = error.meta?.target as string[]
+      if (target?.includes('nis')) {
+        return NextResponse.json({ error: "NIS sudah digunakan oleh siswa lain. Silakan gunakan NIS yang berbeda." }, { status: 400 })
+      }
+      if (target?.includes('nisn')) {
+        return NextResponse.json({ error: "NISN sudah digunakan oleh siswa lain. Silakan gunakan NISN yang berbeda." }, { status: 400 })
+      }
+      return NextResponse.json({ error: "Data sudah ada (duplikat)." }, { status: 400 })
+    }
+    return NextResponse.json({ error: "Terjadi kesalahan saat menyimpan data siswa." }, { status: 500 })
   }
-
-  const student = await db.student.create({
-    data: {
-      tenantId, name, nis: nis || undefined, nisn: nisn || undefined,
-      gender, birthPlace, birthDate: birthDate ? new Date(birthDate) : undefined,
-      address, phone, email: email || undefined,
-      fatherName, motherName, guardianName,
-      classroomId: classroomId || undefined,
-      userId,
-    },
-  })
-
-  return NextResponse.json(student, { status: 201 })
 }
