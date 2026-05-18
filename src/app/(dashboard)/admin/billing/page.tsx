@@ -109,8 +109,14 @@ export default function BillingPage() {
         setFreePlan(plansData.find((p) => p.slug === "free") || null)
         
         // Ensure default selected plan is valid
-        if (billingData?.plan !== "pro" && !proData && liteData) {
-          setSelectedPlanSlug("lite")
+        if (billingData?.plan !== "pro") {
+          if (proData) {
+            setSelectedPlanSlug("pro")
+          } else if (liteData) {
+            setSelectedPlanSlug("lite")
+          } else {
+            setSelectedPlanSlug("")
+          }
         }
       } catch {
         toast({ title: "Error", description: "Gagal memuat data.", variant: "destructive" })
@@ -369,10 +375,22 @@ export default function BillingPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Calculator */}
-              <div className="space-y-4">
+            <CardContent className="space-y-6">
+              {!isPro && !proPlan && !litePlan ? (
+                <div className="py-10 text-center space-y-3 border-2 border-dashed border-border/50 rounded-xl bg-muted/20">
+                  <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center mx-auto">
+                    <ShieldCheck className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-semibold text-muted-foreground">Tidak ada paket tersedia</h3>
+                  <p className="text-sm text-muted-foreground/80 max-w-md mx-auto">
+                    Saat ini tidak ada paket langganan tambahan yang dapat dibeli. Silakan hubungi admin untuk informasi lebih lanjut.
+                  </p>
+                </div>
+              ) : (
+                <>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Calculator */}
+                  <div className="space-y-4">
                 
                 {!isPro && (
                   <div className="space-y-2">
@@ -532,6 +550,8 @@ export default function BillingPage() {
               {checkingOut ? "Membuat Invoice..." : (isPro ? "Buat Tagihan Penambahan Kuota" : "Upgrade Sekarang")}
               <ArrowRight className="h-5 w-5" />
             </Button>
+            </>
+            )}
           </CardContent>
         </Card>
         ) : (
