@@ -226,7 +226,7 @@ export default function PlansPage() {
       </div>
 
       {/* Plan Cards */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
         {plans.map((plan) => {
           const feats = Array.isArray(plan.features) ? plan.features : []
           return (
@@ -247,39 +247,37 @@ export default function PlansPage() {
                       <CardDescription>{plan.description}</CardDescription>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     {plan.slug !== "free" && (
-                      <div className="flex items-center gap-2 mr-1">
-                        <Label htmlFor={`active-${plan.id}`} className="text-[10px] uppercase font-bold text-muted-foreground cursor-pointer">
-                          {plan.isActive ? "Aktif" : "Nonaktif"}
-                        </Label>
+                      <div className="flex items-center gap-1.5 mr-1">
                         <Switch
                           id={`active-${plan.id}`}
                           checked={plan.isActive}
                           onCheckedChange={() => handleToggleActive(plan)}
+                          className="scale-90"
                         />
                       </div>
                     )}
-                    <Button variant="outline" size="sm" className="gap-1.5 rounded-xl h-8 text-xs" onClick={() => openEdit(plan)}>
-                      <Edit className="h-3.5 w-3.5" /> Edit
+                    <Button variant="outline" size="sm" className="gap-1 rounded-lg h-7 px-2 text-[10px]" onClick={() => openEdit(plan)}>
+                      <Edit className="h-3 w-3" /> Edit
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Price */}
-                <div className="text-3xl font-bold">
+                <div className="text-2xl font-bold">
                   {plan.slug === "pro" ? (
                     <div>
-                      <span className="text-lg text-primary block font-bold">Pay-per-Student</span>
-                      <span className="text-xs font-normal text-muted-foreground">
-                        Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")} / siswa / tahun · min. {pricing.MIN_STUDENTS} siswa
+                      <span className="text-base text-primary block font-bold">Pay-per-Student</span>
+                      <span className="text-[10px] font-normal text-muted-foreground block mt-0.5">
+                        Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")}/siswa/thn · min. {pricing.MIN_STUDENTS}
                       </span>
                     </div>
                   ) : (
                     <>
                       Rp {plan.price.toLocaleString("id-ID")}
-                      <span className="text-sm font-normal text-muted-foreground">
+                      <span className="text-xs font-normal text-muted-foreground">
                         {plan.interval === "MONTHLY" ? " / bulan" : plan.interval === "YEARLY" ? " / tahun" : " / sekali bayar"}
                       </span>
                     </>
@@ -287,22 +285,22 @@ export default function PlansPage() {
                 </div>
 
                 {/* Quotas */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-xl bg-muted/40 border border-border/40">
-                    <p className="text-[10px] uppercase text-muted-foreground mb-1">Kuota Siswa</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
+                    <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Kuota Siswa</p>
                     <div className="flex items-center gap-1.5">
-                      <Users className="h-3.5 w-3.5 text-primary" />
-                      <span className="font-bold text-sm">
-                        {plan.slug === "pro" ? "Sesuai Pembelian" : plan.maxStudents === 0 ? "Tak Terbatas" : `${plan.maxStudents} siswa`}
+                      <Users className="h-3 w-3 text-primary" />
+                      <span className="font-bold text-xs truncate">
+                        {plan.slug === "pro" ? "Sesuai Beli" : plan.maxStudents === 0 ? "Unlimited" : `${plan.maxStudents} siswa`}
                       </span>
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-muted/40 border border-border/40">
-                    <p className="text-[10px] uppercase text-muted-foreground mb-1">Penyimpanan</p>
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
+                    <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Penyimpanan</p>
                     <div className="flex items-center gap-1.5">
-                      <HardDrive className="h-3.5 w-3.5 text-primary" />
-                      <span className="font-bold text-sm">
-                        {plan.maxStorage >= 1024 ? `${(plan.maxStorage / 1024).toFixed(0)} GB` : `${plan.maxStorage} MB`}
+                      <HardDrive className="h-3 w-3 text-primary" />
+                      <span className="font-bold text-xs truncate">
+                        {plan.maxStorage === 0 ? "Unlimited" : plan.maxStorage >= 1024 ? `${(plan.maxStorage / 1024).toFixed(1)} GB` : `${plan.maxStorage} MB`}
                       </span>
                     </div>
                   </div>
