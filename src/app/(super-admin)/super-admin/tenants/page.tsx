@@ -35,6 +35,7 @@ interface TenantRow {
   aiTokens: number
   userCount: number
   owner: { name: string; email: string; phone: string | null } | null
+  storageUsed?: number
 }
 
 const planBadge: Record<string, string> = {
@@ -48,6 +49,8 @@ export default function TenantsPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [sortColumn, setSortColumn] = useState("createdAt")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const limit = 10
 
   // Edit Modal State
@@ -79,7 +82,7 @@ export default function TenantsPage() {
 
   const fetchTenants = useCallback(() => {
     setLoading(true)
-    fetch(`/api/super-admin/tenants?page=${page}&limit=${limit}&search=${search}`)
+    fetch(`/api/super-admin/tenants?page=${page}&limit=${limit}&search=${search}&sort=${sortColumn}&order=${sortOrder}`)
       .then(async (r) => {
         const text = await r.text();
         return text ? JSON.parse(text) : { data: [], total: 0 };
@@ -90,9 +93,26 @@ export default function TenantsPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [page, search])
+  }, [page, search, sortColumn, sortOrder])
 
   useEffect(() => { fetchTenants() }, [fetchTenants])
+
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+    } else {
+      setSortColumn(column)
+      setSortOrder("desc")
+    }
+    setPage(1)
+  }
+
+  const formatBytes = (bytes: number) => {
+    if (!bytes || bytes === 0) return "0 MB"
+    const mb = bytes / (1024 * 1024)
+    if (mb >= 1024) return (mb / 1024).toFixed(2) + " GB"
+    return mb.toFixed(1) + " MB"
+  }
 
   const totalPages = Math.ceil(total / limit)
 
@@ -208,6 +228,15 @@ export default function TenantsPage() {
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Kontak Owner</th>
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest hidden lg:table-cell">URL / Domain</th>
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">Plan</th>
+                <th 
+                  className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleSort("storage")}
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    Disk Usage
+                    <ArrowUpDown className="h-3 w-3" />
+                  </div>
+                </th>
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">Status</th>
                 <th className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Aksi</th>
               </tr>
@@ -216,12 +245,12 @@ export default function TenantsPage() {
               {loading ? (
                 [...Array(3)].map((_, i) => (
                   <tr key={i} className="border-b">
-                    <td className="px-4 py-5" colSpan={6}><div className="skeleton h-10 w-full rounded-xl" /></td>
+                    <td className="px-4 py-5" colSpan={7}><div className="skeleton h-10 w-full rounded-xl" /></td>
                   </tr>
                 ))
               ) : tenants.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-20 text-center">
+                  <td colSpan={7} className="px-4 py-20 text-center">
                     <Building2 className="h-12 w-12 mx-auto text-muted-foreground/20 mb-4" />
                     <p className="text-muted-foreground italic">Belum ada tenant yang terdaftar.</p>
                   </td>
@@ -288,6 +317,13 @@ export default function TenantsPage() {
                         {t.plan}
                       </span>
                       <p className="text-[9px] text-muted-foreground mt-1">{t.studentQuota} Siswa</p>
+                    </td>
+
+                    {/* Disk Usage */}
+                    <td className="px-4 py-4 text-center">
+                      <span className="text-[11px] font-bold text-foreground">
+                        {formatBytes(t.storageUsed || 0)}
+                      </span>
                     </td>
 
                     {/* Status */}

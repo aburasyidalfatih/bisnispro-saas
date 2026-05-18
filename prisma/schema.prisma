@@ -16,7 +16,6 @@ model Tenant {
   description          String?
   plan                 String                @default("free")
   theme                String                @default("aurora")
-  template             String                @default("default")
   isActive             Boolean               @default(true)
   settings             Json?
   tagline              String?
@@ -44,21 +43,45 @@ model Tenant {
   googleClientId       String?
   googleClientSecret   String?
   aiTokens             Int                   @default(0)
-  useCustomApiKey      Boolean               @default(false)
   customOpenAiKey      String?
+  useCustomApiKey      Boolean               @default(false)
+  template             String                @default("default")
+  customThemeId        String?
   achievements         Achievement[]
   affiliateCommissions AffiliateCommission[]
+  aiUsageLogs          AiUsageLog[]
   alumni               Alumni[]
+  attendancePermits    AttendancePermit[]
+  attendanceRecords    AttendanceRecord[]
+  attendanceSessions   AttendanceSession[]
   auditLogs            AuditLog[]
+  billingTypes         BillingType[]
+  canteenMerchants     CanteenMerchant[]
+  canteenOrders        CanteenOrder[]
+  canteenProducts      CanteenProduct[]
+  canteenWithdrawals   CanteenWithdrawal[]
+  cashflows            Cashflow[]
   categories           Category[]
+  cbtExams             CbtExam[]
+  cbtQuestionBanks     CbtQuestionBank[]
+  classrooms           Classroom[]
   contactSubmissions   ContactSubmission[]
+  disciplineRecords    DisciplineRecord[]
   documents            Document[]
+  donationCampaigns    DonationCampaign[]
+  donations            Donation[]
   dripLogs             DripLog[]
   events               Event[]
   extracurriculars     Extracurricular[]
   facilities           Facility[]
+  grades               Grade[]
+  installments         Installment[]
+  internalMessages     InternalMessage[]
   invitations          Invitation[]
+  invoicePayments      InvoicePayment[]
+  invoices             Invoice[]
   notifications        Notification[]
+  partnerships         Partnership[]
   payments             Payment[]
   pendaftarPpdb        PendaftarPpdb[]
   periodePpdb          PeriodePpdb[]
@@ -66,48 +89,24 @@ model Tenant {
   posts                Post[]
   programs             Program[]
   rekening             Rekening[]
+  schedules            Schedule[]
   sliders              Slider[]
   staff                Staff[]
+  staffAttendances     StaffAttendance[]
   students             Student[]
-  classrooms           Classroom[]
+  subjects             Subject[]
   subscriptions        Subscription[]
+  teacherJournals      TeacherJournal[]
+  TenantNotification   TenantNotification[]
+  tenantScore          TenantScore?
   users                TenantUser[]
-  internalMessages     InternalMessage[]
-  waSession            WaSession?
+  customTheme          CustomTheme?          @relation(fields: [customThemeId], references: [id])
   subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
+  waQueueLogs          WaQueueLog[]
+  waSession            WaSession?
   walletAccounts       WalletAccount[]
   walletTransactions   WalletTransaction[]
-  cashflows            Cashflow[]
-  billingTypes         BillingType[]
-  invoices             Invoice[]
-  invoicePayments      InvoicePayment[]
-  installments         Installment[]
-  canteenMerchants     CanteenMerchant[]
-  canteenProducts      CanteenProduct[]
-  canteenOrders        CanteenOrder[]
-  canteenWithdrawals   CanteenWithdrawal[]
-  attendanceSessions   AttendanceSession[]
-  attendanceRecords    AttendanceRecord[]
-  staffAttendances     StaffAttendance[]
-  attendancePermits    AttendancePermit[]
-  donationCampaigns    DonationCampaign[]
-  donations            Donation[]
-  subjects             Subject[]
-  schedules            Schedule[]
-  grades               Grade[]
-  teacherJournals      TeacherJournal[]
-  disciplineRecords    DisciplineRecord[]
-  partnerships         Partnership[]
   websiteMenus         WebsiteMenu[]
-  cbtExams             CbtExam[]
-  cbtQuestionBanks     CbtQuestionBank[]
-  aiUsageLogs          AiUsageLog[]
-  tenantScore          TenantScore?
-  waQueueLogs          WaQueueLog[]
-  TenantNotification   TenantNotification[]
-
-  customThemeId String?
-  customTheme   CustomTheme? @relation(fields: [customThemeId], references: [id])
 
   @@index([isActive])
   @@index([plan])
@@ -129,28 +128,28 @@ model User {
   twoFactorEnabled     Boolean               @default(false)
   twoFactorSecret      String?
   twoFactorBackupCodes Json?
-  deletedAt            DateTime?
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
+  deletedAt            DateTime?
   affiliateProfile     AffiliateProfile?
+  aiUsageLogs          AiUsageLog[]
   alumniProfiles       Alumni[]
   auditLogs            AuditLog[]
+  canteenMerchant      CanteenMerchant?
   documents            Document[]
+  receivedMessages     InternalMessage[]     @relation("MessageReceiver")
+  sentMessages         InternalMessage[]     @relation("MessageSender")
   notificationSettings NotificationSetting[]
   notifications        Notification[]
   pendaftarPpdb        PendaftarPpdb[]
   posts                Post[]
   sessions             Session[]
   staffProfiles        Staff[]
-  students             Student[]
   studentParents       StudentParent[]
+  students             Student[]
+  TenantNotification   TenantNotification[]
   tenants              TenantUser[]
   verificationTokens   VerificationToken[]
-  sentMessages         InternalMessage[]     @relation("MessageSender")
-  receivedMessages     InternalMessage[]     @relation("MessageReceiver")
-  canteenMerchant      CanteenMerchant?
-  aiUsageLogs          AiUsageLog[]
-  TenantNotification   TenantNotification[]
 
   @@index([isActive])
   @@index([isSuperAdmin])
@@ -265,13 +264,13 @@ model Payment {
   metadata            Json?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
-  deletedAt           DateTime? // Soft delete
   planId              String?
+  discountCodeId      String?
+  deletedAt           DateTime?
   affiliateCommission AffiliateCommission?
+  discountCode        DiscountCode?        @relation(fields: [discountCodeId], references: [id])
   tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   subscription        Subscription?
-  discountCodeId      String?
-  discountCode        DiscountCode?        @relation(fields: [discountCodeId], references: [id])
 
   @@index([tenantId])
   @@index([status])
@@ -290,12 +289,11 @@ model DiscountCode {
   isActive    Boolean   @default(true)
   maxUses     Int?
   usedCount   Int       @default(0)
-  bonusMonths Int       @default(0)
   expiresAt   DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  payments Payment[]
+  bonusMonths Int       @default(0)
+  payments    Payment[]
 
   @@index([createdAt])
   @@map("discount_codes")
@@ -379,7 +377,6 @@ model TenantApplication {
   address       String?
   status        String            @default("PENDING")
   adminMessage  String?
-  emailOpenedAt DateTime?
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   npsn          String?
@@ -389,6 +386,7 @@ model TenantApplication {
   logo          String?
   studentCount  Int               @default(0)
   affiliateId   String?
+  emailOpenedAt DateTime?
   affiliate     AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 
   @@index([status])
@@ -408,10 +406,10 @@ model Post {
   status        String    @default("PUBLISHED")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime? // Soft delete
   seoDesc       String?
   seoTitle      String?
   categoryId    String?
+  deletedAt     DateTime?
   author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   category      Category? @relation(fields: [categoryId], references: [id])
   tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -507,35 +505,31 @@ model Achievement {
 }
 
 model DripCampaign {
-  id        String   @id @default(cuid())
-  dayOffset Int      @unique
+  id        String    @id @default(cuid())
+  dayOffset Int       @unique
   title     String
   subject   String
-  content   String   @db.Text
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  logs DripLog[]
+  content   String
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  logs      DripLog[]
 
   @@index([createdAt])
   @@map("drip_campaigns")
 }
 
 model DripLog {
-  id         String   @id @default(cuid())
+  id         String       @id @default(cuid())
   tenantId   String
   campaignId String
-  sentAt     DateTime @default(now())
-
-  isOpened Boolean   @default(false)
-  openedAt DateTime?
-
-  isClicked Boolean   @default(false)
-  clickedAt DateTime?
-
-  tenant   Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  campaign DripCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  sentAt     DateTime     @default(now())
+  isOpened   Boolean      @default(false)
+  openedAt   DateTime?
+  isClicked  Boolean      @default(false)
+  clickedAt  DateTime?
+  campaign   DripCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  tenant     Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, campaignId])
   @@map("drip_logs")
@@ -627,7 +621,6 @@ model Staff {
   imageUrl        String?
   bio             String?
   sortOrder       Int                @default(0)
-  deletedAt       DateTime?
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   email           String?
@@ -639,15 +632,16 @@ model Staff {
   tiktok          String?
   youtube         String?
   userId          String?
+  deletedAt       DateTime?
+  cbtExams        CbtExam[]
+  classrooms      Classroom[]
+  disciplines     DisciplineRecord[]
+  gradeInputs     Grade[]
+  schedules       Schedule[]
   tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user            User?              @relation(fields: [userId], references: [id])
-  classrooms      Classroom[]
   StaffAttendance StaffAttendance[]
-  schedules       Schedule[]
   journals        TeacherJournal[]
-  gradeInputs     Grade[]
-  disciplines     DisciplineRecord[]
-  cbtExams        CbtExam[]
 
   @@index([tenantId])
   @@index([userId])
@@ -899,23 +893,23 @@ model Student {
   isActive          Boolean            @default(true)
   syncedAt          DateTime?
   classroomId       String?
-  deletedAt         DateTime?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime?
+  attendancePermits AttendancePermit[]
+  attendanceRecords AttendanceRecord[]
+  canteenOrders     CanteenOrder[]
+  cbtAnswers        CbtAnswer[]
+  cbtSessions       CbtSession[]
+  disciplines       DisciplineRecord[]
+  grades            Grade[]
+  invoices          Invoice[]
+  journalPresences  JournalPresence[]
+  parents           StudentParent[]
+  classroom         Classroom?         @relation(fields: [classroomId], references: [id])
   tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user              User?              @relation(fields: [userId], references: [id])
-  classroom         Classroom?         @relation(fields: [classroomId], references: [id])
-  parents           StudentParent[]
   walletAccount     WalletAccount?
-  invoices          Invoice[]
-  canteenOrders     CanteenOrder[]
-  attendanceRecords AttendanceRecord[]
-  attendancePermits AttendancePermit[]
-  grades            Grade[]
-  journalPresences  JournalPresence[]
-  disciplines       DisciplineRecord[]
-  cbtSessions       CbtSession[]
-  cbtAnswers        CbtAnswer[]
 
   @@index([tenantId])
   @@index([userId])
@@ -934,14 +928,14 @@ model AffiliateProfile {
   accountName        String?
   balance            Int                   @default(0)
   totalEarnings      Int                   @default(0)
-  clicks             Int                   @default(0)
   isActive           Boolean               @default(true)
   createdAt          DateTime              @default(now())
   updatedAt          DateTime              @updatedAt
+  clicks             Int                   @default(0)
   commissions        AffiliateCommission[]
-  tenantApplications TenantApplication[]
   user               User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   withdrawals        AffiliateWithdrawal[]
+  tenantApplications TenantApplication[]
 
   @@index([createdAt])
   @@map("affiliate_profiles")
@@ -992,9 +986,9 @@ model AffiliateWithdrawal {
 model WaSession {
   id        String   @id @default(cuid())
   tenantId  String   @unique
-  status    String   @default("DISCONNECTED") // DISCONNECTED, CONNECTED, CONNECTING
-  qrCode    String?  @db.Text // Base64 image
-  creds     Json? // Baileys auth state
+  status    String   @default("DISCONNECTED")
+  qrCode    String?
+  creds     Json?
   delayMin  Int      @default(5)
   delayMax  Int      @default(15)
   createdAt DateTime @default(now())
@@ -1008,23 +1002,22 @@ model WaSession {
 }
 
 model Classroom {
-  id          String   @id @default(cuid())
-  tenantId    String
-  name        String
-  level       String?
-  capacity    Int      @default(30)
-  waliKelasId String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  id                 String              @id @default(cuid())
+  tenantId           String
+  name               String
+  level              String?
+  capacity           Int                 @default(30)
+  waliKelasId        String?
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  attendanceSessions AttendanceSession[]
   tenant             Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   waliKelas          Staff?              @relation(fields: [waliKelasId], references: [id])
-  students           Student[]
-  attendanceSessions AttendanceSession[]
-  schedules          Schedule[]
-  journals           TeacherJournal[]
   grades             Grade[]
+  schedules          Schedule[]
+  students           Student[]
+  journals           TeacherJournal[]
 
   @@index([tenantId])
   @@index([createdAt])
@@ -1036,12 +1029,11 @@ model StudentParent {
   id        String   @id @default(cuid())
   studentId String
   userId    String
-  relation  String   @default("AYAH") // AYAH, IBU, WALI
+  relation  String   @default("AYAH")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, userId])
   @@index([studentId])
@@ -1054,14 +1046,12 @@ model WaMessage {
   id        String   @id @default(cuid())
   tenantId  String
   to        String
-  content   String   @db.Text
-  status    String   @default("PENDING") // PENDING, SENT, FAILED
-  error     String?  @db.Text
+  content   String
+  status    String   @default("PENDING")
+  error     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Tidak perlu strict relation ke Tenant agar jika tenant dihapus log tidak hilang (atau bisa diatur Cascade)
-  // Tapi untuk konsistensi kita tambahkan index saja
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
@@ -1069,23 +1059,18 @@ model WaMessage {
   @@map("wa_messages")
 }
 
-// ----------------------------------------------------------------------
-// EPIC 1: SchoolPay Wallet & Cashflow
-// ----------------------------------------------------------------------
-
 model WalletAccount {
-  id         String   @id @default(cuid())
-  tenantId   String
-  studentId  String   @unique
-  balance    Float    @default(0)
-  pin        String? // 6-digit PIN untuk transaksi
-  dailyLimit Float? // Limit batas jajan harian
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id           String              @id @default(cuid())
+  tenantId     String
+  studentId    String              @unique
+  balance      Float               @default(0)
+  pin          String?
+  isActive     Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  dailyLimit   Float?
   student      Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   transactions WalletTransaction[]
 
   @@index([tenantId])
@@ -1095,21 +1080,20 @@ model WalletAccount {
 }
 
 model WalletTransaction {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   walletId      String
   tenantId      String
-  type          String // DEPOSIT, WITHDRAWAL, PAYMENT, TRANSFER
+  type          String
   amount        Float
   balanceBefore Float
   balanceAfter  Float
-  referenceId   String? // ID referensi eksternal (Invoice, dll)
+  referenceId   String?
   description   String?
-  status        String   @default("SUCCESS") // PENDING, SUCCESS, FAILED
+  status        String        @default("SUCCESS")
   metadata      Json?
-  createdAt     DateTime @default(now())
-
-  wallet WalletAccount @relation(fields: [walletId], references: [id], onDelete: Cascade)
-  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt     DateTime      @default(now())
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  wallet        WalletAccount @relation(fields: [walletId], references: [id], onDelete: Cascade)
 
   @@index([walletId])
   @@index([tenantId])
@@ -1122,16 +1106,15 @@ model WalletTransaction {
 model Cashflow {
   id          String   @id @default(cuid())
   tenantId    String
-  type        String // INCOME, EXPENSE
-  category    String // SPP, KANTIN, DONASI, OPERASIONAL, dll
+  type        String
+  category    String
   amount      Float
   description String?
-  referenceId String? // ID relasi (Invoice/Payment)
+  referenceId String?
   recordedAt  DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([type])
@@ -1145,16 +1128,15 @@ model InternalMessage {
   id         String   @id @default(cuid())
   tenantId   String
   senderId   String
-  receiverId String? // Jika null, berarti pesan broadcast/untuk Admin
+  receiverId String?
   subject    String?
-  body       String   @db.Text
+  body       String
   isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
-  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  sender   User   @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver User?  @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiver   User?    @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender     User     @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([senderId])
@@ -1164,25 +1146,19 @@ model InternalMessage {
   @@map("internal_messages")
 }
 
-// ======================================================================
-// EPIC 2: BILLING & AUTO-DEBET SPP
-// ======================================================================
-
-// Jenis tagihan yang bisa dibuat sekolah (template)
 model BillingType {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   tenantId    String
-  name        String // "SPP", "Uang Gedung", "Seragam", dll
-  category    String   @default("SPP") // SPP, DAFTAR_ULANG, SERAGAM, BEBAS, LAINNYA
+  name        String
+  category    String    @default("SPP")
   amount      Float
-  isRecurring Boolean  @default(false) // Jika true → Auto-Bill tiap bulan
+  isRecurring Boolean   @default(false)
   description String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  invoices Invoice[]
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoices    Invoice[]
 
   @@index([tenantId])
   @@index([createdAt])
@@ -1190,32 +1166,30 @@ model BillingType {
   @@map("billing_types")
 }
 
-// Tagihan siswa (1 tagihan per siswa per periode)
 model Invoice {
-  id            String    @id @default(cuid())
+  id            String           @id @default(cuid())
   tenantId      String
   studentId     String
   billingTypeId String?
-  code          String    @unique // INV-2024-07-0001
+  code          String           @unique
   title         String
   amount        Float
-  amountPaid    Float     @default(0)
-  amountDue     Float // amount - amountPaid
+  amountPaid    Float            @default(0)
+  amountDue     Float
   dueDate       DateTime
-  month         Int? // 1-12, untuk SPP bulanan
+  month         Int?
   year          Int?
-  status        String    @default("UNPAID") // UNPAID, PARTIAL, PAID, OVERDUE, CANCELLED
-  isAutoDebet   Boolean   @default(false) // Apakah didebet dari wallet otomatis?
+  status        String           @default("UNPAID")
+  isAutoDebet   Boolean          @default(false)
   notes         String?
-  deletedAt     DateTime? // Soft delete
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student      Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  billingType  BillingType?     @relation(fields: [billingTypeId], references: [id])
-  payments     InvoicePayment[]
-  installments Installment[]
+  deletedAt     DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  installments  Installment[]
+  payments      InvoicePayment[]
+  billingType   BillingType?     @relation(fields: [billingTypeId], references: [id])
+  student       Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  tenant        Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([studentId])
@@ -1229,25 +1203,23 @@ model Invoice {
   @@map("invoices")
 }
 
-// Pembayaran atas tagihan (bisa via Tripay, manual, atau Wallet)
 model InvoicePayment {
   id         String    @id @default(cuid())
   invoiceId  String
   tenantId   String
   amount     Float
-  method     String // WALLET, TRANSFER, CASH, TRIPAY
-  reference  String? // ID transaksi eksternal (Tripay ref, dsb)
-  proofUrl   String? // Bukti transfer manual
-  status     String    @default("PENDING") // PENDING, VERIFIED, REJECTED
+  method     String
+  reference  String?
+  proofUrl   String?
+  status     String    @default("PENDING")
   verifiedAt DateTime?
-  verifiedBy String? // userId admin yang verifikasi
+  verifiedBy String?
   notes      String?
   paidAt     DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-
-  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoice    Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([invoiceId])
   @@index([tenantId])
@@ -1257,19 +1229,17 @@ model InvoicePayment {
   @@map("invoice_payments")
 }
 
-// Cicilan tagihan besar
 model Installment {
   id        String    @id @default(cuid())
   invoiceId String
   tenantId  String
   dueDate   DateTime
   amount    Float
-  status    String    @default("UNPAID") // UNPAID, PAID
+  status    String    @default("UNPAID")
   paidAt    DateTime?
   createdAt DateTime  @default(now())
-
-  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoice   Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([invoiceId])
   @@index([tenantId])
@@ -1278,27 +1248,21 @@ model Installment {
   @@map("installments")
 }
 
-// ======================================================================
-// EPIC 3: E-KANTIN (CASHLESS CANTEEN)
-// ======================================================================
-
-// Merchant / Pedagang Kantin
 model CanteenMerchant {
-  id          String   @id @default(cuid())
+  id          String              @id @default(cuid())
   tenantId    String
-  userId      String   @unique // Akun login si pedagang
-  name        String // "Warung Bu Siti"
+  userId      String              @unique
+  name        String
   description String?
   imageUrl    String?
-  isActive    Boolean  @default(true)
-  balance     Float    @default(0) // Saldo kantin (pending withdrawal)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  isActive    Boolean             @default(true)
+  balance     Float               @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
   tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user        User                @relation(fields: [userId], references: [id])
-  products    CanteenProduct[]
   orders      CanteenOrder[]
+  products    CanteenProduct[]
   withdrawals CanteenWithdrawal[]
 
   @@index([tenantId])
@@ -1307,23 +1271,21 @@ model CanteenMerchant {
   @@map("canteen_merchants")
 }
 
-// Menu / Produk Kantin
 model CanteenProduct {
-  id          String   @id @default(cuid())
+  id          String             @id @default(cuid())
   merchantId  String
   tenantId    String
   name        String
   description String?
   imageUrl    String?
   price       Float
-  stock       Int      @default(-1) // -1 = unlimited
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  merchant   CanteenMerchant    @relation(fields: [merchantId], references: [id], onDelete: Cascade)
-  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  orderItems CanteenOrderItem[]
+  stock       Int                @default(-1)
+  isActive    Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  orderItems  CanteenOrderItem[]
+  merchant    CanteenMerchant    @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([merchantId])
   @@index([tenantId])
@@ -1332,21 +1294,19 @@ model CanteenProduct {
   @@map("canteen_products")
 }
 
-// Transaksi jual-beli di kantin
 model CanteenOrder {
-  id          String   @id @default(cuid())
+  id          String             @id @default(cuid())
   tenantId    String
   merchantId  String
-  studentId   String // Siswa yang membeli
+  studentId   String
   total       Float
-  status      String   @default("COMPLETED") // PENDING, COMPLETED, CANCELLED
-  pinVerified Boolean  @default(false)
-  createdAt   DateTime @default(now())
-
-  tenant   Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  merchant CanteenMerchant    @relation(fields: [merchantId], references: [id])
-  student  Student            @relation(fields: [studentId], references: [id])
-  items    CanteenOrderItem[]
+  status      String             @default("COMPLETED")
+  pinVerified Boolean            @default(false)
+  createdAt   DateTime           @default(now())
+  items       CanteenOrderItem[]
+  merchant    CanteenMerchant    @relation(fields: [merchantId], references: [id])
+  student     Student            @relation(fields: [studentId], references: [id])
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([merchantId])
@@ -1357,34 +1317,31 @@ model CanteenOrder {
 }
 
 model CanteenOrderItem {
-  id        String @id @default(cuid())
+  id        String         @id @default(cuid())
   orderId   String
   productId String
-  name      String // Snapshot nama produk saat transaksi
+  name      String
   price     Float
   quantity  Int
   subtotal  Float
-
-  order   CanteenOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product CanteenProduct @relation(fields: [productId], references: [id])
+  order     CanteenOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   CanteenProduct @relation(fields: [productId], references: [id])
 
   @@index([orderId])
   @@map("canteen_order_items")
 }
 
-// Penarikan dana merchant ke sekolah
 model CanteenWithdrawal {
-  id          String    @id @default(cuid())
+  id          String          @id @default(cuid())
   tenantId    String
   merchantId  String
   amount      Float
-  status      String    @default("PENDING") // PENDING, PROCESSED, REJECTED
+  status      String          @default("PENDING")
   notes       String?
   processedAt DateTime?
-  createdAt   DateTime  @default(now())
-
-  tenant   Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  merchant CanteenMerchant @relation(fields: [merchantId], references: [id])
+  createdAt   DateTime        @default(now())
+  merchant    CanteenMerchant @relation(fields: [merchantId], references: [id])
+  tenant      Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([merchantId])
@@ -1393,23 +1350,17 @@ model CanteenWithdrawal {
   @@map("canteen_withdrawals")
 }
 
-// ======================================================================
-// EPIC 4: ABSENSI & DISIPLIN
-// ======================================================================
-
-// Sesi Absensi Harian (dibuat per hari oleh admin/guru)
 model AttendanceSession {
-  id          String   @id @default(cuid())
+  id          String             @id @default(cuid())
   tenantId    String
   classroomId String?
-  date        DateTime @db.Date
-  type        String   @default("DAILY") // DAILY, EXAM, EXTRACURRICULAR
+  date        DateTime           @db.Date
+  type        String             @default("DAILY")
   createdBy   String
-  createdAt   DateTime @default(now())
-
-  tenant    Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  classroom Classroom?         @relation(fields: [classroomId], references: [id])
-  records   AttendanceRecord[]
+  createdAt   DateTime           @default(now())
+  records     AttendanceRecord[]
+  classroom   Classroom?         @relation(fields: [classroomId], references: [id])
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, classroomId, date])
   @@index([tenantId])
@@ -1419,24 +1370,22 @@ model AttendanceSession {
   @@map("attendance_sessions")
 }
 
-// Rekaman absensi per-siswa
 model AttendanceRecord {
-  id           String    @id @default(cuid())
+  id           String            @id @default(cuid())
   sessionId    String
   tenantId     String
   studentId    String
-  academicYear String? // Untuk partitioning
-  status       String // HADIR, IZIN, SAKIT, ALPHA
+  status       String
   notes        String?
   checkinAt    DateTime?
-  proofUrl     String? // Foto/surat keterangan
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime? // Soft delete
-
-  session AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  student Student           @relation(fields: [studentId], references: [id])
-  tenant  Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  proofUrl     String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  academicYear String?
+  deletedAt    DateTime?
+  session      AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student      Student           @relation(fields: [studentId], references: [id])
+  tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([sessionId, studentId])
   @@index([tenantId])
@@ -1447,7 +1396,6 @@ model AttendanceRecord {
   @@map("attendance_records")
 }
 
-// Absensi Guru/Staf dengan Check-In/Out + GPS
 model StaffAttendance {
   id           String    @id @default(cuid())
   tenantId     String
@@ -1458,14 +1406,13 @@ model StaffAttendance {
   checkInLat   Float?
   checkInLng   Float?
   checkInPhoto String?
-  status       String    @default("HADIR") // HADIR, IZIN, SAKIT, ALPHA
+  status       String    @default("HADIR")
   notes        String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime? // Soft delete
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  staff  Staff  @relation(fields: [staffId], references: [id])
+  deletedAt    DateTime?
+  staff        Staff     @relation(fields: [staffId], references: [id])
+  tenant       Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, staffId, date])
   @@index([tenantId])
@@ -1475,25 +1422,23 @@ model StaffAttendance {
   @@map("staff_attendances")
 }
 
-// Pengajuan Izin/Sakit dari Orang Tua
 model AttendancePermit {
   id          String    @id @default(cuid())
   tenantId    String
   studentId   String
-  submittedBy String // userId ortu
-  type        String // IZIN, SAKIT
+  submittedBy String
+  type        String
   startDate   DateTime  @db.Date
   endDate     DateTime  @db.Date
   reason      String
   proofUrl    String?
-  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  status      String    @default("PENDING")
   reviewedBy  String?
   reviewedAt  DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student Student @relation(fields: [studentId], references: [id])
+  student     Student   @relation(fields: [studentId], references: [id])
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([studentId])
@@ -1502,29 +1447,24 @@ model AttendancePermit {
   @@map("attendance_permits")
 }
 
-// ======================================================================
-// EPIC 5: CROWDFUNDING & DONASI
-// ======================================================================
-
 model DonationCampaign {
-  id              String    @id @default(cuid())
+  id              String     @id @default(cuid())
   tenantId        String
   title           String
-  description     String?   @db.Text
+  description     String?
   imageUrl        String?
   targetAmount    Float
-  collectedAmount Float     @default(0)
+  collectedAmount Float      @default(0)
   startDate       DateTime
   endDate         DateTime?
-  isPublic        Boolean   @default(true) // Bisa diakses tanpa login
-  isActive        Boolean   @default(true)
-  slug            String? // Untuk URL publik
-  deletedAt       DateTime? // Soft delete
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  donations Donation[]
+  isPublic        Boolean    @default(true)
+  isActive        Boolean    @default(true)
+  slug            String?
+  deletedAt       DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  tenant          Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  donations       Donation[]
 
   @@index([tenantId])
   @@index([isActive])
@@ -1534,23 +1474,22 @@ model DonationCampaign {
 }
 
 model Donation {
-  id          String    @id @default(cuid())
+  id          String           @id @default(cuid())
   campaignId  String
   tenantId    String
-  donorName   String // Bisa anonymous
+  donorName   String
   donorEmail  String?
-  userId      String? // Jika login → otomatis isi
+  userId      String?
   amount      Float
-  method      String // WALLET, TRIPAY
-  reference   String? // ID transaksi Tripay
-  isAnonymous Boolean   @default(false)
+  method      String
+  reference   String?
+  isAnonymous Boolean          @default(false)
   message     String?
-  status      String    @default("PENDING") // PENDING, PAID
+  status      String           @default("PENDING")
   paidAt      DateTime?
-  createdAt   DateTime  @default(now())
-
-  campaign DonationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt   DateTime         @default(now())
+  campaign    DonationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([campaignId])
   @@index([tenantId])
@@ -1560,25 +1499,19 @@ model Donation {
   @@map("donations")
 }
 
-// ======================================================================
-// EPIC 6: AKADEMIK — MAPEL, JADWAL, NILAI, JURNAL, DISIPLIN
-// ======================================================================
-
-// Mata Pelajaran (Master Data per Tenant)
 model Subject {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   tenantId    String
   name        String
   code        String?
   description String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tenant    Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  schedules Schedule[]
-  grades    Grade[]
-  journals  TeacherJournal[]
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  grades      Grade[]
+  schedules   Schedule[]
+  tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  journals    TeacherJournal[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -1587,23 +1520,21 @@ model Subject {
   @@map("subjects")
 }
 
-// Jadwal Pelajaran Mingguan (Roster)
 model Schedule {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   tenantId    String
   classroomId String
   subjectId   String
   staffId     String
-  dayOfWeek   Int // 1=Senin, 2=Selasa, ..., 6=Sabtu
-  startTime   String // "07:00"
-  endTime     String // "08:30"
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  staff     Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int
+  startTime   String
+  endTime     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  staff       Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([classroomId])
@@ -1613,27 +1544,25 @@ model Schedule {
   @@map("schedules")
 }
 
-// Penilaian / Nilai Siswa
 model Grade {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   tenantId    String
   studentId   String
   subjectId   String
   classroomId String
   staffId     String
-  type        String // HARIAN, PTS, PAS, PRAKTEK
-  semester    Int // 1 atau 2
-  year        Int // Tahun ajaran (misal 2024)
+  type        String
+  semester    Int
+  year        Int
   score       Float
   notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-  staff     Staff     @relation(fields: [staffId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  staff       Staff     @relation(fields: [staffId], references: [id])
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, studentId, subjectId, type, semester, year])
   @@index([tenantId])
@@ -1644,24 +1573,22 @@ model Grade {
   @@map("grades")
 }
 
-// Jurnal Mengajar Guru (per hari per kelas per mapel)
 model TeacherJournal {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   tenantId    String
   staffId     String
   classroomId String
   subjectId   String
-  date        DateTime @db.Date
+  date        DateTime          @db.Date
   topic       String
   notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  staff     Staff             @relation(fields: [staffId], references: [id])
-  classroom Classroom         @relation(fields: [classroomId], references: [id])
-  subject   Subject           @relation(fields: [subjectId], references: [id])
-  presences JournalPresence[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  presences   JournalPresence[]
+  classroom   Classroom         @relation(fields: [classroomId], references: [id])
+  staff       Staff             @relation(fields: [staffId], references: [id])
+  subject     Subject           @relation(fields: [subjectId], references: [id])
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([staffId, classroomId, subjectId, date])
   @@index([tenantId])
@@ -1671,39 +1598,35 @@ model TeacherJournal {
   @@map("teacher_journals")
 }
 
-// Presensi Siswa di dalam Jurnal Guru
 model JournalPresence {
-  id        String  @id @default(cuid())
+  id        String         @id @default(cuid())
   journalId String
   studentId String
-  status    String // HADIR, IZIN, SAKIT, ALPHA
+  status    String
   notes     String?
-
-  journal TeacherJournal @relation(fields: [journalId], references: [id], onDelete: Cascade)
-  student Student        @relation(fields: [studentId], references: [id])
+  journal   TeacherJournal @relation(fields: [journalId], references: [id], onDelete: Cascade)
+  student   Student        @relation(fields: [studentId], references: [id])
 
   @@unique([journalId, studentId])
   @@index([journalId])
   @@map("journal_presences")
 }
 
-// Catatan Pelanggaran & Penghargaan Siswa (BK)
 model DisciplineRecord {
   id          String   @id @default(cuid())
   tenantId    String
   studentId   String
   staffId     String
-  type        String // PELANGGARAN, PENGHARGAAN
-  category    String // KEDISIPLINAN, AKADEMIK, ATRIBUT, PERILAKU
+  type        String
+  category    String
   description String
   points      Int      @default(0)
   date        DateTime @db.Date
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student Student @relation(fields: [studentId], references: [id])
-  staff   Staff   @relation(fields: [staffId], references: [id])
+  staff       Staff    @relation(fields: [staffId], references: [id])
+  student     Student  @relation(fields: [studentId], references: [id])
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([studentId])
@@ -1730,23 +1653,18 @@ model Partnership {
   @@map("partnerships")
 }
 
-// ======================================================================
-// EPIC 4: CBT (COMPUTER BASED TEST)
-// ======================================================================
-
 model CbtQuestionBank {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   tenantId    String
   name        String
   description String?
-  level       String? // SD, SMP, SMA, KELAS_10, dll
+  level       String?
   subject     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tenant    Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  questions CbtQuestion[]
-  exams     CbtExam[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  exams       CbtExam[]
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  questions   CbtQuestion[]
 
   @@index([tenantId])
   @@index([createdAt])
@@ -1755,48 +1673,46 @@ model CbtQuestionBank {
 }
 
 model CbtQuestion {
-  id             String   @id @default(cuid())
+  id             String          @id @default(cuid())
   questionBankId String
-  type           String   @default("MULTIPLE_CHOICE") // MULTIPLE_CHOICE, ESSAY
-  content        String   @db.Text
-  options        Json? // Array of objects { id, text, isCorrect }
-  explanation    String?  @db.Text
-  points         Int      @default(1)
-  order          Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  questionBank CbtQuestionBank @relation(fields: [questionBankId], references: [id], onDelete: Cascade)
-  answers      CbtAnswer[]
+  type           String          @default("MULTIPLE_CHOICE")
+  content        String
+  options        Json?
+  explanation    String?
+  points         Int             @default(1)
+  order          Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  answers        CbtAnswer[]
+  questionBank   CbtQuestionBank @relation(fields: [questionBankId], references: [id], onDelete: Cascade)
 
   @@index([questionBankId])
   @@map("cbt_questions")
 }
 
 model CbtExam {
-  id             String   @id @default(cuid())
+  id             String          @id @default(cuid())
   tenantId       String
   questionBankId String
-  authorId       String // ID Guru/Staff yang membuat
+  authorId       String
   title          String
   description    String?
-  type           String   @default("UTS") // UTS, UAS, KUIS, TUGAS
+  type           String          @default("UTS")
   startTime      DateTime
   endTime        DateTime
-  duration       Int // Durasi ujian dalam menit
-  passingGrade   Int      @default(0)
-  randomize      Boolean  @default(true) // Acak urutan soal
-  randomizeOpts  Boolean  @default(true) // Acak urutan opsi jawaban (A,B,C,D)
-  showResult     Boolean  @default(false)
-  pin            String? // PIN Opsional untuk masuk ujian
-  status         String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  tenant       Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  questionBank CbtQuestionBank @relation(fields: [questionBankId], references: [id])
-  author       Staff           @relation(fields: [authorId], references: [id])
-  sessions     CbtSession[]
+  duration       Int
+  passingGrade   Int             @default(0)
+  randomize      Boolean         @default(true)
+  randomizeOpts  Boolean         @default(true)
+  showResult     Boolean         @default(false)
+  pin            String?
+  status         String          @default("DRAFT")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  author         Staff           @relation(fields: [authorId], references: [id])
+  questionBank   CbtQuestionBank @relation(fields: [questionBankId], references: [id])
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sessions       CbtSession[]
 
   @@index([tenantId])
   @@index([authorId])
@@ -1807,22 +1723,21 @@ model CbtExam {
 }
 
 model CbtSession {
-  id         String    @id @default(cuid())
+  id         String      @id @default(cuid())
   examId     String
   studentId  String
-  status     String    @default("ONGOING") // ONGOING, FINISHED, BLOCKED
-  startTime  DateTime  @default(now())
+  status     String      @default("ONGOING")
+  startTime  DateTime    @default(now())
   endTime    DateTime?
   score      Float?
   ipAddress  String?
   userAgent  String?
-  cheatCount Int       @default(0) // Berapa kali terdeteksi pindah tab
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  exam    CbtExam     @relation(fields: [examId], references: [id], onDelete: Cascade)
-  student Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  answers CbtAnswer[]
+  cheatCount Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  answers    CbtAnswer[]
+  exam       CbtExam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  student    Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([examId, studentId])
   @@index([studentId])
@@ -1832,19 +1747,18 @@ model CbtSession {
 }
 
 model CbtAnswer {
-  id         String   @id @default(cuid())
+  id         String      @id @default(cuid())
   sessionId  String
   studentId  String
   questionId String
-  answer     String?  @db.Text // Bisa ID opsi ganda, atau teks essay
-  isCorrect  Boolean  @default(false)
-  points     Float    @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  session  CbtSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  student  Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  question CbtQuestion @relation(fields: [questionId], references: [id])
+  answer     String?
+  isCorrect  Boolean     @default(false)
+  points     Float       @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  question   CbtQuestion @relation(fields: [questionId], references: [id])
+  session    CbtSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student    Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([sessionId, questionId])
   @@index([studentId])
@@ -1861,9 +1775,8 @@ model AiUsageLog {
   feature   String
   tokens    Int
   createdAt DateTime @default(now())
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([userId])
@@ -1872,18 +1785,16 @@ model AiUsageLog {
   @@map("ai_usage_logs")
 }
 
-// Leaderboard Tracking Score
 model TenantScore {
   id             String   @id @default(cuid())
   tenantId       String   @unique
-  contentScore   Int      @default(0) // Posts, Staff, Facilities, etc.
-  trafficScore   Int      @default(0) // PageViews or Unique Visitors
-  activityScore  Int      @default(0) // Admin logins, etc.
+  contentScore   Int      @default(0)
+  trafficScore   Int      @default(0)
+  activityScore  Int      @default(0)
   totalScore     Int      @default(0)
   rank           Int      @default(0)
   lastCalculated DateTime @default(now())
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([totalScore(sort: Desc)])
   @@index([rank])
@@ -1894,13 +1805,12 @@ model WaQueueLog {
   id           String    @id @default(cuid())
   tenantId     String?
   targetNumber String
-  message      String    @db.Text
-  status       String    @default("PENDING") // PENDING, SENT, FAILED
-  error        String?   @db.Text
+  message      String
+  status       String    @default("PENDING")
+  error        String?
   sentAt       DateTime?
   createdAt    DateTime  @default(now())
-
-  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant       Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([status])
@@ -1911,15 +1821,14 @@ model WaQueueLog {
 model TenantNotification {
   id        String   @id @default(cuid())
   tenantId  String
-  userId    String? // Opsional, jika spesifik untuk 1 user
+  userId    String?
   title     String
   message   String
-  type      String   @default("INFO") // INFO, SUCCESS, WARNING, POINTS_UP
+  type      String   @default("INFO")
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([userId])
@@ -1929,56 +1838,48 @@ model TenantNotification {
 }
 
 model CustomTheme {
-  id        String  @id @default(cuid())
-  name      String
-  author    String?
-  version   String  @default("1.0.0")
-  thumbnail String?
-
-  layoutHtml          String  @db.Text
-  indexHtml           String  @db.Text
-  facilityHtml        String? @db.Text
-  aboutHtml           String? @db.Text
-  staffHtml           String? @db.Text
-  newsHtml            String? @db.Text
-  newsDetailHtml      String? @db.Text
-  galleryHtml         String? @db.Text
-  contactHtml         String? @db.Text
-  extracurricularHtml String? @db.Text
-  programHtml         String? @db.Text
-  achievementHtml     String? @db.Text
-  customCss           String  @db.Text
-  customJs            String  @db.Text
-
-  isActive            Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  tenants Tenant[]
+  id                  String   @id @default(cuid())
+  name                String
+  author              String?
+  version             String   @default("1.0.0")
+  thumbnail           String?
+  layoutHtml          String
+  indexHtml           String
+  facilityHtml        String?
+  customCss           String
+  customJs            String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  aboutHtml           String?
+  achievementHtml     String?
+  contactHtml         String?
+  extracurricularHtml String?
+  galleryHtml         String?
+  newsDetailHtml      String?
+  newsHtml            String?
+  programHtml         String?
+  staffHtml           String?
+  isActive            Boolean  @default(true)
+  tenants             Tenant[]
 
   @@map("custom_themes")
 }
 
 model WebsiteMenu {
-  id       String @id @default(cuid())
-  tenantId String
-  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  label String
-  url   String
-  icon  String? // Optional lucide icon name
-
-  parentId String?
-  parent   WebsiteMenu?  @relation("MenuHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
-  children WebsiteMenu[] @relation("MenuHierarchy")
-
-  order    Int     @default(0)
-  isActive Boolean @default(true)
-  isSystem Boolean @default(false) // Jika true, menu bawaan seperti Home tidak bisa dihapus
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String        @id @default(cuid())
+  tenantId  String
+  label     String
+  url       String
+  icon      String?
+  parentId  String?
+  order     Int           @default(0)
+  isActive  Boolean       @default(true)
+  isSystem  Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  parent    WebsiteMenu?  @relation("MenuHierarchy", fields: [parentId], references: [id])
+  children  WebsiteMenu[] @relation("MenuHierarchy")
+  tenant    Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([parentId])
