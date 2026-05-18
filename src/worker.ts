@@ -2,6 +2,8 @@ import { Worker, Job } from "bullmq"
 import { Redis } from "ioredis"
 import { db } from "./lib/db"
 
+import { sendWhatsAppDirect } from "./lib/services/notification"
+
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
   port: parseInt(process.env.REDIS_PORT || "6379"),
@@ -23,8 +25,12 @@ const waWorker = new Worker(
     console.log(`[wa-queue] Processing job ${job.id} for ${number}...`)
 
     try {
-      // Panggil fungsi kirim WA di sini
-      // const result = await sendWhatsAppDirect(tenantId, number, message)
+      // Panggil fungsi kirim WA aktual
+      const result = await sendWhatsAppDirect(number, message, tenantId)
+      
+      if (!result.success) {
+        throw new Error(result.error || "Failed to send WhatsApp message")
+      }
       
       if (waQueueLogId) {
         await db.waQueueLog.update({
