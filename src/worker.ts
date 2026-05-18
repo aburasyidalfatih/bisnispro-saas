@@ -3,6 +3,7 @@ import { Redis } from "ioredis"
 import { db } from "./lib/db"
 
 import { sendWhatsAppDirect } from "./lib/services/notification"
+import { ImportService } from "./lib/services/import-service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -61,13 +62,39 @@ const waWorker = new Worker(
 const importWorker = new Worker(
   "import-queue",
   async (job: Job) => {
-    const { tenantId, type, fileKey } = job.data
+    const { tenantId, type, data, userId } = job.data
     console.log(`[import-queue] Processing import ${type} for tenant ${tenantId}...`)
 
-    // Proses import ribuan baris CSV di sini
-    // ...
-    
-    return { success: true }
+    try {
+      if (type === "students") {
+        await ImportService.importStudents({ tenantId, students: data })
+      } else if (type === "users") {
+        await ImportService.importUsers({ tenantId, users: data })
+      }
+
+      await db.auditLog.create({
+        data: {
+          tenantId,
+          action: `IMPORT_${type.toUpperCase()}_COMPLETED`,
+          entity: "System",
+          userId: userId || "SYSTEM"
+        }
+      }).catch(() => {})
+
+      return { success: true }
+    } catch (error: any) {
+      console.error(`[import-queue] Failed to import ${type}`, error)
+      await db.auditLog.create({
+        data: {
+          tenantId,
+          action: `IMPORT_${type.toUpperCase()}_FAILED`,
+          entity: "System",
+          userId: userId || "SYSTEM",
+          details: error.message
+        }
+      }).catch(() => {})
+      throw error
+    }
   },
   { connection, concurrency: 5 } // Tugas berat, concurrency diset rendah
 )

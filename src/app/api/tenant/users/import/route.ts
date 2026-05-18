@@ -17,23 +17,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden. Admin access required." }, { status: 403 })
     }
 
-    // Jalankan import langsung di background (bypass Inngest)
-    const { ImportService } = await import("@/lib/services/import-service")
-    const { db } = await import("@/lib/db")
+    // 3. Masukkan ke BullMQ
+    const { importQueue } = await import("@/lib/queue")
+    await importQueue.add("import-gtk", { tenantId, type: "users", data: users, userId: session.user.id })
 
-    ImportService.importUsers({ tenantId, users })
-      .then(async (result) => {
-        await db.auditLog.create({
-          data: {
-            tenantId,
-            action: "IMPORT_USERS_ASYNC",
-            entity: "System",
-            userId: session.user.id || "SYSTEM"
-          }
-        }).catch(() => {})
-        logger.info("GTK import completed", { tenantId, result })
-      })
-      .catch(err => logger.error("GTK import failed", err, { tenantId }))
+    // Log the action
+    await db.auditLog.create({
+      data: {
+        tenantId,
+        action: "ENQUEUE_IMPORT_USERS",
+        entity: "System",
+        userId: session.user.id || "SYSTEM"
+      }
+    }).catch(() => {})
 
     return NextResponse.json({ 
       success: true, 
