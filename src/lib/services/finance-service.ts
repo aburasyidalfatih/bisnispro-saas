@@ -17,6 +17,17 @@ interface CreateInvoiceDTO {
   installments?: { dueDate: string; amount: number }[];
 }
 
+export interface CreateBulkInvoiceDTO {
+  tenantId: string;
+  billingTypeId: string; // Harus pakai template (misal: SPP Kelas 1)
+  title: string;
+  dueDate: string | Date;
+  month?: number;
+  year?: number;
+  notes?: string;
+  userId: string;
+}
+
 interface PayInvoiceDTO {
   tenantId: string;
   invoiceId: string;
@@ -112,6 +123,53 @@ export class FinanceService {
         })
       }
     }
+  }
+
+  static async createBulkInvoices(data: CreateBulkInvoiceDTO) {
+    const billingType = await db.billingType.findUnique({
+      where: { id: data.billingTypeId }
+    })
+
+    if (!billingType) throw new Error("Billing Type tidak ditemukan")
+
+    // Ambil semua siswa aktif di tenant ini
+    const students = await db.student.findMany({
+      where: { tenantId: data.tenantId, deletedAt: null },
+      select: { id: true }
+    })
+
+    if (students.length === 0) return { count: 0 }
+
+    const invoicesData = students.map(student => {
+      const code = `INV-${(data.year || new Date().getFullYear())}-${((data.month || new Date().getMonth() + 1)).toString().padStart(2, "0")}-${nanoid(6).toUpperCase()}`
+      return {
+        tenantId: data.tenantId,
+        code,
+        studentId: student.id,
+        title: data.title,
+        amount: billingType.amount,
+        amountDue: billingType.amount,
+        dueDate: new Date(data.dueDate),
+        month: data.month,
+        year: data.year ?? new Date().getFullYear(),
+        notes: data.notes,
+        billingTypeId: data.billingTypeId,
+        status: "UNPAID",
+      }
+    })
+
+    // Insert massal
+    const createdCount = await db.invoice.createMany({
+      data: invoicesData,
+      skipDuplicates: true
+    })
+
+    // Offload notifikasi ke background job
+    // (Dalam kasus ribuan siswa, notifikasi disarankan ditaruh ke queue lain untuk menghindari timeout, 
+    // tapi karena worker diproses di background, kita bisa memanggil fungsi broadcast langsung secara batch di sini jika perlu, 
+    // atau biarkan user melihat tagihan di app)
+
+    return { count: createdCount.count }
   }
 
   static async processPayment(data: PayInvoiceDTO) {

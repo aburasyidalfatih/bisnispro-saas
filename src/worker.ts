@@ -4,6 +4,8 @@ import { db } from "./lib/db"
 
 import { sendWhatsAppDirect } from "./lib/services/notification"
 import { ImportService } from "./lib/services/import-service"
+import { processGamificationPoints } from "./lib/services/gamification"
+import { FinanceService } from "./lib/services/finance-service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -106,8 +108,35 @@ const billingWorker = new Worker(
   "billing-queue",
   async (job: Job) => {
     console.log(`[billing-queue] Processing invoice generation for tenant ${job.data.tenantId}...`)
-    // Generate invoice bulanan secara asinkron
-    return { success: true }
+    try {
+      // Generate invoice bulanan secara asinkron
+      const result = await FinanceService.createBulkInvoices(job.data)
+      console.log(`[billing-queue] Successfully generated ${result.count} invoices.`)
+
+      await db.auditLog.create({
+        data: {
+          tenantId: job.data.tenantId,
+          action: "BULK_INVOICE_GENERATION_COMPLETED",
+          entity: "Finance",
+          userId: job.data.userId || "SYSTEM",
+          details: `Dibuat ${result.count} tagihan`
+        }
+      }).catch(() => {})
+
+      return { success: true, count: result.count }
+    } catch (error: any) {
+      console.error(`[billing-queue] Failed to generate bulk invoices:`, error)
+      await db.auditLog.create({
+        data: {
+          tenantId: job.data.tenantId,
+          action: "BULK_INVOICE_GENERATION_FAILED",
+          entity: "Finance",
+          userId: job.data.userId || "SYSTEM",
+          details: error.message
+        }
+      }).catch(() => {})
+      throw error
+    }
   },
   { connection, concurrency: 5 }
 )
@@ -119,7 +148,10 @@ const gamificationWorker = new Worker(
   "gamification-queue",
   async (job: Job) => {
     console.log(`[gamification-queue] Adding points to user ${job.data.userId}...`)
+    
     // Hitung poin secara background
+    await processGamificationPoints(job.data)
+    
     return { success: true }
   },
   { connection, concurrency: 50 } // Sangat ringan, concurrency diset sangat tinggi

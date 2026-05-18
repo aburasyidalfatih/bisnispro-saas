@@ -1,13 +1,29 @@
 import { db } from "@/lib/db"
 
+import { gamificationQueue } from "../queue"
+
 /**
- * Tambah poin gamifikasi langsung ke database.
- * Fallback dari Inngest (yang belum dikonfigurasi).
- * 
- * Fungsi ini aman dipanggil dari mana saja — jika tenantScore belum ada,
- * akan di-create otomatis; jika sudah ada, akan di-increment.
+ * Enqueue poin gamifikasi ke BullMQ agar diproses di background.
+ * Ini mencegah server dari query blocker.
  */
-export async function addGamificationPoints({
+export async function addGamificationPoints(payload: {
+  tenantId: string
+  userId?: string
+  type: string
+  points: number
+  description?: string
+}) {
+  try {
+    await gamificationQueue.add("add-points", payload)
+  } catch (err) {
+    console.error("Failed to enqueue gamification points:", err)
+  }
+}
+
+/**
+ * Eksekusi aktual oleh BullMQ Worker.
+ */
+export async function processGamificationPoints({
   tenantId,
   userId,
   type,
