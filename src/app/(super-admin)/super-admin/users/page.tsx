@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
   Users, Search, ShieldCheck, Mail, Calendar,
-  Building2, MoreHorizontal, UserCog, Trash2, ExternalLink, Briefcase
+  Building2, MoreHorizontal, UserCog, Trash2, ExternalLink, Briefcase, Download
 } from "lucide-react"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -82,8 +82,8 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="flex items-center gap-3">
+      {/* Search and Export */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -93,6 +93,12 @@ export default function UsersPage() {
             className="pl-9 rounded-xl"
           />
         </div>
+        <Button asChild variant="outline" className="rounded-xl border-primary/20 text-primary hover:bg-primary/5 shadow-sm">
+          <a href={`/api/super-admin/users/export${search ? `?search=${encodeURIComponent(search)}` : ''}`} download>
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </a>
+        </Button>
       </div>
 
       {/* Table */}
