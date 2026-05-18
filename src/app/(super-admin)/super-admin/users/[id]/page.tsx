@@ -14,14 +14,10 @@ export default function UserDetailPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Reusing the same API or we can just fetch the list and find one. 
-    // Ideally there's a GET /api/super-admin/users/[id]
-    // But since it doesn't exist, we will just say "Detail Page: under construction" or fetch list.
-    fetch(`/api/super-admin/users?search=${id}`)
+    fetch(`/api/super-admin/users/${id}`)
       .then(r => r.json())
       .then(data => {
-        const found = data.data?.find((u: any) => u.id === id)
-        setUser(found || null)
+        setUser(data.error ? null : data)
         setLoading(false)
       })
       .catch(() => setLoading(false))
