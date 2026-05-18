@@ -23,6 +23,15 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
   const principalName = settings.sambutanKepsek ? (settings.principalName || "Kepala Sekolah") : null
   const principalPhoto = settings.principalImage || "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000"
   
+  let videoThumbnail = tenant.heroImage || "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2000"
+  if (settings.videoProfil) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+    const match = settings.videoProfil.match(regExp)
+    if (match && match[2].length === 11) {
+      videoThumbnail = `https://img.youtube.com/vi/${match[2]}/maxresdefault.jpg`
+    }
+  }
+  
   const totalStaff = tenant.staff?.length || 0
   const totalAlumni = tenant.alumni?.length || 0
   const totalEkskul = tenant.extracurriculars?.length || 0
@@ -116,7 +125,8 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
            <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl group bg-black">
               {settings.videoProfil ? (
                  <>
-                    <OptimizedImage src={tenant.heroImage || "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2000"} alt="Video Thumbnail" fill className="object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={videoThumbnail} alt="Video Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
                     <a href={settings.videoProfil} target="_blank" rel="noreferrer" className="absolute inset-0 flex items-center justify-center">
                        <div className="h-20 w-20 rounded-full bg-primary/90 flex items-center justify-center text-white shadow-xl hover:scale-110 transition-transform cursor-pointer">
                           <Play className="h-8 w-8 ml-1" />

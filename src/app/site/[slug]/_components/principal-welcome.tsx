@@ -22,6 +22,7 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
 
   const paragraphs = principalMessage.split("\n").filter((p: string) => p.trim() !== "")
   const [isExpanded, setIsExpanded] = useState(false)
+  const isHtml = /<\/?[a-z][\s\S]*>/i.test(principalMessage)
   const isLongText = principalMessage.length > 300
 
   return (
@@ -97,17 +98,23 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
 
             <div 
               className={cn(
-                "text-muted-foreground text-base md:text-lg leading-relaxed relative transition-all duration-500 ease-in-out",
+                "relative transition-all duration-500 ease-in-out",
                 !isExpanded && isLongText ? "max-h-[320px] overflow-hidden" : "max-h-[2000px]"
               )}
               style={!isExpanded && isLongText ? { maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' } : {}}
             >
               <Quote size={64} className="absolute -top-6 -left-8 text-primary/5 -z-10 transform -scale-x-100" />
               
-              <div className="space-y-6 pb-4">
-                {paragraphs.map((p: string, idx: number) => (
-                  <p key={idx}>{p}</p>
-                ))}
+              <div className="pb-4 prose prose-p:leading-relaxed prose-headings:text-foreground prose-a:text-primary max-w-none text-muted-foreground text-base md:text-lg">
+                {isHtml ? (
+                  <div dangerouslySetInnerHTML={{ __html: principalMessage }} />
+                ) : (
+                  <div className="space-y-6">
+                    {paragraphs.map((p: string, idx: number) => (
+                      <p key={idx}>{p}</p>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

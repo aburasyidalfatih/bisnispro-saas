@@ -7,6 +7,7 @@ export const revalidate = 0
 // Public endpoint - returns plan info including features (no auth needed)
 export async function GET() {
   const plans = await db.subscriptionPlan.findMany({
+    where: { isActive: true },
     select: {
       slug: true,
       name: true,

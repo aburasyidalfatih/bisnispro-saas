@@ -37,10 +37,10 @@ export async function getInvoiceExpiryDays(): Promise<number> {
 /**
  * Membuat Invoice untuk Upgrade ke PRO (tanpa Tripay - manual confirm)
  */
-export async function createUpgradeInvoice(tenantId: string, studentCount: number, discountCodeStr?: string) {
+export async function createUpgradeInvoice(tenantId: string, studentCount: number, discountCodeStr?: string, planSlug: string = "pro") {
   const pricing = await getPricingConfig()
   
-  if (studentCount < pricing.MIN_STUDENTS) {
+  if (planSlug === "pro" && studentCount < pricing.MIN_STUDENTS) {
     throw new Error(`Minimal pembelian adalah ${pricing.MIN_STUDENTS} siswa`)
   }
 
@@ -55,7 +55,20 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
     throw new Error("Masih ada invoice pending yang belum diselesaikan. Silakan batalkan atau selesaikan terlebih dahulu.")
   }
 
-  const subTotal = studentCount * pricing.PRICE_PER_STUDENT
+  let subTotal = 0;
+  let pricePerStudent = 0;
+  
+  if (planSlug === "pro") {
+    subTotal = studentCount * pricing.PRICE_PER_STUDENT
+    pricePerStudent = pricing.PRICE_PER_STUDENT
+  } else {
+    // Fetch fixed price from SubscriptionPlan
+    const plan = await db.subscriptionPlan.findUnique({ where: { slug: planSlug } })
+    if (!plan) throw new Error(`Paket ${planSlug} tidak ditemukan`)
+    subTotal = plan.price
+    pricePerStudent = 0
+  }
+
   let amount = subTotal
   let discountAmount = 0
   let discountPercentage = 0
@@ -94,12 +107,12 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
         reference,
         amount,
         discountCodeId: validDiscountId,
-        plan: "pro",
+        plan: planSlug,
         status: "pending",
         expiredAt,
         metadata: {
-          studentCount,
-          pricePerStudent: pricing.PRICE_PER_STUDENT,
+          studentCount: planSlug === "pro" ? studentCount : 0,
+          pricePerStudent,
           tenantName: tenant.name,
           tenantSlug: tenant.slug,
           subTotal,
@@ -128,8 +141,8 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
     amount: payment.amount,
     subTotal,
     discountAmount,
-    studentCount,
-    pricePerStudent: pricing.PRICE_PER_STUDENT,
+    studentCount: planSlug === "pro" ? studentCount : 0,
+    pricePerStudent,
     tenantName: tenant.name,
     expiredAt: payment.expiredAt,
     status: payment.status,

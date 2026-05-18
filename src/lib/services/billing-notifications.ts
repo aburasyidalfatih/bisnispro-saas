@@ -67,7 +67,7 @@ export async function notifyInvoiceCreated(paymentId: string) {
     const meta = payment.metadata as any
     const type = meta?.type === "ADDON_QUOTA" ? "Penambahan Kuota"
               : meta?.type === "AI_QUOTA" ? "Top-Up Token AI"
-              : "Upgrade PRO"
+              : `Upgrade ${payment.plan?.toUpperCase() || "PAKET"}`
 
     const templateVars = {
       invoiceType: type,
@@ -171,7 +171,7 @@ export async function notifySuperAdminNewInvoice(paymentId: string) {
     const meta = payment.metadata as any
     const type = meta?.type === "ADDON_QUOTA" ? "Addon Kuota"
               : meta?.type === "AI_QUOTA" ? "Top-Up AI"
-              : "Upgrade PRO"
+              : `Upgrade ${payment.plan?.toUpperCase() || "PAKET"}`
 
     const superAdmins = await db.user.findMany({
       where: { isSuperAdmin: true, isActive: true },
@@ -214,7 +214,7 @@ export async function notifyPaymentConfirmed(paymentId: string) {
     const meta = payment.metadata as any
     const type = meta?.type === "ADDON_QUOTA" ? "Penambahan Kuota"
               : meta?.type === "AI_QUOTA" ? "Top-Up Token AI"
-              : "Upgrade PRO"
+              : `Upgrade ${payment.plan?.toUpperCase() || "PAKET"}`
 
     const tenant = payment.tenant
 
@@ -434,10 +434,10 @@ export async function notifySubscriptionExpiring() {
     const sevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
     const oneDay = new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000)
 
-    // Cari tenant PRO yang akan expired dalam 30, 7, atau 1 hari
+    // Cari tenant berbayar (pro/lite) yang akan expired dalam 30, 7, atau 1 hari
     const expiringTenants = await db.tenant.findMany({
       where: {
-        plan: "pro",
+        plan: { not: "free" },
         isActive: true,
         expiresAt: {
           gte: now,
@@ -474,7 +474,7 @@ export async function notifySubscriptionExpiring() {
 
 Halo,
 
-Langganan PRO untuk ${tenant.name} akan berakhir dalam *${diffDays} hari* (${formatDate(tenant.expiresAt)}).
+Langganan ${tenant.plan?.toUpperCase() || "Premium"} untuk ${tenant.name} akan berakhir dalam *${diffDays} hari* (${formatDate(tenant.expiresAt)}).
 
 Segera perpanjang langganan Anda agar tidak kehilangan akses ke fitur premium.
 
@@ -482,7 +482,7 @@ Kunjungi: Menu Langganan di Dashboard Admin.`
 
       await notifyTenantAdmins(tenant.id, {
         title: `Langganan Berakhir ${diffDays} Hari Lagi`,
-        message: `Langganan PRO ${tenant.name} akan berakhir pada ${formatDate(tenant.expiresAt)}. Segera perpanjang untuk menjaga akses fitur premium.`,
+        message: `Langganan ${tenant.plan?.toUpperCase() || "Premium"} ${tenant.name} akan berakhir pada ${formatDate(tenant.expiresAt)}. Segera perpanjang untuk menjaga akses fitur premium.`,
         type: diffDays <= 3 ? "warning" : "info",
         channels: ["inapp"]
       })

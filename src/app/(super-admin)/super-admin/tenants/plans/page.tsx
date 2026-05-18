@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
 import {
   Zap, Star, CheckCircle2,
@@ -58,10 +59,17 @@ export default function PlansPage() {
       ])
       const plansData = await plansRes.json()
       const settingsData = await settingsRes.json()
-      // Stable order: free always left, pro always right
-      const ORDER = ["free", "pro"]
+      // Stable order: free always left, lite middle, pro always right
+      const ORDER = ["free", "lite", "pro"]
       const sorted = [...plansData].sort(
-        (a: any, b: any) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug)
+        (a: any, b: any) => {
+          const indexA = ORDER.indexOf(a.slug);
+          const indexB = ORDER.indexOf(b.slug);
+          // If a slug is not in ORDER, put it at the end
+          const sortA = indexA === -1 ? 999 : indexA;
+          const sortB = indexB === -1 ? 999 : indexB;
+          return sortA - sortB;
+        }
       )
       setPlans(sorted)
       setPricing({
@@ -91,6 +99,24 @@ export default function PlansPage() {
     setIsDialogOpen(true)
   }
 
+  const openCreate = () => {
+    setEditingPlan({
+      name: "Lite",
+      slug: "lite",
+      description: "Paket menengah untuk sekolah yang sedang berkembang",
+      price: 1500000,
+      interval: "YEARLY",
+      maxStudents: 500,
+      maxStorage: 2048,
+      isActive: true,
+      isPopular: true,
+      sortOrder: 2,
+      features: ["Custom Domain", "Broadcast WhatsApp ke Guru", "Semua fitur Free"]
+    })
+    setFeatureInput("")
+    setIsDialogOpen(true)
+  }
+
   const addFeature = () => {
     const trimmed = featureInput.trim()
     if (!trimmed || !editingPlan) return
@@ -115,8 +141,9 @@ export default function PlansPage() {
 
       // Save plan data — features already stored as array in editingPlan.features
       const feats = Array.isArray(editingPlan.features) ? editingPlan.features : []
+      const method = editingPlan.id ? "PUT" : "POST"
       const res = await fetch("/api/super-admin/plans", {
-        method: "PUT",
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...editingPlan,
@@ -156,6 +183,27 @@ export default function PlansPage() {
     }
   }
 
+  const handleToggleActive = async (plan: SubscriptionPlan) => {
+    if (plan.slug === "free") return
+    try {
+      const planPayload = {
+        ...plan,
+        isActive: !plan.isActive,
+        features: JSON.stringify(plan.features || []),
+      }
+      const res = await fetch(`/api/super-admin/plans`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(planPayload),
+      })
+      if (!res.ok) throw new Error("Gagal mengubah status paket")
+      toast({ title: "Berhasil", description: `Paket ${plan.name} berhasil di${!plan.isActive ? "aktifkan" : "nonaktifkan"}.` })
+      fetchAll()
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    }
+  }
+
   const isProPlan = editingPlan?.slug === "pro"
 
   if (loading && plans.length === 0) {
@@ -167,13 +215,18 @@ export default function PlansPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Paket & Harga</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Kelola konfigurasi paket <strong>Free</strong> dan <strong>PRO</strong> platform.
-        </p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-1">
+          <p className="text-muted-foreground text-sm">
+            Kelola konfigurasi paket <strong>Free</strong>, <strong>Lite</strong>, dan <strong>PRO</strong> platform.
+          </p>
+          <Button onClick={openCreate} className="btn-gradient text-white border-0 rounded-xl gap-2 h-10 shadow-lg shadow-primary/20">
+            Tambah Paket Baru
+          </Button>
+        </div>
       </div>
 
       {/* Plan Cards */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
         {plans.map((plan) => {
           const feats = Array.isArray(plan.features) ? plan.features : []
           return (
@@ -194,25 +247,37 @@ export default function PlansPage() {
                       <CardDescription>{plan.description}</CardDescription>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="gap-1.5 rounded-xl h-8 text-xs" onClick={() => openEdit(plan)}>
-                    <Edit className="h-3.5 w-3.5" /> Edit
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {plan.slug !== "free" && (
+                      <div className="flex items-center gap-1.5 mr-1">
+                        <Switch
+                          id={`active-${plan.id}`}
+                          checked={plan.isActive}
+                          onCheckedChange={() => handleToggleActive(plan)}
+                          className="scale-90"
+                        />
+                      </div>
+                    )}
+                    <Button variant="outline" size="sm" className="gap-1 rounded-lg h-7 px-2 text-[10px]" onClick={() => openEdit(plan)}>
+                      <Edit className="h-3 w-3" /> Edit
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Price */}
-                <div className="text-3xl font-bold">
+                <div className="text-2xl font-bold">
                   {plan.slug === "pro" ? (
                     <div>
-                      <span className="text-lg text-primary block font-bold">Pay-per-Student</span>
-                      <span className="text-xs font-normal text-muted-foreground">
-                        Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")} / siswa / tahun · min. {pricing.MIN_STUDENTS} siswa
+                      <span className="text-base text-primary block font-bold">Pay-per-Student</span>
+                      <span className="text-[10px] font-normal text-muted-foreground block mt-0.5">
+                        Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")}/siswa/thn · min. {pricing.MIN_STUDENTS}
                       </span>
                     </div>
                   ) : (
                     <>
                       Rp {plan.price.toLocaleString("id-ID")}
-                      <span className="text-sm font-normal text-muted-foreground">
+                      <span className="text-xs font-normal text-muted-foreground">
                         {plan.interval === "MONTHLY" ? " / bulan" : plan.interval === "YEARLY" ? " / tahun" : " / sekali bayar"}
                       </span>
                     </>
@@ -220,22 +285,22 @@ export default function PlansPage() {
                 </div>
 
                 {/* Quotas */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-xl bg-muted/40 border border-border/40">
-                    <p className="text-[10px] uppercase text-muted-foreground mb-1">Kuota Siswa</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
+                    <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Kuota Siswa</p>
                     <div className="flex items-center gap-1.5">
-                      <Users className="h-3.5 w-3.5 text-primary" />
-                      <span className="font-bold text-sm">
-                        {plan.slug === "pro" ? "Sesuai Pembelian" : plan.maxStudents === 0 ? "Tak Terbatas" : `${plan.maxStudents} siswa`}
+                      <Users className="h-3 w-3 text-primary" />
+                      <span className="font-bold text-xs truncate">
+                        {plan.slug === "pro" ? "Sesuai Beli" : plan.maxStudents === 0 ? "Unlimited" : `${plan.maxStudents} siswa`}
                       </span>
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-muted/40 border border-border/40">
-                    <p className="text-[10px] uppercase text-muted-foreground mb-1">Penyimpanan</p>
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
+                    <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Penyimpanan</p>
                     <div className="flex items-center gap-1.5">
-                      <HardDrive className="h-3.5 w-3.5 text-primary" />
-                      <span className="font-bold text-sm">
-                        {plan.maxStorage >= 1024 ? `${(plan.maxStorage / 1024).toFixed(0)} GB` : `${plan.maxStorage} MB`}
+                      <HardDrive className="h-3 w-3 text-primary" />
+                      <span className="font-bold text-xs truncate">
+                        {plan.maxStorage === 0 ? "Unlimited" : plan.maxStorage >= 1024 ? `${(plan.maxStorage / 1024).toFixed(1)} GB` : `${plan.maxStorage} MB`}
                       </span>
                     </div>
                   </div>

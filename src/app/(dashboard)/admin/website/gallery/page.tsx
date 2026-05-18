@@ -208,6 +208,7 @@ export default function WebsiteGalleryPage() {
                 <div className="text-center">
                   <p className="text-sm font-medium">{uploading ? "Mengunggah..." : "Klik atau drag foto ke sini"}</p>
                   <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP, GIF · Maks 5MB per file · Bisa pilih banyak</p>
+                  <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">Rekomendasi rasio 16:9 atau 4:3 (Landscape)</p>
                 </div>
               </button>
             </div>

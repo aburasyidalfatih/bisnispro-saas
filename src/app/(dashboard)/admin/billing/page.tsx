@@ -47,7 +47,9 @@ export default function BillingPage() {
   const [checkingOut, setCheckingOut] = useState(false)
   const [billing, setBilling] = useState<TenantBilling | null>(null)
   const [proPlan, setProPlan] = useState<PlanInfo | null>(null)
+  const [litePlan, setLitePlan] = useState<PlanInfo | null>(null)
   const [freePlan, setFreePlan] = useState<PlanInfo | null>(null)
+  const [selectedPlanSlug, setSelectedPlanSlug] = useState("pro")
   const [studentCount, setStudentCount] = useState(50)
   const [invoice, setInvoice] = useState<InvoiceData | null>(null)
   const [showInvoice, setShowInvoice] = useState(false)
@@ -100,8 +102,22 @@ export default function BillingPage() {
         const plansData: PlanInfo[] = await plansRes.json()
         setBilling(billingData)
         setStudentCount(billingData?.pricing?.MIN_STUDENTS || 50)
-        setProPlan(plansData.find((p) => p.slug === "pro") || null)
+        const proData = plansData.find((p) => p.slug === "pro") || null
+        const liteData = plansData.find((p) => p.slug === "lite") || null
+        setProPlan(proData)
+        setLitePlan(liteData)
         setFreePlan(plansData.find((p) => p.slug === "free") || null)
+        
+        // Ensure default selected plan is valid
+        if (billingData?.plan !== "pro") {
+          if (proData) {
+            setSelectedPlanSlug("pro")
+          } else if (liteData) {
+            setSelectedPlanSlug("lite")
+          } else {
+            setSelectedPlanSlug("")
+          }
+        }
       } catch {
         toast({ title: "Error", description: "Gagal memuat data.", variant: "destructive" })
       } finally {
@@ -131,13 +147,14 @@ export default function BillingPage() {
     proratedRatio = Math.min(daysRemaining / 365, 1)
   }
 
-  const baseSubTotal = studentCount * effectivePricePerStudent
+  const selectedPlanInfo = selectedPlanSlug === "pro" ? proPlan : selectedPlanSlug === "lite" ? litePlan : null
+  const baseSubTotal = selectedPlanSlug === "pro" ? studentCount * effectivePricePerStudent : (litePlan?.price || 0)
   const subTotal = baseSubTotal * proratedRatio
   const discountAmount = appliedDiscount ? subTotal * (appliedDiscount.percentage / 100) : 0
   const totalCost = subTotal - discountAmount
 
-  const proFeatures = proPlan?.features || []
-  const currentPlanFeatures = isPro ? (proPlan?.features || []) : (freePlan?.features || [])
+  const selectedPlanFeatures = selectedPlanInfo?.features || []
+  const currentPlanFeatures = isPro ? (proPlan?.features || []) : billing?.plan === "lite" ? (litePlan?.features || []) : (freePlan?.features || [])
 
   const handleValidateDiscount = async () => {
     if (!discountCodeInput) return
@@ -166,7 +183,7 @@ export default function BillingPage() {
   }
 
   const handleCheckout = async () => {
-    if (studentCount < minStudents) {
+    if (selectedPlanSlug === "pro" && studentCount < minStudents) {
       toast({ title: "Gagal", description: `Minimal ${minStudents} siswa`, variant: "destructive" })
       return
     }
@@ -176,7 +193,7 @@ export default function BillingPage() {
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentCount, discountCode: appliedDiscount?.code }),
+        body: JSON.stringify({ studentCount: selectedPlanSlug === "pro" ? studentCount : 0, planSlug: selectedPlanSlug, discountCode: appliedDiscount?.code }),
       })
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Gagal membuat invoice")
@@ -305,7 +322,7 @@ export default function BillingPage() {
               <div className="pt-3 border-t border-border/40">
                 <p className="text-xs text-muted-foreground flex items-start gap-2">
                   <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                  Upgrade ke PRO untuk akses fitur lengkap.
+                  Upgrade paket untuk akses fitur lengkap.
                 </p>
               </div>
             )}
@@ -349,33 +366,74 @@ export default function BillingPage() {
                 <ShieldCheck className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <CardTitle>{isPro ? "Tambah Kuota Siswa" : "Upgrade ke Paket PRO"}</CardTitle>
+                <CardTitle>{isPro ? "Tambah Kuota Siswa" : "Upgrade Paket Anda"}</CardTitle>
                 <CardDescription>
                   {isPro 
                     ? `Biaya penambahan kuota akan disesuaikan (Pro-rata) dengan sisa masa aktif langganan Anda (${daysRemaining} hari).` 
-                    : (proPlan?.description || "Bayar sesuai jumlah siswa aktif (Pay-per-Student)")}
+                    : "Pilih paket yang sesuai dengan kebutuhan sekolah Anda"}
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Calculator */}
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2 text-sm font-semibold">
-                    <Users className="h-4 w-4 text-primary" /> {isPro ? "Jumlah Tambah Siswa" : "Jumlah Siswa Aktif"}
-                  </Label>
-                  <Input
-                    type="number" min={minStudents}
-                    value={studentCount}
-                    onChange={(e) => setStudentCount(Number(e.target.value))}
-                    className="rounded-xl h-12 text-lg font-semibold"
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Minimal {isPro ? "tambah" : "upgrade"}: <strong>{minStudents} siswa</strong>
+            <CardContent className="space-y-6">
+              {!isPro && !proPlan && !litePlan ? (
+                <div className="py-10 text-center space-y-3 border-2 border-dashed border-border/50 rounded-xl bg-muted/20">
+                  <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center mx-auto">
+                    <ShieldCheck className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-semibold text-muted-foreground">Tidak ada paket tersedia</h3>
+                  <p className="text-sm text-muted-foreground/80 max-w-md mx-auto">
+                    Saat ini tidak ada paket langganan tambahan yang dapat dibeli. Silakan hubungi admin untuk informasi lebih lanjut.
                   </p>
                 </div>
+              ) : (
+                <>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Calculator */}
+                  <div className="space-y-4">
+                
+                {!isPro && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">Pilih Paket</Label>
+                    <div className="flex gap-2">
+                      {litePlan && (
+                        <Button 
+                          variant={selectedPlanSlug === "lite" ? "default" : "outline"} 
+                          onClick={() => setSelectedPlanSlug("lite")}
+                          className="flex-1"
+                        >
+                          Lite
+                        </Button>
+                      )}
+                      {proPlan && (
+                        <Button 
+                          variant={selectedPlanSlug === "pro" ? "default" : "outline"} 
+                          onClick={() => setSelectedPlanSlug("pro")}
+                          className="flex-1"
+                        >
+                          PRO
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {selectedPlanSlug === "pro" && (
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-sm font-semibold">
+                      <Users className="h-4 w-4 text-primary" /> {isPro ? "Jumlah Tambah Siswa" : "Jumlah Siswa Aktif"}
+                    </Label>
+                    <Input
+                      type="number" min={minStudents}
+                      value={studentCount}
+                      onChange={(e) => setStudentCount(Number(e.target.value))}
+                      className="rounded-xl h-12 text-lg font-semibold"
+                    />
+                    <p className="text-[11px] text-muted-foreground">
+                      Minimal {isPro ? "tambah" : "upgrade"}: <strong>{minStudents} siswa</strong>
+                    </p>
+                  </div>
+                )}
                 <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 space-y-1.5">
                   <p className="text-xs text-muted-foreground font-medium">Estimasi Biaya {isPro && "(Pro-rata)"}</p>
                   
@@ -397,12 +455,18 @@ export default function BillingPage() {
                     <span className="text-sm font-semibold">Rp</span>
                     <span className="text-3xl font-bold">{totalCost.toLocaleString("id-ID")}</span>
                   </div>
-                  <p className="text-[11px] text-primary/70 italic">
-                    Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / siswa / tahun
-                    {isUsingLockedPrice && (
-                      <span className="ml-1.5 text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-semibold not-italic dark:bg-blue-900/30 dark:text-blue-400">Harga Kontrak</span>
-                    )}
-                  </p>
+                  {selectedPlanSlug === "pro" ? (
+                    <p className="text-[11px] text-primary/70 italic">
+                      Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / siswa / tahun
+                      {isUsingLockedPrice && (
+                        <span className="ml-1.5 text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-semibold not-italic dark:bg-blue-900/30 dark:text-blue-400">Harga Kontrak</span>
+                      )}
+                    </p>
+                  ) : (
+                    <p className="text-[11px] text-primary/70 italic">
+                      Biaya Tetap (Per Tahun)
+                    </p>
+                  )}
                 </div>
 
                 {/* Discount Input */}
@@ -451,9 +515,9 @@ export default function BillingPage() {
               {/* Features */}
               <div className="space-y-3">
                 <Label className="text-sm font-semibold">Fitur yang Anda dapatkan:</Label>
-                {proFeatures.length > 0 ? (
+                {selectedPlanFeatures.length > 0 ? (
                   <ul className="space-y-2">
-                    {proFeatures.map((feat, i) => (
+                    {selectedPlanFeatures.map((feat, i) => (
                       <li key={i} className="flex items-center gap-2.5 text-sm">
                         <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                         <span>{feat}</span>
@@ -480,12 +544,14 @@ export default function BillingPage() {
 
             <Button
               className="w-full h-12 rounded-xl btn-gradient text-white border-0 gap-2 text-base font-semibold shadow-lg shadow-primary/20"
-              disabled={checkingOut || studentCount < minStudents || billing?.hasPendingInvoice}
+              disabled={checkingOut || (selectedPlanSlug === "pro" && studentCount < minStudents) || billing?.hasPendingInvoice}
               onClick={handleCheckout}
             >
               {checkingOut ? "Membuat Invoice..." : (isPro ? "Buat Tagihan Penambahan Kuota" : "Upgrade Sekarang")}
               <ArrowRight className="h-5 w-5" />
             </Button>
+            </>
+            )}
           </CardContent>
         </Card>
         ) : (
@@ -493,7 +559,7 @@ export default function BillingPage() {
             <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-5">
               <ShieldCheck className="h-8 w-8 text-muted-foreground" />
             </div>
-            <CardTitle className="text-xl mb-2 text-muted-foreground">Upgrade ke Paket PRO</CardTitle>
+            <CardTitle className="text-xl mb-2 text-muted-foreground">Upgrade Paket</CardTitle>
             <CardDescription className="max-w-md mx-auto">
               Fitur upgrade paket secara mandiri sedang dinonaktifkan sementara oleh Super Admin. Silakan hubungi admin pusat untuk melakukan upgrade paket langganan Anda.
             </CardDescription>
@@ -546,14 +612,23 @@ export default function BillingPage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Jumlah Siswa</span>
-                    <span className="font-semibold">{invoice?.studentCount} siswa</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Harga per Siswa</span>
-                    <span className="font-semibold">Rp {Number(invoice?.pricePerStudent || 0).toLocaleString("id-ID")}</span>
-                  </div>
+                  {(invoice?.studentCount || 0) > 0 ? (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Jumlah Siswa</span>
+                        <span className="font-semibold">{invoice?.studentCount} siswa</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Harga per Siswa</span>
+                        <span className="font-semibold">Rp {Number(invoice?.pricePerStudent || 0).toLocaleString("id-ID")}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Paket</span>
+                      <span className="font-semibold uppercase">{selectedPlanSlug}</span>
+                    </div>
+                  )}
                 </>
               )}
               {invoice?.discountAmount && invoice.discountAmount > 0 && (

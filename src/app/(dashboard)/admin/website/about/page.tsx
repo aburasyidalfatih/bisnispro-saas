@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
 import { getStaff } from "@/lib/actions/staff"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
 
 export default function WebsiteAboutPage() {
   const { data: session } = useSession()
@@ -242,6 +243,7 @@ export default function WebsiteAboutPage() {
                     {uploadingLogo ? "Mengunggah..." : "Upload Logo"}
                   </Button>
                   <p className="text-[11px] text-muted-foreground">PNG, JPG, WebP, SVG. Maks 5MB.</p>
+                  <p className="text-[11px] text-primary font-semibold mt-1 bg-primary/10 inline-block px-1.5 py-0.5 rounded">Rekomendasi rasio 1:1</p>
                 </div>
               </div>
             </div>
@@ -534,11 +536,11 @@ export default function WebsiteAboutPage() {
             
             <div className="space-y-2 mt-4">
               <Label>Pesan Sambutan</Label>
-              <textarea value={form.settings?.principalMessage || ""}
-                onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalMessage: e.target.value } }))}
+              <RichTextEditor 
+                value={form.settings?.principalMessage || ""}
+                onChange={val => setForm(p => ({ ...p, settings: { ...p.settings, principalMessage: val } }))}
                 placeholder="Puji syukur ke hadirat Tuhan YME..."
-                rows={6}
-                className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
+              />
             </div>
 
             <div className="space-y-2">

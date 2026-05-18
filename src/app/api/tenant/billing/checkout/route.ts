@@ -7,8 +7,9 @@ import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
 
 const checkoutSchema = z.object({
-  studentCount: z.number().int().min(1, "Jumlah siswa minimal 1"),
-  discountCode: z.string().optional()
+  studentCount: z.number().int().min(0, "Jumlah siswa tidak valid"),
+  discountCode: z.string().optional(),
+  planSlug: z.string().optional().default("pro")
 })
 
 export async function POST(req: Request) {
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
   if (parsed.error) return parsed.error
 
   try {
-    const result = await createUpgradeInvoice(tenantId, parsed.data.studentCount, parsed.data.discountCode)
+    const result = await createUpgradeInvoice(tenantId, parsed.data.studentCount, parsed.data.discountCode, parsed.data.planSlug)
     
     // Kirim notifikasi billing (async, non-blocking)
     import("@/lib/services/billing-notifications").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
