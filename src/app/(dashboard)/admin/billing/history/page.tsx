@@ -121,7 +121,7 @@ export default function BillingHistoryPage() {
               <p className="text-muted-foreground text-sm mt-1">Invoice akan muncul di sini setelah Anda melakukan request upgrade.</p>
             </div>
             <Button className="rounded-xl btn-gradient text-white border-0 mt-2" asChild>
-              <Link href="/admin/billing">Upgrade ke PRO</Link>
+              <Link href="/admin/billing">Upgrade Paket</Link>
             </Button>
           </CardContent>
         </Card>

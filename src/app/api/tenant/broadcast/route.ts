@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   }
 
   if (plan === "free") {
-    return NextResponse.json({ error: "Fitur Broadcast WhatsApp hanya tersedia untuk paket Premium/Pro." }, { status: 403 })
+    return NextResponse.json({ error: "Fitur Broadcast WhatsApp hanya tersedia untuk paket Lite dan Pro." }, { status: 403 })
   }
 
   try {
@@ -28,6 +28,10 @@ export async function POST(req: Request) {
 
     if (!message) {
       return NextResponse.json({ error: "Pesan wajib diisi" }, { status: 400 })
+    }
+
+    if (plan === "lite" && target !== "all_gtk") {
+      return NextResponse.json({ error: "Paket Lite hanya dapat melakukan broadcast ke Guru & Staf." }, { status: 403 })
     }
 
     // 1. Get recipients based on target and tenant

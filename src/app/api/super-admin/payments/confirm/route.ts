@@ -49,10 +49,10 @@ export async function POST(req: Request) {
     if (isAiAddon) {
       tenantUpdateData.aiTokens = { increment: meta?.aiTokens || 0 }
     } else if (isAddon) {
-      tenantUpdateData.plan = "pro"
+      tenantUpdateData.plan = payment.plan || "pro"
       tenantUpdateData.studentQuota = { increment: studentCount }
     } else {
-      tenantUpdateData.plan = "pro"
+      tenantUpdateData.plan = payment.plan || "pro"
       // Untuk renewal: pertahankan kuota tertinggi (jangan timpa addon)
       if (studentCount > 0) {
         const currentQuota = payment.tenant.studentQuota || 0
@@ -121,7 +121,7 @@ export async function POST(req: Request) {
       success: true,
       message: isAddon 
         ? `Berhasil menambah ${studentCount} kuota siswa untuk Tenant "${payment.tenant.name}".`
-        : `Tenant "${payment.tenant.name}" berhasil diupgrade ke PRO hingga ${expiresAt.toLocaleDateString("id-ID")}.`,
+        : `Tenant "${payment.tenant.name}" berhasil diupgrade ke ${payment.plan?.toUpperCase() || 'PAKET BARU'} hingga ${expiresAt.toLocaleDateString("id-ID")}.`,
     })
   } catch (error) {
     logger.error("Confirm payment failed", error, { path: "/api/super-admin/payments/confirm" })

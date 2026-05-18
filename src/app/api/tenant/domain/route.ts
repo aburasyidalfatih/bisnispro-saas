@@ -70,7 +70,7 @@ export async function GET(req: Request) {
   // 2. Cek paket langganan (hanya jika fitur aktif secara global)
   if (isCustomDomainEnabled && tenant.plan === "free") {
     isCustomDomainEnabled = false
-    lockedMessage = "Fitur Custom Domain eksklusif untuk paket PRO. Silakan upgrade paket Anda untuk menggunakan fitur ini."
+    lockedMessage = "Fitur Custom Domain eksklusif untuk paket Lite dan PRO. Silakan upgrade paket Anda untuk menggunakan fitur ini."
   }
 
   return NextResponse.json({
@@ -112,7 +112,7 @@ export async function PUT(req: Request) {
   })
   
   if (tenant?.plan === "free") {
-    return NextResponse.json({ error: "Fitur custom domain eksklusif untuk paket PRO. Silakan upgrade paket Anda." }, { status: 403 })
+    return NextResponse.json({ error: "Fitur custom domain eksklusif untuk paket Lite dan PRO. Silakan upgrade paket Anda." }, { status: 403 })
   }
 
   // Cek domain tidak dipakai tenant lain

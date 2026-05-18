@@ -97,7 +97,7 @@ export default function BroadcastPage() {
   const tenantRole = session?.user?.tenants?.[0]?.role
   if (tenantRole !== "owner" && tenantRole !== "admin") return null
 
-  // Batasi akses hanya untuk pengguna berbayar (Premium/Pro)
+  // Batasi akses hanya untuk pengguna berbayar (Lite/Pro)
   const tenantPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
   if (tenantPlan === "free") {
     return (
@@ -105,9 +105,9 @@ export default function BroadcastPage() {
         <div className="p-4 bg-primary/10 rounded-full text-primary">
           <Megaphone className="h-12 w-12" />
         </div>
-        <h2 className="text-2xl font-bold tracking-tight">Fitur Premium</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Fitur Berbayar</h2>
         <p className="text-muted-foreground max-w-md">
-          Fitur Broadcast WhatsApp hanya tersedia untuk pelanggan paket Premium atau Pro. Silakan tingkatkan paket langganan Anda untuk menikmati fitur ini.
+          Fitur Broadcast WhatsApp tersedia untuk pelanggan paket Lite dan Pro. Silakan tingkatkan paket langganan Anda untuk menikmati fitur ini.
         </p>
         <Button asChild className="mt-4 btn-gradient text-white border-0">
           <a href="/admin/billing">Upgrade Paket Sekarang</a>
@@ -157,10 +157,19 @@ export default function BroadcastPage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all_gtk">Semua Guru & Staf (GTK)</SelectItem>
-                          <SelectItem value="all_parents">Semua Orang Tua Siswa</SelectItem>
-                          <SelectItem value="all">Semua GTK & Orang Tua</SelectItem>
+                          {tenantPlan === "pro" && (
+                            <>
+                              <SelectItem value="all_parents">Semua Orang Tua Siswa</SelectItem>
+                              <SelectItem value="all">Semua GTK & Orang Tua</SelectItem>
+                            </>
+                          )}
                         </SelectContent>
                       </Select>
+                      {tenantPlan === "lite" && (
+                        <p className="text-[11px] text-amber-600 font-medium">
+                          Paket Lite hanya dapat melakukan broadcast ke Guru & Staf. Upgrade ke PRO untuk broadcast ke Orang Tua.
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-3">

@@ -175,7 +175,7 @@ export default function PaymentsPage() {
           <Clock className="h-5 w-5 text-amber-600 shrink-0" />
           <div className="flex-1">
             <p className="text-sm font-bold text-amber-700">Ada {pendingPayments.length} permintaan upgrade yang belum dikonfirmasi.</p>
-            <p className="text-xs text-amber-600 mt-0.5">Klik tombol <strong>Konfirmasi Bayar</strong> pada baris transaksi untuk mengaktifkan paket PRO tenant.</p>
+            <p className="text-xs text-amber-600 mt-0.5">Klik tombol <strong>Konfirmasi Bayar</strong> pada baris transaksi untuk mengaktifkan paket berlangganan tenant.</p>
           </div>
         </div>
       )}
@@ -289,7 +289,7 @@ export default function PaymentsPage() {
               Konfirmasi Pembayaran
             </DialogTitle>
             <DialogDescription>
-              Tindakan ini akan mengaktifkan paket PRO untuk tenant berikut secara permanen.
+              Tindakan ini akan mengaktifkan paket berlangganan untuk tenant berikut secara permanen.
             </DialogDescription>
           </DialogHeader>
           {confirmTarget && (
@@ -329,7 +329,7 @@ export default function PaymentsPage() {
               {confirming ? (
                 <><div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Memproses...</>
               ) : (
-                <><ShieldCheck className="h-4 w-4" /> Ya, Konfirmasi & Aktifkan PRO</>
+                <><ShieldCheck className="h-4 w-4" /> Ya, Konfirmasi & Aktifkan Paket</>
               )}
             </Button>
           </DialogFooter>

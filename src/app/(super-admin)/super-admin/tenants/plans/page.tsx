@@ -58,10 +58,17 @@ export default function PlansPage() {
       ])
       const plansData = await plansRes.json()
       const settingsData = await settingsRes.json()
-      // Stable order: free always left, pro always right
-      const ORDER = ["free", "pro"]
+      // Stable order: free always left, lite middle, pro always right
+      const ORDER = ["free", "lite", "pro"]
       const sorted = [...plansData].sort(
-        (a: any, b: any) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug)
+        (a: any, b: any) => {
+          const indexA = ORDER.indexOf(a.slug);
+          const indexB = ORDER.indexOf(b.slug);
+          // If a slug is not in ORDER, put it at the end
+          const sortA = indexA === -1 ? 999 : indexA;
+          const sortB = indexB === -1 ? 999 : indexB;
+          return sortA - sortB;
+        }
       )
       setPlans(sorted)
       setPricing({
@@ -91,6 +98,24 @@ export default function PlansPage() {
     setIsDialogOpen(true)
   }
 
+  const openCreate = () => {
+    setEditingPlan({
+      name: "Lite",
+      slug: "lite",
+      description: "Paket menengah untuk sekolah yang sedang berkembang",
+      price: 1500000,
+      interval: "YEARLY",
+      maxStudents: 500,
+      maxStorage: 2048,
+      isActive: true,
+      isPopular: true,
+      sortOrder: 2,
+      features: ["Custom Domain", "Broadcast WhatsApp ke Guru", "Semua fitur Free"]
+    })
+    setFeatureInput("")
+    setIsDialogOpen(true)
+  }
+
   const addFeature = () => {
     const trimmed = featureInput.trim()
     if (!trimmed || !editingPlan) return
@@ -115,8 +140,9 @@ export default function PlansPage() {
 
       // Save plan data — features already stored as array in editingPlan.features
       const feats = Array.isArray(editingPlan.features) ? editingPlan.features : []
+      const method = editingPlan.id ? "PUT" : "POST"
       const res = await fetch("/api/super-admin/plans", {
-        method: "PUT",
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...editingPlan,
@@ -167,9 +193,14 @@ export default function PlansPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Paket & Harga</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Kelola konfigurasi paket <strong>Free</strong> dan <strong>PRO</strong> platform.
-        </p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-1">
+          <p className="text-muted-foreground text-sm">
+            Kelola konfigurasi paket <strong>Free</strong>, <strong>Lite</strong>, dan <strong>PRO</strong> platform.
+          </p>
+          <Button onClick={openCreate} className="btn-gradient text-white border-0 rounded-xl gap-2 h-10 shadow-lg shadow-primary/20">
+            Tambah Paket Baru
+          </Button>
+        </div>
       </div>
 
       {/* Plan Cards */}
