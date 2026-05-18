@@ -102,9 +102,16 @@ export default function BillingPage() {
         const plansData: PlanInfo[] = await plansRes.json()
         setBilling(billingData)
         setStudentCount(billingData?.pricing?.MIN_STUDENTS || 50)
-        setProPlan(plansData.find((p) => p.slug === "pro") || null)
-        setLitePlan(plansData.find((p) => p.slug === "lite") || null)
+        const proData = plansData.find((p) => p.slug === "pro") || null
+        const liteData = plansData.find((p) => p.slug === "lite") || null
+        setProPlan(proData)
+        setLitePlan(liteData)
         setFreePlan(plansData.find((p) => p.slug === "free") || null)
+        
+        // Ensure default selected plan is valid
+        if (billingData?.plan !== "pro" && !proData && liteData) {
+          setSelectedPlanSlug("lite")
+        }
       } catch {
         toast({ title: "Error", description: "Gagal memuat data.", variant: "destructive" })
       } finally {
@@ -380,13 +387,15 @@ export default function BillingPage() {
                           Lite
                         </Button>
                       )}
-                      <Button 
-                        variant={selectedPlanSlug === "pro" ? "default" : "outline"} 
-                        onClick={() => setSelectedPlanSlug("pro")}
-                        className="flex-1"
-                      >
-                        PRO
-                      </Button>
+                      {proPlan && (
+                        <Button 
+                          variant={selectedPlanSlug === "pro" ? "default" : "outline"} 
+                          onClick={() => setSelectedPlanSlug("pro")}
+                          className="flex-1"
+                        >
+                          PRO
+                        </Button>
+                      )}
                     </div>
                   </div>
                 )}
