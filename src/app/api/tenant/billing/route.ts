@@ -81,7 +81,7 @@ export async function GET() {
 
   const proFeatures = normalizeFeatures(proPlan?.features)
 
-  const upgradeEnabled = platformSettings.find(s => s.key === "enable_billing_upgrade")?.value === "true"
+  const upgradeEnabled = true // always allow upgrades now
   const manualPayment = {
     bank: platformSettings.find(s => s.key === "MANUAL_PAYMENT_BANK")?.value || "Bank BCA",
     number: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NUMBER")?.value || "1234 5678 90",
