@@ -67,6 +67,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: errMsg }, { status: 400 })
     }
     logger.error("Upload failed", error, { path: "/api/upload" })
-    return NextResponse.json({ error: "Upload gagal" }, { status: 500 })
+    return NextResponse.json({ error: "Upload gagal: " + (error instanceof Error ? error.message : String(error)) }, { status: 500 })
   }
 }
