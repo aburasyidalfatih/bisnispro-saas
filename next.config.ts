@@ -9,6 +9,8 @@ const ALLOWED_IMAGE_DOMAINS = [
   { protocol: "https" as const, hostname: "www.gravatar.com" },
   { protocol: "https" as const, hostname: "images.unsplash.com" },
   { protocol: "https" as const, hostname: "*.public.blob.vercel-storage.com" },
+  { protocol: "https" as const, hostname: "*.r2.dev" },
+  { protocol: "https" as const, hostname: "*.cloudflarestorage.com" },
 ]
 
 /**
