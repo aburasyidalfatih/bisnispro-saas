@@ -76,7 +76,7 @@ export default function PengumumanFormPage() {
       .then(r => r.json())
       .then(d => {
         if (d.error) {
-          toast({ title: "Gagal memuat artikel", description: d.error, variant: "destructive" })
+          toast({ title: "Gagal memuat pengumuman", description: d.error, variant: "destructive" })
           router.push("/admin/website/pengumuman")
           return
         }
@@ -92,7 +92,7 @@ export default function PengumumanFormPage() {
         setInitialLoading(false)
       })
       .catch(() => {
-        toast({ title: "Gagal memuat artikel", variant: "destructive" })
+        toast({ title: "Gagal memuat pengumuman", variant: "destructive" })
         setInitialLoading(false)
       })
   }, [tenantId, isNew, params.id, setValue, router])
@@ -103,7 +103,7 @@ export default function PengumumanFormPage() {
     // Validasi manual konten kosong (karena RichTextEditor mengembalikan "<p></p>" saat kosong)
     const isEmptyContent = !data.content || data.content === "<p></p>" || data.content.trim() === ""
     if (isEmptyContent) {
-      toast({ title: "Konten kosong", description: "Isi artikel tidak boleh kosong", variant: "destructive" })
+      toast({ title: "Konten kosong", description: "Isi pengumuman tidak boleh kosong", variant: "destructive" })
       return
     }
 
@@ -128,7 +128,7 @@ export default function PengumumanFormPage() {
         toast({ title: "Gagal menyimpan", description: d.error, variant: "destructive" })
       }
     } catch {
-      toast({ title: "Gagal menyimpan artikel", variant: "destructive" })
+      toast({ title: "Gagal menyimpan pengumuman", variant: "destructive" })
     } finally {
       setLoading(false)
     }
@@ -149,7 +149,7 @@ export default function PengumumanFormPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{isNew ? "Tulis Artikel Baru" : "Edit Artikel"}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{isNew ? "Tulis Pengumuman Baru" : "Edit Pengumuman"}</h1>
             <p className="text-muted-foreground mt-1 text-sm">Gunakan editor di bawah untuk membuat konten menarik.</p>
           </div>
         </div>
@@ -161,22 +161,22 @@ export default function PengumumanFormPage() {
           <Card className="glass border-0 overflow-hidden shadow-sm">
             <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
               <CardTitle className="text-base">Konten Utama</CardTitle>
-              <CardDescription className="text-xs">Tulis judul dan isi artikel dengan lengkap.</CardDescription>
+              <CardDescription className="text-xs">Tulis judul dan isi pengumuman dengan lengkap.</CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-6 pt-6">
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-medium">Judul Artikel <span className="text-red-500">*</span></Label>
+                <Label htmlFor="title" className="text-sm font-medium">Judul Pengumuman <span className="text-red-500">*</span></Label>
                 <Input 
                   id="title" 
                   {...register("title")} 
                   className="rounded-xl text-lg px-4 py-6 font-medium border-muted-foreground/20 focus-visible:ring-primary/20" 
-                  placeholder="Ketik judul artikel di sini..." 
+                  placeholder="Ketik judul pengumuman di sini..." 
                 />
                 {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content" className="text-sm font-medium">Isi Artikel <span className="text-red-500">*</span></Label>
+                <Label htmlFor="content" className="text-sm font-medium">Isi Pengumuman <span className="text-red-500">*</span></Label>
                 <RichTextEditor 
                   value={contentValue} 
                   onChange={(val) => setValue("content", val, { shouldValidate: true })} 
@@ -193,7 +193,7 @@ export default function PengumumanFormPage() {
                 <Search className="h-4 w-4" /> Pengaturan SEO (Opsional)
               </CardTitle>
               <CardDescription className="text-xs">
-                Tingkatkan peringkat artikel Anda di Google dengan mengisi meta informasi di bawah ini.
+                Tingkatkan peringkat pengumuman Anda di Google dengan mengisi meta informasi di bawah ini.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-5">
@@ -211,7 +211,7 @@ export default function PengumumanFormPage() {
                   placeholder="Judul yang akan muncul di hasil pencarian Google" 
                 />
                 {errors.seoTitle && <p className="text-xs text-red-500">{errors.seoTitle.message}</p>}
-                <p className="text-[11px] text-muted-foreground">Jika dikosongkan, judul artikel akan digunakan sebagai Meta Title.</p>
+                <p className="text-[11px] text-muted-foreground">Jika dikosongkan, judul pengumuman akan digunakan sebagai Meta Title.</p>
               </div>
 
               <div className="space-y-2">
@@ -225,7 +225,7 @@ export default function PengumumanFormPage() {
                   id="seoDesc" 
                   {...register("seoDesc")} 
                   className="rounded-xl min-h-[100px] resize-none" 
-                  placeholder="Tuliskan rangkuman singkat artikel ini (1-2 kalimat)..." 
+                  placeholder="Tuliskan rangkuman singkat pengumuman ini (1-2 kalimat)..." 
                 />
                 {errors.seoDesc && <p className="text-xs text-red-500">{errors.seoDesc.message}</p>}
               </div>
@@ -267,24 +267,7 @@ export default function PengumumanFormPage() {
                 {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
               </div>
 
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="categoryId">Kategori Artikel</Label>
-                  <Link href="/admin/website/categories" className="text-[10px] text-primary hover:underline font-medium">Kelola</Link>
-                </div>
-                <select 
-                  id="categoryId" 
-                  {...register("categoryId")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-shadow hover:border-primary/50"
-                >
-                  <option value="">-- Pilih Kategori --</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
-                <p className="text-[10px] text-muted-foreground">Kategori dinamis yang akan tampil di web publik.</p>
-                {errors.categoryId && <p className="text-xs text-red-500">{errors.categoryId.message}</p>}
-              </div>
+
 
               <div className="space-y-2">
                 <Label htmlFor="slug">Tautan URL (Slug)</Label>
@@ -304,7 +287,7 @@ export default function PengumumanFormPage() {
             <CardHeader className="pb-4">
               <CardTitle className="text-base">Gambar Utama</CardTitle>
               <CardDescription className="text-xs">
-                Gambar ini akan menjadi sampul artikel Anda.
+                Gambar ini akan menjadi sampul pengumuman Anda.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -321,7 +304,7 @@ export default function PengumumanFormPage() {
           <div className="flex flex-col gap-3">
             <Button type="submit" disabled={loading} className="w-full gap-2 btn-gradient text-white border-0 rounded-xl py-6 shadow-md hover:shadow-lg transition-all">
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-              <span className="text-base font-semibold">{isNew ? "Simpan & Publikasikan" : "Perbarui Artikel"}</span>
+              <span className="text-base font-semibold">{isNew ? "Simpan & Publikasikan" : "Perbarui Pengumuman"}</span>
             </Button>
             <Button asChild variant="ghost" className="w-full rounded-xl" disabled={loading}>
               <Link href="/admin/website/pengumuman">Batal</Link>
