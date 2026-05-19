@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
-import { getPaymentChannels } from "@/lib/services/payment"
+import { getPaymentChannels } from "@/features/finance/services/payment.service"
 import { CheckoutForm } from "./_components/checkout-form"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"

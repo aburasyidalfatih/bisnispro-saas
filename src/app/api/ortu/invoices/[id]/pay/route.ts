@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { createTransaction } from "@/lib/services/payment"
+import { createTransaction } from "@/features/finance/services/payment.service"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const session = await auth()
@@ -136,7 +136,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     })
 
     if (!tripayResult.success) {
-      return NextResponse.json({ error: tripayResult.message || "Gagal menghubungi Payment Gateway" }, { status: 500 })
+      return NextResponse.json({ error: tripayResult.error || "Gagal menghubungi Payment Gateway" }, { status: 500 })
     }
 
     return NextResponse.json({ 

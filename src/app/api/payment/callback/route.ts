@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import crypto from "crypto"
-import { handleCallback } from "@/lib/services/payment"
+import { handleCallback } from "@/features/finance/services/payment.service"
 import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
@@ -26,18 +26,21 @@ export async function POST(req: Request) {
       status: body.status,
     })
 
-    const result = await handleCallback(body)
+    const res = await handleCallback(body)
 
-    if (!result) {
-      logger.warn("Payment callback: payment not found", {
+    if (!res.success) {
+      logger.warn("Payment callback processing failed", {
         merchantRef: body.merchant_ref,
+        error: res.error
       })
-      return NextResponse.json({ error: "Payment not found" }, { status: 404 })
+      return NextResponse.json({ error: res.error }, { status: 400 })
     }
 
+    const result = res.data
+
     logger.info("Payment callback processed", {
-      paymentId: result.id,
-      status: result.status,
+      paymentId: result?.id,
+      status: result?.status,
     })
 
     return NextResponse.json({ success: true })
