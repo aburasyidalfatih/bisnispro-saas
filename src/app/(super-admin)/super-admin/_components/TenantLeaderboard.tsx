@@ -71,7 +71,26 @@ export function TenantLeaderboard() {
                   
                   <a href={`/site/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="relative shrink-0 transition-transform hover:scale-105 hover:shadow-md rounded-full h-10 w-10">
                     {tenant.logo ? (
-                      <Image src={tenant.logo} alt={tenant.name} fill className="rounded-full object-contain border bg-white p-0.5" unoptimized />
+                      <>
+                        <Image 
+                          src={tenant.logo} 
+                          alt={tenant.name} 
+                          fill 
+                          className="rounded-full object-contain border bg-white p-0.5" 
+                          unoptimized 
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (fallback) {
+                              fallback.style.display = 'flex';
+                              fallback.classList.remove('hidden');
+                            }
+                          }}
+                        />
+                        <div className="h-10 w-10 rounded-full border bg-muted hidden items-center justify-center shrink-0 absolute inset-0">
+                          <Building2 className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                      </>
                     ) : (
                       <div className="h-10 w-10 rounded-full border bg-muted flex items-center justify-center shrink-0">
                         <Building2 className="h-5 w-5 text-muted-foreground" />

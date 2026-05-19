@@ -404,7 +404,23 @@ export default function SuperAdminApplicationsPage() {
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden relative">
-                        {app.logo ? <img src={app.logo} alt="Logo" className="object-contain p-0.5" /> : <School className="h-5 w-5 text-muted-foreground" />}
+                        {app.logo ? (
+                          <>
+                            <img 
+                              src={app.logo} 
+                              alt="Logo" 
+                              className="object-contain p-0.5 w-full h-full" 
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
+                                if (nextSibling) nextSibling.style.display = 'block';
+                              }}
+                            />
+                            <School className="h-5 w-5 text-muted-foreground hidden" />
+                          </>
+                        ) : (
+                          <School className="h-5 w-5 text-muted-foreground" />
+                        )}
                         {(() => {
                           const result = checkDataCompleteness(app)
                           const color = result.level === 'complete' ? 'bg-emerald-500' : result.level === 'location' ? 'bg-amber-500' : 'bg-rose-500'
@@ -609,7 +625,23 @@ export default function SuperAdminApplicationsPage() {
               {/* Header with Logo & Status */}
               <div className="flex items-center gap-4 bg-muted/20 p-4 rounded-xl border">
                 <div className="h-16 w-16 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden">
-                  {selectedApp.logo ? <img src={selectedApp.logo} alt="Logo" className="object-contain p-1 w-full h-full" /> : <School className="h-8 w-8 text-muted-foreground" />}
+                  {selectedApp.logo ? (
+                    <>
+                      <img 
+                        src={selectedApp.logo} 
+                        alt="Logo" 
+                        className="object-contain p-1 w-full h-full" 
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (nextSibling) nextSibling.style.display = 'block';
+                        }}
+                      />
+                      <School className="h-8 w-8 text-muted-foreground hidden" />
+                    </>
+                  ) : (
+                    <School className="h-8 w-8 text-muted-foreground" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-lg truncate">{selectedApp.schoolName}</h3>
