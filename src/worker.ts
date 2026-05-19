@@ -5,7 +5,7 @@ import { db } from "./lib/db"
 import { sendWhatsAppDirect, sendEmail } from "./lib/services/notification"
 import { ImportService } from "@/features/import/services/import.service"
 import { processGamificationPoints } from "@/features/gamification/services/gamification.service"
-import { FinanceService } from "./lib/services/finance-service"
+import { FinanceService } from "@/features/finance/services/finance.service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -115,7 +115,12 @@ const billingWorker = new Worker(
     try {
       // Generate invoice bulanan secara asinkron
       const result = await FinanceService.createBulkInvoices(job.data)
-      console.log(`[billing-queue] Successfully generated ${result.count} invoices.`)
+      
+      if (!result.success || !result.data) {
+        throw new Error(result.error || "Gagal memproses bulk invoice")
+      }
+      
+      console.log(`[billing-queue] Successfully generated ${result.data.count} invoices.`)
 
       await db.auditLog.create({
         data: {
@@ -123,11 +128,11 @@ const billingWorker = new Worker(
           action: "BULK_INVOICE_GENERATION_COMPLETED",
           entity: "Finance",
           userId: job.data.userId || "SYSTEM",
-          details: `Dibuat ${result.count} tagihan`
+          details: `Dibuat ${result.data.count} tagihan`
         }
       }).catch(() => {})
 
-      return { success: true, count: result.count }
+      return { success: true, count: result.data.count }
     } catch (error: any) {
       console.error(`[billing-queue] Failed to generate bulk invoices:`, error)
       await db.auditLog.create({

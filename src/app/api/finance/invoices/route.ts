@@ -6,7 +6,7 @@ import { nanoid } from "nanoid"
 import { sendNotification } from "@/lib/services/notification"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
-import { FinanceService } from "@/lib/services/finance-service"
+import { FinanceService } from "@/features/finance/services/finance.service"
 
 const invoiceSchema = z.object({
   studentId: z.string().min(1),
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
   const { installments, dueDate, ...invoiceData } = parsed.data
 
   try {
-    const invoice = await FinanceService.createInvoice({
+    const result = await FinanceService.createInvoice({
       tenantId,
       studentId: invoiceData.studentId,
       billingTypeId: invoiceData.billingTypeId,
@@ -96,9 +96,13 @@ export async function POST(req: Request) {
       installments
     })
 
-    return NextResponse.json(invoice, { status: 201 })
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 400 })
+    }
+
+    return NextResponse.json(result.data, { status: 201 })
   } catch (error: any) {
     console.error("Gagal membuat invoice:", error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
 }

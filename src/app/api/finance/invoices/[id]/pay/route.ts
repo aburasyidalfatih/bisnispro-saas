@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { z } from "zod"
 import { auth } from "@/lib/auth"
-import { FinanceService } from "@/lib/services/finance-service"
+import { FinanceService } from "@/features/finance/services/finance.service"
 
 const paySchema = z.object({
   tenantId: z.string(),
@@ -27,7 +27,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
 
   try {
-    const result = await FinanceService.processPayment({
+    const res = await FinanceService.processPayment({
       tenantId,
       invoiceId: id,
       amount,
@@ -37,13 +37,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       userId: session.user.id
     })
 
+    if (!res.success || !res.data) {
+      return NextResponse.json({ error: res.error || "Pembayaran gagal diproses" }, { status: 400 })
+    }
+
+    const result = res.data
+
     return NextResponse.json(
       { message: result.message, paymentId: result.paymentId }, 
       { status: result.status === "PENDING" ? 201 : 200 }
     )
   } catch (error: any) {
     console.error("Payment error:", error)
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
 }
 
@@ -58,7 +64,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
 
   try {
-    const result = await FinanceService.verifyPayment({
+    const res = await FinanceService.verifyPayment({
       tenantId,
       paymentId,
       action,
@@ -66,9 +72,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       userId: session.user.id
     })
 
-    return NextResponse.json({ message: result.message })
+    if (!res.success || !res.data) {
+      return NextResponse.json({ error: res.error || "Gagal memverifikasi pembayaran" }, { status: 400 })
+    }
+
+    return NextResponse.json({ message: res.data.message })
   } catch (error: any) {
     console.error("Verification error:", error)
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
 }
