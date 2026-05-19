@@ -30,7 +30,7 @@ export default async function PengumumanPage({
     where: { 
       tenantId: tenant.id, 
       status: 'PUBLISHED',
-      type: "PENGUMUMAN"
+      type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] }
     },
     orderBy: { createdAt: 'desc' },
     skip: (page - 1) * perPage,
@@ -44,7 +44,7 @@ export default async function PengumumanPage({
     where: { 
       tenantId: tenant.id, 
       status: 'PUBLISHED',
-      type: "PENGUMUMAN"
+      type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] }
     }
   })
   const totalPages = Math.ceil(totalPosts / perPage)
