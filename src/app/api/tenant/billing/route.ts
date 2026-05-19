@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { getPricingConfig } from "@/lib/services/billing"
+import { getPricingConfig } from "@/features/finance/services/billing.service"
 import { headers } from "next/headers"
 
 export const dynamic = "force-dynamic"

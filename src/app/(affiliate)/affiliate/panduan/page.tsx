@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Infinity, Landmark, Sparkles, TrendingUp, Users } from "lucide-react"
 import { CommissionSimulator } from "./_components/commission-simulator"
-import { getPricingConfig } from "@/lib/services/billing"
+import { getPricingConfig } from "@/features/finance/services/billing.service"
 
 export default async function AffiliateGuidePage() {
   const pricing = await getPricingConfig()

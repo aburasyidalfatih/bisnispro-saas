@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { createUpgradeInvoice } from "@/lib/services/billing"
+import { createUpgradeInvoice } from "@/features/finance/services/billing.service"
 import { headers } from "next/headers"
 import { logger } from "@/lib/logger"
 import { z } from "zod"
@@ -35,8 +35,14 @@ export async function POST(req: Request) {
   if (parsed.error) return parsed.error
 
   try {
-    const result = await createUpgradeInvoice(tenantId, parsed.data.studentCount, parsed.data.discountCode, parsed.data.planSlug)
+    const res = await createUpgradeInvoice(tenantId, parsed.data.studentCount, parsed.data.discountCode, parsed.data.planSlug)
     
+    if (!res.success || !res.data) {
+      return NextResponse.json({ error: res.error || "Terjadi kesalahan saat memproses pembayaran" }, { status: 400 })
+    }
+
+    const result = res.data
+
     // Kirim notifikasi billing (async, non-blocking)
     import("@/lib/services/billing-notifications").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
       notifyInvoiceCreated(result.id).catch(() => {})
@@ -46,6 +52,6 @@ export async function POST(req: Request) {
     return NextResponse.json(result)
   } catch (error: any) {
     logger.error("Billing checkout failed", error, { path: "/api/tenant/billing/checkout" })
-    return NextResponse.json({ error: error.message || "Terjadi kesalahan saat memproses pembayaran" }, { status: 400 })
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
 }
