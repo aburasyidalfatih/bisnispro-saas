@@ -494,6 +494,7 @@ model Achievement {
   date        DateTime
   level       String   @default("LOKAL")
   imageUrl    String?
+  order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)

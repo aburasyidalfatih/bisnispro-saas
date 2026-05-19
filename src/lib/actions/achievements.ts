@@ -11,7 +11,10 @@ export async function getAchievements(tenantId: string) {
   
   return await db.achievement.findMany({
     where: { tenantId },
-    orderBy: { date: 'desc' },
+    orderBy: [
+      { order: 'asc' },
+      { date: 'desc' }
+    ],
   })
 }
 
@@ -82,3 +85,25 @@ export async function deleteAchievement(id: string, tenantId: string) {
   
   revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
 }
+
+export async function updateAchievementsOrder(tenantId: string, orderedIds: string[]) {
+  await requireTenantAccess(tenantId)
+  
+  // Update sequentially to avoid deadlocks
+  for (let i = 0; i < orderedIds.length; i++) {
+    await db.achievement.update({
+      where: { id: orderedIds[i], tenantId },
+      data: { order: i }
+    })
+  }
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
+  
+  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
+}
+
