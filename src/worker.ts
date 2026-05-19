@@ -14,7 +14,9 @@ const redisOptions = {
   maxRetriesPerRequest: null,
 }
 
-const connection = new Redis(redisOptions)
+const connection = process.env.REDIS_URL 
+  ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null }) 
+  : new Redis(redisOptions)
 
 console.log("🛠️  Starting BullMQ Enterprise Workers...")
 
