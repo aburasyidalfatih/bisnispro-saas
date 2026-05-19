@@ -74,7 +74,7 @@ export async function createPost(params: {
       tenantId,
       authorId: userId,
       status: finalStatus
-    }
+    } as any
   })
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
@@ -129,7 +129,7 @@ export async function createEvent(params: {
   }
 
   const event = await db.event.create({
-    data: { ...data, tenantId }
+    data: { ...data, tenantId } as any
   })
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
@@ -179,6 +179,6 @@ export async function createCategory(params: {
   }
 
   return db.category.create({
-    data: { ...data, tenantId }
+    data: { ...data, tenantId } as any
   })
 }

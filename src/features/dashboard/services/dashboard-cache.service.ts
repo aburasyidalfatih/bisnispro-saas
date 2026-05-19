@@ -53,9 +53,9 @@ export const getAdminStatsCached = unstable_cache(
           tenantId,
           status: "PAID",
           deletedAt: null,
-          paidAt: { gte: sixMonthsAgo },
+          updatedAt: { gte: sixMonthsAgo },
         },
-        select: { amountPaid: true, paidAt: true },
+        select: { amountPaid: true, updatedAt: true },
       }),
     ])
 
@@ -67,8 +67,8 @@ export const getAdminStatsCached = unstable_cache(
       const month = d.getMonth()
       const year = d.getFullYear()
       const monthPayments = recentPayments.filter((p: any) => {
-        if (!p.paidAt) return false
-        const pd = new Date(p.paidAt)
+        if (!p.updatedAt) return false
+        const pd = new Date(p.updatedAt)
         return pd.getMonth() === month && pd.getFullYear() === year
       })
       chartData.push({

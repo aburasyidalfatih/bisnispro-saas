@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { getWaConfig } from "@/features/notification/services/notification.service"
 
 /**
  * CRON: Proses ulang pesan WA yang stuck di status PENDING.
@@ -23,5 +21,3 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
-
-

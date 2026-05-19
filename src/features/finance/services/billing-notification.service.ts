@@ -464,7 +464,7 @@ export async function notifySubscriptionExpiring(): Promise<SubscriptionReminder
           lte: thirtyDays
         }
       },
-      select: { id: true, name: true, expiresAt: true, slug: true }
+      select: { id: true, name: true, plan: true, expiresAt: true, slug: true }
     })
 
     let sentCount = 0

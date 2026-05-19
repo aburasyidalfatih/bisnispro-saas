@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
-import { startOfDay, endOfDay } from "date-fns"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 300

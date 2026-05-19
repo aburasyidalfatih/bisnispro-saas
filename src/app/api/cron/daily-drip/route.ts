@@ -1,7 +1,4 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
-import { emailQueue } from "@/lib/queue"
-import { startOfDay } from "date-fns"
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300 // 5 minutes timeout for cron job
