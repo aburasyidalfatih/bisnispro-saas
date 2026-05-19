@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Trophy, Building2, TrendingUp } from "lucide-react"
+import Image from "next/image"
 
 interface LeaderboardTenant {
   id: string
@@ -68,9 +69,9 @@ export function TenantLeaderboard() {
                     {index > 2 && <span className="text-muted-foreground text-sm">{index + 1}</span>}
                   </div>
                   
-                  <a href={`/site/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105 hover:shadow-md rounded-full">
+                  <a href={`/site/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="relative shrink-0 transition-transform hover:scale-105 hover:shadow-md rounded-full h-10 w-10">
                     {tenant.logo ? (
-                      <img src={tenant.logo} alt={tenant.name} className="h-10 w-10 rounded-full object-contain border bg-white p-0.5" />
+                      <Image src={tenant.logo} alt={tenant.name} fill className="rounded-full object-contain border bg-white p-0.5" unoptimized />
                     ) : (
                       <div className="h-10 w-10 rounded-full border bg-muted flex items-center justify-center shrink-0">
                         <Building2 className="h-5 w-5 text-muted-foreground" />
