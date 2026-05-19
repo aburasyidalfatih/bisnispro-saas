@@ -654,7 +654,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
           <>
             <Link href={homeHref} className="flex items-center gap-2.5">
               <div className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-xl text-white font-bold text-sm shadow-lg overflow-hidden",
+                "relative flex h-9 w-9 items-center justify-center rounded-xl text-white font-bold text-sm shadow-lg overflow-hidden shrink-0",
                 finalBrandLogo || isSuperAdminPath ? "bg-transparent shadow-none" : "btn-gradient"
               )}>
                 {isSuperAdminPath
@@ -682,7 +682,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
           <button
             onClick={() => setCollapsed(false)}
             className={cn(
-              "flex h-9 w-9 mx-auto items-center justify-center rounded-xl text-white font-bold text-sm shadow-lg hover:opacity-90 transition-opacity overflow-hidden",
+              "relative flex h-9 w-9 mx-auto items-center justify-center rounded-xl text-white font-bold text-sm shadow-lg hover:opacity-90 transition-opacity overflow-hidden shrink-0",
               finalBrandLogo || isSuperAdminPath ? "bg-transparent shadow-none" : "btn-gradient"
             )}
           >
