@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
 import { postSchema } from "@/features/post/schemas/post.schema"
 import { parseBody, requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
-import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 export async function GET(req: Request) {
   const url = new URL(req.url)
@@ -13,42 +11,16 @@ export async function GET(req: Request) {
 
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
 
-  const { session, error } = await requireTenantMembership(tenantId)
+  const { error } = await requireTenantMembership(tenantId)
   if (error) return error
 
-  const whereClause: any = { tenantId }
-  
-  if (type) {
-    if (type === "PENGUMUMAN_GTK") {
-      whereClause.type = { in: ["PENGUMUMAN_GTK", "PENGUMUMAN_SEMUA"] }
-    } else if (type === "PENGUMUMAN_ORTU") {
-      whereClause.type = { in: ["PENGUMUMAN_ORTU", "PENGUMUMAN_SEMUA"] }
-    } else if (type === "PENGUMUMAN_SISWA") {
-      whereClause.type = { in: ["PENGUMUMAN_SISWA", "PENGUMUMAN_SEMUA"] }
-    } else if (type === "INTERNAL_ANNOUNCEMENTS") {
-      whereClause.type = { in: ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
-    } else {
-      whereClause.type = type
-    }
-  } else {
-    // Default Artikel & Pos: Jangan tampilkan pengumuman apapun
-    whereClause.type = { notIn: ["PENGUMUMAN", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA", "PENGUMUMAN_SEMUA"] }
+  try {
+    const { listPosts } = await import("@/features/post/services/content.service")
+    const posts = await listPosts(tenantId, type)
+    return NextResponse.json(posts)
+  } catch (error: any) {
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
-
-  const posts = await db.post.findMany({
-    where: whereClause,
-    orderBy: { createdAt: 'desc' },
-    include: {
-      author: {
-        select: { id: true, name: true, email: true, avatar: true }
-      },
-      category: {
-        select: { id: true, name: true }
-      }
-    }
-  })
-
-  return NextResponse.json(posts)
 }
 
 export async function POST(req: Request) {
@@ -63,54 +35,17 @@ export async function POST(req: Request) {
   if (parsed.error) return parsed.error
   const { tenantId, ...data } = parsed.data
 
-  // Verifikasi peran
-  const isSuperAdmin = session.user.isSuperAdmin
-  let userRole = "orangtua"
-  if (!isSuperAdmin) {
-    const tu = await db.tenantUser.findUnique({
-      where: { tenantId_userId: { tenantId, userId: session.user.id } },
-    })
-    const allowedRoles = ["owner", "admin", "teacher", "operator", "guru"]
-    if (!tu || !allowedRoles.includes(tu.role)) {
-      return NextResponse.json({ error: "Tidak punya izin untuk membuat artikel" }, { status: 403 })
-    }
-    userRole = tu.role
-  }
-
-  // Jika authorId tidak dikirim dari FE, ambil dari session user
-  const authorId = session.user.id
-
-  // Guru tidak bisa mempublikasikan langsung (wajib approval)
-  let finalStatus = data.status || "PUBLISHED"
-  if (userRole === "guru") {
-    finalStatus = "PENDING"
-  }
-
-  const post = await db.post.create({
-    data: {
-      ...data,
-      tenantId,
-      authorId,
-      status: finalStatus
-    }
-  })
-
-  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) await invalidatePublicTenantCache(tenant.slug)
-
-  // TRIGGER GAMIFICATION (Direct DB call)
   try {
-    const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
-    await addGamificationPoints({
+    const { createPost } = await import("@/features/post/services/content.service")
+    const post = await createPost({
       tenantId,
       userId: session.user.id,
-      type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
-      points: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5,
-      description: `Membuat postingan: ${data.title}`
+      isSuperAdmin: session.user.isSuperAdmin,
+      data
     })
-  } catch (error) {
-    console.error("Failed to trigger gamification event", error)
+    return NextResponse.json({ message: "Artikel berhasil dibuat", post })
+  } catch (error: any) {
+    const status = error.message?.includes("izin") ? 403 : 500
+    return NextResponse.json({ error: error.message || "Terjadi kesalahan" }, { status })
   }
-
-  return NextResponse.json({ message: "Artikel berhasil dibuat", post })
 }

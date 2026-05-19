@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
 
 import { getAdminStatsCached } from "@/features/dashboard/services/dashboard-cache.service"
 

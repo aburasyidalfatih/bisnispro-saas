@@ -1,0 +1,182 @@
+import { db } from "@/lib/db"
+import { invalidatePublicTenantCache } from "./tenant-public.service"
+
+// ==========================================
+// Query: Data Website Tenant (Dashboard CMS)
+// ==========================================
+export async function getWebsiteData(tenantId: string) {
+  const tenant = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: {
+      id: true, name: true, slug: true, tagline: true, description: true,
+      about: true, logo: true, heroImage: true, address: true, phone: true,
+      email: true, website: true, whatsapp: true, instagram: true,
+      facebook: true, youtube: true, tiktok: true, gallery: true, settings: true,
+      seoTitle: true, seoDesc: true, googleClientId: true, googleClientSecret: true,
+      _count: {
+        select: {
+          posts: true,
+          documents: true,
+          facilities: true,
+          staff: true,
+          achievements: true,
+          alumni: true,
+          extracurriculars: true,
+          programs: true,
+          popups: true,
+          sliders: true,
+          events: true,
+          partnerships: true,
+          contactSubmissions: {
+            where: { isRead: false }
+          },
+        }
+      },
+      tenantScore: true
+    },
+  })
+
+  if (!tenant) throw new Error("Tenant tidak ditemukan")
+  return tenant
+}
+
+// ==========================================
+// Mutation: Update Data Website
+// ==========================================
+export async function updateWebsiteData(tenantId: string, data: Record<string, any>, userId: string, isSuperAdmin: boolean) {
+  // Cek izin — hanya owner/admin
+  if (!isSuperAdmin) {
+    const tu = await db.tenantUser.findUnique({
+      where: { tenantId_userId: { tenantId, userId } },
+    })
+    if (!tu || !["owner", "admin"].includes(tu.role)) {
+      throw new Error("Tidak punya izin")
+    }
+  }
+
+  const updated = await db.tenant.update({
+    where: { id: tenantId },
+    data,
+  })
+
+  if (data.settings) {
+    const settings = data.settings as Record<string, any>
+    if (settings.studentCount !== undefined) {
+      try {
+        await db.tenantApplication.update({
+          where: { schoolSlug: updated.slug },
+          data: { studentCount: Number(settings.studentCount) }
+        })
+      } catch (error) {
+        console.error("[website service] Gagal sync studentCount ke application:", error)
+      }
+    }
+  }
+
+  // Invalidate Redis cache so public site reflects changes immediately
+  await invalidatePublicTenantCache(updated.slug)
+
+  return updated
+}
+
+// ==========================================
+// Query: Tenant Settings
+// ==========================================
+export async function getTenantSettings(tenantId: string, userId: string, isSuperAdmin: boolean) {
+  if (!isSuperAdmin) {
+    const tu = await db.tenantUser.findUnique({
+      where: { tenantId_userId: { tenantId, userId } },
+    })
+    if (!tu || !["owner", "admin"].includes(tu.role)) {
+      throw new Error("Tidak punya izin")
+    }
+  }
+
+  const tenant = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { settings: true },
+  })
+
+  return (tenant?.settings as Record<string, any>) || {}
+}
+
+// ==========================================
+// Mutation: Update Tenant Settings (Merge)
+// ==========================================
+export async function updateTenantSettings(tenantId: string, settings: Record<string, any>, userId: string, isSuperAdmin: boolean) {
+  if (!isSuperAdmin) {
+    const tu = await db.tenantUser.findUnique({
+      where: { tenantId_userId: { tenantId, userId } },
+    })
+    if (!tu || !["owner", "admin"].includes(tu.role)) {
+      throw new Error("Tidak punya izin")
+    }
+  }
+
+  const existing = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { settings: true },
+  })
+  const existingSettings = (existing?.settings as Record<string, any>) || {}
+  const merged = { ...existingSettings, ...settings }
+
+  await db.tenant.update({
+    where: { id: tenantId },
+    data: { settings: merged },
+  })
+
+  return { message: "Pengaturan disimpan" }
+}
+
+// ==========================================
+// Mutation: Ganti Subdomain (1x Only)
+// ==========================================
+export async function changeSubdomain(tenantId: string, newSlug: string, userId: string, isSuperAdmin: boolean) {
+  const tu = await db.tenantUser.findUnique({
+    where: { tenantId_userId: { tenantId, userId } },
+  })
+  
+  if (!isSuperAdmin && (!tu || !["owner", "admin"].includes(tu.role))) {
+    throw new Error("Tidak punya izin")
+  }
+
+  const tenant = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { slug: true, settings: true },
+  })
+  
+  if (!tenant) throw new Error("Tenant tidak ditemukan")
+
+  const settings = (tenant.settings as Record<string, any>) || {}
+  
+  if (settings.hasChangedSubdomain) {
+    throw new Error("Anda sudah pernah mengganti subdomain. Penggantian hanya diperbolehkan 1 kali.")
+  }
+
+  if (tenant.slug === newSlug) {
+    throw new Error("Subdomain baru harus berbeda dengan yang lama.")
+  }
+
+  const reservedSlugs = ["admin", "superadmin", "api", "auth", "static", "assets", "dashboard", "site", "schoolpro"]
+  if (reservedSlugs.includes(newSlug)) {
+    throw new Error("Subdomain ini tidak dapat digunakan.")
+  }
+
+  const existing = await db.tenant.findUnique({ where: { slug: newSlug } })
+  if (existing) {
+    throw new Error("Subdomain sudah digunakan oleh sekolah lain. Silakan pilih yang berbeda.")
+  }
+
+  await db.tenant.update({
+    where: { id: tenantId },
+    data: {
+      slug: newSlug,
+      settings: {
+        ...settings,
+        hasChangedSubdomain: true
+      }
+    }
+  })
+
+  return { message: "Subdomain berhasil diubah" }
+}

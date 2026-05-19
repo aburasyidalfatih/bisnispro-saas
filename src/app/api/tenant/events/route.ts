@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
 import { eventSchema } from "@/features/event/schemas/event.schema"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
-import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 export async function GET(req: Request) {
   const url = new URL(req.url)
@@ -14,12 +12,13 @@ export async function GET(req: Request) {
   const { error } = await (await import("@/lib/api-utils")).requireTenantMembership(tenantId)
   if (error) return error
 
-  const events = await db.event.findMany({
-    where: { tenantId },
-    orderBy: { startDate: 'asc' },
-  })
-
-  return NextResponse.json(events)
+  try {
+    const { listEvents } = await import("@/features/post/services/content.service")
+    const events = await listEvents(tenantId)
+    return NextResponse.json(events)
+  } catch (error: any) {
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
+  }
 }
 
 export async function POST(req: Request) {
@@ -34,26 +33,17 @@ export async function POST(req: Request) {
   if (parsed.error) return parsed.error
   const { tenantId, ...data } = parsed.data
 
-  const isSuperAdmin = session.user.isSuperAdmin
-  if (!isSuperAdmin) {
-    const tu = await db.tenantUser.findUnique({
-      where: { tenantId_userId: { tenantId, userId: session.user.id } },
-    })
-    const allowedRoles = ["owner", "admin", "operator"]
-    if (!tu || !allowedRoles.includes(tu.role)) {
-      return NextResponse.json({ error: "Tidak punya izin untuk membuat acara" }, { status: 403 })
-    }
-  }
-
-  const event = await db.event.create({
-    data: {
-      ...data,
+  try {
+    const { createEvent } = await import("@/features/post/services/content.service")
+    const event = await createEvent({
       tenantId,
-    }
-  })
-
-  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) await invalidatePublicTenantCache(tenant.slug)
-
-  return NextResponse.json({ message: "Acara berhasil dibuat", event })
+      userId: session.user.id,
+      isSuperAdmin: session.user.isSuperAdmin,
+      data
+    })
+    return NextResponse.json({ message: "Acara berhasil dibuat", event })
+  } catch (error: any) {
+    const status = error.message?.includes("izin") ? 403 : 500
+    return NextResponse.json({ error: error.message || "Terjadi kesalahan" }, { status })
+  }
 }
