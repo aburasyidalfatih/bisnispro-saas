@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { sendEmail } from "@/lib/services/notification"
+import { emailQueue } from "@/lib/queue"
 import { startOfDay } from "date-fns"
 
 export const dynamic = 'force-dynamic'
@@ -140,8 +140,15 @@ export async function GET(req: Request) {
             .replace(/{{name}}/g, owner.name)
             .replace(/{{schoolName}}/g, tenant.name)
 
-          // Kirim email
-          await sendEmail(owner.email, subject, htmlContent)
+          // Kirim email (enqueue via BullMQ)
+          await emailQueue.add("send-educational-email", {
+            to: owner.email,
+            subject,
+            htmlContent,
+            logId: dripLog.id,
+            tenantId: tenant.id,
+            campaignId: campaignToSend.id
+          })
 
           emailsSent++
           logs.push(`Sent campaign Day ${campaignToSend.dayOffset} to ${owner.email} (${tenant.name})`)

@@ -36,22 +36,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Jalankan import langsung di background (bypass Inngest)
-    const { ImportService } = await import("@/lib/services/import-service")
-    
-    ImportService.importStudents({ tenantId, students })
-      .then(async (result) => {
-        await db.auditLog.create({
-          data: {
-            tenantId,
-            action: "IMPORT_STUDENTS_ASYNC",
-            entity: "System",
-            userId: session.user.id || "SYSTEM"
-          }
-        }).catch(() => {})
-        logger.info("Student import completed", { tenantId, result })
-      })
-      .catch(err => logger.error("Student import failed", err, { tenantId }))
+    // 3. Masukkan ke BullMQ
+    const { importQueue } = await import("@/lib/queue")
+    await importQueue.add("import-students", { tenantId, type: "students", data: students, userId: session.user.id })
+
+    // Log the action
+    await db.auditLog.create({
+      data: {
+        tenantId,
+        action: "ENQUEUE_IMPORT_STUDENTS",
+        entity: "System",
+        userId: session.user.id || "SYSTEM"
+      }
+    }).catch(() => {})
 
     return NextResponse.json({ 
       success: true, 

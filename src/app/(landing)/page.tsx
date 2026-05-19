@@ -84,7 +84,7 @@ const featureModules = [
     icon: Zap,
     description: "Dibangun dengan fondasi teknologi level korporasi yang tahan banting untuk puluhan ribu sekolah.",
     features: [
-      { name: "Inngest Queue untuk Background Tasks", status: "ready" },
+      { name: "BullMQ & Redis untuk Background Tasks", status: "ready" },
       { name: "Isolasi Kredensial (Bring Your Own SMTP/WA)", status: "ready" },
       { name: "Pengiriman Notifikasi Asynchronous Massal", status: "ready" },
       { name: "Isolasi Database & Proteksi Data Anti-Bocor", status: "ready" },
