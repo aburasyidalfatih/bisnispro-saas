@@ -30,7 +30,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       template: `%s | ${tenant.name}`,
       default: tenant.seoTitle || tenant.name,
     },
-    icons: tenant.logo ? { icon: tenant.logo, shortcut: tenant.logo, apple: tenant.logo } : undefined,
+    icons: tenant.logo ? { 
+      icon: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 
+      shortcut: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 
+      apple: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=256&q=100` 
+    } : undefined,
     openGraph: {
       title: {
         template: `%s | ${tenant.name}`,

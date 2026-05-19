@@ -62,6 +62,7 @@ import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
+import Image from "next/image"
 
 // ============================================================
 // MENU DEFINITIONS
@@ -657,9 +658,9 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                 finalBrandLogo || isSuperAdminPath ? "bg-transparent shadow-none" : "btn-gradient"
               )}>
                 {isSuperAdminPath
-                  ? <img src={platformLogo} alt="SchoolPro Logo" className="h-full w-full object-contain" />
+                  ? <Image src={platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
                   : finalBrandLogo
-                    ? <img src={finalBrandLogo} alt={brandName} className="h-full w-full object-contain" />
+                    ? <Image src={finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
                     : brandInitial
                 }
               </div>
@@ -686,9 +687,9 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
             )}
           >
             {isSuperAdminPath
-              ? <img src={platformLogo} alt="SchoolPro Logo" className="h-full w-full object-contain" />
+              ? <Image src={platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
               : finalBrandLogo
-                ? <img src={finalBrandLogo} alt={brandName} className="h-full w-full object-contain" />
+                ? <Image src={finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
                 : brandInitial
             }
           </button>

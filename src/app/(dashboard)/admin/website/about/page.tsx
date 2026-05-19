@@ -230,7 +230,7 @@ export default function WebsiteAboutPage() {
               <div className="flex items-center gap-4">
                 <div className="relative shrink-0 h-14 w-14 overflow-hidden rounded-xl border bg-muted">
                   {logoPreview ? (
-                    <Image src={logoPreview} alt="Logo" fill className="object-cover" unoptimized />
+                    <Image src={logoPreview} alt="Logo" fill className="object-contain p-1" />
                   ) : (
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl border-2 border-dashed bg-muted/30">
                       <Building2 className="h-5 w-5 text-muted-foreground/40" />
