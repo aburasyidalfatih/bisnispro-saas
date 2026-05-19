@@ -29,7 +29,8 @@ export async function generateTwoFactorSecret(userId: string, userEmail: string)
     data: { twoFactorSecret: secret },
   })
 
-  return { secret, qrCode, uri }
+  // DTO mapping
+  return { success: true, data: { secret, qrCode, uri } }
 }
 
 /**
@@ -53,54 +54,63 @@ export function verifyTwoFactorCode(secret: string, code: string): boolean {
  * Enable 2FA after user verifies their first code.
  */
 export async function enableTwoFactor(userId: string, code: string) {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: { twoFactorSecret: true },
-  })
+  try {
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      select: { twoFactorSecret: true },
+    })
 
-  if (!user?.twoFactorSecret) {
-    throw new Error("2FA secret belum di-generate")
+    if (!user?.twoFactorSecret) {
+      return { success: false, error: "2FA secret belum di-generate" }
+    }
+
+    const isValid = verifyTwoFactorCode(user.twoFactorSecret, code)
+    if (!isValid) {
+      return { success: false, error: "Kode OTP tidak valid" }
+    }
+
+    // Generate backup codes using crypto for better entropy
+    const backupCodes = Array.from({ length: 8 }, () =>
+      crypto.randomBytes(4).toString("hex").toUpperCase()
+    )
+
+    // Hash backup codes before storing
+    const hashedCodes = await Promise.all(
+      backupCodes.map((c) => bcrypt.hash(c, 10))
+    )
+
+    await db.user.update({
+      where: { id: userId },
+      data: {
+        twoFactorEnabled: true,
+        twoFactorBackupCodes: hashedCodes,
+      },
+    })
+
+    // Return plain codes — this is the only time user sees them
+    return { success: true, data: { backupCodes } }
+  } catch (error) {
+    return { success: false, error: "Terjadi kesalahan internal" }
   }
-
-  const isValid = verifyTwoFactorCode(user.twoFactorSecret, code)
-  if (!isValid) {
-    throw new Error("Kode OTP tidak valid")
-  }
-
-  // Generate backup codes using crypto for better entropy
-  const backupCodes = Array.from({ length: 8 }, () =>
-    crypto.randomBytes(4).toString("hex").toUpperCase()
-  )
-
-  // Hash backup codes before storing (plain codes are only shown once to user)
-  const hashedCodes = await Promise.all(
-    backupCodes.map((code) => bcrypt.hash(code, 10))
-  )
-
-  await db.user.update({
-    where: { id: userId },
-    data: {
-      twoFactorEnabled: true,
-      twoFactorBackupCodes: hashedCodes,
-    },
-  })
-
-  // Return plain codes — this is the only time user sees them
-  return { backupCodes }
 }
 
 /**
  * Disable 2FA for a user.
  */
 export async function disableTwoFactor(userId: string) {
-  await db.user.update({
-    where: { id: userId },
-    data: {
-      twoFactorEnabled: false,
-      twoFactorSecret: null,
-      twoFactorBackupCodes: null as any,
-    },
-  })
+  try {
+    await db.user.update({
+      where: { id: userId },
+      data: {
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        twoFactorBackupCodes: null as any,
+      },
+    })
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: "Gagal mematikan 2FA" }
+  }
 }
 
 /**
@@ -109,17 +119,17 @@ export async function disableTwoFactor(userId: string) {
 export async function verifyTwoFactorLogin(
   userId: string,
   code: string
-): Promise<boolean> {
+): Promise<{ success: boolean; isBackupCodeUsed?: boolean }> {
   const user = await db.user.findUnique({
     where: { id: userId },
     select: { twoFactorSecret: true, twoFactorBackupCodes: true },
   })
 
-  if (!user?.twoFactorSecret) return false
+  if (!user?.twoFactorSecret) return { success: false }
 
   // Try TOTP first
   if (verifyTwoFactorCode(user.twoFactorSecret, code)) {
-    return true
+    return { success: true, isBackupCodeUsed: false }
   }
 
   // Try backup code (hashed comparison)
@@ -136,10 +146,10 @@ export async function verifyTwoFactorLogin(
           where: { id: userId },
           data: { twoFactorBackupCodes: hashedCodes },
         })
-        return true
+        return { success: true, isBackupCodeUsed: true }
       }
     }
   }
 
-  return false
+  return { success: false }
 }
