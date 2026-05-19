@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Plus, Edit2, Trash2, FileText, Globe, Clock, XCircle } from "lucide-react"
+import { Plus, Edit2, Trash2, FileText, Globe, Clock, XCircle, ImageIcon } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { format } from "date-fns"
 
 interface Post {
@@ -17,6 +18,7 @@ interface Post {
   type: string
   status: string
   createdAt: string
+  featuredImage?: string | null
   author: { name: string }
   category?: { name: string } | null
 }
@@ -114,8 +116,21 @@ export default function PengumumanPage() {
                   {posts.map(post => (
                     <tr key={post.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
                       <td className="px-4 py-3">
-                        <div className="font-medium text-foreground">{post.title}</div>
-                        <div className="text-[11px] text-muted-foreground font-mono mt-0.5">/{post.slug}</div>
+                        <div className="flex items-center gap-3">
+                          {post.featuredImage ? (
+                            <div className="relative h-10 w-16 shrink-0 rounded overflow-hidden border">
+                              <Image src={post.featuredImage} alt={post.title} fill className="object-cover" unoptimized />
+                            </div>
+                          ) : (
+                            <div className="flex h-10 w-16 shrink-0 items-center justify-center rounded border bg-muted/50">
+                              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div>
+                            <div className="font-medium text-foreground line-clamp-1" title={post.title}>{post.title}</div>
+                            <div className="text-[11px] text-muted-foreground font-mono mt-0.5 line-clamp-1">/{post.slug}</div>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary">
