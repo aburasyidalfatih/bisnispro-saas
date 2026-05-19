@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { saveFile } from "@/lib/services/upload"
+import { saveFile } from "@/features/upload/services/upload.service"
 import path from "path"
 import { logger } from "@/lib/logger"
 
@@ -36,12 +36,18 @@ export async function POST(req: Request) {
     }
 
     const result = await saveFile(file, tenantId || undefined, subDir || undefined)
+    
+    if (!result.success || !result.data) {
+      return NextResponse.json({ error: result.error || "Gagal mengupload file" }, { status: 400 })
+    }
+
+    const fileData = result.data
 
     // Konversi path absolut filesystem ke URL publik via /api/files/...
-    let publicUrl = result.path
-    if (!result.path.startsWith("http")) {
+    let publicUrl = fileData.path
+    if (!fileData.path.startsWith("http")) {
       const uploadDirResolved = path.resolve(process.env.UPLOAD_DIR || "./uploads")
-      const fileResolved = path.resolve(result.path)
+      const fileResolved = path.resolve(fileData.path)
       
       const relativeToUpload = fileResolved
         .replace(uploadDirResolved, "")
@@ -54,18 +60,14 @@ export async function POST(req: Request) {
       message: "File berhasil diupload",
       url: publicUrl,
       file: {
-        name: result.name,
-        size: result.size,
-        mimeType: result.mimeType,
-        path: result.path,
+        name: fileData.name,
+        size: fileData.size,
+        mimeType: fileData.mimeType,
+        path: fileData.path,
         url: publicUrl,
       },
     })
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : ""
-    if (errMsg.includes("batas maksimum") || errMsg.includes("Quota penyimpanan")) {
-      return NextResponse.json({ error: errMsg }, { status: 400 })
-    }
     logger.error("Upload failed", error, { path: "/api/upload" })
     return NextResponse.json({ error: "Upload gagal: " + (error instanceof Error ? error.message : String(error)) }, { status: 500 })
   }

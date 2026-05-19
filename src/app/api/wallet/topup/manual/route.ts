@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { saveFile } from "@/lib/services/upload"
+import { saveFile } from "@/features/upload/services/upload.service"
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -27,11 +27,13 @@ export async function POST(req: Request) {
     // Upload file using central upload service
     const uploaded = await saveFile(file, payment.tenantId, "proofs", ["image"])
     
+    if (!uploaded.success || !uploaded.data) {
+      return NextResponse.json({ error: uploaded.error || "Gagal mengupload bukti pembayaran" }, { status: 400 })
+    }
+
     // Create public URL
-    // If it's a local file, we prefix with /api/uploads/ or similar, but the saveFile path usually contains the public accessible path or we just use it directly. 
-    // Wait, let's just save the path as proofUrl and let the frontend resolve it. The finalFilePath in local mode is "uploads/...". We should convert it to a URL or use an API route to serve it.
-    // Wait, for simplicity, I'll assume the path is fine, but to be safe let's just store uploaded.path
-    const proofUrl = uploaded.path.startsWith("http") ? uploaded.path : `/uploads/${uploaded.name}`
+    const fileData = uploaded.data
+    const proofUrl = fileData.path.startsWith("http") ? fileData.path : `/uploads/${fileData.name}`
 
     const currentMeta = payment.metadata as any
     await db.payment.update({

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { saveFile } from "@/lib/services/upload"
+import { saveFile } from "@/features/upload/services/upload.service"
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -27,8 +27,13 @@ export async function POST(req: Request) {
     // Upload file using central upload service
     const uploaded = await saveFile(file, payment.tenantId, "proofs", ["image"])
     
+    if (!uploaded.success || !uploaded.data) {
+      return NextResponse.json({ error: uploaded.error || "Gagal mengupload bukti pembayaran" }, { status: 400 })
+    }
+
     // Create public URL
-    const proofUrl = uploaded.path.startsWith("http") ? uploaded.path : `/uploads/${uploaded.name}`
+    const fileData = uploaded.data
+    const proofUrl = fileData.path.startsWith("http") ? fileData.path : `/uploads/${fileData.name}`
 
     await db.invoicePayment.update({
       where: { id: paymentId },
