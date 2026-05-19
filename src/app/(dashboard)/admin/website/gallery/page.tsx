@@ -82,7 +82,7 @@ export default function WebsiteGalleryPage() {
       }
     }
     if (uploaded.length > 0) {
-      setGallery(prev => [...prev, ...uploaded])
+      setGallery(prev => [...uploaded, ...prev])
       toast({ title: `${uploaded.length} foto berhasil diunggah`, description: "Klik Simpan untuk menyimpan perubahan." })
     }
     setUploading(false)
@@ -95,7 +95,7 @@ export default function WebsiteGalleryPage() {
       toast({ title: "URL tidak valid", description: "Masukkan URL yang dimulai dengan https://", variant: "destructive" })
       return
     }
-    setGallery(prev => [...prev, { url: urlInput.trim(), caption: "" }])
+    setGallery(prev => [{ url: urlInput.trim(), caption: "" }, ...prev])
     setUrlInput("")
   }
 

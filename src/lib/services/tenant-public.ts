@@ -52,9 +52,9 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       tiktok: true,
       staff: { orderBy: { sortOrder: 'asc' }, take: 20 },
       alumni: { orderBy: { graduationYear: 'desc' }, take: 15 },
-      programs: { take: 10 },
-      extracurriculars: { take: 15 },
-      facilities: { take: 15 },
+      programs: { orderBy: { createdAt: 'desc' }, take: 10 },
+      extracurriculars: { orderBy: { createdAt: 'desc' }, take: 15 },
+      facilities: { orderBy: { createdAt: 'desc' }, take: 15 },
       achievements: { orderBy: { createdAt: 'desc' }, take: 10 },
       websiteMenus: { 
         where: { isActive: true, parentId: null },
