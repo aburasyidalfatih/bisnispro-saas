@@ -2,10 +2,30 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { sendWhatsApp, sendEmail, notifyTenantAdmins } from "@/lib/services/notification"
 
+export type BillingSettingsDTO = {
+  platformName: string
+  rootDomain: string
+  bankName: string
+  bankNumber: string
+  bankAccountName: string
+  adminWA: string
+  tplInvoiceCreated: string
+  tplPaymentConfirmed: string
+  tplAffiliateCommission: string
+  tplSubscriptionReminder: string
+}
+
+export type SubscriptionReminderResultDTO = {
+  success: boolean
+  processed: number
+  sent: number
+  error?: string
+}
+
 /**
  * Helper: Ambil platform settings terkait billing + templates
  */
-async function getBillingSettings() {
+export async function getBillingSettings(): Promise<BillingSettingsDTO> {
   const keys = [
     "platform_name", "NEXT_PUBLIC_ROOT_DOMAIN",
     "MANUAL_PAYMENT_BANK", "MANUAL_PAYMENT_NUMBER",
@@ -55,7 +75,7 @@ function formatDate(date: Date | string): string {
 // ============================================================
 // 1. NOTIFIKASI INVOICE DIBUAT → TENANT
 // ============================================================
-export async function notifyInvoiceCreated(paymentId: string) {
+export async function notifyInvoiceCreated(paymentId: string): Promise<void> {
   try {
     const payment = await db.payment.findUnique({
       where: { id: paymentId },
@@ -160,7 +180,7 @@ Terima kasih! 🙏`
 // ============================================================
 // 2. NOTIFIKASI INVOICE BARU → SUPER ADMIN
 // ============================================================
-export async function notifySuperAdminNewInvoice(paymentId: string) {
+export async function notifySuperAdminNewInvoice(paymentId: string): Promise<void> {
   try {
     const payment = await db.payment.findUnique({
       where: { id: paymentId },
@@ -202,7 +222,7 @@ Silakan pantau di Panel Super Admin.`
 // ============================================================
 // 3. NOTIFIKASI PEMBAYARAN DIKONFIRMASI → TENANT
 // ============================================================
-export async function notifyPaymentConfirmed(paymentId: string) {
+export async function notifyPaymentConfirmed(paymentId: string): Promise<void> {
   try {
     const payment = await db.payment.findUnique({
       where: { id: paymentId },
@@ -311,7 +331,7 @@ Selamat menggunakan fitur premium ${cfg.platformName}! 🎉`
 // ============================================================
 // 4. NOTIFIKASI KOMISI → AFILIASI
 // ============================================================
-export async function notifyAffiliateCommission(affiliateId: string, commissionAmount: number, tenantName: string) {
+export async function notifyAffiliateCommission(affiliateId: string, commissionAmount: number, tenantName: string): Promise<void> {
   try {
     const affiliate = await db.affiliateProfile.findUnique({
       where: { id: affiliateId },
@@ -381,7 +401,7 @@ Terima kasih sudah menjadi mitra ${cfg.platformName}! 🤝`
 // ============================================================
 // 5. NOTIFIKASI INVOICE EXPIRED → TENANT
 // ============================================================
-export async function notifyInvoiceExpired(paymentIds: string[]) {
+export async function notifyInvoiceExpired(paymentIds: string[]): Promise<void> {
   try {
     const payments = await db.payment.findMany({
       where: { id: { in: paymentIds } },
@@ -427,7 +447,7 @@ Terima kasih.`
 // ============================================================
 // 6. NOTIFIKASI SUBSCRIPTION HAMPIR HABIS → TENANT
 // ============================================================
-export async function notifySubscriptionExpiring() {
+export async function notifySubscriptionExpiring(): Promise<SubscriptionReminderResultDTO> {
   try {
     const now = new Date()
     const thirtyDays = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
@@ -501,9 +521,9 @@ Kunjungi: Menu Langganan di Dashboard Admin.`
       sentCount++
     }
 
-    return { processed: expiringTenants.length, sent: sentCount }
-  } catch (err) {
+    return { success: true, processed: expiringTenants.length, sent: sentCount }
+  } catch (err: any) {
     logger.error("Billing notification: subscription expiring failed", err)
-    return { processed: 0, sent: 0 }
+    return { success: false, processed: 0, sent: 0, error: err.message || "Failed to process subscription reminder" }
   }
 }

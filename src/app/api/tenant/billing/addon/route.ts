@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const invoice = result.data
 
     // Kirim notifikasi billing (async, non-blocking)
-    import("@/lib/services/billing-notifications").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
+    import("@/features/finance/services/billing-notification.service").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
       notifyInvoiceCreated(invoice.id).catch(() => {})
       notifySuperAdminNewInvoice(invoice.id).catch(() => {})
     }).catch(() => {})

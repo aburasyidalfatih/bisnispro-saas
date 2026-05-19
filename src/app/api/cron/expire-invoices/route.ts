@@ -65,7 +65,7 @@ export async function GET(req: Request) {
     logger.info(`Auto-expired ${expiredPayments.length} invoices`, { references: refs })
 
     // Kirim notifikasi ke tenant (async, non-blocking)
-    import("@/lib/services/billing-notifications").then(({ notifyInvoiceExpired }) => {
+    import("@/features/finance/services/billing-notification.service").then(({ notifyInvoiceExpired }) => {
       notifyInvoiceExpired(ids).catch(() => {})
     }).catch(() => {})
 
