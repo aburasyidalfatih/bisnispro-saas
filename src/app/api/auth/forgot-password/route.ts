@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { createToken } from "@/lib/services/token"
+import { createToken } from "@/features/auth/services/token.service"
 import { sendEmail } from "@/lib/services/notification"
 import { rateLimit } from "@/lib/rate-limit"
 import { forgotPasswordSchema } from "@/lib/validations/auth"

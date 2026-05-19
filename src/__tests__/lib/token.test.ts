@@ -17,7 +17,7 @@ vi.mock("@/lib/db", () => ({
   },
 }))
 
-describe("Token Service", () => {
+describe("Token Service (FSD Refactored)", () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -33,7 +33,7 @@ describe("Token Service", () => {
         expiresAt: new Date(),
       })
 
-      const { createToken } = await import("@/lib/services/token")
+      const { createToken } = await import("@/features/auth/services/token.service")
       const result = await createToken("user-1", "email_verify", 24)
 
       expect(mockDeleteMany).toHaveBeenCalledWith({
@@ -45,7 +45,8 @@ describe("Token Service", () => {
           type: "email_verify",
         }),
       })
-      expect(result).toBeDefined()
+      expect(result.success).toBe(true)
+      expect(result.token).toBe("generated-token")
     })
   })
 
@@ -60,14 +61,14 @@ describe("Token Service", () => {
         expiresAt: futureDate,
       })
 
-      const { verifyToken } = await import("@/lib/services/token")
+      const { verifyToken } = await import("@/features/auth/services/token.service")
       const result = await verifyToken("valid-token", "password_reset")
 
-      expect(result).not.toBeNull()
-      expect(result?.userId).toBe("user-1")
+      expect(result.success).toBe(true)
+      expect(result.data?.userId).toBe("user-1")
     })
 
-    it("returns null for wrong type", async () => {
+    it("returns error for wrong type", async () => {
       mockFindUnique.mockResolvedValue({
         id: "1",
         userId: "user-1",
@@ -76,13 +77,13 @@ describe("Token Service", () => {
         expiresAt: new Date(Date.now() + 3600000),
       })
 
-      const { verifyToken } = await import("@/lib/services/token")
+      const { verifyToken } = await import("@/features/auth/services/token.service")
       const result = await verifyToken("token", "password_reset")
 
-      expect(result).toBeNull()
+      expect(result.success).toBe(false)
     })
 
-    it("returns null and deletes expired token", async () => {
+    it("returns error and deletes expired token", async () => {
       const pastDate = new Date(Date.now() - 3600000)
       mockFindUnique.mockResolvedValue({
         id: "1",
@@ -93,20 +94,20 @@ describe("Token Service", () => {
       })
       mockDelete.mockResolvedValue({})
 
-      const { verifyToken } = await import("@/lib/services/token")
+      const { verifyToken } = await import("@/features/auth/services/token.service")
       const result = await verifyToken("expired-token", "password_reset")
 
-      expect(result).toBeNull()
+      expect(result.success).toBe(false)
       expect(mockDelete).toHaveBeenCalledWith({ where: { id: "1" } })
     })
 
-    it("returns null for non-existent token", async () => {
+    it("returns error for non-existent token", async () => {
       mockFindUnique.mockResolvedValue(null)
 
-      const { verifyToken } = await import("@/lib/services/token")
+      const { verifyToken } = await import("@/features/auth/services/token.service")
       const result = await verifyToken("nonexistent", "email_verify")
 
-      expect(result).toBeNull()
+      expect(result.success).toBe(false)
     })
   })
 
@@ -114,10 +115,11 @@ describe("Token Service", () => {
     it("deletes the token", async () => {
       mockDelete.mockResolvedValue({})
 
-      const { consumeToken } = await import("@/lib/services/token")
-      await consumeToken("some-token")
+      const { consumeToken } = await import("@/features/auth/services/token.service")
+      const result = await consumeToken("some-token")
 
       expect(mockDelete).toHaveBeenCalledWith({ where: { token: "some-token" } })
+      expect(result.success).toBe(true)
     })
   })
 })
