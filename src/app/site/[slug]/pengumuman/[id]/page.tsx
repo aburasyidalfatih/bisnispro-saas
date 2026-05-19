@@ -19,11 +19,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = (tenant.posts || []).find((p: any) => p.id === id)
   if (!post) return {}
   const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
-  let imageUrl = post.featuredImage || post.image || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  let imageUrl = post.featuredImage || post.image || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
   if (imageUrl.startsWith("/")) {
-    const domain = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
-    imageUrl = `${domain}${imageUrl}`
+    imageUrl = `${domainUrl}${imageUrl}`
   }
+
+  // Proxy through Next.js to convert WebP to JPG and avoid CORS/ISP timeout issues for social media scrapers
+  const finalOgImageUrl = `${domainUrl}/_next/image?url=${encodeURIComponent(imageUrl)}&w=1200&q=75`
 
   return {
     title: `${post.title} - ${tenant.name}`,
@@ -33,14 +37,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       url: `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/pengumuman/${post.id}`,
       siteName: tenant.name,
-      images: [{ url: imageUrl, width: 1200, height: 630 }],
+      images: [{ url: finalOgImageUrl, width: 1200, height: 630 }],
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description,
-      images: [imageUrl],
+      images: [finalOgImageUrl],
     },
   }
 }
