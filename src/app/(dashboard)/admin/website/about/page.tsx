@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
 import { getStaff } from "@/lib/actions/staff"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import Image from "next/image"
 
 export default function WebsiteAboutPage() {
   const { data: session } = useSession()
