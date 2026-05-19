@@ -25,8 +25,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const domainUrl = `${protocol}://${host}`
 
     const ogImageBase = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
-    // Fix: Proxy OG image through Next.js optimizer to convert WebP to JPEG for social media crawlers
-    const ogImageUrl = `${domainUrl}/_next/image?url=${encodeURIComponent(ogImageBase)}&w=1200&q=75`
+    // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
+    const ogImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
 
     return {
       metadataBase: new URL(domainUrl),

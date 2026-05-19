@@ -27,8 +27,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     imageUrl = `${domainUrl}${imageUrl}`
   }
 
-  // Proxy through Next.js to convert WebP to JPG and avoid CORS/ISP timeout issues for social media scrapers
-  const finalOgImageUrl = `${domainUrl}/_next/image?url=${encodeURIComponent(imageUrl)}&w=1200&q=75`
+  // Proxy through custom og-proxy to convert WebP to JPG and avoid CORS/ISP timeout issues for social media scrapers like Facebook and WhatsApp
+  const finalOgImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(imageUrl)}&ext=.jpg`
 
   return {
     title: `${post.title} - ${tenant.name}`,

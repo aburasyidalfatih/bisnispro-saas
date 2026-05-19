@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props) {
   const domainUrl = `${protocol}://${host}`
 
   const ogImageBase = (campaign.imageUrl as string) || (campaign.tenant as any).logo || "https://schoolpro.id/default-og.jpg"
-  const ogImageUrl = `${domainUrl}/_next/image?url=${encodeURIComponent(ogImageBase)}&w=1200&q=75`
+  const ogImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
 
   return {
     title: `${campaign.title} | Donasi ${campaign.tenant.name}`,
