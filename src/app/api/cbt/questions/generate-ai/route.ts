@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { getAiProvider, checkAiTokenBalance, deductAiToken } from "@/lib/services/ai-service"
+import { getAiProvider, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
 import { generateObject } from "ai"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
@@ -22,13 +22,17 @@ export async function POST(req: Request) {
     }
 
     // 1. Cek Saldo Token
-    const hasTokens = await checkAiTokenBalance(tenantId)
-    if (!hasTokens) {
+    const balanceResult = await checkAiTokenBalance(tenantId)
+    if (!balanceResult.success || !balanceResult.hasBalance) {
       return NextResponse.json({ error: "Saldo Token AI habis. Silakan beli kuota tambahan atau gunakan API Key Anda sendiri." }, { status: 403 })
     }
 
     // 2. Setup AI Provider
-    const openai = await getAiProvider(tenantId)
+    const providerResult = await getAiProvider(tenantId)
+    if (!providerResult.success || !providerResult.provider) {
+      return NextResponse.json({ error: providerResult.error || "Gagal inisialisasi AI" }, { status: 500 })
+    }
+    const openai = providerResult.provider
     const model = openai("gpt-4o-mini") // Gunakan model cost-effective
 
     // 3. Bangun Prompt & Schema Dinamis
