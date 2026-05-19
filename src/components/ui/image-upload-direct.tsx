@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
 import { ImageIcon, X, Loader2, UploadCloud } from "lucide-react"
+import Image from "next/image"
 
 interface ImageUploadDirectProps {
   value: string
@@ -132,8 +133,7 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
       >
         {previewUrl ? (
           <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-lg" />
+            <Image src={previewUrl} alt="Preview" fill className="object-cover rounded-lg" unoptimized />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
               <p className="text-white text-sm font-medium flex items-center gap-2">
                 <UploadCloud className="h-4 w-4" /> Ganti Gambar

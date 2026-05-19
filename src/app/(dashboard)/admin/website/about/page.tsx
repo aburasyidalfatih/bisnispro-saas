@@ -227,9 +227,9 @@ export default function WebsiteAboutPage() {
             <div className="space-y-2 mb-4">
               <Label>Logo Lembaga</Label>
               <div className="flex items-center gap-4">
-                <div className="relative shrink-0 overflow-hidden rounded-xl border bg-muted">
+                <div className="relative shrink-0 h-14 w-14 overflow-hidden rounded-xl border bg-muted">
                   {logoPreview ? (
-                    <img src={logoPreview} alt="Logo" className="h-14 w-14 object-cover" />
+                    <Image src={logoPreview} alt="Logo" fill className="object-cover" unoptimized />
                   ) : (
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl border-2 border-dashed bg-muted/30">
                       <Building2 className="h-5 w-5 text-muted-foreground/40" />
