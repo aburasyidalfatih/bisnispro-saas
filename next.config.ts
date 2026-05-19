@@ -1,4 +1,5 @@
 import type { NextConfig } from "next"
+import { withSentryConfig } from "@sentry/nextjs"
 
 /**
  * Domain gambar yang diizinkan untuk Next.js Image Optimization.
@@ -33,7 +34,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' ws: wss: https://cloudflareinsights.com https://static.cloudflareinsights.com",
+      "connect-src 'self' ws: wss: https://cloudflareinsights.com https://static.cloudflareinsights.com https://*.ingest.sentry.io https://*.sentry.io",
       "frame-src 'self' https://challenges.cloudflare.com",
       "frame-ancestors 'none'",
     ].join("; "),
@@ -54,7 +55,6 @@ const nextConfig: NextConfig = {
     remotePatterns: ALLOWED_IMAGE_DOMAINS,
   },
   experimental: {
-    instrumentationHook: true,
     // Membatasi penggunaan memori saat kompilasi
     cpus: 1, 
     workerThreads: false,
@@ -90,4 +90,27 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  // Sentry Options
+  org: process.env.SENTRY_ORG || "",
+  project: process.env.SENTRY_PROJECT || "",
+
+  // Suppress source map upload in dev / when no auth token
+  silent: !process.env.SENTRY_AUTH_TOKEN,
+
+  // Upload source maps for better stack traces (only when auth token set)
+  widenClientFileUpload: true,
+
+  // Disable Sentry telemetry to Sentry servers
+  disableLogger: true,
+
+  // Source maps configuration
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+
+  // Auto-instrument server components and API routes
+  autoInstrumentServerFunctions: true,
+  autoInstrumentMiddleware: true,
+  autoInstrumentAppDirectory: true,
+})
