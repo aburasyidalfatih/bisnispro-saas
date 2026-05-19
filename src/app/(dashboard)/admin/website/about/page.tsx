@@ -413,11 +413,13 @@ export default function WebsiteAboutPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <textarea value={form.about}
-              onChange={e => setForm(p => ({ ...p, about: e.target.value }))}
-              placeholder="Ceritakan tentang lembaga Anda, sejarah panjang..."
-              rows={6}
-              className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
+            <div className="space-y-2">
+              <RichTextEditor 
+                value={form.about || ""}
+                onChange={val => setForm(p => ({ ...p, about: val }))}
+                placeholder="Ceritakan tentang lembaga Anda, sejarah panjang..."
+              />
+            </div>
             
             <div className="space-y-1.5 mt-4">
               <Label>Link Video Profil (YouTube)</Label>
@@ -449,17 +451,21 @@ export default function WebsiteAboutPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 md:col-span-2">
                 <Label>Visi</Label>
-                <textarea value={form.settings?.visi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, visi: e.target.value } }))}
-                  placeholder="Visi sekolah..." rows={3}
-                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
+                <RichTextEditor 
+                  value={form.settings?.visi || ""}
+                  onChange={val => setForm(p => ({ ...p, settings: { ...p.settings, visi: val } }))}
+                  placeholder="Visi sekolah..."
+                />
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 md:col-span-2">
                 <Label>Misi</Label>
-                <textarea value={form.settings?.misi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, misi: e.target.value } }))}
-                  placeholder="Gunakan enter untuk memisahkan misi..." rows={4}
-                  className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
+                <RichTextEditor 
+                  value={form.settings?.misi || ""}
+                  onChange={val => setForm(p => ({ ...p, settings: { ...p.settings, misi: val } }))}
+                  placeholder="Misi sekolah..."
+                />
               </div>
             </div>
 
