@@ -26,15 +26,12 @@ services:
       - .env
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@pgbouncer:6432/${POSTGRES_DB:-saasmasterpro}?pgbouncer=true
-      - REDIS_URL=redis://redis:6379
       - DISABLE_WORKER=true
     volumes:
       - uploads:/app/uploads
       - ./backups:/app/backups
     depends_on:
       pgbouncer:
-        condition: service_started
-      redis:
         condition: service_started
     restart: unless-stopped
     networks:
@@ -52,12 +49,9 @@ services:
       - .env
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@pgbouncer:6432/${POSTGRES_DB:-saasmasterpro}?pgbouncer=true
-      - REDIS_URL=redis://redis:6379
     command: npm run worker
     depends_on:
       pgbouncer:
-        condition: service_started
-      redis:
         condition: service_started
     restart: unless-stopped
     networks:

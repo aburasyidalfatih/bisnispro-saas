@@ -14,16 +14,16 @@ vi.mock("@/lib/db", () => ({
   },
 }))
 
-describe("Audit Service", () => {
+describe("Audit Service (FSD Refactored)", () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   describe("createAuditLog", () => {
     it("creates audit log with all fields", async () => {
-      mockCreate.mockResolvedValue({ id: "1" })
+      mockCreate.mockResolvedValue({ id: "1", action: "create", createdAt: new Date() })
 
-      const { createAuditLog } = await import("@/lib/services/audit")
+      const { createAuditLog } = await import("@/features/audit/services/audit.service")
       await createAuditLog({
         tenantId: "tenant-1",
         userId: "user-1",
@@ -50,9 +50,9 @@ describe("Audit Service", () => {
     })
 
     it("handles null optional fields", async () => {
-      mockCreate.mockResolvedValue({ id: "1" })
+      mockCreate.mockResolvedValue({ id: "1", action: "login", createdAt: new Date() })
 
-      const { createAuditLog } = await import("@/lib/services/audit")
+      const { createAuditLog } = await import("@/features/audit/services/audit.service")
       await createAuditLog({
         action: "login",
         entity: "session",
@@ -70,11 +70,15 @@ describe("Audit Service", () => {
   })
 
   describe("getAuditLogs", () => {
-    it("returns paginated results", async () => {
-      mockFindMany.mockResolvedValue([{ id: "1" }, { id: "2" }])
+    it("returns paginated results with DTO mapping", async () => {
+      const mockDate = new Date()
+      mockFindMany.mockResolvedValue([
+        { id: "1", action: "create", entity: "user", createdAt: mockDate }, 
+        { id: "2", action: "update", entity: "user", createdAt: mockDate }
+      ])
       mockCount.mockResolvedValue(50)
 
-      const { getAuditLogs } = await import("@/lib/services/audit")
+      const { getAuditLogs } = await import("@/features/audit/services/audit.service")
       const result = await getAuditLogs({ tenantId: "tenant-1", page: 2, limit: 10 })
 
       expect(result.data).toHaveLength(2)
@@ -87,8 +91,8 @@ describe("Audit Service", () => {
       mockFindMany.mockResolvedValue([])
       mockCount.mockResolvedValue(0)
 
-      const { getAuditLogs } = await import("@/lib/services/audit")
-      const result = await getAuditLogs({})
+      const { getAuditLogs } = await import("@/features/audit/services/audit.service")
+      const result = await getAuditLogs({ page: 1, limit: 20 })
 
       expect(result.page).toBe(1)
       expect(result.limit).toBe(20)
