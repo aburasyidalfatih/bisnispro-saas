@@ -34,11 +34,25 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   }
 
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: ["/api/", "/dashboard/", "/super-admin/"],
-    },
+    rules: [
+      {
+        userAgent: "facebookexternalhit",
+        allow: "/",
+      },
+      {
+        userAgent: "Twitterbot",
+        allow: "/",
+      },
+      {
+        userAgent: "WhatsApp",
+        allow: "/",
+      },
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/api/", "/dashboard/", "/super-admin/"],
+      }
+    ],
     sitemap: `${domainUrl}/sitemap.xml`,
   }
 }
