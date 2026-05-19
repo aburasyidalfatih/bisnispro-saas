@@ -1,6 +1,6 @@
 "use server";
 
-import { createSampleSchema } from "./validations";
+import { createSampleSchema } from "./schemas/sample.schema";
 import { createSampleRecord } from "./services/sample.service";
 import { revalidatePath } from "next/cache";
 
