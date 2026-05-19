@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
 import { Save, ImageIcon, Plus, Trash2, ExternalLink, Upload, GripVertical, X, Link as LinkIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 interface GalleryItem {
   url: string
@@ -82,7 +83,7 @@ export default function WebsiteGalleryPage() {
       }
     }
     if (uploaded.length > 0) {
-      setGallery(prev => [...prev, ...uploaded])
+      setGallery(prev => [...uploaded, ...prev])
       toast({ title: `${uploaded.length} foto berhasil diunggah`, description: "Klik Simpan untuk menyimpan perubahan." })
     }
     setUploading(false)
@@ -95,7 +96,7 @@ export default function WebsiteGalleryPage() {
       toast({ title: "URL tidak valid", description: "Masukkan URL yang dimulai dengan https://", variant: "destructive" })
       return
     }
-    setGallery(prev => [...prev, { url: urlInput.trim(), caption: "" }])
+    setGallery(prev => [{ url: urlInput.trim(), caption: "" }, ...prev])
     setUrlInput("")
   }
 
@@ -245,7 +246,7 @@ export default function WebsiteGalleryPage() {
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {gallery.map((item, i) => (
-              <div key={i}
+              <div key={`${item.url}-${i}`}
                 draggable
                 onDragStart={() => handleDragStart(i)}
                 onDragOver={e => handleDragOver(e, i)}
@@ -258,8 +259,9 @@ export default function WebsiteGalleryPage() {
                 )}>
                 {/* Image */}
                 <div className="aspect-square relative">
-                  <img src={item.url} alt={item.caption || `Foto ${i + 1}`}
-                    className="w-full h-full object-cover" />
+                  <Image src={item.url} alt={item.caption || `Foto ${i + 1}`}
+                    fill unoptimized
+                    className="object-cover" />
                   {/* Overlay controls */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
                   <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
