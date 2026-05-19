@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
 import { headers } from "next/headers"
 
 export const dynamic = "force-dynamic"
@@ -16,19 +15,18 @@ export async function GET() {
     if (host.endsWith(`.${rootDomain}`)) {
       slug = host.replace(`.${rootDomain}`, "")
     } else if (host !== rootDomain && !host.startsWith("www.")) {
-      slug = host.split(".")[0] // Fallback local test
+      slug = host.split(".")[0]
     }
   }
   
   const tenant = session?.user?.tenants?.find((t: any) => t.slug === slug)
   if (!tenant) return NextResponse.json({ error: "Unauthorized", slug_detected: slug }, { status: 401 })
-  const tenantId = tenant.id
 
-  const payments = await db.payment.findMany({
-    where: { tenantId },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-  })
-
-  return NextResponse.json(payments)
+  try {
+    const { getBillingHistory } = await import("@/features/finance/services/wallet.service")
+    const payments = await getBillingHistory(tenant.id)
+    return NextResponse.json(payments)
+  } catch (error: any) {
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
+  }
 }
