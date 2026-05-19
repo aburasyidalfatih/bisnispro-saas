@@ -25,22 +25,63 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@pgbouncer:6432/${POSTGRES_DB:-saasmasterpro}?pgbouncer=true
       - REDIS_URL=redis://redis:6379
-      - WA_GATEWAY_URL=${WA_GATEWAY_URL:-http://wa-gateway:4000}
+      - DISABLE_WORKER=true
     volumes:
       - uploads:/app/uploads
       - ./backups:/app/backups
     depends_on:
-      db:
-        condition: service_healthy
-        required: false
+      pgbouncer:
+        condition: service_started
+      redis:
+        condition: service_started
     restart: unless-stopped
     networks:
       default:
       shared-proxy:
         aliases:
           - ${APP_ALIAS:-schoolpro-app}
+
+  worker:
+    image: ${APP_IMAGE:-schoolpro-app:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@pgbouncer:6432/${POSTGRES_DB:-saasmasterpro}?pgbouncer=true
+      - REDIS_URL=redis://redis:6379
+    command: npm run worker
+    depends_on:
+      pgbouncer:
+        condition: service_started
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      default:
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    environment:
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DB_HOST: db
+      DB_NAME: ${POSTGRES_DB:-saasmasterpro}
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 20
+      ADMIN_USERS: ${POSTGRES_USER:-postgres}
+    ports:
+      - "127.0.0.1:6432:6432"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - default
 
   db:
     profiles:

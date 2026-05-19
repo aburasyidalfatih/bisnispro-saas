@@ -1816,6 +1816,8 @@ model WaQueueLog {
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
+  @@index([tenantId, status])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("wa_queue_logs")
 }
 
