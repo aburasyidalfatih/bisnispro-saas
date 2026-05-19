@@ -11,7 +11,8 @@ const redisOptions: RedisOptions = {
 const globalForRedis = global as unknown as { redisConnection: Redis }
 
 export const redisConnection =
-  globalForRedis.redisConnection || new Redis(redisOptions)
+  globalForRedis.redisConnection || 
+  (process.env.REDIS_URL ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null }) : new Redis(redisOptions))
 
 if (process.env.NODE_ENV !== "production") {
   globalForRedis.redisConnection = redisConnection
