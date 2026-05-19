@@ -2,7 +2,7 @@ import { Worker, Job } from "bullmq"
 import { Redis } from "ioredis"
 import { db } from "./lib/db"
 
-import { sendWhatsAppDirect } from "./lib/services/notification"
+import { sendWhatsAppDirect, sendEmail } from "./lib/services/notification"
 import { ImportService } from "./lib/services/import-service"
 import { processGamificationPoints } from "./lib/services/gamification"
 import { FinanceService } from "./lib/services/finance-service"
@@ -157,8 +157,33 @@ const gamificationWorker = new Worker(
   { connection, concurrency: 50 } // Sangat ringan, concurrency diset sangat tinggi
 )
 
+// -----------------------------------------------------------------------------
+// 5. Automated Emails Worker
+// -----------------------------------------------------------------------------
+const emailWorker = new Worker(
+  "email-queue",
+  async (job: Job) => {
+    const { to, subject, htmlContent, logId, tenantId, campaignId } = job.data
+    console.log(`[email-queue] Sending email to ${to} for campaign ${campaignId}...`)
+    
+    try {
+      await sendEmail(to, subject, htmlContent)
+      return { success: true }
+    } catch (error: any) {
+      console.error(`[email-queue] Failed to send email to ${to}:`, error.message)
+      
+      // Hapus log jika gagal kirim, agar besok bisa dicoba lagi
+      if (logId) {
+         await db.dripLog.delete({ where: { id: logId } }).catch(() => {})
+      }
+      throw error
+    }
+  },
+  { connection, concurrency: 10 } // Hindari rate limit SMTP/Resend
+)
+
 // Menangani error tak terduga agar worker tidak crash
-const workers = [waWorker, importWorker, billingWorker, gamificationWorker]
+const workers = [waWorker, importWorker, billingWorker, gamificationWorker, emailWorker]
 workers.forEach(w => {
   w.on('failed', (job, err) => {
     console.error(`❌ Job ${job?.id} in ${w.name} failed:`, err.message)

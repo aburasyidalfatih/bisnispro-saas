@@ -39,3 +39,9 @@ export const gamificationQueue = new Queue("gamification-queue", {
   connection: redisConnection,
   defaultJobOptions,
 })
+
+// Queue for sending automated emails
+export const emailQueue = new Queue("email-queue", {
+  connection: redisConnection,
+  defaultJobOptions,
+})
