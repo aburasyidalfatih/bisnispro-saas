@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { notFound } from "next/navigation"
 import { WebsiteNavbar } from "./_components/navbar"
 import { WebsiteFooter } from "./_components/footer"

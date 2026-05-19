@@ -56,7 +56,7 @@ export async function PUT(req: Request) {
 
     // Invalidate Redis cache agar website publik langsung menampilkan template baru
     try {
-      const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
       await invalidatePublicTenantCache(updated.slug)
     } catch {}
 

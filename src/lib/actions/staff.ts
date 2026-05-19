@@ -92,7 +92,7 @@ export async function createStaff(tenantId: string, data: any) {
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}/gtk`, "page")
     revalidatePath(`/site/${tenant.slug}`, "page")
@@ -169,7 +169,7 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}/gtk`, "page")
     revalidatePath(`/site/${tenant.slug}`, "page")
@@ -194,7 +194,7 @@ export async function deleteStaff(id: string, tenantId: string) {
   
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}/gtk`, "page")
     revalidatePath(`/site/${tenant.slug}`, "page")

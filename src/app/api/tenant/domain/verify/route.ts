@@ -20,7 +20,7 @@ import {
   cacheDomainSlug,
   invalidateDomainCache,
   type DomainStatus,
-} from "@/lib/services/domain"
+} from "@/features/tenant/services/domain.service"
 
 const verifySchema = z.object({
   tenantId: z.string().min(1, "tenantId harus diisi"),

@@ -54,7 +54,7 @@ export async function createPopup(tenantId: string, data: any) {
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
@@ -82,7 +82,7 @@ export async function updatePopup(id: string, tenantId: string, data: any) {
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
@@ -99,7 +99,7 @@ export async function deletePopup(id: string, tenantId: string) {
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
@@ -124,7 +124,7 @@ export async function togglePopupStatus(id: string, tenantId: string, isActive: 
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }

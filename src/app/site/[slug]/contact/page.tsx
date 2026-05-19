@@ -2,7 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { MapPin, Phone, Mail, MessageCircle } from "lucide-react"
 import { ContactForm } from "./contact-form"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

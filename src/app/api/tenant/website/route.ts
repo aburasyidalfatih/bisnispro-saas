@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
-import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
+import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 const websiteSchema = z.object({
   tenantId: z.string().min(1),

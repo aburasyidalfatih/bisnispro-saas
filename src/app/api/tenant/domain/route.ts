@@ -16,7 +16,7 @@ import {
   generateVerifyToken,
   getDomainSettings,
   invalidateDomainCache,
-} from "@/lib/services/domain"
+} from "@/features/tenant/services/domain.service"
 
 // ==================== HELPERS ====================
 

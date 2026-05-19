@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import { Star, CheckCircle2, Target } from "lucide-react"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { getPublicBasePath } from "@/lib/utils/public-path"

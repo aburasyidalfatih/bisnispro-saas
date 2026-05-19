@@ -1,7 +1,7 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { BookOpen, Target, ArrowRight, Star, CheckCircle2, Award } from "lucide-react"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"

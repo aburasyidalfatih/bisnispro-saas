@@ -1,6 +1,6 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { Calendar, ArrowLeft, Clock, MapPin, User } from "lucide-react"

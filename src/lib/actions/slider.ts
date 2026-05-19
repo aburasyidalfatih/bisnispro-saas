@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { sliderSchema } from "@/lib/validations/slider"
 import { revalidatePath } from "next/cache"
-import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
+import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 
 

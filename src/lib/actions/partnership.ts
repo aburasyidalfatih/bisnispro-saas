@@ -4,7 +4,7 @@ import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { db } from "@/lib/db"
 import { partnershipSchema } from "@/lib/validations/partnership"
 import { revalidatePath } from "next/cache"
-import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
+import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 export async function getPartnerships(tenantId: string) {
   await requireTenantAccess(tenantId)

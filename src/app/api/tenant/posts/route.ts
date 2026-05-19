@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 import { postSchema } from "@/lib/validations/post"
 import { parseBody, requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
-import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
+import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 export async function GET(req: Request) {
   const url = new URL(req.url)

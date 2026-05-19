@@ -38,7 +38,7 @@ export async function createExtracurricular(tenantId: string, data: any) {
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
@@ -59,7 +59,7 @@ export async function updateExtracurricular(id: string, tenantId: string, data: 
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
@@ -76,7 +76,7 @@ export async function deleteExtracurricular(id: string, tenantId: string) {
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }

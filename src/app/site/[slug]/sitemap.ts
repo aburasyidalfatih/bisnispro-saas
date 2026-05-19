@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { headers } from "next/headers"
 

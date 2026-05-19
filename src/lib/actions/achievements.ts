@@ -39,7 +39,7 @@ export async function createAchievement(tenantId: string, data: any) {
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
@@ -60,7 +60,7 @@ export async function updateAchievement(id: string, tenantId: string, data: any)
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
@@ -77,7 +77,7 @@ export async function deleteAchievement(id: string, tenantId: string) {
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
@@ -99,7 +99,7 @@ export async function updateAchievementsOrder(tenantId: string, orderedIds: stri
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }

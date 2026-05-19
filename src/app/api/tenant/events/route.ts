@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 import { eventSchema } from "@/lib/validations/event"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
-import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
+import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 export async function GET(req: Request) {
   const url = new URL(req.url)

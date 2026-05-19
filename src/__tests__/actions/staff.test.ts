@@ -11,7 +11,7 @@ vi.mock('next/cache', () => ({
 }))
 
 // Mock dynamic imports used in staff.ts
-vi.mock('@/lib/services/tenant-public', () => ({
+vi.mock('@/features/tenant/services/tenant-public.service', () => ({
   invalidatePublicTenantCache: vi.fn(),
 }))
 

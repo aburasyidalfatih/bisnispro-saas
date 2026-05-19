@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { sendApplicationNotification, sendNewApplicationAlerts } from "@/lib/services/application"
+import { sendApplicationNotification, sendNewApplicationAlerts } from "@/features/tenant/services/application.service"
 import { parseBody } from "@/lib/api-utils"
 
 const registerSchoolSchema = z.object({

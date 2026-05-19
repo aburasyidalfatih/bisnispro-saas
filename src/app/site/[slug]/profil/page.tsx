@@ -5,7 +5,7 @@ import {
   BookOpen, CheckCircle, Quote, MapPin, Phone, Mail,
   Play, Target, Award, ArrowRight, ShieldCheck
 } from "lucide-react"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"

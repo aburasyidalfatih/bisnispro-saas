@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { Calendar, User, ArrowLeft, Megaphone } from "lucide-react"

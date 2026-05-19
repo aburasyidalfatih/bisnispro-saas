@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock the domain service before importing the route
-vi.mock('@/lib/services/domain', () => ({
+vi.mock('@/features/tenant/services/domain.service', () => ({
   resolveDomainToSlug: vi.fn(),
 }))
 
@@ -18,7 +18,7 @@ describe('API: /api/internal/domain-lookup', () => {
     // Re-import to get fresh module with env vars
     vi.resetModules()
     const { GET } = await import('@/app/api/internal/domain-lookup/route')
-    const { resolveDomainToSlug } = await import('@/lib/services/domain')
+    const { resolveDomainToSlug } = await import('@/features/tenant/services/domain.service')
 
     const url = domain
       ? `http://localhost/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`
@@ -48,7 +48,7 @@ describe('API: /api/internal/domain-lookup', () => {
 
   it('TC4: Mengembalikan 404 jika domain tidak ditemukan di database', async () => {
     vi.resetModules()
-    const { resolveDomainToSlug } = await import('@/lib/services/domain')
+    const { resolveDomainToSlug } = await import('@/features/tenant/services/domain.service')
     vi.mocked(resolveDomainToSlug).mockResolvedValue(null)
 
     const { response } = await callDomainLookup('unknown-domain.com', MOCK_SECRET)
@@ -57,7 +57,7 @@ describe('API: /api/internal/domain-lookup', () => {
 
   it('TC5: Mengembalikan slug yang valid jika domain ditemukan', async () => {
     vi.resetModules()
-    const { resolveDomainToSlug } = await import('@/lib/services/domain')
+    const { resolveDomainToSlug } = await import('@/features/tenant/services/domain.service')
     vi.mocked(resolveDomainToSlug).mockResolvedValue('sma-nusantara')
 
     const { response } = await callDomainLookup('sma-nusantara.sch.id', MOCK_SECRET)
@@ -69,7 +69,7 @@ describe('API: /api/internal/domain-lookup', () => {
 
   it('TC6: Response mengandung Cache-Control header', async () => {
     vi.resetModules()
-    const { resolveDomainToSlug } = await import('@/lib/services/domain')
+    const { resolveDomainToSlug } = await import('@/features/tenant/services/domain.service')
     vi.mocked(resolveDomainToSlug).mockResolvedValue('test-school')
 
     const { response } = await callDomainLookup('test.sch.id', MOCK_SECRET)

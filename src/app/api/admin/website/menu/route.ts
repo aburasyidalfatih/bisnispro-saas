@@ -1,7 +1,7 @@
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
-import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
+import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 // GET: Ambil semua menu website untuk tenant ini
 export async function GET(req: NextRequest) {

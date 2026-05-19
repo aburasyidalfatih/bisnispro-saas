@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { sendApplicationNotification } from "@/lib/services/application";
+import { sendApplicationNotification } from "@/features/tenant/services/application.service";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { logger } from "@/lib/logger";

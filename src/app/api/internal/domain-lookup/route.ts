@@ -13,7 +13,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { resolveDomainToSlug } from "@/lib/services/domain"
+import { resolveDomainToSlug } from "@/features/tenant/services/domain.service"
 
 const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ""
 
