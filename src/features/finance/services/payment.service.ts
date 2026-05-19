@@ -251,7 +251,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
              })
 
              // 3. Notify Admin
-             const { notifyTenantAdmins } = await import("@/lib/services/notification");
+             const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service");
              await notifyTenantAdmins(payment.tenantId, {
                title: "Top-Up Saldo Berhasil",
                message: `Wali murid telah berhasil melakukan top-up saldo sebesar Rp ${payment.amount.toLocaleString("id-ID")}.`,
@@ -280,7 +280,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
              })
 
              // Notify Admin
-             const { notifyTenantAdmins } = await import("@/lib/services/notification");
+             const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service");
              await notifyTenantAdmins(payment.tenantId, {
                title: "Pembayaran Tagihan Berhasil",
                message: `Tagihan '${invoice.title}' senilai Rp ${payment.amount.toLocaleString("id-ID")} telah berhasil dibayar.`,
@@ -329,7 +329,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
         "upgrade-plan"
       )
       // Notify tenant admin about successful upgrade
-      const { notifyTenantAdmins } = await import("@/lib/services/notification");
+      const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service");
       await notifyTenantAdmins(payment.tenantId, {
         title: "Upgrade Paket Berhasil ✅",
         message: `Selamat! Paket berhasil diupgrade ke ${plan?.slug?.toUpperCase() || payment.plan}. Nikmati fitur premium SchoolPro.`,

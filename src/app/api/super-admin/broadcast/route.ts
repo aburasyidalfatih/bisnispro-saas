@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { sendEmail, sendWhatsApp } from "@/lib/services/notification"
+import { sendEmail, sendWhatsApp } from "@/features/notification/services/notification.service"
 import { logger } from "@/lib/logger"
 
 

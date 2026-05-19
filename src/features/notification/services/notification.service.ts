@@ -132,7 +132,7 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
 }
 
 
-import { enqueueWhatsApp } from "./wa-queue"
+import { enqueueWhatsApp } from "./wa-queue.service"
 
 /**
  * Fungsi pengiriman WA terpusat — Memprioritaskan Internal Gateway, fallback ke StarSender.

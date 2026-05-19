@@ -113,7 +113,7 @@ export class FinanceService {
     })
 
     if (student && student.parents.length > 0) {
-      const { sendTemplateNotification } = await import("@/lib/services/notification")
+      const { sendTemplateNotification } = await import("@/features/notification/services/notification.service")
       
       for (const parent of student.parents) {
         if (!parent.userId) continue
@@ -265,7 +265,7 @@ export class FinanceService {
         // Offload Notification to Background Job
         const parents = invoice.student.parents || []
         if (parents.length > 0) {
-          import("@/lib/services/notification").then(({ sendTemplateNotification }) => {
+          import("@/features/notification/services/notification.service").then(({ sendTemplateNotification }) => {
             for (const parent of parents) {
               if (!parent.userId) continue
               sendTemplateNotification({
@@ -366,7 +366,7 @@ export class FinanceService {
       if (action === "VERIFIED") {
         const student = payment.invoice.student
         if (student && student.parents.length > 0) {
-          import("@/lib/services/notification").then(({ sendTemplateNotification }) => {
+          import("@/features/notification/services/notification.service").then(({ sendTemplateNotification }) => {
             for (const parent of student.parents) {
               if (!parent.userId) continue
               sendTemplateNotification({

@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       }
     })
 
-    const { notifyTenantAdmins } = await import("@/lib/services/notification")
+    const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service")
     await notifyTenantAdmins(payment.tenantId, {
       title: "Verifikasi Top-Up Manual",
       message: `Ada pengajuan Top-Up manual senilai Rp ${payment.amount.toLocaleString("id-ID")} yang menunggu verifikasi Anda.`,

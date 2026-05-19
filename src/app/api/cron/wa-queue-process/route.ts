@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { getWaConfig } from "@/lib/services/notification"
+import { getWaConfig } from "@/features/notification/services/notification.service"
 
 /**
  * CRON: Proses ulang pesan WA yang stuck di status PENDING.

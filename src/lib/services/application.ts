@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import { logger } from "@/lib/logger"
-import { sendWhatsApp, getWaConfig, sendEmail } from "@/lib/services/notification"
+import { sendWhatsApp, getWaConfig, sendEmail } from "@/features/notification/services/notification.service"
 /**
  * Mengambil semua pengaturan platform sebagai key-value map.
  */

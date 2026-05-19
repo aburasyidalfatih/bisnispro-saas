@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { sendWhatsApp, getWaConfig } from "@/lib/services/notification"
+import { sendWhatsApp, getWaConfig } from "@/features/notification/services/notification.service"
 import { logger } from "@/lib/logger"
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

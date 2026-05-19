@@ -2,7 +2,7 @@ import { Worker, Job } from "bullmq"
 import { Redis } from "ioredis"
 import { db } from "./lib/db"
 
-import { sendWhatsAppDirect, sendEmail } from "./lib/services/notification"
+import { sendWhatsAppDirect, sendEmail } from "@/features/notification/services/notification.service"
 import { ImportService } from "@/features/import/services/import.service"
 import { processGamificationPoints } from "@/features/gamification/services/gamification.service"
 import { FinanceService } from "@/features/finance/services/finance.service"

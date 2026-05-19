@@ -1,15 +1,19 @@
-import { logger } from '../logger';
+import { logger } from "@/lib/logger"
+import { waQueue } from "@/lib/queue"
+import { db } from "@/lib/db"
 
-import { waQueue } from '../queue';
+export type WaQueueResultDTO = {
+  success: boolean
+  logId?: string
+  error?: string
+}
 
 /**
  * Memasukkan pesan WA ke database sebagai PENDING, lalu mendorongnya ke BullMQ.
  * Worker terpisah (src/worker.ts) akan mengeksekusi pesan ini secara background.
  */
-export const enqueueWhatsApp = async (phone: string, message: string, tenantId?: string | null) => {
+export const enqueueWhatsApp = async (phone: string, message: string, tenantId?: string | null): Promise<WaQueueResultDTO> => {
   try {
-    const { db } = await import('@/lib/db');
-    
     // 1. Tulis ke DB sebagai PENDING
     const log = await db.waQueueLog.create({
       data: {

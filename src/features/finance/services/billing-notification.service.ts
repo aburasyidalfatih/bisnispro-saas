@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { sendWhatsApp, sendEmail, notifyTenantAdmins } from "@/lib/services/notification"
+import { sendWhatsApp, sendEmail, notifyTenantAdmins } from "@/features/notification/services/notification.service"
 
 export type BillingSettingsDTO = {
   platformName: string
