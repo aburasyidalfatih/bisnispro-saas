@@ -30,13 +30,33 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = tenant.seoTitle || tenant.name
   const description = tenant.seoDesc || tenant.description || tenant.tagline || `Website resmi ${tenant.name}`
 
+  let imageUrl = tenant.logo || "https://schoolpro.id/default-og.jpg"
+  if (imageUrl.startsWith("/")) {
+    const domain = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+    imageUrl = `${domain}${imageUrl}`
+  }
+
   return {
     title,
     description,
     manifest: `/api/tenant/manifest?slug=${slug}`,
     alternates: {
       canonical: "/",
-    }
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://${tenant.domain || tenant.slug + '.schoolpro.id'}`,
+      siteName: tenant.name,
+      images: [{ url: imageUrl, width: 1200, height: 630 }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
   }
 }
 

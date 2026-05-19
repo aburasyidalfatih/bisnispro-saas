@@ -20,7 +20,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = (tenant.posts || []).find((p: any) => p.id === id)
   if (!post) return {}
   const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
-  const imageUrl = post.featuredImage || post.image || "https://schoolpro.id/default-og.jpg"
+  let imageUrl = post.featuredImage || post.image || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  if (imageUrl.startsWith("/")) {
+    const domain = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+    imageUrl = `${domain}${imageUrl}`
+  }
 
   return {
     title: `${post.title} - ${tenant.name}`,
