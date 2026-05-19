@@ -1,0 +1,12 @@
+0 7 * * * curl -X GET "https://schoolpro.id/api/cron/daily-drip" -H "Authorization: Bearer cron_sec_8f9x3bL2qP5mN1zV6kR4tY7wJ9cH2dE5" > /dev/null 2>&1
+0 6 * * * curl -X GET "https://schoolpro.id/api/cron/auto-debet-spp" -H "Authorization: Bearer cron_sec_8f9x3bL2qP5mN1zV6kR4tY7wJ9cH2dE5" > /dev/null 2>&1
+*/5 * * * * curl -X GET "https://schoolpro.id/api/cron/wa-queue-process" -H "Authorization: Bearer cron_sec_8f9x3bL2qP5mN1zV6kR4tY7wJ9cH2dE5" > /dev/null 2>&1
+0 3 * * * curl -X GET "https://schoolpro.id/api/cron/leaderboard-sync?key=cron_sec_8f9x3bL2qP5mN1zV6kR4tY7wJ9cH2dE5" > /dev/null 2>&1
+*/15 * * * * curl -X GET "https://schoolpro.id/api/cron/expire-invoices?key=cron_sec_8f9x3bL2qP5mN1zV6kR4tY7wJ9cH2dE5" > /dev/null 2>&1
+
+0 2 * * * /home/ubuntu/schoolpro-prod/scripts/backup-db.sh >> /home/ubuntu/schoolpro-prod/backups/cron.log 2>&1
+30 2 * * * /home/ubuntu/schoolpro-dev/scripts/backup-db.sh >> /home/ubuntu/schoolpro-dev/backups/cron.log 2>&1
+
+# DEV Cron jobs (so we can test it)
+0 7 * * * curl -X GET "https://schoolpro.my.id/api/cron/daily-drip" -H "Authorization: Bearer cron_sec_8f9x3bL2qP5mN1zV6kR4tY7wJ9cH2dE5" > /dev/null 2>&1
+*/5 * * * * curl -X GET "https://schoolpro.my.id/api/cron/wa-queue-process" -H "Authorization: Bearer cron_sec_8f9x3bL2qP5mN1zV6kR4tY7wJ9cH2dE5" > /dev/null 2>&1

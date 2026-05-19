@@ -190,7 +190,24 @@ export default function LeaderboardPage() {
                 {/* Logo */}
                 <div className="relative w-12 h-12 rounded-full bg-slate-100 border overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {entry.tenant.logo ? (
-                    <Image src={entry.tenant.logo} alt={entry.tenant.name} fill className="object-cover" unoptimized />
+                    <>
+                      <Image 
+                        src={entry.tenant.logo} 
+                        alt={entry.tenant.name} 
+                        fill 
+                        className="object-cover" 
+                        unoptimized 
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (fallback) {
+                            fallback.style.display = 'block';
+                            fallback.classList.remove('hidden');
+                          }
+                        }}
+                      />
+                      <div className="text-slate-400 text-xs font-bold hidden z-10">{entry.tenant.name.substring(0, 2).toUpperCase()}</div>
+                    </>
                   ) : (
                     <div className="text-slate-400 text-xs font-bold">{entry.tenant.name.substring(0, 2).toUpperCase()}</div>
                   )}
