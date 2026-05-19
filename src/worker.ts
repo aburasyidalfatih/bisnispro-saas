@@ -3,7 +3,7 @@ import { Redis } from "ioredis"
 import { db } from "./lib/db"
 
 import { sendWhatsAppDirect, sendEmail } from "./lib/services/notification"
-import { ImportService } from "./lib/services/import-service"
+import { ImportService } from "@/features/import/services/import.service"
 import { processGamificationPoints } from "@/features/gamification/services/gamification.service"
 import { FinanceService } from "./lib/services/finance-service"
 
@@ -71,9 +71,11 @@ const importWorker = new Worker(
 
     try {
       if (type === "students") {
-        await ImportService.importStudents({ tenantId, students: data })
+        const result = await ImportService.importStudents({ tenantId, students: data })
+        if (!result.success) throw new Error(result.error)
       } else if (type === "users") {
-        await ImportService.importUsers({ tenantId, users: data })
+        const result = await ImportService.importUsers({ tenantId, users: data })
+        if (!result.success) throw new Error(result.error)
       }
 
       await db.auditLog.create({
