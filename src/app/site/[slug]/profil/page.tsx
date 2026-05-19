@@ -25,10 +25,10 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
   
   let videoThumbnail = tenant.heroImage || "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2000"
   if (settings.videoProfil) {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
-    const match = settings.videoProfil.match(regExp)
-    if (match && match[2].length === 11) {
-      videoThumbnail = `https://img.youtube.com/vi/${match[2]}/maxresdefault.jpg`
+    const match = settings.videoProfil.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})/)
+    if (match && match[1]) {
+      // Use hqdefault because maxresdefault is not always available for all videos
+      videoThumbnail = `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`
     }
   }
   
@@ -117,9 +117,10 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                  Sejarah Sekolah
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-foreground">Tentang {tenant.name}</h2>
-              <div className="prose prose-slate leading-relaxed text-muted-foreground">
-                 <p>{tenant.about || tenant.description || "Belum ada informasi profil sejarah sekolah."}</p>
-              </div>
+              <div 
+                 className="prose prose-slate leading-relaxed text-muted-foreground max-w-none" 
+                 dangerouslySetInnerHTML={{ __html: tenant.about || tenant.description || "Belum ada informasi profil sejarah sekolah." }} 
+              />
            </div>
            
            <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl group bg-black">
@@ -155,7 +156,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                        <Target className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="text-2xl font-black mb-4">Visi Kami</h3>
-                    <p className="text-lg leading-relaxed font-medium opacity-90">{settings.visi}</p>
+                    <div className="text-lg leading-relaxed font-medium opacity-90 prose prose-invert" dangerouslySetInnerHTML={{ __html: settings.visi }} />
                  </div>
               )}
               {settings.misi && (
@@ -165,14 +166,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                        <CheckCircle className="h-7 w-7 text-primary" />
                     </div>
                     <h3 className="text-2xl font-black mb-4 text-foreground">Misi Kami</h3>
-                    <div className="space-y-3">
-                       {settings.misi.split('\n').filter((m: string) => m.trim()).map((misi: string, idx: number) => (
-                          <div key={idx} className="flex gap-3 text-muted-foreground">
-                             <div className="mt-1 h-5 w-5 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">{idx + 1}</div>
-                             <p className="leading-relaxed">{misi}</p>
-                          </div>
-                       ))}
-                    </div>
+                    <div className="space-y-3 prose prose-slate text-muted-foreground marker:text-primary max-w-none" dangerouslySetInnerHTML={{ __html: settings.misi }} />
                  </div>
               )}
            </div>
