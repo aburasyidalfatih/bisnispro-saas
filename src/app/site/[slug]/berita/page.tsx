@@ -36,6 +36,7 @@ export default async function BeritaPage({
   const { slug } = await params
   const resolvedSearchParams = await searchParams
   const typeFilter = typeof resolvedSearchParams.type === 'string' ? resolvedSearchParams.type.toUpperCase() : null
+  const categoryFilter = typeof resolvedSearchParams.category === 'string' ? resolvedSearchParams.category : null
   const page = typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page) : 1
   const perPage = 9
 
@@ -46,30 +47,48 @@ export default async function BeritaPage({
   
   const excludedTypes = ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA", "PENGUMUMAN"]
 
+  // Ambil kategori yang sudah memiliki artikel terpublikasi
+  const activeCategories = await db.category.findMany({
+    where: {
+      tenantId: tenant.id,
+      posts: {
+        some: {
+          status: 'PUBLISHED',
+          type: { notIn: excludedTypes }
+        }
+      }
+    },
+    select: { id: true, name: true, slug: true },
+    orderBy: { name: 'asc' }
+  })
+
+  const whereClause: any = { 
+    tenantId: tenant.id, 
+    status: 'PUBLISHED',
+    type: typeFilter ? typeFilter : { notIn: excludedTypes }
+  }
+
+  if (categoryFilter) {
+    whereClause.category = { slug: categoryFilter }
+  }
+
   // Fetch paginated posts directly from DB
   const posts = await db.post.findMany({
-    where: { 
-      tenantId: tenant.id, 
-      status: 'PUBLISHED',
-      type: typeFilter ? typeFilter : { notIn: excludedTypes }
-    },
+    where: whereClause,
     orderBy: { createdAt: 'desc' },
     skip: (page - 1) * perPage,
     take: perPage,
   })
 
   const totalPosts = await db.post.count({
-    where: { 
-      tenantId: tenant.id, 
-      status: 'PUBLISHED',
-      type: typeFilter ? typeFilter : { notIn: excludedTypes }
-    }
+    where: whereClause
   })
   const totalPages = Math.ceil(totalPosts / perPage)
   
 
 
-  const pageTitle = typeFilter === 'PENGUMUMAN' ? "Pengumuman Terbaru" : "Artikel & Berita Terbaru"
+  const activeCategoryName = categoryFilter ? activeCategories.find(c => c.slug === categoryFilter)?.name : null
+  const pageTitle = activeCategoryName ? `Kategori: ${activeCategoryName}` : (typeFilter === 'PENGUMUMAN' ? "Pengumuman Terbaru" : "Artikel & Berita Terbaru")
   const breadcrumbLabel = typeFilter === 'PENGUMUMAN' ? "Pengumuman" : "Berita"
 
   return (
@@ -86,17 +105,23 @@ export default async function BeritaPage({
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         {/* Category Pills Filter */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10 md:mb-14">
-          {[
-            { label: "Semua", value: null },
-            { label: "Berita", value: "BERITA" },
-            { label: "Blog Guru", value: "BLOG_GURU" },
-            { label: "Prestasi", value: "PRESTASI" },
-          ].map((cat) => {
-            const isActive = typeFilter === cat.value || (!typeFilter && cat.value === null)
-            const href = cat.value ? `${base}/berita?type=${cat.value}` : `${base}/berita`
+          <Link
+            href={`${base}/berita`}
+            className={cn(
+              "px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300",
+              !categoryFilter && !typeFilter
+                ? "bg-primary text-white shadow-lg shadow-primary/25 scale-105"
+                : "bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent hover:border-border/50"
+            )}
+          >
+            Semua
+          </Link>
+          {activeCategories.map((cat) => {
+            const isActive = categoryFilter === cat.slug
+            const href = `${base}/berita?category=${cat.slug}`
             return (
               <Link
-                key={cat.label}
+                key={cat.id}
                 href={href}
                 className={cn(
                   "px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300",
@@ -105,7 +130,7 @@ export default async function BeritaPage({
                     : "bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent hover:border-border/50"
                 )}
               >
-                {cat.label}
+                {cat.name}
               </Link>
             )
           })}
