@@ -44,3 +44,48 @@ export function startWaWorker() {
   logger.info("WA Worker: Direct processing mode (no Inngest dependency). Skipping startWaWorker.");
   return null;
 }
+
+export async function processWaQueueCron() {
+  const oneMinuteAgo = new Date(Date.now() - 60 * 1000)
+
+  const pendingMessages = await db.waQueueLog.findMany({
+    where: {
+      status: "PENDING",
+      createdAt: { lt: oneMinuteAgo }
+    },
+    orderBy: { createdAt: "asc" },
+    take: 10,
+  })
+
+  if (pendingMessages.length === 0) {
+    return { processed: 0, message: "No stuck messages" }
+  }
+
+  logger.info(`WA Queue Cron: Processing ${pendingMessages.length} stuck messages`)
+
+  let enqueued = 0
+
+  for (const msg of pendingMessages) {
+    try {
+      await waQueue.add(
+        "send-wa",
+        { tenantId: msg.tenantId || null, number: msg.targetNumber, message: msg.message, waQueueLogId: msg.id },
+        { jobId: msg.id }
+      )
+      enqueued++
+    } catch (err: any) {
+      logger.error(`WA Cron: Failed to enqueue log ${msg.id}`, err)
+    }
+  }
+
+  logger.info(`WA Queue Cron: Done. Enqueued=${enqueued}`)
+
+  // Cleanup logs older than 3 days
+  const threeDaysAgo = new Date()
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+  const cleanupRes = await db.waQueueLog.deleteMany({
+    where: { createdAt: { lt: threeDaysAgo } }
+  })
+  
+  return { processed: pendingMessages.length, enqueued, cleanedUp: cleanupRes.count }
+}

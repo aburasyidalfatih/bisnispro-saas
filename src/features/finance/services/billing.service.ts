@@ -370,3 +370,173 @@ export async function createAiAddonInvoice(tenantId: string, packageKey: string)
     return { success: false, error: "Terjadi kesalahan internal" }
   }
 }
+
+/**
+ * Proses Auto-Debet SPP
+ */
+export async function processAutoDebetSPP() {
+  const { endOfDay } = await import("date-fns");
+  const today = new Date();
+  const results = {
+    processed: 0,
+    succeeded: 0,
+    failed: 0,
+    skipped: 0,
+    errors: [] as string[],
+  };
+
+  const invoices = await db.invoice.findMany({
+    where: {
+      isAutoDebet: true,
+      deletedAt: null,
+      dueDate: { lte: endOfDay(today) },
+      status: { in: ["UNPAID", "PARTIAL"] },
+    },
+    include: {
+      student: {
+        include: {
+          walletAccount: true,
+        },
+      },
+    },
+  });
+
+  results.processed = invoices.length;
+
+  for (const invoice of invoices) {
+    const wallet = invoice.student?.walletAccount;
+    const amountToPay = invoice.amountDue;
+
+    if (!wallet || wallet.balance < amountToPay) {
+      results.skipped++;
+      continue;
+    }
+
+    try {
+      await db.$transaction(async (tx) => {
+        const updatedWallet = await tx.walletAccount.update({
+          where: { id: wallet.id },
+          data: { balance: { decrement: amountToPay } },
+        });
+        const newBalance = updatedWallet.balance;
+
+        await tx.walletTransaction.create({
+          data: {
+            walletId: wallet.id,
+            tenantId: invoice.tenantId,
+            type: "PAYMENT",
+            amount: amountToPay,
+            balanceBefore: wallet.balance,
+            balanceAfter: newBalance,
+            referenceId: invoice.code,
+            description: `[AUTO-DEBET] ${invoice.title}`,
+            status: "SUCCESS",
+          },
+        });
+
+        await tx.invoicePayment.create({
+          data: {
+            invoiceId: invoice.id,
+            tenantId: invoice.tenantId,
+            amount: amountToPay,
+            method: "WALLET",
+            status: "VERIFIED",
+            verifiedAt: new Date(),
+            verifiedBy: "SYSTEM_CRON",
+            paidAt: new Date(),
+            notes: "Auto-debet otomatis oleh sistem",
+          },
+        });
+
+        await tx.invoice.update({
+          where: { id: invoice.id },
+          data: {
+            amountPaid: invoice.amountPaid + amountToPay,
+            amountDue: 0,
+            status: "PAID",
+          },
+        });
+
+        await tx.cashflow.create({
+          data: {
+            tenantId: invoice.tenantId,
+            type: "INCOME",
+            category: "SPP",
+            amount: amountToPay,
+            description: `[AUTO] ${invoice.title} — ${invoice.student.name}`,
+            referenceId: invoice.code,
+          },
+        });
+      });
+
+      results.succeeded++;
+    } catch (err: any) {
+      results.failed++;
+      results.errors.push(`Invoice ${invoice.code}: ${err.message}`);
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Cron handler: otomatis expire invoice pending yang melewati jatuh tempo
+ * dan kembalikan kuota kupon yang digunakan.
+ */
+export async function processExpiredInvoices() {
+  const { logger } = await import("@/lib/logger");
+  const now = new Date()
+
+  // Cari semua invoice pending yang sudah melewati expiredAt
+  const expiredPayments = await db.payment.findMany({
+    where: {
+      status: "pending",
+      expiredAt: { lt: now }
+    },
+    select: { id: true, discountCodeId: true, reference: true }
+  })
+
+  if (expiredPayments.length === 0) {
+    return { message: "Tidak ada invoice expired", count: 0 }
+  }
+
+  // Proses setiap invoice expired
+  const operations: any[] = []
+
+  for (const payment of expiredPayments) {
+    // Update status ke expired
+    operations.push(
+      db.payment.update({
+        where: { id: payment.id },
+        data: { status: "expired" }
+      })
+    )
+
+    // Kembalikan kuota kupon jika ada
+    if (payment.discountCodeId) {
+      operations.push(
+        db.discountCode.update({
+          where: { id: payment.discountCodeId },
+          data: { usedCount: { decrement: 1 } }
+        })
+      )
+    }
+  }
+
+  await db.$transaction(operations)
+
+  const refs = expiredPayments.map(p => p.reference)
+  const ids = expiredPayments.map(p => p.id)
+  logger.info(`Auto-expired ${expiredPayments.length} invoices`, { references: refs })
+
+  // Kirim notifikasi ke tenant (async, non-blocking)
+  import("@/features/finance/services/billing-notification.service").then(({ notifyInvoiceExpired }) => {
+    notifyInvoiceExpired(ids).catch(() => {})
+  }).catch(() => {})
+
+  return {
+    message: `${expiredPayments.length} invoice berhasil di-expire`,
+    count: expiredPayments.length,
+    references: refs
+  }
+}
