@@ -159,10 +159,8 @@ export async function sendWhatsAppDirect(
         const config = await getWaConfig(tenantId || undefined)
 
         // Implement random delay for ALL providers
-        // Cap at 15 seconds max to prevent timeouts (DB might have values in wrong unit)
-        const MAX_DELAY_SEC = 15
-        const safeMin = Math.min(config.delayMin && config.delayMin > 0 ? config.delayMin : 3, MAX_DELAY_SEC);
-        const safeMax = Math.min(config.delayMax && config.delayMax > 0 ? config.delayMax : 8, MAX_DELAY_SEC);
+        const safeMin = config.delayMin && config.delayMin > 0 ? config.delayMin : 3;
+        const safeMax = config.delayMax && config.delayMax > 0 ? config.delayMax : 8;
         
         const minMs = safeMin * 1000;
         const maxMs = Math.max(minMs, safeMax * 1000);
