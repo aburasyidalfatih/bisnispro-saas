@@ -78,9 +78,6 @@ services:
       - default
 
   db:
-    profiles:
-      - prod
-      - db
     image: postgres:16-alpine
     ports:
       - "127.0.0.1:${DB_PORT:-5432}:5432"
