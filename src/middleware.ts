@@ -67,6 +67,18 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
 }
 
 export default async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // 1. Lewati aset statis secara manual (Security Layer 2)
+  // LAKUKAN INI SEBELUM RATE LIMITING untuk menghindari pengurasan kuota Redis!
+  if (
+    pathname.startsWith("/_next") || 
+    pathname.startsWith("/static") || 
+    pathname.includes(".") && !pathname.startsWith("/api")
+  ) {
+    return addSecurityHeaders(NextResponse.next())
+  }
+
   // Gunakan X-Forwarded-Host dari Nginx jika ada, jika tidak gunakan host bawaan
   let hostname = request.headers.get("x-forwarded-host") || request.headers.get("host") || ""
   
@@ -85,16 +97,6 @@ export default async function middleware(request: NextRequest) {
     rootDomain = "schoolpro.my.id"
   } else if (hostname.endsWith("schoolpro.id") || hostname === "schoolpro.id") {
     rootDomain = "schoolpro.id"
-  }
-  const { pathname } = request.nextUrl
-
-  // 1. Lewati aset statis secara manual (Security Layer 2)
-  if (
-    pathname.startsWith("/_next") || 
-    pathname.startsWith("/static") || 
-    pathname.includes(".") && !pathname.startsWith("/api")
-  ) {
-    return addSecurityHeaders(NextResponse.next())
   }
 
   // 2. Bypass middleware completely for internal APIs to prevent infinite loops
