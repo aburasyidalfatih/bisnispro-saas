@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getFacilityById, updateFacility } from "@/lib/actions/facilities"
+import { getFacilityById, updateFacility } from "@/features/facility/actions/facility.action"
 
 export default function EditFacilityPage() {
   const router = useRouter()

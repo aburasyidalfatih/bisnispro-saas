@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { postSchema } from "@/lib/validations/post"
+import { postSchema } from "@/features/post/schemas/post.schema"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"

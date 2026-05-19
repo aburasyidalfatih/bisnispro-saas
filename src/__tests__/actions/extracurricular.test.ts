@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createExtracurricular, getExtracurriculars, updateExtracurricular, deleteExtracurricular } from '@/lib/actions/extracurricular'
+import { createExtracurricular, getExtracurriculars, updateExtracurricular, deleteExtracurricular } from '@/features/extracurricular/actions/extracurricular.action'
 import { db } from '../../../__mocks__/prisma'
 
 vi.mock('@/lib/guards/tenant-guard', () => ({

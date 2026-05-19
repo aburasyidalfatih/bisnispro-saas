@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createFacility } from "@/lib/actions/facilities"
+import { createFacility } from "@/features/facility/actions/facility.action"
 
 export default function NewFacilityPage() {
   const router = useRouter()

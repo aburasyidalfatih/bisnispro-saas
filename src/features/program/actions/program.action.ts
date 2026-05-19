@@ -3,34 +3,34 @@
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { alumniSchema } from "@/lib/validations/alumni"
+import { programSchema } from "@/features/program/schemas/program.schema"
 import { revalidatePath } from "next/cache"
 
 
 
-export async function getAlumni(tenantId: string) {
+export async function getPrograms(tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.alumni.findMany({
+  return await db.program.findMany({
     where: { tenantId },
-    orderBy: { graduationYear: 'desc' },
+    orderBy: { createdAt: 'desc' },
   })
 }
 
-export async function getAlumniById(id: string, tenantId: string) {
+export async function getProgramById(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.alumni.findUnique({
+  return await db.program.findUnique({
     where: { id, tenantId }
   })
 }
 
-export async function createAlumni(tenantId: string, data: any) {
+export async function createProgram(tenantId: string, data: any) {
   await requireTenantAccess(tenantId)
   
-  const parsed = alumniSchema.parse(data)
+  const parsed = programSchema.parse(data)
   
-  const alumni = await db.alumni.create({
+  const program = await db.program.create({
     data: {
       ...parsed,
       tenantId,
@@ -44,16 +44,16 @@ export async function createAlumni(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
-  return alumni
+  revalidatePath("/(dashboard)/dashboard/website/programs", "page")
+  return program
 }
 
-export async function updateAlumni(id: string, tenantId: string, data: any) {
+export async function updateProgram(id: string, tenantId: string, data: any) {
   await requireTenantAccess(tenantId)
   
-  const parsed = alumniSchema.parse(data)
+  const parsed = programSchema.parse(data)
   
-  await db.alumni.update({
+  await db.program.update({
     where: { id, tenantId },
     data: parsed
   })
@@ -65,13 +65,13 @@ export async function updateAlumni(id: string, tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
+  revalidatePath("/(dashboard)/dashboard/website/programs", "page")
 }
 
-export async function deleteAlumni(id: string, tenantId: string) {
+export async function deleteProgram(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  await db.alumni.delete({
+  await db.program.delete({
     where: { id, tenantId }
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
@@ -82,6 +82,6 @@ export async function deleteAlumni(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
+  revalidatePath("/(dashboard)/dashboard/website/programs", "page")
 }
 

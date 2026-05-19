@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { exportToExcel } from "@/features/export/services/export.service"
-import { exportSchema } from "@/lib/validations/super-admin"
+import { exportSchema } from "@/features/super-admin/schemas/super-admin.schema"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
 

@@ -10,7 +10,7 @@ import { Plus, Trash2, Edit, Building2, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import Image from "next/image"
-import { getFacilities, deleteFacility as deleteFacilityAction } from "@/lib/actions/facilities"
+import { getFacilities, deleteFacility as deleteFacilityAction } from "@/features/facility/actions/facility.action"
 
 interface Facility {
   id: string

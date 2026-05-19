@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast"
 import { Plus, Trash2, Edit, Users, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { getStaff, deleteStaff } from "@/lib/actions/staff"
+import { getStaff, deleteStaff } from "@/features/staff/actions/staff.action"
 
 interface Staff {
   id: string

@@ -3,7 +3,7 @@
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { staffSchema } from "@/lib/validations/staff"
+import { staffSchema } from "@/features/staff/schemas/staff.schema"
 import { revalidatePath } from "next/cache"
 import crypto from "crypto"
 

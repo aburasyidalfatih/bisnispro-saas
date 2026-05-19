@@ -62,7 +62,7 @@ export async function PUT(req: Request) {
   }
 
   // Support single update (legacy)
-  const { platformSettingSchema } = await import("@/lib/validations/super-admin")
+  const { platformSettingSchema } = await import("@/features/super-admin/schemas/super-admin.schema")
   const { key, value } = body
   
   await db.platformSetting.upsert({

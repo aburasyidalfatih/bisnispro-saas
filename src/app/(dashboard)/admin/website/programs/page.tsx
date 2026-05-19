@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast"
 import { Plus, Trash2, Edit, GraduationCap, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { getPrograms, deleteProgram } from "@/lib/actions/program"
+import { getPrograms, deleteProgram } from "@/features/program/actions/program.action"
 
 interface Program {
   id: string

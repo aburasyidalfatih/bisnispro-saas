@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Fitur login sebagai user dinonaktifkan oleh super admin" }, { status: 403 })
   }
 
-  const { impersonateUserSchema } = await import("@/lib/validations/tenant")
+  const { impersonateUserSchema } = await import("@/features/tenant/schemas/tenant.schema")
   const { parseBody } = await import("@/lib/api-utils")
   const parsed = await parseBody(req, impersonateUserSchema)
   if (parsed.error) return parsed.error

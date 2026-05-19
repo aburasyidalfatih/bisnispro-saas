@@ -141,7 +141,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const { deleteTenantSchema } = await import("@/lib/validations/super-admin")
+  const { deleteTenantSchema } = await import("@/features/super-admin/schemas/super-admin.schema")
   const { parseBody } = await import("@/lib/api-utils")
   const parsed = await parseBody(req, deleteTenantSchema)
   if (parsed.error) return parsed.error

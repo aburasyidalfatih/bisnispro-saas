@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-import { createSubject, updateSubject, deleteSubject } from "@/lib/actions/academic"
+import { createSubject, updateSubject, deleteSubject } from "@/features/academic/actions/academic.action"
 
 interface Subject {
   id: string; name: string; code: string | null; description: string | null; isActive: boolean

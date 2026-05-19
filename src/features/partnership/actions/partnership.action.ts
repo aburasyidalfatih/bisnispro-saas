@@ -1,70 +1,67 @@
 "use server"
 
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
-import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { sliderSchema } from "@/lib/validations/slider"
+import { partnershipSchema } from "@/features/partnership/schemas/partnership.schema"
 import { revalidatePath } from "next/cache"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
-
-
-export async function getSliders(tenantId: string) {
+export async function getPartnerships(tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.slider.findMany({
+  return await db.partnership.findMany({
     where: { tenantId },
     orderBy: { sortOrder: 'asc' },
   })
 }
 
-export async function getActiveSliders(tenantId: string) {
-  return await db.slider.findMany({
+export async function getActivePartnerships(tenantId: string) {
+  return await db.partnership.findMany({
     where: { tenantId, isActive: true },
     orderBy: { sortOrder: 'asc' },
   })
 }
 
-export async function getSliderById(id: string, tenantId: string) {
+export async function getPartnershipById(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.slider.findUnique({
+  return await db.partnership.findUnique({
     where: { id, tenantId }
   })
 }
 
-export async function createSlider(tenantId: string, data: any) {
+export async function createPartnership(tenantId: string, data: any) {
   await requireTenantAccess(tenantId)
   
-  const parsed = sliderSchema.parse(data)
+  const parsed = partnershipSchema.parse(data)
   
-  const slider = await db.slider.create({
+  const partnership = await db.partnership.create({
     data: {
       ...parsed,
       tenantId,
     }
   })
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/admin/website/partners", "page")
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}`, "page")
   }
-  return slider
+  return partnership
 }
 
-export async function updateSlider(id: string, tenantId: string, data: any) {
+export async function updatePartnership(id: string, tenantId: string, data: any) {
   await requireTenantAccess(tenantId)
   
-  const parsed = sliderSchema.parse(data)
+  const parsed = partnershipSchema.parse(data)
   
-  await db.slider.update({
+  await db.partnership.update({
     where: { id, tenantId },
     data: parsed
   })
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/admin/website/partners", "page")
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
@@ -72,14 +69,14 @@ export async function updateSlider(id: string, tenantId: string, data: any) {
   }
 }
 
-export async function deleteSlider(id: string, tenantId: string) {
+export async function deletePartnership(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  await db.slider.delete({
+  await db.partnership.delete({
     where: { id, tenantId }
   })
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/admin/website/partners", "page")
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
@@ -87,19 +84,18 @@ export async function deleteSlider(id: string, tenantId: string) {
   }
 }
 
-export async function toggleSliderStatus(id: string, tenantId: string, isActive: boolean) {
+export async function togglePartnershipStatus(id: string, tenantId: string, isActive: boolean) {
   await requireTenantAccess(tenantId)
   
-  await db.slider.update({
+  await db.partnership.update({
     where: { id, tenantId },
     data: { isActive }
   })
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/admin/website/partners", "page")
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}`, "page")
   }
 }
-

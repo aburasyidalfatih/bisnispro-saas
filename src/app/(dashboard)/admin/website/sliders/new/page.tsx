@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createSlider } from "@/lib/actions/slider"
+import { createSlider } from "@/features/slider/actions/slider.action"
 
 export default function NewSliderPage() {
   const router = useRouter()

@@ -11,7 +11,7 @@ import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, Shield
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
-import { getStaff } from "@/lib/actions/staff"
+import { getStaff } from "@/features/staff/actions/staff.action"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import Image from "next/image"
 

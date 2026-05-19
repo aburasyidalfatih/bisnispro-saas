@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { themeSchema } from "@/lib/validations/tenant"
+import { themeSchema } from "@/features/tenant/schemas/tenant.schema"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
 

@@ -10,7 +10,7 @@ import { Plus, Trash2, Edit, Award, Image as ImageIcon, GripVertical } from "luc
 import Link from "next/link"
 import { format } from "date-fns"
 import Image from "next/image"
-import { getAchievements, deleteAchievement, updateAchievementsOrder } from "@/lib/actions/achievements"
+import { getAchievements, deleteAchievement, updateAchievementsOrder } from "@/features/achievement/actions/achievement.action"
 import { cn } from "@/lib/utils"
 
 interface Achievement {

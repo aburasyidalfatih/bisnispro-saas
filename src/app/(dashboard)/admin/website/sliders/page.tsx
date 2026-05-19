@@ -10,8 +10,8 @@ import { Plus, Trash2, Edit, Image as ImageIcon, MoveVertical } from "lucide-rea
 import { Switch } from "@/components/ui/switch"
 import Link from "next/link"
 import Image from "next/image"
-import { getPopups } from "@/lib/actions/popup" // We'll need a similar getSliders
-import { getSliders, deleteSlider, toggleSliderStatus } from "@/lib/actions/slider"
+import { getPopups } from "@/features/popup/actions/popup.action" // We'll need a similar getSliders
+import { getSliders, deleteSlider, toggleSliderStatus } from "@/features/slider/actions/slider.action"
 
 interface Slider {
   id: string

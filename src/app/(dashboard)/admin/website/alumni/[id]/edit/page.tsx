@@ -12,7 +12,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, User, Quote } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getAlumniById, updateAlumni } from "@/lib/actions/alumni"
+import { getAlumniById, updateAlumni } from "@/features/alumni/actions/alumni.action"
 
 export default function EditAlumniPage() {
   const router = useRouter()

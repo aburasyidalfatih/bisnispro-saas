@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getStaffById, updateStaff } from "@/lib/actions/staff"
+import { getStaffById, updateStaff } from "@/features/staff/actions/staff.action"
 
 export default function EditStaffPage() {
   const router = useRouter()

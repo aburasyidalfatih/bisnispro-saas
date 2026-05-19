@@ -46,7 +46,7 @@ export async function POST(req: Request) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const { addUserSchema } = await import("@/lib/validations/tenant")
+  const { addUserSchema } = await import("@/features/tenant/schemas/tenant.schema")
   const { parseBody } = await import("@/lib/api-utils")
   const parsed = await parseBody(req, addUserSchema)
   if (parsed.error) return parsed.error
@@ -129,7 +129,7 @@ export async function PATCH(req: Request) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const { editUserSchema } = await import("@/lib/validations/tenant")
+  const { editUserSchema } = await import("@/features/tenant/schemas/tenant.schema")
   const { parseBody } = await import("@/lib/api-utils")
   const parsed = await parseBody(req, editUserSchema)
   if (parsed.error) return parsed.error
@@ -179,7 +179,7 @@ export async function DELETE(req: Request) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const { deleteUserSchema } = await import("@/lib/validations/tenant")
+  const { deleteUserSchema } = await import("@/features/tenant/schemas/tenant.schema")
   const { parseBody } = await import("@/lib/api-utils")
   const parsed = await parseBody(req, deleteUserSchema)
   if (parsed.error) return parsed.error

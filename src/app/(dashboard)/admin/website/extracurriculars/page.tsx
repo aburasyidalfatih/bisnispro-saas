@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast"
 import { Plus, Trash2, Edit, Trophy, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { getExtracurriculars, deleteExtracurricular } from "@/lib/actions/extracurricular"
+import { getExtracurriculars, deleteExtracurricular } from "@/features/extracurricular/actions/extracurricular.action"
 
 interface Extracurricular {
   id: string

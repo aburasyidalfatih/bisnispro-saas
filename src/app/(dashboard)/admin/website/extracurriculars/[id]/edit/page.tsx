@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, Trophy } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getExtracurricularById, updateExtracurricular } from "@/lib/actions/extracurricular"
+import { getExtracurricularById, updateExtracurricular } from "@/features/extracurricular/actions/extracurricular.action"
 
 export default function EditExtracurricularPage() {
   const router = useRouter()

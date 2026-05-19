@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createStaff } from "@/lib/actions/staff"
+import { createStaff } from "@/features/staff/actions/staff.action"
 
 export default function NewStaffPage() {
   const router = useRouter()

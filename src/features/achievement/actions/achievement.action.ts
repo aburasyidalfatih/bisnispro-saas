@@ -3,50 +3,35 @@
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { popupSchema } from "@/lib/validations/popup"
+import { achievementSchema } from "@/features/achievement/schemas/achievement.schema"
 import { revalidatePath } from "next/cache"
 
-
-
-export async function getPopups(tenantId: string) {
+export async function getAchievements(tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.popup.findMany({
+  return await db.achievement.findMany({
     where: { tenantId },
-    orderBy: { createdAt: 'desc' },
+    orderBy: [
+      { order: 'asc' },
+      { date: 'desc' }
+    ],
   })
 }
 
-export async function getActivePopup(tenantId: string) {
-  // Public access logic (no tenant check needed for website frontend)
-  return await db.popup.findFirst({
-    where: { tenantId, isActive: true },
-    orderBy: { updatedAt: 'desc' },
-  })
-}
-
-export async function getPopupById(id: string, tenantId: string) {
+export async function getAchievementById(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.popup.findUnique({
+  return await db.achievement.findUnique({
     where: { id, tenantId }
   })
 }
 
-export async function createPopup(tenantId: string, data: any) {
+export async function createAchievement(tenantId: string, data: any) {
   await requireTenantAccess(tenantId)
   
-  const parsed = popupSchema.parse(data)
+  const parsed = achievementSchema.parse(data)
   
-  // If this popup is set to active, deactivate others
-  if (parsed.isActive) {
-    await db.popup.updateMany({
-      where: { tenantId, isActive: true },
-      data: { isActive: false }
-    })
-  }
-  
-  const popup = await db.popup.create({
+  const achievement = await db.achievement.create({
     data: {
       ...parsed,
       tenantId,
@@ -60,23 +45,16 @@ export async function createPopup(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/popups", "page")
-  return popup
+  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
+  return achievement
 }
 
-export async function updatePopup(id: string, tenantId: string, data: any) {
+export async function updateAchievement(id: string, tenantId: string, data: any) {
   await requireTenantAccess(tenantId)
   
-  const parsed = popupSchema.parse(data)
+  const parsed = achievementSchema.parse(data)
   
-  if (parsed.isActive) {
-    await db.popup.updateMany({
-      where: { tenantId, isActive: true, NOT: { id } },
-      data: { isActive: false }
-    })
-  }
-  
-  await db.popup.update({
+  await db.achievement.update({
     where: { id, tenantId },
     data: parsed
   })
@@ -88,13 +66,13 @@ export async function updatePopup(id: string, tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/popups", "page")
+  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
 }
 
-export async function deletePopup(id: string, tenantId: string) {
+export async function deleteAchievement(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  await db.popup.delete({
+  await db.achievement.delete({
     where: { id, tenantId }
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
@@ -105,31 +83,27 @@ export async function deletePopup(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/popups", "page")
+  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
 }
 
-export async function togglePopupStatus(id: string, tenantId: string, isActive: boolean) {
+export async function updateAchievementsOrder(tenantId: string, orderedIds: string[]) {
   await requireTenantAccess(tenantId)
   
-  if (isActive) {
-    await db.popup.updateMany({
-      where: { tenantId, isActive: true, NOT: { id } },
-      data: { isActive: false }
+  // Update sequentially to avoid deadlocks
+  for (let i = 0; i < orderedIds.length; i++) {
+    await db.achievement.update({
+      where: { id: orderedIds[i], tenantId },
+      data: { order: i }
     })
   }
-  
-  await db.popup.update({
-    where: { id, tenantId },
-    data: { isActive }
-  })
+
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath("/", "layout")
   }
-
   
-  revalidatePath("/(dashboard)/dashboard/website/popups", "page")
+  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
 }
 

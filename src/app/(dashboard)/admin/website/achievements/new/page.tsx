@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createAchievement } from "@/lib/actions/achievements"
+import { createAchievement } from "@/features/achievement/actions/achievement.action"
 
 export default function NewAchievementPage() {
   const router = useRouter()

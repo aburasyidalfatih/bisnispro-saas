@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Printer, ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { getRootDomain } from "@/lib/utils"
-import { getStaff } from "@/lib/actions/staff"
+import { getStaff } from "@/features/staff/actions/staff.action"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 
 export default function IDCardPrintPage() {

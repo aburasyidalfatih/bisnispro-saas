@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { verifyManualTopup, rejectManualTopup } from "@/lib/actions/wallet-admin"
+import { verifyManualTopup, rejectManualTopup } from "@/features/finance/actions/wallet-admin.action"
 import { toast } from "@/hooks/use-toast"
 
 export function WalletManager({ tenantId, wallets, pendingTopups, transactions, stats }: any) {

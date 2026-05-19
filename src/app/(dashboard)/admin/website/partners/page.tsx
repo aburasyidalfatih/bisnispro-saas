@@ -10,7 +10,7 @@ import { Plus, Trash2, Edit, Image as ImageIcon } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import Link from "next/link"
 import Image from "next/image"
-import { getPartnerships, deletePartnership, togglePartnershipStatus } from "@/lib/actions/partnership"
+import { getPartnerships, deletePartnership, togglePartnershipStatus } from "@/features/partnership/actions/partnership.action"
 
 interface Partnership {
   id: string

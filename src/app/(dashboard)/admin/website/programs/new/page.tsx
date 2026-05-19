@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon, GraduationCap } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createProgram } from "@/lib/actions/program"
+import { createProgram } from "@/features/program/actions/program.action"
 
 export default function NewProgramPage() {
   const router = useRouter()

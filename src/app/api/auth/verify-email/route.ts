@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { verifyToken, consumeToken } from "@/features/auth/services/token.service"
-import { verifyEmailSchema } from "@/lib/validations/auth"
+import { verifyEmailSchema } from "@/features/auth/schemas/auth.schema"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
 

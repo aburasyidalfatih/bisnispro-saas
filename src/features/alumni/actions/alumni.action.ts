@@ -3,34 +3,34 @@
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { extracurricularSchema } from "@/lib/validations/extracurricular"
+import { alumniSchema } from "@/features/alumni/schemas/alumni.schema"
 import { revalidatePath } from "next/cache"
 
 
 
-export async function getExtracurriculars(tenantId: string) {
+export async function getAlumni(tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.extracurricular.findMany({
+  return await db.alumni.findMany({
     where: { tenantId },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { graduationYear: 'desc' },
   })
 }
 
-export async function getExtracurricularById(id: string, tenantId: string) {
+export async function getAlumniById(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.extracurricular.findUnique({
+  return await db.alumni.findUnique({
     where: { id, tenantId }
   })
 }
 
-export async function createExtracurricular(tenantId: string, data: any) {
+export async function createAlumni(tenantId: string, data: any) {
   await requireTenantAccess(tenantId)
   
-  const parsed = extracurricularSchema.parse(data)
+  const parsed = alumniSchema.parse(data)
   
-  const extracurricular = await db.extracurricular.create({
+  const alumni = await db.alumni.create({
     data: {
       ...parsed,
       tenantId,
@@ -44,16 +44,16 @@ export async function createExtracurricular(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
-  return extracurricular
+  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
+  return alumni
 }
 
-export async function updateExtracurricular(id: string, tenantId: string, data: any) {
+export async function updateAlumni(id: string, tenantId: string, data: any) {
   await requireTenantAccess(tenantId)
   
-  const parsed = extracurricularSchema.parse(data)
+  const parsed = alumniSchema.parse(data)
   
-  await db.extracurricular.update({
+  await db.alumni.update({
     where: { id, tenantId },
     data: parsed
   })
@@ -65,13 +65,13 @@ export async function updateExtracurricular(id: string, tenantId: string, data: 
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
+  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
 }
 
-export async function deleteExtracurricular(id: string, tenantId: string) {
+export async function deleteAlumni(id: string, tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  await db.extracurricular.delete({
+  await db.alumni.delete({
     where: { id, tenantId }
   })
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
@@ -82,6 +82,6 @@ export async function deleteExtracurricular(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
+  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
 }
 

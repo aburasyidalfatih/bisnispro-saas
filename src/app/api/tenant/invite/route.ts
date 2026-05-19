@@ -3,7 +3,7 @@ import crypto from "crypto"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { sendEmail } from "@/features/notification/services/notification.service"
-import { inviteSchema } from "@/lib/validations/tenant"
+import { inviteSchema } from "@/features/tenant/schemas/tenant.schema"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
 

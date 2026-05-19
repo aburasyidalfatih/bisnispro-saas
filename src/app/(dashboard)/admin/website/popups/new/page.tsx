@@ -12,7 +12,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, Megaphone, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createPopup } from "@/lib/actions/popup"
+import { createPopup } from "@/features/popup/actions/popup.action"
 
 export default function NewPopupPage() {
   const router = useRouter()

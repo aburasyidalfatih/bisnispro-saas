@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, GraduationCap } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getProgramById, updateProgram } from "@/lib/actions/program"
+import { getProgramById, updateProgram } from "@/features/program/actions/program.action"
 
 export default function EditProgramPage() {
   const router = useRouter()

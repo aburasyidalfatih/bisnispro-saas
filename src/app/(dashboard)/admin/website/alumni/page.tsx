@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast"
 import { Plus, Trash2, Edit, GraduationCap, Quote, User } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { getAlumni, deleteAlumni } from "@/lib/actions/alumni"
+import { getAlumni, deleteAlumni } from "@/features/alumni/actions/alumni.action"
 import { cn } from "@/lib/utils"
 
 interface Alumni {

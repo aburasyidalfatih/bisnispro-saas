@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createFacility, updateFacility, deleteFacility, getFacilities } from '@/lib/actions/facilities'
+import { createFacility, updateFacility, deleteFacility, getFacilities } from '@/features/facility/actions/facility.action'
 import { db } from '../../../__mocks__/prisma'
 
 // Mock Guard: lolos secara default

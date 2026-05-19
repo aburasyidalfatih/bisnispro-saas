@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema } from "@/lib/validations/auth"
+import { loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema } from "@/features/auth/schemas/auth.schema"
 
 describe("loginSchema", () => {
   it("should accept valid login data", () => {
