@@ -56,7 +56,7 @@ const waWorker = new Worker(
   },
   { 
     connection,
-    concurrency: 20 // Bisa kirim 20 WA sekaligus tanpa ngelag!
+    concurrency: 1 // WA worker WAJIB concurrency 1 agar sistem delay antar pesan berfungsi (mencegah blokir)
   }
 )
 
