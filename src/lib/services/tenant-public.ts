@@ -64,12 +64,12 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       posts: { 
         where: { 
           status: "PUBLISHED",
-          type: { notIn: ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
+          type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
         }, 
         orderBy: { createdAt: 'desc' }, 
         take: 20 
       },
-      events: { orderBy: { startDate: 'asc' }, take: 6 },
+      events: { orderBy: { createdAt: 'desc' }, take: 6 },
       documents: { orderBy: { createdAt: 'desc' }, take: 10 },
       sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
       partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
