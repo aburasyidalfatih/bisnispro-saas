@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
 import { DonationPublicClient } from "./_components/donation-public-client"
+import { headers } from "next/headers"
 
 interface Props {
   params: Promise<{ slug: string; campaignId: string }>
@@ -13,10 +14,19 @@ export async function generateMetadata({ params }: Props) {
     include: { tenant: { select: { name: true } } },
   })
   if (!campaign) return { title: "Kampanye Tidak Ditemukan" }
+  const headerList = await headers()
+  const protocol = headerList.get("x-forwarded-proto") || "https"
+  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
+  host = host.split(':')[0]
+  const domainUrl = `${protocol}://${host}`
+
+  const ogImageBase = (campaign.imageUrl as string) || (campaign.tenant as any).logo || "https://schoolpro.id/default-og.jpg"
+  const ogImageUrl = `${domainUrl}/_next/image?url=${encodeURIComponent(ogImageBase)}&w=1200&q=75`
+
   return {
     title: `${campaign.title} | Donasi ${campaign.tenant.name}`,
     description: campaign.description || `Bantu kami mencapai target donasi Rp ${campaign.targetAmount.toLocaleString("id-ID")}`,
-    openGraph: { images: campaign.imageUrl ? [campaign.imageUrl] : [] },
+    openGraph: { images: [{ url: ogImageUrl, width: 1200, height: 630 }] },
   }
 }
 

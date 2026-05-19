@@ -24,37 +24,41 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   host = host.split(':')[0]
   const domainUrl = `${protocol}://${host}`
 
-  return {
-    metadataBase: new URL(domainUrl),
-    title: {
-      template: `%s | ${tenant.name}`,
-      default: tenant.seoTitle || tenant.name,
-    },
-    icons: tenant.logo ? { 
-      icon: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 
-      shortcut: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 
-      apple: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=256&q=100` 
-    } : undefined,
-    openGraph: {
+    const ogImageBase = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+    // Fix: Proxy OG image through Next.js optimizer to convert WebP to JPEG for social media crawlers
+    const ogImageUrl = `${domainUrl}/_next/image?url=${encodeURIComponent(ogImageBase)}&w=1200&q=75`
+
+    return {
+      metadataBase: new URL(domainUrl),
       title: {
         template: `%s | ${tenant.name}`,
         default: tenant.seoTitle || tenant.name,
       },
-      description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
-      siteName: tenant.name,
-      images: tenant.logo ? [{ url: tenant.logo, width: 800, height: 600, alt: tenant.name }] : [],
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: {
-        template: `%s | ${tenant.name}`,
-        default: tenant.seoTitle || tenant.name,
+      icons: tenant.logo ? { 
+        icon: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 
+        shortcut: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 
+        apple: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=256&q=100` 
+      } : undefined,
+      openGraph: {
+        title: {
+          template: `%s | ${tenant.name}`,
+          default: tenant.seoTitle || tenant.name,
+        },
+        description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
+        siteName: tenant.name,
+        images: [{ url: ogImageUrl, width: 1200, height: 630, alt: tenant.name }],
+        type: "website",
       },
-      description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
-      images: tenant.logo ? [tenant.logo] : [],
+      twitter: {
+        card: "summary_large_image",
+        title: {
+          template: `%s | ${tenant.name}`,
+          default: tenant.seoTitle || tenant.name,
+        },
+        description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
+        images: [ogImageUrl],
+      }
     }
-  }
 }
 
 export default async function WebsiteLayout({
