@@ -4,7 +4,7 @@ import { db } from "./lib/db"
 
 import { sendWhatsAppDirect, sendEmail } from "./lib/services/notification"
 import { ImportService } from "./lib/services/import-service"
-import { processGamificationPoints } from "./lib/services/gamification"
+import { processGamificationPoints } from "@/features/gamification/services/gamification.service"
 import { FinanceService } from "./lib/services/finance-service"
 
 const redisOptions = {

@@ -305,7 +305,7 @@ export const authOptions: NextAuthConfig = {
 
             // TRIGGER GAMIFICATION LOGIN POINTS (Direct DB call)
             if (tenantId) {
-                const { addGamificationPoints } = await import("@/lib/services/gamification")
+                const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
                 await addGamificationPoints({
                   tenantId,
                   userId: user.id,

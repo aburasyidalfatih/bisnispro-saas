@@ -100,7 +100,7 @@ export async function POST(req: Request) {
 
   // TRIGGER GAMIFICATION (Direct DB call)
   try {
-    const { addGamificationPoints } = await import("@/lib/services/gamification")
+    const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
     await addGamificationPoints({
       tenantId,
       userId: session.user.id,
