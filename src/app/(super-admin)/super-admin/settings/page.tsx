@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Image from "next/image"
 
 export default function SuperAdminSettingsPage() {
   const [loading, setLoading] = useState(true)
@@ -315,7 +316,9 @@ export default function SuperAdminSettingsPage() {
                 <Label>Logo Platform (SaaS)</Label>
                 <div className="flex items-center gap-4">
                   {form.app_logo ? (
-                    <img src={form.app_logo} alt="Logo" className="h-16 w-auto object-contain rounded-lg border bg-white p-1" />
+                    <div className="relative h-16 w-16 shrink-0 rounded-lg border bg-white p-1 overflow-hidden">
+                      <Image src={form.app_logo} alt="Logo" fill className="object-contain" unoptimized />
+                    </div>
                   ) : (
                     <div className="h-16 w-16 rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
                       <Globe className="h-6 w-6 text-muted-foreground" />
