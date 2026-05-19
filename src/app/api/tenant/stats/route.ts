@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 
-import { getAdminStatsCached } from "@/lib/services/dashboard-cache"
+import { getAdminStatsCached } from "@/features/dashboard/services/dashboard-cache.service"
 
 export async function GET(req: Request) {
   const url = new URL(req.url)

@@ -1,15 +1,34 @@
 import { db } from "@/lib/db"
 import { unstable_cache } from "next/cache"
 
-/**
- * Optimasi Caching untuk Dashboard (Fase 3)
- * Cache selama 60 detik (1 menit) atau sesuai kebutuhan.
- * Tags memungkinkan invalidasi cache (revalidateTag) saat ada aksi mutasi.
- */
+export type AdminDashboardStatsDTO = {
+  userCount: number
+  notifCount: number
+  auditCount: number
+  studentCount: number
+  totalRevenue: number
+  totalDue: number
+  chartData: Array<{
+    bulan: string
+    pendapatan: number
+  }>
+}
 
-// 1. Cache untuk Admin/Tenant Stats
+export type StudentDashboardDTO = {
+  student: any
+  announcements: any[]
+  schedules: any[]
+  invoices: any[]
+}
+
+export type GtkDashboardDTO = {
+  staff: any
+  todaySchedules: any[]
+  announcements: any[]
+}
+
 export const getAdminStatsCached = unstable_cache(
-  async (tenantId: string) => {
+  async (tenantId: string): Promise<AdminDashboardStatsDTO> => {
     const now = new Date()
     const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1)
 
@@ -75,9 +94,8 @@ export const getAdminStatsCached = unstable_cache(
   }
 )
 
-// 2. Cache untuk Siswa Dashboard
 export const getStudentDashboardCached = unstable_cache(
-  async (userId: string, tenantId: string) => {
+  async (userId: string, tenantId: string): Promise<StudentDashboardDTO | null> => {
     const student = await db.student.findFirst({
       where: { userId, tenantId },
       include: {
@@ -103,7 +121,7 @@ export const getStudentDashboardCached = unstable_cache(
 
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    const dayOfWeek = tomorrow.getDay() // 0 = Minggu, 1 = Senin, dst.
+    const dayOfWeek = tomorrow.getDay()
 
     const schedules = student.classroomId 
       ? await db.schedule.findMany({
@@ -128,9 +146,8 @@ export const getStudentDashboardCached = unstable_cache(
   }
 )
 
-// 3. Cache untuk GTK Dashboard
 export const getGtkDashboardCached = unstable_cache(
-  async (userId: string, tenantId: string) => {
+  async (userId: string, tenantId: string): Promise<GtkDashboardDTO | null> => {
     const staff = await db.staff.findFirst({
       where: { userId, tenantId },
       include: {
@@ -146,10 +163,8 @@ export const getGtkDashboardCached = unstable_cache(
     const today = new Date()
     const dayOfWeek = today.getDay()
     
-    // Jadwal hari ini
     const todaySchedules = staff.schedules.filter(s => s.dayOfWeek === dayOfWeek)
 
-    // Pengumuman
     const announcements = await db.post.findMany({
       where: { tenantId, type: "PENGUMUMAN", status: "PUBLISHED" },
       orderBy: { createdAt: "desc" },
