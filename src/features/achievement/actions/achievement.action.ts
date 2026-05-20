@@ -89,13 +89,11 @@ export async function deleteAchievement(id: string, tenantId: string) {
 export async function updateAchievementsOrder(tenantId: string, orderedIds: string[]) {
   await requireTenantAccess(tenantId)
   
-  // Update sequentially to avoid deadlocks
-  for (let i = 0; i < orderedIds.length; i++) {
-    await db.achievement.update({
-      where: { id: orderedIds[i], tenantId },
-      data: { order: i }
-    })
-  }
+  await db.$transaction(
+    orderedIds.map((id, i) =>
+      db.achievement.update({ where: { id, tenantId }, data: { order: i } })
+    )
+  )
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {

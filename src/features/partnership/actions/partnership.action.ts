@@ -103,12 +103,11 @@ export async function togglePartnershipStatus(id: string, tenantId: string, isAc
 export async function updatePartnershipsOrder(tenantId: string, orderedIds: string[]) {
   await requireTenantAccess(tenantId)
   
-  for (let i = 0; i < orderedIds.length; i++) {
-    await db.partnership.update({
-      where: { id: orderedIds[i], tenantId },
-      data: { sortOrder: i }
-    })
-  }
+  await db.$transaction(
+    orderedIds.map((id, i) =>
+      db.partnership.update({ where: { id, tenantId }, data: { sortOrder: i } })
+    )
+  )
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {

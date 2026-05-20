@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
+import { subjectSchema } from "@/features/academic/schemas/academic.schema"
 
 // Helper
 async function checkAccess(tenantId: string) {
@@ -18,13 +19,6 @@ async function checkAccess(tenantId: string) {
 // ========================
 // SUBJECTS ACTIONS
 // ========================
-
-const subjectSchema = z.object({
-  tenantId: z.string().min(1),
-  name: z.string().min(1, "Nama mata pelajaran wajib diisi").max(100),
-  code: z.string().max(20).optional().nullable(),
-  description: z.string().max(500).optional().nullable(),
-})
 
 export async function createSubject(data: { tenantId: string, name: string, code?: string, description?: string }) {
   const parsed = subjectSchema.parse(data)

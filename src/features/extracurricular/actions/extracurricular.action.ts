@@ -88,12 +88,11 @@ export async function deleteExtracurricular(id: string, tenantId: string) {
 export async function updateExtracurricularsOrder(tenantId: string, orderedIds: string[]) {
   await requireTenantAccess(tenantId)
   
-  for (let i = 0; i < orderedIds.length; i++) {
-    await db.extracurricular.update({
-      where: { id: orderedIds[i], tenantId },
-      data: { sortOrder: i }
-    })
-  }
+  await db.$transaction(
+    orderedIds.map((id, i) =>
+      db.extracurricular.update({ where: { id, tenantId }, data: { sortOrder: i } })
+    )
+  )
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {

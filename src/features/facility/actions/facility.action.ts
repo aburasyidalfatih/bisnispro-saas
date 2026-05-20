@@ -3,16 +3,7 @@
 import { db } from "@/lib/db"
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { revalidatePath } from "next/cache"
-import { z } from "zod"
-
-const facilitySchema = z.object({
-  name: z.string().min(1, "Nama fasilitas harus diisi"),
-  description: z.string().optional().nullable(),
-  imageUrl: z.string().optional().nullable(),
-  category: z.string().optional().nullable(),
-  condition: z.string().optional().nullable(),
-  access: z.string().optional().nullable(),
-})
+import { facilitySchema } from "@/features/facility/schemas/facility.schema"
 
 export async function getFacilities(tenantId: string) {
   await requireTenantAccess(tenantId)
@@ -95,12 +86,11 @@ export async function deleteFacility(id: string, tenantId: string) {
 export async function updateFacilitiesOrder(tenantId: string, orderedIds: string[]) {
   await requireTenantAccess(tenantId)
   
-  for (let i = 0; i < orderedIds.length; i++) {
-    await db.facility.update({
-      where: { id: orderedIds[i], tenantId },
-      data: { sortOrder: i }
-    })
-  }
+  await db.$transaction(
+    orderedIds.map((id, i) =>
+      db.facility.update({ where: { id, tenantId }, data: { sortOrder: i } })
+    )
+  )
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {

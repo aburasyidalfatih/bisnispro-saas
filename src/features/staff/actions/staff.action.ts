@@ -208,12 +208,11 @@ export async function deleteStaff(id: string, tenantId: string) {
 export async function updateStaffOrder(tenantId: string, orderedIds: string[]) {
   await requireTenantAccess(tenantId)
   
-  for (let i = 0; i < orderedIds.length; i++) {
-    await db.staff.update({
-      where: { id: orderedIds[i], tenantId },
-      data: { sortOrder: i }
-    })
-  }
+  await db.$transaction(
+    orderedIds.map((id, i) =>
+      db.staff.update({ where: { id, tenantId }, data: { sortOrder: i } })
+    )
+  )
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
