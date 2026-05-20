@@ -153,9 +153,9 @@ jobs:
           docker compose pull app
           
           if [ "${env:BRANCH}" = "main" ]; then
-            docker compose up -d --no-build app db redis --remove-orphans
+            docker compose up -d --no-build app worker db redis --remove-orphans
           else
-            docker compose up -d --no-build app --remove-orphans
+            docker compose up -d --no-build app worker --remove-orphans
           fi
           
           echo `"Waiting for container to be ready...`"
