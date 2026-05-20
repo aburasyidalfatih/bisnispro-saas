@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast"
 import { Plus, Trash2, Edit, Megaphone, MonitorPlay } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import Link from "next/link"
-import { getPopups, deletePopup, togglePopupStatus } from "@/lib/actions/popup"
+import { getPopups, deletePopup, togglePopupStatus } from "@/features/popup/actions/popup.action"
 
 interface Popup {
   id: string

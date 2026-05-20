@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { enableTwoFactor } from "@/lib/services/two-factor"
+import { enableTwoFactor } from "@/features/auth/services/two-factor.service"
 import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
@@ -21,16 +21,15 @@ export async function POST(req: Request) {
     if (parsed.error) return parsed.error
 
     const result = await enableTwoFactor(session.user.id, parsed.data.code)
+    if (!result.success || !result.data) {
+      return NextResponse.json({ error: result.error || "Gagal mengaktifkan 2FA" }, { status: 400 })
+    }
 
     return NextResponse.json({
       message: "2FA berhasil diaktifkan",
-      backupCodes: result.backupCodes,
+      backupCodes: result.data.backupCodes,
     })
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : ""
-    if (errMsg === "Kode OTP tidak valid") {
-      return NextResponse.json({ error: "Kode OTP tidak valid" }, { status: 400 })
-    }
     logger.error("2FA verify failed", error, { path: "/api/auth/two-factor/verify" })
     return NextResponse.json({ error: "Terjadi kesalahan" }, { status: 500 })
   }

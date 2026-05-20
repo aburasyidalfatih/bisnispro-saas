@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-import { createSubject, updateSubject, deleteSubject } from "@/lib/actions/academic"
+import { createSubject, updateSubject, deleteSubject } from "@/features/academic/actions/academic.action"
 
 interface Subject {
   id: string; name: string; code: string | null; description: string | null; isActive: boolean
@@ -68,8 +68,8 @@ export default function SubjectsPage() {
         result = await createSubject({ tenantId: tenant.id, ...form })
       }
 
-      if (result?.error) {
-        toast({ title: "Gagal", description: result.error, variant: "destructive" })
+      if ((result as any)?.error) {
+        toast({ title: "Gagal", description: (result as any).error, variant: "destructive" })
         setSaving(false)
         return
       }

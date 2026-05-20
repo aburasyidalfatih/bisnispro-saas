@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
 import { ImageIcon, X, Loader2, UploadCloud } from "lucide-react"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface ImageUploadDirectProps {
   value: string
@@ -20,8 +21,9 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (value !== previewUrl && !uploading) {
-      setPreviewUrl(value)
+    const normalized = normalizeImageUrl(value) || null
+    if (normalized !== previewUrl && !uploading) {
+      setPreviewUrl(normalized)
     }
   }, [value, previewUrl, uploading])
 
@@ -133,7 +135,12 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
       >
         {previewUrl ? (
           <>
-            <Image src={previewUrl} alt="Preview" fill className="object-cover rounded-lg" unoptimized />
+            <Image src={previewUrl} alt="Preview" fill className="object-cover rounded-lg" 
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+                setPreviewUrl(null)
+              }}
+            />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
               <p className="text-white text-sm font-medium flex items-center gap-2">
                 <UploadCloud className="h-4 w-4" /> Ganti Gambar

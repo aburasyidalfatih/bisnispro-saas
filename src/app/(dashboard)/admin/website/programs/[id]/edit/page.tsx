@@ -11,7 +11,8 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, GraduationCap } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getProgramById, updateProgram } from "@/lib/actions/program"
+import { getProgramById, updateProgram } from "@/features/program/actions/program.action"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export default function EditProgramPage() {
   const router = useRouter()
@@ -52,7 +53,7 @@ export default function EditProgramPage() {
               focus: d.focus || "",
               prospects: d.prospects || ""
             })
-            if (d.imageUrl) setPreviewUrl(d.imageUrl)
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
           }
           setLoading(false)
         })

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { subscriptionPlanSchema } from "@/lib/validations/super-admin"
+import { subscriptionPlanSchema } from "@/features/super-admin/schemas/super-admin.schema"
 import { logger } from "@/lib/logger"
 
 function safeParseFeatures(features: string | undefined): string[] {

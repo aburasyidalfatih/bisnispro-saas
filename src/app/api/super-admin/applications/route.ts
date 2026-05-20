@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { approveApplication, sendApplicationNotification } from "@/lib/services/application"
+import { approveApplication, sendApplicationNotification } from "@/features/tenant/services/application.service"
 import { logger } from "@/lib/logger"
 
 // Ambil semua daftar pengajuan

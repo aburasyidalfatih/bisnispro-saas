@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
-import { verifyToken, consumeToken } from "@/lib/services/token"
-import { resetPasswordSchema } from "@/lib/validations/auth"
+import { verifyToken, consumeToken } from "@/features/auth/services/token.service"
+import { resetPasswordSchema } from "@/features/auth/schemas/auth.schema"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
 import { rateLimit } from "@/lib/rate-limit"
@@ -21,13 +21,13 @@ export async function POST(req: Request) {
     const { token, password } = parsed.data
 
     const record = await verifyToken(token, "password_reset")
-    if (!record) {
-      return NextResponse.json({ error: "Token tidak valid atau sudah kedaluwarsa" }, { status: 400 })
+    if (!record.success || !record.data) {
+      return NextResponse.json({ error: record.error || "Token tidak valid atau sudah kedaluwarsa" }, { status: 400 })
     }
 
     const hashed = await bcrypt.hash(password, 12)
     const updatedUser = await db.user.update({ 
-      where: { id: record.userId }, 
+      where: { id: record.data.userId }, 
       data: { password: hashed },
       include: { tenants: { include: { tenant: true } } }
     })

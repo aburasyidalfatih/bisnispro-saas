@@ -1,13 +1,15 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Building2, Users, CheckCircle, Tag } from "lucide-react"
 import { db } from "@/lib/db"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
+export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
@@ -18,6 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${facility.name} - ${tenant.name}`,
     description: facility.description || `Fasilitas ${facility.name} di ${tenant.name}`,
+    alternates: {
+      canonical: `/fasilitas/${facility.id}`,
+    },
   }
 }
 
@@ -62,10 +67,13 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
            <div className="lg:col-span-2">
               {facility.imageUrl ? (
                 <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-10 shadow-sm border border-border/50 bg-muted">
-                  <img 
-                    src={facility.imageUrl} 
+                   <Image 
+                    src={normalizeImageUrl(facility.imageUrl) || facility.imageUrl} 
                     alt={facility.name} 
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 50vw"
+                    priority
                   />
                 </div>
               ) : (

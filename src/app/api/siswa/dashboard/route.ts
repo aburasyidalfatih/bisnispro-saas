@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { getStudentDashboardCached } from "@/lib/services/dashboard-cache"
+import { getStudentDashboardCached } from "@/features/dashboard/services/dashboard-cache.service"
 
 export async function GET(req: Request) {
   const session = await auth()

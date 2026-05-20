@@ -31,7 +31,7 @@ const typeIcons: Record<string, { icon: typeof Info; color: string }> = {
 
 export default function NotificationsPage() {
   const { data: session } = useSession()
-  const tenantId = session?.user?.tenants?.[0]?.tenantId || ""
+  const tenantId = session?.user?.tenants?.[0]?.id || ""
   const [activeTab, setActiveTab] = useState("inbox")
   
   // Inbox state

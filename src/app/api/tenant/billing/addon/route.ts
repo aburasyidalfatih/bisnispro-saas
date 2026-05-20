@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import { createAddonInvoice } from "@/lib/services/billing"
+import { createAddonInvoice } from "@/features/finance/services/billing.service"
 import { headers } from "next/headers"
 import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
@@ -35,16 +34,22 @@ export async function POST(req: Request) {
   if (parsed.error) return parsed.error
 
   try {
-    const invoice = await createAddonInvoice(tenantUser.id, parsed.data.studentCount, parsed.data.discountCode)
+    const result = await createAddonInvoice(tenantUser.id, parsed.data.studentCount, parsed.data.discountCode)
     
+    if (!result.success || !result.data) {
+      return NextResponse.json({ error: result.error || "Gagal membuat tagihan penambahan kuota" }, { status: 400 })
+    }
+
+    const invoice = result.data
+
     // Kirim notifikasi billing (async, non-blocking)
-    import("@/lib/services/billing-notifications").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
+    import("@/features/finance/services/billing-notification.service").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
       notifyInvoiceCreated(invoice.id).catch(() => {})
       notifySuperAdminNewInvoice(invoice.id).catch(() => {})
     }).catch(() => {})
 
     return NextResponse.json(invoice)
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Gagal membuat tagihan penambahan kuota" }, { status: 400 })
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
 }

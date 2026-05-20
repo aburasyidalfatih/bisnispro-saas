@@ -1,5 +1,6 @@
 import Link from "next/link"
 import NextImage from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, CheckCircle2 } from "lucide-react"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
@@ -16,6 +17,38 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { ThemeProps } from "../types"
 
 export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
+  const achievements = (tenant.achievements || []).map((a) => ({
+    id: a.id,
+    title: a.title,
+    description: a.description,
+    date: a.createdAt,
+    level: a.level || "LOKAL",
+    imageUrl: a.imageUrl,
+  }))
+
+  const staff = (tenant.staff || []).map((s) => ({
+    id: s.id,
+    name: s.name,
+    role: s.role || "Staff",
+    imageUrl: s.imageUrl,
+  }))
+
+  const alumni = (tenant.alumni || []).map((al) => ({
+    id: al.id,
+    name: al.name,
+    graduationYear: al.graduationYear,
+    currentStatus: (al as any).currentStatus || al.currentPosition || "LAINNYA",
+    testimonial: al.testimonial,
+    imageUrl: al.imageUrl,
+  }))
+
+  const partnerships = (tenant.partnerships || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    imageUrl: p.logo || "",
+    websiteUrl: p.website,
+  }))
+
   return (
     <main>
       {/* ── 1. Hero Slider ── */}
@@ -64,7 +97,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 7. Prestasi ── */}
       <ScrollReveal delay={0.1}>
-        <AchievementsSection achievements={tenant.achievements || []} />
+        <AchievementsSection achievements={achievements} />
       </ScrollReveal>
 
       {/* ── 8. Fasilitas Sekolah ── */}
@@ -79,7 +112,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 10. Guru & Staff Highlight ── */}
       <ScrollReveal delay={0.1}>
-        <StaffHighlight staff={tenant.staff || []} />
+        <StaffHighlight staff={staff} />
       </ScrollReveal>
 
       {/* ── 11. Galeri ── */}
@@ -105,8 +138,9 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => (
                 <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
-                  <NextImage src={item.url} alt={item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
-                    fill unoptimized
+                  <NextImage src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   {item.caption && (
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -123,13 +157,13 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 12. Testimonial Alumni ── */}
       <ScrollReveal>
-        <AlumniTestimonials alumni={tenant.alumni || []} />
+        <AlumniTestimonials alumni={alumni} />
       </ScrollReveal>
 
 
       {/* ── 13. Kerjasama Lembaga ── */}
       <ScrollReveal delay={0.1}>
-        <PartnershipsSection partnerships={tenant.partnerships || []} />
+        <PartnershipsSection partnerships={partnerships} />
       </ScrollReveal>
 
       {/* ── 13. Kontak CTA ── */}

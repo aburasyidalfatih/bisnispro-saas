@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import { categorySchema } from "@/lib/validations/category"
+import { categorySchema } from "@/features/post/schemas/category.schema"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
@@ -15,11 +14,8 @@ export async function GET(req: Request) {
     const { error } = await (await import("@/lib/api-utils")).requireTenantMembership(tenantId)
     if (error) return error
 
-    const categories = await db.category.findMany({
-      where: { tenantId },
-      orderBy: { createdAt: 'desc' },
-    })
-
+    const { listCategories } = await import("@/features/post/services/content.service")
+    const categories = await listCategories(tenantId)
     return NextResponse.json(categories)
   } catch (error) {
     logger.error("GET Categories Error", error, { path: "/api/tenant/categories" })
@@ -40,38 +36,22 @@ export async function POST(req: Request) {
     if (parsed.error) return parsed.error
     const { tenantId, ...data } = parsed.data
 
-    // Verifikasi peran
-    const isSuperAdmin = session.user.isSuperAdmin
-    if (!isSuperAdmin) {
-      const tu = await db.tenantUser.findUnique({
-        where: { tenantId_userId: { tenantId, userId: session.user.id } },
-      })
-      const allowedRoles = ["owner", "admin", "teacher", "operator"]
-      if (!tu || !allowedRoles.includes(tu.role)) {
-        return NextResponse.json({ error: "Tidak punya izin untuk membuat kategori" }, { status: 403 })
-      }
-    }
-
-    // Check unique slug
-    const existingCategory = await db.category.findFirst({
-      where: { tenantId, slug: data.slug }
+    const { createCategory } = await import("@/features/post/services/content.service")
+    const category = await createCategory({
+      tenantId,
+      userId: session.user.id,
+      isSuperAdmin: session.user.isSuperAdmin,
+      data
     })
-
-    if (existingCategory) {
-      return NextResponse.json({ error: "Slug kategori sudah digunakan" }, { status: 400 })
-    }
-
-    const category = await db.category.create({
-      data: {
-        ...data,
-        tenantId,
-      }
-    })
-
     return NextResponse.json({ message: "Kategori berhasil dibuat", category })
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message?.includes("izin")) {
+      return NextResponse.json({ error: error.message }, { status: 403 })
+    }
+    if (error.message?.includes("sudah digunakan")) {
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
     logger.error("POST Categories Error", error, { path: "/api/tenant/categories" })
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
 }
-

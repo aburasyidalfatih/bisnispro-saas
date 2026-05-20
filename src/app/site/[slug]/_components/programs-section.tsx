@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowRight, BookOpen, GraduationCap } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface Program {
   id: string
@@ -47,7 +48,7 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
               Program Keahlian
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
-              Program Unggulan Kami
+              Program Keahlian Kami
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
               Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja.
@@ -73,7 +74,7 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
                 <div className="relative h-44 overflow-hidden">
                   {program.imageUrl ? (
                       <Image
-                        src={program.imageUrl}
+                        src={normalizeImageUrl(program.imageUrl)!}
                         alt={`Program: ${program.name}`}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-700"

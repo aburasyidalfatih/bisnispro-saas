@@ -11,7 +11,8 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getPartnershipById, updatePartnership } from "@/lib/actions/partnership"
+import { getPartnershipById, updatePartnership } from "@/features/partnership/actions/partnership.action"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export default function EditPartnershipPage() {
   const router = useRouter()
@@ -52,7 +53,7 @@ export default function EditPartnershipPage() {
               isActive: d.isActive,
               imageUrl: d.imageUrl
             })
-            setPreviewUrl(d.imageUrl)
+            setPreviewUrl(normalizeImageUrl(d.imageUrl))
           }
           setLoading(false)
         })

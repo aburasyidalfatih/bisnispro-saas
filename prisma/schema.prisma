@@ -32,6 +32,7 @@ model Tenant {
   services             Json?
   heroImage            String?
   gallery              Json?
+  galleryImages        TenantGallery[]
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   affiliateId          String?
@@ -113,6 +114,22 @@ model Tenant {
   @@index([planId])
   @@index([createdAt])
   @@map("tenants")
+}
+
+model TenantGallery {
+  id          String   @id @default(cuid())
+  tenantId    String
+  imageUrl    String
+  title       String?
+  description String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, sortOrder])
+  @@map("tenant_galleries")
 }
 
 model User {
@@ -545,12 +562,14 @@ model Facility {
   category    String?
   condition   String?
   access      String?
+  sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, sortOrder])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("facilities")
 }
@@ -564,12 +583,14 @@ model Extracurricular {
   imageUrl        String?
   contactPerson   String?
   registrationUrl String?
+  sortOrder       Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, sortOrder])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("extracurriculars")
 }
@@ -582,12 +603,14 @@ model Program {
   imageUrl    String?
   focus       String?
   prospects   String?
+  sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, sortOrder])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("programs")
 }
@@ -602,6 +625,7 @@ model Alumni {
   institutionName String?
   testimonial     String?
   imageUrl        String?
+  sortOrder       Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -610,6 +634,7 @@ model Alumni {
   @@index([tenantId])
   @@index([userId])
   @@index([createdAt])
+  @@index([tenantId, sortOrder])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("alumni")
 }
@@ -1093,14 +1118,14 @@ model WalletTransaction {
   status        String        @default("SUCCESS")
   metadata      Json?
   createdAt     DateTime      @default(now())
+  deletedAt     DateTime?
   tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   wallet        WalletAccount @relation(fields: [walletId], references: [id], onDelete: Cascade)
 
-  @@index([walletId])
-  @@index([tenantId])
-  @@index([type])
-  @@index([createdAt])
+  @@index([tenantId, type, status])
+  @@index([walletId, createdAt(sort: Desc)])
   @@index([tenantId, createdAt(sort: Desc)])
+  @@index([referenceId])
   @@map("wallet_transactions")
 }
 
@@ -1192,14 +1217,8 @@ model Invoice {
   student       Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   tenant        Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId])
-  @@index([studentId])
-  @@index([status])
-  @@index([dueDate])
-  @@index([createdAt])
-  @@index([tenantId, status])
+  @@index([tenantId, studentId, status])
   @@index([tenantId, dueDate])
-  @@index([tenantId, studentId])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("invoices")
 }
@@ -1219,13 +1238,12 @@ model InvoicePayment {
   paidAt     DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
   invoice    Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([invoiceId])
-  @@index([tenantId])
-  @@index([status])
-  @@index([createdAt])
+  @@index([tenantId, status])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("invoice_payments")
 }
@@ -1304,15 +1322,14 @@ model CanteenOrder {
   status      String             @default("COMPLETED")
   pinVerified Boolean            @default(false)
   createdAt   DateTime           @default(now())
+  deletedAt   DateTime?
   items       CanteenOrderItem[]
   merchant    CanteenMerchant    @relation(fields: [merchantId], references: [id])
   student     Student            @relation(fields: [studentId], references: [id])
   tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId])
-  @@index([merchantId])
-  @@index([studentId])
-  @@index([createdAt])
+  @@index([tenantId, studentId])
+  @@index([merchantId, createdAt(sort: Desc)])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("canteen_orders")
 }
@@ -1372,7 +1389,7 @@ model AttendanceSession {
 }
 
 model AttendanceRecord {
-  id           String            @id @default(cuid())
+  id           String            // Hapus @id standalone
   sessionId    String
   tenantId     String
   studentId    String
@@ -1382,18 +1399,19 @@ model AttendanceRecord {
   proofUrl     String?
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
-  academicYear String?
+  academicYear String            @default("2025/2026")
   deletedAt    DateTime?
   session      AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   student      Student           @relation(fields: [studentId], references: [id])
   tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@unique([sessionId, studentId])
-  @@index([tenantId])
+  @@id([id, academicYear])
+  @@unique([sessionId, studentId, academicYear])
+  @@index([tenantId, academicYear, status])
+  @@index([tenantId, studentId, status])
   @@index([studentId])
-  @@index([createdAt])
-  @@index([tenantId, academicYear])
-  @@index([tenantId, createdAt])
+  @@index([createdAt(sort: Desc)])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@map("attendance_records")
 }
 
@@ -1559,6 +1577,7 @@ model Grade {
   notes       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
   staff       Staff     @relation(fields: [staffId], references: [id])
   student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -1566,10 +1585,9 @@ model Grade {
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, studentId, subjectId, type, semester, year])
-  @@index([tenantId])
-  @@index([studentId])
+  @@index([tenantId, studentId, year, semester])
   @@index([classroomId])
-  @@index([createdAt])
+  @@index([createdAt(sort: Desc)])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("grades")
 }
@@ -1625,13 +1643,12 @@ model DisciplineRecord {
   date        DateTime @db.Date
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
   staff       Staff    @relation(fields: [staffId], references: [id])
   student     Student  @relation(fields: [studentId], references: [id])
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId])
-  @@index([studentId])
-  @@index([createdAt])
+  @@index([tenantId, studentId])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("discipline_records")
 }
@@ -1736,14 +1753,14 @@ model CbtSession {
   cheatCount Int         @default(0)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
   answers    CbtAnswer[]
   exam       CbtExam     @relation(fields: [examId], references: [id], onDelete: Cascade)
   student    Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([examId, studentId])
-  @@index([studentId])
-  @@index([status])
-  @@index([createdAt])
+  @@index([studentId, status])
+  @@index([createdAt(sort: Desc)])
   @@map("cbt_sessions")
 }
 
@@ -1757,15 +1774,15 @@ model CbtAnswer {
   points     Float       @default(0)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
   question   CbtQuestion @relation(fields: [questionId], references: [id])
   session    CbtSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   student    Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([sessionId, questionId])
-  @@index([studentId])
+  @@index([studentId, createdAt(sort: Desc)])
   @@index([sessionId])
   @@index([questionId])
-  @@index([createdAt])
   @@map("cbt_answers")
 }
 
@@ -1841,29 +1858,37 @@ model TenantNotification {
 }
 
 model CustomTheme {
-  id                  String   @id @default(cuid())
-  name                String
-  author              String?
-  version             String   @default("1.0.0")
-  thumbnail           String?
-  layoutHtml          String
-  indexHtml           String
-  facilityHtml        String?
-  customCss           String
-  customJs            String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  aboutHtml           String?
-  achievementHtml     String?
-  contactHtml         String?
-  extracurricularHtml String?
-  galleryHtml         String?
-  newsDetailHtml      String?
-  newsHtml            String?
-  programHtml         String?
-  staffHtml           String?
-  isActive            Boolean  @default(true)
-  tenants             Tenant[]
+  id                    String   @id @default(cuid())
+  name                  String
+  author                String?
+  version               String   @default("1.0.0")
+  thumbnail             String?
+  layoutHtml            String
+  indexHtml             String
+  facilityHtml          String?
+  customCss             String
+  customJs              String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  aboutHtml             String?
+  achievementHtml       String?
+  contactHtml           String?
+  extracurricularHtml   String?
+  galleryHtml           String?
+  newsDetailHtml        String?
+  newsHtml              String?
+  programHtml           String?
+  staffHtml             String?
+  isActive              Boolean  @default(true)
+  // New template columns
+  pengumumanHtml        String?
+  pengumumanDetailHtml  String?
+  ppdbHtml              String?
+  alumniHtml            String?
+  agendaHtml            String?
+  unduhanHtml           String?
+  staffDetailHtml       String?
+  tenants               Tenant[]
 
   @@map("custom_themes")
 }

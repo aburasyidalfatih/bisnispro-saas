@@ -21,6 +21,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "File harus berformat .zip" }, { status: 400 })
     }
 
+    // Enforce max 10MB file size
+    const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json({ error: `File terlalu besar (${(file.size / 1024 / 1024).toFixed(1)}MB). Maksimal 10MB.` }, { status: 400 })
+    }
+
     const arrayBuffer = await file.arrayBuffer()
     const zip = await JSZip.loadAsync(arrayBuffer)
     
@@ -60,6 +66,13 @@ export async function POST(request: Request) {
     const extracurricularHtml = await getFileContent("ekstrakurikuler.hbs")
     const programHtml = await getFileContent("program.hbs")
     const achievementHtml = await getFileContent("prestasi.hbs")
+    const pengumumanHtml = await getFileContent("pengumuman.hbs")
+    const pengumumanDetailHtml = await getFileContent("pengumuman-detail.hbs")
+    const ppdbHtml = await getFileContent("ppdb.hbs")
+    const alumniHtml = await getFileContent("alumni.hbs")
+    const agendaHtml = await getFileContent("agenda.hbs")
+    const unduhanHtml = await getFileContent("unduhan.hbs")
+    const staffDetailHtml = await getFileContent("guru-detail.hbs")
     const customCss = await getFileContent("styles.css")
     const customJs = await getFileContent("scripts.js")
     
@@ -77,11 +90,19 @@ export async function POST(request: Request) {
         ...(aboutHtml ? { "profil.hbs": aboutHtml } : {}),
         ...(staffHtml ? { "guru.hbs": staffHtml } : {}),
         ...(newsHtml ? { "berita.hbs": newsHtml } : {}),
+        ...(newsDetailHtml ? { "berita-detail.hbs": newsDetailHtml } : {}),
         ...(galleryHtml ? { "galeri.hbs": galleryHtml } : {}),
         ...(contactHtml ? { "kontak.hbs": contactHtml } : {}),
         ...(extracurricularHtml ? { "ekstrakurikuler.hbs": extracurricularHtml } : {}),
         ...(programHtml ? { "program.hbs": programHtml } : {}),
         ...(achievementHtml ? { "prestasi.hbs": achievementHtml } : {}),
+        ...(pengumumanHtml ? { "pengumuman.hbs": pengumumanHtml } : {}),
+        ...(pengumumanDetailHtml ? { "pengumuman-detail.hbs": pengumumanDetailHtml } : {}),
+        ...(ppdbHtml ? { "ppdb.hbs": ppdbHtml } : {}),
+        ...(alumniHtml ? { "alumni.hbs": alumniHtml } : {}),
+        ...(agendaHtml ? { "agenda.hbs": agendaHtml } : {}),
+        ...(unduhanHtml ? { "unduhan.hbs": unduhanHtml } : {}),
+        ...(staffDetailHtml ? { "guru-detail.hbs": staffDetailHtml } : {}),
       }
       
       const syntaxErrors: string[] = []
@@ -123,6 +144,13 @@ export async function POST(request: Request) {
         extracurricularHtml: extracurricularHtml || null,
         programHtml: programHtml || null,
         achievementHtml: achievementHtml || null,
+        pengumumanHtml: pengumumanHtml || null,
+        pengumumanDetailHtml: pengumumanDetailHtml || null,
+        ppdbHtml: ppdbHtml || null,
+        alumniHtml: alumniHtml || null,
+        agendaHtml: agendaHtml || null,
+        unduhanHtml: unduhanHtml || null,
+        staffDetailHtml: staffDetailHtml || null,
         customCss,
         customJs
       }

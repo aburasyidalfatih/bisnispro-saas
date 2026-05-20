@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { themeSchema } from "@/lib/validations/tenant"
+import { themeSchema } from "@/features/tenant/schemas/tenant.schema"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
 
@@ -56,7 +56,7 @@ export async function PUT(req: Request) {
 
     // Invalidate Redis cache agar website publik langsung menampilkan template baru
     try {
-      const { invalidatePublicTenantCache } = await import("@/lib/services/tenant-public")
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
       await invalidatePublicTenantCache(updated.slug)
     } catch {}
 

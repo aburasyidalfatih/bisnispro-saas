@@ -1,6 +1,6 @@
 import { headers } from "next/headers"
 import { checkIsMainDomain, getRootDomain } from "@/lib/utils"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { db } from "@/lib/db"
 import ClientForgotPasswordPage from "./client-page"
 

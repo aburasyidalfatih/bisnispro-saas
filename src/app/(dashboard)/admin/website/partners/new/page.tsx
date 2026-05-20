@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createPartnership } from "@/lib/actions/partnership"
+import { createPartnership } from "@/features/partnership/actions/partnership.action"
 
 export default function NewPartnershipPage() {
   const router = useRouter()

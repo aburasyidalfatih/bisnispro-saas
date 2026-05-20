@@ -1,6 +1,6 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { Calendar, ArrowLeft, Clock, MapPin, User } from "lucide-react"
@@ -8,7 +8,8 @@ import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
+export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
@@ -19,6 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${event.title} - ${tenant.name}`,
     description: event.description || `Agenda kegiatan ${event.title}`,
+    alternates: {
+      canonical: `/agenda/${event.id}`,
+    },
   }
 }
 

@@ -1,12 +1,12 @@
 import { db } from "@/lib/db"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { notFound } from "next/navigation"
 import { WebsiteNavbar } from "./_components/navbar"
 import { WebsiteFooter } from "./_components/footer"
 import { ThemeInjector } from "./_components/theme-injector"
 import { RoutingProvider } from "@/components/providers/routing-provider"
 import { headers } from "next/headers"
-import { getActivePopup } from "@/lib/actions/popup"
+import { getActivePopup } from "@/features/popup/actions/popup.action"
 import { PopupRenderer } from "./_components/popup-renderer"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
 import Script from "next/script"
@@ -18,21 +18,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
 
-  const headerList = await headers()
-  const protocol = headerList.get("x-forwarded-proto") || "https"
-  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
-  host = host.split(':')[0]
-  const domainUrl = `${protocol}://${host}`
+  const canonicalDomain = tenant.domain 
+    ? `https://${tenant.domain}` 
+    : `https://${tenant.slug}.schoolpro.id`
 
     const ogImageBase = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
     // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
-    const ogImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
+    const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
 
     return {
-      metadataBase: new URL(domainUrl),
+      metadataBase: new URL(canonicalDomain),
       title: {
         template: `%s | ${tenant.name}`,
         default: tenant.seoTitle || tenant.name,
+      },
+      alternates: {
+        canonical: "/",
       },
       icons: tenant.logo ? { 
         icon: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 

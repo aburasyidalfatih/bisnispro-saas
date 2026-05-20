@@ -14,7 +14,8 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
 } from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
+
 
 type StudentInfo = {
   student: { id: string; name: string; nis?: string; nisn?: string; classroom: string }
@@ -214,7 +215,7 @@ export default function ScanKasirPage() {
                   )}
                 >
                   {p.imageUrl && (
-                    <img src={p.imageUrl} alt={p.name} className="w-full h-24 object-cover rounded-lg mb-2" />
+                     <img src={normalizeImageUrl(p.imageUrl) || p.imageUrl} alt={p.name} className="w-full h-24 object-cover rounded-lg mb-2" />
                   )}
                   <p className="font-semibold text-sm leading-tight">{p.name}</p>
                   <p className="text-primary font-black mt-1">Rp {p.price.toLocaleString("id-ID")}</p>

@@ -5,7 +5,8 @@ import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 import { Building, ShieldCheck } from "lucide-react"
 
-export default async function PrintInvoicePage({ params }: { params: { id: string } }) {
+export default async function PrintInvoicePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await auth()
   if (!session?.user) redirect("/login")
   
@@ -13,7 +14,7 @@ export default async function PrintInvoicePage({ params }: { params: { id: strin
   if (!tenantId) redirect("/admin")
 
   const invoice = await db.invoice.findUnique({
-    where: { id: params.id, tenantId },
+    where: { id, tenantId },
     include: {
       student: { include: { classroom: true } },
       payments: { where: { status: "VERIFIED" } },

@@ -1,11 +1,12 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { BookOpen, Target, ArrowRight, Star, CheckCircle2, Award } from "lucide-react"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function ProgramPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -15,6 +16,18 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
 
   const programs = tenant.programs || []
   const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.programHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.programHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant: { ...tenant, programs }, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
 
   return (
     <div className="bg-background min-h-screen">

@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next"
 import { headers } from "next/headers"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
-import { resolveDomainToSlug } from "@/lib/services/domain"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { resolveDomainToSlug } from "@/features/tenant/services/domain.service"
 
 export const revalidate = 3600 // Edge Caching ISR (1 jam)
 
@@ -175,9 +175,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (tenant.posts) {
     tenant.posts.forEach((post: any) => {
       routes.push({
-        url: `${domainUrl}/berita/${post.slug}`,
+        url: `${domainUrl}/berita/${post.id}`,
         lastModified: post.updatedAt || post.createdAt,
-        changeFrequency: "yearly",
+        changeFrequency: "weekly",
         priority: 0.7,
       })
     })

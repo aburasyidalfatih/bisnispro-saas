@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, GraduationCap, Quote, User } from "lucide-react"
+import { Plus, Trash2, Edit, GraduationCap, Quote, User, GripVertical } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { getAlumni, deleteAlumni } from "@/lib/actions/alumni"
-import { cn } from "@/lib/utils"
+import { getAlumni, deleteAlumni, updateAlumniOrder } from "@/features/alumni/actions/alumni.action"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 
 interface Alumni {
   id: string
@@ -26,6 +26,8 @@ export default function AlumniPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [alumniList, setAlumniList] = useState<Alumni[]>([])
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [dragOver, setDragOver] = useState<number | null>(null)
 
   const tenantId = branding.id
 
@@ -56,6 +58,39 @@ export default function AlumniPage() {
       loadData()
     } catch (err: any) {
       toast({ title: "Gagal", description: err.message, variant: "destructive" })
+    }
+  }
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDragIndex(index)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    setDragOver(index)
+    e.dataTransfer.dropEffect = "move"
+  }
+
+  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    setDragOver(null)
+    if (dragIndex === null || dragIndex === dropIndex) return
+
+    const newArr = [...alumniList]
+    const [dragged] = newArr.splice(dragIndex, 1)
+    newArr.splice(dropIndex, 0, dragged)
+    
+    setAlumniList(newArr)
+    setDragIndex(null)
+
+    if (tenantId) {
+      try {
+        await updateAlumniOrder(tenantId, newArr.map(a => a.id))
+        toast({ title: "Urutan berhasil disimpan" })
+      } catch (err: any) {
+        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+      }
     }
   }
 
@@ -101,13 +136,30 @@ export default function AlumniPage() {
               </Button>
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {alumniList.map(alumni => (
-                <Card key={alumni.id} className="overflow-hidden border group relative hover:shadow-md transition-shadow">
+            <>
+              <p className="text-xs text-muted-foreground mb-4">
+                {alumniList.length} alumni · Drag untuk mengubah urutan
+              </p>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {alumniList.map((alumni, i) => (
+                <Card key={alumni.id}
+                  draggable
+                  onDragStart={e => handleDragStart(e, i)}
+                  onDragOver={e => handleDragOver(e, i)}
+                  onDrop={e => handleDrop(e, i)}
+                  onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
+                  className={cn(
+                    "overflow-hidden border group relative hover:shadow-md transition-all cursor-grab active:cursor-grabbing",
+                    dragOver === i && "ring-2 ring-primary scale-[1.02]",
+                    dragIndex === i && "opacity-50"
+                  )}>
                   <div className="p-4 flex gap-4">
+                    <div className="flex items-center mr-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <GripVertical className="h-4 w-4 text-muted-foreground" />
+                    </div>
                     <div className="h-16 w-16 rounded-full overflow-hidden bg-muted shrink-0 relative flex items-center justify-center">
                       {alumni.imageUrl ? (
-                        <Image src={alumni.imageUrl} alt={alumni.name} fill className="object-cover" />
+                        <Image src={normalizeImageUrl(alumni.imageUrl)!} alt={alumni.name} fill className="object-cover" />
                       ) : (
                         <User className="h-8 w-8 text-muted-foreground/40" />
                       )}
@@ -161,6 +213,7 @@ export default function AlumniPage() {
                 </Card>
               ))}
             </div>
+            </>
           )}
         </CardContent>
       </Card>

@@ -57,6 +57,39 @@ export function getRootDomain(hostname?: string): string {
   return process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
 }
 
+/**
+ * Normalize image URL to ensure it can be displayed correctly.
+ * Handles:
+ * - S3/external URLs (https://...) — returned as-is
+ * - /api/files/... URLs — returned as-is
+ * - Filesystem paths (uploads/..., ./uploads/...) — converted to /api/files/...
+ * - null/undefined/empty — returns null
+ */
+export function normalizeImageUrl(url: string | null | undefined): string | null {
+  if (!url || url.trim() === "") return null
+
+  // Already a proper URL (S3 or external)
+  if (url.startsWith("http://") || url.startsWith("https://")) return url
+
+  // Already a proper /api/files/ path
+  if (url.startsWith("/api/files/")) return url
+
+  // Already a valid relative URL (starts with /)
+  if (url.startsWith("/")) return url
+
+  // Filesystem path: remove leading ./ and "uploads/" prefix, then wrap with /api/files/
+  let cleaned = url
+    .replace(/\\/g, "/")       // Convert Windows backslashes
+    .replace(/^\.\//, "")      // Remove leading ./
+  
+  // Remove the "uploads/" prefix if present
+  if (cleaned.startsWith("uploads/")) {
+    cleaned = cleaned.substring("uploads/".length)
+  }
+
+  return `/api/files/${cleaned}`
+}
+
 export function checkIsMainDomain(hostname?: string): boolean {
   let host = hostname || ""
   if (typeof window !== "undefined" && !host) {

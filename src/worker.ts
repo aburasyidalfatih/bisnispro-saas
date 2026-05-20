@@ -2,10 +2,10 @@ import { Worker, Job } from "bullmq"
 import { Redis } from "ioredis"
 import { db } from "./lib/db"
 
-import { sendWhatsAppDirect, sendEmail } from "./lib/services/notification"
-import { ImportService } from "./lib/services/import-service"
-import { processGamificationPoints } from "./lib/services/gamification"
-import { FinanceService } from "./lib/services/finance-service"
+import { sendWhatsAppDirect, sendEmail } from "@/features/notification/services/notification.service"
+import { ImportService } from "@/features/import/services/import.service"
+import { processGamificationPoints } from "@/features/gamification/services/gamification.service"
+import { FinanceService } from "@/features/finance/services/finance.service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -14,35 +14,70 @@ const redisOptions = {
   maxRetriesPerRequest: null,
 }
 
-const connection = process.env.REDIS_URL 
-  ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null }) 
+const connection = process.env.REDIS_URL
+  ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null })
   : new Redis(redisOptions)
 
 console.log("🛠️  Starting BullMQ Enterprise Workers...")
 
-// -----------------------------------------------------------------------------
-// 1. WhatsApp Notification Worker
-// -----------------------------------------------------------------------------
+// ============================================================
+// Helper: Report failed jobs to Sentry
+// ============================================================
+async function reportToSentry(workerName: string, job: Job | undefined, err: Error) {
+  try {
+    const Sentry = require("@sentry/nextjs")
+    Sentry.withScope((scope: any) => {
+      scope.setTag("worker", workerName)
+      scope.setTag("jobId", job?.id || "unknown")
+      if (job?.data?.tenantId) scope.setTag("tenantId", job.data.tenantId)
+      scope.setExtras({
+        jobName: job?.name,
+        attemptsMade: job?.attemptsMade,
+        data: JSON.stringify(job?.data || {}).substring(0, 500),
+      })
+      Sentry.captureException(err)
+    })
+  } catch {
+    // Sentry not available — fail silently
+  }
+}
+
+// ============================================================
+// 1. WhatsApp Notification Worker (handles both single + broadcast)
+// ============================================================
 const waWorker = new Worker(
   "wa-queue",
   async (job: Job) => {
-    const { tenantId, number, message, waQueueLogId } = job.data
+    const { tenantId, number, message, waQueueLogId, broadcastId, recipientName } = job.data
     console.log(`[wa-queue] Processing job ${job.id} for ${number}...`)
 
     try {
-      // Panggil fungsi kirim WA aktual
       const result = await sendWhatsAppDirect(number, message, tenantId)
-      
+
       if (!result.success) {
         throw new Error(result.error || "Failed to send WhatsApp message")
       }
-      
+
+      // Update WA queue log if exists (for queued messages via admin)
       if (waQueueLogId) {
         await db.waQueueLog.update({
           where: { id: waQueueLogId },
           data: { status: "SENT", sentAt: new Date() },
         })
       }
+
+      // Create individual delivery log for broadcast tracking
+      if (broadcastId) {
+        await db.waMessage.create({
+          data: {
+            tenantId,
+            to: number,
+            content: message.substring(0, 500),
+            status: "SENT",
+          },
+        }).catch(() => {})
+      }
+
       return { success: true }
     } catch (error: any) {
       if (waQueueLogId) {
@@ -51,18 +86,32 @@ const waWorker = new Worker(
           data: { status: "FAILED", error: error.message },
         })
       }
-      throw error // Akan diproses ulang oleh fitur retry BullMQ
+
+      // On final attempt failure, log for broadcast
+      if (broadcastId && job.attemptsMade >= (job.opts?.attempts || 3) - 1) {
+        await db.waMessage.create({
+          data: {
+            tenantId,
+            to: number,
+            content: message.substring(0, 500),
+            status: "FAILED",
+            error: error.message,
+          },
+        }).catch(() => {})
+      }
+
+      throw error // BullMQ retry mechanism handles this
     }
   },
-  { 
+  {
     connection,
-    concurrency: 1 // WA worker WAJIB concurrency 1 agar sistem delay antar pesan berfungsi (mencegah blokir)
+    concurrency: 1, // WA worker WAJIB concurrency 1 agar delay antar pesan berfungsi
   }
 )
 
-// -----------------------------------------------------------------------------
+// ============================================================
 // 2. CSV Import Worker
-// -----------------------------------------------------------------------------
+// ============================================================
 const importWorker = new Worker(
   "import-queue",
   async (job: Job) => {
@@ -71,9 +120,11 @@ const importWorker = new Worker(
 
     try {
       if (type === "students") {
-        await ImportService.importStudents({ tenantId, students: data })
+        const result = await ImportService.importStudents({ tenantId, students: data })
+        if (!result.success) throw new Error(result.error)
       } else if (type === "users") {
-        await ImportService.importUsers({ tenantId, users: data })
+        const result = await ImportService.importUsers({ tenantId, users: data })
+        if (!result.success) throw new Error(result.error)
       }
 
       await db.auditLog.create({
@@ -81,8 +132,8 @@ const importWorker = new Worker(
           tenantId,
           action: `IMPORT_${type.toUpperCase()}_COMPLETED`,
           entity: "System",
-          userId: userId || "SYSTEM"
-        }
+          userId: userId || "SYSTEM",
+        },
       }).catch(() => {})
 
       return { success: true }
@@ -94,26 +145,30 @@ const importWorker = new Worker(
           action: `IMPORT_${type.toUpperCase()}_FAILED`,
           entity: "System",
           userId: userId || "SYSTEM",
-          details: error.message
-        }
+          newData: error.message,
+        },
       }).catch(() => {})
       throw error
     }
   },
-  { connection, concurrency: 5 } // Tugas berat, concurrency diset rendah
+  { connection, concurrency: 5 }
 )
 
-// -----------------------------------------------------------------------------
+// ============================================================
 // 3. Billing / Invoice Worker
-// -----------------------------------------------------------------------------
+// ============================================================
 const billingWorker = new Worker(
   "billing-queue",
   async (job: Job) => {
     console.log(`[billing-queue] Processing invoice generation for tenant ${job.data.tenantId}...`)
     try {
-      // Generate invoice bulanan secara asinkron
       const result = await FinanceService.createBulkInvoices(job.data)
-      console.log(`[billing-queue] Successfully generated ${result.count} invoices.`)
+
+      if (!result.success || !result.data) {
+        throw new Error(result.error || "Gagal memproses bulk invoice")
+      }
+
+      console.log(`[billing-queue] Successfully generated ${result.data.count} invoices.`)
 
       await db.auditLog.create({
         data: {
@@ -121,11 +176,11 @@ const billingWorker = new Worker(
           action: "BULK_INVOICE_GENERATION_COMPLETED",
           entity: "Finance",
           userId: job.data.userId || "SYSTEM",
-          details: `Dibuat ${result.count} tagihan`
-        }
+          newData: `Dibuat ${result.data.count} tagihan`,
+        },
       }).catch(() => {})
 
-      return { success: true, count: result.count }
+      return { success: true, count: result.data.count }
     } catch (error: any) {
       console.error(`[billing-queue] Failed to generate bulk invoices:`, error)
       await db.auditLog.create({
@@ -134,8 +189,8 @@ const billingWorker = new Worker(
           action: "BULK_INVOICE_GENERATION_FAILED",
           entity: "Finance",
           userId: job.data.userId || "SYSTEM",
-          details: error.message
-        }
+          newData: error.message,
+        },
       }).catch(() => {})
       throw error
     }
@@ -143,53 +198,85 @@ const billingWorker = new Worker(
   { connection, concurrency: 5 }
 )
 
-// -----------------------------------------------------------------------------
+// ============================================================
 // 4. Gamification Worker
-// -----------------------------------------------------------------------------
+// ============================================================
 const gamificationWorker = new Worker(
   "gamification-queue",
   async (job: Job) => {
     console.log(`[gamification-queue] Adding points to user ${job.data.userId}...`)
-    
-    // Hitung poin secara background
     await processGamificationPoints(job.data)
-    
     return { success: true }
   },
-  { connection, concurrency: 50 } // Sangat ringan, concurrency diset sangat tinggi
+  { connection, concurrency: 50 }
 )
 
-// -----------------------------------------------------------------------------
+// ============================================================
 // 5. Automated Emails Worker
-// -----------------------------------------------------------------------------
+// ============================================================
 const emailWorker = new Worker(
   "email-queue",
   async (job: Job) => {
     const { to, subject, htmlContent, logId, tenantId, campaignId } = job.data
     console.log(`[email-queue] Sending email to ${to} for campaign ${campaignId}...`)
-    
+
     try {
       await sendEmail(to, subject, htmlContent)
       return { success: true }
     } catch (error: any) {
       console.error(`[email-queue] Failed to send email to ${to}:`, error.message)
-      
+
       // Hapus log jika gagal kirim, agar besok bisa dicoba lagi
       if (logId) {
-         await db.dripLog.delete({ where: { id: logId } }).catch(() => {})
+        await db.dripLog.delete({ where: { id: logId } }).catch(() => {})
       }
       throw error
     }
   },
-  { connection, concurrency: 10 } // Hindari rate limit SMTP/Resend
+  { connection, concurrency: 10 }
 )
 
-// Menangani error tak terduga agar worker tidak crash
+// ============================================================
+// ENTERPRISE: Global Error & Dead-Letter Handling
+// ============================================================
 const workers = [waWorker, importWorker, billingWorker, gamificationWorker, emailWorker]
-workers.forEach(w => {
-  w.on('failed', (job, err) => {
-    console.error(`❌ Job ${job?.id} in ${w.name} failed:`, err.message)
+
+workers.forEach((w) => {
+  // Log + Sentry on every failure
+  w.on("failed", (job, err) => {
+    console.error(`❌ Job ${job?.id} in ${w.name} failed (attempt ${job?.attemptsMade}):`, err.message)
+    reportToSentry(w.name, job, err)
+  })
+
+  // Dead-Letter: log permanently failed jobs (exhausted all retries)
+  w.on("failed", (job, err) => {
+    if (job && job.attemptsMade >= (job.opts?.attempts || 3)) {
+      console.error(`💀 [DLQ] Job ${job.id} in ${w.name} permanently failed after ${job.attemptsMade} attempts`)
+
+      // Log to audit for visibility
+      const tenantId = job.data?.tenantId
+      if (tenantId) {
+        db.auditLog.create({
+          data: {
+            tenantId,
+            action: `QUEUE_JOB_PERMANENTLY_FAILED`,
+            entity: w.name,
+            userId: "SYSTEM",
+            newData: `Job ${job.id}: ${err.message}`.substring(0, 500),
+          },
+        }).catch(() => {})
+      }
+    }
+  })
+
+  // Log completions for monitoring
+  w.on("completed", (job) => {
+    if (process.env.NODE_ENV === "development") {
+      console.log(`✅ Job ${job.id} in ${w.name} completed`)
+    }
   })
 })
 
 console.log("✅ All BullMQ Workers are running and listening to queues!")
+console.log("   Queues: wa-queue, import-queue, billing-queue, gamification-queue, email-queue")
+console.log("   Features: retry (3x exponential), dead-letter logging, Sentry reporting")

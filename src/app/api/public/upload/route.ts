@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { saveFile } from "@/lib/services/upload"
+import { saveFile } from "@/features/upload/services/upload.service"
 import path from "path"
 import { logger } from "@/lib/logger"
 
@@ -36,12 +36,18 @@ export async function POST(req: Request) {
     // Simpan file ke subfolder "public-registration"
     // tenantId diset undefined karena belum memiliki tenant
     const result = await saveFile(file, undefined, "public-registration", ["image"])
+    
+    if (!result.success || !result.data) {
+      return NextResponse.json({ error: result.error || "Gagal mengupload file" }, { status: 400 })
+    }
+
+    const fileData = result.data
 
     // Konversi path absolut filesystem ke URL publik via /api/files/...
-    let publicUrl = result.path
-    if (!result.path.startsWith("http")) {
+    let publicUrl = fileData.path
+    if (!fileData.path.startsWith("http")) {
       const uploadDirResolved = path.resolve(process.env.UPLOAD_DIR || "./uploads")
-      const fileResolved = path.resolve(result.path)
+      const fileResolved = path.resolve(fileData.path)
       
       const relativeToUpload = fileResolved
         .replace(uploadDirResolved, "")

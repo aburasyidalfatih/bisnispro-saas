@@ -18,7 +18,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const { notifySubscriptionExpiring } = await import("@/lib/services/billing-notifications")
+    const { notifySubscriptionExpiring } = await import("@/features/finance/services/billing-notification.service")
     const result = await notifySubscriptionExpiring()
 
     logger.info("Cron subscription-reminder completed", result)

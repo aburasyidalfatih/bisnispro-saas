@@ -30,6 +30,16 @@ export async function DELETE(req: Request, props: { params: Promise<{ id: string
         tenantId,
       }
     })
+
+    const tenant = await db.tenant.findUnique({
+      where: { id: tenantId },
+      select: { slug: true }
+    })
+    if (tenant) {
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+      await invalidatePublicTenantCache(tenant.slug)
+    }
+
     return NextResponse.json({ message: "Dokumen berhasil dihapus" })
   } catch (error) {
     logger.error("Document delete failed", error, { documentId: params.id })

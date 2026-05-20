@@ -5,14 +5,15 @@ import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 import { Building, ShieldCheck } from "lucide-react"
 
-export default async function OrtuPrintInvoicePage({ params }: { params: { id: string } }) {
+export default async function OrtuPrintInvoicePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await auth()
   if (!session?.user) redirect("/login")
 
   const userId = session.user.id
 
   const invoice = await db.invoice.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       student: { 
         include: { 

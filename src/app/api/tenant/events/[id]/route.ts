@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { eventSchema } from "@/lib/validations/event"
+import { eventSchema } from "@/features/event/schemas/event.schema"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
-import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
+import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

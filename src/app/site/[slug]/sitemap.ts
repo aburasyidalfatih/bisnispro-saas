@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { headers } from "next/headers"
 
@@ -106,9 +106,9 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   if (tenant.posts) {
     tenant.posts.forEach((post: any) => {
       routes.push({
-        url: `${baseUrl}/berita/${post.slug}`,
+        url: `${baseUrl}/berita/${post.id}`,
         lastModified: post.updatedAt || post.createdAt,
-        changeFrequency: "yearly",
+        changeFrequency: "weekly",
         priority: 0.7,
       })
     })

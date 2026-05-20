@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const { impersonateTenantSchema } = await import("@/lib/validations/tenant")
+  const { impersonateTenantSchema } = await import("@/features/tenant/schemas/tenant.schema")
   const { parseBody } = await import("@/lib/api-utils")
   const parsed = await parseBody(req, impersonateTenantSchema)
   if (parsed.error) return parsed.error

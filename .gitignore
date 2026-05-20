@@ -20,7 +20,6 @@ vps_error*.html
 test.ts
 dummy.txt
 query.sql
-test-auth.js
 src/app/scratch.ts
 
 # Ignore temp large files
@@ -29,3 +28,21 @@ src/app/scratch.ts
 *.exe
 *rclone*
 *.sql
+
+# ==========================================
+# SECURITY: Jangan track env secrets!
+# ==========================================
+remote-*.env
+*.env.production
+*.env.staging
+
+# ==========================================
+# SCRATCH / ONE-OFF SCRIPTS (root level)
+# ==========================================
+scratch/
+check-*.js
+scratch-*.js
+scratch_*.js
+test-*.js
+prod.html
+temp.*

@@ -2,7 +2,7 @@ import NextAuth, { CredentialsSignin } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
-import { verifyTwoFactorLogin } from "@/lib/services/two-factor"
+import { verifyTwoFactorLogin } from "@/features/auth/services/two-factor.service"
 import { authConfig } from "@/lib/auth.config"
 import { NextAuthConfig } from "next-auth"
 
@@ -131,7 +131,7 @@ export const authOptions: NextAuthConfig = {
             user.id,
             credentials.twoFactorCode as string
           )
-          if (!is2FAValid) throw new CustomAuthError("Kode 2FA tidak valid")
+          if (!is2FAValid.success) throw new CustomAuthError("Kode 2FA tidak valid")
         }
 
         return {
@@ -305,7 +305,7 @@ export const authOptions: NextAuthConfig = {
 
             // TRIGGER GAMIFICATION LOGIN POINTS (Direct DB call)
             if (tenantId) {
-                const { addGamificationPoints } = await import("@/lib/services/gamification")
+                const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
                 await addGamificationPoints({
                   tenantId,
                   userId: user.id,

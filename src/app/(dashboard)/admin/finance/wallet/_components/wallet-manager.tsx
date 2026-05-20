@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { verifyManualTopup, rejectManualTopup } from "@/lib/actions/wallet-admin"
+import { verifyManualTopup, rejectManualTopup } from "@/features/finance/actions/wallet-admin.action"
 import { toast } from "@/hooks/use-toast"
 
 export function WalletManager({ tenantId, wallets, pendingTopups, transactions, stats }: any) {
@@ -29,7 +29,7 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
     if (res.success) {
        toast({ title: "Berhasil", description: "Top up manual telah disetujui. Saldo siswa bertambah." })
     } else {
-       toast({ title: "Gagal", description: res.error, variant: "destructive" })
+       toast({ title: "Gagal", description: (res as any).error, variant: "destructive" })
     }
   }
 
@@ -40,7 +40,7 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
     if (res.success) {
        toast({ title: "Ditolak", description: "Top up manual telah ditolak." })
     } else {
-       toast({ title: "Gagal", description: res.error, variant: "destructive" })
+       toast({ title: "Gagal", description: (res as any).error, variant: "destructive" })
     }
   }
 

@@ -196,7 +196,7 @@ export default function LeaderboardPage() {
                         alt={entry.tenant.name} 
                         fill 
                         className="object-cover" 
-                        unoptimized 
+                        
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';
                           const fallback = e.currentTarget.nextElementSibling as HTMLElement;

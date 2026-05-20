@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
 import { headers } from "next/headers"
 
 export async function GET(req: Request) {
@@ -23,28 +22,9 @@ export async function GET(req: Request) {
   const limit = parseInt(searchParams.get("limit") || "10")
 
   try {
-    const [logs, total] = await Promise.all([
-      db.aiUsageLog.findMany({
-        where: { tenantId: tenantUser.id },
-        include: {
-          user: { select: { name: true, email: true } }
-        },
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      db.aiUsageLog.count({
-        where: { tenantId: tenantUser.id }
-      })
-    ])
-
-    return NextResponse.json({
-      data: logs,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    })
+    const { getAiUsageLogs } = await import("@/features/ai/services/ai-settings.service")
+    const result = await getAiUsageLogs(tenantUser.id, page, limit)
+    return NextResponse.json(result)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Gagal mengambil log penggunaan AI" }, { status: 500 })
   }

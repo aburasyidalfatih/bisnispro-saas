@@ -73,6 +73,10 @@ jobs:
           build-args: |
             APP_VERSION=${{ github.sha }}
             NEXT_PUBLIC_ROOT_DOMAIN=${{ env.ROOT_DOMAIN }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
 
   deploy:
     needs: build-and-push
@@ -93,6 +97,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACTOR: ${{ github.actor }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -121,6 +126,14 @@ jobs:
               echo -e "\nCRON_SECRET=\"${env:CRON_SECRET}\"" >> .env
             else
               sed -i "s|^CRON_SECRET=.*|CRON_SECRET=\"${env:CRON_SECRET}\"|g" .env
+            fi
+          fi
+
+          if [ -n "${env:SENTRY_DSN}" ]; then
+            if ! grep -q "^NEXT_PUBLIC_SENTRY_DSN=" .env; then
+              echo -e "\nNEXT_PUBLIC_SENTRY_DSN=\"${env:SENTRY_DSN}\"" >> .env
+            else
+              sed -i "s|^NEXT_PUBLIC_SENTRY_DSN=.*|NEXT_PUBLIC_SENTRY_DSN=\"${env:SENTRY_DSN}\"|g" .env
             fi
           fi
 

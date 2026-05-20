@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon, Trophy } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createExtracurricular } from "@/lib/actions/extracurricular"
+import { createExtracurricular } from "@/features/extracurricular/actions/extracurricular.action"
 
 export default function NewExtracurricularPage() {
   const router = useRouter()

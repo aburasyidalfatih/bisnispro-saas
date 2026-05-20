@@ -4,7 +4,27 @@ import { db } from "@/lib/db"
 
 export async function GET(req: Request) {
   const session = await auth()
-  if (!session?.user?.tenantId) {
+  if (!session?.user) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  const { headers: nextHeaders } = await import("next/headers")
+  const headersList = await nextHeaders()
+  let slug = headersList.get("x-tenant-slug")
+  if (!slug) {
+    const host = headersList.get("host") || ""
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const hostWithoutPort = host.split(":")[0]
+    if (hostWithoutPort.endsWith(`.${rootDomain}`)) {
+      slug = hostWithoutPort.replace(`.${rootDomain}`, "")
+    } else if (hostWithoutPort !== rootDomain && !hostWithoutPort.startsWith("www.")) {
+      slug = hostWithoutPort.split(".")[0]
+    }
+  }
+  const tenantUser = session?.user?.tenants?.find((t: any) => t.slug === slug)
+  const tenantId = tenantUser?.id || session?.user?.tenants?.[0]?.id
+
+  if (!tenantId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
@@ -15,7 +35,7 @@ export async function GET(req: Request) {
 
   // Wajib dibatasi hanya data milik tenant ini!
   const where: any = {
-    tenantId: session.user.tenantId
+    tenantId: tenantId
   }
 
   if (search) {

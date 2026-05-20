@@ -11,7 +11,8 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getSliderById, updateSlider } from "@/lib/actions/slider"
+import { getSliderById, updateSlider } from "@/features/slider/actions/slider.action"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export default function EditSliderPage() {
   const router = useRouter()
@@ -56,7 +57,7 @@ export default function EditSliderPage() {
               isActive: d.isActive,
               imageUrl: d.imageUrl
             })
-            setPreviewUrl(d.imageUrl)
+            setPreviewUrl(normalizeImageUrl(d.imageUrl))
           }
           setLoading(false)
         })

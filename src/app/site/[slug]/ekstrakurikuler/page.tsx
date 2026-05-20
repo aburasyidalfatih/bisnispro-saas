@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation"
 import { Star, CheckCircle2, Target } from "lucide-react"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function EkstrakurikulerPage({ params }: { params: Promise<{ slug: string }> }) {
  const { slug } = await params
@@ -14,6 +15,18 @@ export default async function EkstrakurikulerPage({ params }: { params: Promise<
 
  const extracurriculars = tenant.extracurriculars || []
  const base = await getPublicBasePath(slug)
+
+ // Custom Theme rendering
+ if (tenant.customThemeId && tenant.customTheme?.extracurricularHtml) {
+   const rendered = renderCustomTheme({
+     templateHtml: tenant.customTheme.extracurricularHtml,
+     layoutHtml: tenant.customTheme.layoutHtml,
+     customCss: tenant.customTheme.customCss,
+     customJs: tenant.customTheme.customJs,
+     context: { tenant: { ...tenant, extracurriculars }, base, settings: tenant.settings || {} },
+   })
+   if (rendered) return rendered
+ }
  
  const BORDER_COLORS = [
    "hover:border-blue-400 hover:shadow-blue-500/20",

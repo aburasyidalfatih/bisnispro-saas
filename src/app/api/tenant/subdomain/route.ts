@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
 import { requireAuth } from "@/lib/api-utils"
 import { z } from "zod"
 
@@ -24,62 +23,12 @@ export async function PUT(req: Request) {
 
     const { tenantId, newSlug } = parsed.data
 
-    const tu = await db.tenantUser.findUnique({
-      where: { tenantId_userId: { tenantId, userId: session.user.id } },
-    })
-    
-    if (!session.user.isSuperAdmin && (!tu || !["owner", "admin"].includes(tu.role))) {
-      return NextResponse.json({ error: "Tidak punya izin" }, { status: 403 })
-    }
-
-    const tenant = await db.tenant.findUnique({
-      where: { id: tenantId },
-      select: { slug: true, settings: true },
-    })
-    
-    if (!tenant) {
-      return NextResponse.json({ error: "Tenant tidak ditemukan" }, { status: 404 })
-    }
-
-    const settings = (tenant.settings as Record<string, any>) || {}
-    
-    if (settings.hasChangedSubdomain) {
-      return NextResponse.json({ 
-        error: "Anda sudah pernah mengganti subdomain. Penggantian hanya diperbolehkan 1 kali." 
-      }, { status: 403 })
-    }
-
-    if (tenant.slug === newSlug) {
-      return NextResponse.json({ error: "Subdomain baru harus berbeda dengan yang lama." }, { status: 400 })
-    }
-
-    // Cek apakah subdomain sudah dipakai tenant lain atau masuk dalam reserved word list
-    const reservedSlugs = ["admin", "superadmin", "api", "auth", "static", "assets", "dashboard", "site", "schoolpro"]
-    if (reservedSlugs.includes(newSlug)) {
-      return NextResponse.json({ error: "Subdomain ini tidak dapat digunakan." }, { status: 400 })
-    }
-
-    const existing = await db.tenant.findUnique({ where: { slug: newSlug } })
-    if (existing) {
-      return NextResponse.json({ 
-        error: "Subdomain sudah digunakan oleh sekolah lain. Silakan pilih yang berbeda." 
-      }, { status: 409 })
-    }
-
-    // Update slug dan flag hasChangedSubdomain
-    await db.tenant.update({
-      where: { id: tenantId },
-      data: {
-        slug: newSlug,
-        settings: {
-          ...settings,
-          hasChangedSubdomain: true
-        }
-      }
-    })
-
-    return NextResponse.json({ message: "Subdomain berhasil diubah" })
+    const { changeSubdomain } = await import("@/features/tenant/services/tenant-management.service")
+    const result = await changeSubdomain(tenantId, newSlug, session.user.id, session.user.isSuperAdmin)
+    return NextResponse.json(result)
   } catch (err: any) {
-    return NextResponse.json({ error: "Terjadi kesalahan internal peladen" }, { status: 500 })
+    const msg = err.message || "Terjadi kesalahan internal peladen"
+    const status = msg.includes("izin") ? 403 : msg.includes("sudah") ? 409 : 400
+    return NextResponse.json({ error: msg }, { status })
   }
 }

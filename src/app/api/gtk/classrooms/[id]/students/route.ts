@@ -4,9 +4,10 @@ import { NextResponse } from "next/server"
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -22,7 +23,7 @@ export async function GET(
     const students = await db.student.findMany({
       where: {
         tenantId,
-        classroomId: params.id,
+        classroomId: id,
         isActive: true
       },
       select: {

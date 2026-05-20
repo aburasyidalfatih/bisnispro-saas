@@ -57,7 +57,7 @@ import {
   BadgeDollarSign,
   type LucideIcon,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
@@ -658,9 +658,9 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                 finalBrandLogo || isSuperAdminPath ? "bg-transparent shadow-none" : "btn-gradient"
               )}>
                 {isSuperAdminPath
-                  ? <Image src={platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
+                  ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
                   : finalBrandLogo
-                    ? <Image src={finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
+                    ? <Image src={normalizeImageUrl(finalBrandLogo) || finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
                     : brandInitial
                 }
               </div>
@@ -687,9 +687,9 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
             )}
           >
             {isSuperAdminPath
-              ? <Image src={platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
+              ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
               : finalBrandLogo
-                ? <Image src={finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
+                ? <Image src={normalizeImageUrl(finalBrandLogo) || finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
                 : brandInitial
             }
           </button>

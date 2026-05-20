@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+import { normalizeImageUrl } from "@/lib/utils"
+
 
 export default function PpdbTagihanPage() {
   const { data: session } = useSession()
@@ -224,8 +226,8 @@ export default function PpdbTagihanPage() {
                       {p.buktiUrl && (
                         <div>
                           <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Bukti Transfer</p>
-                          <a href={p.buktiUrl} target="_blank" rel="noreferrer" className="block rounded-xl overflow-hidden border hover:opacity-80 transition-opacity">
-                            <img src={p.buktiUrl} alt="Bukti" className="w-full aspect-video object-cover" />
+                          <a href={normalizeImageUrl(p.buktiUrl) || p.buktiUrl} target="_blank" rel="noreferrer" className="block rounded-xl overflow-hidden border hover:opacity-80 transition-opacity">
+                            <img src={normalizeImageUrl(p.buktiUrl) || p.buktiUrl} alt="Bukti" className="w-full aspect-video object-cover" />
                           </a>
                         </div>
                       )}

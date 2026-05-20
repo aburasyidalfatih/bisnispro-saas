@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { Users, GraduationCap, Mail, MessageSquare, Award, BookOpen } from "lucide-react"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function GTKPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -15,6 +16,19 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
 
   const staff = tenant.staff || []
   const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.staffHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.staffHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant: { ...tenant, staff }, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
+
   const totalStaff = staff.length
 
   // Group staff by role

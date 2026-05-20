@@ -9,9 +9,9 @@ import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
 import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X, Phone, MapPin, Mail, MessageCircle, Megaphone } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
-import { getStaff } from "@/lib/actions/staff"
+import { getStaff } from "@/features/staff/actions/staff.action"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import Image from "next/image"
 
@@ -230,7 +230,7 @@ export default function WebsiteAboutPage() {
               <div className="flex items-center gap-4">
                 <div className="relative shrink-0 h-14 w-14 overflow-hidden rounded-xl border bg-muted">
                   {logoPreview ? (
-                    <Image src={logoPreview} alt="Logo" fill className="object-contain p-1" />
+                     <Image src={normalizeImageUrl(logoPreview) || logoPreview} alt="Logo" fill className="object-contain p-1" />
                   ) : (
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl border-2 border-dashed bg-muted/30">
                       <Building2 className="h-5 w-5 text-muted-foreground/40" />
@@ -570,7 +570,7 @@ export default function WebsiteAboutPage() {
               </div>
               {form.settings?.principalImage && (
                 <div className="mt-4 rounded-xl overflow-hidden border w-32 h-32">
-                  <img src={form.settings?.principalImage} alt="Principal preview" className="w-full h-full object-cover" />
+                  <img src={normalizeImageUrl(form.settings?.principalImage) || form.settings?.principalImage} alt="Principal preview" className="w-full h-full object-cover" />
                 </div>
               )}
             </div>

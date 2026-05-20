@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import { TopUpForm } from "./_components/topup-form"
-import { getPaymentChannels } from "@/lib/services/payment"
+import { getPaymentChannels } from "@/features/finance/services/payment.service"
 import Link from "next/link"
 
 export default async function TopUpPage() {

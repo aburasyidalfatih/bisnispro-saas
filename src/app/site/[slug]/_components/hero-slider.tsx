@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ChevronLeft, ChevronRight, Play } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface Slide {
   title: string
@@ -299,11 +300,12 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 }
 
 function SlideBackground({ slide, isPriority }: { slide: Slide, isPriority?: boolean }) {
+  const imageUrl = normalizeImageUrl(slide.image) || slide.image
   return (
     <div className="absolute inset-0">
-      {slide.image ? (
+      {imageUrl ? (
         <Image
-          src={slide.image}
+          src={imageUrl}
           alt={slide.title || "Hero Image"}
           fill
           priority={isPriority}

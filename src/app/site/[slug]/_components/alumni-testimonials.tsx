@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ChevronLeft, ChevronRight, Quote, GraduationCap, ArrowRight } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface AlumniMember {
   id: string
@@ -102,7 +103,7 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
                 <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-4 border-background shadow-xl bg-muted">
                   {person.imageUrl ? (
                     <Image
-                      src={person.imageUrl}
+                      src={normalizeImageUrl(person.imageUrl)!}
                       alt={person.name}
                       fill
                       sizes="112px"

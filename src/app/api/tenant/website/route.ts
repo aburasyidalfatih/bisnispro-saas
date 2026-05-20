@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
 import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
-import { invalidatePublicTenantCache } from "@/lib/services/tenant-public"
+import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 const websiteSchema = z.object({
   tenantId: z.string().min(1),
@@ -45,41 +44,13 @@ export async function GET(req: Request) {
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
 
-  const tenant = await db.tenant.findUnique({
-    where: { id: tenantId },
-    select: {
-      id: true, name: true, slug: true, tagline: true, description: true,
-      about: true, logo: true, heroImage: true, address: true, phone: true,
-      email: true, website: true, whatsapp: true, instagram: true,
-      facebook: true, youtube: true, tiktok: true, gallery: true, settings: true,
-      seoTitle: true, seoDesc: true, googleClientId: true, googleClientSecret: true,
-      _count: {
-        select: {
-          posts: true,
-          documents: true,
-          facilities: true,
-          staff: true,
-          achievements: true,
-          alumni: true,
-          extracurriculars: true,
-          programs: true,
-          popups: true,
-          sliders: true,
-          events: true,
-          partnerships: true,
-          contactSubmissions: {
-            where: { isRead: false }
-          },
-        }
-      },
-      tenantScore: true
-    },
-  })
-
-  if (!tenant) return NextResponse.json({ error: "Tenant tidak ditemukan" }, { status: 404 })
-
-  // Native Json fields — Prisma returns parsed objects directly
-  return NextResponse.json(tenant)
+  try {
+    const { getWebsiteData } = await import("@/features/tenant/services/tenant-management.service")
+    const tenant = await getWebsiteData(tenantId)
+    return NextResponse.json(tenant)
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || "Tenant tidak ditemukan" }, { status: 404 })
+  }
 }
 
 // PUT: update data website tenant
@@ -91,39 +62,12 @@ export async function PUT(req: Request) {
   if (parsed.error) return parsed.error
   const { tenantId, ...data } = parsed.data
 
-  // Cek izin — hanya owner/admin
-  const isSuperAdmin = session.user.isSuperAdmin
-  if (!isSuperAdmin) {
-    const tu = await db.tenantUser.findUnique({
-      where: { tenantId_userId: { tenantId, userId: session.user.id } },
-    })
-    if (!tu || !["owner", "admin"].includes(tu.role)) {
-      return NextResponse.json({ error: "Tidak punya izin" }, { status: 403 })
-    }
+  try {
+    const { updateWebsiteData } = await import("@/features/tenant/services/tenant-management.service")
+    const updated = await updateWebsiteData(tenantId, data, session.user.id, session.user.isSuperAdmin)
+    return NextResponse.json({ message: "Website berhasil diperbarui", tenant: updated })
+  } catch (error: any) {
+    const status = error.message?.includes("izin") ? 403 : 500
+    return NextResponse.json({ error: error.message || "Terjadi kesalahan" }, { status })
   }
-
-  const updated = await db.tenant.update({
-    where: { id: tenantId },
-    data,
-  })
-
-  if (data.settings) {
-    const settings = data.settings as Record<string, any>
-    // Note: Auto-sync staff logic removed to prevent overwriting existing staff names when changing the principal welcome message.
-
-    if (settings.studentCount !== undefined) {
-      try {
-        await db.tenantApplication.update({
-          where: { schoolSlug: updated.slug },
-          data: { studentCount: Number(settings.studentCount) }
-        })
-      } catch (error) {
-        console.error("[website/route] Gagal sync studentCount ke application:", error)
-      }
-    }
-  }
-  // Invalidate Redis cache so public site reflects changes immediately
-  await invalidatePublicTenantCache(updated.slug)
-
-  return NextResponse.json({ message: "Website berhasil diperbarui", tenant: updated })
 }

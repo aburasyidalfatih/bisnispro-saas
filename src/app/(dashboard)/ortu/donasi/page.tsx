@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Heart, Wallet, Loader2, Target, Users, ArrowRight } from "lucide-react"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export default function OrtuDonasiPage() {
   const { data: session } = useSession()
@@ -85,7 +86,7 @@ export default function OrtuDonasiPage() {
           const pct = Math.min((c.collectedAmount / c.targetAmount) * 100, 100)
           return (
             <Card key={c.id} className="glass border-0 shadow-sm overflow-hidden">
-              {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-36 object-cover" />}
+              {c.imageUrl && <img src={normalizeImageUrl(c.imageUrl)} alt={c.title} className="w-full h-36 object-cover" />}
               <CardContent className="p-4">
                 <h3 className="font-bold mb-2">{c.title}</h3>
                 {c.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{c.description}</p>}

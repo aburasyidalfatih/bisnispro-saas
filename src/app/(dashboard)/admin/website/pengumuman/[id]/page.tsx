@@ -5,7 +5,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { postSchema } from "@/lib/validations/post"
+import { postSchema } from "@/features/post/schemas/post.schema"
 import * as z from "zod"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,7 @@ import { ArrowLeft, Save, Loader2, Search } from "lucide-react"
 import Link from "next/link"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
+import { normalizeImageUrl } from "@/lib/utils"
 
 type FormData = z.infer<typeof postSchema>
 
@@ -85,7 +86,7 @@ export default function PengumumanFormPage() {
         setValue("content", d.content)
         setValue("type", d.type)
         setValue("status", d.status)
-        setValue("featuredImage", d.featuredImage || "")
+        setValue("featuredImage", normalizeImageUrl(d.featuredImage) || "")
         setValue("categoryId", d.categoryId || "")
         setValue("seoTitle", d.seoTitle || "")
         setValue("seoDesc", d.seoDesc || "")

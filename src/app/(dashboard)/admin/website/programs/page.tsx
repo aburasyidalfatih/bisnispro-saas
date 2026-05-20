@@ -6,10 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, GraduationCap, Image as ImageIcon } from "lucide-react"
+import { Plus, Trash2, Edit, GraduationCap, Image as ImageIcon, GripVertical } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { getPrograms, deleteProgram } from "@/lib/actions/program"
+import { getPrograms, deleteProgram, updateProgramsOrder } from "@/features/program/actions/program.action"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 
 interface Program {
   id: string
@@ -22,6 +23,8 @@ export default function ProgramsPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState<Program[]>([])
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [dragOver, setDragOver] = useState<number | null>(null)
 
   const tenantId = branding.id
 
@@ -52,6 +55,39 @@ export default function ProgramsPage() {
       loadData()
     } catch (err: any) {
       toast({ title: "Gagal", description: err.message, variant: "destructive" })
+    }
+  }
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDragIndex(index)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    setDragOver(index)
+    e.dataTransfer.dropEffect = "move"
+  }
+
+  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    setDragOver(null)
+    if (dragIndex === null || dragIndex === dropIndex) return
+
+    const newArr = [...items]
+    const [dragged] = newArr.splice(dragIndex, 1)
+    newArr.splice(dropIndex, 0, dragged)
+    
+    setItems(newArr)
+    setDragIndex(null)
+
+    if (tenantId) {
+      try {
+        await updateProgramsOrder(tenantId, newArr.map(a => a.id))
+        toast({ title: "Urutan berhasil disimpan" })
+      } catch (err: any) {
+        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+      }
     }
   }
 
@@ -87,15 +123,37 @@ export default function ProgramsPage() {
               </Button>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map(item => (
-                <Card key={item.id} className="overflow-hidden border group relative">
-                  <div className="aspect-video relative bg-muted flex items-center justify-center">
-                    {item.imageUrl ? (
-                      <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
-                    ) : (
-                      <GraduationCap className="h-10 w-10 text-muted-foreground/50" />
-                    )}
+            <>
+              <p className="text-xs text-muted-foreground mb-4">
+                {items.length} program · Drag untuk mengubah urutan
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((item, i) => {
+                const displayImage = normalizeImageUrl(item.imageUrl)
+                return (
+                  <Card key={item.id}
+                    draggable
+                    onDragStart={e => handleDragStart(e, i)}
+                    onDragOver={e => handleDragOver(e, i)}
+                    onDrop={e => handleDrop(e, i)}
+                    onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
+                    className={cn(
+                      "overflow-hidden border group relative transition-all",
+                      dragOver === i && "ring-2 ring-primary scale-[1.02]",
+                      dragIndex === i && "opacity-50"
+                    )}>
+                    <div className="aspect-video relative bg-muted flex items-center justify-center cursor-grab active:cursor-grabbing">
+                      {displayImage ? (
+                        <Image src={displayImage} alt={item.name} fill className="object-cover" />
+                      ) : (
+                        <GraduationCap className="h-10 w-10 text-muted-foreground/50" />
+                      )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                      <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black/60 shadow-sm">
+                          <GripVertical className="h-4 w-4 text-white" />
+                        </div>
+                      </div>
                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm">
                         <Link href={`/admin/website/programs/${item.id}/edit`}>
@@ -122,8 +180,10 @@ export default function ProgramsPage() {
                     </p>
                   </CardContent>
                 </Card>
-              ))}
+              )
+              })}
             </div>
+            </>
           )}
         </CardContent>
       </Card>

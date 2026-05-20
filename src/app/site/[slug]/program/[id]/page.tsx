@@ -1,13 +1,15 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, BookOpen } from "lucide-react"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
+export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
@@ -18,6 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${program.name} - ${tenant.name}`,
     description: program.description || `Informasi program keahlian ${program.name}`,
+    alternates: {
+      canonical: `/program/${program.id}`,
+    },
   }
 }
 
@@ -75,7 +80,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
         {program.imageUrl ? (
           <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image 
-              src={program.imageUrl} 
+              src={normalizeImageUrl(program.imageUrl) || program.imageUrl} 
               alt={program.name} 
               fill 
               className="object-cover"

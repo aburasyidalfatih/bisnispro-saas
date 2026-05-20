@@ -11,7 +11,9 @@ import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
-import { getAchievementById, updateAchievement } from "@/lib/actions/achievements"
+import { getAchievementById, updateAchievement } from "@/features/achievement/actions/achievement.action"
+import { normalizeImageUrl } from "@/lib/utils"
+
 
 export default function EditAchievementPage() {
   const router = useRouter()
@@ -52,7 +54,7 @@ export default function EditAchievementPage() {
               level: d.level || "LOKAL",
               imageUrl: d.imageUrl || ""
             })
-            if (d.imageUrl) setPreviewUrl(d.imageUrl)
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
           }
           setLoading(false)
         })

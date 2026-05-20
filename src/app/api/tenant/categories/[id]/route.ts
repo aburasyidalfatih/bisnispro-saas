@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { categorySchema } from "@/lib/validations/category"
+import { categorySchema } from "@/features/post/schemas/category.schema"
 import { parseBody } from "@/lib/api-utils"
 import { z } from "zod"
 

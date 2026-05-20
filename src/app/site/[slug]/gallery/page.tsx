@@ -1,7 +1,9 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { GalleryGrid } from "./gallery-grid"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getPublicBasePath } from "@/lib/utils/public-path"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -18,11 +20,25 @@ export default async function GalleryPage({ params }: { params: Promise<{ slug: 
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
+  const base = await getPublicBasePath(slug)
+
   // Support both old format (string[]) and new format ({url, caption}[])
   const raw = (tenant.gallery as any[]) || []
   const gallery = raw.map((item: any) =>
     typeof item === "string" ? { url: item, caption: "" } : item
   )
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.galleryHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.galleryHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, gallery, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
 
   return (
     <>

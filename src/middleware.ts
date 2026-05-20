@@ -10,7 +10,7 @@ import NextAuth from "next-auth"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { authConfig } from "@/lib/auth.config"
-import { edgeRateLimit } from "@/lib/edge-rate-limit"
+import { edgeRateLimit, tenantRateLimit } from "@/lib/edge-rate-limit"
 import { Redis } from "@upstash/redis"
 
 const { auth } = NextAuth(authConfig)
@@ -29,17 +29,20 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
       if (cached) return cached as string
     }
 
-    const base = process.env.NEXT_PUBLIC_APP_URL || new URL(requestUrl).origin
+    // Edge-Safe: Fetch from local Node.js API instead of importing database TCP Sockets directly
+    const port = process.env.PORT || "3000"
     const res = await fetch(
-      `${base}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
+      `http://127.0.0.1:${port}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
       {
-        headers: { "x-internal-secret": INTERNAL_SECRET },
-        next: { revalidate: 300 },
+        headers: {
+          "x-internal-secret": INTERNAL_SECRET,
+        },
       }
     )
+
     if (!res.ok) return null
     const data = await res.json()
-    const slug = data.slug ?? null
+    const slug = data.slug
 
     if (redis && slug) {
       await redis.set(`domain:${domain}`, slug, { ex: 300 })
@@ -238,6 +241,12 @@ export default async function middleware(request: NextRequest) {
   // B. SUBDOMAIN
   // ============================================================
   if (isSubdomain) {
+    // Per-Tenant Rate Limiting (Task 3.4)
+    const { success: tenantSuccess } = await tenantRateLimit.limit(`rl:tenant:${subdomain}`)
+    if (!tenantSuccess) {
+      return new NextResponse("Too Many Requests for this Tenant. Rate Limit exceeded.", { status: 429 })
+    }
+
     // Jangan rewrite rute Dashboard/Login di subdomain
     if (
       pathname.startsWith("/admin") ||
@@ -276,6 +285,12 @@ export default async function middleware(request: NextRequest) {
   if (isCustomDomain) {
     const slug = await resolveCustomDomain(hostname, request.url)
     if (!slug) return addSecurityHeaders(NextResponse.rewrite(new URL("/not-found", request.url)))
+
+    // Per-Tenant Rate Limiting (Task 3.4)
+    const { success: tenantSuccess } = await tenantRateLimit.limit(`rl:tenant:${slug}`)
+    if (!tenantSuccess) {
+      return new NextResponse("Too Many Requests for this Tenant. Rate Limit exceeded.", { status: 429 })
+    }
 
     if (
       pathname.startsWith("/admin") ||

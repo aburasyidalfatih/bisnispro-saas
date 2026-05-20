@@ -60,7 +60,7 @@ export default function AttendanceSessionDetailPage({ params }: { params: Promis
         body: JSON.stringify({ tenantId: tenant.id, records: recordsArr }),
       })
       if (!res.ok) throw new Error("Gagal sinkronisasi ke server")
-      toast({ title: "Absensi tersimpan", description: "Semua siswa ditandai " + status, className: "bg-emerald-50 text-emerald-600 border-emerald-200" })
+      toast({ title: "Absensi tersimpan", description: "Semua siswa ditandai " + status })
     } catch (err: any) {
       // 3. Rollback on Error
       setRecords(previousRecords)

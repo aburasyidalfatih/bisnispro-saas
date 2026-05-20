@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { verifyToken, consumeToken } from "@/lib/services/token"
-import { verifyEmailSchema } from "@/lib/validations/auth"
+import { verifyToken, consumeToken } from "@/features/auth/services/token.service"
+import { verifyEmailSchema } from "@/features/auth/schemas/auth.schema"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
 
@@ -12,12 +12,12 @@ export async function POST(req: Request) {
     const { token } = parsed.data
 
     const record = await verifyToken(token, "email_verify")
-    if (!record) {
-      return NextResponse.json({ error: "Token tidak valid atau sudah kedaluwarsa" }, { status: 400 })
+    if (!record.success || !record.data) {
+      return NextResponse.json({ error: record.error || "Token tidak valid atau sudah kedaluwarsa" }, { status: 400 })
     }
 
     await db.user.update({
-      where: { id: record.userId },
+      where: { id: record.data.userId },
       data: { emailVerified: new Date() },
     })
     await consumeToken(token)

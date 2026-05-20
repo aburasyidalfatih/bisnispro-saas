@@ -15,7 +15,7 @@ import {
 } from "lucide-react"
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns"
 import { id as localeId } from "date-fns/locale"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 
 const STATUS_CFG: Record<string, { label: string; color: string; badgeCls: string }> = {
   HADIR: { label: "Hadir", color: "text-emerald-600", badgeCls: "bg-emerald-500/10 text-emerald-600 border-emerald-300" },
@@ -229,7 +229,7 @@ export default function AdminGTKAttendancePage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="h-8 w-8 rounded-xl overflow-hidden bg-primary/10 shrink-0">
-                            {s.imageUrl ? <img src={s.imageUrl} alt={s.name} className="h-full w-full object-cover" /> : (
+                            {s.imageUrl ? <img src={normalizeImageUrl(s.imageUrl)} alt={s.name} className="h-full w-full object-cover" /> : (
                               <div className="h-full w-full flex items-center justify-center font-bold text-primary text-xs">{s.name.charAt(0)}</div>
                             )}
                           </div>

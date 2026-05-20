@@ -11,12 +11,12 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 export const dynamic = "force-dynamic"
 import { parseBody, requireAuth } from "@/lib/api-utils"
-import { setDomainSchema, removeDomainSchema } from "@/lib/validations/domain"
+import { setDomainSchema, removeDomainSchema } from "@/features/tenant/schemas/domain.schema"
 import {
   generateVerifyToken,
   getDomainSettings,
   invalidateDomainCache,
-} from "@/lib/services/domain"
+} from "@/features/tenant/services/domain.service"
 
 // ==================== HELPERS ====================
 

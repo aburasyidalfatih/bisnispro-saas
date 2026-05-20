@@ -10,8 +10,8 @@ import { Plus, Trash2, Edit, Award, Image as ImageIcon, GripVertical } from "luc
 import Link from "next/link"
 import { format } from "date-fns"
 import Image from "next/image"
-import { getAchievements, deleteAchievement, updateAchievementsOrder } from "@/lib/actions/achievements"
-import { cn } from "@/lib/utils"
+import { getAchievements, deleteAchievement, updateAchievementsOrder } from "@/features/achievement/actions/achievement.action"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 
 interface Achievement {
   id: string
@@ -157,7 +157,7 @@ export default function AchievementsPage() {
                   )}>
                   <div className="aspect-video relative bg-muted flex items-center justify-center cursor-grab active:cursor-grabbing">
                     {achievement.imageUrl ? (
-                      <Image src={achievement.imageUrl} alt={achievement.title} fill className="object-cover" />
+                      <Image src={normalizeImageUrl(achievement.imageUrl)!} alt={achievement.title} fill className="object-cover" />
                     ) : (
                       <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
                     )}

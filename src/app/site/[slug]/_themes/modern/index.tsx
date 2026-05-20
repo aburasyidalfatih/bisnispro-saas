@@ -1,6 +1,7 @@
 import Link from "next/link"
 import NextImage from "next/image"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react"
+import { normalizeImageUrl } from "@/lib/utils"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
 import { PrincipalWelcome } from "../../_components/principal-welcome"
@@ -24,6 +25,38 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       || s.role.toLowerCase().includes("direktur") 
       || s.role.toLowerCase().includes("ketua")
     ))
+
+  const achievements = (tenant.achievements || []).map((a) => ({
+    id: a.id,
+    title: a.title,
+    description: a.description,
+    date: a.createdAt,
+    level: a.level || "LOKAL",
+    imageUrl: a.imageUrl,
+  }))
+
+  const staff = (tenant.staff || []).map((s) => ({
+    id: s.id,
+    name: s.name,
+    role: s.role || "Staff",
+    imageUrl: s.imageUrl,
+  }))
+
+  const alumni = (tenant.alumni || []).map((al) => ({
+    id: al.id,
+    name: al.name,
+    graduationYear: al.graduationYear,
+    currentStatus: (al as any).currentStatus || al.currentPosition || "LAINNYA",
+    testimonial: al.testimonial,
+    imageUrl: al.imageUrl,
+  }))
+
+  const partnerships = (tenant.partnerships || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    imageUrl: p.logo || "",
+    websiteUrl: p.website,
+  }))
 
   return (
     <main className="bg-muted/30">
@@ -113,7 +146,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.achievements?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <AchievementsSection achievements={tenant.achievements || []} />
+          <AchievementsSection achievements={achievements} />
         </ScrollReveal>
       )}
 
@@ -133,7 +166,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.staff?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <StaffHighlight staff={tenant.staff || []} />
+          <StaffHighlight staff={staff} />
         </ScrollReveal>
       )}
 
@@ -159,8 +192,9 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
               <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {gallery.slice(0, 12).map((item: any, i: number) => (
                   <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-[4/3] relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
-                    <NextImage src={item.url} alt={item.caption || `Galeri ${i + 1}`}
-                      fill unoptimized
+                    <NextImage src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Galeri ${i + 1}`}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover group-hover/item:scale-105 transition-transform duration-500" />
                     {item.caption && (
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-end">
@@ -185,7 +219,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
             <div className="grid gap-8">
               {/* Alumni Testimonial */}
               <div>
-                <AlumniTestimonials alumni={tenant.alumni || []} />
+                <AlumniTestimonials alumni={alumni} />
               </div>
             </div>
           </div>
@@ -198,7 +232,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       {(tenant.partnerships?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
           <div className="bg-card py-8">
-            <PartnershipsSection partnerships={tenant.partnerships || []} />
+            <PartnershipsSection partnerships={partnerships} />
           </div>
         </ScrollReveal>
       )}

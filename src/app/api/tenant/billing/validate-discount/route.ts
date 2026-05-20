@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 
 export async function POST(req: Request) {
@@ -14,36 +13,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Kode diskon wajib diisi" }, { status: 400 })
     }
 
-    const discount = await db.discountCode.findUnique({
-      where: { code: code.toUpperCase() },
-    })
-
-    if (!discount) {
-      return NextResponse.json({ error: "Kode diskon tidak ditemukan" }, { status: 404 })
-    }
-
-    if (!discount.isActive) {
-      return NextResponse.json({ error: "Kode diskon sudah tidak aktif" }, { status: 400 })
-    }
-
-    if (discount.maxUses !== null && discount.usedCount >= discount.maxUses) {
-      return NextResponse.json({ error: "Kode diskon sudah mencapai batas penggunaan" }, { status: 400 })
-    }
-
-    if (discount.expiresAt && new Date(discount.expiresAt) < new Date()) {
-      return NextResponse.json({ error: "Kode diskon sudah kedaluwarsa" }, { status: 400 })
-    }
-
-    return NextResponse.json({
-      id: discount.id,
-      code: discount.code,
-      percentage: discount.percentage,
-      description: discount.description,
-      expiresAt: discount.expiresAt,
-      bonusMonths: discount.bonusMonths,
-    })
-  } catch (error) {
-    console.error("Validate discount error:", error)
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    const { validateDiscountCode } = await import("@/features/finance/services/wallet.service")
+    const result = await validateDiscountCode(code)
+    return NextResponse.json(result)
+  } catch (error: any) {
+    const status = error.message?.includes("tidak ditemukan") ? 404 : 400
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status })
   }
 }

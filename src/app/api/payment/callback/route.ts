@@ -1,19 +1,29 @@
 import { NextResponse } from "next/server"
 import crypto from "crypto"
-import { handleCallback } from "@/lib/services/payment"
+import { handleCallback } from "@/features/finance/services/payment.service"
 import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
   try {
     const body = await req.json()
 
+    const privateKey = process.env.TRIPAY_PRIVATE_KEY
+    if (!privateKey) {
+      logger.error("Payment callback: TRIPAY_PRIVATE_KEY is not configured")
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    }
+
+    const callbackSignature = req.headers.get("x-callback-signature")
+    if (!callbackSignature) {
+      return NextResponse.json({ error: "Missing signature" }, { status: 403 })
+    }
+
     // Verifikasi signature dari Tripay
     const signature = crypto
-      .createHmac("sha256", process.env.TRIPAY_PRIVATE_KEY || "")
+      .createHmac("sha256", privateKey)
       .update(JSON.stringify(body))
       .digest("hex")
 
-    const callbackSignature = req.headers.get("x-callback-signature")
     if (callbackSignature !== signature) {
       logger.warn("Payment callback: invalid signature", {
         merchantRef: body.merchant_ref,
@@ -26,18 +36,21 @@ export async function POST(req: Request) {
       status: body.status,
     })
 
-    const result = await handleCallback(body)
+    const res = await handleCallback(body)
 
-    if (!result) {
-      logger.warn("Payment callback: payment not found", {
+    if (!res.success) {
+      logger.warn("Payment callback processing failed", {
         merchantRef: body.merchant_ref,
+        error: res.error
       })
-      return NextResponse.json({ error: "Payment not found" }, { status: 404 })
+      return NextResponse.json({ error: res.error }, { status: 400 })
     }
 
+    const result = res.data
+
     logger.info("Payment callback processed", {
-      paymentId: result.id,
-      status: result.status,
+      paymentId: result?.id,
+      status: result?.status,
     })
 
     return NextResponse.json({ success: true })

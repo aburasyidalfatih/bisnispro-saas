@@ -71,10 +71,14 @@ export const logger = {
     }
     output(formatEntry("error", message, errorMeta))
 
-    // ENTERPRISE TELEMETRY (Fase 1)
-    // TODO: Integrate @sentry/nextjs or Datadog tracing here for production
-    if (IS_PROD && process.env.SENTRY_DSN) {
-      // Sentry.captureException(error || new Error(message), { extra: errorMeta });
+    // ENTERPRISE TELEMETRY — Sentry Integration (Active)
+    if (IS_PROD && process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      try {
+        const Sentry = require("@sentry/nextjs")
+        Sentry.captureException(error || new Error(message), { extra: errorMeta })
+      } catch {
+        // Sentry not available — fail silently
+      }
     }
   },
 }

@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
-import { sendTemplateNotification } from "@/lib/services/notification"
+import { sendTemplateNotification } from "@/features/notification/services/notification.service"
 
 const orderSchema = z.object({
   tenantId: z.string(),

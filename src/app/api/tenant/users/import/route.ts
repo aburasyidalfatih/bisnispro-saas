@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { logger } from "@/lib/logger"
+import { db } from "@/lib/db"
 
 export async function POST(req: NextRequest) {
   try {

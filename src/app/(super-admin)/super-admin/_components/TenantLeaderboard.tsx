@@ -77,7 +77,7 @@ export function TenantLeaderboard() {
                           alt={tenant.name} 
                           fill 
                           className="rounded-full object-contain border bg-white p-0.5" 
-                          unoptimized 
+                          
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                             const fallback = e.currentTarget.nextElementSibling as HTMLElement;

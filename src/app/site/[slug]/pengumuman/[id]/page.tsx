@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import { Calendar, User, ArrowLeft, Megaphone } from "lucide-react"
 import { format } from "date-fns"
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = (tenant.posts || []).find((p: any) => p.id === id)
   if (!post) return {}
   const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
-  let imageUrl = post.featuredImage || post.image || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
   
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
   if (imageUrl.startsWith("/")) {
@@ -59,6 +60,19 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
 
   const base = await getPublicBasePath(slug)
 
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.pengumumanDetailHtml) {
+    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.pengumumanDetailHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, post, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
+
   // Get related pengumuman
   const relatedPosts = (tenant.posts || [])
     .filter((p: any) => p.id !== id && p.type === "PENGUMUMAN")
@@ -75,7 +89,7 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
             "@context": "https://schema.org",
             "@type": "Article",
             "headline": post.title,
-            "image": post.featuredImage || post.image || "https://schoolpro.id/logo-schoolpro.png",
+            "image": normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || "https://schoolpro.id/logo-schoolpro.png",
             "datePublished": post.createdAt,
             "dateModified": post.updatedAt || post.createdAt,
             "author": {
@@ -126,10 +140,10 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
       </div>
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
-        {(post.featuredImage || post.image) && (
+        {(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image)) && (
           <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image
-              src={post.featuredImage || post.image}
+              src={(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image))!}
               alt={post.title}
               fill
               priority

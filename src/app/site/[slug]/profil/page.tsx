@@ -5,11 +5,12 @@ import {
   BookOpen, CheckCircle, Quote, MapPin, Phone, Mail,
   Play, Target, Award, ArrowRight, ShieldCheck
 } from "lucide-react"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function ProfilTerpaduPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -17,6 +18,19 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.aboutHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.aboutHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
+
   const settings = tenant.settings || {} as any
 
   // Extracts
@@ -127,7 +141,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
               {settings.videoProfil ? (
                  <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={videoThumbnail} alt="Video Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                    <img src={normalizeImageUrl(videoThumbnail)} alt="Video Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
                     <a href={settings.videoProfil} target="_blank" rel="noreferrer" className="absolute inset-0 flex items-center justify-center">
                        <div className="h-20 w-20 rounded-full bg-primary/90 flex items-center justify-center text-white shadow-xl hover:scale-110 transition-transform cursor-pointer">
                           <Play className="h-8 w-8 ml-1" />

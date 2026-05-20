@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { Building2, X } from "lucide-react"
+import { normalizeImageUrl } from "@/lib/utils"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 
@@ -55,7 +56,8 @@ export function SocialProofPopup() {
   if (registrations.length === 0) return null
 
   const current = registrations[currentIndex]
-  const hasLogo = current.logo && (current.logo.startsWith('http') || current.logo.startsWith('/'))
+  const normalizedLogo = normalizeImageUrl(current.logo)
+  const hasLogo = !!normalizedLogo
 
   return (
     <AnimatePresence>
@@ -81,7 +83,7 @@ export function SocialProofPopup() {
           <div className="flex items-start gap-3 relative z-10">
             <div className="flex-shrink-0 relative h-10 w-10 rounded-full overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center">
               {hasLogo ? (
-                <Image src={current.logo!} alt={current.schoolName} fill sizes="40px" className="object-cover" />
+                <Image src={normalizedLogo!} alt={current.schoolName} fill sizes="40px" className="object-cover" />
               ) : (
                 <Building2 className="h-5 w-5 text-primary/60" />
               )}

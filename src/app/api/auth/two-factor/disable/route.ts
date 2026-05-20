@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { disableTwoFactor } from "@/lib/services/two-factor"
+import { disableTwoFactor } from "@/features/auth/services/two-factor.service"
 import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
 import { logger } from "@/lib/logger"
@@ -36,7 +36,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Password salah" }, { status: 400 })
     }
 
-    await disableTwoFactor(session.user.id)
+    const result = await disableTwoFactor(session.user.id)
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 400 })
+    }
 
     return NextResponse.json({ message: "2FA berhasil dinonaktifkan" })
   } catch (error) {

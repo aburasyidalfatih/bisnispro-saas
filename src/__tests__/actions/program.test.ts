@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createProgram, getPrograms, updateProgram, deleteProgram } from '@/lib/actions/program'
+import { createProgram, getPrograms, updateProgram, deleteProgram } from '@/features/program/actions/program.action'
 import { db } from '../../../__mocks__/prisma'
 
 vi.mock('@/lib/guards/tenant-guard', () => ({
@@ -35,7 +35,7 @@ describe('Server Actions: Program', () => {
 
     expect(db.program.findMany).toHaveBeenCalledWith({
       where: { tenantId: 'tenant-abc' },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     })
   })
 

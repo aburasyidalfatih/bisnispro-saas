@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createStaff, getStaff, deleteStaff } from '@/lib/actions/staff'
+import { createStaff, getStaff, deleteStaff } from '@/features/staff/actions/staff.action'
 import { db } from '../../../__mocks__/prisma'
 
 vi.mock('@/lib/guards/tenant-guard', () => ({
@@ -11,7 +11,7 @@ vi.mock('next/cache', () => ({
 }))
 
 // Mock dynamic imports used in staff.ts
-vi.mock('@/lib/services/tenant-public', () => ({
+vi.mock('@/features/tenant/services/tenant-public.service', () => ({
   invalidatePublicTenantCache: vi.fn(),
 }))
 

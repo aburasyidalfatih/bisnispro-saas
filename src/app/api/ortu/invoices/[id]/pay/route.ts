@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { createTransaction } from "@/lib/services/payment"
+import { createTransaction } from "@/features/finance/services/payment.service"
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
     const { method, walletId, customerName, customerEmail, customerPhone } = await req.json()
-    const invoiceId = params.id
+    const { id } = await params
+    const invoiceId = id
 
     if (!method) {
       return NextResponse.json({ error: "Metode pembayaran harus dipilih" }, { status: 400 })
@@ -136,7 +137,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     })
 
     if (!tripayResult.success) {
-      return NextResponse.json({ error: tripayResult.message || "Gagal menghubungi Payment Gateway" }, { status: 500 })
+      return NextResponse.json({ error: tripayResult.error || "Gagal menghubungi Payment Gateway" }, { status: 500 })
     }
 
     return NextResponse.json({ 

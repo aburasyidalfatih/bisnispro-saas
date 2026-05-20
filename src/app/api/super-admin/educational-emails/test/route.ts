@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { sendEmail } from "@/lib/services/notification"
+import { sendEmail } from "@/features/notification/services/notification.service"
 import { auth } from "@/lib/auth"
 
 export async function POST(req: Request) {

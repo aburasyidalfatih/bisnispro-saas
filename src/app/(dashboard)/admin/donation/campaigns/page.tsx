@@ -15,6 +15,8 @@ import {
 import Link from "next/link"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+import { normalizeImageUrl } from "@/lib/utils"
+
 
 export default function DonationCampaignsPage() {
   const { data: session } = useSession()
@@ -107,7 +109,7 @@ export default function DonationCampaignsPage() {
             return (
               <Card key={campaign.id} className="glass border-0 shadow-sm overflow-hidden">
                 {campaign.imageUrl && (
-                  <img src={campaign.imageUrl} alt={campaign.title} className="w-full h-36 object-cover" />
+                  <img src={normalizeImageUrl(campaign.imageUrl) || campaign.imageUrl} alt={campaign.title} className="w-full h-36 object-cover" />
                 )}
                 <CardContent className="p-5">
                   <div className="flex justify-between items-start mb-3">

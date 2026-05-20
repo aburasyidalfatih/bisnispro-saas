@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createFacility, updateFacility, deleteFacility, getFacilities } from '@/lib/actions/facilities'
+import { createFacility, updateFacility, deleteFacility, getFacilities } from '@/features/facility/actions/facility.action'
 import { db } from '../../../__mocks__/prisma'
 
 // Mock Guard: lolos secara default
@@ -51,7 +51,7 @@ describe('Server Actions: Facilities', () => {
     expect(requireTenantAccess).toHaveBeenCalledWith('tenant-xyz')
     expect(db.facility.findMany).toHaveBeenCalledWith({
       where: { tenantId: 'tenant-xyz' },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     })
   })
 

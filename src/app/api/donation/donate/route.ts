@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { z } from "zod"
-import { createTransaction } from "@/lib/services/payment"
+import { createTransaction } from "@/features/finance/services/payment.service"
 
 const donateSchema = z.object({
   campaignId: z.string(),
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
     metadata: { campaignId, isAnonymous, message, donorName },
   })
 
-  if (!tripayResult.success) return NextResponse.json({ error: tripayResult.message }, { status: 500 })
+  if (!tripayResult.success) return NextResponse.json({ error: tripayResult.error }, { status: 500 })
 
   // Simpan donasi dengan status PENDING
   await db.donation.create({

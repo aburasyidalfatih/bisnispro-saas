@@ -10,6 +10,7 @@ import { Plus, Edit2, Trash2, FileText, Globe, Clock, XCircle, ImageIcon } from 
 import Link from "next/link"
 import Image from "next/image"
 import { format } from "date-fns"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface Post {
   id: string
@@ -117,9 +118,23 @@ export default function PengumumanPage() {
                     <tr key={post.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          {post.featuredImage ? (
+                          {normalizeImageUrl(post.featuredImage) ? (
                             <div className="relative h-10 w-16 shrink-0 rounded overflow-hidden border">
-                              <Image src={post.featuredImage} alt={post.title} fill className="object-cover" unoptimized />
+                              <Image 
+                                src={normalizeImageUrl(post.featuredImage)!} 
+                                alt={post.title} 
+                                fill 
+                                className="object-cover" 
+                                
+                                onError={(e) => {
+                                  const target = e.currentTarget
+                                  target.style.display = 'none'
+                                  if (target.parentElement) {
+                                    target.parentElement.classList.add('flex', 'items-center', 'justify-center', 'bg-muted/50')
+                                    target.parentElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>'
+                                  }
+                                }}
+                              />
                             </div>
                           ) : (
                             <div className="flex h-10 w-16 shrink-0 items-center justify-center rounded border bg-muted/50">

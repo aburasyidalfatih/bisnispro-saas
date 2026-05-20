@@ -63,6 +63,15 @@ export async function POST(req: Request) {
       }
     })
 
+    const tenant = await db.tenant.findUnique({
+      where: { id: tenantId },
+      select: { slug: true }
+    })
+    if (tenant) {
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+      await invalidatePublicTenantCache(tenant.slug)
+    }
+
     return NextResponse.json({ message: "Dokumen berhasil diunggah", document })
   } catch (error) {
     logger.error("Document upload failed", error, { path: "/api/tenant/documents" })

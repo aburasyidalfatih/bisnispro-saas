@@ -1,13 +1,14 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { Trophy, Calendar, Medal, Award, Star } from "lucide-react"
-import { getPublicTenantBySlug } from "@/lib/services/tenant-public"
+import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function PrestasiPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -17,6 +18,18 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
 
   const achievements = tenant.achievements || []
   const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.achievementHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.achievementHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant: { ...tenant, achievements }, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
 
   return (
     <div className="bg-background min-h-screen">
