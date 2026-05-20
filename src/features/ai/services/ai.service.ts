@@ -1,5 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
+import { createOpenRouter } from "@openrouter/ai-sdk-provider"
 import { LanguageModelV1 } from "@ai-sdk/provider"
 import { db } from "@/lib/db"
 
@@ -18,7 +19,7 @@ export async function getAiModel(tenantId: string): Promise<AiModelResult> {
 
     // Fetch global AI settings
     const settings = await db.platformSetting.findMany({
-      where: { key: { in: ["AI_PROVIDER", "OPENAI_API_KEY", "OPENAI_MODEL", "GEMINI_API_KEY", "GEMINI_MODEL"] } }
+      where: { key: { in: ["AI_PROVIDER", "OPENAI_API_KEY", "OPENAI_MODEL", "GEMINI_API_KEY", "GEMINI_MODEL", "OPENROUTER_API_KEY", "OPENROUTER_MODEL"] } }
     })
     
     const settingsMap: Record<string, string> = {}
@@ -38,6 +39,13 @@ export async function getAiModel(tenantId: string): Promise<AiModelResult> {
       
       const provider = createGoogleGenerativeAI({ apiKey })
       const modelName = settingsMap.GEMINI_MODEL || "gemini-1.5-flash"
+      return { success: true, model: provider(modelName) }
+    } else if (aiProvider === "openrouter") {
+      const apiKey = settingsMap.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY
+      if (!apiKey) return { success: false, error: "OpenRouter API Key not configured." }
+      
+      const provider = createOpenRouter({ apiKey })
+      const modelName = settingsMap.OPENROUTER_MODEL || "meta-llama/llama-3-8b-instruct"
       return { success: true, model: provider(modelName) }
     } else {
       const apiKey = settingsMap.OPENAI_API_KEY || process.env.OPENAI_API_KEY

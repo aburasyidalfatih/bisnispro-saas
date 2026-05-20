@@ -28,6 +28,7 @@
     "@bull-board/ui": "^7.1.5",
     "@hookform/resolvers": "^3.3.4",
     "@marsidev/react-turnstile": "^1.5.1",
+    "@openrouter/ai-sdk-provider": "^2.9.0",
     "@prisma/client": "5.22.0",
     "@prisma/extension-accelerate": "^3.0.1",
     "@radix-ui/react-alert-dialog": "^1.0.5",
