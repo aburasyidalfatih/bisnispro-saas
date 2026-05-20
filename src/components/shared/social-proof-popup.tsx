@@ -83,7 +83,7 @@ export function SocialProofPopup() {
           <div className="flex items-start gap-3 relative z-10">
             <div className="flex-shrink-0 relative h-10 w-10 rounded-full overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center">
               {hasLogo ? (
-                <Image src={normalizedLogo!} alt={current.schoolName} fill sizes="40px" className="object-cover" />
+                <Image src={normalizedLogo!} alt={current.schoolName} fill sizes="40px" className="object-cover" unoptimized />
               ) : (
                 <Building2 className="h-5 w-5 text-primary/60" />
               )}
