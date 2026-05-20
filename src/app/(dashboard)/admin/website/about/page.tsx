@@ -7,7 +7,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X, Phone, MapPin, Mail, MessageCircle, Megaphone } from "lucide-react"
+import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X, Phone, MapPin, Mail, MessageCircle, Megaphone, Sparkles, Wand2, Loader2 as Loader2Icon } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
@@ -35,6 +44,13 @@ export default function WebsiteAboutPage() {
     whatsapp: "", instagram: "", facebook: "", youtube: "", tiktok: "",
     settings: {} as any,
   })
+
+  // AI State
+  const [aiModalOpen, setAiModalOpen] = useState(false)
+  const [aiPromptType, setAiPromptType] = useState<"vision-mission" | "about" | "principal-speech">("about")
+  const [aiInputText, setAiInputText] = useState("")
+  const [aiInputName, setAiInputName] = useState("")
+  const [aiLoading, setAiLoading] = useState(false)
 
   // Resolve tenantId
   useEffect(() => {
@@ -173,6 +189,53 @@ export default function WebsiteAboutPage() {
     } finally {
       e.target.value = ""
     }
+  }
+
+  const handleGenerateAI = async () => {
+    if (!aiInputText.trim()) {
+      toast({ title: "Input kosong", description: "Silakan masukkan poin/fakta terlebih dahulu.", variant: "destructive" })
+      return
+    }
+
+    setAiLoading(true)
+    try {
+      const res = await fetch("/api/tenant/ai/generate-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          tenantId, 
+          promptType: aiPromptType, 
+          inputs: { text: aiInputText, name: aiInputName } 
+        })
+      })
+      const d = await res.json()
+      if (res.ok && d.success && d.data?.result) {
+        if (aiPromptType === "vision-mission") {
+          // Put result in visi for now, user can split
+          setForm(p => ({ ...p, settings: { ...p.settings, visi: d.data.result } }))
+        } else if (aiPromptType === "about") {
+          setForm(p => ({ ...p, about: d.data.result }))
+        } else if (aiPromptType === "principal-speech") {
+          setForm(p => ({ ...p, settings: { ...p.settings, principalMessage: d.data.result } }))
+        }
+        setAiModalOpen(false)
+        setAiInputText("")
+        toast({ title: "Berhasil", description: "Konten berhasil di-generate AI." })
+      } else {
+        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
+  const openAiModal = (type: "vision-mission" | "about" | "principal-speech") => {
+    setAiPromptType(type)
+    setAiInputText("")
+    setAiInputName(type === "principal-speech" ? form.settings?.principalName || "" : "")
+    setAiModalOpen(true)
   }
 
   if (loading) return (
@@ -411,6 +474,9 @@ export default function WebsiteAboutPage() {
                 <CardDescription>Cerita lengkap, sejarah, visi, dan misi lembaga</CardDescription>
               </div>
             </div>
+            <Button variant="outline" size="sm" onClick={() => openAiModal("about")} className="h-8 gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700">
+              <Sparkles className="h-3.5 w-3.5" /> Generate Sejarah
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -450,8 +516,13 @@ export default function WebsiteAboutPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
-              <div className="space-y-1.5 md:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t relative">
+              <div className="absolute top-4 right-0">
+                <Button variant="outline" size="sm" onClick={() => openAiModal("vision-mission")} className="h-8 gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700">
+                  <Sparkles className="h-3.5 w-3.5" /> Poles Visi Misi
+                </Button>
+              </div>
+              <div className="space-y-1.5 md:col-span-2 mt-8">
                 <Label>Visi</Label>
                 <RichTextEditor 
                   value={form.settings?.visi || ""}
@@ -484,6 +555,9 @@ export default function WebsiteAboutPage() {
                 <CardDescription>Pesan sambutan dari tokoh utama untuk beranda website</CardDescription>
               </div>
             </div>
+            <Button variant="outline" size="sm" onClick={() => openAiModal("principal-speech")} className="h-8 gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700">
+              <Sparkles className="h-3.5 w-3.5" /> Buat Sambutan AI
+            </Button>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-4">
@@ -629,8 +703,72 @@ export default function WebsiteAboutPage() {
             )}
           </CardContent>
         </Card>
-
       </div>
+
+      {/* AI Content Modal */}
+      <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-violet-500" />
+              {aiPromptType === "vision-mission" && "Poles Visi & Misi"}
+              {aiPromptType === "about" && "Generate Sejarah Sekolah"}
+              {aiPromptType === "principal-speech" && "Buat Sambutan Kepala Sekolah"}
+            </DialogTitle>
+            <DialogDescription>
+              Ubah poin-poin singkat Anda menjadi konten profesional.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {aiPromptType === "principal-speech" && (
+              <div className="space-y-2">
+                <Label>Nama Kepala Sekolah</Label>
+                <Input value={aiInputName} onChange={e => setAiInputName(e.target.value)} placeholder="Contoh: Bpk. Budi Santoso" className="rounded-xl" />
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label>
+                {aiPromptType === "vision-mission" && "Masukkan Visi/Misi Kasar"}
+                {aiPromptType === "about" && "Fakta & Sejarah Singkat"}
+                {aiPromptType === "principal-speech" && "Fokus/Harapan Utama Sekolah Tahun Ini"}
+                <span className="text-red-500">*</span>
+              </Label>
+              <Textarea 
+                value={aiInputText}
+                onChange={(e) => setAiInputText(e.target.value)}
+                placeholder={
+                  aiPromptType === "vision-mission" ? "Sekolah yang pintar, bertakwa, dan bisa komputer." :
+                  aiPromptType === "about" ? "Berdiri tahun 1990, awalnya 3 kelas. Sekarang fasilitas lengkap." :
+                  "Ingin tingkatkan akhlak dan teknologi. Fokus pada prestasi olimpiade sains."
+                }
+                className="min-h-[120px] rounded-xl resize-none"
+              />
+            </div>
+            
+            <div className="rounded-xl bg-violet-500/10 p-3 flex gap-2 items-start mt-2 border border-violet-500/20">
+              <Wand2 className="h-4 w-4 text-violet-600 mt-0.5 shrink-0" />
+              <p className="text-[11px] text-violet-700 leading-relaxed">
+                Akan memotong saldo AI Token (25 token).
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="ghost" className="rounded-xl" onClick={() => setAiModalOpen(false)} disabled={aiLoading}>
+              Batal
+            </Button>
+            <Button 
+              onClick={handleGenerateAI} 
+              disabled={aiLoading || !aiInputText.trim()}
+              className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
+            >
+              {aiLoading ? <Loader2Icon className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {aiLoading ? "Memproses..." : "Generate dengan AI"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 Tugas Anda adalah mengubah poin-poin singkat yang diberikan menjadi sebuah artikel liputan atau berita sekolah yang utuh, profesional, dan inspiratif.
 
 Aturan penulisan:
-1. Gunakan gaya bahasa: ${tone === 'formal' ? 'Formal, lugas, dan jurnalistik (layaknya berita koran).' : 'Santai, ramah, dan inspiratif (cocok untuk dibaca orang tua murid).'}
+1. Gunakan gaya bahasa: ${tone === 'pengumuman' ? 'Instruksional, lugas, tegas, dan berwibawa (layaknya surat edaran resmi instansi).' : tone === 'formal' ? 'Formal, lugas, dan jurnalistik (layaknya berita koran).' : 'Santai, ramah, dan inspiratif (cocok untuk dibaca orang tua murid).'}
 2. Gunakan bahasa Indonesia baku (PUEBI) namun tetap mengalir dan enak dibaca.
 3. Buatkan judul (title) yang menarik (maksimal 60 karakter).
 4. Buatkan ringkasan SEO (seoDesc) maksimal 150 karakter.

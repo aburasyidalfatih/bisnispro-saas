@@ -429,6 +429,7 @@ export default function PostFormPage() {
               >
                 <option value="formal">Formal & Jurnalistik (Berita Resmi)</option>
                 <option value="santai">Santai & Inspiratif (Bercerita / Storytelling)</option>
+                <option value="pengumuman">Surat Edaran / Pengumuman Resmi</option>
               </select>
             </div>
             
