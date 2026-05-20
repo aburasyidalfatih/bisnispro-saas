@@ -107,7 +107,7 @@ export default function AlumniPage() {
                   <div className="p-4 flex gap-4">
                     <div className="h-16 w-16 rounded-full overflow-hidden bg-muted shrink-0 relative flex items-center justify-center">
                       {alumni.imageUrl ? (
-                        <Image src={normalizeImageUrl(alumni.imageUrl)!} alt={alumni.name} fill className="object-cover" unoptimized />
+                        <Image src={normalizeImageUrl(alumni.imageUrl)!} alt={alumni.name} fill className="object-cover" />
                       ) : (
                         <User className="h-8 w-8 text-muted-foreground/40" />
                       )}

@@ -106,7 +106,7 @@ export default function PartnershipsPage() {
               {partnerships.map(partner => (
                 <Card key={partner.id} className="overflow-hidden border group relative">
                   <div className="aspect-video relative bg-white flex items-center justify-center p-4">
-                    <Image src={normalizeImageUrl(partner.imageUrl)!} alt={partner.name} fill className="object-contain p-4" unoptimized />
+                    <Image src={normalizeImageUrl(partner.imageUrl)!} alt={partner.name} fill className="object-contain p-4" />
                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm">
                         <Link href={`/admin/website/partners/${partner.id}/edit`}>

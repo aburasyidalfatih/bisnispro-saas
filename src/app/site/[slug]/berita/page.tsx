@@ -167,7 +167,7 @@ export default async function BeritaPage({
               >
                 <div className="w-full lg:w-3/5 aspect-[16/10] lg:aspect-auto relative overflow-hidden bg-muted">
                   {normalizeImageUrl(posts[0].featuredImage) ? (
-                    <Image src={normalizeImageUrl(posts[0].featuredImage)!} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" unoptimized />
+                    <Image src={normalizeImageUrl(posts[0].featuredImage)!} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   ) : (
                     <SmartPlaceholder title={posts[0].title} type={posts[0].type || "BERITA"} />
                   )}
@@ -203,7 +203,7 @@ export default async function BeritaPage({
                   >
                     <div className="aspect-[16/10] relative overflow-hidden bg-muted">
                       {normalizeImageUrl(post.featuredImage) ? (
-                        <Image src={normalizeImageUrl(post.featuredImage)!} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
+                        <Image src={normalizeImageUrl(post.featuredImage)!} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       ) : (
                         <SmartPlaceholder title={post.title} type={post.type || "BERITA"} />
                       )}

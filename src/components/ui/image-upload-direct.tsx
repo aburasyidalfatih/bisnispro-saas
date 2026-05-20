@@ -135,7 +135,7 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
       >
         {previewUrl ? (
           <>
-            <Image src={previewUrl} alt="Preview" fill className="object-cover rounded-lg" unoptimized 
+            <Image src={previewUrl} alt="Preview" fill className="object-cover rounded-lg" 
               onError={(e) => {
                 e.currentTarget.style.display = 'none'
                 setPreviewUrl(null)

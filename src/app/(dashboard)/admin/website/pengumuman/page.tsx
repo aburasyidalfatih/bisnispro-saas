@@ -125,7 +125,7 @@ export default function PengumumanPage() {
                                 alt={post.title} 
                                 fill 
                                 className="object-cover" 
-                                unoptimized 
+                                
                                 onError={(e) => {
                                   const target = e.currentTarget
                                   target.style.display = 'none'

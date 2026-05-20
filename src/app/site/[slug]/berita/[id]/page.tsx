@@ -153,7 +153,6 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
               priority
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              unoptimized
             />
           </div>
         )}
@@ -197,7 +196,6 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      unoptimized
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-primary/5">

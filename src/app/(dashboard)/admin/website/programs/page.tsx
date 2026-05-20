@@ -95,7 +95,7 @@ export default function ProgramsPage() {
                   <Card key={item.id} className="overflow-hidden border group relative">
                     <div className="aspect-video relative bg-muted flex items-center justify-center">
                       {displayImage ? (
-                        <Image src={displayImage} alt={item.name} fill className="object-cover" unoptimized />
+                        <Image src={displayImage} alt={item.name} fill className="object-cover" />
                       ) : (
                         <GraduationCap className="h-10 w-10 text-muted-foreground/50" />
                       )}

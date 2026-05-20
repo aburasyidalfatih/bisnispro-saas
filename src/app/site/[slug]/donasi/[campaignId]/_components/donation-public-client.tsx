@@ -112,7 +112,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
       {/* Hero */}
       <div className="relative h-72 sm:h-96 bg-gray-200 overflow-hidden">
         {campaign.imageUrl ? (
-          <Image src={normalizeImageUrl(campaign.imageUrl) || campaign.imageUrl} alt={campaign.title} fill className="object-cover" unoptimized />
+          <Image src={normalizeImageUrl(campaign.imageUrl) || campaign.imageUrl} alt={campaign.title} fill className="object-cover" />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-rose-400 to-pink-600 flex items-center justify-center">
             <Heart className="h-24 w-24 text-white/50" />

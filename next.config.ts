@@ -52,6 +52,12 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    // Bypass Next.js Image Optimization secara global.
+    // Alasan:
+    // 1. Gambar sudah dioptimasi (WebP via Sharp) saat upload di upload.service.ts
+    // 2. Domain CDN/R2 bersifat dinamis (diset Super Admin di settings), tidak bisa di-hardcode
+    // 3. Mendukung custom domain apapun: cdn.schoolpro.id, cdn.schoolpro.my.id, dll
+    unoptimized: true,
     remotePatterns: ALLOWED_IMAGE_DOMAINS,
   },
   experimental: {

@@ -92,7 +92,6 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                    fill 
                    className="object-cover"
                    priority
-                   unoptimized
                  />
                ) : (
                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
@@ -172,7 +171,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                         <Link href={`${base}/berita/${post.slug}`} key={post.id} className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col">
                            <div className="relative h-48 w-full overflow-hidden bg-muted">
                               {normalizeImageUrl(post.featuredImage) ? (
-                                <Image src={normalizeImageUrl(post.featuredImage)!} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                                <Image src={normalizeImageUrl(post.featuredImage)!} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                               ) : (
                                 <div className="absolute inset-0 bg-primary/5 flex items-center justify-center">
                                   <BookOpen className="h-10 w-10 text-primary/20" />

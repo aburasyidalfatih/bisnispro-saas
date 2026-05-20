@@ -150,7 +150,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
                         fill
                         sizes="80px"
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        unoptimized
+                        
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-emerald-50">

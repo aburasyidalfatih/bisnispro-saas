@@ -51,7 +51,7 @@ export function StaffHighlight({ staff }: StaffHighlightProps) {
               <Link key={`${member.id}-${i}`} href={resolveHref(`/gtk/${member.id}`)} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px]">
                 <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover/card:shadow-xl group-hover/card:border-primary/30 transition-all duration-300">
                   {member.imageUrl ? (
-                    <Image src={normalizeImageUrl(member.imageUrl)!} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover/card:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" unoptimized />
+                    <Image src={normalizeImageUrl(member.imageUrl)!} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover/card:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center">
                       <span className="text-4xl font-bold text-sky-300">{member.name.charAt(0).toUpperCase()}</span>
@@ -70,7 +70,7 @@ export function StaffHighlight({ staff }: StaffHighlightProps) {
               <Link key={`${member.id}-clone-${i}`} href={resolveHref(`/gtk/${member.id}`)} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px]">
                 <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover/card:shadow-xl group-hover/card:border-primary/30 transition-all duration-300">
                   {member.imageUrl ? (
-                    <Image src={normalizeImageUrl(member.imageUrl)!} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover/card:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" unoptimized />
+                    <Image src={normalizeImageUrl(member.imageUrl)!} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover/card:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center">
                       <span className="text-4xl font-bold text-sky-300">{member.name.charAt(0).toUpperCase()}</span>

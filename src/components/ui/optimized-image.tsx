@@ -34,9 +34,6 @@ export function OptimizedImage({
       src={finalSrc}
       alt={finalAlt}
       className={cn("object-cover", className)}
-      // Bypass Next.js Image Optimization for external URLs (Cloudflare R2)
-      // This prevents errors when the R2 domain is not in next.config remotePatterns
-      unoptimized
       {...props}
     />
   )

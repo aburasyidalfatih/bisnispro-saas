@@ -658,9 +658,9 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                 finalBrandLogo || isSuperAdminPath ? "bg-transparent shadow-none" : "btn-gradient"
               )}>
                 {isSuperAdminPath
-                  ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" unoptimized />
+                  ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
                   : finalBrandLogo
-                    ? <Image src={normalizeImageUrl(finalBrandLogo) || finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" unoptimized />
+                    ? <Image src={normalizeImageUrl(finalBrandLogo) || finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
                     : brandInitial
                 }
               </div>
@@ -687,9 +687,9 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
             )}
           >
             {isSuperAdminPath
-              ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" unoptimized />
+              ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
               : finalBrandLogo
-                ? <Image src={normalizeImageUrl(finalBrandLogo) || finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" unoptimized />
+                ? <Image src={normalizeImageUrl(finalBrandLogo) || finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
                 : brandInitial
             }
           </button>

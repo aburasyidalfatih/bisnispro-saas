@@ -260,7 +260,7 @@ export default function WebsiteGalleryPage() {
                 {/* Image */}
                 <div className="aspect-square relative">
                   <Image src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Foto ${i + 1}`}
-                    fill unoptimized
+                    fill
                     className="object-cover" />
                   {/* Overlay controls */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
