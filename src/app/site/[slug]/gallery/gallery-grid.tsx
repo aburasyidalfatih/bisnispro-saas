@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { X, ChevronLeft, ChevronRight, ImageIcon } from "lucide-react"
+import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
 interface GalleryItem {
@@ -38,8 +39,14 @@ export function GalleryGrid({ items }: Props) {
           <button key={i} onClick={() => setLightbox(i)}
             className="group block relative w-full rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all duration-500 transform hover:-translate-y-1">
             {/* Aspect ratio is natural in columns, but we add an empty div with random heights if needed, or just let img determine height */}
-            <img src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Foto ${i + 1}`}
-              className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700" />
+            <Image 
+              src={normalizeImageUrl(item.url) || item.url} 
+              alt={item.caption || `Foto ${i + 1}`}
+              width={600}
+              height={600}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700" 
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
               <p className="text-white text-sm font-bold leading-snug">{item.caption || `Dokumentasi ${i + 1}`}</p>
