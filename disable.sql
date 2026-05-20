@@ -1,1 +1,0 @@
-DELETE FROM "PlatformSetting" WHERE "key" = 'TURNSTILE_SITE_KEY' OR "key" = 'TURNSTILE_SECRET_KEY';

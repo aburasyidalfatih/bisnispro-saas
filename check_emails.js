@@ -1,1 +1,0 @@
-const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); async function main() { const logs = await prisma.dripLog.findMany({ include: { campaign: true } }); console.log('Total email terkirim:', logs.length); logs.forEach(l => console.log('- ' + l.campaign.title + ' (Sent At: ' + l.sentAt + ')')); } main().finally(() => prisma.$disconnect());
