@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Wallet, PlusCircle } from "lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
@@ -177,13 +178,16 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
            })}
 
            {childrenData.length === 0 && (
-             <div className="bg-card rounded-saas-card p-8 text-center shadow-sm border border-border">
-               <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                  <User className="h-8 w-8 text-muted-foreground" />
-               </div>
-               <h3 className="font-bold text-lg mb-1">{userRole === "siswa" ? "Data Belum Terhubung" : "Belum Ada Data Anak"}</h3>
-               <p className="text-sm text-muted-foreground">{userRole === "siswa" ? "Akun Anda belum terhubung dengan data siswa. Silakan hubungi admin sekolah." : "Silakan hubungi admin sekolah untuk menghubungkan akun Anda dengan data siswa."}</p>
-             </div>
+             <EmptyState
+               icon={User}
+               title={userRole === "siswa" ? "Data Belum Terhubung" : "Belum Ada Data Anak"}
+               description={userRole === "siswa" ? "Akun Anda belum terhubung dengan data siswa. Silakan hubungi admin sekolah." : "Silakan hubungi admin sekolah untuk menghubungkan akun Anda dengan data siswa."}
+               action={
+                 <Button className="rounded-xl font-semibold text-xs px-5 h-10" onClick={() => window.location.reload()}>
+                   Segarkan Halaman
+                 </Button>
+               }
+             />
            )}
         </div>
 
