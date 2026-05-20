@@ -61,6 +61,19 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
   const base = await getPublicBasePath(slug)
 
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.newsDetailHtml) {
+    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.newsDetailHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, post, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
+
   // Get related posts (same type, exclude current)
   const relatedPosts = (tenant.posts || [])
     .filter((p: any) => p.id !== id)

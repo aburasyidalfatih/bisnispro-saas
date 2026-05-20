@@ -7,8 +7,7 @@ import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { db } from "@/lib/db"
-import Handlebars from "handlebars"
-import parse from "html-react-parser"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function FasilitasPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -25,32 +24,14 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
 
   // Jika sekolah menggunakan Custom Theme dan menyediakan template fasilitas
   if (tenant.customThemeId && tenant.customTheme?.facilityHtml) {
-    try {
-      const template = Handlebars.compile(tenant.customTheme.facilityHtml)
-      const layoutTemplate = Handlebars.compile(tenant.customTheme.layoutHtml)
-      
-      const themeContext = {
-        tenant: { ...tenant, facilities }, // Override tenant.facilities with full list
-        base,
-        settings: tenant.settings || {},
-      }
-      
-      const pageHtml = template(themeContext)
-      const finalHtml = layoutTemplate({ ...themeContext, body: new Handlebars.SafeString(pageHtml) })
-      
-      return (
-        <div className="custom-theme-wrapper">
-          <style dangerouslySetInnerHTML={{ __html: tenant.customTheme.customCss }} />
-          {parse(finalHtml)}
-          {tenant.customTheme.customJs && (
-            <script dangerouslySetInnerHTML={{ __html: tenant.customTheme.customJs }} />
-          )}
-        </div>
-      )
-    } catch (e: any) {
-      console.error("Gagal merender custom theme fasilitas", e)
-      // Fallback ke bawaan
-    }
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.facilityHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant: { ...tenant, facilities }, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
   }
 
   // Generate perfect asymmetric spans for a 12-column grid

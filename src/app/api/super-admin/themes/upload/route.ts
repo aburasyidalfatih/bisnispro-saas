@@ -21,6 +21,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "File harus berformat .zip" }, { status: 400 })
     }
 
+    // Enforce max 10MB file size
+    const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json({ error: `File terlalu besar (${(file.size / 1024 / 1024).toFixed(1)}MB). Maksimal 10MB.` }, { status: 400 })
+    }
+
     const arrayBuffer = await file.arrayBuffer()
     const zip = await JSZip.loadAsync(arrayBuffer)
     
@@ -77,6 +83,7 @@ export async function POST(request: Request) {
         ...(aboutHtml ? { "profil.hbs": aboutHtml } : {}),
         ...(staffHtml ? { "guru.hbs": staffHtml } : {}),
         ...(newsHtml ? { "berita.hbs": newsHtml } : {}),
+        ...(newsDetailHtml ? { "berita-detail.hbs": newsDetailHtml } : {}),
         ...(galleryHtml ? { "galeri.hbs": galleryHtml } : {}),
         ...(contactHtml ? { "kontak.hbs": contactHtml } : {}),
         ...(extracurricularHtml ? { "ekstrakurikuler.hbs": extracurricularHtml } : {}),

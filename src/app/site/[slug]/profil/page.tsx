@@ -10,6 +10,7 @@ import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function ProfilTerpaduPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -17,6 +18,19 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.aboutHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.aboutHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
+
   const settings = tenant.settings || {} as any
 
   // Extracts

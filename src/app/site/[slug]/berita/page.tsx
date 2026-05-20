@@ -44,6 +44,19 @@ export default async function BeritaPage({
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.newsHtml) {
+    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.newsHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
   
   const excludedTypes = ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA", "PENGUMUMAN"]
 

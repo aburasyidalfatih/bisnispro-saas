@@ -3,6 +3,8 @@ import { notFound } from "next/navigation"
 import { MapPin, Phone, Mail, MessageCircle } from "lucide-react"
 import { ContactForm } from "./contact-form"
 import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getPublicBasePath } from "@/lib/utils/public-path"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -18,6 +20,20 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
+
+  const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.contactHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.contactHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
 
   const hasContact = tenant.address || tenant.phone || tenant.email || tenant.whatsapp
 
