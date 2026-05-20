@@ -55,6 +55,7 @@ import {
   CalendarCheck,
   FileCheck,
   BadgeDollarSign,
+  Zap,
   type LucideIcon,
 } from "lucide-react"
 import { cn, normalizeImageUrl } from "@/lib/utils"
@@ -440,6 +441,7 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
           children: [
             { label: "Semua Tenant", href: "/super-admin/tenants", icon: Globe },
             { label: "Paket & Harga", href: "/super-admin/tenants/plans", icon: Tag },
+            { label: "Paket Token AI", href: "/super-admin/tenants/ai-packages", icon: Zap },
             { label: "Kode Diskon", href: "/super-admin/tenants/discounts", icon: Tag },
             { label: "Pengajuan Sekolah", href: "/super-admin/applications", icon: FileText },
           ],
