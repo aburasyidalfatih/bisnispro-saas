@@ -101,7 +101,7 @@ export default function FacilitiesPage() {
                   <Card key={facility.id} className="overflow-hidden border group relative">
                     <div className="aspect-video relative bg-muted flex items-center justify-center">
                       {displayImage ? (
-                        <Image src={displayImage} alt={facility.name} fill className="object-cover" />
+                        <Image src={displayImage} alt={facility.name} fill className="object-cover" unoptimized />
                       ) : (
                         <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
                       )}

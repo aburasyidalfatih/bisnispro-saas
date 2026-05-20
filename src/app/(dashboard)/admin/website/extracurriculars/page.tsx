@@ -96,7 +96,7 @@ export default function ExtracurricularPage() {
                   <Card key={item.id} className="overflow-hidden border group relative">
                     <div className="aspect-video relative bg-muted flex items-center justify-center">
                       {displayImage ? (
-                        <Image src={displayImage} alt={item.name} fill className="object-cover" />
+                        <Image src={displayImage} alt={item.name} fill className="object-cover" unoptimized />
                       ) : (
                         <Trophy className="h-10 w-10 text-muted-foreground/50" />
                       )}

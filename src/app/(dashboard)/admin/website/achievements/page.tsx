@@ -157,7 +157,7 @@ export default function AchievementsPage() {
                   )}>
                   <div className="aspect-video relative bg-muted flex items-center justify-center cursor-grab active:cursor-grabbing">
                     {achievement.imageUrl ? (
-                      <Image src={normalizeImageUrl(achievement.imageUrl)!} alt={achievement.title} fill className="object-cover" />
+                      <Image src={normalizeImageUrl(achievement.imageUrl)!} alt={achievement.title} fill className="object-cover" unoptimized />
                     ) : (
                       <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
                     )}

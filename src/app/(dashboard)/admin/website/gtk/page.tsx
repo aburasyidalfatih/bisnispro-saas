@@ -102,7 +102,7 @@ export default function StaffPage() {
                 <Card key={person.id} className="overflow-hidden border group relative">
                   <div className="aspect-[3/4] relative bg-muted flex items-center justify-center">
                     {person.imageUrl ? (
-                      <Image src={normalizeImageUrl(person.imageUrl)!} alt={person.name} fill className="object-cover" />
+                      <Image src={normalizeImageUrl(person.imageUrl)!} alt={person.name} fill className="object-cover" unoptimized />
                     ) : (
                       <div className="flex flex-col items-center gap-2">
                         <Users className="h-10 w-10 text-muted-foreground/50" />
