@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Calendar, User, ArrowRight } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 
 function SmartPlaceholder({ title, type }: { title: string, type: string }) {
   const hash = title.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
@@ -153,8 +153,8 @@ export default async function BeritaPage({
                 className="group relative flex flex-col lg:flex-row bg-white rounded-[2.5rem] overflow-hidden border border-border/50 hover:shadow-2xl transition-all duration-500"
               >
                 <div className="w-full lg:w-3/5 aspect-[16/10] lg:aspect-auto relative overflow-hidden bg-muted">
-                  {posts[0].featuredImage ? (
-                    <Image src={posts[0].featuredImage} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                  {normalizeImageUrl(posts[0].featuredImage) ? (
+                    <Image src={normalizeImageUrl(posts[0].featuredImage)!} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" unoptimized />
                   ) : (
                     <SmartPlaceholder title={posts[0].title} type={posts[0].type || "BERITA"} />
                   )}
@@ -189,8 +189,8 @@ export default async function BeritaPage({
                     className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-border/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="aspect-[16/10] relative overflow-hidden bg-muted">
-                      {post.featuredImage ? (
-                        <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                      {normalizeImageUrl(post.featuredImage) ? (
+                        <Image src={normalizeImageUrl(post.featuredImage)!} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
                       ) : (
                         <SmartPlaceholder title={post.title} type={post.type || "BERITA"} />
                       )}

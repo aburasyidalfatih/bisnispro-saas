@@ -28,7 +28,17 @@ export async function POST(req: Request) {
     }
 
     const fileData = uploaded.data
-    const proofUrl = fileData.path.startsWith("http") ? fileData.path : `/uploads/${fileData.name}`
+    let proofUrl = fileData.path
+    if (!fileData.path.startsWith("http")) {
+      const path = await import("path")
+      const uploadDirResolved = path.resolve(process.env.UPLOAD_DIR || "./uploads")
+      const fileResolved = path.resolve(fileData.path)
+      const relativeToUpload = fileResolved
+        .replace(uploadDirResolved, "")
+        .replace(/\\/g, "/")
+        .replace(/^\//, "")
+      proofUrl = `/api/files/${relativeToUpload}`
+    }
 
     const { submitManualTopupProof } = await import("@/features/finance/services/wallet.service")
     const result = await submitManualTopupProof(paymentId, proofUrl)

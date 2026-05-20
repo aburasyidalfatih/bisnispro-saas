@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import { Calendar, User, ArrowLeft, Clock, Tag } from "lucide-react"
 import { format } from "date-fns"
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = (tenant.posts || []).find((p: any) => p.id === id)
   if (!post) return {}
   const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
-  let imageUrl = post.featuredImage || post.image || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
   
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
   if (imageUrl.startsWith("/")) {
@@ -76,7 +77,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
             "@context": "https://schema.org",
             "@type": "Article",
             "headline": post.title,
-            "image": post.featuredImage || post.image || "https://schoolpro.id/logo-schoolpro.png",
+            "image": normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || "https://schoolpro.id/logo-schoolpro.png",
             "datePublished": post.createdAt,
             "dateModified": post.updatedAt || post.createdAt,
             "author": {
@@ -127,15 +128,16 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
       </div>
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
-        {(post.featuredImage || post.image) && (
+        {(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image)) && (
           <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image
-              src={post.featuredImage || post.image}
+              src={(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image))!}
               alt={post.title}
               fill
               priority
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              unoptimized
             />
           </div>
         )}
@@ -172,13 +174,14 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
                 className="group flex flex-col bg-background rounded-2xl overflow-hidden border hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="aspect-[16/10] relative overflow-hidden bg-muted">
-                  {(related.featuredImage || related.image) ? (
+                  {(normalizeImageUrl(related.featuredImage) || normalizeImageUrl(related.image)) ? (
                     <Image
-                      src={related.featuredImage || related.image}
+                      src={(normalizeImageUrl(related.featuredImage) || normalizeImageUrl(related.image))!}
                       alt={related.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                       sizes="(max-width: 768px) 100vw, 33vw"
+                      unoptimized
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-primary/5">

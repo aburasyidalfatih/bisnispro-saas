@@ -17,6 +17,7 @@ import { ArrowLeft, Save, Loader2, Search } from "lucide-react"
 import Link from "next/link"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
+import { normalizeImageUrl } from "@/lib/utils"
 
 type FormData = z.infer<typeof postSchema>
 
@@ -85,7 +86,7 @@ export default function PostFormPage() {
         setValue("content", d.content)
         setValue("type", d.type)
         setValue("status", d.status)
-        setValue("featuredImage", d.featuredImage || "")
+        setValue("featuredImage", normalizeImageUrl(d.featuredImage) || "")
         setValue("categoryId", d.categoryId || "")
         setValue("seoTitle", d.seoTitle || "")
         setValue("seoDesc", d.seoDesc || "")

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, User, Briefcase, Mail, Globe, GraduationCap, BookOpen, MessageCircle, PenTool, Calendar, ChevronRight } from "lucide-react"
@@ -67,13 +68,14 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
              
              {/* Profile Image */}
              <div className="w-40 h-40 md:w-48 md:h-48 relative rounded-full overflow-hidden border-8 border-white shadow-xl shrink-0 bg-muted/30">
-               {staff.imageUrl ? (
+               {normalizeImageUrl(staff.imageUrl) ? (
                  <Image 
-                   src={staff.imageUrl} 
+                   src={normalizeImageUrl(staff.imageUrl)!} 
                    alt={staff.name} 
                    fill 
                    className="object-cover"
                    priority
+                   unoptimized
                  />
                ) : (
                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
@@ -152,8 +154,8 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                       {articles.map((post: any) => (
                         <Link href={`${base}/berita/${post.slug}`} key={post.id} className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col">
                            <div className="relative h-48 w-full overflow-hidden bg-muted">
-                              {post.featuredImage ? (
-                                <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                              {normalizeImageUrl(post.featuredImage) ? (
+                                <Image src={normalizeImageUrl(post.featuredImage)!} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
                               ) : (
                                 <div className="absolute inset-0 bg-primary/5 flex items-center justify-center">
                                   <BookOpen className="h-10 w-10 text-primary/20" />
