@@ -75,7 +75,12 @@ export function normalizeImageUrl(url: string | null | undefined): string | null
   if (url.startsWith("/api/files/")) return url
 
   // Already a valid relative URL (starts with /)
-  if (url.startsWith("/")) return url
+  if (url.startsWith("/")) {
+    if (url.startsWith("/uploads/")) {
+      return `/api/files/${url.substring(9)}`
+    }
+    return url
+  }
 
   // Filesystem path: remove leading ./ and "uploads/" prefix, then wrap with /api/files/
   let cleaned = url
