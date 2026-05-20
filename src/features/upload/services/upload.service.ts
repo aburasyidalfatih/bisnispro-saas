@@ -47,7 +47,7 @@ const MIME_TO_EXT: Record<string, string> = {
 
 export type UploadResultDTO = {
   success: boolean
-  data?: { path: string; name: string; size: number; mimeType: string }
+  data?: { path: string; url: string; name: string; size: number; mimeType: string }
   error?: string
 }
 
@@ -180,6 +180,18 @@ export async function saveFile(
       fs.writeFileSync(finalFilePath, buffer)
     }
 
+    // Compute public URL
+    let publicUrl = finalFilePath
+    if (!finalFilePath.startsWith("http")) {
+      const uploadDirResolved = path.resolve(UPLOAD_DIR)
+      const fileResolved = path.resolve(finalFilePath)
+      const relativeToUpload = fileResolved
+        .replace(uploadDirResolved, "")
+        .replace(/\\/g, "/")
+        .replace(/^\//, "")
+      publicUrl = `/api/files/${relativeToUpload}`
+    }
+
     await db.fileUpload.create({
       data: {
         tenantId,
@@ -194,6 +206,7 @@ export async function saveFile(
       success: true,
       data: {
         path: finalFilePath,
+        url: publicUrl,
         name: file.name,
         size: buffer.length,
         mimeType: mimeType,

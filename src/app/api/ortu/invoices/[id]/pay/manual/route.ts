@@ -31,19 +31,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: uploaded.error || "Gagal mengupload bukti pembayaran" }, { status: 400 })
     }
 
-    // Create public URL
-    const fileData = uploaded.data
-    let proofUrl = fileData.path
-    if (!fileData.path.startsWith("http")) {
-      const path = await import("path")
-      const uploadDirResolved = path.resolve(process.env.UPLOAD_DIR || "./uploads")
-      const fileResolved = path.resolve(fileData.path)
-      const relativeToUpload = fileResolved
-        .replace(uploadDirResolved, "")
-        .replace(/\\/g, "/")
-        .replace(/^\//, "")
-      proofUrl = `/api/files/${relativeToUpload}`
-    }
+    const proofUrl = uploaded.data.url
 
     await db.invoicePayment.update({
       where: { id: paymentId },

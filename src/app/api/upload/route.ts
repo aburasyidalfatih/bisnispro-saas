@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { saveFile } from "@/features/upload/services/upload.service"
-import path from "path"
 import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
@@ -43,28 +42,15 @@ export async function POST(req: Request) {
 
     const fileData = result.data
 
-    // Konversi path absolut filesystem ke URL publik via /api/files/...
-    let publicUrl = fileData.path
-    if (!fileData.path.startsWith("http")) {
-      const uploadDirResolved = path.resolve(process.env.UPLOAD_DIR || "./uploads")
-      const fileResolved = path.resolve(fileData.path)
-      
-      const relativeToUpload = fileResolved
-        .replace(uploadDirResolved, "")
-        .replace(/\\/g, "/")
-        .replace(/^\//, "")
-      publicUrl = `/api/files/${relativeToUpload}`
-    }
-
     return NextResponse.json({
       message: "File berhasil diupload",
-      url: publicUrl,
+      url: fileData.url,
       file: {
         name: fileData.name,
         size: fileData.size,
         mimeType: fileData.mimeType,
         path: fileData.path,
-        url: publicUrl,
+        url: fileData.url,
       },
     })
   } catch (error) {
