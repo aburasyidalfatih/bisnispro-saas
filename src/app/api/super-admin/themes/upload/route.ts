@@ -66,6 +66,13 @@ export async function POST(request: Request) {
     const extracurricularHtml = await getFileContent("ekstrakurikuler.hbs")
     const programHtml = await getFileContent("program.hbs")
     const achievementHtml = await getFileContent("prestasi.hbs")
+    const pengumumanHtml = await getFileContent("pengumuman.hbs")
+    const pengumumanDetailHtml = await getFileContent("pengumuman-detail.hbs")
+    const ppdbHtml = await getFileContent("ppdb.hbs")
+    const alumniHtml = await getFileContent("alumni.hbs")
+    const agendaHtml = await getFileContent("agenda.hbs")
+    const unduhanHtml = await getFileContent("unduhan.hbs")
+    const staffDetailHtml = await getFileContent("guru-detail.hbs")
     const customCss = await getFileContent("styles.css")
     const customJs = await getFileContent("scripts.js")
     
@@ -89,6 +96,13 @@ export async function POST(request: Request) {
         ...(extracurricularHtml ? { "ekstrakurikuler.hbs": extracurricularHtml } : {}),
         ...(programHtml ? { "program.hbs": programHtml } : {}),
         ...(achievementHtml ? { "prestasi.hbs": achievementHtml } : {}),
+        ...(pengumumanHtml ? { "pengumuman.hbs": pengumumanHtml } : {}),
+        ...(pengumumanDetailHtml ? { "pengumuman-detail.hbs": pengumumanDetailHtml } : {}),
+        ...(ppdbHtml ? { "ppdb.hbs": ppdbHtml } : {}),
+        ...(alumniHtml ? { "alumni.hbs": alumniHtml } : {}),
+        ...(agendaHtml ? { "agenda.hbs": agendaHtml } : {}),
+        ...(unduhanHtml ? { "unduhan.hbs": unduhanHtml } : {}),
+        ...(staffDetailHtml ? { "guru-detail.hbs": staffDetailHtml } : {}),
       }
       
       const syntaxErrors: string[] = []
@@ -130,6 +144,13 @@ export async function POST(request: Request) {
         extracurricularHtml: extracurricularHtml || null,
         programHtml: programHtml || null,
         achievementHtml: achievementHtml || null,
+        pengumumanHtml: pengumumanHtml || null,
+        pengumumanDetailHtml: pengumumanDetailHtml || null,
+        ppdbHtml: ppdbHtml || null,
+        alumniHtml: alumniHtml || null,
+        agendaHtml: agendaHtml || null,
+        unduhanHtml: unduhanHtml || null,
+        staffDetailHtml: staffDetailHtml || null,
         customCss,
         customJs
       }

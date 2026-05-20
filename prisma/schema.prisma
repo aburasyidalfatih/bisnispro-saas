@@ -1841,29 +1841,37 @@ model TenantNotification {
 }
 
 model CustomTheme {
-  id                  String   @id @default(cuid())
-  name                String
-  author              String?
-  version             String   @default("1.0.0")
-  thumbnail           String?
-  layoutHtml          String
-  indexHtml           String
-  facilityHtml        String?
-  customCss           String
-  customJs            String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  aboutHtml           String?
-  achievementHtml     String?
-  contactHtml         String?
-  extracurricularHtml String?
-  galleryHtml         String?
-  newsDetailHtml      String?
-  newsHtml            String?
-  programHtml         String?
-  staffHtml           String?
-  isActive            Boolean  @default(true)
-  tenants             Tenant[]
+  id                    String   @id @default(cuid())
+  name                  String
+  author                String?
+  version               String   @default("1.0.0")
+  thumbnail             String?
+  layoutHtml            String
+  indexHtml             String
+  facilityHtml          String?
+  customCss             String
+  customJs              String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  aboutHtml             String?
+  achievementHtml       String?
+  contactHtml           String?
+  extracurricularHtml   String?
+  galleryHtml           String?
+  newsDetailHtml        String?
+  newsHtml              String?
+  programHtml           String?
+  staffHtml             String?
+  isActive              Boolean  @default(true)
+  // New template columns
+  pengumumanHtml        String?
+  pengumumanDetailHtml  String?
+  ppdbHtml              String?
+  alumniHtml            String?
+  agendaHtml            String?
+  unduhanHtml           String?
+  staffDetailHtml       String?
+  tenants               Tenant[]
 
   @@map("custom_themes")
 }

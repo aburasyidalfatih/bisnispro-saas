@@ -86,6 +86,13 @@ export async function GET(request: Request) {
     zip.file("templates/ekstrakurikuler.hbs", TEMPLATE_EKSKUL_HBS)
     zip.file("templates/program.hbs", TEMPLATE_PROGRAM_HBS)
     zip.file("templates/prestasi.hbs", TEMPLATE_PRESTASI_HBS)
+    zip.file("templates/pengumuman.hbs", TEMPLATE_PENGUMUMAN_HBS)
+    zip.file("templates/pengumuman-detail.hbs", TEMPLATE_PENGUMUMAN_DETAIL_HBS)
+    zip.file("templates/ppdb.hbs", TEMPLATE_PPDB_HBS)
+    zip.file("templates/alumni.hbs", TEMPLATE_ALUMNI_HBS)
+    zip.file("templates/agenda.hbs", TEMPLATE_AGENDA_HBS)
+    zip.file("templates/unduhan.hbs", TEMPLATE_UNDUHAN_HBS)
+    zip.file("templates/guru-detail.hbs", TEMPLATE_GURU_DETAIL_HBS)
 
     // 5. Assets
     zip.file("assets/styles.css", STARTER_CSS)
@@ -121,13 +128,20 @@ const STARTER_README = `# SchoolPro Theme Starter Kit
 │   ├── profil.hbs          # Halaman profil/tentang sekolah
 │   ├── fasilitas.hbs       # Halaman daftar fasilitas
 │   ├── guru.hbs            # Halaman daftar guru/staff
+│   ├── guru-detail.hbs     # Halaman detail profil guru
 │   ├── berita.hbs          # Halaman daftar berita
 │   ├── berita-detail.hbs   # Halaman detail berita
 │   ├── galeri.hbs          # Halaman galeri foto
 │   ├── kontak.hbs          # Halaman kontak
 │   ├── ekstrakurikuler.hbs # Halaman daftar ekstrakurikuler
 │   ├── program.hbs         # Halaman daftar program
-│   └── prestasi.hbs        # Halaman daftar prestasi
+│   ├── prestasi.hbs        # Halaman daftar prestasi
+│   ├── pengumuman.hbs      # Halaman daftar pengumuman
+│   ├── pengumuman-detail.hbs # Halaman detail pengumuman
+│   ├── ppdb.hbs            # Halaman pendaftaran siswa baru
+│   ├── alumni.hbs          # Halaman daftar alumni & testimonial
+│   ├── agenda.hbs          # Halaman kalender agenda/event
+│   └── unduhan.hbs         # Halaman dokumen & file download
 └── assets/
     ├── styles.css           # CSS kustom
     └── scripts.js           # JavaScript kustom
@@ -254,6 +268,29 @@ const LAYOUT_MAIN_HBS = `<!DOCTYPE html>
           <a href="{{base}}/prestasi" class="hover:text-indigo-600 transition-colors">Prestasi</a>
           <a href="{{base}}/contact" class="hover:text-indigo-600 transition-colors">Kontak</a>
         </div>
+        <!-- Mobile hamburger -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-gray-100 mt-2 pt-4">
+        <div class="flex flex-col gap-3 text-sm font-medium text-gray-600">
+          <a href="{{base}}" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Beranda</a>
+          <a href="{{base}}/profil" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Profil</a>
+          <a href="{{base}}/program" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Program</a>
+          <a href="{{base}}/gtk" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Guru & Staf</a>
+          <a href="{{base}}/fasilitas" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Fasilitas</a>
+          <a href="{{base}}/berita" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Berita</a>
+          <a href="{{base}}/pengumuman" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Pengumuman</a>
+          <a href="{{base}}/gallery" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Galeri</a>
+          <a href="{{base}}/prestasi" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Prestasi</a>
+          <a href="{{base}}/alumni" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Alumni</a>
+          <a href="{{base}}/agenda" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Agenda</a>
+          <a href="{{base}}/unduhan" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Unduhan</a>
+          <a href="{{base}}/contact" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Kontak</a>
+          <a href="{{base}}/ppdb" class="mt-2 text-center bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-indigo-700 transition-colors">PPDB →</a>
+        </div>
       </div>
     </div>
   </nav>
@@ -266,7 +303,7 @@ const LAYOUT_MAIN_HBS = `<!DOCTYPE html>
   <!-- ═══════════════ FOOTER ═══════════════ -->
   <footer class="bg-gray-900 text-gray-300 pt-16 pb-8 mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
         <div>
           <h3 class="text-white font-bold text-lg mb-3">{{tenant.name}}</h3>
           <p class="text-sm leading-relaxed text-gray-400">{{tenant.tagline}}</p>
@@ -275,13 +312,25 @@ const LAYOUT_MAIN_HBS = `<!DOCTYPE html>
           {{/if}}
         </div>
         <div>
-          <h4 class="text-white font-semibold mb-3">Menu</h4>
+          <h4 class="text-white font-semibold mb-3">Menu Utama</h4>
           <ul class="space-y-2 text-sm">
             <li><a href="{{base}}/profil" class="hover:text-white transition-colors">Profil Sekolah</a></li>
             <li><a href="{{base}}/program" class="hover:text-white transition-colors">Program Unggulan</a></li>
             <li><a href="{{base}}/gtk" class="hover:text-white transition-colors">Guru & Staf</a></li>
-            <li><a href="{{base}}/berita" class="hover:text-white transition-colors">Berita Terbaru</a></li>
+            <li><a href="{{base}}/fasilitas" class="hover:text-white transition-colors">Fasilitas</a></li>
             <li><a href="{{base}}/gallery" class="hover:text-white transition-colors">Galeri Foto</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-3">Informasi</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="{{base}}/berita" class="hover:text-white transition-colors">Berita Terbaru</a></li>
+            <li><a href="{{base}}/pengumuman" class="hover:text-white transition-colors">Pengumuman</a></li>
+            <li><a href="{{base}}/agenda" class="hover:text-white transition-colors">Agenda & Event</a></li>
+            <li><a href="{{base}}/prestasi" class="hover:text-white transition-colors">Prestasi</a></li>
+            <li><a href="{{base}}/alumni" class="hover:text-white transition-colors">Alumni</a></li>
+            <li><a href="{{base}}/unduhan" class="hover:text-white transition-colors">Unduhan</a></li>
+            <li><a href="{{base}}/ppdb" class="hover:text-white transition-colors">PPDB</a></li>
           </ul>
         </div>
         <div>
@@ -295,6 +344,7 @@ const LAYOUT_MAIN_HBS = `<!DOCTYPE html>
             {{#if tenant.instagram}}<a href="https://instagram.com/{{tenant.instagram}}" target="_blank" class="text-gray-400 hover:text-pink-400 transition-colors text-sm">Instagram</a>{{/if}}
             {{#if tenant.facebook}}<a href="https://facebook.com/{{tenant.facebook}}" target="_blank" class="text-gray-400 hover:text-blue-400 transition-colors text-sm">Facebook</a>{{/if}}
             {{#if tenant.youtube}}<a href="https://youtube.com/{{tenant.youtube}}" target="_blank" class="text-gray-400 hover:text-red-400 transition-colors text-sm">YouTube</a>{{/if}}
+            {{#if tenant.tiktok}}<a href="https://tiktok.com/{{tenant.tiktok}}" target="_blank" class="text-gray-400 hover:text-white transition-colors text-sm">TikTok</a>{{/if}}
           </div>
         </div>
       </div>
@@ -303,6 +353,25 @@ const LAYOUT_MAIN_HBS = `<!DOCTYPE html>
       </div>
     </div>
   </footer>
+
+  <!-- ═══════════════ BACK TO TOP ═══════════════ -->
+  <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 h-12 w-12 bg-indigo-600 text-white rounded-full shadow-xl hover:bg-indigo-700 transition-all opacity-0 translate-y-4 pointer-events-none z-50" style="transition: opacity 0.3s, transform 0.3s;">
+    <svg class="h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
+  </button>
+  <script>
+    window.addEventListener('scroll', function() {
+      var btn = document.getElementById('back-to-top');
+      if (window.scrollY > 400) {
+        btn.style.opacity = '1';
+        btn.style.transform = 'translateY(0)';
+        btn.style.pointerEvents = 'auto';
+      } else {
+        btn.style.opacity = '0';
+        btn.style.transform = 'translateY(1rem)';
+        btn.style.pointerEvents = 'none';
+      }
+    });
+  </script>
 </body>
 </html>`
 
@@ -902,6 +971,269 @@ const TEMPLATE_PRESTASI_HBS = `<section class="py-20">
         </div>
       </div>
       {{/each}}
+    </div>
+  </div>
+</section>`
+
+// =============================================
+// TEMPLATE: PENGUMUMAN (LIST)
+// =============================================
+const TEMPLATE_PENGUMUMAN_HBS = `<section class="py-20">
+  <div class="max-w-7xl mx-auto px-8">
+    <nav class="text-sm text-gray-400 mb-6"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <span class="text-gray-700">Pengumuman</span></nav>
+    <div class="text-center mb-12">
+      <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Informasi</span>
+      <h2 class="text-4xl font-black mt-2">Pengumuman Resmi</h2>
+      <p class="text-gray-500 mt-3 max-w-xl mx-auto">Informasi penting dan pengumuman resmi dari sekolah untuk seluruh civitas akademika.</p>
+    </div>
+    {{#if tenant.posts}}
+    <div class="space-y-6">
+      {{#each tenant.posts}}
+      <a href="{{../base}}/pengumuman/{{this.id}}" class="block bg-white rounded-2xl p-6 border hover:border-indigo-200 hover:shadow-lg transition-all group">
+        <div class="flex items-start gap-6">
+          <div class="shrink-0 w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-indigo-100 transition-colors">📢</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 mb-1">
+              {{#if this.category}}<span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">{{this.category.name}}</span>{{/if}}
+              <span class="text-xs text-gray-400">{{dateFormat this.createdAt}}</span>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">{{this.title}}</h3>
+            <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{this.excerpt}}</p>
+          </div>
+        </div>
+      </a>
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="text-center py-20 bg-gray-50 rounded-3xl border border-dashed">
+      <div class="text-5xl mb-4">📭</div>
+      <h3 class="text-xl font-bold text-gray-600">Belum Ada Pengumuman</h3>
+      <p class="text-gray-400 mt-2">Belum ada pengumuman yang dipublikasikan saat ini.</p>
+    </div>
+    {{/if}}
+  </div>
+</section>`
+
+// =============================================
+// TEMPLATE: PENGUMUMAN DETAIL
+// =============================================
+const TEMPLATE_PENGUMUMAN_DETAIL_HBS = `<article class="py-16">
+  <div class="max-w-3xl mx-auto px-8">
+    <nav class="text-sm text-gray-400 mb-8"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <a href="{{base}}/pengumuman" class="hover:text-indigo-600">Pengumuman</a> / <span class="text-gray-700">Detail</span></nav>
+    {{#if post.category}}<span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-semibold uppercase">{{post.category.name}}</span>{{/if}}
+    <h1 class="text-3xl md:text-4xl font-black mt-4 mb-4 leading-tight">{{post.title}}</h1>
+    <div class="flex items-center gap-4 text-sm text-gray-400 mb-8 pb-8 border-b">
+      <span>📅 {{dateFormat post.createdAt}}</span>
+      <span>✍️ {{post.author.name}}</span>
+    </div>
+    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+      {{{post.content}}}
+    </div>
+    <div class="mt-12 pt-8 border-t text-center">
+      <a href="{{base}}/pengumuman" class="text-indigo-600 font-semibold hover:underline">← Kembali ke Daftar Pengumuman</a>
+    </div>
+  </div>
+</article>`
+
+// =============================================
+// TEMPLATE: PPDB
+// =============================================
+const TEMPLATE_PPDB_HBS = `<!-- Hero PPDB -->
+<section class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 text-white py-24 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 80 80\\"><circle cx=\\"40\\" cy=\\"40\\" r=\\"2\\" fill=\\"white\\"/></svg>'); background-size: 40px 40px;"></div>
+  <div class="max-w-4xl mx-auto px-8 text-center relative z-10">
+    <span class="inline-block bg-white/20 backdrop-blur-sm text-white px-4 py-1 rounded-full text-sm font-bold mb-6">📚 Tahun Ajaran Baru</span>
+    <h2 class="text-4xl md:text-5xl font-black mb-4 leading-tight">Penerimaan Peserta Didik Baru</h2>
+    <p class="text-xl text-indigo-200 max-w-2xl mx-auto mb-10">Bergabunglah bersama {{tenant.name}} dan raih masa depan gemilang putra-putri Anda.</p>
+    {{#if tenant.whatsapp}}
+    <a href="https://wa.me/{{tenant.whatsapp}}" target="_blank" class="inline-flex items-center gap-3 bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:shadow-2xl transition-all">
+      💬 Hubungi via WhatsApp
+    </a>
+    {{/if}}
+  </div>
+</section>
+
+<!-- Info Sekolah -->
+<section class="py-20">
+  <div class="max-w-6xl mx-auto px-8">
+    <div class="text-center mb-16">
+      <h3 class="text-3xl font-bold">Mengapa Memilih {{tenant.name}}?</h3>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center p-8 bg-indigo-50 rounded-2xl">
+        <div class="text-4xl mb-4">🎓</div>
+        <h4 class="font-bold text-lg mb-2">Pendidikan Berkualitas</h4>
+        <p class="text-sm text-gray-600">Kurikulum terpadu dengan standar nasional dan internasional.</p>
+      </div>
+      <div class="text-center p-8 bg-emerald-50 rounded-2xl">
+        <div class="text-4xl mb-4">👨‍🏫</div>
+        <h4 class="font-bold text-lg mb-2">Guru Profesional</h4>
+        <p class="text-sm text-gray-600">Tenaga pendidik berpengalaman dan bersertifikasi.</p>
+      </div>
+      <div class="text-center p-8 bg-amber-50 rounded-2xl">
+        <div class="text-4xl mb-4">🏫</div>
+        <h4 class="font-bold text-lg mb-2">Fasilitas Lengkap</h4>
+        <p class="text-sm text-gray-600">Sarana dan prasarana modern untuk menunjang pembelajaran.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Kontak PPDB -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-3xl mx-auto px-8 text-center">
+    <h3 class="text-2xl font-bold mb-4">Informasi Lebih Lanjut</h3>
+    <p class="text-gray-500 mb-8">Hubungi panitia PPDB untuk informasi jadwal, persyaratan, dan prosedur pendaftaran.</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      {{#if tenant.phone}}<a href="tel:{{tenant.phone}}" class="bg-white px-6 py-3 rounded-xl border hover:shadow-md transition-shadow font-medium">📞 {{tenant.phone}}</a>{{/if}}
+      {{#if tenant.email}}<a href="mailto:{{tenant.email}}" class="bg-white px-6 py-3 rounded-xl border hover:shadow-md transition-shadow font-medium">✉️ {{tenant.email}}</a>{{/if}}
+    </div>
+  </div>
+</section>`
+
+// =============================================
+// TEMPLATE: ALUMNI
+// =============================================
+const TEMPLATE_ALUMNI_HBS = `<section class="py-20">
+  <div class="max-w-7xl mx-auto px-8">
+    <nav class="text-sm text-gray-400 mb-6"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <span class="text-gray-700">Alumni</span></nav>
+    <div class="text-center mb-16">
+      <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Kebanggaan Kami</span>
+      <h2 class="text-4xl font-black mt-2">Alumni {{tenant.name}}</h2>
+      <p class="text-gray-500 mt-3 max-w-2xl mx-auto">Mengenal lebih dekat para alumni yang telah berhasil di berbagai bidang dan menjadi inspirasi generasi berikutnya.</p>
+    </div>
+    {{#if tenant.alumni}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {{#each tenant.alumni}}
+      <div class="bg-white rounded-2xl p-8 shadow-sm border hover:shadow-lg transition-all text-center group">
+        {{#if this.imageUrl}}
+        <img src="{{this.imageUrl}}" alt="{{this.name}}" class="w-24 h-24 rounded-full object-cover mx-auto mb-6 ring-4 ring-indigo-50 group-hover:ring-indigo-200 transition-all">
+        {{else}}
+        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold">👤</div>
+        {{/if}}
+        <h4 class="font-bold text-lg text-gray-800">{{this.name}}</h4>
+        <p class="text-xs text-indigo-600 font-semibold mt-1">Angkatan {{this.graduationYear}}</p>
+        {{#if this.currentPosition}}<p class="text-sm text-gray-500 mt-2">{{this.currentPosition}}</p>{{/if}}
+        {{#if this.testimonial}}
+        <blockquote class="text-sm text-gray-500 italic mt-4 pt-4 border-t border-gray-100">"{{truncate this.testimonial 150}}"</blockquote>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="text-center py-20 bg-gray-50 rounded-3xl border border-dashed">
+      <div class="text-5xl mb-4">🎓</div>
+      <h3 class="text-xl font-bold text-gray-600">Data Alumni Segera Hadir</h3>
+    </div>
+    {{/if}}
+  </div>
+</section>`
+
+// =============================================
+// TEMPLATE: AGENDA / EVENT
+// =============================================
+const TEMPLATE_AGENDA_HBS = `<section class="py-20">
+  <div class="max-w-7xl mx-auto px-8">
+    <nav class="text-sm text-gray-400 mb-6"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <span class="text-gray-700">Agenda</span></nav>
+    <div class="text-center mb-16">
+      <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Kalender</span>
+      <h2 class="text-4xl font-black mt-2">Agenda & Kegiatan</h2>
+      <p class="text-gray-500 mt-3">Jadwal kegiatan dan acara penting yang akan datang.</p>
+    </div>
+    {{#if tenant.events}}
+    <div class="space-y-6 max-w-3xl mx-auto">
+      {{#each tenant.events}}
+      <div class="bg-white rounded-2xl p-6 border hover:shadow-lg transition-all flex gap-6 items-start group">
+        <div class="shrink-0 w-20 h-20 bg-indigo-50 rounded-2xl flex flex-col items-center justify-center group-hover:bg-indigo-100 transition-colors">
+          <span class="text-2xl">📅</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-bold text-lg text-gray-800 group-hover:text-indigo-600 transition-colors">{{this.title}}</h4>
+          <p class="text-sm text-gray-500 mt-1">{{this.description}}</p>
+          <div class="flex flex-wrap gap-3 mt-3 text-xs text-gray-400">
+            <span>📅 {{dateFormat this.startDate}}</span>
+            {{#if this.endDate}}<span>→ {{dateFormat this.endDate}}</span>{{/if}}
+            {{#if this.location}}<span>📍 {{this.location}}</span>{{/if}}
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="text-center py-20 bg-gray-50 rounded-3xl border border-dashed">
+      <div class="text-5xl mb-4">📅</div>
+      <h3 class="text-xl font-bold text-gray-600">Belum Ada Agenda</h3>
+    </div>
+    {{/if}}
+  </div>
+</section>`
+
+// =============================================
+// TEMPLATE: UNDUHAN / DOKUMEN
+// =============================================
+const TEMPLATE_UNDUHAN_HBS = `<section class="py-20">
+  <div class="max-w-4xl mx-auto px-8">
+    <nav class="text-sm text-gray-400 mb-6"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <span class="text-gray-700">Unduhan</span></nav>
+    <div class="text-center mb-16">
+      <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Dokumen</span>
+      <h2 class="text-4xl font-black mt-2">Pusat Unduhan</h2>
+      <p class="text-gray-500 mt-3">Unduh dokumen, formulir, dan berkas penting dari sekolah.</p>
+    </div>
+    {{#if tenant.documents}}
+    <div class="space-y-4">
+      {{#each tenant.documents}}
+      <a href="{{this.fileUrl}}" target="_blank" class="block bg-white rounded-xl p-5 border hover:border-indigo-200 hover:shadow-md transition-all group">
+        <div class="flex items-center gap-4">
+          <div class="shrink-0 w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-xl group-hover:bg-red-100 transition-colors">📄</div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">{{this.title}}</h4>
+            <p class="text-xs text-gray-400 mt-0.5">{{dateFormat this.createdAt}}</p>
+          </div>
+          <div class="shrink-0 text-indigo-600 font-bold text-sm">Unduh ↓</div>
+        </div>
+      </a>
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="text-center py-20 bg-gray-50 rounded-3xl border border-dashed">
+      <div class="text-5xl mb-4">📂</div>
+      <h3 class="text-xl font-bold text-gray-600">Belum Ada Dokumen</h3>
+    </div>
+    {{/if}}
+  </div>
+</section>`
+
+// =============================================
+// TEMPLATE: GURU DETAIL
+// =============================================
+const TEMPLATE_GURU_DETAIL_HBS = `<section class="py-20">
+  <div class="max-w-4xl mx-auto px-8">
+    <nav class="text-sm text-gray-400 mb-8"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <a href="{{base}}/gtk" class="hover:text-indigo-600">Guru & Staf</a> / <span class="text-gray-700">{{staff.name}}</span></nav>
+    <div class="bg-white rounded-3xl shadow-lg border overflow-hidden">
+      <div class="md:flex">
+        <div class="md:w-1/3 shrink-0">
+          {{#if staff.imageUrl}}
+          <img src="{{staff.imageUrl}}" alt="{{staff.name}}" class="w-full h-72 md:h-full object-cover">
+          {{else}}
+          <div class="w-full h-72 md:h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-6xl">👤</div>
+          {{/if}}
+        </div>
+        <div class="p-8 md:p-12 flex-1">
+          <span class="text-indigo-600 font-bold text-xs uppercase tracking-widest">{{staff.role}}</span>
+          <h2 class="text-3xl font-black mt-2 mb-4">{{staff.name}}</h2>
+          {{#if staff.nip}}<p class="text-sm text-gray-400 mb-4">NIP: {{staff.nip}}</p>{{/if}}
+          {{#if staff.education}}<div class="flex items-center gap-2 text-sm text-gray-600 mb-4">🎓 {{staff.education}}</div>{{/if}}
+          {{#if staff.bio}}
+          <div class="prose text-gray-600 mt-6 pt-6 border-t">
+            <p>{{staff.bio}}</p>
+          </div>
+          {{/if}}
+          {{#if staff.email}}<a href="mailto:{{staff.email}}" class="inline-flex items-center gap-2 mt-6 text-indigo-600 font-semibold hover:underline">✉️ {{staff.email}}</a>{{/if}}
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-10">
+      <a href="{{base}}/gtk" class="text-indigo-600 font-semibold hover:underline">← Kembali ke Daftar Guru</a>
     </div>
   </div>
 </section>`

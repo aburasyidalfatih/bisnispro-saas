@@ -60,6 +60,19 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
 
   const base = await getPublicBasePath(slug)
 
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.pengumumanDetailHtml) {
+    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.pengumumanDetailHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, post, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
+
   // Get related pengumuman
   const relatedPosts = (tenant.posts || [])
     .filter((p: any) => p.id !== id && p.type === "PENGUMUMAN")

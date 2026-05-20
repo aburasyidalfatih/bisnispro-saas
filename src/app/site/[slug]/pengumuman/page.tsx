@@ -7,6 +7,7 @@ import { Megaphone, ArrowRight, Search, Calendar } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { db } from "@/lib/db"
+import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function PengumumanPage({ 
   params,
@@ -24,6 +25,18 @@ export default async function PengumumanPage({
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.pengumumanHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.pengumumanHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
 
   // Fetch paginated pengumuman directly from DB
   const posts = await db.post.findMany({

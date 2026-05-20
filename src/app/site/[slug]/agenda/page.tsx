@@ -15,6 +15,19 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
   const events = tenant.events || []
   const base = await getPublicBasePath(slug)
 
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.agendaHtml) {
+    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.agendaHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant: { ...tenant, events }, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
+
   return (
     <div className="bg-background min-h-screen pb-12">
       {/* ── HERO SECTION ── */}

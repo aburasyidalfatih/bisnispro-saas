@@ -15,6 +15,19 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
   const alumni = tenant.alumni || []
   const base = await getPublicBasePath(slug)
 
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.alumniHtml) {
+    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.alumniHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant: { ...tenant, alumni }, base, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
+
   return (
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}

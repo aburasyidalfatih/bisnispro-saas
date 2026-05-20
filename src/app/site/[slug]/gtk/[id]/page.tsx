@@ -41,6 +41,19 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
   if (!staff) notFound()
 
   const base = await getPublicBasePath(slug)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.staffDetailHtml) {
+    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.staffDetailHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { tenant, base, staff, settings: tenant.settings || {} },
+    })
+    if (rendered) return rendered
+  }
   
   // Get articles written by this staff member
   const articles = staff.userId 
