@@ -727,6 +727,7 @@ model SubscriptionPlan {
   features      Json?
   maxStudents   Int            @default(0)
   maxStorage    Int            @default(0)
+  monthlyAiTokens Int          @default(0)
   isActive      Boolean        @default(true)
   isPopular     Boolean        @default(false)
   sortOrder     Int            @default(0)
