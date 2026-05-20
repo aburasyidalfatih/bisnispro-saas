@@ -405,7 +405,7 @@ export default function PostFormPage() {
               AI Article Writer
             </DialogTitle>
             <DialogDescription>
-              Ubah poin-poin singkat menjadi artikel utuh yang profesional. Ditenagai oleh GPT-4o-Mini.
+              Ubah poin-poin singkat menjadi artikel utuh yang profesional.
             </DialogDescription>
           </DialogHeader>
           

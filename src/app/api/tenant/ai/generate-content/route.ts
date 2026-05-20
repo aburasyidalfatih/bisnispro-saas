@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { getAiProvider, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
+import { getAiModel, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
 import { generateObject } from "ai"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
@@ -29,13 +29,13 @@ export async function POST(req: Request) {
       }, { status: 402 })
     }
 
-    // Get AI Provider
-    const aiResult = await getAiProvider(tenantId)
-    if (!aiResult.success || !aiResult.provider) {
+    // Get AI Provider & Model
+    const aiResult = await getAiModel(tenantId)
+    if (!aiResult.success || !aiResult.model) {
       return NextResponse.json({ error: aiResult.error }, { status: 500 })
     }
 
-    const provider = aiResult.provider
+    const model = aiResult.model
 
     let systemPrompt = ""
     let userPrompt = ""
@@ -109,7 +109,7 @@ Kata Kunci Testimoni: ${inputs?.text || ''}`
     }
 
     const { object } = await generateObject({
-      model: provider('gpt-4o-mini'),
+      model,
       system: systemPrompt,
       prompt: userPrompt,
       schema: z.object({

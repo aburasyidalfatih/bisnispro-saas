@@ -464,18 +464,18 @@ export default function WebsiteAboutPage() {
 
         {/* Tentang Kami */}
         <Card className="glass border-0 lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+          <CardHeader className="flex flex-row items-start sm:items-center justify-between space-y-0 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 shrink-0">
                 <Info className="h-4 w-4 text-primary" />
               </div>
-              <div>
+              <div className="space-y-1">
                 <CardTitle className="text-lg">Tentang Kami</CardTitle>
                 <CardDescription>Cerita lengkap, sejarah, visi, dan misi lembaga</CardDescription>
               </div>
             </div>
-            <Button variant="outline" size="sm" onClick={() => openAiModal("about")} className="h-8 gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700">
-              <Sparkles className="h-3.5 w-3.5" /> Generate Sejarah
+            <Button type="button" variant="outline" size="sm" onClick={() => openAiModal("about")} className="h-7 text-[10px] gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700 px-2 mt-0 shrink-0">
+              <Sparkles className="h-3 w-3" /> Generate Sejarah
             </Button>
           </CardHeader>
           <CardContent>
@@ -518,8 +518,8 @@ export default function WebsiteAboutPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t relative">
               <div className="absolute top-4 right-0">
-                <Button variant="outline" size="sm" onClick={() => openAiModal("vision-mission")} className="h-8 gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700">
-                  <Sparkles className="h-3.5 w-3.5" /> Poles Visi Misi
+                <Button type="button" variant="outline" size="sm" onClick={() => openAiModal("vision-mission")} className="h-7 text-[10px] gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700 px-2 mt-0">
+                  <Sparkles className="h-3 w-3" /> Poles Visi Misi
                 </Button>
               </div>
               <div className="space-y-1.5 md:col-span-2 mt-8">
@@ -545,18 +545,18 @@ export default function WebsiteAboutPage() {
 
         {/* Sambutan Kepala Sekolah */}
         <Card className="glass border-0 lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+          <CardHeader className="flex flex-row items-start sm:items-center justify-between space-y-0 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 shrink-0">
                 <Info className="h-4 w-4 text-primary" />
               </div>
-              <div>
+              <div className="space-y-1">
                 <CardTitle className="text-lg">Sambutan Utama (Pimpinan / Kepala Sekolah)</CardTitle>
                 <CardDescription>Pesan sambutan dari tokoh utama untuk beranda website</CardDescription>
               </div>
             </div>
-            <Button variant="outline" size="sm" onClick={() => openAiModal("principal-speech")} className="h-8 gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700">
-              <Sparkles className="h-3.5 w-3.5" /> Buat Sambutan AI
+            <Button type="button" variant="outline" size="sm" onClick={() => openAiModal("principal-speech")} className="h-7 text-[10px] gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700 px-2 mt-0 shrink-0">
+              <Sparkles className="h-3 w-3" /> Buat Sambutan AI
             </Button>
           </CardHeader>
           <CardContent className="space-y-4">

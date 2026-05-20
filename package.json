@@ -20,6 +20,7 @@
     "worker": "tsx src/worker.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.77",
     "@ai-sdk/openai": "^3.0.63",
     "@auth/prisma-adapter": "^2.0.0",
     "@aws-sdk/client-s3": "^3.1045.0",
