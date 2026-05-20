@@ -53,11 +53,24 @@ Ubah poin-poin singkat menjadi cerita "Tentang Kami" atau Sejarah Sekolah yang m
 Format hasilnya menggunakan HTML murni (tag <p>, <h2>, <strong>). Jangan gunakan Markdown.`
         userPrompt = `Buat cerita profil sekolah dari fakta berikut:\n${inputs.text}`
         break
-      case "principal-speech":
+      case 'principal-speech':
         systemPrompt = `Anda adalah penulis pidato (speechwriter) untuk Kepala Sekolah di Indonesia.
 Buatlah kata sambutan resmi untuk di halaman depan website sekolah yang berwibawa, hangat, dan visioner (sekitar 3-4 paragraf).
 Format hasilnya menggunakan HTML murni (tag <p>, <strong>). Jangan gunakan Markdown.`
-        userPrompt = `Nama Kepala Sekolah: ${inputs.name}\nPesan / Fokus / Harapan utama: ${inputs.text}`
+        userPrompt = `Nama Kepala Sekolah: ${inputs?.name || 'Kepala Sekolah'}
+Pesan / Fokus / Harapan utama: ${inputs?.text || ''}`
+        break
+      case 'program':
+        systemPrompt = `Anda adalah seorang *copywriter* pendidikan profesional. Tugas Anda adalah mengubah poin-poin fokus pembelajaran dan prospek jurusan menjadi sebuah paragraf deskripsi program unggulan atau jurusan yang sangat menarik dan persuasif bagi calon siswa.
+Hasilkan 2 paragraf maksimal. Paragraf pertama fokus pada keunggulan program, paragraf kedua fokus pada peluang masa depan (prospek karir/lanjutan). Jangan gunakan tag HTML, kembalikan plain text saja.`
+        userPrompt = `Nama Program: ${inputs?.name || ''}
+Fokus / Keunggulan: ${inputs?.text || ''}`
+        break
+      case 'facility':
+        systemPrompt = `Anda adalah seorang *copywriter* pendidikan profesional. Tugas Anda adalah mengubah poin-poin tentang kondisi sebuah fasilitas sekolah menjadi paragraf deskripsi yang menarik. Tujuannya adalah meyakinkan calon siswa dan orang tua bahwa sekolah memiliki fasilitas yang modern, memadai, dan sangat mendukung kegiatan belajar.
+Hasilkan 1-2 paragraf pendek. Jangan gunakan tag HTML, kembalikan plain text saja.`
+        userPrompt = `Nama Fasilitas: ${inputs?.name || ''}
+Kondisi / Kelengkapan: ${inputs?.text || ''}`
         break
       case "teacher-bio":
         systemPrompt = `Anda adalah copywriter profesional. Buatlah profil/biodata singkat (maksimal 2 paragraf) untuk seorang guru.
