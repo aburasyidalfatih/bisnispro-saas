@@ -10,6 +10,7 @@ import { Plus, Trash2, Edit, Image as ImageIcon, MoveVertical } from "lucide-rea
 import { Switch } from "@/components/ui/switch"
 import Link from "next/link"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 import { getPopups } from "@/features/popup/actions/popup.action" // We'll need a similar getSliders
 import { getSliders, deleteSlider, toggleSliderStatus } from "@/features/slider/actions/slider.action"
 
@@ -105,7 +106,7 @@ export default function SlidersPage() {
               {sliders.map(slide => (
                 <Card key={slide.id} className="overflow-hidden border group relative">
                   <div className="aspect-video relative bg-muted flex items-center justify-center">
-                    <Image src={slide.imageUrl} alt={slide.title || "Slider"} fill className="object-cover" />
+                    <Image src={normalizeImageUrl(slide.imageUrl)!} alt={slide.title || "Slider"} fill className="object-cover" />
                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm">
                         <Link href={`/admin/website/sliders/${slide.id}/edit`}>

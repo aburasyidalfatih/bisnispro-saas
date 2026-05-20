@@ -13,6 +13,7 @@ import { ArrowLeft, Save, ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
 import { getPopupById, updatePopup } from "@/features/popup/actions/popup.action"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export default function EditPopupPage() {
   const router = useRouter()
@@ -59,7 +60,7 @@ export default function EditPopupPage() {
               displayOnce: d.displayOnce,
               imageUrl: d.imageUrl || ""
             })
-            if (d.imageUrl) setPreviewUrl(d.imageUrl)
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
           }
           setLoading(false)
         })

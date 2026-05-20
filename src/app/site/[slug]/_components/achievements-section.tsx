@@ -6,6 +6,7 @@ import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface Achievement {
   id: string
@@ -76,7 +77,7 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
                 <div className="flex items-start gap-4">
                   {achievement.imageUrl ? (
                     <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border bg-white shadow-sm">
-                      <Image src={achievement.imageUrl} alt={`Prestasi: ${achievement.title}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="64px" />
+                      <Image src={normalizeImageUrl(achievement.imageUrl)!} alt={`Prestasi: ${achievement.title}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="64px" />
                     </div>
                   ) : (
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-white/80 shadow-sm border`}>

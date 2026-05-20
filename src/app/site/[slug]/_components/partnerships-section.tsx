@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface Partnership {
   id: string
@@ -35,12 +36,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
-                    <Image src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
+                    <Image src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
                   </div>
                 </Link>
               ) : (
                 <div className="relative aspect-video w-full">
-                  <Image src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
+                  <Image src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
                 </div>
               )}
             </div>
@@ -53,12 +54,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
-                    <Image src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
+                    <Image src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
                   </div>
                 </Link>
               ) : (
                 <div className="relative aspect-video w-full">
-                  <Image src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
+                  <Image src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill unoptimized />
                 </div>
               )}
             </div>

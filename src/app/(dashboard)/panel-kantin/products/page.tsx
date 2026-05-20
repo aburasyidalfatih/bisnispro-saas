@@ -11,6 +11,8 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Package, Plus, Edit2, Loader2, ImagePlus, ToggleLeft } from "lucide-react"
 import { useToast as useToastHook } from "@/hooks/use-toast"
+import { normalizeImageUrl } from "@/lib/utils"
+
 
 type Product = { id: string; name: string; price: number; stock: number; isActive: boolean; imageUrl?: string }
 
@@ -114,7 +116,7 @@ export default function ProductsPage() {
           {products.map(p => (
             <Card key={p.id} className="glass border-0 shadow-sm overflow-hidden">
               {p.imageUrl && (
-                <img src={p.imageUrl} alt={p.name} className="w-full h-36 object-cover" />
+                <img src={normalizeImageUrl(p.imageUrl) || p.imageUrl} alt={p.name} className="w-full h-36 object-cover" />
               )}
               <CardContent className="p-4">
                 <div className="flex justify-between items-start mb-2">

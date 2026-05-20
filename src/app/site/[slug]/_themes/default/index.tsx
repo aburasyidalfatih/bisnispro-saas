@@ -1,5 +1,6 @@
 import Link from "next/link"
 import NextImage from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, CheckCircle2 } from "lucide-react"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
@@ -137,8 +138,9 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => (
                 <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
-                  <NextImage src={item.url} alt={item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
-                    fill unoptimized
+                  <NextImage src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   {item.caption && (
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">

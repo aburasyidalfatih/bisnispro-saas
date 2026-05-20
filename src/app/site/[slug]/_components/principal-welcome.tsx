@@ -3,7 +3,7 @@
 import { Quote, ChevronDown, ChevronUp } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 
 interface PrincipalWelcomeProps {
   tenantName: string
@@ -16,7 +16,8 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
 
   const principalName = settings?.principalName || (principalStaff ? principalStaff.name : "Nama Pimpinan")
   const principalTitle = settings?.principalTitle || (principalStaff ? principalStaff.role : "Pimpinan Lembaga")
-  const principalImage = settings?.principalImage || (principalStaff ? (principalStaff.imageUrl || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076") : "/principal_portrait.png")
+  const rawPrincipalImage = settings?.principalImage || (principalStaff ? (principalStaff.imageUrl || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076") : "/principal_portrait.png")
+  const principalImage = normalizeImageUrl(rawPrincipalImage) || rawPrincipalImage
   const principalMessage = settings?.principalMessage || `Puji syukur ke hadirat Tuhan YME atas segala rahmat dan karunia-Nya. Selamat datang di website resmi ${tenantName}. Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara sekolah dengan orang tua, peserta didik, serta masyarakat luas.\n\nMelalui media ini, kami berharap seluruh informasi mengenai kegiatan, prestasi, serta program pendidikan dapat tersampaikan secara transparan, cepat, dan akurat. Kami berkomitmen untuk terus meningkatkan kualitas pendidikan dan mencetak generasi penerus bangsa yang unggul dan berkarakter.`
   const principalBadgeYear = settings?.principalBadgeYear || "2015"
 

@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
 import { Save, ImageIcon, Plus, Trash2, ExternalLink, Upload, GripVertical, X, Link as LinkIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 import Image from "next/image"
 
 interface GalleryItem {
@@ -259,7 +259,7 @@ export default function WebsiteGalleryPage() {
                 )}>
                 {/* Image */}
                 <div className="aspect-square relative">
-                  <Image src={item.url} alt={item.caption || `Foto ${i + 1}`}
+                  <Image src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Foto ${i + 1}`}
                     fill unoptimized
                     className="object-cover" />
                   {/* Overlay controls */}

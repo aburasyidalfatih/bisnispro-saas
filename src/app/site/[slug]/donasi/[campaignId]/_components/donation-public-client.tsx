@@ -11,6 +11,7 @@ import { Heart, Loader2, Users, Target, CheckCircle } from "lucide-react"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 const QUICK_AMOUNTS = [10000, 25000, 50000, 100000, 250000, 500000]
 
@@ -111,7 +112,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
       {/* Hero */}
       <div className="relative h-72 sm:h-96 bg-gray-200 overflow-hidden">
         {campaign.imageUrl ? (
-          <Image src={campaign.imageUrl} alt={campaign.title} fill className="object-cover" />
+          <Image src={normalizeImageUrl(campaign.imageUrl) || campaign.imageUrl} alt={campaign.title} fill className="object-cover" />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-rose-400 to-pink-600 flex items-center justify-center">
             <Heart className="h-24 w-24 text-white/50" />
@@ -121,7 +122,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <div className="flex items-center gap-2 mb-3">
             {campaign.tenant.logo && (
-              <img src={campaign.tenant.logo} alt={campaign.tenant.name} className="h-8 w-8 rounded-full bg-white p-0.5 object-contain" />
+              <img src={normalizeImageUrl(campaign.tenant.logo) || campaign.tenant.logo} alt={campaign.tenant.name} className="h-8 w-8 rounded-full bg-white p-0.5 object-contain" />
             )}
             <span className="text-sm font-semibold text-white/90">{campaign.tenant.name}</span>
           </div>

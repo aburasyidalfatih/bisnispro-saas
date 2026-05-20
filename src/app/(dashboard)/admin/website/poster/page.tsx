@@ -6,7 +6,7 @@ import QRCode from "react-qr-code"
 import { Button } from "@/components/ui/button"
 import { Printer, ArrowLeft, Globe, ScanFace } from "lucide-react"
 import Link from "next/link"
-import { getRootDomain } from "@/lib/utils"
+import { getRootDomain, normalizeImageUrl } from "@/lib/utils"
 
 export default function WebsitePosterPage() {
   const { data: session } = useSession()
@@ -72,7 +72,7 @@ export default function WebsitePosterPage() {
         {/* Top Header */}
         <div className="text-center space-y-6 relative z-10 pt-8">
           {tenant?.logo ? (
-            <img src={tenant.logo} alt="Logo" className="h-32 w-auto mx-auto object-contain drop-shadow-md" />
+            <img src={normalizeImageUrl(tenant.logo)} alt="Logo" className="h-32 w-auto mx-auto object-contain drop-shadow-md" />
           ) : (
             <div className="h-32 w-32 bg-slate-100 rounded-full mx-auto flex items-center justify-center">
               <Globe className="h-12 w-12 text-slate-400" />

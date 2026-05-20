@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowRight, Building2 } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface Facility {
   id: string
@@ -71,7 +72,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
               >
                 {facility.imageUrl ? (
                   <Image 
-                    src={facility.imageUrl} 
+                    src={normalizeImageUrl(facility.imageUrl)!} 
                     alt={`Fasilitas: ${facility.name}`} 
                     fill 
                     className="object-cover group-hover:scale-110 transition-transform duration-1000" 

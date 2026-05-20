@@ -13,6 +13,8 @@ import { ArrowLeft, Save, User, Quote } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
 import { getAlumniById, updateAlumni } from "@/features/alumni/actions/alumni.action"
+import { normalizeImageUrl } from "@/lib/utils"
+
 
 export default function EditAlumniPage() {
   const router = useRouter()
@@ -55,7 +57,7 @@ export default function EditAlumniPage() {
               testimonial: d.testimonial || "",
               imageUrl: d.imageUrl || ""
             })
-            if (d.imageUrl) setPreviewUrl(d.imageUrl)
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
           }
           setLoading(false)
         })

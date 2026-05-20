@@ -12,6 +12,8 @@ import { ArrowLeft, Save, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
 import { getStaffById, updateStaff } from "@/features/staff/actions/staff.action"
+import { normalizeImageUrl } from "@/lib/utils"
+
 
 export default function EditStaffPage() {
   const router = useRouter()
@@ -62,7 +64,7 @@ export default function EditStaffPage() {
               education: (d as any).education || "",
               password: ""
             })
-            if (d.imageUrl) setPreviewUrl(d.imageUrl)
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
           }
           setLoading(false)
         })

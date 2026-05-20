@@ -1,6 +1,7 @@
 import Link from "next/link"
 import NextImage from "next/image"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react"
+import { normalizeImageUrl } from "@/lib/utils"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
 import { PrincipalWelcome } from "../../_components/principal-welcome"
@@ -191,8 +192,9 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
               <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {gallery.slice(0, 12).map((item: any, i: number) => (
                   <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-[4/3] relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
-                    <NextImage src={item.url} alt={item.caption || `Galeri ${i + 1}`}
-                      fill unoptimized
+                    <NextImage src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Galeri ${i + 1}`}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover group-hover/item:scale-105 transition-transform duration-500" />
                     {item.caption && (
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-end">

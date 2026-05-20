@@ -9,6 +9,8 @@ import { ShoppingBag, TrendingUp, Wallet, Receipt, QrCode, Package, ArrowRight, 
 import Link from "next/link"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+import { normalizeImageUrl } from "@/lib/utils"
+
 
 export default function PanelKantinPage() {
   const { data: session } = useSession()
@@ -46,7 +48,7 @@ export default function PanelKantinPage() {
       {/* Header */}
       <div className="glass rounded-2xl p-6 flex items-center gap-4">
         {merchant?.imageUrl ? (
-          <img src={merchant.imageUrl} alt={merchant.name} className="h-16 w-16 rounded-2xl object-cover" />
+          <img src={normalizeImageUrl(merchant.imageUrl) || merchant.imageUrl} alt={merchant.name} className="h-16 w-16 rounded-2xl object-cover" />
         ) : (
           <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
             <ShoppingBag className="h-8 w-8 text-primary" />

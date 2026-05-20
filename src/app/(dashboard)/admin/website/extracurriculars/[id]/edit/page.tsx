@@ -12,6 +12,7 @@ import { ArrowLeft, Save, Trophy } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
 import { getExtracurricularById, updateExtracurricular } from "@/features/extracurricular/actions/extracurricular.action"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export default function EditExtracurricularPage() {
   const router = useRouter()
@@ -54,7 +55,7 @@ export default function EditExtracurricularPage() {
               contactPerson: d.contactPerson || "",
               registrationUrl: d.registrationUrl || ""
             })
-            if (d.imageUrl) setPreviewUrl(d.imageUrl)
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
           }
           setLoading(false)
         })

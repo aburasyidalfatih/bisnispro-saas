@@ -2,6 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Trophy, Calendar, Medal } from "lucide-react"
@@ -9,7 +10,8 @@ import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
+export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
@@ -20,6 +22,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${achievement.title} - ${tenant.name}`,
     description: achievement.description || `Informasi prestasi ${achievement.title}`,
+    alternates: {
+      canonical: `/prestasi/${achievement.id}`,
+    },
   }
 }
 
@@ -65,7 +70,7 @@ export default async function AchievementDetailPage({ params }: { params: Promis
         {achievement.imageUrl ? (
           <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image 
-              src={achievement.imageUrl} 
+              src={normalizeImageUrl(achievement.imageUrl) || achievement.imageUrl} 
               alt={achievement.title} 
               fill 
               className="object-cover"

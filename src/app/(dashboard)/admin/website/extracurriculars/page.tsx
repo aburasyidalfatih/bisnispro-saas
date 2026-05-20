@@ -10,6 +10,7 @@ import { Plus, Trash2, Edit, Trophy, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { getExtracurriculars, deleteExtracurricular } from "@/features/extracurricular/actions/extracurricular.action"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface Extracurricular {
   id: string
@@ -89,14 +90,16 @@ export default function ExtracurricularPage() {
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map(item => (
-                <Card key={item.id} className="overflow-hidden border group relative">
-                  <div className="aspect-video relative bg-muted flex items-center justify-center">
-                    {item.imageUrl ? (
-                      <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
-                    ) : (
-                      <Trophy className="h-10 w-10 text-muted-foreground/50" />
-                    )}
+              {items.map(item => {
+                const displayImage = normalizeImageUrl(item.imageUrl)
+                return (
+                  <Card key={item.id} className="overflow-hidden border group relative">
+                    <div className="aspect-video relative bg-muted flex items-center justify-center">
+                      {displayImage ? (
+                        <Image src={displayImage} alt={item.name} fill className="object-cover" />
+                      ) : (
+                        <Trophy className="h-10 w-10 text-muted-foreground/50" />
+                      )}
                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm">
                         <Link href={`/admin/website/extracurriculars/${item.id}/edit`}>
@@ -127,8 +130,9 @@ export default function ExtracurricularPage() {
                       </div>
                     )}
                   </CardContent>
-                </Card>
-              ))}
+                  </Card>
+                )
+              })}
             </div>
           )}
         </CardContent>

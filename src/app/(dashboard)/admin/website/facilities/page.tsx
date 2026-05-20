@@ -11,6 +11,7 @@ import Link from "next/link"
 import { format } from "date-fns"
 import Image from "next/image"
 import { getFacilities, deleteFacility as deleteFacilityAction } from "@/features/facility/actions/facility.action"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface Facility {
   id: string
@@ -94,14 +95,16 @@ export default function FacilitiesPage() {
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {facilities.map(facility => (
-                <Card key={facility.id} className="overflow-hidden border group relative">
-                  <div className="aspect-video relative bg-muted flex items-center justify-center">
-                    {facility.imageUrl ? (
-                      <Image src={facility.imageUrl} alt={facility.name} fill className="object-cover" />
-                    ) : (
-                      <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
-                    )}
+              {facilities.map(facility => {
+                const displayImage = normalizeImageUrl(facility.imageUrl)
+                return (
+                  <Card key={facility.id} className="overflow-hidden border group relative">
+                    <div className="aspect-video relative bg-muted flex items-center justify-center">
+                      {displayImage ? (
+                        <Image src={displayImage} alt={facility.name} fill className="object-cover" />
+                      ) : (
+                        <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
+                      )}
                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm">
                         <Link href={`/admin/website/facilities/${facility.id}/edit`}>
@@ -131,7 +134,8 @@ export default function FacilitiesPage() {
                     </p>
                   </CardContent>
                 </Card>
-              ))}
+                )
+              })}
             </div>
           )}
         </CardContent>

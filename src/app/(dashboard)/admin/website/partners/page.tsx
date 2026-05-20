@@ -10,6 +10,7 @@ import { Plus, Trash2, Edit, Image as ImageIcon } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import Link from "next/link"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 import { getPartnerships, deletePartnership, togglePartnershipStatus } from "@/features/partnership/actions/partnership.action"
 
 interface Partnership {
@@ -105,7 +106,7 @@ export default function PartnershipsPage() {
               {partnerships.map(partner => (
                 <Card key={partner.id} className="overflow-hidden border group relative">
                   <div className="aspect-video relative bg-white flex items-center justify-center p-4">
-                    <Image src={partner.imageUrl} alt={partner.name} fill className="object-contain p-4" />
+                    <Image src={normalizeImageUrl(partner.imageUrl)!} alt={partner.name} fill className="object-contain p-4" />
                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm">
                         <Link href={`/admin/website/partners/${partner.id}/edit`}>

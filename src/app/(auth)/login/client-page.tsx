@@ -14,7 +14,7 @@ import { LogIn } from "lucide-react"
 
 import { Turnstile } from "@marsidev/react-turnstile"
 
-import { checkIsMainDomain, getRootDomain } from "@/lib/utils"
+import { checkIsMainDomain, getRootDomain, normalizeImageUrl } from "@/lib/utils"
 
 export default function LoginPage({
   isMainDomain,
@@ -118,10 +118,10 @@ export default function LoginPage({
         <div className="glass rounded-3xl p-8 md:p-10 shadow-2xl">
           <div className="flex flex-col items-center mb-8 text-center">
             {isMainDomain ? (
-              <img src={platformLogo} alt="SchoolPro Logo" className="h-20 w-auto mb-2 object-contain" />
+              <img src={normalizeImageUrl(platformLogo)} alt="SchoolPro Logo" className="h-20 w-auto mb-2 object-contain" />
             ) : (
               platformLogo ? (
-                <img src={platformLogo} alt={tenantNameDisplay || "Logo Tenant"} className="h-20 w-auto mb-4 object-contain" />
+                <img src={normalizeImageUrl(platformLogo)} alt={tenantNameDisplay || "Logo Tenant"} className="h-20 w-auto mb-4 object-contain" />
               ) : (
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
                   {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "S"}

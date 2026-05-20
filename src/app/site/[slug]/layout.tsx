@@ -18,21 +18,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
 
-  const headerList = await headers()
-  const protocol = headerList.get("x-forwarded-proto") || "https"
-  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
-  host = host.split(':')[0]
-  const domainUrl = `${protocol}://${host}`
+  const canonicalDomain = tenant.domain 
+    ? `https://${tenant.domain}` 
+    : `https://${tenant.slug}.schoolpro.id`
 
     const ogImageBase = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
     // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
-    const ogImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
+    const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
 
     return {
-      metadataBase: new URL(domainUrl),
+      metadataBase: new URL(canonicalDomain),
       title: {
         template: `%s | ${tenant.name}`,
         default: tenant.seoTitle || tenant.name,
+      },
+      alternates: {
+        canonical: "/",
       },
       icons: tenant.logo ? { 
         icon: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 

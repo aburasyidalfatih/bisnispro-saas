@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import DOMPurify from "isomorphic-dompurify"
 import { Bell, CreditCard, CalendarDays, FileText, CheckCircle, Clock, BookOpen, MessageSquare, Award, MonitorSmartphone, Calendar, FileCheck, ClipboardList, Megaphone, User, ArrowRight, Receipt, Activity, Users, UtensilsCrossed, Eye, EyeOff } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -53,7 +53,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
              {tenant?.logo ? (
-                <img src={tenant.logo} alt="Logo" className="h-10 w-10 object-contain bg-white rounded-full p-1 shadow-sm" />
+                <img src={normalizeImageUrl(tenant.logo) || tenant.logo} alt="Logo" className="h-10 w-10 object-contain bg-white rounded-full p-1 shadow-sm" />
              ) : (
                 <div className="h-10 w-10 bg-white/20 rounded-full flex items-center justify-center">
                   <MonitorSmartphone className="h-5 w-5 text-primary-foreground" />

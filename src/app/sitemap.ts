@@ -175,9 +175,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (tenant.posts) {
     tenant.posts.forEach((post: any) => {
       routes.push({
-        url: `${domainUrl}/berita/${post.slug}`,
+        url: `${domainUrl}/berita/${post.id}`,
         lastModified: post.updatedAt || post.createdAt,
-        changeFrequency: "yearly",
+        changeFrequency: "weekly",
         priority: 0.7,
       })
     })

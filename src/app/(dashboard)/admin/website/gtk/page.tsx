@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast"
 import { Plus, Trash2, Edit, Users, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 import { getStaff, deleteStaff } from "@/features/staff/actions/staff.action"
 
 interface Staff {
@@ -101,7 +102,7 @@ export default function StaffPage() {
                 <Card key={person.id} className="overflow-hidden border group relative">
                   <div className="aspect-[3/4] relative bg-muted flex items-center justify-center">
                     {person.imageUrl ? (
-                      <Image src={person.imageUrl} alt={person.name} fill className="object-cover" />
+                      <Image src={normalizeImageUrl(person.imageUrl)!} alt={person.name} fill className="object-cover" />
                     ) : (
                       <div className="flex flex-col items-center gap-2">
                         <Users className="h-10 w-10 text-muted-foreground/50" />

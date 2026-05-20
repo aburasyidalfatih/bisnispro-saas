@@ -6,7 +6,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, User, Briefcase, Mail, Globe, GraduationCap, BookOpen, MessageCircle, PenTool, Calendar, ChevronRight } from "lucide-react"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
+export const dynamicParams = true
 
 function slugify(text: string) {
   return text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
@@ -26,6 +27,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${staff.name} - ${tenant.name}`,
     description: staff.bio || `Profil ${staff.name} (${staff.role}) di ${tenant.name}`,
+    alternates: {
+      canonical: `/gtk/${staff.id}`,
+    },
   }
 }
 
