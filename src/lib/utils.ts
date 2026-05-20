@@ -68,28 +68,37 @@ export function getRootDomain(hostname?: string): string {
 export function normalizeImageUrl(url: string | null | undefined): string | null {
   if (!url || url.trim() === "") return null
 
+  let cleaned = url.trim()
+
   // Already a proper URL (S3 or external)
-  if (url.startsWith("http://") || url.startsWith("https://")) return url
+  if (cleaned.startsWith("http://") || cleaned.startsWith("https://") || cleaned.startsWith("data:")) return cleaned
 
   // Already a proper /api/files/ path
-  if (url.startsWith("/api/files/")) return url
+  if (cleaned.startsWith("/api/files/")) return cleaned
 
-  // Already a valid relative URL (starts with /)
-  if (url.startsWith("/")) {
-    if (url.startsWith("/uploads/")) {
-      return `/api/files/${url.substring(9)}`
-    }
-    return url
+  // Explicit local paths
+  if (cleaned.startsWith("/uploads/")) {
+    return `/api/files/${cleaned.substring(9)}`
+  }
+  if (cleaned.startsWith("uploads/")) {
+    return `/api/files/${cleaned.substring(8)}`
+  }
+  
+  // If it's a valid absolute path for other assets
+  if (cleaned.startsWith("/")) return cleaned
+
+  // Check if it's a domain missing https:// (e.g., pub-xxxx.r2.dev/file.jpg)
+  // Heuristic: has a slash, and has a dot BEFORE the first slash
+  const firstSlashIdx = cleaned.indexOf("/")
+  const firstDotIdx = cleaned.indexOf(".")
+  if (firstSlashIdx > 0 && firstDotIdx > 0 && firstDotIdx < firstSlashIdx) {
+    return `https://${cleaned}`
   }
 
   // Filesystem path: remove leading ./ and "uploads/" prefix, then wrap with /api/files/
-  let cleaned = url
-    .replace(/\\/g, "/")       // Convert Windows backslashes
-    .replace(/^\.\//, "")      // Remove leading ./
-  
-  // Remove the "uploads/" prefix if present
+  cleaned = cleaned.replace(/\\/g, "/").replace(/^\.\//, "")
   if (cleaned.startsWith("uploads/")) {
-    cleaned = cleaned.substring("uploads/".length)
+    cleaned = cleaned.substring(8)
   }
 
   return `/api/files/${cleaned}`
