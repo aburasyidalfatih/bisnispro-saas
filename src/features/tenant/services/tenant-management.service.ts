@@ -120,10 +120,13 @@ export async function updateTenantSettings(tenantId: string, settings: Record<st
   const existingSettings = (existing?.settings as Record<string, any>) || {}
   const merged = { ...existingSettings, ...settings }
 
-  await db.tenant.update({
+  const updated = await db.tenant.update({
     where: { id: tenantId },
     data: { settings: merged },
+    select: { slug: true }
   })
+
+  await invalidatePublicTenantCache(updated.slug)
 
   return { message: "Pengaturan disimpan" }
 }
@@ -177,6 +180,11 @@ export async function changeSubdomain(tenantId: string, newSlug: string, userId:
       }
     }
   })
+
+  if (tenant.slug) {
+    await invalidatePublicTenantCache(tenant.slug)
+  }
+  await invalidatePublicTenantCache(newSlug)
 
   return { message: "Subdomain berhasil diubah" }
 }

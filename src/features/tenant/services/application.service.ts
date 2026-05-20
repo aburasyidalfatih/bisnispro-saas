@@ -325,5 +325,11 @@ export async function approveApplication(id: string) {
     })
     .catch(err => logger.error("Application notification failed", err))
 
+  // Invalidate public tenant cache
+  try {
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+    await invalidatePublicTenantCache(tenant.slug)
+  } catch {}
+
   return tenant
 }

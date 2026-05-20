@@ -128,6 +128,11 @@ export async function updateTenantByAdmin(id: string, data: {
   aiTokens?: number
 }) {
   try {
+    const existing = await db.tenant.findUnique({
+      where: { id },
+      select: { slug: true }
+    })
+
     const updated = await db.tenant.update({
       where: { id },
       data: {
@@ -140,6 +145,16 @@ export async function updateTenantByAdmin(id: string, data: {
         aiTokens: Number(data.aiTokens || 0)
       }
     })
+
+    if (existing?.slug) {
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+      await invalidatePublicTenantCache(existing.slug)
+    }
+    if (updated.slug !== existing?.slug) {
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+      await invalidatePublicTenantCache(updated.slug)
+    }
+
     return { success: true, data: updated }
   } catch (error) {
     const prismaError = error as any
@@ -155,7 +170,18 @@ export async function updateTenantByAdmin(id: string, data: {
 // Mutation: Delete Tenant (Super Admin)
 // ==========================================
 export async function deleteTenantByAdmin(tenantId: string) {
+  const existing = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { slug: true }
+  })
+
   await db.tenant.delete({ where: { id: tenantId } })
+
+  if (existing?.slug) {
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+    await invalidatePublicTenantCache(existing.slug)
+  }
+
   return { message: "Tenant dihapus" }
 }
 
