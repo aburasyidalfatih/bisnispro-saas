@@ -84,6 +84,26 @@ Buatlah deskripsi promosi yang menarik untuk ekstrakurikuler sekolah agar siswa 
 Format hasilnya menggunakan HTML murni (tag <p>, <ul>, <li>, <strong>). Jangan gunakan Markdown.`
         userPrompt = `Nama Ekstrakurikuler: ${inputs.name}\nPoin-poin kegiatan/tujuan: ${inputs.text}`
         break
+      case 'event':
+        systemPrompt = `Anda adalah penulis konten profesional. Tugas Anda adalah membuat deskripsi acara/agenda (event) sekolah yang menarik dan informatif berdasarkan poin-poin yang diberikan.
+Tujuannya agar pembaca (siswa/orang tua) tertarik untuk hadir atau berpartisipasi.
+Hasilkan 1-2 paragraf pendek. Jangan gunakan tag HTML, kembalikan plain text saja.`
+        userPrompt = `Judul Acara: ${inputs?.name || ''}
+Detail/Poin Acara: ${inputs?.text || ''}`
+        break
+      case 'achievement':
+        systemPrompt = `Anda adalah penulis konten profesional. Tugas Anda adalah membuat deskripsi prestasi sekolah atau siswa yang membanggakan dan menginspirasi berdasarkan poin-poin yang diberikan.
+Hasilkan 1-2 paragraf pendek yang menunjukkan kebanggaan dan apresiasi. Jangan gunakan tag HTML, kembalikan plain text saja.`
+        userPrompt = `Judul Prestasi: ${inputs?.name || ''}
+Detail Prestasi: ${inputs?.text || ''}`
+        break
+      case 'alumni':
+        systemPrompt = `Anda adalah penulis *copywriter*. Tugas Anda adalah membuat draf testimoni alumni yang natural, positif, dan menginspirasi berdasarkan kata kunci yang diberikan. 
+Testimoni harus menonjolkan bagaimana sekolah/kampus membantu karir/studi mereka saat ini.
+Hasilkan 1 paragraf singkat bergaya kutipan (quote). Jangan gunakan tag HTML, kembalikan plain text saja.`
+        userPrompt = `Status Saat Ini: ${inputs?.name || ''}
+Kata Kunci Testimoni: ${inputs?.text || ''}`
+        break
       default:
         return NextResponse.json({ error: "Invalid prompt type" }, { status: 400 })
     }
