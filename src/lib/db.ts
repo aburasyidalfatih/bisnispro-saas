@@ -81,11 +81,27 @@ export function withTenant(tenantId: string) {
   return db.$extends({
     query: {
       $allModels: {
-        async $allOperations({ args, query }) {
+        async $allOperations({ model, operation, args, query }) {
           // Fallback ke ORM Level Isolation jika query belum support RLS
           if (typeof args === 'object' && args !== null) {
              (args as any).where = { ...(args as any).where, tenantId }
           }
+          
+          const isRead = [
+            "findUnique",
+            "findUniqueOrThrow",
+            "findFirst",
+            "findFirstOrThrow",
+            "findMany",
+            "count",
+            "aggregate",
+            "groupBy",
+          ].includes(operation)
+
+          if (isRead) {
+            return query(args)
+          }
+
           // Interactive transaction to prevent connection pooling cross-contamination and enforce RLS
           const [, result] = await db.$transaction([
             db.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`,

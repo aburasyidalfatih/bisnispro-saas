@@ -29,19 +29,20 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
       if (cached) return cached as string
     }
 
-    // Direct database query via Prisma Edge adapter instead of self-fetch API
-    const { db } = await import("@/lib/db")
-    const tenant = await db.tenant.findFirst({
-      where: { domain, isActive: true },
-      select: { slug: true, settings: true },
-    })
+    // Edge-Safe: Fetch from local Node.js API instead of importing database TCP Sockets directly
+    const port = process.env.PORT || "3000"
+    const res = await fetch(
+      `http://127.0.0.1:${port}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
+      {
+        headers: {
+          "x-internal-secret": INTERNAL_SECRET,
+        },
+      }
+    )
 
-    if (!tenant) return null
-
-    const customDomain = (tenant.settings as any)?.customDomain
-    if (customDomain?.status !== "verified") return null
-
-    const slug = tenant.slug
+    if (!res.ok) return null
+    const data = await res.json()
+    const slug = data.slug
 
     if (redis && slug) {
       await redis.set(`domain:${domain}`, slug, { ex: 300 })

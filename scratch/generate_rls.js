@@ -9,7 +9,7 @@ for (let i = 1; i < models.length; i += 2) {
   if (body.includes('tenantId')) {
     sql += `ALTER TABLE "${name}" ENABLE ROW LEVEL SECURITY;\n`;
     sql += `DROP POLICY IF EXISTS "tenant_isolation_policy" ON "${name}";\n`;
-    sql += `CREATE POLICY "tenant_isolation_policy" ON "${name}" FOR ALL USING ("tenantId" = current_setting('app.current_tenant_id', TRUE));\n\n`;
+    sql += `CREATE POLICY "tenant_isolation_policy" ON "${name}" FOR ALL USING ("tenantId" = current_setting('app.current_tenant', TRUE));\n\n`;
   }
 }
 
