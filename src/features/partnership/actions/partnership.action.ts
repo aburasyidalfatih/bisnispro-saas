@@ -99,3 +99,22 @@ export async function togglePartnershipStatus(id: string, tenantId: string, isAc
     revalidatePath(`/site/${tenant.slug}`, "page")
   }
 }
+
+export async function updatePartnershipsOrder(tenantId: string, orderedIds: string[]) {
+  await requireTenantAccess(tenantId)
+  
+  for (let i = 0; i < orderedIds.length; i++) {
+    await db.partnership.update({
+      where: { id: orderedIds[i], tenantId },
+      data: { sortOrder: i }
+    })
+  }
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath(`/site/${tenant.slug}`, "page")
+  }
+  
+  revalidatePath("/admin/website/partners", "page")
+}

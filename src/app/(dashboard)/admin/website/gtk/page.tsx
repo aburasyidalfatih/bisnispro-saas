@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Users, Image as ImageIcon } from "lucide-react"
+import { Plus, Trash2, Edit, Users, Image as ImageIcon, GripVertical } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { normalizeImageUrl } from "@/lib/utils"
-import { getStaff, deleteStaff } from "@/features/staff/actions/staff.action"
+import { cn, normalizeImageUrl } from "@/lib/utils"
+import { getStaff, deleteStaff, updateStaffOrder } from "@/features/staff/actions/staff.action"
 
 interface Staff {
   id: string
@@ -25,6 +25,8 @@ export default function StaffPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [staffList, setStaffList] = useState<Staff[]>([])
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [dragOver, setDragOver] = useState<number | null>(null)
 
   const tenantId = branding.id
 
@@ -55,6 +57,39 @@ export default function StaffPage() {
       loadStaff()
     } catch (err: any) {
       toast({ title: "Gagal", description: err.message, variant: "destructive" })
+    }
+  }
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDragIndex(index)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    setDragOver(index)
+    e.dataTransfer.dropEffect = "move"
+  }
+
+  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    setDragOver(null)
+    if (dragIndex === null || dragIndex === dropIndex) return
+
+    const newArr = [...staffList]
+    const [dragged] = newArr.splice(dragIndex, 1)
+    newArr.splice(dropIndex, 0, dragged)
+    
+    setStaffList(newArr)
+    setDragIndex(null)
+
+    if (tenantId) {
+      try {
+        await updateStaffOrder(tenantId, newArr.map(a => a.id))
+        toast({ title: "Urutan berhasil disimpan" })
+      } catch (err: any) {
+        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+      }
     }
   }
 
@@ -97,10 +132,24 @@ export default function StaffPage() {
               </Button>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {staffList.map(person => (
-                <Card key={person.id} className="overflow-hidden border group relative">
-                  <div className="aspect-[3/4] relative bg-muted flex items-center justify-center">
+            <>
+              <p className="text-xs text-muted-foreground mb-4">
+                {staffList.length} GTK · Drag untuk mengubah urutan
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {staffList.map((person, i) => (
+                <Card key={person.id}
+                  draggable
+                  onDragStart={e => handleDragStart(e, i)}
+                  onDragOver={e => handleDragOver(e, i)}
+                  onDrop={e => handleDrop(e, i)}
+                  onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
+                  className={cn(
+                    "overflow-hidden border group relative transition-all",
+                    dragOver === i && "ring-2 ring-primary scale-[1.02]",
+                    dragIndex === i && "opacity-50"
+                  )}>
+                  <div className="aspect-[3/4] relative bg-muted flex items-center justify-center cursor-grab active:cursor-grabbing">
                     {person.imageUrl ? (
                       <Image src={normalizeImageUrl(person.imageUrl)!} alt={person.name} fill className="object-cover" />
                     ) : (
@@ -109,6 +158,12 @@ export default function StaffPage() {
                         <span className="text-[10px] text-muted-foreground">Tanpa Foto</span>
                       </div>
                     )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                    <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black/60 shadow-sm">
+                        <GripVertical className="h-4 w-4 text-white" />
+                      </div>
+                    </div>
                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm">
                         <Link href={`/admin/website/gtk/${person.id}/edit`}>
@@ -137,6 +192,7 @@ export default function StaffPage() {
                 </Card>
               ))}
             </div>
+            </>
           )}
         </CardContent>
       </Card>

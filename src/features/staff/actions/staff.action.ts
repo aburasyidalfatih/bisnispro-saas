@@ -205,6 +205,28 @@ export async function deleteStaff(id: string, tenantId: string) {
   revalidatePath("/(dashboard)/dashboard/website/gtk", "page")
 }
 
+export async function updateStaffOrder(tenantId: string, orderedIds: string[]) {
+  await requireTenantAccess(tenantId)
+  
+  for (let i = 0; i < orderedIds.length; i++) {
+    await db.staff.update({
+      where: { id: orderedIds[i], tenantId },
+      data: { sortOrder: i }
+    })
+  }
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath(`/site/${tenant.slug}/gtk`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath("/", "layout")
+  }
+  
+  revalidatePath("/(dashboard)/dashboard/website/gtk", "page")
+}
+
 /**
  * Helper: Sinkronkan data Kepala Sekolah dari Staff ke tenant.settings
  * Memastikan foto & nama kepsek konsisten antara halaman /gtk dan homepage

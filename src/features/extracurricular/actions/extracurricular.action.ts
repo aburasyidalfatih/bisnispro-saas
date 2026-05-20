@@ -13,7 +13,7 @@ export async function getExtracurriculars(tenantId: string) {
   
   return await db.extracurricular.findMany({
     where: { tenantId },
-    orderBy: { createdAt: 'desc' },
+    orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
   })
 }
 
@@ -81,6 +81,26 @@ export async function deleteExtracurricular(id: string, tenantId: string) {
     revalidatePath("/", "layout")
   }
 
+  
+  revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
+}
+
+export async function updateExtracurricularsOrder(tenantId: string, orderedIds: string[]) {
+  await requireTenantAccess(tenantId)
+  
+  for (let i = 0; i < orderedIds.length; i++) {
+    await db.extracurricular.update({
+      where: { id: orderedIds[i], tenantId },
+      data: { sortOrder: i }
+    })
+  }
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
   
   revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
 }

@@ -13,7 +13,7 @@ export async function getPrograms(tenantId: string) {
   
   return await db.program.findMany({
     where: { tenantId },
-    orderBy: { createdAt: 'desc' },
+    orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
   })
 }
 
@@ -81,6 +81,26 @@ export async function deleteProgram(id: string, tenantId: string) {
     revalidatePath("/", "layout")
   }
 
+  
+  revalidatePath("/(dashboard)/dashboard/website/programs", "page")
+}
+
+export async function updateProgramsOrder(tenantId: string, orderedIds: string[]) {
+  await requireTenantAccess(tenantId)
+  
+  for (let i = 0; i < orderedIds.length; i++) {
+    await db.program.update({
+      where: { id: orderedIds[i], tenantId },
+      data: { sortOrder: i }
+    })
+  }
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath("/", "layout")
+  }
   
   revalidatePath("/(dashboard)/dashboard/website/programs", "page")
 }

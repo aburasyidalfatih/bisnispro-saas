@@ -103,3 +103,22 @@ export async function toggleSliderStatus(id: string, tenantId: string, isActive:
   }
 }
 
+export async function updateSlidersOrder(tenantId: string, orderedIds: string[]) {
+  await requireTenantAccess(tenantId)
+  
+  for (let i = 0; i < orderedIds.length; i++) {
+    await db.slider.update({
+      where: { id: orderedIds[i], tenantId },
+      data: { sortOrder: i }
+    })
+  }
+
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  if (tenant) {
+    await invalidatePublicTenantCache(tenant.slug)
+    revalidatePath(`/site/${tenant.slug}`, "page")
+  }
+  
+  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+}
+

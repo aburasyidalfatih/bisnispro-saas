@@ -562,12 +562,14 @@ model Facility {
   category    String?
   condition   String?
   access      String?
+  sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, sortOrder])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("facilities")
 }
@@ -581,12 +583,14 @@ model Extracurricular {
   imageUrl        String?
   contactPerson   String?
   registrationUrl String?
+  sortOrder       Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, sortOrder])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("extracurriculars")
 }
@@ -599,12 +603,14 @@ model Program {
   imageUrl    String?
   focus       String?
   prospects   String?
+  sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([tenantId, sortOrder])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("programs")
 }
@@ -619,6 +625,7 @@ model Alumni {
   institutionName String?
   testimonial     String?
   imageUrl        String?
+  sortOrder       Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -627,6 +634,7 @@ model Alumni {
   @@index([tenantId])
   @@index([userId])
   @@index([createdAt])
+  @@index([tenantId, sortOrder])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("alumni")
 }
