@@ -45,7 +45,7 @@ export async function createAchievement(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
+  revalidatePath("/(dashboard)/admin/website/achievements", "page")
   return achievement
 }
 
@@ -66,7 +66,7 @@ export async function updateAchievement(id: string, tenantId: string, data: any)
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
+  revalidatePath("/(dashboard)/admin/website/achievements", "page")
 }
 
 export async function deleteAchievement(id: string, tenantId: string) {
@@ -83,7 +83,7 @@ export async function deleteAchievement(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
+  revalidatePath("/(dashboard)/admin/website/achievements", "page")
 }
 
 export async function updateAchievementsOrder(tenantId: string, orderedIds: string[]) {
@@ -102,6 +102,6 @@ export async function updateAchievementsOrder(tenantId: string, orderedIds: stri
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/achievements", "page")
+  revalidatePath("/(dashboard)/admin/website/achievements", "page")
 }
 

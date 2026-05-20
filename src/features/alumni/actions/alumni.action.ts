@@ -44,7 +44,7 @@ export async function createAlumni(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
+  revalidatePath("/(dashboard)/admin/website/alumni", "page")
   return alumni
 }
 
@@ -65,7 +65,7 @@ export async function updateAlumni(id: string, tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
+  revalidatePath("/(dashboard)/admin/website/alumni", "page")
 }
 
 export async function deleteAlumni(id: string, tenantId: string) {
@@ -82,7 +82,7 @@ export async function deleteAlumni(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
+  revalidatePath("/(dashboard)/admin/website/alumni", "page")
 }
 
 export async function updateAlumniOrder(tenantId: string, orderedIds: string[]) {
@@ -101,6 +101,6 @@ export async function updateAlumniOrder(tenantId: string, orderedIds: string[]) 
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/alumni", "page")
+  revalidatePath("/(dashboard)/admin/website/alumni", "page")
 }
 

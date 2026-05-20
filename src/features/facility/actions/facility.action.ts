@@ -41,7 +41,7 @@ export async function createFacility(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/facilities", "page")
+  revalidatePath("/(dashboard)/admin/website/facilities", "page")
   return facility
 }
 
@@ -62,7 +62,7 @@ export async function updateFacility(id: string, tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/facilities", "page")
+  revalidatePath("/(dashboard)/admin/website/facilities", "page")
   return facility
 }
 
@@ -80,7 +80,7 @@ export async function deleteFacility(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/facilities", "page")
+  revalidatePath("/(dashboard)/admin/website/facilities", "page")
 }
 
 export async function updateFacilitiesOrder(tenantId: string, orderedIds: string[]) {
@@ -99,5 +99,5 @@ export async function updateFacilitiesOrder(tenantId: string, orderedIds: string
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/facilities", "page")
+  revalidatePath("/(dashboard)/admin/website/facilities", "page")
 }

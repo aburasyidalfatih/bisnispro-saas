@@ -60,7 +60,7 @@ export async function createPopup(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/popups", "page")
+  revalidatePath("/(dashboard)/admin/website/popups", "page")
   return popup
 }
 
@@ -88,7 +88,7 @@ export async function updatePopup(id: string, tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/popups", "page")
+  revalidatePath("/(dashboard)/admin/website/popups", "page")
 }
 
 export async function deletePopup(id: string, tenantId: string) {
@@ -105,7 +105,7 @@ export async function deletePopup(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/popups", "page")
+  revalidatePath("/(dashboard)/admin/website/popups", "page")
 }
 
 export async function togglePopupStatus(id: string, tenantId: string, isActive: boolean) {
@@ -130,6 +130,6 @@ export async function togglePopupStatus(id: string, tenantId: string, isActive: 
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/popups", "page")
+  revalidatePath("/(dashboard)/admin/website/popups", "page")
 }
 

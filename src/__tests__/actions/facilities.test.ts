@@ -51,7 +51,7 @@ describe('Server Actions: Facilities', () => {
     expect(requireTenantAccess).toHaveBeenCalledWith('tenant-xyz')
     expect(db.facility.findMany).toHaveBeenCalledWith({
       where: { tenantId: 'tenant-xyz' },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     })
   })
 

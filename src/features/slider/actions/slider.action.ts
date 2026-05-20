@@ -45,7 +45,7 @@ export async function createSlider(tenantId: string, data: any) {
     }
   })
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/(dashboard)/admin/website/sliders", "page")
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
@@ -64,7 +64,7 @@ export async function updateSlider(id: string, tenantId: string, data: any) {
     data: parsed
   })
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/(dashboard)/admin/website/sliders", "page")
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
@@ -79,7 +79,7 @@ export async function deleteSlider(id: string, tenantId: string) {
     where: { id, tenantId }
   })
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/(dashboard)/admin/website/sliders", "page")
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
@@ -95,7 +95,7 @@ export async function toggleSliderStatus(id: string, tenantId: string, isActive:
     data: { isActive }
   })
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/(dashboard)/admin/website/sliders", "page")
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
@@ -118,6 +118,6 @@ export async function updateSlidersOrder(tenantId: string, orderedIds: string[])
     revalidatePath(`/site/${tenant.slug}`, "page")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/sliders", "page")
+  revalidatePath("/(dashboard)/admin/website/sliders", "page")
 }
 

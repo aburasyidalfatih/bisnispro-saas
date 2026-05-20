@@ -44,7 +44,7 @@ export async function createProgram(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/programs", "page")
+  revalidatePath("/(dashboard)/admin/website/programs", "page")
   return program
 }
 
@@ -65,7 +65,7 @@ export async function updateProgram(id: string, tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/programs", "page")
+  revalidatePath("/(dashboard)/admin/website/programs", "page")
 }
 
 export async function deleteProgram(id: string, tenantId: string) {
@@ -82,7 +82,7 @@ export async function deleteProgram(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/programs", "page")
+  revalidatePath("/(dashboard)/admin/website/programs", "page")
 }
 
 export async function updateProgramsOrder(tenantId: string, orderedIds: string[]) {
@@ -101,6 +101,6 @@ export async function updateProgramsOrder(tenantId: string, orderedIds: string[]
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/programs", "page")
+  revalidatePath("/(dashboard)/admin/website/programs", "page")
 }
 

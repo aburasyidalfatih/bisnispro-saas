@@ -35,7 +35,7 @@ describe('Server Actions: Program', () => {
 
     expect(db.program.findMany).toHaveBeenCalledWith({
       where: { tenantId: 'tenant-abc' },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     })
   })
 

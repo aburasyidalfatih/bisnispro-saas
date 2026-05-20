@@ -40,7 +40,7 @@ describe('Server Actions: Extracurricular', () => {
 
     expect(db.extracurricular.findMany).toHaveBeenCalledWith({
       where: { tenantId: 'tenant-xyz' },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     })
   })
 

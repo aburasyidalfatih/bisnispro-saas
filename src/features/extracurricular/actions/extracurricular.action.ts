@@ -44,7 +44,7 @@ export async function createExtracurricular(tenantId: string, data: any) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
+  revalidatePath("/(dashboard)/admin/website/extracurriculars", "page")
   return extracurricular
 }
 
@@ -65,7 +65,7 @@ export async function updateExtracurricular(id: string, tenantId: string, data: 
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
+  revalidatePath("/(dashboard)/admin/website/extracurriculars", "page")
 }
 
 export async function deleteExtracurricular(id: string, tenantId: string) {
@@ -82,7 +82,7 @@ export async function deleteExtracurricular(id: string, tenantId: string) {
   }
 
   
-  revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
+  revalidatePath("/(dashboard)/admin/website/extracurriculars", "page")
 }
 
 export async function updateExtracurricularsOrder(tenantId: string, orderedIds: string[]) {
@@ -101,6 +101,6 @@ export async function updateExtracurricularsOrder(tenantId: string, orderedIds: 
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/extracurriculars", "page")
+  revalidatePath("/(dashboard)/admin/website/extracurriculars", "page")
 }
 

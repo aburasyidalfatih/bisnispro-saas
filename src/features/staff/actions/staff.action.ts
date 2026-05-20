@@ -100,7 +100,7 @@ export async function createStaff(tenantId: string, data: any) {
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/gtk", "page")
+  revalidatePath("/(dashboard)/admin/website/gtk", "page")
   return staff
 }
 
@@ -177,7 +177,7 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/gtk", "page")
+  revalidatePath("/(dashboard)/admin/website/gtk", "page")
 }
 
 export async function deleteStaff(id: string, tenantId: string) {
@@ -202,7 +202,7 @@ export async function deleteStaff(id: string, tenantId: string) {
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/gtk", "page")
+  revalidatePath("/(dashboard)/admin/website/gtk", "page")
 }
 
 export async function updateStaffOrder(tenantId: string, orderedIds: string[]) {
@@ -223,7 +223,7 @@ export async function updateStaffOrder(tenantId: string, orderedIds: string[]) {
     revalidatePath("/", "layout")
   }
   
-  revalidatePath("/(dashboard)/dashboard/website/gtk", "page")
+  revalidatePath("/(dashboard)/admin/website/gtk", "page")
 }
 
 /**
