@@ -13,7 +13,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, Loader2, Search } from "lucide-react"
+import { ArrowLeft, Save, Loader2, Search, Sparkles, Wand2 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import Link from "next/link"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
@@ -29,6 +37,12 @@ export default function PostFormPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+
+  // AI State
+  const [aiModalOpen, setAiModalOpen] = useState(false)
+  const [aiTopic, setAiTopic] = useState("")
+  const [aiTone, setAiTone] = useState("formal")
+  const [aiLoading, setAiLoading] = useState(false)
 
   const tenantId = branding.id
   const isNew = params.id === "new"
@@ -137,6 +151,38 @@ export default function PostFormPage() {
     }
   }
 
+  const handleGenerateAI = async () => {
+    if (!aiTopic.trim()) {
+      toast({ title: "Topik kosong", description: "Silakan masukkan poin-poin cerita terlebih dahulu.", variant: "destructive" })
+      return
+    }
+
+    setAiLoading(true)
+    try {
+      const res = await fetch("/api/tenant/ai/generate-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantId, topic: aiTopic, tone: aiTone })
+      })
+      const d = await res.json()
+      if (res.ok && d.success && d.data) {
+        setValue("title", d.data.title, { shouldValidate: true })
+        setValue("content", d.data.content, { shouldValidate: true })
+        setValue("seoTitle", d.data.seoTitle, { shouldValidate: true })
+        setValue("seoDesc", d.data.seoDesc, { shouldValidate: true })
+        setAiModalOpen(false)
+        setAiTopic("")
+        toast({ title: "Artikel Berhasil Dibuat", description: "Silakan review dan edit hasil tulisan AI sebelum menyimpan." })
+      } else {
+        toast({ title: "Gagal membuat artikel", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
   if (initialLoading) return <div className="skeleton h-[600px] rounded-2xl" />
 
   const contentValue = watch("content")
@@ -155,6 +201,15 @@ export default function PostFormPage() {
             <h1 className="text-2xl font-bold tracking-tight">{isNew ? "Tulis Artikel Baru" : "Edit Artikel"}</h1>
             <p className="text-muted-foreground mt-1 text-sm">Gunakan editor di bawah untuk membuat konten menarik.</p>
           </div>
+        </div>
+        <div>
+          <Button 
+            onClick={() => setAiModalOpen(true)}
+            className="gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-md border-0 rounded-xl"
+          >
+            <Sparkles className="h-4 w-4" />
+            Tulis dengan AI
+          </Button>
         </div>
       </div>
 
@@ -340,6 +395,67 @@ export default function PostFormPage() {
           </div>
         </div>
       </form>
+
+      {/* AI Generate Modal */}
+      <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-violet-500" />
+              AI Article Writer
+            </DialogTitle>
+            <DialogDescription>
+              Ubah poin-poin singkat menjadi artikel utuh yang profesional. Ditenagai oleh GPT-4o-Mini.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Poin Singkat Cerita / Berita <span className="text-red-500">*</span></Label>
+              <Textarea 
+                value={aiTopic}
+                onChange={(e) => setAiTopic(e.target.value)}
+                placeholder="Misal: Hari ini Senin upacara bendera. Pembina Pak Budi menyampaikan pesan tentang kebersihan lingkungan kelas. Upacara berjalan tertib dan hikmat."
+                className="min-h-[120px] rounded-xl resize-none"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Gaya Bahasa</Label>
+              <select 
+                value={aiTone}
+                onChange={(e) => setAiTone(e.target.value)}
+                className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="formal">Formal & Jurnalistik (Berita Resmi)</option>
+                <option value="santai">Santai & Inspiratif (Bercerita / Storytelling)</option>
+                <option value="pengumuman">Surat Edaran / Pengumuman Resmi</option>
+              </select>
+            </div>
+            
+            <div className="rounded-xl bg-violet-500/10 p-3 flex gap-2 items-start mt-2 border border-violet-500/20">
+              <Wand2 className="h-4 w-4 text-violet-600 mt-0.5 shrink-0" />
+              <p className="text-[11px] text-violet-700 leading-relaxed">
+                Pembuatan artikel memotong saldo AI Token (50 token). Pastikan poin berita cukup detail agar hasil maksimal.
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="ghost" className="rounded-xl" onClick={() => setAiModalOpen(false)} disabled={aiLoading}>
+              Batal
+            </Button>
+            <Button 
+              onClick={handleGenerateAI} 
+              disabled={aiLoading || !aiTopic.trim()}
+              className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
+            >
+              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {aiLoading ? "Menulis Artikel..." : "Mulai Generate"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

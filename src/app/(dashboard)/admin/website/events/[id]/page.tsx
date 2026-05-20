@@ -13,8 +13,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, Loader2 } from "lucide-react"
+import { ArrowLeft, Save, Loader2, Sparkles, Wand2 } from "lucide-react"
 import Link from "next/link"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 type FormData = z.infer<typeof eventSchema>
 
@@ -29,11 +37,52 @@ export default function EventFormPage() {
 
   const isNew = params.id === "new"
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(eventSchema),
   })
 
+  // AI State
+  const [aiModalOpen, setAiModalOpen] = useState(false)
+  const [aiInputText, setAiInputText] = useState("")
+  const [aiLoading, setAiLoading] = useState(false)
 
+  const handleGenerateAI = async () => {
+    const title = getValues("title")
+    if (!title) {
+      toast({ title: "Judul Belum Diisi", description: "Silakan isi Judul Acara terlebih dahulu.", variant: "destructive" })
+      return
+    }
+    if (!aiInputText.trim()) {
+      toast({ title: "Input kosong", description: "Silakan masukkan detail acara.", variant: "destructive" })
+      return
+    }
+
+    setAiLoading(true)
+    try {
+      const res = await fetch("/api/tenant/ai/generate-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          tenantId, 
+          promptType: "event", 
+          inputs: { text: aiInputText, name: title } 
+        })
+      })
+      const d = await res.json()
+      if (res.ok && d.success && d.data?.result) {
+        setValue("description", d.data.result, { shouldValidate: true })
+        setAiModalOpen(false)
+        setAiInputText("")
+        toast({ title: "Berhasil", description: "Deskripsi acara berhasil di-generate AI." })
+      } else {
+        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+    } finally {
+      setAiLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (isLoadingTenant) return
@@ -170,7 +219,12 @@ export default function EventFormPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Deskripsi Acara</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="description">Deskripsi Acara</Label>
+                <Button type="button" variant="outline" size="sm" onClick={() => setAiModalOpen(true)} className="h-7 text-[10px] gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700 px-2">
+                  <Sparkles className="h-3 w-3" /> Buat Deskripsi AI
+                </Button>
+              </div>
               <Textarea 
                 id="description" 
                 {...register("description")} 
@@ -192,6 +246,55 @@ export default function EventFormPage() {
           </Button>
         </div>
       </form>
+
+      {/* AI Content Modal */}
+      <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-violet-500" />
+              Generate Deskripsi Acara
+            </DialogTitle>
+            <DialogDescription>
+              AI akan merangkai poin-poin informasi menjadi deskripsi acara yang menarik dan informatif.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Detail / Poin Acara <span className="text-red-500">*</span></Label>
+              <Textarea 
+                value={aiInputText}
+                onChange={(e) => setAiInputText(e.target.value)}
+                placeholder="Contoh: Mengundang seluruh wali murid untuk pembagian rapot semester ganjil, harap hadir tepat waktu, tempat di aula."
+                className="min-h-[120px] rounded-xl resize-none"
+              />
+            </div>
+            
+            <div className="rounded-xl bg-violet-500/10 p-3 flex gap-2 items-start mt-2 border border-violet-500/20">
+              <Wand2 className="h-4 w-4 text-violet-600 mt-0.5 shrink-0" />
+              <p className="text-[11px] text-violet-700 leading-relaxed">
+                Akan memotong saldo AI Token (25 token). Pastikan judul acara sudah diisi sebelum generate.
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="ghost" className="rounded-xl" onClick={() => setAiModalOpen(false)} disabled={aiLoading}>
+              Batal
+            </Button>
+            <Button 
+              type="button"
+              onClick={handleGenerateAI} 
+              disabled={aiLoading || !aiInputText.trim()}
+              className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
+            >
+              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {aiLoading ? "Memproses..." : "Generate Deskripsi"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

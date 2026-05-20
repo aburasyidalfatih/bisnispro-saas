@@ -12,7 +12,7 @@ import {
   CheckCircle, XCircle, Clock, RefreshCcw, Trash2,
   School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User, Search, MessageSquareOff, MessageSquare, MailOpen, MailX
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 import { checkDataCompleteness, type CompletenessLevel } from "@/lib/utils/data-completeness"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
@@ -407,7 +407,7 @@ export default function SuperAdminApplicationsPage() {
                         {app.logo ? (
                           <>
                             <img 
-                              src={app.logo} 
+                              src={normalizeImageUrl(app.logo) || app.logo} 
                               alt="Logo" 
                               className="object-contain p-0.5 w-full h-full" 
                               onError={(e) => {
@@ -628,7 +628,7 @@ export default function SuperAdminApplicationsPage() {
                   {selectedApp.logo ? (
                     <>
                       <img 
-                        src={selectedApp.logo} 
+                        src={normalizeImageUrl(selectedApp.logo) || selectedApp.logo} 
                         alt="Logo" 
                         className="object-contain p-1 w-full h-full" 
                         onError={(e) => {

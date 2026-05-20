@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Trophy, Building2, TrendingUp } from "lucide-react"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface LeaderboardTenant {
   id: string
@@ -73,7 +74,7 @@ export function TenantLeaderboard() {
                     {tenant.logo ? (
                       <>
                         <Image 
-                          src={tenant.logo} 
+                          src={normalizeImageUrl(tenant.logo) || tenant.logo} 
                           alt={tenant.name} 
                           fill 
                           className="rounded-full object-contain border bg-white p-0.5" 

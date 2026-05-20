@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Link from "next/link"
 import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface LeaderboardEntry {
   id: string
@@ -192,7 +193,7 @@ export default function LeaderboardPage() {
                   {entry.tenant.logo ? (
                     <>
                       <Image 
-                        src={entry.tenant.logo} 
+                        src={normalizeImageUrl(entry.tenant.logo) || entry.tenant.logo} 
                         alt={entry.tenant.name} 
                         fill 
                         className="object-cover" 

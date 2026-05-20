@@ -8,10 +8,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, Trophy } from "lucide-react"
+import { ArrowLeft, Save, Trophy, Sparkles, Wand2, Loader2 as Loader2Icon } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
 import { getExtracurricularById, updateExtracurricular } from "@/features/extracurricular/actions/extracurricular.action"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { normalizeImageUrl } from "@/lib/utils"
 
 export default function EditExtracurricularPage() {
@@ -36,6 +44,11 @@ export default function EditExtracurricularPage() {
     contactPerson: "",
     registrationUrl: ""
   })
+
+  // AI State
+  const [aiModalOpen, setAiModalOpen] = useState(false)
+  const [aiInputText, setAiInputText] = useState("")
+  const [aiLoading, setAiLoading] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -123,6 +136,43 @@ export default function EditExtracurricularPage() {
       toast({ title: "Gagal", description: error.message, variant: "destructive" })
       setUploading(false)
       setSaving(false)
+    }
+  }
+
+  const handleGenerateAI = async () => {
+    if (!formData.name) {
+      toast({ title: "Nama Belum Diisi", description: "Silakan isi Nama Ekstrakurikuler terlebih dahulu.", variant: "destructive" })
+      return
+    }
+    if (!aiInputText.trim()) {
+      toast({ title: "Input kosong", description: "Silakan masukkan poin kegiatan ekskul.", variant: "destructive" })
+      return
+    }
+
+    setAiLoading(true)
+    try {
+      const res = await fetch("/api/tenant/ai/generate-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          tenantId, 
+          promptType: "extracurricular", 
+          inputs: { text: aiInputText, name: formData.name } 
+        })
+      })
+      const d = await res.json()
+      if (res.ok && d.success && d.data?.result) {
+        setFormData(p => ({ ...p, description: d.data.result }))
+        setAiModalOpen(false)
+        setAiInputText("")
+        toast({ title: "Berhasil", description: "Deskripsi berhasil di-generate AI." })
+      } else {
+        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+    } finally {
+      setAiLoading(false)
     }
   }
 
@@ -235,7 +285,12 @@ export default function EditExtracurricularPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Deskripsi Kegiatan</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="description">Deskripsi Kegiatan</Label>
+                <Button type="button" variant="outline" size="sm" onClick={() => setAiModalOpen(true)} className="h-7 text-[10px] gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700 px-2">
+                  <Sparkles className="h-3 w-3" /> Promosi AI
+                </Button>
+              </div>
               <Textarea 
                 id="description" 
                 value={formData.description} 
@@ -272,6 +327,54 @@ export default function EditExtracurricularPage() {
           </Card>
         </div>
       </form>
+
+      {/* AI Content Modal */}
+      <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-violet-500" />
+              Generate Promosi Ekskul
+            </DialogTitle>
+            <DialogDescription>
+              AI akan membuat kalimat promosi yang menarik agar siswa baru mau bergabung dengan ekskul ini.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Tujuan / Kegiatan Utama <span className="text-red-500">*</span></Label>
+              <Textarea 
+                value={aiInputText}
+                onChange={(e) => setAiInputText(e.target.value)}
+                placeholder="Contoh: Belajar baris berbaris, melatih disiplin, sering ikut lomba tingkat kota, dapat sertifikat."
+                className="min-h-[120px] rounded-xl resize-none"
+              />
+            </div>
+            
+            <div className="rounded-xl bg-violet-500/10 p-3 flex gap-2 items-start mt-2 border border-violet-500/20">
+              <Wand2 className="h-4 w-4 text-violet-600 mt-0.5 shrink-0" />
+              <p className="text-[11px] text-violet-700 leading-relaxed">
+                Akan memotong saldo AI Token (25 token).
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="ghost" className="rounded-xl" onClick={() => setAiModalOpen(false)} disabled={aiLoading}>
+              Batal
+            </Button>
+            <Button 
+              onClick={handleGenerateAI} 
+              disabled={aiLoading || !aiInputText.trim()}
+              className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
+            >
+              {aiLoading ? <Loader2Icon className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {aiLoading ? "Memproses..." : "Generate Deskripsi"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
