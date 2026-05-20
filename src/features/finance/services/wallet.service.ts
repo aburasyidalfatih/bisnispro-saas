@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { logger } from "@/lib/logger"
 
 // ==========================================
@@ -108,7 +108,8 @@ export async function createManualTopup(params: {
   customerName: string
   customerEmail: string
 }) {
-  const tenantData = await db.tenant.findUnique({
+  const tenantDb = withTenant(params.tenantId)
+  const tenantData = await tenantDb.tenant.findUnique({
     where: { id: params.tenantId },
     select: { settings: true }
   })
@@ -119,7 +120,7 @@ export async function createManualTopup(params: {
     throw new Error("Rekening manual tidak ditemukan")
   }
 
-  const payment = await db.payment.create({
+  const payment = await tenantDb.payment.create({
     data: {
       tenantId: params.tenantId,
       reference: `MANUAL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
@@ -139,6 +140,16 @@ export async function createManualTopup(params: {
     }
   })
 
+  // Audit trail
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId: params.tenantId,
+      action: "WALLET_TOPUP_CREATED",
+      entity: "Wallet",
+      newData: { paymentId: payment.id, amount: params.amount }
+    }
+  }).catch(() => {})
+
   return {
     message: "Transaksi manual berhasil dibuat",
     redirectUrl: `/ortu/wallet/topup/manual/${payment.id}`
@@ -152,8 +163,9 @@ export async function submitManualTopupProof(paymentId: string, proofUrl: string
   const payment = await db.payment.findUnique({ where: { id: paymentId } })
   if (!payment) throw new Error("Pembayaran tidak ditemukan")
 
+  const tenantDb = withTenant(payment.tenantId)
   const currentMeta = payment.metadata as any
-  await db.payment.update({
+  await tenantDb.payment.update({
     where: { id: paymentId },
     data: {
       status: "PENDING_VERIFICATION",
@@ -163,6 +175,16 @@ export async function submitManualTopupProof(paymentId: string, proofUrl: string
       }
     }
   })
+
+  // Audit trail
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId: payment.tenantId,
+      action: "WALLET_TOPUP_PROOF_SUBMITTED",
+      entity: "Wallet",
+      newData: { paymentId, proofUrl }
+    }
+  }).catch(() => {})
 
   // Kirim notifikasi ke admin sekolah (async, non-blocking)
   import("@/features/notification/services/notification.service").then(({ notifyTenantAdmins }) => {
@@ -205,9 +227,10 @@ export async function verifyWalletOwnership(walletId: string, userId: string) {
 // ==========================================
 export async function getBillingDashboardData(tenantId: string) {
   const { getPricingConfig } = await import("./billing.service")
+  const tenantDb = withTenant(tenantId)
 
   const [tenant, pricing, proPlan, pendingPayment, platformSettings] = await Promise.all([
-    db.tenant.findUnique({
+    tenantDb.tenant.findUnique({
       where: { id: tenantId },
       select: {
         id: true,
@@ -223,7 +246,7 @@ export async function getBillingDashboardData(tenantId: string) {
       where: { slug: "pro" },
       select: { features: true }
     }),
-    db.payment.findFirst({
+    tenantDb.payment.findFirst({
       where: { tenantId, status: "pending" },
       select: { id: true }
     }),
@@ -236,7 +259,7 @@ export async function getBillingDashboardData(tenantId: string) {
   // Untuk tenant PRO aktif: cari harga dari payment PAID terakhir (harga kontrak)
   let lockedPricePerStudent: number | null = null
   if (tenant?.plan === "pro" && tenant.isActive && tenant.expiresAt && new Date(tenant.expiresAt) > new Date()) {
-    const lastPaid = await db.payment.findFirst({
+    const lastPaid = await tenantDb.payment.findFirst({
       where: { tenantId, status: "paid", plan: "pro" },
       orderBy: { paidAt: "desc" },
       select: { metadata: true }
@@ -269,7 +292,8 @@ export async function getBillingDashboardData(tenantId: string) {
 // Query: Riwayat Billing
 // ==========================================
 export async function getBillingHistory(tenantId: string) {
-  return db.payment.findMany({
+  const tenantDb = withTenant(tenantId)
+  return tenantDb.payment.findMany({
     where: { tenantId },
     orderBy: { createdAt: "desc" },
     take: 50,
@@ -280,7 +304,8 @@ export async function getBillingHistory(tenantId: string) {
 // Mutation: Batalkan Invoice Pending
 // ==========================================
 export async function cancelPendingPayment(tenantId: string, paymentId: string) {
-  const payment = await db.payment.findUnique({
+  const tenantDb = withTenant(tenantId)
+  const payment = await tenantDb.payment.findUnique({
     where: { id: paymentId },
     select: { id: true, tenantId: true, status: true, discountCodeId: true }
   })
@@ -295,7 +320,7 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
 
   // Gunakan transaksi: batalkan invoice + kembalikan kuota kupon
   const operations: any[] = [
-    db.payment.update({
+    tenantDb.payment.update({
       where: { id: paymentId },
       data: { status: "cancelled" }
     })
@@ -311,7 +336,18 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
     )
   }
 
-  await db.$transaction(operations)
+  await tenantDb.$transaction(operations)
+
+  // Audit trail
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId,
+      action: "BILLING_PAYMENT_CANCELLED",
+      entity: "Finance",
+      newData: { paymentId }
+    }
+  }).catch(() => {})
+
   return { success: true }
 }
 

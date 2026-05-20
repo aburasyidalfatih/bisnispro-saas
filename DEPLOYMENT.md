@@ -63,3 +63,12 @@ docker compose up -d --build
 
 ---
 *Diperbarui: Mei 2026 - Optimized with Self-Hosted Runner, Native SSH & WA Gateway Enterprise Architecture*
+
+Contoh perintah untuk berpindah direktori:
+
+powershell
+cd C:\actions-runner
+Jalankan perintah berikut untuk menghubungkan runner ke server GitHub:
+
+powershell
+.\run.cmd

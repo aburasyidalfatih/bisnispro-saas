@@ -1,151 +1,62 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import { sendWhatsApp, getWaConfig } from "@/features/notification/services/notification.service"
 import { logger } from "@/lib/logger"
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
+/**
+ * POST: Trigger WhatsApp broadcast via BullMQ queue (non-blocking)
+ * 
+ * Previously: synchronous loop with sleep() — could block 25+ minutes
+ * Now: enqueue all messages, return immediately, worker processes in background
+ */
 export async function POST(req: Request) {
   const session = await auth()
-  
-  // Ensure the user is authenticated and has a tenant
-  const tenantId = session?.user?.tenants?.[0]?.tenantId
+
+  const tenantId = session?.user?.tenants?.[0]?.id
   const role = session?.user?.tenants?.[0]?.role
   const plan = (session?.user as any)?.tenants?.[0]?.plan || "free"
-  
+
   if (!tenantId || (role !== "owner" && role !== "admin")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
   if (plan === "free") {
-    return NextResponse.json({ error: "Fitur Broadcast WhatsApp hanya tersedia untuk paket Lite dan Pro." }, { status: 403 })
+    return NextResponse.json(
+      { error: "Fitur Broadcast WhatsApp hanya tersedia untuk paket Lite dan Pro." },
+      { status: 403 }
+    )
   }
 
   try {
     const body = await req.json()
-    const { target, channel, message } = body
+    const { target, message } = body
 
     if (!message) {
       return NextResponse.json({ error: "Pesan wajib diisi" }, { status: 400 })
     }
 
     if (plan === "lite" && target !== "all_gtk") {
-      return NextResponse.json({ error: "Paket Lite hanya dapat melakukan broadcast ke Guru & Staf." }, { status: 403 })
+      return NextResponse.json(
+        { error: "Paket Lite hanya dapat melakukan broadcast ke Guru & Staf." },
+        { status: 403 }
+      )
     }
 
-    // 1. Get recipients based on target and tenant
-    const targetRoles = []
-    if (target === "all_gtk") targetRoles.push("guru")
-    if (target === "all_parents") targetRoles.push("orangtua")
-    if (target === "all") targetRoles.push("guru", "orangtua")
+    const { enqueueBroadcast } = await import(
+      "@/features/notification/services/broadcast.service"
+    )
 
-    if (targetRoles.length === 0) {
-      return NextResponse.json({ error: "Target penerima tidak valid" }, { status: 400 })
-    }
-
-    const tenantUsers = await db.tenantUser.findMany({
-      where: {
-        tenantId,
-        role: { in: targetRoles }
-      },
-      include: {
-        user: true
-      }
+    const result = await enqueueBroadcast({
+      tenantId,
+      userId: session.user.id,
+      target,
+      message,
     })
 
-    const recipients = tenantUsers
-      .map(tu => ({
-        name: tu.user.name,
-        phone: tu.user.phone
-      }))
-      .filter(r => r.phone) // Only those with phone numbers
-
-    if (recipients.length === 0) {
-      return NextResponse.json({ error: "Tidak ada penerima dengan nomor WhatsApp yang valid" }, { status: 400 })
-    }
-
-    // Remove duplicates
-    const uniqueRecipients = Array.from(new Map(
-      recipients.map(r => [r.phone, r])
-    ).values())
-
-    // 2. Ambil config WA dari tenant untuk mendapatkan delay yang diset admin
-    const waConfig = await getWaConfig(tenantId)
-    const delayMin = waConfig.delayMin || 3
-    const delayMax = waConfig.delayMax || 5
-
-    const processBroadcast = async () => {
-      logger.info(`Starting tenant broadcast to ${uniqueRecipients.length} recipients`, { target, channel, tenantId })
-      
-      let successCount = 0
-      let failCount = 0
-
-      for (const [index, recipient] of uniqueRecipients.entries()) {
-        try {
-          let finalMessage = message
-            .replace(/{{name}}/g, recipient.name || "")
-            .replace(/{{phone}}/g, recipient.phone || "")
-
-          if (recipient.phone) {
-            // Log ke WaMessage dengan status PENDING
-            const waLog = await db.waMessage.create({
-              data: {
-                tenantId: tenantId,
-                to: recipient.phone,
-                content: finalMessage,
-                status: "PENDING"
-              }
-            })
-
-            const sendRes = await sendWhatsApp(recipient.phone, finalMessage, tenantId)
-            
-            if (sendRes.success) {
-              await db.waMessage.update({
-                where: { id: waLog.id },
-                data: { status: "SENT" }
-              })
-              successCount++
-            } else {
-              await db.waMessage.update({
-                where: { id: waLog.id },
-                data: { status: "FAILED", error: sendRes.error }
-              })
-              failCount++
-            }
-          }
-
-          // Delay antar pesan agar tidak spam
-          if (index < uniqueRecipients.length - 1) {
-            if (waConfig.provider !== "starsender") {
-              const minMs = delayMin * 1000
-              const maxMs = delayMax * 1000
-              const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs
-              if (delay > 0) await sleep(delay)
-            } else {
-               await sleep(500)
-            }
-          }
-
-        } catch (error: any) {
-          failCount++
-          logger.error("Tenant Broadcast recipient failed", error, { recipient })
-        }
-      }
-
-      logger.info(`Tenant Broadcast completed. Success: ${successCount}, Failed: ${failCount}`)
-    }
-
-    // Trigger process in background
-    processBroadcast().catch(e => logger.error("Fatal Background Tenant Broadcast Error", e))
-
-    return NextResponse.json({ 
-      message: `Broadcast sedang diproses untuk ${uniqueRecipients.length} nomor tujuan.`,
-      count: uniqueRecipients.length
-    })
-
-  } catch (error) {
-    logger.error("Tenant Broadcast trigger error", error)
-    return NextResponse.json({ error: "Gagal memulai broadcast" }, { status: 500 })
+    return NextResponse.json(result)
+  } catch (error: any) {
+    const msg = error.message || "Gagal memulai broadcast"
+    logger.error("Broadcast trigger error", error, { tenantId })
+    const status = msg.includes("valid") || msg.includes("penerima") ? 400 : 500
+    return NextResponse.json({ error: msg }, { status })
   }
 }

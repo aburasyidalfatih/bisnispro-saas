@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
 
+/**
+ * GET: Retrieve broadcast history for tenant (delegates to broadcast.service)
+ */
 export async function GET(req: Request) {
   const session = await auth()
   
-  const tenantId = session?.user?.tenants?.[0]?.tenantId
+  const tenantId = session?.user?.tenants?.[0]?.id
   const role = session?.user?.tenants?.[0]?.role
   const plan = (session?.user as any)?.tenants?.[0]?.plan || "free"
   
@@ -22,27 +24,12 @@ export async function GET(req: Request) {
     const page = parseInt(url.searchParams.get("page") || "1")
     const limit = parseInt(url.searchParams.get("limit") || "10")
     
-    const skip = (page - 1) * limit
+    const { getBroadcastHistory } = await import(
+      "@/features/notification/services/broadcast.service"
+    )
 
-    const [data, total] = await Promise.all([
-      db.waMessage.findMany({
-        where: { tenantId },
-        orderBy: { createdAt: "desc" },
-        skip,
-        take: limit,
-      }),
-      db.waMessage.count({
-        where: { tenantId }
-      })
-    ])
-
-    return NextResponse.json({
-      data,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit)
-    })
-
+    const result = await getBroadcastHistory(tenantId, page, limit)
+    return NextResponse.json(result)
   } catch (error) {
     return NextResponse.json({ error: "Gagal mengambil history pesan" }, { status: 500 })
   }

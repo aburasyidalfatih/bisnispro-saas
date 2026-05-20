@@ -7,13 +7,23 @@ export async function POST(req: Request) {
   try {
     const body = await req.json()
 
+    const privateKey = process.env.TRIPAY_PRIVATE_KEY
+    if (!privateKey) {
+      logger.error("Payment callback: TRIPAY_PRIVATE_KEY is not configured")
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    }
+
+    const callbackSignature = req.headers.get("x-callback-signature")
+    if (!callbackSignature) {
+      return NextResponse.json({ error: "Missing signature" }, { status: 403 })
+    }
+
     // Verifikasi signature dari Tripay
     const signature = crypto
-      .createHmac("sha256", process.env.TRIPAY_PRIVATE_KEY || "")
+      .createHmac("sha256", privateKey)
       .update(JSON.stringify(body))
       .digest("hex")
 
-    const callbackSignature = req.headers.get("x-callback-signature")
     if (callbackSignature !== signature) {
       logger.warn("Payment callback: invalid signature", {
         merchantRef: body.merchant_ref,

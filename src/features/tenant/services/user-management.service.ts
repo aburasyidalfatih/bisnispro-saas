@@ -1,14 +1,15 @@
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import bcrypt from "bcryptjs"
 
 // ==========================================
 // Query: List Users in Tenant
 // ==========================================
 export async function listTenantUsers(tenantId: string, role?: string | null) {
+  const tenantDb = withTenant(tenantId)
   const whereClause: any = { tenantId }
   if (role) whereClause.role = role
 
-  const data = await db.tenantUser.findMany({
+  const data = await tenantDb.tenantUser.findMany({
     where: whereClause,
     include: {
       user: { select: { id: true, name: true, email: true, phone: true, isActive: true, createdAt: true } },
@@ -43,10 +44,11 @@ export async function addUserToTenant(params: {
 }) {
   const { tenantId, callerUserId, isSuperAdmin, name, role, phone, password } = params
   const email = params.email.toLowerCase()
+  const tenantDb = withTenant(tenantId)
 
   // Cek izin
   if (!isSuperAdmin) {
-    const tu = await db.tenantUser.findUnique({
+    const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: callerUserId } },
     })
     if (!tu || !["owner", "admin"].includes(tu.role)) {
@@ -56,9 +58,9 @@ export async function addUserToTenant(params: {
 
   // Cek kuota admin untuk paket free
   if (role === "admin") {
-    const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
+    const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId } })
     if (tenant?.plan === "free") {
-      const adminCount = await db.tenantUser.count({ where: { tenantId, role: "admin" } })
+      const adminCount = await tenantDb.tenantUser.count({ where: { tenantId, role: "admin" } })
       if (adminCount >= 1) {
         throw new Error("Kuota maksimal 1 admin tambahan untuk paket Free. Silakan upgrade paket untuk menambah.")
       }
@@ -68,7 +70,7 @@ export async function addUserToTenant(params: {
   let user = await db.user.findUnique({ where: { email } })
 
   if (user) {
-    const existing = await db.tenantUser.findUnique({
+    const existing = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: user.id } },
     })
 
@@ -104,9 +106,19 @@ export async function addUserToTenant(params: {
     })
   }
 
-  await db.tenantUser.create({
+  await tenantDb.tenantUser.create({
     data: { tenantId, userId: user.id, role },
   })
+
+  // Audit trail
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId,
+      action: "USER_ADDED",
+      entity: "User",
+      newData: { targetUserId: user.id, name, role }
+    }
+  }).catch(() => {})
 
   return { message: "User berhasil ditambahkan", userId: user.id }
 }
@@ -132,9 +144,10 @@ export async function editTenantUser(params: {
   })
 
   if (!targetTu) throw new Error("User tidak ditemukan")
+  const tenantDb = withTenant(targetTu.tenantId)
 
   if (!isSuperAdmin) {
-    const callerTu = await db.tenantUser.findUnique({
+    const callerTu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId: targetTu.tenantId, userId: callerUserId } }
     })
     if (!callerTu || !["owner", "admin"].includes(callerTu.role)) {
@@ -157,6 +170,16 @@ export async function editTenantUser(params: {
     data: updateData
   })
 
+  // Audit trail
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId: targetTu.tenantId,
+      action: "USER_EDITED",
+      entity: "User",
+      newData: { targetUserId: targetTu.userId, name, email }
+    }
+  }).catch(() => {})
+
   return { message: "User berhasil diperbarui" }
 }
 
@@ -166,9 +189,10 @@ export async function editTenantUser(params: {
 export async function deleteTenantUser(tenantUserId: string, callerUserId: string, isSuperAdmin: boolean) {
   const targetTu = await db.tenantUser.findUnique({ where: { id: tenantUserId } })
   if (!targetTu) throw new Error("User tidak ditemukan")
+  const tenantDb = withTenant(targetTu.tenantId)
 
   if (!isSuperAdmin) {
-    const callerTu = await db.tenantUser.findUnique({
+    const callerTu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId: targetTu.tenantId, userId: callerUserId } }
     })
     if (!callerTu || !["owner", "admin"].includes(callerTu.role)) {
@@ -179,6 +203,17 @@ export async function deleteTenantUser(tenantUserId: string, callerUserId: strin
     }
   }
 
-  await db.tenantUser.delete({ where: { id: tenantUserId } })
+  await tenantDb.tenantUser.delete({ where: { id: tenantUserId } })
+
+  // Audit trail
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId: targetTu.tenantId,
+      action: "USER_DELETED",
+      entity: "User",
+      newData: { targetUserId: targetTu.userId, tenantUserId }
+    }
+  }).catch(() => {})
+
   return { message: "User dihapus dari tenant" }
 }

@@ -1,10 +1,11 @@
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
 // ==========================================
 // Query: List Posts
 // ==========================================
 export async function listPosts(tenantId: string, type?: string | null) {
+  const tenantDb = withTenant(tenantId)
   const whereClause: any = { tenantId }
   
   if (type) {
@@ -24,7 +25,7 @@ export async function listPosts(tenantId: string, type?: string | null) {
     whereClause.type = { notIn: ["PENGUMUMAN", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA", "PENGUMUMAN_SEMUA"] }
   }
 
-  return db.post.findMany({
+  return tenantDb.post.findMany({
     where: whereClause,
     orderBy: { createdAt: 'desc' },
     include: {
@@ -48,11 +49,12 @@ export async function createPost(params: {
   data: Record<string, any>
 }) {
   const { tenantId, userId, isSuperAdmin, data } = params
+  const tenantDb = withTenant(tenantId)
 
   // Verifikasi peran
   let userRole = "orangtua"
   if (!isSuperAdmin) {
-    const tu = await db.tenantUser.findUnique({
+    const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId } },
     })
     const allowedRoles = ["owner", "admin", "teacher", "operator", "guru"]
@@ -68,7 +70,7 @@ export async function createPost(params: {
     finalStatus = "PENDING"
   }
 
-  const post = await db.post.create({
+  const post = await tenantDb.post.create({
     data: {
       ...data,
       tenantId,
@@ -77,7 +79,8 @@ export async function createPost(params: {
     } as any
   })
 
-  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  // Invalidate cache
+  const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) await invalidatePublicTenantCache(tenant.slug)
 
   // TRIGGER GAMIFICATION (Direct DB call)
@@ -94,6 +97,16 @@ export async function createPost(params: {
     console.error("Failed to trigger gamification event", error)
   }
 
+  // Audit Log
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId,
+      action: "CMS_POST_CREATED",
+      entity: "Post",
+      newData: { postId: post.id, title: post.title }
+    }
+  }).catch(() => {})
+
   return post
 }
 
@@ -101,7 +114,8 @@ export async function createPost(params: {
 // Query: List Events
 // ==========================================
 export async function listEvents(tenantId: string) {
-  return db.event.findMany({
+  const tenantDb = withTenant(tenantId)
+  return tenantDb.event.findMany({
     where: { tenantId },
     orderBy: { startDate: 'asc' },
   })
@@ -117,9 +131,10 @@ export async function createEvent(params: {
   data: Record<string, any>
 }) {
   const { tenantId, userId, isSuperAdmin, data } = params
+  const tenantDb = withTenant(tenantId)
 
   if (!isSuperAdmin) {
-    const tu = await db.tenantUser.findUnique({
+    const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId } },
     })
     const allowedRoles = ["owner", "admin", "operator"]
@@ -128,12 +143,22 @@ export async function createEvent(params: {
     }
   }
 
-  const event = await db.event.create({
+  const event = await tenantDb.event.create({
     data: { ...data, tenantId } as any
   })
 
-  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) await invalidatePublicTenantCache(tenant.slug)
+
+  // Audit Log
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId,
+      action: "CMS_EVENT_CREATED",
+      entity: "Event",
+      newData: { eventId: event.id, title: event.title }
+    }
+  }).catch(() => {})
 
   return event
 }
@@ -142,7 +167,8 @@ export async function createEvent(params: {
 // Query: List Categories
 // ==========================================
 export async function listCategories(tenantId: string) {
-  return db.category.findMany({
+  const tenantDb = withTenant(tenantId)
+  return tenantDb.category.findMany({
     where: { tenantId },
     orderBy: { createdAt: 'desc' },
   })
@@ -158,9 +184,10 @@ export async function createCategory(params: {
   data: Record<string, any>
 }) {
   const { tenantId, userId, isSuperAdmin, data } = params
+  const tenantDb = withTenant(tenantId)
 
   if (!isSuperAdmin) {
-    const tu = await db.tenantUser.findUnique({
+    const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId } },
     })
     const allowedRoles = ["owner", "admin", "teacher", "operator"]
@@ -170,7 +197,7 @@ export async function createCategory(params: {
   }
 
   // Check unique slug
-  const existingCategory = await db.category.findFirst({
+  const existingCategory = await tenantDb.category.findFirst({
     where: { tenantId, slug: data.slug }
   })
 
@@ -178,7 +205,19 @@ export async function createCategory(params: {
     throw new Error("Slug kategori sudah digunakan")
   }
 
-  return db.category.create({
+  const cat = await tenantDb.category.create({
     data: { ...data, tenantId } as any
   })
+
+  // Audit Log
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId,
+      action: "CMS_CATEGORY_CREATED",
+      entity: "Category",
+      newData: { categoryId: cat.id, name: cat.name }
+    }
+  }).catch(() => {})
+
+  return cat
 }

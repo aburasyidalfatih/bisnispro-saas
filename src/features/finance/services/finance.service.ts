@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { nanoid } from "nanoid"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
@@ -54,10 +54,11 @@ export type FinanceResultDTO<T = any> = {
 export class FinanceService {
   static async createInvoice(data: CreateInvoiceDTO): Promise<FinanceResultDTO> {
     try {
+      const tenantDb = withTenant(data.tenantId)
       // Generate kode unik
       const code = `INV-${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-${nanoid(6).toUpperCase()}`
 
-      const invoice = await db.$transaction(async (tx) => {
+      const invoice = await tenantDb.$transaction(async (tx) => {
         const inv = await tx.invoice.create({
           data: {
             tenantId: data.tenantId,
@@ -90,6 +91,16 @@ export class FinanceService {
         return inv
       })
 
+      // Audit trail
+      await tenantDb.auditLog.create({
+        data: {
+          tenantId: data.tenantId,
+          action: "INVOICE_CREATED",
+          entity: "Invoice",
+          newData: { invoiceId: invoice.id, code: invoice.code, amount: invoice.amount }
+        }
+      }).catch(() => {})
+
       // Send Notification to Parents asynchronously
       this.sendInvoiceNotification(invoice).catch(err => {
         console.error("Gagal mengirim notifikasi invoice:", err)
@@ -102,12 +113,13 @@ export class FinanceService {
   }
 
   private static async sendInvoiceNotification(invoice: any) {
-    const student = await db.student.findUnique({
+    const tenantDb = withTenant(invoice.tenantId)
+    const student = await tenantDb.student.findUnique({
       where: { id: invoice.studentId },
       include: { parents: true }
     })
 
-    const tenant = await db.tenant.findUnique({
+    const tenant = await tenantDb.tenant.findUnique({
       where: { id: invoice.tenantId },
       select: { name: true }
     })
@@ -136,14 +148,15 @@ export class FinanceService {
 
   static async createBulkInvoices(data: CreateBulkInvoiceDTO): Promise<FinanceResultDTO> {
     try {
-      const billingType = await db.billingType.findUnique({
+      const tenantDb = withTenant(data.tenantId)
+      const billingType = await tenantDb.billingType.findUnique({
         where: { id: data.billingTypeId }
       })
 
       if (!billingType) return { success: false, error: "Billing Type tidak ditemukan" }
 
       // Ambil semua siswa aktif di tenant ini
-      const students = await db.student.findMany({
+      const students = await tenantDb.student.findMany({
         where: { tenantId: data.tenantId, deletedAt: null },
         select: { id: true }
       })
@@ -169,10 +182,20 @@ export class FinanceService {
       })
 
       // Insert massal
-      const createdCount = await db.invoice.createMany({
+      const createdCount = await tenantDb.invoice.createMany({
         data: invoicesData,
         skipDuplicates: true
       })
+
+      // Audit trail
+      await tenantDb.auditLog.create({
+        data: {
+          tenantId: data.tenantId,
+          action: "BULK_INVOICES_CREATED",
+          entity: "Invoice",
+          newData: { count: createdCount.count, billingTypeId: data.billingTypeId }
+        }
+      }).catch(() => {})
 
       return { success: true, data: { count: createdCount.count } }
     } catch (error: any) {
@@ -183,8 +206,9 @@ export class FinanceService {
   static async processPayment(data: PayInvoiceDTO): Promise<FinanceResultDTO> {
     try {
       const { tenantId, invoiceId, amount, method, proofUrl, notes, userId } = data
+      const tenantDb = withTenant(tenantId)
 
-      const invoice = await db.invoice.findFirst({
+      const invoice = await tenantDb.invoice.findFirst({
         where: { id: invoiceId, tenantId, deletedAt: null },
         include: { student: { include: { walletAccount: true, parents: true } } },
       })
@@ -197,7 +221,7 @@ export class FinanceService {
         if (!wallet) return { success: false, error: "Siswa tidak memiliki wallet" }
         if (wallet.balance < amount) return { success: false, error: "Saldo tidak mencukupi" }
 
-        await db.$transaction(async (tx) => {
+        await tenantDb.$transaction(async (tx) => {
           // Atomic decrement to prevent Race Conditions
           const updatedWallet = await tx.walletAccount.update({
             where: { id: wallet.id },
@@ -262,6 +286,16 @@ export class FinanceService {
           })
         })
 
+        // Audit trail
+        await tenantDb.auditLog.create({
+          data: {
+            tenantId,
+            action: "PAYMENT_WALLET_SUCCESS",
+            entity: "Payment",
+            newData: { invoiceId, amount, method: "WALLET" }
+          }
+        }).catch(() => {})
+
         // Offload Notification to Background Job
         const parents = invoice.student.parents || []
         if (parents.length > 0) {
@@ -286,7 +320,7 @@ export class FinanceService {
       }
 
       // Metode lain (TRANSFER/CASH/TRIPAY) → status PENDING, tunggu verifikasi admin
-      const invoicePayment = await db.invoicePayment.create({
+      const invoicePayment = await tenantDb.invoicePayment.create({
         data: {
           invoiceId,
           tenantId,
@@ -299,6 +333,16 @@ export class FinanceService {
         },
       })
 
+      // Audit trail
+      await tenantDb.auditLog.create({
+        data: {
+          tenantId,
+          action: "PAYMENT_PENDING",
+          entity: "Payment",
+          newData: { paymentId: invoicePayment.id, invoiceId, amount, method }
+        }
+      }).catch(() => {})
+
       return { success: true, data: { status: "PENDING", message: "Pembayaran tercatat, menunggu verifikasi admin", paymentId: invoicePayment.id } }
     } catch (error: any) {
       return { success: false, error: "Gagal memproses pembayaran" }
@@ -308,8 +352,9 @@ export class FinanceService {
   static async verifyPayment(data: VerifyPaymentDTO): Promise<FinanceResultDTO> {
     try {
       const { tenantId, paymentId, action, notes, userId } = data
+      const tenantDb = withTenant(tenantId)
 
-      const payment = await db.invoicePayment.findUnique({
+      const payment = await tenantDb.invoicePayment.findUnique({
         where: { id: paymentId },
         include: { 
           invoice: {
@@ -322,7 +367,7 @@ export class FinanceService {
       if (payment.tenantId !== tenantId) return { success: false, error: "Unauthorized" }
       if (payment.status !== "PENDING") return { success: false, error: "Pembayaran sudah diproses sebelumnya (Idempotency Protected)" }
 
-      await db.$transaction(async (tx) => {
+      await tenantDb.$transaction(async (tx) => {
         await tx.invoicePayment.update({
           where: { id: paymentId },
           data: {
@@ -362,6 +407,16 @@ export class FinanceService {
           })
         }
       })
+
+      // Audit trail
+      await tenantDb.auditLog.create({
+        data: {
+          tenantId,
+          action: action === "VERIFIED" ? "PAYMENT_VERIFIED" : "PAYMENT_REJECTED",
+          entity: "Payment",
+          newData: { paymentId, action, invoiceId: payment.invoice.id, amount: payment.amount }
+        }
+      }).catch(() => {})
 
       if (action === "VERIFIED") {
         const student = payment.invoice.student

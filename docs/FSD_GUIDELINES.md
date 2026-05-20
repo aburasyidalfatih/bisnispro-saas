@@ -97,3 +97,32 @@ Folder `src/lib/` HANYA boleh berisi infrastruktur global yang digunakan oleh SE
 
 ## Sisa Refactor (Boy Scout Rule)
 ~50 API routes di `src/app/api/` masih meng-import `db` secara langsung. Mayoritas adalah **CRUD ultra-sederhana** (1-2 query), **webhooks**, atau **utility endpoints**. Mereka BOLEH di-refactor secara bertahap (Boy Scout Rule) ketika ada bug yang perlu diperbaiki, tetapi TIDAK wajib karena tidak mengandung logika bisnis kompleks.
+
+## Strategi Caching & Invalidation (Fase 4 - Skala Enterprise)
+Untuk memastikan performa 10/10 dan meminimalkan beban database pada 10.000+ tenant, SchoolPro menerapkan strategi caching multi-tier:
+
+### 1. Unified Cache Helper (`src/lib/cache.ts`)
+Semua fitur caching wajib menggunakan `cacheGet`, `cacheSet`, dan `cacheInvalidate` dari unified cache helper dengan konvensi key yang terpusat (`cacheKeys`). Caching ini mendukung 3-tier fallback otomatis (Upstash -> Local Redis -> In-memory).
+
+### 2. Standar Konvensi Key Cache
+*   **Public Site Data:** `tenant:site:${slug}` (Invalidasi setiap kali profil, kontak, program, atau setting website berubah).
+*   **Posts/News List:** `posts:${tenantId}:p${page}` (Invalidasi jika ada postingan baru dibuat, dihapus, atau diedit).
+*   **Post Details:** `post:${slug}:${postId}` (Invalidasi jika isi post/berita diupdate).
+*   **Events/Staff/Gallery:** `events:${tenantId}`, `staff:${tenantId}`, `gallery:${tenantId}`.
+
+### 3. Invalidation Actions (Pemicu Invalidasi)
+Setiap kali Service melakukan operasi mutasi data (CREATE/UPDATE/DELETE), panggil fungsi invalidasi yang bersesuaian:
+```typescript
+import { cacheInvalidate, cacheKeys } from "@/lib/cache"
+
+// Contoh saat edit profil sekolah
+await db.tenant.update({ ... })
+await cacheInvalidate(cacheKeys.tenantSite(slug))
+```
+
+### 4. Incremental Static Regeneration (ISR)
+Halaman publik tenant (`src/app/site/[slug]/page.tsx`) diatur menggunakan ISR dengan `export const revalidate = 300` (5 menit). Hal ini menjamin Time-to-First-Byte (TTFB) super cepat di level Edge CDN serta mengurangi overhead query database yang berulang.
+
+### 5. Client & CDN Static Headers
+Semua aset statis tenant (seperti logo, galeri, lampiran dokumen) yang di-serve via `/api/files/...` disematkan header `Cache-Control: public, max-age=31536000, s-maxage=31536000, immutable` untuk memanfaatkan caching permanen di level Browser dan Edge CDN.
+

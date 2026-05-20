@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 
 // ==========================================
 // Query: List Notifications (In-App)
@@ -58,16 +58,17 @@ export async function updateNotificationPreference(userId: string, channel: stri
 // Query: Internal Messages (Inbox/Sent)
 // ==========================================
 export async function listMessages(tenantId: string, userId: string, isSuperAdmin: boolean, isSent: boolean) {
+  const tenantDb = withTenant(tenantId)
   let isAdminRole = isSuperAdmin
   if (!isAdminRole) {
-    const tu = await db.tenantUser.findUnique({
+    const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId } },
     })
     isAdminRole = tu?.role === "owner" || tu?.role === "admin"
   }
 
   if (isSent) {
-    return db.internalMessage.findMany({
+    return tenantDb.internalMessage.findMany({
       where: { tenantId, senderId: userId },
       orderBy: { createdAt: 'desc' },
       include: {
@@ -87,7 +88,7 @@ export async function listMessages(tenantId: string, userId: string, isSuperAdmi
     }
   }
 
-  return db.internalMessage.findMany({
+  return tenantDb.internalMessage.findMany({
     where: whereClause,
     orderBy: { createdAt: 'desc' },
     include: {
@@ -100,7 +101,9 @@ export async function listMessages(tenantId: string, userId: string, isSuperAdmi
 // Mutation: Send Internal Message
 // ==========================================
 export async function sendMessage(tenantId: string, senderId: string, receiverId: string | null, subject: string | null, body: string) {
-  return db.internalMessage.create({
+  const tenantDb = withTenant(tenantId)
+  
+  const msg = await tenantDb.internalMessage.create({
     data: {
       tenantId,
       senderId,
@@ -109,15 +112,28 @@ export async function sendMessage(tenantId: string, senderId: string, receiverId
       body
     }
   })
+
+  // Audit trail
+  await tenantDb.auditLog.create({
+    data: {
+      tenantId,
+      action: "INTERNAL_MESSAGE_SENT",
+      entity: "Notification",
+      newData: { messageId: msg.id }
+    }
+  }).catch(() => {})
+
+  return msg
 }
 
 // ==========================================
 // Query: Unread Message Count
 // ==========================================
 export async function getUnreadCount(tenantId: string, userId: string, isSuperAdmin: boolean) {
+  const tenantDb = withTenant(tenantId)
   let isAdminRole = isSuperAdmin
   if (!isAdminRole) {
-    const tu = await db.tenantUser.findUnique({
+    const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId } },
     })
     isAdminRole = tu?.role === "owner" || tu?.role === "admin"
@@ -135,11 +151,11 @@ export async function getUnreadCount(tenantId: string, userId: string, isSuperAd
     }
   }
 
-  const internalCount = await db.internalMessage.count({ where: internalWhere })
+  const internalCount = await tenantDb.internalMessage.count({ where: internalWhere })
 
   let contactCount = 0
   if (isAdminRole) {
-    contactCount = await db.contactSubmission.count({ where: { tenantId, isRead: false } })
+    contactCount = await tenantDb.contactSubmission.count({ where: { tenantId, isRead: false } })
   }
 
   return { unread: internalCount + contactCount, internalCount, contactCount }
