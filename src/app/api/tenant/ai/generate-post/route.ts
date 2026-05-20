@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { getAiProvider, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
+import { getAiModel, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
 import { generateObject } from "ai"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
@@ -29,13 +29,13 @@ export async function POST(req: Request) {
       }, { status: 402 })
     }
 
-    // Get AI Provider
-    const aiResult = await getAiProvider(tenantId)
-    if (!aiResult.success || !aiResult.provider) {
+    // Get AI Provider & Model
+    const aiResult = await getAiModel(tenantId)
+    if (!aiResult.success || !aiResult.model) {
       return NextResponse.json({ error: aiResult.error }, { status: 500 })
     }
 
-    const provider = aiResult.provider
+    const model = aiResult.model
 
     // Generate content using AI
     const systemPrompt = `Anda adalah seorang jurnalis dan praktisi humas profesional yang bekerja untuk sebuah sekolah di Indonesia. 
@@ -50,7 +50,7 @@ Aturan penulisan:
 6. Artikel harus terdiri dari 3-5 paragraf. Paragraf pertama adalah pembuka (lead), lalu isi utama, dan selalu ditutup dengan paragraf harapan atau motivasi ke depannya.`
 
     const { object } = await generateObject({
-      model: provider('gpt-4o-mini'),
+      model,
       system: systemPrompt,
       prompt: `Topik / Poin Singkat Artikel:\n${topic}`,
       schema: z.object({

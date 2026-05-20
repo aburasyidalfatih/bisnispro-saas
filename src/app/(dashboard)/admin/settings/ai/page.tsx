@@ -12,11 +12,7 @@ import { toast } from "@/hooks/use-toast"
 import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins, History, User, Zap, CheckCircle2, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const AI_PACKAGES = [
-  { id: "pkg_5k", label: "5.000 Token", tokens: 5000, price: 25000 },
-  { id: "pkg_10k", label: "10.000 Token", tokens: 10000, price: 45000 },
-  { id: "pkg_50k", label: "50.000 Token", tokens: 50000, price: 200000 },
-]
+// Removed hardcoded AI_PACKAGES
 
 export default function AiSettingsPage() {
   const { data: session } = useSession()
@@ -32,7 +28,8 @@ export default function AiSettingsPage() {
   })
 
   const [checkingOutAi, setCheckingOutAi] = useState(false)
-  const [selectedAiPkg, setSelectedAiPkg] = useState<string>("pkg_5k")
+  const [selectedAiPkg, setSelectedAiPkg] = useState<string>("")
+  const [aiPackages, setAiPackages] = useState<any[]>([])
 
   const [logs, setLogs] = useState<any[]>([])
   const [logsLoading, setLogsLoading] = useState(true)
@@ -65,13 +62,22 @@ export default function AiSettingsPage() {
         setLoading(false)
       })
       
-    fetch(`/api/tenant/ai-settings/logs?limit=20`)
       .then(res => res.json())
       .then(data => {
         setLogs(data.data || [])
         setLogsLoading(false)
       })
       .catch(() => setLogsLoading(false))
+
+    fetch(`/api/tenant/ai-packages`)
+      .then(res => res.json())
+      .then(data => {
+        setAiPackages(data || [])
+        if (data && data.length > 0) {
+          setSelectedAiPkg(data[0].id)
+        }
+      })
+      .catch(() => {})
   }, [tenantId])
 
   const handleSave = async () => {
@@ -100,10 +106,10 @@ export default function AiSettingsPage() {
   const handleCheckoutAi = async () => {
     setCheckingOutAi(true)
     try {
-      const res = await fetch("/api/tenant/billing/ai-addon", {
+      const res = await fetch("/api/tenant/billing/topup-ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ packageKey: selectedAiPkg }),
+        body: JSON.stringify({ packageId: selectedAiPkg }),
       })
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Gagal membuat invoice AI")
@@ -198,7 +204,7 @@ export default function AiSettingsPage() {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-3 gap-4 mb-6">
-            {AI_PACKAGES.map((pkg) => (
+            {aiPackages.map((pkg) => (
               <div 
                 key={pkg.id}
                 onClick={() => setSelectedAiPkg(pkg.id)}
@@ -214,13 +220,21 @@ export default function AiSettingsPage() {
                     <CheckCircle2 className="h-5 w-5" />
                   </div>
                 )}
-                <p className="text-muted-foreground font-semibold text-sm mb-1">{pkg.label}</p>
+                <p className="text-muted-foreground font-semibold text-sm mb-1">{pkg.name}</p>
                 <div className="flex items-end gap-1 text-foreground">
                   <span className="text-sm font-semibold">Rp</span>
                   <span className="text-2xl font-bold">{pkg.price.toLocaleString("id-ID")}</span>
                 </div>
+                <p className="text-xs text-blue-600 font-medium mt-2 bg-blue-500/10 inline-block px-2 py-1 rounded-md">
+                  {pkg.tokens.toLocaleString("id-ID")} Token
+                </p>
               </div>
             ))}
+            {aiPackages.length === 0 && (
+              <div className="col-span-full text-center text-muted-foreground italic p-4 border rounded-xl">
+                Belum ada paket AI yang tersedia.
+              </div>
+            )}
           </div>
           <div className="flex justify-end">
             <Button 

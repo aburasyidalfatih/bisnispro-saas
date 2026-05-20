@@ -50,7 +50,13 @@ export default function SuperAdminSettingsPage() {
     block_search_indexing: "false",
     contact_email: "support@schoolpro.id",
     META_PIXEL_ID: "",
+    AI_PROVIDER: "openai",
     OPENAI_API_KEY: "",
+    OPENAI_MODEL: "gpt-4o-mini",
+    GEMINI_API_KEY: "",
+    GEMINI_MODEL: "gemini-1.5-flash",
+    OPENROUTER_API_KEY: "",
+    OPENROUTER_MODEL: "",
     
     // Email
     SMTP_HOST: "",
@@ -1185,22 +1191,114 @@ export default function SuperAdminSettingsPage() {
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Settings2 className="h-4 w-4 text-primary" /></div>
                   <CardTitle className="text-lg">Konfigurasi Kecerdasan Buatan</CardTitle>
                 </div>
-                <Button onClick={() => handleSaveBatch(["OPENAI_API_KEY"])} disabled={saving} className="rounded-xl shadow-lg shadow-primary/20">
+                <Button onClick={() => handleSaveBatch(["AI_PROVIDER", "OPENAI_API_KEY", "OPENAI_MODEL", "GEMINI_API_KEY", "GEMINI_MODEL", "OPENROUTER_API_KEY", "OPENROUTER_MODEL"])} disabled={saving} className="rounded-xl shadow-lg shadow-primary/20">
                   <Save className="mr-2 h-4 w-4" /> Simpan Pengaturan
                 </Button>
               </div>
-              <CardDescription>Atur Master API Key dari OpenAI yang akan digunakan oleh tenant yang tidak memiliki API Key sendiri (Tidak menggunakan BYOK).</CardDescription>
+              <CardDescription>Atur Provider LLM dan API Key yang akan digunakan secara default oleh sistem (untuk tenant yang tidak menggunakan API Key sendiri).</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2 max-w-2xl">
-                <Label>Master OpenAI API Key</Label>
-                <Input 
-                  type="password"
-                  placeholder="sk-proj-..." 
-                  value={form.OPENAI_API_KEY} 
-                  onChange={e => setForm({ ...form, OPENAI_API_KEY: e.target.value })} 
-                />
-                <p className="text-xs text-muted-foreground">Kunci ini akan disimpan di database <code>platform_settings</code> dan digunakan sebagai fallback jika <code>process.env.OPENAI_API_KEY</code> tidak tersedia dan tenant tidak memasukkan API Key sendiri.</p>
+              <div className="space-y-4 max-w-2xl">
+                <div className="space-y-2">
+                  <Label>Provider AI Utama</Label>
+                  <Select value={form.AI_PROVIDER} onValueChange={v => setForm({ ...form, AI_PROVIDER: v })}>
+                    <SelectTrigger className="w-full rounded-xl">
+                      <SelectValue placeholder="Pilih Provider" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="openai">OpenAI</SelectItem>
+                      <SelectItem value="gemini">Google Gemini</SelectItem>
+                      <SelectItem value="openrouter">OpenRouter</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Pilih mesin LLM yang akan digunakan oleh platform ini.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className={cn("space-y-4 border p-4 rounded-xl transition-all", form.AI_PROVIDER === 'openai' ? 'bg-primary/5 border-primary/30' : 'bg-muted/20 opacity-60 grayscale-[50%]')}>
+                    <div className="font-semibold text-sm flex items-center justify-between">
+                      OpenAI
+                      {form.AI_PROVIDER === 'openai' && <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />}
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Master API Key</Label>
+                      <Input 
+                        type="password"
+                        placeholder="sk-proj-..." 
+                        value={form.OPENAI_API_KEY} 
+                        onChange={e => setForm({ ...form, OPENAI_API_KEY: e.target.value })} 
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Model Default</Label>
+                      <Input 
+                        placeholder="gpt-4o-mini" 
+                        value={form.OPENAI_MODEL} 
+                        onChange={e => setForm({ ...form, OPENAI_MODEL: e.target.value })} 
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={cn("space-y-4 border p-4 rounded-xl transition-all", form.AI_PROVIDER === 'gemini' ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-muted/20 opacity-60 grayscale-[50%]')}>
+                    <div className="font-semibold text-sm flex items-center justify-between">
+                      Google Gemini
+                      {form.AI_PROVIDER === 'gemini' && <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />}
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Master API Key</Label>
+                      <Input 
+                        type="password"
+                        placeholder="AIzaSy..." 
+                        value={form.GEMINI_API_KEY} 
+                        onChange={e => setForm({ ...form, GEMINI_API_KEY: e.target.value })} 
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Model Default</Label>
+                      <Input 
+                        placeholder="gemini-1.5-flash" 
+                        value={form.GEMINI_MODEL} 
+                        onChange={e => setForm({ ...form, GEMINI_MODEL: e.target.value })} 
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={cn("space-y-4 border p-4 rounded-xl transition-all", form.AI_PROVIDER === 'openrouter' ? 'bg-indigo-500/5 border-indigo-500/30' : 'bg-muted/20 opacity-60 grayscale-[50%]')}>
+                    <div className="font-semibold text-sm flex items-center justify-between">
+                      OpenRouter
+                      {form.AI_PROVIDER === 'openrouter' && <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />}
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Master API Key</Label>
+                      <Input 
+                        type="password"
+                        placeholder="sk-or-v1-..." 
+                        value={form.OPENROUTER_API_KEY} 
+                        onChange={e => setForm({ ...form, OPENROUTER_API_KEY: e.target.value })} 
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Model Default</Label>
+                      <Input 
+                        placeholder="meta-llama/llama-3-8b-instruct" 
+                        value={form.OPENROUTER_MODEL} 
+                        onChange={e => setForm({ ...form, OPENROUTER_MODEL: e.target.value })} 
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-blue-500/10 p-4 border border-blue-500/20">
+                  <p className="text-xs text-blue-700 dark:text-blue-400">
+                    Kunci akan disimpan di database <code>platform_settings</code>. Jika Provider diset ke <strong>OpenAI</strong>, maka API Key OpenAI dan model OpenAI yang akan digunakan. Begitu juga sebaliknya untuk Gemini.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

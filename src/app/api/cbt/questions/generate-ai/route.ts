@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { getAiProvider, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
+import { getAiModel, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
 import { generateObject } from "ai"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
@@ -27,13 +27,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Saldo Token AI habis. Silakan beli kuota tambahan atau gunakan API Key Anda sendiri." }, { status: 403 })
     }
 
-    // 2. Setup AI Provider
-    const providerResult = await getAiProvider(tenantId)
-    if (!providerResult.success || !providerResult.provider) {
-      return NextResponse.json({ error: providerResult.error || "Gagal inisialisasi AI" }, { status: 500 })
+    // 2. Setup AI Provider & Model
+    const aiResult = await getAiModel(tenantId)
+    if (!aiResult.success || !aiResult.model) {
+      return NextResponse.json({ error: aiResult.error || "Gagal inisialisasi AI" }, { status: 500 })
     }
-    const openai = providerResult.provider
-    const model = openai("gpt-4o-mini") // Gunakan model cost-effective
+    const model = aiResult.model
 
     // 3. Bangun Prompt & Schema Dinamis
     let schema: z.ZodType<any>

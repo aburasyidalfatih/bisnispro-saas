@@ -32,6 +32,7 @@ interface SubscriptionPlan {
   features: any
   maxStudents: number
   maxStorage: number
+  monthlyAiTokens: number
   isActive: boolean
   isPopular: boolean
   sortOrder: number
@@ -108,6 +109,7 @@ export default function PlansPage() {
       interval: "YEARLY",
       maxStudents: 500,
       maxStorage: 2048,
+      monthlyAiTokens: 0,
       isActive: true,
       isPopular: true,
       sortOrder: 2,
@@ -285,7 +287,7 @@ export default function PlansPage() {
                 </div>
 
                 {/* Quotas */}
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
                     <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Kuota Siswa</p>
                     <div className="flex items-center gap-1.5">
@@ -301,6 +303,15 @@ export default function PlansPage() {
                       <HardDrive className="h-3 w-3 text-primary" />
                       <span className="font-bold text-xs truncate">
                         {plan.maxStorage === 0 ? "Unlimited" : plan.maxStorage >= 1024 ? `${(plan.maxStorage / 1024).toFixed(1)} GB` : `${plan.maxStorage} MB`}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
+                    <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Bonus AI (Bln)</p>
+                    <div className="flex items-center gap-1.5">
+                      <Zap className="h-3 w-3 text-primary" />
+                      <span className="font-bold text-xs truncate">
+                        {plan.monthlyAiTokens > 0 ? `${plan.monthlyAiTokens.toLocaleString("id-ID")} Token` : "-"}
                       </span>
                     </div>
                   </div>
@@ -465,10 +476,11 @@ export default function PlansPage() {
               )}
 
               {/* Quotas */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Quotas */}
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold flex items-center gap-1.5">
-                    <Users className="h-3.5 w-3.5" /> Kuota Siswa
+                    <Users className="h-3.5 w-3.5" /> Siswa
                   </Label>
                   <Input
                     type="number"
@@ -477,13 +489,13 @@ export default function PlansPage() {
                     className="rounded-xl"
                     disabled={isProPlan}
                   />
-                  <p className="text-[10px] text-muted-foreground">
-                    {isProPlan ? "Ditentukan saat pembelian" : "Isi 0 untuk tidak terbatas"}
+                  <p className="text-[9px] text-muted-foreground leading-tight">
+                    {isProPlan ? "Sesuai invoice" : "0 = Unlimited"}
                   </p>
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold flex items-center gap-1.5">
-                    <HardDrive className="h-3.5 w-3.5" /> Penyimpanan (MB)
+                    <HardDrive className="h-3.5 w-3.5" /> Penyimpanan
                   </Label>
                   <Input
                     type="number"
@@ -491,7 +503,19 @@ export default function PlansPage() {
                     onChange={e => setEditingPlan({ ...editingPlan, maxStorage: Number(e.target.value) })}
                     className="rounded-xl"
                   />
-                  <p className="text-[10px] text-muted-foreground">1024 = 1 GB, 5120 = 5 GB</p>
+                  <p className="text-[9px] text-muted-foreground leading-tight">Dalam MB (1024 = 1GB)</p>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold flex items-center gap-1.5">
+                    <Zap className="h-3.5 w-3.5" /> Bonus AI
+                  </Label>
+                  <Input
+                    type="number"
+                    value={editingPlan.monthlyAiTokens ?? 0}
+                    onChange={e => setEditingPlan({ ...editingPlan, monthlyAiTokens: Number(e.target.value) })}
+                    className="rounded-xl"
+                  />
+                  <p className="text-[9px] text-muted-foreground leading-tight">Token / Bulan</p>
                 </div>
               </div>
 

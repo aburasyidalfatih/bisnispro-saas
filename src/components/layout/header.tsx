@@ -19,6 +19,7 @@ import Link from "next/link"
 import { TenantSwitcher } from "@/components/shared/tenant-switcher"
 import { NotificationBell } from "@/components/shared/notification-bell"
 import { MessageIndicator } from "@/components/shared/message-indicator"
+import { AiTokenBadge } from "@/components/shared/ai-token-badge"
 
 const labelMap: Record<string, string> = {
   dashboard: "Dashboard",
@@ -152,6 +153,9 @@ export function Header() {
           <Moon className="absolute h-[18px] w-[18px] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle tema</span>
         </Button>
+
+        {/* AI Token Badge (Only in tenant admin) */}
+        {!isSuperAdminPanel && !isGTKPanel && !isAffiliatePanel && <AiTokenBadge />}
 
         {/* Messages */}
         <MessageIndicator />

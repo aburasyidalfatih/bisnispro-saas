@@ -727,6 +727,7 @@ model SubscriptionPlan {
   features      Json?
   maxStudents   Int            @default(0)
   maxStorage    Int            @default(0)
+  monthlyAiTokens Int          @default(0)
   isActive      Boolean        @default(true)
   isPopular     Boolean        @default(false)
   sortOrder     Int            @default(0)
@@ -1801,6 +1802,20 @@ model AiUsageLog {
   @@index([createdAt])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("ai_usage_logs")
+}
+
+model AiTokenPackage {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float    @default(0)
+  tokens      Int      @default(0)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("ai_token_packages")
 }
 
 model TenantScore {
