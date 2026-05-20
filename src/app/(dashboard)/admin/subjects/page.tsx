@@ -68,8 +68,8 @@ export default function SubjectsPage() {
         result = await createSubject({ tenantId: tenant.id, ...form })
       }
 
-      if (result?.error) {
-        toast({ title: "Gagal", description: result.error, variant: "destructive" })
+      if ((result as any)?.error) {
+        toast({ title: "Gagal", description: (result as any).error, variant: "destructive" })
         setSaving(false)
         return
       }

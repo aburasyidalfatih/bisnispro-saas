@@ -5,11 +5,29 @@ import { logger } from "@/lib/logger"
 export async function POST(req: Request) {
   try {
     const session = await auth()
-    if (!session?.user?.tenantId) {
+    if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const tenantId = session.user.tenantId
+    const { headers: nextHeaders } = await import("next/headers")
+    const headersList = await nextHeaders()
+    let slug = headersList.get("x-tenant-slug")
+    if (!slug) {
+      const host = headersList.get("host") || ""
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      const hostWithoutPort = host.split(":")[0]
+      if (hostWithoutPort.endsWith(`.${rootDomain}`)) {
+        slug = hostWithoutPort.replace(`.${rootDomain}`, "")
+      } else if (hostWithoutPort !== rootDomain && !hostWithoutPort.startsWith("www.")) {
+        slug = hostWithoutPort.split(".")[0]
+      }
+    }
+    const tenantUser = session?.user?.tenants?.find((t: any) => t.slug === slug)
+    const tenantId = tenantUser?.id || session?.user?.tenants?.[0]?.id
+
+    if (!tenantId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
     const body = await req.json()
     const { billingTypeId, title, dueDate, month, year, notes } = body
 

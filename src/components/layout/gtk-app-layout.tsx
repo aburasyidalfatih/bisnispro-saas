@@ -24,7 +24,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
   const tenantPlan = session?.user?.tenants?.[0]?.plan || "free"
   const isPremium = tenantPlan === "premium" || tenantPlan === "pro"
 
-  const navItems = [
+  const navItems: { label: string; icon: any; href: string; badge?: string }[] = [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
     { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal" },
     { label: "Jurnal", icon: CalendarCheck, href: "/panel-gtk/jurnal" },

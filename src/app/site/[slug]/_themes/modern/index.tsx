@@ -25,6 +25,38 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       || s.role.toLowerCase().includes("ketua")
     ))
 
+  const achievements = (tenant.achievements || []).map((a) => ({
+    id: a.id,
+    title: a.title,
+    description: a.description,
+    date: a.createdAt,
+    level: a.level || "LOKAL",
+    imageUrl: a.imageUrl,
+  }))
+
+  const staff = (tenant.staff || []).map((s) => ({
+    id: s.id,
+    name: s.name,
+    role: s.role || "Staff",
+    imageUrl: s.imageUrl,
+  }))
+
+  const alumni = (tenant.alumni || []).map((al) => ({
+    id: al.id,
+    name: al.name,
+    graduationYear: al.graduationYear,
+    currentStatus: (al as any).currentStatus || al.currentPosition || "LAINNYA",
+    testimonial: al.testimonial,
+    imageUrl: al.imageUrl,
+  }))
+
+  const partnerships = (tenant.partnerships || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    imageUrl: p.logo || "",
+    websiteUrl: p.website,
+  }))
+
   return (
     <main className="bg-muted/30">
       {/* ══════════════════════════════════════════════════════════════
@@ -113,7 +145,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.achievements?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <AchievementsSection achievements={tenant.achievements || []} />
+          <AchievementsSection achievements={achievements} />
         </ScrollReveal>
       )}
 
@@ -133,7 +165,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.staff?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <StaffHighlight staff={tenant.staff || []} />
+          <StaffHighlight staff={staff} />
         </ScrollReveal>
       )}
 
@@ -185,7 +217,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
             <div className="grid gap-8">
               {/* Alumni Testimonial */}
               <div>
-                <AlumniTestimonials alumni={tenant.alumni || []} />
+                <AlumniTestimonials alumni={alumni} />
               </div>
             </div>
           </div>
@@ -198,7 +230,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       {(tenant.partnerships?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
           <div className="bg-card py-8">
-            <PartnershipsSection partnerships={tenant.partnerships || []} />
+            <PartnershipsSection partnerships={partnerships} />
           </div>
         </ScrollReveal>
       )}

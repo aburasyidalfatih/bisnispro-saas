@@ -22,7 +22,7 @@ vi.mock('@/components/providers/tenant-branding-provider', () => ({
 
 // Mock Server Actions
 const mockCreateFacility = vi.fn()
-vi.mock('@/lib/actions/facilities', () => ({
+vi.mock('@/features/facility/actions/facility.action', () => ({
   createFacility: (...args: any[]) => mockCreateFacility(...args)
 }))
 

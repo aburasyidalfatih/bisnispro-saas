@@ -6,7 +6,8 @@ import { CheckoutForm } from "./_components/checkout-form"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
 
-export default async function PaymentCheckoutPage({ params }: { params: { id: string } }) {
+export default async function PaymentCheckoutPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await auth()
   if (!session?.user) redirect("/login")
   
@@ -15,7 +16,7 @@ export default async function PaymentCheckoutPage({ params }: { params: { id: st
 
   // Fetch Invoice
   const invoice = await db.invoice.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       student: {
         include: {

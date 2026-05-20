@@ -21,7 +21,7 @@ export async function GET(req: Request) {
   const merchants = await db.canteenMerchant.findMany({
     where: { tenantId },
     include: {
-      user: { select: { id: true, name: true, email: true, image: true } },
+      user: { select: { id: true, name: true, email: true, avatar: true } },
       _count: { select: { products: true, orders: true } },
     },
     orderBy: { name: "asc" },

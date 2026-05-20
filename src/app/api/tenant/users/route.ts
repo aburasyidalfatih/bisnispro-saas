@@ -33,6 +33,8 @@ export async function POST(req: Request) {
     const { addUserToTenant } = await import("@/features/tenant/services/user-management.service")
     const result = await addUserToTenant({
       ...parsed.data,
+      role: parsed.data.role || "orangtua",
+      phone: parsed.data.phone ?? undefined,
       callerUserId: session.user.id,
       isSuperAdmin: session.user.isSuperAdmin,
     })
@@ -57,6 +59,7 @@ export async function PATCH(req: Request) {
     const { editTenantUser } = await import("@/features/tenant/services/user-management.service")
     const result = await editTenantUser({
       ...parsed.data,
+      phone: parsed.data.phone ?? undefined,
       callerUserId: session.user.id,
       isSuperAdmin: session.user.isSuperAdmin,
     })

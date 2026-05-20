@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { UploadProofForm } from "./_components/upload-proof-form"
 
-export default async function ManualTopUpPage({ params }: { params: { id: string } }) {
+export default async function ManualTopUpPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await auth()
   if (!session?.user) redirect("/login")
 
   const payment = await db.payment.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { tenant: true }
   })
 

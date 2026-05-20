@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = params.id;
+    const { id } = await params;
     
     // Update emailOpenedAt jika masih kosong
     await db.tenantApplication.updateMany({
@@ -22,7 +22,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       "base64"
     );
     
-    return new NextResponse(pixel, {
+    return new NextResponse(new Uint8Array(pixel), {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",

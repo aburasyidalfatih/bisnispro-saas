@@ -49,7 +49,7 @@ export default function JadwalSiswaPage() {
       {/* Timeline */}
       <div className="px-2">
         <div className="relative border-l-2 border-slate-200 ml-4 space-y-6 pb-4">
-          {scheduleToday.map((item, idx) => (
+          {scheduleToday.map((item: any, idx: number) => (
             <div key={idx} className="relative pl-6">
               {/* Timeline Dot */}
               <div className={`absolute -left-[9px] top-4 w-4 h-4 rounded-full border-4 border-white ${item.iconText.replace('text-', 'bg-')} shadow-sm`} />

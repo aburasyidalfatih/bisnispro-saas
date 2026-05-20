@@ -114,7 +114,7 @@ export function CheckoutForm({ invoice, wallet, paymentChannels, manualBanks, us
                     <p className="font-bold text-xs">Tabungan Anak</p>
                     <p className="text-[10px] text-muted-foreground">Saldo: Rp {wallet?.balance.toLocaleString('id-ID') || '0'}</p>
                  </div>
-                 {isWalletDisabled && <Info className="h-4 w-4 text-rose-500" title="Saldo tidak mencukupi" />}
+                 {isWalletDisabled && <span title="Saldo tidak mencukupi"><Info className="h-4 w-4 text-rose-500" /></span>}
               </div>
 
               {/* Tripay Channels */}

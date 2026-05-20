@@ -29,7 +29,7 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
     if (res.success) {
        toast({ title: "Berhasil", description: "Top up manual telah disetujui. Saldo siswa bertambah." })
     } else {
-       toast({ title: "Gagal", description: res.error, variant: "destructive" })
+       toast({ title: "Gagal", description: (res as any).error, variant: "destructive" })
     }
   }
 
@@ -40,7 +40,7 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
     if (res.success) {
        toast({ title: "Ditolak", description: "Top up manual telah ditolak." })
     } else {
-       toast({ title: "Gagal", description: res.error, variant: "destructive" })
+       toast({ title: "Gagal", description: (res as any).error, variant: "destructive" })
     }
   }
 

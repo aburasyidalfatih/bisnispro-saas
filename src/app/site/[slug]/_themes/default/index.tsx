@@ -16,6 +16,38 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { ThemeProps } from "../types"
 
 export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
+  const achievements = (tenant.achievements || []).map((a) => ({
+    id: a.id,
+    title: a.title,
+    description: a.description,
+    date: a.createdAt,
+    level: a.level || "LOKAL",
+    imageUrl: a.imageUrl,
+  }))
+
+  const staff = (tenant.staff || []).map((s) => ({
+    id: s.id,
+    name: s.name,
+    role: s.role || "Staff",
+    imageUrl: s.imageUrl,
+  }))
+
+  const alumni = (tenant.alumni || []).map((al) => ({
+    id: al.id,
+    name: al.name,
+    graduationYear: al.graduationYear,
+    currentStatus: (al as any).currentStatus || al.currentPosition || "LAINNYA",
+    testimonial: al.testimonial,
+    imageUrl: al.imageUrl,
+  }))
+
+  const partnerships = (tenant.partnerships || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    imageUrl: p.logo || "",
+    websiteUrl: p.website,
+  }))
+
   return (
     <main>
       {/* ── 1. Hero Slider ── */}
@@ -64,7 +96,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 7. Prestasi ── */}
       <ScrollReveal delay={0.1}>
-        <AchievementsSection achievements={tenant.achievements || []} />
+        <AchievementsSection achievements={achievements} />
       </ScrollReveal>
 
       {/* ── 8. Fasilitas Sekolah ── */}
@@ -79,7 +111,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 10. Guru & Staff Highlight ── */}
       <ScrollReveal delay={0.1}>
-        <StaffHighlight staff={tenant.staff || []} />
+        <StaffHighlight staff={staff} />
       </ScrollReveal>
 
       {/* ── 11. Galeri ── */}
@@ -123,13 +155,13 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 12. Testimonial Alumni ── */}
       <ScrollReveal>
-        <AlumniTestimonials alumni={tenant.alumni || []} />
+        <AlumniTestimonials alumni={alumni} />
       </ScrollReveal>
 
 
       {/* ── 13. Kerjasama Lembaga ── */}
       <ScrollReveal delay={0.1}>
-        <PartnershipsSection partnerships={tenant.partnerships || []} />
+        <PartnershipsSection partnerships={partnerships} />
       </ScrollReveal>
 
       {/* ── 13. Kontak CTA ── */}

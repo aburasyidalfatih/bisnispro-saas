@@ -5,21 +5,22 @@ import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import { UploadProofForm } from "./_components/upload-proof-form"
 
-export default async function ManualInvoicePaymentPage({ params }: { params: { id: string, paymentId: string } }) {
+export default async function ManualInvoicePaymentPage({ params }: { params: Promise<{ id: string, paymentId: string }> }) {
+  const { id, paymentId } = await params
   const session = await auth()
   if (!session?.user) redirect("/login")
 
   const payment = await db.invoicePayment.findUnique({
-    where: { id: params.paymentId },
+    where: { id: paymentId },
     include: { tenant: true }
   })
 
   if (!payment) {
-    redirect(`/ortu/tagihan/${params.id}`)
+    redirect(`/ortu/tagihan/${id}`)
   }
 
   const invoice = await db.invoice.findUnique({
-     where: { id: params.id }
+     where: { id }
   })
 
   let meta: any = {}
@@ -38,7 +39,7 @@ export default async function ManualInvoicePaymentPage({ params }: { params: { i
           <svg className="h-32 w-32 -mr-10 -mt-10" fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v1h-9a2 2 0 00-2 2v8a2 2 0 002 2h9zm-9-2h10V8H12v8zm4-2.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" /></svg>
         </div>
         <div className="relative z-10">
-          <Link href={`/ortu/tagihan/${params.id}`} className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-white/20 text-white hover:bg-white/30 backdrop-blur-md transition-colors mb-6 cursor-pointer">
+          <Link href={`/ortu/tagihan/${id}`} className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-white/20 text-white hover:bg-white/30 backdrop-blur-md transition-colors mb-6 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="m15 18-6-6 6-6"/></svg>
           </Link>
           <h1 className="text-2xl font-black text-white">Instruksi Pembayaran</h1>
@@ -72,7 +73,7 @@ export default async function ManualInvoicePaymentPage({ params }: { params: { i
                      <p className="text-xs text-amber-600/80 mt-1">Bukti transfer Anda sedang dicek oleh petugas. Tagihan akan otomatis lunas setelah diverifikasi.</p>
                   </div>
                ) : (
-                  <UploadProofForm paymentId={payment.id} invoiceId={params.id} />
+                  <UploadProofForm paymentId={payment.id} invoiceId={id} />
                )}
             </CardContent>
          </Card>

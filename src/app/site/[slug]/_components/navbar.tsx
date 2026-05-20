@@ -236,7 +236,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                     {link.children && isOpen && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-56 z-50">
                         <div className="bg-white rounded-2xl shadow-xl border border-border/50 overflow-hidden flex flex-col p-2 animate-in fade-in slide-in-from-top-4 duration-200">
-                          {link.children.map((child) => (
+                          {link.children.map((child: any) => (
                             <Link
                               key={child.label}
                               href={resolveHref(child.href)}
@@ -358,7 +358,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                               isExpanded ? "max-h-[400px] opacity-100 mt-1" : "max-h-0 opacity-0"
                             )}>
                               <div className="pl-[3.25rem] pr-4 py-1 flex flex-col gap-1">
-                                {link.children.map((child) => (
+                                {link.children.map((child: any) => (
                                   <Link
                                     key={child.label}
                                     href={resolveHref(child.href)}

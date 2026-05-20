@@ -1,9 +1,9 @@
 import { vi } from 'vitest'
-import { mockDeep } from 'vitest-mock-extended'
+import { db } from './__mocks__/prisma'
 
 // Mock modul Prisma
 vi.mock('@/lib/db', () => ({
-  db: mockDeep()
+  db
 }))
 
 // Mock NextAuth

@@ -36,7 +36,8 @@ export default async function SuperAdminThemesPage() {
       isSystem: true,
       isDeletable: false,
       createdAt: new Date("2024-01-01"),
-      _count: { tenants: defaultCount }
+      _count: { tenants: defaultCount },
+      isActive: true
     }
   ]
 
@@ -50,7 +51,8 @@ export default async function SuperAdminThemesPage() {
       isSystem: true,
       isDeletable: true,
       createdAt: new Date("2024-02-01"),
-      _count: { tenants: modernCount }
+      _count: { tenants: modernCount },
+      isActive: true
     })
   }
 

@@ -39,6 +39,8 @@ export default function EducationalEmailsPage() {
   const [testEmailAddress, setTestEmailAddress] = useState("")
   const [isTesting, setIsTesting] = useState(false)
 
+  const activeCampaign = campaigns.find(c => c.dayOffset === activeTab)
+
   useEffect(() => {
     fetch("/api/super-admin/educational-emails")
       .then(res => res.json())
@@ -74,6 +76,7 @@ export default function EducationalEmailsPage() {
   if (!session?.user?.isSuperAdmin) return null
 
   async function handleTestSend() {
+    if (!activeCampaign) return
     if (!testEmailAddress) {
       toast({ variant: "destructive", title: "Error", description: "Silakan masukkan email tujuan" })
       return
@@ -102,8 +105,6 @@ export default function EducationalEmailsPage() {
   if (loading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
   }
-
-  const activeCampaign = campaigns.find(c => c.dayOffset === activeTab)
 
   return (
     <div className="space-y-6">
