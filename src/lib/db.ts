@@ -82,9 +82,28 @@ export function withTenant(tenantId: string) {
     query: {
       $allModels: {
         async $allOperations({ model, operation, args, query }) {
-          // Fallback ke ORM Level Isolation jika query belum support RLS
+          // Operations that support a `where` clause
+          const whereOperations = [
+            "findUnique", "findUniqueOrThrow",
+            "findFirst", "findFirstOrThrow",
+            "findMany", "count", "aggregate", "groupBy",
+            "update", "updateMany", "delete", "deleteMany",
+            "upsert",
+          ]
+
+          // Operations that support a `data` clause (for injecting tenantId into data)
+          const dataOperations = ["create", "createMany"]
+
           if (typeof args === 'object' && args !== null) {
-             (args as any).where = { ...(args as any).where, tenantId }
+            if (whereOperations.includes(operation)) {
+              // Inject tenantId into where clause for reads and mutations that use where
+              (args as any).where = { ...(args as any).where, tenantId }
+            } else if (dataOperations.includes(operation)) {
+              // For create operations, ensure tenantId is in the data
+              if ((args as any).data && typeof (args as any).data === 'object' && !Array.isArray((args as any).data)) {
+                (args as any).data = { ...(args as any).data, tenantId }
+              }
+            }
           }
           
           const isRead = [
