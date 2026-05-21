@@ -54,10 +54,7 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
   }
 }
 
-/**
- * Keamanan Headers & CSP
- */
-function addSecurityHeaders(response: NextResponse): NextResponse {
+function addSecurityHeaders(response: NextResponse, routeType: "public" | "protected" | "static" = "public"): NextResponse {
   response.headers.set("X-Frame-Options", "DENY")
   response.headers.set("X-Content-Type-Options", "nosniff")
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
@@ -66,6 +63,14 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
     "Content-Security-Policy",
     "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ws: wss: https://cloudflareinsights.com https://static.cloudflareinsights.com; frame-src 'self' https://challenges.cloudflare.com https://www.openstreetmap.org https://maps.google.com; frame-ancestors 'none'"
   )
+
+  // Aggressive SEO Indexing Header for public pages
+  if (routeType === "public") {
+    response.headers.set("X-Robots-Tag", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1")
+  } else if (routeType === "protected" || routeType === "static") {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow")
+  }
+
   return response
 }
 
@@ -79,7 +84,7 @@ export default async function middleware(request: NextRequest) {
     pathname.startsWith("/static") || 
     pathname.includes(".") && !pathname.startsWith("/api")
   ) {
-    return addSecurityHeaders(NextResponse.next())
+    return addSecurityHeaders(NextResponse.next(), "static")
   }
 
   // Gunakan X-Forwarded-Host dari Nginx jika ada, jika tidak gunakan host bawaan
@@ -234,7 +239,7 @@ export default async function middleware(request: NextRequest) {
       return res
     }
 
-    return addSecurityHeaders(NextResponse.next())
+    return addSecurityHeaders(NextResponse.next(), "public")
   }
 
   // ============================================================
@@ -266,7 +271,7 @@ export default async function middleware(request: NextRequest) {
     ) {
       const response = NextResponse.next()
       response.headers.set("x-tenant-slug", subdomain)
-      return addSecurityHeaders(response)
+      return addSecurityHeaders(response, "protected")
     }
 
     // Rewrite ke website sekolah
@@ -276,7 +281,7 @@ export default async function middleware(request: NextRequest) {
     response.headers.set("x-tenant-slug", subdomain)
     response.headers.set("x-hostname", hostname)
     response.headers.set("x-root-domain", rootDomain)
-    return addSecurityHeaders(response)
+    return addSecurityHeaders(response, "public")
   }
 
   // ============================================================
@@ -313,7 +318,7 @@ export default async function middleware(request: NextRequest) {
       response.headers.set("x-custom-domain", hostname)
       response.headers.set("x-hostname", hostname)
       response.headers.set("x-root-domain", rootDomain)
-      return addSecurityHeaders(response)
+      return addSecurityHeaders(response, "protected")
     }
 
     const url = request.nextUrl.clone()
@@ -323,13 +328,13 @@ export default async function middleware(request: NextRequest) {
     response.headers.set("x-custom-domain", hostname)
     response.headers.set("x-hostname", hostname)
     response.headers.set("x-root-domain", rootDomain)
-    return addSecurityHeaders(response)
+    return addSecurityHeaders(response, "public")
   }
 
   const response = NextResponse.next()
   response.headers.set("x-hostname", hostname)
   response.headers.set("x-root-domain", rootDomain)
-  return addSecurityHeaders(response)
+  return addSecurityHeaders(response, "public")
 }
 
 export const config = {

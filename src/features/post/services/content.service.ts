@@ -79,8 +79,8 @@ export async function createPost(params: {
     } as any
   })
 
-  // Invalidate cache
-  const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  // Invalidate cache and Auto-Indexing
+  const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true, domain: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
     try {
@@ -88,6 +88,18 @@ export async function createPost(params: {
       revalidatePath("/", "layout")
     } catch (e) {
       console.error("Failed to revalidate path", e)
+    }
+
+    // [AUTO-INDEXING] Asynchronously Ping Search Engines if published
+    if (finalStatus === "PUBLISHED") {
+      const host = tenant.domain || `${tenant.slug}.schoolpro.id`
+      const isPengumuman = typeof data.type === 'string' && data.type.includes("PENGUMUMAN")
+      const postUrl = `https://${host}/${isPengumuman ? 'pengumuman' : 'berita'}/${post.id}`
+      
+      Promise.allSettled([
+        import("@/lib/seo/indexnow.service").then(m => m.submitToIndexNow(host, [postUrl])),
+        import("@/lib/seo/google-indexing.service").then(m => m.submitToGoogleIndexing(postUrl, "URL_UPDATED"))
+      ]).catch(e => console.error("Auto-Indexing failed", e))
     }
   }
 
@@ -155,7 +167,7 @@ export async function createEvent(params: {
     data: { ...data, tenantId } as any
   })
 
-  const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+  const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true, domain: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
     try {
@@ -164,6 +176,15 @@ export async function createEvent(params: {
     } catch (e) {
       console.error("Failed to revalidate path", e)
     }
+
+    // [AUTO-INDEXING] Asynchronously Ping Search Engines for new Event
+    const host = tenant.domain || `${tenant.slug}.schoolpro.id`
+    const eventUrl = `https://${host}/agenda/${event.id}`
+    
+    Promise.allSettled([
+      import("@/lib/seo/indexnow.service").then(m => m.submitToIndexNow(host, [eventUrl])),
+      import("@/lib/seo/google-indexing.service").then(m => m.submitToGoogleIndexing(eventUrl, "URL_UPDATED"))
+    ]).catch(e => console.error("Auto-Indexing failed", e))
   }
 
   // Audit Log
