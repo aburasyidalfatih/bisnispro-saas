@@ -155,35 +155,7 @@ export default function AiSettingsPage() {
           </CardFooter>
         </Card>
 
-        <Card className="glass border-0">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-                <BrainCircuit className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Fitur AI Aktif</CardTitle>
-                <CardDescription>Modul SchoolPro yang menggunakan AI.</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between p-3 border rounded-xl bg-background/50">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">Pembuat Soal CBT Otomatis</span>
-              </div>
-              <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full font-semibold">Tersedia</span>
-            </div>
-            <div className="flex items-center justify-between p-3 border rounded-xl bg-background/50">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">Pembuat RPP (Kurikulum Merdeka)</span>
-              </div>
-              <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full font-semibold">Tersedia</span>
-            </div>
-          </CardContent>
-        </Card>
+
       </div>
 
       {/* ── Card Top Up Token AI ── */}
