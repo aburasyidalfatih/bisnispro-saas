@@ -19,6 +19,7 @@ interface Staff {
   bio?: string | null
   imageUrl?: string | null
   sortOrder: number
+  isOnline?: boolean
 }
 
 export default function StaffPage() {
@@ -184,7 +185,15 @@ export default function StaffPage() {
                     </div>
                   </div>
                   <CardContent className="p-3 text-center">
-                    <h3 className="font-bold text-sm truncate">{person.name}</h3>
+                    <div className="flex items-center justify-center gap-2">
+                      <h3 className="font-bold text-sm truncate">{person.name}</h3>
+                      {person.isOnline && (
+                        <span className="relative flex h-2 w-2" title="Sedang Online">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[10px] text-primary font-semibold uppercase tracking-wider mt-1">
                       {person.role}
                     </p>

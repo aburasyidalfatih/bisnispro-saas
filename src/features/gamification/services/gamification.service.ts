@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { gamificationQueue } from "@/lib/queue"
 import { publishEvent } from "@/lib/realtime"
+import { getRedis } from "@/lib/redis"
 
 export type GamificationPayload = {
   tenantId: string
@@ -47,6 +48,16 @@ export async function processGamificationPoints(payload: GamificationPayload) {
         rank: 0,
       },
     })
+
+    // [REDIS ZSET] Update leaderboard in Redis for instant ranking
+    try {
+      const redis = getRedis()
+      if (redis) {
+        await redis.zincrby("leaderboard:global", points, tenantId)
+      }
+    } catch (e) {
+      console.error("[GAMIFICATION] Failed to update Redis leaderboard", e)
+    }
 
     // Buat notifikasi jika userId tersedia
     if (userId) {

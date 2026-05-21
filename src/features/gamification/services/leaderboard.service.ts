@@ -1,14 +1,27 @@
 import { db } from "@/lib/db"
+import { getRedis } from "@/lib/redis"
+import { publishEvent } from "@/lib/realtime"
 
 export async function processLeaderboardSync() {
   const currentYear = new Date().getFullYear()
   const startOfYear = new Date(currentYear, 0, 1)
 
-  // Ambil semua tenant yang aktif
+  // ============================================================
+  // Step 1: Ambil peringkat LAMA sebelum recalculation
+  // ============================================================
+  const oldRanks = await db.tenantScore.findMany({
+    select: { tenantId: true, rank: true, totalScore: true }
+  })
+  const oldRankMap = Object.fromEntries(oldRanks.map(r => [r.tenantId, { rank: r.rank, totalScore: r.totalScore }]))
+
+  // ============================================================
+  // Step 2: Hitung skor baru
+  // ============================================================
   const tenants = await db.tenant.findMany({
     where: { isActive: true },
     select: {
       id: true,
+      name: true,
       _count: {
         select: {
           posts: { where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear } } },
@@ -44,12 +57,13 @@ export async function processLeaderboardSync() {
     // Aktivitas: pengumuman internal
     const announcementPoints = (tenant._count.internalMessages || 0) * 2
     
-    const activityScore = announcementPoints // Login harian belum terhitung di backend
-    
+    const activityScore = announcementPoints
+
     const totalScore = contentScore + trafficScore + activityScore
 
     scores.push({
       tenantId: tenant.id,
+      tenantName: tenant.name,
       contentScore,
       trafficScore,
       activityScore,
@@ -59,8 +73,11 @@ export async function processLeaderboardSync() {
 
   // Sort descending by totalScore
   scores.sort((a, b) => b.totalScore - a.totalScore)
+  const totalParticipants = scores.length
 
-  // Update database dalam transaksi
+  // ============================================================
+  // Step 3: Update database
+  // ============================================================
   const updatePromises = scores.map((score, index) => {
     const rank = index + 1
     return db.tenantScore.upsert({
@@ -84,8 +101,91 @@ export async function processLeaderboardSync() {
     })
   })
 
-  // Eksekusi batch
   await db.$transaction(updatePromises)
+
+  // ============================================================
+  // Step 4: Deteksi perubahan peringkat & kirim notifikasi
+  // ============================================================
+  for (let i = 0; i < scores.length; i++) {
+    const newRank = i + 1
+    const score = scores[i]
+    const old = oldRankMap[score.tenantId]
+    
+    // Skip jika tenant baru (belum pernah punya ranking)
+    if (!old || old.rank === 0) continue
+    
+    const oldRank = old.rank
+    if (oldRank === newRank) continue // Tidak berubah
+
+    let title = ""
+    let message = ""
+    let type = "info"
+
+    if (newRank < oldRank) {
+      // 📈 NAIK PERINGKAT
+      if (newRank <= 3) {
+        title = `🏆 WOW! Sekolah Anda masuk Top 3!`
+        message = `Selamat! Website ${score.tenantName} naik dari peringkat #${oldRank} ke #${newRank} dari ${totalParticipants} sekolah! Terus pertahankan!`
+        type = "success"
+      } else {
+        title = `📈 Peringkat Naik ke #${newRank}!`
+        message = `Selamat! Website ${score.tenantName} naik dari peringkat #${oldRank} ke #${newRank}. Bagikan konten ke sosial media untuk naik lebih tinggi!`
+        type = "success"
+      }
+    } else {
+      // 📉 TURUN PERINGKAT
+      const diff = newRank - oldRank
+      title = `📉 Peringkat turun ke #${newRank}`
+      message = `Peringkat website ${score.tenantName} turun ${diff} posisi (dari #${oldRank} ke #${newRank}). Yuk, buat postingan baru dan bagikan ke sosmed untuk merebut kembali posisi!`
+      type = "warning"
+    }
+
+    // Buat notifikasi untuk semua admin/owner tenant ini
+    try {
+      const admins = await db.tenantUser.findMany({
+        where: { tenantId: score.tenantId, role: { in: ["owner", "admin"] } },
+        select: { userId: true }
+      })
+
+      for (const admin of admins) {
+        await db.notification.create({
+          data: {
+            tenantId: score.tenantId,
+            userId: admin.userId,
+            title,
+            message,
+            type,
+            channel: "inapp",
+          }
+        })
+
+        // Kirim via SSE realtime
+        publishEvent(`user-notif:${admin.userId}`, {
+          type: "NEW_NOTIFICATION",
+          notification: { title, message, type, isRead: false },
+        }).catch(() => {})
+      }
+    } catch (e) {
+      console.error(`[LEADERBOARD] Failed to notify tenant ${score.tenantId}`, e)
+    }
+  }
+
+  // ============================================================
+  // Step 5: Sync Redis ZSET
+  // ============================================================
+  try {
+    const redis = getRedis()
+    if (redis) {
+      const pipeline = redis.pipeline()
+      pipeline.del("leaderboard:global")
+      for (const score of scores) {
+        pipeline.zadd("leaderboard:global", score.totalScore, score.tenantId)
+      }
+      await pipeline.exec()
+    }
+  } catch (e) {
+    console.error("[LEADERBOARD] Failed to sync Redis ZSET", e)
+  }
 
   return {
     message: "Leaderboard synchronized successfully",

@@ -112,20 +112,37 @@ export default function LeaderboardPage() {
                 <DialogHeader>
                   <DialogTitle>Kriteria Skor Website</DialogTitle>
                 </DialogHeader>
-                <div className="p-4 space-y-3">
-                  <ul className="space-y-2.5 list-disc list-inside text-sm text-foreground">
-                    <li>Berita & Artikel: <span className="font-bold text-primary">+20 Pts</span></li>
-                    <li>Data Prestasi: <span className="font-bold text-primary">+20 Pts</span></li>
-                    <li>Agenda/Event: <span className="font-bold text-primary">+15 Pts</span></li>
-                    <li>Data Fasilitas: <span className="font-bold text-primary">+15 Pts</span></li>
-                    <li>Profil Guru (GTK): <span className="font-bold text-primary">+10 Pts</span></li>
-                    <li>Foto Galeri: <span className="font-bold text-primary">+5 Pts</span></li>
-                    <li>Admin Login Harian: <span className="font-bold text-primary">+10 Pts</span></li>
-                    <li>Guru Login Harian: <span className="font-bold text-primary">+3 Pts</span></li>
-                    <li>Buat Pengumuman Internal: <span className="font-bold text-primary">+2 Pts</span></li>
-                  </ul>
-                  <p className="text-xs text-muted-foreground mt-4 italic">
-                    *Poin dihitung secara otomatis oleh sistem setiap hari.
+                <div className="p-4 space-y-4">
+                  <div>
+                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">📝 Konten Website</h4>
+                    <ul className="space-y-1.5 list-disc list-inside text-sm text-foreground">
+                      <li>Berita & Artikel: <span className="font-bold text-primary">+20 Pts</span></li>
+                      <li>Data Prestasi: <span className="font-bold text-primary">+20 Pts</span></li>
+                      <li>Agenda/Event: <span className="font-bold text-primary">+15 Pts</span></li>
+                      <li>Data Fasilitas: <span className="font-bold text-primary">+15 Pts</span></li>
+                      <li>Profil Guru (GTK): <span className="font-bold text-primary">+10 Pts</span></li>
+                      <li>Foto Galeri: <span className="font-bold text-primary">+5 Pts</span></li>
+                    </ul>
+                  </div>
+                  <div className="border-t pt-3">
+                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">📤 Interaksi & Sosial Media</h4>
+                    <ul className="space-y-1.5 list-disc list-inside text-sm text-foreground">
+                      <li>Share ke WhatsApp: <span className="font-bold text-green-600">+5 Pts</span></li>
+                      <li>Share ke Facebook: <span className="font-bold text-blue-600">+5 Pts</span></li>
+                      <li>Share ke X/Twitter: <span className="font-bold text-sky-500">+5 Pts</span></li>
+                      <li>Copy Link Konten: <span className="font-bold text-slate-500">+2 Pts</span></li>
+                    </ul>
+                  </div>
+                  <div className="border-t pt-3">
+                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">🎯 Aktivitas Harian</h4>
+                    <ul className="space-y-1.5 list-disc list-inside text-sm text-foreground">
+                      <li>Admin Login Harian: <span className="font-bold text-primary">+10 Pts</span></li>
+                      <li>Guru Login Harian: <span className="font-bold text-primary">+3 Pts</span></li>
+                      <li>Buat Pengumuman Internal: <span className="font-bold text-primary">+2 Pts</span></li>
+                    </ul>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-3 italic bg-muted/50 p-2 rounded-lg">
+                    *Poin dihitung secara otomatis oleh sistem. Perubahan peringkat akan dikirim sebagai notifikasi.
                   </p>
                 </div>
               </DialogContent>

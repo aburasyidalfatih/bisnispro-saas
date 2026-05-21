@@ -169,7 +169,9 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
         {/* Share Buttons */}
         <ShareButtons 
           url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/pengumuman/${post.id}`} 
-          title={post.title} 
+          title={post.title}
+          postId={post.id}
+          tenantId={tenant.id}
         />
       </article>
 

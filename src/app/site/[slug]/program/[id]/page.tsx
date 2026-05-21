@@ -8,7 +8,7 @@ import Image from "next/image"
 import { ArrowLeft, BookOpen } from "lucide-react"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
-export const revalidate = 300
+
 export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
@@ -134,7 +134,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
         {/* Share Buttons */}
         <ShareButtons 
           url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/program/${program.id}`} 
-          title={program.name} 
+          title={program.name}
+          tenantId={tenant.id}
         />
       </article>
     </div>

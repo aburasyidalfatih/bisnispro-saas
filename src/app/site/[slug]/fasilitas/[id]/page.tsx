@@ -8,7 +8,7 @@ import Image from "next/image"
 import { ArrowLeft, Building2, Users, CheckCircle, Tag } from "lucide-react"
 import { db } from "@/lib/db"
 
-export const revalidate = 300
+
 export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {

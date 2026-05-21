@@ -181,3 +181,39 @@ export async function getRedisClient(): Promise<RedisClient> {
   _client = inMemoryClient
   return _client
 }
+
+// ==================== IOREDIS DIRECT ACCESS (for ZSET, pipeline, etc.) ====================
+
+import IORedis from "ioredis"
+
+let _ioredis: IORedis | null = null
+let _ioredisInit = false
+
+/**
+ * getRedis() — returns raw ioredis instance for advanced ops (ZSET, MGET, pipeline, etc.)
+ * Returns null if REDIS_URL is not set (cloud/dev environments without local Redis).
+ */
+export function getRedis(): IORedis | null {
+  if (_ioredisInit) return _ioredis
+
+  _ioredisInit = true
+  const url = process.env.REDIS_URL
+  if (!url) return null
+
+  try {
+    _ioredis = new IORedis(url, {
+      maxRetriesPerRequest: 3,
+      lazyConnect: false,
+      enableOfflineQueue: true,
+    })
+
+    _ioredis.on("error", (err) => {
+      console.error("[Redis Direct] Connection error:", err.message)
+    })
+
+    return _ioredis
+  } catch (err) {
+    console.error("[Redis Direct] Failed to create ioredis instance:", err)
+    return null
+  }
+}

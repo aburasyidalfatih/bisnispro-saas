@@ -427,6 +427,8 @@ model Post {
   seoTitle      String?
   categoryId    String?
   deletedAt     DateTime?
+  viewCount     Int       @default(0)
+  shareCount    Int       @default(0)
   author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   category      Category? @relation(fields: [categoryId], references: [id])
   tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -494,6 +496,7 @@ model Event {
   endDate       DateTime
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  viewCount     Int      @default(0)
   tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
