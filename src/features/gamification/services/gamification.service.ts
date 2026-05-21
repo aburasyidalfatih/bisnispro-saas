@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
 import { gamificationQueue } from "@/lib/queue"
+import { publishEvent } from "@/lib/realtime"
 
 export type GamificationPayload = {
   tenantId: string
@@ -49,16 +50,37 @@ export async function processGamificationPoints(payload: GamificationPayload) {
 
     // Buat notifikasi jika userId tersedia
     if (userId) {
-      await db.notification.create({
-        data: {
-          tenantId,
-          userId,
-          title: `+${points} Poin Pencapaian`,
-          message: description || `Anda mendapatkan poin dari aktivitas: ${type}`,
-          type: "success",
-          channel: "inapp",
-        },
+      const notifData = {
+        tenantId,
+        userId,
+        title: `+${points} Poin Pencapaian`,
+        message: description || `Anda mendapatkan poin dari aktivitas: ${type}`,
+        type: "success",
+        channel: "inapp",
+      }
+      
+      const newNotif = await db.notification.create({
+        data: notifData,
       })
+
+      // [REAL-TIME SSE] Publish event ke channel spesifik user dan tenant
+      // Supaya client (SWR) dan toast bisa langsung update
+      publishEvent(`user-notif:${userId}`, {
+        type: "NEW_NOTIFICATION",
+        notification: { ...newNotif, isRead: false },
+        points,
+        newScore: newScore.totalScore,
+      }).catch(console.error)
+    }
+
+    // [REAL-TIME SSE] Publish event update poin untuk level admin tenant (tanpa userId spesifik)
+    if (!userId) {
+      publishEvent(`tenant-notif:${tenantId}`, {
+        type: "POINTS_UPDATED",
+        points,
+        newScore: newScore.totalScore,
+        description: description || type
+      }).catch(console.error)
     }
 
     return { 

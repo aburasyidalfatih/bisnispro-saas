@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!facility) return {}
   return {
     title: `${facility.name} - ${tenant.name}`,
-    description: facility.description || `Fasilitas ${facility.name} di ${tenant.name}`,
+    description: (facility.description ? facility.description.replace(/<[^>]*>?/gm, '') : `Fasilitas ${facility.name} di ${tenant.name}`),
     alternates: {
       canonical: `/fasilitas/${facility.id}`,
     },
@@ -84,7 +84,7 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
               
               <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
                  {facility.description ? (
-                    <p className="whitespace-pre-wrap">{facility.description}</p>
+                    <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: facility.description }} />
                  ) : (
                     <p className="italic">Tidak ada penjelasan lebih detail mengenai fasilitas ini.</p>
                  )}

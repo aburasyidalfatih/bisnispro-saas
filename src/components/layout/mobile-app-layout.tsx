@@ -1,8 +1,12 @@
 "use client"
 
 import { MobileBottomNav } from "./mobile-bottom-nav"
+import { Header } from "./header"
+import { useRealtimeNotification } from "@/hooks/use-realtime-notification"
 
 export function MobileAppLayout({ children }: { children: React.ReactNode }) {
+  useRealtimeNotification()
+  
   return (
     <div className="min-h-screen flex justify-center w-full font-sans bg-muted/20">
       {/* Mobile Device Simulator Container */}

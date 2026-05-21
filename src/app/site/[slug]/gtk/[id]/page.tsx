@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   
   return {
     title: `${staff.name} - ${tenant.name}`,
-    description: staff.bio || `Profil ${staff.name} (${staff.role}) di ${tenant.name}`,
+    description: (staff.bio ? staff.bio.replace(/<[^>]*>?/gm, '') : `Profil ${staff.name} (${staff.role}) di ${tenant.name}`),
     alternates: {
       canonical: `/gtk/${staff.id}`,
     },
@@ -155,9 +155,16 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                  <h3 className="text-2xl font-black mb-6 text-slate-900 flex items-center gap-3 border-b pb-4">
                     <User className="h-6 w-6 text-primary" /> Profil & Biografi
                  </h3>
-                 <p className="whitespace-pre-wrap text-base md:text-lg">
-                    {staff.bio || "Berkomitmen penuh untuk mendidik dan membimbing siswa-siswi menuju masa depan yang cerah dengan bekal ilmu dan akhlak mulia."}
-                 </p>
+                 {staff.bio ? (
+                   <div 
+                     className="whitespace-pre-wrap text-base md:text-lg prose prose-slate" 
+                     dangerouslySetInnerHTML={{ __html: staff.bio }} 
+                   />
+                 ) : (
+                   <p className="whitespace-pre-wrap text-base md:text-lg">
+                      Berkomitmen penuh untuk mendidik dan membimbing siswa-siswi menuju masa depan yang cerah dengan bekal ilmu dan akhlak mulia.
+                   </p>
+                 )}
               </section>
 
               {/* ── ARTIKEL GURU ── */}

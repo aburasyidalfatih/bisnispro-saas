@@ -81,7 +81,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
                   </Link>
                 </div>
                 <div className="prose prose-slate italic text-muted-foreground">
-                  <p>"{principal.bio || "Pendidikan adalah senjata paling mematikan di dunia, karena dengan pendidikan Anda bisa mengubah dunia. Kami di sini berkomitmen penuh untuk menjaga amanah Bapak/Ibu sekalian."}"</p>
+                  <p>"{principal.bio ? principal.bio.replace(/<[^>]*>?/gm, '') : "Pendidikan adalah senjata paling mematikan di dunia, karena dengan pendidikan Anda bisa mengubah dunia. Kami di sini berkomitmen penuh untuk menjaga amanah Bapak/Ibu sekalian."}"</p>
                 </div>
                 
                 <div className="flex flex-wrap gap-4 items-center">
@@ -162,7 +162,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
                   <p className="text-xs text-primary font-bold uppercase tracking-widest mt-1 mb-4">{s.role}</p>
                   {s.bio && (
                     <p className="text-[11px] text-muted-foreground line-clamp-2 italic mb-4">
-                      "{s.bio}"
+                      "{s.bio.replace(/<[^>]*>?/gm, '')}"
                     </p>
                   )}
                   <div className="h-1 w-12 bg-primary/20 mx-auto rounded-full group-hover:w-20 group-hover:bg-primary transition-all duration-500" />

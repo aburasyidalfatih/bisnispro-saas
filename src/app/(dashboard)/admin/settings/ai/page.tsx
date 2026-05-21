@@ -34,9 +34,10 @@ export default function AiSettingsPage() {
   const [logs, setLogs] = useState<any[]>([])
   const [logsLoading, setLogsLoading] = useState(true)
 
-  // Resolve tenantId
+  // Resolve tenantId & plan
   useEffect(() => {
-    const id = session?.user?.tenants?.[0]?.id
+    const tenants = session?.user?.tenants || []
+    const id = tenants?.[0]?.id
     if (id) { setTenantId(id); return }
     const match = document.cookie.match(/impersonate-tenant=([^;]+)/)
     const slug = match?.[1]
@@ -44,6 +45,10 @@ export default function AiSettingsPage() {
       fetch(`/api/tenant/by-slug?slug=${slug}`).then(r => r.json()).then(d => { if (d.id) setTenantId(d.id) })
     }
   }, [session?.user?.tenants])
+
+  const currentTenant = session?.user?.tenants?.find((t: any) => t.id === tenantId) || session?.user?.tenants?.[0]
+  const tenantPlan = currentTenant?.plan || "free"
+  const isFreePlan = tenantPlan === "free"
 
   useEffect(() => {
     if (!tenantId) return
@@ -158,30 +163,82 @@ export default function AiSettingsPage() {
         <Card className="glass border-0">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-                <BrainCircuit className="h-4 w-4 text-primary" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
+                <Key className="h-4 w-4 text-orange-500" />
               </div>
               <div>
-                <CardTitle className="text-lg">Fitur AI Aktif</CardTitle>
-                <CardDescription>Modul SchoolPro yang menggunakan AI.</CardDescription>
+                <CardTitle className="text-lg">Bring Your Own Key (BYOK)</CardTitle>
+                <CardDescription>
+                  Gunakan API Key OpenAI milik sekolah Anda sendiri untuk penggunaan tanpa batas kuota.
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between p-3 border rounded-xl bg-background/50">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">Pembuat Soal CBT Otomatis</span>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between rounded-xl border p-4 bg-background">
+              <div className="space-y-0.5">
+                <Label className="text-base flex items-center gap-2">
+                  Gunakan API Key Sendiri
+                  {isFreePlan && (
+                    <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full tracking-wider">Premium</span>
+                  )}
+                </Label>
+                <p className="text-sm text-muted-foreground">Aktifkan untuk mode BYOK.</p>
               </div>
-              <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full font-semibold">Tersedia</span>
+              <Switch
+                disabled={isFreePlan}
+                checked={formData.useCustomApiKey}
+                onCheckedChange={(checked) => setFormData({ ...formData, useCustomApiKey: checked })}
+              />
             </div>
-            <div className="flex items-center justify-between p-3 border rounded-xl bg-background/50">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">Pembuat RPP (Kurikulum Merdeka)</span>
+
+            {isFreePlan && (
+              <div className="rounded-xl border border-dashed border-amber-500/50 bg-amber-500/5 p-4 text-center space-y-3">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/20 mb-2">
+                  <Sparkles className="h-5 w-5 text-amber-600" />
+                </div>
+                <h4 className="text-sm font-semibold text-foreground">Fitur Terkunci (Paket Gratis)</h4>
+                <p className="text-xs text-muted-foreground">
+                  Kemampuan menggunakan API Key OpenAI milik sendiri hanya tersedia untuk paket Premium/Pro.
+                </p>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  className="mt-2 h-8 text-xs font-medium border-amber-500/20 bg-background hover:bg-amber-500/10 hover:text-amber-700"
+                  onClick={() => router.push("/admin/billing")}
+                >
+                  Upgrade Sekarang <ArrowRight className="ml-1 h-3 w-3" />
+                </Button>
               </div>
-              <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full font-semibold">Tersedia</span>
-            </div>
+            )}
+
+            {formData.useCustomApiKey && (
+              <div className="space-y-3 p-4 rounded-xl bg-orange-500/5 border border-orange-500/20 animate-in fade-in slide-in-from-top-2">
+                <div className="space-y-1">
+                  <Label htmlFor="apiKey" className="text-xs">OpenAI API Key (sk-...)</Label>
+                  <Input
+                    id="apiKey"
+                    type="password"
+                    placeholder="sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx"
+                    value={formData.customOpenAiKey}
+                    onChange={(e) => setFormData({ ...formData, customOpenAiKey: e.target.value })}
+                    className="bg-background rounded-xl h-9 text-sm font-mono"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Kunci ini dienkripsi dengan aman. Tagihan API ditanggung akun OpenAI Anda sendiri.
+                </p>
+              </div>
+            )}
+            
+            <Button 
+              className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" 
+              onClick={handleSave} 
+              disabled={saving || isFreePlan}
+            >
+              {saving ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
+              {saving ? "Menyimpan..." : "Simpan Pengaturan"}
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -249,57 +306,6 @@ export default function AiSettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="glass border-0">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
-              <Key className="h-4 w-4 text-orange-500" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Bring Your Own Key (BYOK)</CardTitle>
-              <CardDescription>
-                Gunakan API Key OpenAI milik sekolah Anda sendiri untuk mendapatkan penggunaan *unlimited* tanpa memotong saldo Kuota Token SchoolPro.
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between rounded-xl border p-4 bg-background">
-            <div className="space-y-0.5">
-              <Label className="text-base">Gunakan API Key Sendiri</Label>
-              <p className="text-sm text-muted-foreground">Aktifkan untuk menggunakan mode Lanjutan.</p>
-            </div>
-            <Switch
-              checked={formData.useCustomApiKey}
-              onCheckedChange={(checked) => setFormData({ ...formData, useCustomApiKey: checked })}
-            />
-          </div>
-
-          {formData.useCustomApiKey && (
-            <div className="space-y-3 p-4 rounded-xl bg-orange-500/5 border border-orange-500/20 animate-in fade-in slide-in-from-top-2">
-              <div className="space-y-1">
-                <Label htmlFor="apiKey" className="text-xs">OpenAI API Key (sk-...)</Label>
-                <Input
-                  id="apiKey"
-                  type="password"
-                  placeholder="sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx"
-                  value={formData.customOpenAiKey}
-                  onChange={(e) => setFormData({ ...formData, customOpenAiKey: e.target.value })}
-                  className="bg-background rounded-xl h-9 text-sm font-mono"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Kunci ini akan dienkripsi dan disimpan dengan aman. Anda bertanggung jawab penuh atas tagihan API di akun OpenAI Anda.
-              </p>
-            </div>
-          )}
-          
-          <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSave} disabled={saving}>
-            {saving ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
-            {saving ? "Menyimpan..." : "Simpan Pengaturan"}
-          </Button>
-        </CardContent>
-      </Card>
 
       <Card className="glass border-0">
         <CardHeader className="pb-3">

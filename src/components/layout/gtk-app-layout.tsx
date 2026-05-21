@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { MobileBottomNav } from "./mobile-bottom-nav"
 import { Button } from "@/components/ui/button"
 import { signOut, useSession } from "next-auth/react"
+import { useRealtimeNotification } from "@/hooks/use-realtime-notification"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -20,6 +21,9 @@ import {
 export function GtkAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { data: session } = useSession()
+  
+  // Aktivasi real-time notifications via SSE
+  useRealtimeNotification()
 
   const tenantPlan = session?.user?.tenants?.[0]?.plan || "free"
   const isPremium = tenantPlan === "premium" || tenantPlan === "pro"

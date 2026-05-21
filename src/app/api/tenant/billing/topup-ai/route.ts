@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { createTransaction } from "@/features/finance/services/payment.service"
+import { createAiAddonInvoice } from "@/features/finance/services/billing.service"
 import { logger } from "@/lib/logger"
 import { headers } from "next/headers"
 
@@ -29,31 +29,21 @@ export async function POST(req: Request) {
     const { packageId } = await req.json()
     if (!packageId) return NextResponse.json({ error: "Package ID is required" }, { status: 400 })
 
-    const tokenPackage = await db.aiTokenPackage.findUnique({
-      where: { id: packageId }
-    })
+    const res = await createAiAddonInvoice(tenant.id, packageId)
 
-    if (!tokenPackage || !tokenPackage.isActive) {
-      return NextResponse.json({ error: "Paket token tidak ditemukan atau tidak aktif" }, { status: 404 })
+    if (!res.success || !res.data) {
+      return NextResponse.json({ error: res.error || "Gagal membuat invoice tagihan AI" }, { status: 400 })
     }
 
-    // Hitung PPN 11% (jika ada, sesuaikan dengan logic platform. Di sini diasumsikan nett)
-    const amount = tokenPackage.price
+    const result = res.data
 
-    // Create payment transaction
-    const payment = await createTransaction({
-      tenantId: tenant.id,
-      amount,
-      plan: "ai-token",
-      metadata: {
-        type: "AI_QUOTA",
-        packageId: tokenPackage.id,
-        packageName: tokenPackage.name,
-        aiTokens: tokenPackage.tokens
-      }
-    })
+    // Kirim notifikasi billing (async, non-blocking)
+    import("@/features/finance/services/billing-notification.service").then(({ notifyInvoiceCreated, notifySuperAdminNewInvoice }) => {
+      notifyInvoiceCreated(result.id).catch(() => {})
+      notifySuperAdminNewInvoice(result.id).catch(() => {})
+    }).catch(() => {})
 
-    return NextResponse.json(payment)
+    return NextResponse.json(result)
   } catch (error) {
     logger.error("Create AI top-up payment failed", error, { path: "/api/tenant/billing/topup-ai" })
     return NextResponse.json({ error: "Gagal membuat tagihan pembelian token AI" }, { status: 500 })

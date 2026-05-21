@@ -140,7 +140,7 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
                       {facility.name}
                     </h3>
                     <p className="text-white/80 text-sm leading-relaxed mb-0 line-clamp-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                      {facility.description || "Klik untuk melihat informasi selengkapnya mengenai sarana prasarana sekolah ini."}
+                      {facility.description ? facility.description.replace(/<[^>]*>?/gm, '') : "Klik untuk melihat informasi selengkapnya mengenai sarana prasarana sekolah ini."}
                     </p>
                   </div>
                 </Link>

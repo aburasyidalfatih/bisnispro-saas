@@ -94,7 +94,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
                   <h3 className="text-lg md:text-xl lg:text-2xl font-black drop-shadow-md leading-tight group-hover:text-primary-foreground transition-colors">{facility.name}</h3>
                   {facility.description && (
                     <p className="text-white/80 text-xs mt-2 line-clamp-1 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
-                      {facility.description}
+                      {facility.description.replace(/<[^>]*>?/gm, '')}
                     </p>
                   )}
                 </div>

@@ -100,8 +100,8 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
                     {program.name}
                   </h3>
                   {program.description && (
-                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                      {program.description}
+                    <p className="text-[11px] text-muted-foreground line-clamp-2 italic group-hover:text-slate-600 transition-colors">
+                      {program.description.replace(/<[^>]*>?/gm, '')}
                     </p>
                   )}
                   <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">

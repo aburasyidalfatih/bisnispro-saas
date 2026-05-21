@@ -25,7 +25,6 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-ENV NEXT_MINIFIER_THREADS=1
 
 ARG APP_VERSION
 ENV NEXT_PUBLIC_APP_VERSION=${APP_VERSION}
@@ -69,6 +68,13 @@ RUN npm install -g tsx
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
+# Install worker deps in a separate folder to prevent npm from pruning standalone node_modules
+RUN mkdir /tmp/worker-deps && \
+    cd /tmp/worker-deps && \
+    npm init -y && \
+    npm install bullmq ioredis nodemailer --no-package-lock && \
+    cp -r node_modules/* /app/node_modules/ && \
+    rm -rf /tmp/worker-deps
 # ========================
 
 RUN mkdir -p ./uploads ./.next/cache && chown -R nextjs:nodejs ./uploads ./.next/cache

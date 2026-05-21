@@ -7,6 +7,10 @@ concurrency:
 on:
   push:
     branches: [develop, main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       branch:
@@ -16,7 +20,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -24,21 +28,21 @@ jobs:
       - name: Set target branch name
         id: vars
         run: |
-          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
-            Add-Content -Path $env:GITHUB_ENV -Value "BRANCH=${{ github.event.inputs.branch }}"
-            if ("${{ github.event.inputs.branch }}" -eq "main") {
-              Add-Content -Path $env:GITHUB_ENV -Value "ROOT_DOMAIN=schoolpro.id"
-            } else {
-              Add-Content -Path $env:GITHUB_ENV -Value "ROOT_DOMAIN=schoolpro.my.id"
-            }
-          } else {
-            Add-Content -Path $env:GITHUB_ENV -Value "BRANCH=${{ github.ref_name }}"
-            if ("${{ github.ref_name }}" -eq "main") {
-              Add-Content -Path $env:GITHUB_ENV -Value "ROOT_DOMAIN=schoolpro.id"
-            } else {
-              Add-Content -Path $env:GITHUB_ENV -Value "ROOT_DOMAIN=schoolpro.my.id"
-            }
-          }
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
+            if [ "${{ github.event.inputs.branch }}" = "main" ]; then
+              echo "ROOT_DOMAIN=schoolpro.id" >> $GITHUB_ENV
+            else
+              echo "ROOT_DOMAIN=schoolpro.my.id" >> $GITHUB_ENV
+            fi
+          else
+            echo "BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+            if [ "${{ github.ref_name }}" = "main" ]; then
+              echo "ROOT_DOMAIN=schoolpro.id" >> $GITHUB_ENV
+            else
+              echo "ROOT_DOMAIN=schoolpro.my.id" >> $GITHUB_ENV
+            fi
+          fi
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,8 +51,8 @@ jobs:
 
       - name: Set lowercase repository name
         run: |
-          $repo = "${{ github.repository }}".ToLower()
-          Add-Content -Path $env:GITHUB_ENV -Value "REPO=$repo"
+          REPO="${{ github.repository }}"
+          echo "REPO=${REPO,,}" >> $GITHUB_ENV
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -63,6 +67,9 @@ jobs:
         with:
           images: ghcr.io/${{ env.REPO }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -70,6 +77,8 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.REPO }}:${{ env.BRANCH }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             APP_VERSION=${{ github.sha }}
             NEXT_PUBLIC_ROOT_DOMAIN=${{ env.ROOT_DOMAIN }}
@@ -80,123 +89,109 @@ jobs:
 
   deploy:
     needs: build-and-push
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Set target variables
         run: |
-          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
-            Add-Content -Path $env:GITHUB_ENV -Value "BRANCH=${{ github.event.inputs.branch }}"
-          } else {
-            Add-Content -Path $env:GITHUB_ENV -Value "BRANCH=${{ github.ref_name }}"
-          }
-          $repo = "${{ github.repository }}".ToLower()
-          Add-Content -Path $env:GITHUB_ENV -Value "REPO=$repo"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
+          else
+            echo "BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+          REPO="${{ github.repository }}"
+          echo "REPO=${REPO,,}" >> $GITHUB_ENV
 
-      - name: Execute Deployment via Native SSH
+      - name: Execute Deployment via SSH
+        uses: appleboy/ssh-action@v1.0.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACTOR: ${{ github.actor }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          BRANCH: ${{ env.BRANCH }}
+          REPO: ${{ env.REPO }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          # 1. Setup SSH Key with correct permissions
-          $sshDir = "$env:USERPROFILE\.ssh"
-          if (-not (Test-Path -Path $sshDir)) { New-Item -ItemType Directory -Path $sshDir -Force | Out-Null }
-          $keyPath = "$sshDir\deploy_key"
-          Set-Content -Path $keyPath -Value $env:SSH_PRIVATE_KEY
-          icacls $keyPath /inheritance:r /grant "$($env:USERNAME):F" | Out-Null
-          
-          # 2. Build the bash script to execute on the VPS
-          $script = @"
-          set -e
-          echo "${env:GITHUB_TOKEN}" | docker login ghcr.io -u ${env:ACTOR} --password-stdin
-          if [ "${env:BRANCH}" = "main" ]; then
-            APP_DIR="/home/${env:REMOTE_USER}/schoolpro-prod"
-          else
-            APP_DIR="/home/${env:REMOTE_USER}/schoolpro-dev"
-          fi
-          echo "Deploying branch ${env:BRANCH} to `$APP_DIR"
-          cd `$APP_DIR
-
-          if [ -n "${env:CRON_SECRET}" ]; then
-            if ! grep -q "^CRON_SECRET=" .env; then
-              echo -e "\nCRON_SECRET=\"${env:CRON_SECRET}\"" >> .env
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: GITHUB_TOKEN,ACTOR,CRON_SECRET,SENTRY_DSN,BRANCH,REPO,REMOTE_USER
+          script: |
+            set -e
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
+            if [ "$BRANCH" = "main" ]; then
+              APP_DIR="/home/$REMOTE_USER/schoolpro-prod"
             else
-              sed -i "s|^CRON_SECRET=.*|CRON_SECRET=\"${env:CRON_SECRET}\"|g" .env
+              APP_DIR="/home/$REMOTE_USER/schoolpro-dev"
             fi
-          fi
+            echo "Deploying branch $BRANCH to $APP_DIR"
+            cd "$APP_DIR"
 
-          if [ -n "${env:SENTRY_DSN}" ]; then
-            if ! grep -q "^NEXT_PUBLIC_SENTRY_DSN=" .env; then
-              echo -e "\nNEXT_PUBLIC_SENTRY_DSN=\"${env:SENTRY_DSN}\"" >> .env
+            if [ -n "$CRON_SECRET" ]; then
+              if ! grep -q "^CRON_SECRET=" .env; then
+                echo -e "\nCRON_SECRET=\"$CRON_SECRET\"" >> .env
+              else
+                sed -i "s|^CRON_SECRET=.*|CRON_SECRET=\"$CRON_SECRET\"|g" .env
+              fi
+            fi
+
+            if [ -n "$SENTRY_DSN" ]; then
+              if ! grep -q "^NEXT_PUBLIC_SENTRY_DSN=" .env; then
+                echo -e "\nNEXT_PUBLIC_SENTRY_DSN=\"$SENTRY_DSN\"" >> .env
+              else
+                sed -i "s|^NEXT_PUBLIC_SENTRY_DSN=.*|NEXT_PUBLIC_SENTRY_DSN=\"$SENTRY_DSN\"|g" .env
+              fi
+            fi
+
+            git remote set-url origin https://oauth2:$GITHUB_TOKEN@github.com/$REPO.git
+            git fetch --all
+            git reset --hard origin/$BRANCH
+            
+            docker network ls | grep -q "shared-proxy" || docker network create shared-proxy
+            
+            export APP_IMAGE="ghcr.io/$REPO:$BRANCH"
+            if [ "$BRANCH" = "main" ]; then
+              export APP_ALIAS="schoolpro-prod-app"
             else
-              sed -i "s|^NEXT_PUBLIC_SENTRY_DSN=.*|NEXT_PUBLIC_SENTRY_DSN=\"${env:SENTRY_DSN}\"|g" .env
+              export APP_ALIAS="schoolpro-dev-app"
             fi
-          fi
-
-          git remote set-url origin https://oauth2:${env:GITHUB_TOKEN}@github.com/${env:REPO}.git
-          git fetch --all
-          git reset --hard origin/${env:BRANCH}
-          
-          docker network ls | grep -q "shared-proxy" || docker network create shared-proxy
-          
-          export APP_IMAGE="ghcr.io/${env:REPO}:${env:BRANCH}"
-          if [ "${env:BRANCH}" = "main" ]; then
-            export APP_ALIAS="schoolpro-prod-app"
-          else
-            export APP_ALIAS="schoolpro-dev-app"
-          fi
-          
-          docker compose pull app
-          
-          if [ "${env:BRANCH}" = "main" ]; then
-            docker compose up -d --no-build app worker db redis --remove-orphans
-          else
-            docker compose up -d --no-build app worker --remove-orphans
-          fi
-          
-          echo `"Waiting for container to be ready...`"
-          sleep 10
-          
-          echo `"Running database synchronization...`"
-          docker compose exec -T app node node_modules/prisma/build/index.js db push --accept-data-loss --skip-generate 2>&1 || echo `"⚠️ Synchronization failed!`"
-          
-          if [ `"$env:BRANCH`" = `"main`" ]; then
-            echo `"Restarting Nginx proxy to flush DNS cache...`"
-            docker compose restart nginx
-          fi
-          
-          echo `"Running health check...`"
-          HEALTH_OK=false
-          for i in `$(seq 1 12); do
-            RESULT=`$(docker compose exec -T app wget -qO- http://localhost:3000/api/health 2>/dev/null || echo `"fail`")
-            if echo `"$RESULT`" | grep -q `"healthy`"; then
-              echo `"✅ Health check passed!`"
-              HEALTH_OK=true
-              break
+            
+            docker compose pull app
+            
+            if [ "$BRANCH" = "main" ]; then
+              docker compose up -d --no-build app worker db redis --remove-orphans
+            else
+              docker compose up -d --no-build app worker --remove-orphans
             fi
-            echo `"Attempt `$i/12 — waiting 5s...`"
-            sleep 5
-          done
-          
-          if [ `"$HEALTH_OK`" = `"false`" ]; then
-            echo `"⚠️ Health check did not pass, but container is running.`"
-          fi
-          
-          docker logout ghcr.io
-          docker image prune -f
-          echo `"✅ Deployment completed!`"
-          "@
-          
-          # Force LF line endings for bash compatibility
-          $script = $script.Replace("`r`n", "`n")
-          [IO.File]::WriteAllText("deploy_script.sh", $script)
-          
-          # 3. Execute script over SSH natively
-          cmd.exe /c "ssh -o StrictHostKeyChecking=no -i $keyPath ""$env:REMOTE_USER@$env:REMOTE_HOST"" ""bash -s"" < deploy_script.sh"
-          
-          # Clean up key
-          Remove-Item -Path $keyPath -Force
+            
+            echo "Waiting for container to be ready..."
+            sleep 10
+            
+            echo "Running database synchronization..."
+            docker compose exec -T app node node_modules/prisma/build/index.js db push --accept-data-loss --skip-generate 2>&1 || echo "⚠️ Synchronization failed!"
+            
+            if [ "$BRANCH" = "main" ]; then
+              echo "Restarting Nginx proxy to flush DNS cache..."
+              docker compose restart nginx
+            fi
+            
+            echo "Running health check..."
+            HEALTH_OK=false
+            for i in $(seq 1 12); do
+              RESULT=$(docker compose exec -T app wget -qO- http://localhost:3000/api/health 2>/dev/null || echo "fail")
+              if echo "$RESULT" | grep -q "healthy"; then
+                echo "✅ Health check passed!"
+                HEALTH_OK=true
+                break
+              fi
+              echo "Attempt $i/12 — waiting 5s..."
+              sleep 5
+            done
+            
+            if [ "$HEALTH_OK" = "false" ]; then
+              echo "⚠️ Health check did not pass, but container is running."
+            fi
+            
+            docker logout ghcr.io
+            docker image prune -f
+            echo "✅ Deployment completed!"

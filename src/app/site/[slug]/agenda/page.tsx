@@ -81,8 +81,8 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
                         <MapPin className="h-4 w-4 text-primary" /> {event.location || "Area Sekolah"}
                      </div>
                   </div>
-                  <p className="text-muted-foreground line-clamp-2 leading-relaxed">
-                     {event.description || "Silakan klik untuk melihat detail informasi agenda kegiatan ini."}
+                  <p className="text-muted-foreground text-sm line-clamp-2">
+                     {event.description ? event.description.replace(/<[^>]*>?/gm, '') : "Silakan klik untuk melihat detail informasi agenda kegiatan ini."}
                   </p>
                   <div className="mt-6 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                     Lihat Detail <ArrowRight className="h-3 w-3" />

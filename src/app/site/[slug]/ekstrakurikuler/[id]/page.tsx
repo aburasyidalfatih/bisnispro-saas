@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!extra) return {}
   return {
     title: `${extra.name} - ${tenant.name}`,
-    description: extra.description || `Informasi Ekstrakurikuler ${extra.name}`,
+    description: (extra.description ? extra.description.replace(/<[^>]*>?/gm, '') : `Informasi Ekstrakurikuler ${extra.name}`),
     alternates: {
       canonical: `/ekstrakurikuler/${extra.id}`,
     },
@@ -84,7 +84,7 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
               <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
                 <h3 className="text-xl font-bold mb-4 text-foreground">Mengenal {extra.name}</h3>
                 {extra.description ? (
-                  <p className="whitespace-pre-wrap">{extra.description}</p>
+                  <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: extra.description }} />
                 ) : (
                   <p className="italic">Tidak ada deskripsi detail untuk ekstrakurikuler ini.</p>
                 )}
