@@ -72,7 +72,7 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 RUN mkdir /tmp/worker-deps && \
     cd /tmp/worker-deps && \
     npm init -y && \
-    npm install bullmq ioredis --no-package-lock && \
+    npm install bullmq ioredis nodemailer --no-package-lock && \
     cp -r node_modules/* /app/node_modules/ && \
     rm -rf /tmp/worker-deps
 # ========================
