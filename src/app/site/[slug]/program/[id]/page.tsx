@@ -134,7 +134,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
         {/* Share Buttons */}
         <ShareButtons 
           url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/program/${program.id}`} 
-          title={program.name} 
+          title={program.name}
+          tenantId={tenant.id}
         />
       </article>
     </div>

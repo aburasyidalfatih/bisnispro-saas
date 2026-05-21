@@ -153,7 +153,8 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
         {/* Share Buttons */}
         <ShareButtons 
           url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/agenda/${event.id}`} 
-          title={event.title} 
+          title={event.title}
+          tenantId={tenant.id}
         />
       </article>
     </div>

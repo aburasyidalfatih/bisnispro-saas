@@ -1,7 +1,9 @@
 "use client"
 
 import { useToast } from "@/hooks/use-toast"
-import { Link as LinkIcon } from "lucide-react"
+import { Link as LinkIcon, Share2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { trackShareAction } from "@/features/post/actions/share.action"
 
 // Custom SVG Icons
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -22,53 +24,93 @@ const TwitterIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
-export function ShareButtons({ url, title }: { url: string; title: string }) {
+export function ShareButtons({ url, title, postId, tenantId, initialShares = 0 }: { 
+  url: string; 
+  title: string; 
+  postId?: string; 
+  tenantId?: string;
+  initialShares?: number;
+}) {
   const { toast } = useToast()
+  const [shareCount, setShareCount] = useState(initialShares)
   
   // Need absolute URL for sharing
   const absoluteUrl = typeof window !== "undefined" ? window.location.href : url
 
-  const handleCopyLink = () => {
+  const handleShare = async (platform: string, shareUrl: string) => {
+    // Open share link
+    window.open(shareUrl, "_blank", "noopener,noreferrer")
+
+    // Track share in Redis + award leaderboard points
+    if (postId && tenantId) {
+      const result = await trackShareAction(postId, tenantId, platform)
+      if (result.success) {
+        setShareCount(prev => prev + 1)
+        
+        const pointsMap: Record<string, number> = { whatsapp: 5, facebook: 5, twitter: 5, copy: 2 }
+        const points = pointsMap[platform] || 2
+        
+        toast({
+          title: `+${points} Poin Leaderboard! 🎮`,
+          description: `Terima kasih sudah membagikan ke ${platform === "whatsapp" ? "WhatsApp" : platform === "facebook" ? "Facebook" : "X/Twitter"}!`,
+          className: "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-none",
+        })
+      }
+    }
+  }
+
+  const handleCopyLink = async () => {
     navigator.clipboard.writeText(absoluteUrl)
+    
+    // Track copy as share
+    if (postId && tenantId) {
+      const result = await trackShareAction(postId, tenantId, "copy")
+      if (result.success) {
+        setShareCount(prev => prev + 1)
+      }
+    }
+
     toast({
-      title: "Tautan Disalin!",
+      title: "Tautan Disalin! +2 Poin 🎮",
       description: "Tautan artikel berhasil disalin ke clipboard.",
     })
   }
 
   return (
     <div className="flex items-center gap-3 mt-8 pt-8 border-t border-border">
-      <span className="text-sm font-semibold text-muted-foreground">Bagikan:</span>
-      <a
-        href={`https://wa.me/?text=${encodeURIComponent(title + " " + absoluteUrl)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="h-10 w-10 rounded-full bg-green-500/10 text-green-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-all duration-300 shadow-sm"
+      <div className="flex items-center gap-2">
+        <Share2 className="h-4 w-4 text-muted-foreground" />
+        <span className="text-sm font-semibold text-muted-foreground">Bagikan:</span>
+        {shareCount > 0 && (
+          <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+            {shareCount}x
+          </span>
+        )}
+      </div>
+      <button
+        onClick={() => handleShare("whatsapp", `https://wa.me/?text=${encodeURIComponent(title + " " + absoluteUrl)}`)}
+        className="h-10 w-10 rounded-full bg-green-500/10 text-green-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
         aria-label="Bagikan ke WhatsApp"
       >
         <WhatsAppIcon className="h-4 w-4" />
-      </a>
-      <a
-        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(absoluteUrl)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="h-10 w-10 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-sm"
+      </button>
+      <button
+        onClick={() => handleShare("facebook", `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(absoluteUrl)}`)}
+        className="h-10 w-10 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
         aria-label="Bagikan ke Facebook"
       >
         <FacebookIcon className="h-4 w-4" />
-      </a>
-      <a
-        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(absoluteUrl)}&text=${encodeURIComponent(title)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="h-10 w-10 rounded-full bg-sky-500/10 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all duration-300 shadow-sm"
+      </button>
+      <button
+        onClick={() => handleShare("twitter", `https://twitter.com/intent/tweet?url=${encodeURIComponent(absoluteUrl)}&text=${encodeURIComponent(title)}`)}
+        className="h-10 w-10 rounded-full bg-sky-500/10 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
         aria-label="Bagikan ke X/Twitter"
       >
         <TwitterIcon className="h-4 w-4" />
-      </a>
+      </button>
       <button
         onClick={handleCopyLink}
-        className="h-10 w-10 rounded-full bg-slate-500/10 text-slate-600 flex items-center justify-center hover:bg-slate-500 hover:text-white transition-all duration-300 shadow-sm"
+        className="h-10 w-10 rounded-full bg-slate-500/10 text-slate-600 flex items-center justify-center hover:bg-slate-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
         aria-label="Salin Tautan"
       >
         <LinkIcon className="h-4 w-4" />
@@ -76,3 +118,4 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
     </div>
   )
 }
+

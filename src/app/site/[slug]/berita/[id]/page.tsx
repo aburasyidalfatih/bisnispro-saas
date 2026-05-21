@@ -13,6 +13,7 @@ import { ReadingProgress } from "./_components/reading-progress"
 import { ShareButtons } from "./_components/share-buttons"
 import { PostViewCounter } from "./_components/view-counter"
 import { getPostViews } from "@/features/post/services/views.service"
+import { getShareCount } from "@/features/post/services/share.service"
 
 export const dynamicParams = true
 
@@ -87,6 +88,10 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
   // Get live views from Redis + Postgres baseline
   const redisViews = await getPostViews(id)
   const totalViews = (post.viewCount || 0) + redisViews
+  
+  // Get share count from Redis + Postgres
+  const redisShares = await getShareCount(id)
+  const totalShares = (post.shareCount || 0) + redisShares
 
   return (
     <div className="bg-background min-h-screen pt-4 md:pt-12 pb-24 font-sans text-foreground">
@@ -180,7 +185,10 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
         {/* Share Buttons */}
         <ShareButtons 
           url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.id}`} 
-          title={post.title} 
+          title={post.title}
+          postId={post.id}
+          tenantId={tenant.id}
+          initialShares={totalShares}
         />
       </article>
 

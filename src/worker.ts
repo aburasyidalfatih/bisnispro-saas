@@ -7,6 +7,7 @@ import { ImportService } from "@/features/import/services/import.service"
 import { processGamificationPoints } from "@/features/gamification/services/gamification.service"
 import { FinanceService } from "@/features/finance/services/finance.service"
 import { syncPostViewsToDatabase, syncEventViewsToDatabase } from "@/features/post/services/views.service"
+import { syncShareCountsToDatabase } from "@/features/post/services/share.service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -317,11 +318,12 @@ setInterval(async () => {
   try {
     const p = await syncPostViewsToDatabase()
     const e = await syncEventViewsToDatabase()
-    if (p > 0 || e > 0) {
-      console.log(`[cron] Synced ${p} post views and ${e} event views to DB`)
+    const s = await syncShareCountsToDatabase()
+    if (p > 0 || e > 0 || s > 0) {
+      console.log(`[cron] Synced ${p} post views, ${e} event views, ${s} share counts to DB`)
     }
   } catch (error) {
-    console.error("[cron] Failed to sync views", error)
+    console.error("[cron] Failed to sync", error)
   }
 }, 10 * 60 * 1000) // 10 minutes
 

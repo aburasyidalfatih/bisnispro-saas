@@ -94,7 +94,8 @@ export default async function AchievementDetailPage({ params }: { params: Promis
         {/* Share Buttons */}
         <ShareButtons 
           url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/prestasi/${achievement.id}`} 
-          title={achievement.title} 
+          title={achievement.title}
+          tenantId={tenant.id}
         />
       </article>
     </div>

@@ -134,7 +134,8 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
         {/* Share Buttons */}
         <ShareButtons 
           url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/ekstrakurikuler/${extra.id}`} 
-          title={extra.name} 
+          title={extra.name}
+          tenantId={tenant.id}
         />
       </article>
     </div>
