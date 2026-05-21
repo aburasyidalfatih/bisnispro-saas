@@ -1,5 +1,6 @@
 import { JWT } from "google-auth-library"
 import { logger } from "@/lib/logger"
+import { db } from "@/lib/db"
 
 /**
  * Service untuk memanggil Google Indexing API
@@ -11,8 +12,22 @@ export async function submitToGoogleIndexing(
   credentials?: { email: string, key: string }
 ): Promise<boolean> {
   // Gunakan kredensial tenant jika ada, atau fallback ke kredensial global server
-  const clientEmail = credentials?.email || process.env.GOOGLE_INDEXING_CLIENT_EMAIL
+  let clientEmail = credentials?.email || process.env.GOOGLE_INDEXING_CLIENT_EMAIL
   let privateKey = credentials?.key || process.env.GOOGLE_INDEXING_PRIVATE_KEY
+
+  if (!clientEmail || !privateKey) {
+    try {
+      const settings = await db.platformSetting.findMany({
+        where: { key: { in: ["GOOGLE_INDEXING_CLIENT_EMAIL", "GOOGLE_INDEXING_PRIVATE_KEY"] } }
+      })
+      const emailSetting = settings.find(s => s.key === "GOOGLE_INDEXING_CLIENT_EMAIL")?.value
+      const keySetting = settings.find(s => s.key === "GOOGLE_INDEXING_PRIVATE_KEY")?.value
+      clientEmail = clientEmail || emailSetting
+      privateKey = privateKey || keySetting
+    } catch (e) {
+      logger.warn("Failed to fetch Google Indexing credentials from DB", { error: String(e) })
+    }
+  }
   
   if (privateKey) {
     privateKey = privateKey.replace(/\\n/g, '\n')

@@ -106,6 +106,10 @@ export default function SuperAdminSettingsPage() {
     GOOGLE_CLIENT_ID: "",
     GOOGLE_CLIENT_SECRET: "",
 
+    // Google Indexing API
+    GOOGLE_INDEXING_CLIENT_EMAIL: "",
+    GOOGLE_INDEXING_PRIVATE_KEY: "",
+
     // Cloudflare Turnstile
     TURNSTILE_ENABLED: "false",
     TURNSTILE_SITE_KEY: "",
@@ -1049,6 +1053,35 @@ export default function SuperAdminSettingsPage() {
               </div>
               <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'])} disabled={saving}>
                 <Save className="h-4 w-4" /> Simpan Kredensial
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="glass border-0">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10">
+                  <Globe className="h-4 w-4 text-blue-500" />
+                </div>
+                <CardTitle className="text-lg">Google Indexing API (SEO)</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">Kredensial ini digunakan sebagai <i>fallback</i> jika sekolah/tenant tidak mengatur kredensial Indexing mereka sendiri. Berguna untuk meminta Google mengindeks artikel secara instan.</p>
+              
+              <div className="space-y-2">
+                <Label>Client Email</Label>
+                <Input value={form.GOOGLE_INDEXING_CLIENT_EMAIL} onChange={e => setForm({...form, GOOGLE_INDEXING_CLIENT_EMAIL: e.target.value})} placeholder="nama-akun@project-id.iam.gserviceaccount.com" className="rounded-xl font-mono text-xs" />
+              </div>
+              <div className="space-y-2">
+                <Label>Private Key (JSON)</Label>
+                <div className="relative">
+                  <Input type={showPass ? "text" : "password"} value={form.GOOGLE_INDEXING_PRIVATE_KEY} onChange={e => setForm({...form, GOOGLE_INDEXING_PRIVATE_KEY: e.target.value})} placeholder="-----BEGIN PRIVATE KEY-----\n..." className="rounded-xl font-mono text-xs pr-10" />
+                  <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+                </div>
+              </div>
+              <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['GOOGLE_INDEXING_CLIENT_EMAIL', 'GOOGLE_INDEXING_PRIVATE_KEY'])} disabled={saving}>
+                <Save className="h-4 w-4" /> Simpan Kredensial Indexing
               </Button>
             </CardContent>
           </Card>
