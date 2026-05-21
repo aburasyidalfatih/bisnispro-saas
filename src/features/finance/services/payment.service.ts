@@ -289,6 +289,30 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
           },
           "pay-invoice"
         )
+      } else if (payment.plan === "ai_addon" || (payment.metadata as any)?.type === "AI_QUOTA") {
+        await retryAsync(
+          async () => {
+             const metadata = payment.metadata as any
+             if (!metadata?.aiTokens) throw new Error("AI Tokens amount not found in payment metadata")
+             
+             // Tambahkan token ke Tenant
+             await db.tenant.update({
+               where: { id: payment.tenantId },
+               data: { 
+                 aiTokens: { increment: Number(metadata.aiTokens) } 
+               }
+             })
+
+             // Notify Admin
+             const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service");
+             await notifyTenantAdmins(payment.tenantId, {
+               title: "Top-Up Token AI Berhasil 🤖",
+               message: `Selamat! Anda berhasil melakukan Top-Up sebanyak ${metadata.aiTokens} Token AI.`,
+               type: "success"
+             })
+          },
+          "topup-ai-tokens"
+        )
       } else {
         const plan = await db.subscriptionPlan.findFirst({
           where: payment.planId ? { id: payment.planId } : { slug: payment.plan },
@@ -297,13 +321,19 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
       await retryAsync(
         async () => {
           // Update tenant
+          const updateData: any = {
+            plan: plan?.slug || payment.plan,
+            planId: plan?.id,
+            studentQuota: plan?.maxStudents || 0,
+          }
+
+          if (plan && plan.monthlyAiTokens > 0) {
+            updateData.aiTokens = { increment: plan.monthlyAiTokens }
+          }
+
           await db.tenant.update({
             where: { id: payment.tenantId },
-            data: {
-              plan: plan?.slug || payment.plan,
-              planId: plan?.id,
-              studentQuota: plan?.maxStudents || 0,
-            },
+            data: updateData,
           })
 
           // Create subscription history
@@ -332,7 +362,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
       const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service");
       await notifyTenantAdmins(payment.tenantId, {
         title: "Upgrade Paket Berhasil ✅",
-        message: `Selamat! Paket berhasil diupgrade ke ${plan?.slug?.toUpperCase() || payment.plan}. Nikmati fitur premium SchoolPro.`,
+        message: `Selamat! Paket berhasil diupgrade ke ${plan?.slug?.toUpperCase() || payment.plan}.${plan?.monthlyAiTokens ? ` Anda mendapatkan bonus ${plan.monthlyAiTokens} Token AI.` : ""}`,
         type: "success"
       })
       } // end else
