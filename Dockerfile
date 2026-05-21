@@ -68,14 +68,8 @@ RUN npm install -g tsx
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
-# Install worker deps in a separate folder to prevent npm from pruning standalone node_modules
-RUN mkdir /tmp/worker-deps && \
-    cd /tmp/worker-deps && \
-    npm init -y && \
-    npm install bullmq ioredis nodemailer --no-package-lock && \
-    cp -r node_modules/* /app/node_modules/ && \
-    rm -rf /tmp/worker-deps
-# ========================
+# Install all production dependencies for worker to prevent MODULE_NOT_FOUND errors
+RUN npm install --omit=dev --legacy-peer-deps
 
 RUN mkdir -p ./uploads ./.next/cache && chown -R nextjs:nodejs ./uploads ./.next/cache
 
