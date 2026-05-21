@@ -1,12 +1,12 @@
 import { createOpenAI } from "@ai-sdk/openai"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
 import { createOpenRouter } from "@openrouter/ai-sdk-provider"
-import { LanguageModelV1 } from "@ai-sdk/provider"
+import { LanguageModelV2 } from "@ai-sdk/provider"
 import { db } from "@/lib/db"
 
 export type AiModelResult = {
   success: boolean
-  model?: LanguageModelV1
+  model?: LanguageModelV2
   error?: string
 }
 

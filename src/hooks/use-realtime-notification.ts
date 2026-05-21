@@ -27,8 +27,6 @@ export function useRealtimeNotification() {
           toast({
             title: data.notification.title || "Notifikasi Baru",
             description: data.notification.message || "Anda mendapatkan pesan baru",
-            variant: "default", // Atau variant custom success
-            className: "bg-green-500 text-white border-none",
           })
 
           // 2. Optimistic update / Re-fetch SWR cache untuk badge bell
@@ -41,8 +39,6 @@ export function useRealtimeNotification() {
           toast({
             title: `+${data.points} Poin (Aktivitas Tenant)`,
             description: data.description,
-            variant: "default",
-            className: "bg-blue-500 text-white border-none",
           })
           
           mutate("/api/notifications")
