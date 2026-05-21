@@ -15,6 +15,7 @@ import { GtkAppLayout } from "@/components/layout/gtk-app-layout"
 import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
 import { TenantCompletenessPopup } from "@/components/layout/tenant-completeness-popup"
 import { PresenceProvider } from "@/components/providers/presence-provider"
+import { ActivityTracker } from "@/components/providers/activity-tracker"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
@@ -113,6 +114,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <TenantBrandingProvider>
       <PresenceProvider />
+      {isAdminRole && <ActivityTracker />}
       <TenantCompletenessPopup />
       {isGuru ? (
         <GtkAppLayout>

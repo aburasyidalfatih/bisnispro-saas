@@ -327,3 +327,136 @@ setInterval(async () => {
   }
 }, 10 * 60 * 1000) // 10 minutes
 
+// ============================================================
+// TENANT LIFECYCLE MANAGEMENT (RETENTION & CLEANUP)
+// ============================================================
+setInterval(async () => {
+  console.log("[cron] Running Tenant Lifecycle Management check...")
+  try {
+    const now = new Date()
+    
+    // 1. Fase 1: Peringatan 30 Hari (Re-engagement)
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    const thirtyOneDaysAgo = new Date(now.getTime() - 31 * 24 * 60 * 60 * 1000)
+    
+    const warnTenants = await db.tenant.findMany({
+      where: {
+        isActive: true,
+        retentionStatus: "ACTIVE",
+        lastActiveAt: {
+          lte: thirtyDaysAgo,
+          gt: thirtyOneDaysAgo // Prevent spamming, only trigger on the 30th-31st day window
+        }
+      }
+    })
+
+    for (const tenant of warnTenants) {
+      console.log(`[retention] Warning 30-day inactive tenant: ${tenant.slug}`)
+      
+      // Update status
+      await db.tenant.update({
+        where: { id: tenant.id },
+        data: { retentionStatus: "WARN_30" }
+      })
+
+      // Ambil konfigurasi template dari PlatformSetting
+      const platformSettings = await db.platformSetting.findMany({
+        where: { key: { in: ['RETENTION_30_WA', 'RETENTION_30_EMAIL_SUBJECT', 'RETENTION_30_EMAIL_BODY'] } }
+      })
+      const settingsMap = platformSettings.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as any)
+      
+      const emailSubject = settingsMap['RETENTION_30_EMAIL_SUBJECT'] || "Apakah ada kendala dengan website sekolah Anda?"
+      const emailBodyRaw = settingsMap['RETENTION_30_EMAIL_BODY'] || `
+        <p>Halo Admin {nama_sekolah},</p>
+        <p>Kami perhatikan Anda belum login ke dasbor SchoolPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur sekolah Anda?</p>
+        <p>Yuk, mulai bangun kehadiran digital sekolah Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p>
+        <p>Salam hangat,<br/>Tim SchoolPro</p>
+      `
+      const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name)
+      
+      const waMsgRaw = settingsMap['RETENTION_30_WA'] || "Halo Admin {nama_sekolah}, kami perhatikan Anda belum login dasbor selama 30 hari. Apakah ada kendala? Yuk, bangun kehadiran digital sekolah Anda sekarang. Balas pesan ini jika butuh bantuan!"
+      const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name)
+
+      const Queue = require("bullmq").Queue
+
+      // Kirim Email
+      if (tenant.email) {
+        const emailQueue = new Queue("email-queue", { connection })
+        await emailQueue.add("retention-warning", {
+          tenantId: tenant.id,
+          to: tenant.email,
+          subject: emailSubject,
+          htmlContent: emailBody
+        })
+      }
+
+      // Kirim WA
+      if (tenant.whatsapp || tenant.phone) {
+        const phone = tenant.whatsapp || tenant.phone || ""
+        // Log ke database agar tampil di dasbor /super-admin/wa-logs
+        const waLog = await db.waQueueLog.create({
+          data: {
+            tenantId: tenant.id, 
+            targetNumber: phone,
+            message: waMsg,
+            status: "PENDING"
+          }
+        })
+
+        const waQueue = new Queue("wa-queue", { connection })
+        await waQueue.add("retention-warning-wa", {
+          tenantId: tenant.id,
+          number: phone,
+          message: waMsg,
+          waQueueLogId: waLog.id
+        })
+      }
+    }
+
+    // 2. Fase 2: Penonaktifan 90 Hari (Suspension)
+    const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+    const suspendTenants = await db.tenant.findMany({
+      where: {
+        isActive: true,
+        retentionStatus: "WARN_30",
+        lastActiveAt: { lte: ninetyDaysAgo }
+      }
+    })
+
+    for (const tenant of suspendTenants) {
+      console.log(`[retention] Suspending 90-day inactive tenant: ${tenant.slug}`)
+      await db.tenant.update({
+        where: { id: tenant.id },
+        data: { 
+          isActive: false, 
+          retentionStatus: "SUSPENDED_90" 
+        }
+      })
+    }
+
+    // 3. Fase 3: Penghapusan 180 Hari (Soft Delete)
+    const oneEightyDaysAgo = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000)
+    const deleteTenants = await db.tenant.findMany({
+      where: {
+        isActive: false,
+        retentionStatus: "SUSPENDED_90",
+        lastActiveAt: { lte: oneEightyDaysAgo },
+        deletedAt: null
+      }
+    })
+
+    for (const tenant of deleteTenants) {
+      console.log(`[retention] Soft-deleting 180-day inactive tenant: ${tenant.slug}`)
+      await db.tenant.update({
+        where: { id: tenant.id },
+        data: { 
+          retentionStatus: "DELETED_180",
+          deletedAt: now
+        }
+      })
+    }
+
+  } catch (error) {
+    console.error("[cron] Failed Tenant Lifecycle check", error)
+  }
+}, 24 * 60 * 60 * 1000) // Runs once every 24 hours

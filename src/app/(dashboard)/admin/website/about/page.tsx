@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
 import { getStaff } from "@/features/staff/actions/staff.action"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
 import Image from "next/image"
 
 export default function WebsiteAboutPage() {

@@ -23,7 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import Link from "next/link"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
 import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
 import { normalizeImageUrl } from "@/lib/utils"
 

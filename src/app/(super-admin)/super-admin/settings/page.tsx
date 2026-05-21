@@ -10,7 +10,7 @@ import {
   Server, Shield, Eye, EyeOff, Mail, MessageSquare, 
   CreditCard, Globe, Settings2, Save, ExternalLink,
   Send, Smartphone, ShieldCheck, Database, HardDrive, Cloud,
-  Download, RefreshCw, CheckCircle2, XCircle, Clock, Archive, Timer
+  Download, RefreshCw, CheckCircle2, XCircle, Clock, Archive, Timer, Plus, X, Trash2, Edit, Loader2, ArrowRight, HelpCircle, Cpu, Megaphone
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
@@ -114,6 +114,11 @@ export default function SuperAdminSettingsPage() {
     TURNSTILE_ENABLED: "false",
     TURNSTILE_SITE_KEY: "",
     TURNSTILE_SECRET_KEY: "",
+
+    // Pesan Retensi
+    RETENTION_30_EMAIL_SUBJECT: "Apakah ada kendala dengan website sekolah Anda?",
+    RETENTION_30_EMAIL_BODY: "<p>Halo Admin {nama_sekolah},</p><p>Kami perhatikan Anda belum login ke dasbor SchoolPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur sekolah Anda?</p><p>Yuk, mulai bangun kehadiran digital sekolah Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p>",
+    RETENTION_30_WA: "Halo Admin {nama_sekolah}, kami perhatikan Anda belum login dasbor selama 30 hari. Apakah ada kendala? Yuk, bangun kehadiran digital sekolah Anda sekarang. Balas pesan ini jika butuh bantuan!",
 
     // Kendali Akses Free Plan
     FREE_PLAN_ACCESS: JSON.stringify({
@@ -1538,6 +1543,34 @@ export default function SuperAdminSettingsPage() {
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="retention" className="grid gap-6 outline-none">
+          <Card className="glass border-0 shadow-sm overflow-hidden col-span-full">
+            <CardHeader className="border-b bg-white/50">
+              <CardTitle className="flex items-center gap-2">
+                <Megaphone className="h-5 w-5 text-primary" />
+                Pesan Retensi & Penagihan (30 Hari)
+              </CardTitle>
+              <CardDescription>Sesuaikan pesan yang dikirim ke tenant yang tidak aktif selama 30 hari.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              <div className="grid gap-2">
+                <Label>Subjek Email</Label>
+                <Input value={form.RETENTION_30_EMAIL_SUBJECT} onChange={e => setForm({...form, RETENTION_30_EMAIL_SUBJECT: e.target.value})} />
+              </div>
+              <div className="grid gap-2">
+                <Label>Isi Email (HTML)</Label>
+                <Textarea rows={6} value={form.RETENTION_30_EMAIL_BODY} onChange={e => setForm({...form, RETENTION_30_EMAIL_BODY: e.target.value})} className="font-mono text-sm" />
+                <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> untuk variabel dinamis.</p>
+              </div>
+              <div className="grid gap-2">
+                <Label>Pesan WhatsApp</Label>
+                <Textarea rows={4} value={form.RETENTION_30_WA} onChange={e => setForm({...form, RETENTION_30_WA: e.target.value})} />
+                <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> untuk variabel dinamis.</p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
