@@ -162,11 +162,15 @@ export default function BillingHistoryPage() {
                             hour: "2-digit", minute: "2-digit"
                           })}
                         </p>
-                        {meta.studentCount && (
+                        {meta.studentCount ? (
                           <p className="text-xs text-muted-foreground mt-0.5">
                             {meta.studentCount} siswa × Rp {Number(meta.pricePerStudent || 0).toLocaleString("id-ID")}
                           </p>
-                        )}
+                        ) : meta.type === "AI_QUOTA" ? (
+                          <p className="text-xs text-muted-foreground mt-0.5 font-medium text-blue-600">
+                            + {Number(meta.aiTokens || 0).toLocaleString("id-ID")} Token AI
+                          </p>
+                        ) : null}
                       </div>
                     </div>
 
