@@ -42,9 +42,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   await Promise.all(
     records.map((rec: { studentId: string; status: string; notes?: string }) =>
       db.attendanceRecord.upsert({
-        where: { sessionId_studentId: { sessionId, studentId: rec.studentId } },
+        where: { sessionId_studentId_academicYear: { sessionId, studentId: rec.studentId, academicYear: "2025/2026" } },
         update: { status: rec.status, notes: rec.notes },
-        create: { sessionId, tenantId, studentId: rec.studentId, status: rec.status, notes: rec.notes },
+        create: { id: crypto.randomUUID(), academicYear: "2025/2026", sessionId, tenantId, studentId: rec.studentId, status: rec.status, notes: rec.notes },
       })
     )
   )

@@ -239,6 +239,7 @@ async function main() {
 
   await prisma.attendanceRecord.create({
     data: {
+      id: "demo-att-001",
       tenantId: demoTenant.id,
       studentId: siswa.id,
       sessionId: session.id,

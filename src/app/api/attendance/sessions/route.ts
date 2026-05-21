@@ -105,6 +105,8 @@ export async function POST(req: Request) {
     if (students.length > 0) {
       await db.attendanceRecord.createMany({
         data: students.map(s => ({
+          id: crypto.randomUUID(),
+          academicYear: "2025/2026",
           sessionId: attendanceSession.id,
           tenantId,
           studentId: s.id,

@@ -25,6 +25,8 @@ interface Payment {
     studentCount?: number
     pricePerStudent?: number
     tenantName?: string
+    type?: string
+    aiTokens?: number
   } | null
 }
 

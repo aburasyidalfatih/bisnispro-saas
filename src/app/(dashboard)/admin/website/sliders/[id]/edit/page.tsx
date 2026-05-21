@@ -57,7 +57,7 @@ export default function EditSliderPage() {
               isActive: d.isActive,
               imageUrl: d.imageUrl
             })
-            setPreviewUrl(normalizeImageUrl(d.imageUrl))
+            setPreviewUrl(normalizeImageUrl(d.imageUrl) || null)
           }
           setLoading(false)
         })

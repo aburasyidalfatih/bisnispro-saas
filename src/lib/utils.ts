@@ -65,8 +65,8 @@ export function getRootDomain(hostname?: string): string {
  * - Filesystem paths (uploads/..., ./uploads/...) — converted to /api/files/...
  * - null/undefined/empty — returns null
  */
-export function normalizeImageUrl(url: string | null | undefined): string | null {
-  if (!url || url.trim() === "") return null
+export function normalizeImageUrl(url: string | null | undefined): string | undefined {
+  if (!url || url.trim() === "") return undefined
 
   let cleaned = url.trim()
 
