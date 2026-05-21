@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { normalizeImageUrl } from "@/lib/utils"
@@ -9,6 +10,21 @@ interface Partnership {
   name: string
   imageUrl: string
   websiteUrl?: string | null
+}
+
+const PartnerImage = ({ src, alt }: { src: string | null | undefined, alt: string }) => {
+  const [error, setError] = useState(false)
+  
+  const finalSrc = error || !src ? "https://schoolpro.id/logo-schoolpro.png" : src
+
+  return (
+    <img 
+      src={finalSrc}
+      alt={alt}
+      className="absolute inset-0 w-full h-full object-contain"
+      onError={() => setError(true)}
+    />
+  )
 }
 
 export function PartnershipsSection({ partnerships }: { partnerships: Partnership[] }) {
@@ -36,12 +52,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
-                    <Image src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill />
+                    <PartnerImage src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} />
                   </div>
                 </Link>
               ) : (
                 <div className="relative aspect-video w-full">
-                  <Image src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill />
+                  <PartnerImage src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} />
                 </div>
               )}
             </div>
@@ -54,12 +70,12 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
-                    <Image src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill />
+                    <PartnerImage src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} />
                   </div>
                 </Link>
               ) : (
                 <div className="relative aspect-video w-full">
-                  <Image src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-contain" fill />
+                  <PartnerImage src={normalizeImageUrl(partner.imageUrl) || partner.imageUrl} alt={partner.name} />
                 </div>
               )}
             </div>

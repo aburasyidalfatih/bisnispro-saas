@@ -50,7 +50,7 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
       facebook: true,
       youtube: true,
       tiktok: true,
-      staff: { orderBy: { sortOrder: 'asc' }, take: 20 },
+      staff: { orderBy: { sortOrder: 'asc' }, take: 100 },
       alumni: { orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
       programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 10 },
       extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },

@@ -51,11 +51,11 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
     imageUrl: al.imageUrl,
   }))
 
-  const partnerships = (tenant.partnerships || []).map((p) => ({
+  const partnerships = (tenant.partnerships || []).map((p: any) => ({
     id: p.id,
     name: p.name,
-    imageUrl: p.logo || "",
-    websiteUrl: p.website,
+    imageUrl: p.imageUrl || "",
+    websiteUrl: p.websiteUrl,
   }))
 
   return (
