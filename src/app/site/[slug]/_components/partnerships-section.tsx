@@ -12,12 +12,14 @@ interface Partnership {
   websiteUrl?: string | null
 }
 
-const PartnerImage = ({ src, alt }: { src: string, alt: string }) => {
+const PartnerImage = ({ src, alt }: { src: string | null | undefined, alt: string }) => {
   const [error, setError] = useState(false)
   
+  const finalSrc = error || !src ? "https://schoolpro.id/logo-schoolpro.png" : src
+
   return (
     <img 
-      src={error ? "/logo-schoolpro.png" : src}
+      src={finalSrc}
       alt={alt}
       className="absolute inset-0 w-full h-full object-contain"
       onError={() => setError(true)}
