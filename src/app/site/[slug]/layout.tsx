@@ -8,6 +8,7 @@ import { RoutingProvider } from "@/components/providers/routing-provider"
 import { headers } from "next/headers"
 import { getActivePopup } from "@/features/popup/actions/popup.action"
 import { PopupRenderer } from "./_components/popup-renderer"
+import { normalizeImageUrl } from "@/lib/utils"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
 import Script from "next/script"
 
@@ -129,7 +130,7 @@ export default async function WebsiteLayout({
         {!tenant.customThemeId && <WebsiteFooter tenant={tenant} />}
         
         {activePopup && <PopupRenderer popup={activePopup} />}
-        <PwaInstaller tenantName={tenant.name} tenantLogo={tenant.logo} />
+        <PwaInstaller tenantName={tenant.name} tenantLogo={normalizeImageUrl(tenant.logo) || tenant.logo} />
         
 
       </div>
