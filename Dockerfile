@@ -69,6 +69,7 @@ RUN npm install -g tsx
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
+RUN npm install bullmq ioredis
 # ========================
 
 RUN mkdir -p ./uploads ./.next/cache && chown -R nextjs:nodejs ./uploads ./.next/cache
