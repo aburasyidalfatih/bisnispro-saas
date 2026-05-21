@@ -69,10 +69,13 @@ RUN npm install -g tsx
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
-# Hide package.json temporarily so npm doesn't install all dependencies
-RUN mv package.json package.json.bak && \
-    npm install bullmq ioredis --no-save --no-package-lock && \
-    mv package.json.bak package.json
+# Install worker deps in a separate folder to prevent npm from pruning standalone node_modules
+RUN mkdir /tmp/worker-deps && \
+    cd /tmp/worker-deps && \
+    npm init -y && \
+    npm install bullmq ioredis --no-package-lock && \
+    cp -r node_modules/* /app/node_modules/ && \
+    rm -rf /tmp/worker-deps
 # ========================
 
 RUN mkdir -p ./uploads ./.next/cache && chown -R nextjs:nodejs ./uploads ./.next/cache
