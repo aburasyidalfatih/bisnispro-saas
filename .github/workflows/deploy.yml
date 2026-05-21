@@ -7,6 +7,10 @@ concurrency:
 on:
   push:
     branches: [develop, main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       branch:
@@ -63,6 +67,9 @@ jobs:
         with:
           images: ghcr.io/${{ env.REPO }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -70,6 +77,8 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.REPO }}:${{ env.BRANCH }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             APP_VERSION=${{ github.sha }}
             NEXT_PUBLIC_ROOT_DOMAIN=${{ env.ROOT_DOMAIN }}
