@@ -109,7 +109,7 @@ export default async function PengumumanPage({
             {posts.map((post: any) => (
               <Link 
                 key={post.id} 
-                href={`${base}/pengumuman/${post.id}`}
+                href={`${base}/pengumuman/${post.slug}`}
                 className="group flex flex-col md:flex-row bg-white rounded-3xl overflow-hidden border border-border/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative"
               >
                 {/* Decoration line */}

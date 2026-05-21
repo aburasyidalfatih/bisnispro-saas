@@ -94,7 +94,7 @@ export async function createPost(params: {
     if (finalStatus === "PUBLISHED") {
       const host = tenant.domain || `${tenant.slug}.schoolpro.id`
       const isPengumuman = typeof data.type === 'string' && data.type.includes("PENGUMUMAN")
-      const postUrl = `https://${host}/${isPengumuman ? 'pengumuman' : 'berita'}/${post.id}`
+      const postUrl = `https://${host}/${isPengumuman ? 'pengumuman' : 'berita'}/${post.slug}`
       
       const settings = tenant.settings as any || {}
       const googleIndexingCreds = settings.googleIndexingEmail && settings.googleIndexingKey 

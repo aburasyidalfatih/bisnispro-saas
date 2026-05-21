@@ -97,7 +97,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
                 const badgeColor = badgeColors[idx % badgeColors.length];
                 
                 return (
-                  <Link key={idx} href={resolveHref(`/pengumuman/${item.id}`)} className="flex gap-4 group cursor-pointer">
+                  <Link key={idx} href={resolveHref(`/pengumuman/${item.slug}`)} className="flex gap-4 group cursor-pointer">
                     <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
                       <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
                         {format(new Date(item.createdAt), "dd")}
@@ -141,7 +141,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
             
             <div className="space-y-6 flex-1">
               {artikel.length > 0 ? artikel.map((item, idx) => (
-                <Link key={idx} href={resolveHref(`/berita/${item.id}`)} className="flex gap-4 group cursor-pointer">
+                <Link key={idx} href={resolveHref(`/berita/${item.slug}`)} className="flex gap-4 group cursor-pointer">
                   <div className="relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border bg-muted">
                     {normalizeImageUrl(item.featuredImage) ? (
                       <Image 

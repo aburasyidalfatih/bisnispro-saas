@@ -989,7 +989,7 @@ const TEMPLATE_PENGUMUMAN_HBS = `<section class="py-20">
     {{#if tenant.posts}}
     <div class="space-y-6">
       {{#each tenant.posts}}
-      <a href="{{../base}}/pengumuman/{{this.id}}" class="block bg-white rounded-2xl p-6 border hover:border-indigo-200 hover:shadow-lg transition-all group">
+      <a href="{{../base}}/pengumuman/{{this.slug}}" class="block bg-white rounded-2xl p-6 border hover:border-indigo-200 hover:shadow-lg transition-all group">
         <div class="flex items-start gap-6">
           <div class="shrink-0 w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-indigo-100 transition-colors">📢</div>
           <div class="flex-1 min-w-0">

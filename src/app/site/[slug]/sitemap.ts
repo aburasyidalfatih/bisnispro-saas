@@ -105,8 +105,9 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   // Dynamic routes: Berita
   if (tenant.posts) {
     tenant.posts.forEach((post: any) => {
+      const typePath = post.type === "PENGUMUMAN" ? "pengumuman" : "berita";
       routes.push({
-        url: `${baseUrl}/berita/${post.id}`,
+        url: `${baseUrl}/${typePath}/${post.slug}`,
         lastModified: post.updatedAt || post.createdAt,
         changeFrequency: "weekly",
         priority: 0.7,

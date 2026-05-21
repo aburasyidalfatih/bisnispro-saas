@@ -21,7 +21,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, id } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
-  const post = (tenant.posts || []).find((p: any) => p.id === id)
+  const staffSlugDecoded = decodeURIComponent(id)
+  const post = (tenant.posts || []).find((p: any) => p.id === id || p.slug === staffSlugDecoded)
   if (!post) return {}
   const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
   let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
@@ -38,12 +39,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${post.title} - ${tenant.name}`,
     description,
     alternates: {
-      canonical: `/berita/${post.id}`,
+      canonical: `/berita/${post.slug}`,
     },
     openGraph: {
       title: `${post.title} - ${tenant.name}`,
       description,
-      url: `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.id}`,
+      url: `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.slug}`,
       siteName: tenant.name,
       images: [{ url: finalOgImageUrl, width: 1200, height: 630 }],
       type: "article",
@@ -62,7 +63,8 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
-  const post = (tenant.posts || []).find((p: any) => p.id === id)
+  const decodedId = decodeURIComponent(id)
+  const post = (tenant.posts || []).find((p: any) => p.id === id || p.slug === decodedId)
   if (!post) notFound()
 
   const base = await getPublicBasePath(slug)
@@ -119,7 +121,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
                 "url": tenant.logo || "https://schoolpro.id/logo-schoolpro.png"
               }
             },
-            "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.id}`
+            "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.slug}`
           })
         }}
       />
@@ -184,7 +186,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.id}`} 
+          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.slug}`} 
           title={post.title}
           postId={post.id}
           tenantId={tenant.id}
@@ -200,7 +202,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
             {relatedPosts.map((related: any) => (
               <Link
                 key={related.id}
-                href={`${base}/berita/${related.id}`}
+                href={`${base}/berita/${related.slug}`}
                 className="group flex flex-col bg-background rounded-2xl overflow-hidden border hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="aspect-[16/10] relative overflow-hidden bg-muted">
