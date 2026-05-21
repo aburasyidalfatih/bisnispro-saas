@@ -21,8 +21,8 @@ export function getPublisher(): Redis | null {
   try {
     publisher = new Redis(url, {
       maxRetriesPerRequest: 3,
-      lazyConnect: true,
-      enableOfflineQueue: false,
+      lazyConnect: false,
+      enableOfflineQueue: true,
     })
     return publisher
   } catch (error) {
@@ -40,8 +40,8 @@ export function getSubscriber(): Redis | null {
   try {
     subscriber = new Redis(url, {
       maxRetriesPerRequest: 3,
-      lazyConnect: true,
-      enableOfflineQueue: false,
+      lazyConnect: false,
+      enableOfflineQueue: true,
     })
     return subscriber
   } catch (error) {
