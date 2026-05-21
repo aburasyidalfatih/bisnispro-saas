@@ -20,6 +20,11 @@ import { TenantSwitcher } from "@/components/shared/tenant-switcher"
 import { NotificationBell } from "@/components/shared/notification-bell"
 import { MessageIndicator } from "@/components/shared/message-indicator"
 import { AiTokenBadge } from "@/components/shared/ai-token-badge"
+import { useRealtimeNotification } from "@/hooks/use-realtime-notification"
+
+interface HeaderProps {
+  onMenuClick?: () => void
+}
 
 const labelMap: Record<string, string> = {
   dashboard: "Dashboard",
@@ -109,10 +114,13 @@ function HeaderBreadcrumb() {
   )
 }
 
-export function Header() {
+export function Header({ onMenuClick }: HeaderProps) {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
+
+  // Aktivasi real-time notifications via SSE untuk Admin / Super Admin
+  useRealtimeNotification()
 
   const isSuperAdminPanel = pathname.startsWith("/super-admin")
   const isAffiliatePanel = pathname.startsWith("/affiliate")
