@@ -27,6 +27,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
     const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
 
+    const normalizedLogo = tenant.logo ? (normalizeImageUrl(tenant.logo) || tenant.logo) : null;
+
     return {
       metadataBase: new URL(canonicalDomain),
       title: {
@@ -36,10 +38,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       alternates: {
         canonical: "/",
       },
-      icons: tenant.logo ? { 
-        icon: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 
-        shortcut: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=64&q=100`, 
-        apple: `/_next/image?url=${encodeURIComponent(tenant.logo)}&w=256&q=100` 
+      icons: normalizedLogo ? { 
+        icon: normalizedLogo, 
+        shortcut: normalizedLogo, 
+        apple: normalizedLogo 
       } : undefined,
       openGraph: {
         title: {

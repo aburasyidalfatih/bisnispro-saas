@@ -14,6 +14,7 @@ import { ConfirmProvider } from "@/components/providers/confirm-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 import { db } from "@/lib/db"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export async function generateMetadata(): Promise<Metadata> {
   // Periksa apakah Super Admin memblokir indexing (Dev Mode)
@@ -35,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
       where: { key: "app_logo" }
     })
     if (logoSetting && logoSetting.value) {
-      platformLogo = logoSetting.value
+      platformLogo = normalizeImageUrl(logoSetting.value) || logoSetting.value
     }
   } catch (error) {
     // Abaikan error DB
