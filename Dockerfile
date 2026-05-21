@@ -61,7 +61,6 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
 
 # === Setup for Worker ===
 RUN npm install -g tsx
@@ -70,6 +69,9 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 # Install all production dependencies for worker to prevent MODULE_NOT_FOUND errors
 RUN npm install --omit=dev --legacy-peer-deps
+
+# Re-copy prisma CLI after npm install (npm install --omit=dev removes devDeps including prisma)
+COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
 
 RUN mkdir -p ./uploads ./.next/cache && chown -R nextjs:nodejs ./uploads ./.next/cache
 
