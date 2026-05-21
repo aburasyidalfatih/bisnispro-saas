@@ -121,7 +121,7 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
               return (
                 <Link 
                   key={facility.id} 
-                  href={`${base}/fasilitas/${facility.id}`}
+                  href={`${base}/fasilitas/${facility.slug || facility.id}`}
                   className={cn(
                     "group relative overflow-hidden rounded-[2.5rem] flex flex-col shadow-sm hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 border border-border/40",
                     spanClass

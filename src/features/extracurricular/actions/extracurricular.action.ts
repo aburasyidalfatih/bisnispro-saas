@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { extracurricularSchema } from "@/features/extracurricular/schemas/extracurricular.schema"
 import { revalidatePath } from "next/cache"
+import { generateUniqueSlug } from "@/lib/utils/slug"
 
 
 
@@ -30,9 +31,12 @@ export async function createExtracurricular(tenantId: string, data: any) {
   
   const parsed = extracurricularSchema.parse(data)
   
+  const slug = await generateUniqueSlug(db.extracurricular, tenantId, parsed.name)
+  
   const extracurricular = await db.extracurricular.create({
     data: {
       ...parsed,
+      slug,
       tenantId,
     }
   })

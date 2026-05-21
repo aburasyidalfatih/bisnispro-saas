@@ -15,13 +15,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, id } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
-  const program = (tenant.programs || []).find((p: any) => p.id === id)
+  const program = (tenant.programs || []).find((p: any) => p.id === id || p.slug === id)
   if (!program) return {}
   return {
     title: `${program.name} - ${tenant.name}`,
     description: (program.description ? program.description.replace(/<[^>]*>?/gm, '') : `Informasi program keahlian ${program.name}`),
     alternates: {
-      canonical: `/program/${program.id}`,
+      canonical: `/program/${program.slug || program.id}`,
     },
   }
 }
@@ -31,7 +31,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
-  const program = (tenant.programs || []).find((p: any) => p.id === id)
+  const program = (tenant.programs || []).find((p: any) => p.id === id || p.slug === id)
   if (!program) notFound()
 
   const base = await getPublicBasePath(slug)

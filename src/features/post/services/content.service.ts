@@ -1,5 +1,6 @@
 import { db, withTenant } from "@/lib/db"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
+import { generateUniqueSlug } from "@/lib/utils/slug"
 
 // ==========================================
 // Query: List Posts
@@ -168,8 +169,9 @@ export async function createEvent(params: {
     }
   }
 
+  const slug = await generateUniqueSlug(tenantDb.event, tenantId, data.title || "event")
   const event = await tenantDb.event.create({
-    data: { ...data, tenantId } as any
+    data: { ...data, slug, tenantId } as any
   })
 
   const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true, domain: true, settings: true } })

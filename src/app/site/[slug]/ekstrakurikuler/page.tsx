@@ -58,7 +58,7 @@ export default async function EkstrakurikulerPage({ params }: { params: Promise<
    const hoverStyle = BORDER_COLORS[idx % BORDER_COLORS.length];
    return (
  <Link 
-   href={`${base}/ekstrakurikuler/${ekskul.id}`}
+   href={`${base}/ekstrakurikuler/${ekskul.slug || ekskul.id}`}
    key={ekskul.id} 
    className={`group bg-white rounded-3xl p-6 border-2 border-transparent shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 ${hoverStyle}`}
  >

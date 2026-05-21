@@ -75,7 +75,7 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
             {events.map((event: any) => (
               <Link 
                 key={event.id} 
-                href={`${base}/agenda/${event.id}`}
+                href={`${base}/agenda/${event.slug || event.id}`}
                 className="group flex flex-col md:flex-row bg-white rounded-3xl overflow-hidden border border-border/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative"
               >
                 {/* Decoration line */}

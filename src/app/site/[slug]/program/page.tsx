@@ -90,7 +90,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                   <p className="text-muted-foreground line-clamp-2">
                     {prog.description ? prog.description.replace(/<[^>]*>?/gm, '') : "Program pendidikan yang dirancang khusus untuk mengoptimalkan potensi intelektual dan keterampilan siswa secara komprehensif."}
                   </p>
-                  <Link href={`${base}/program/${prog.id}`} className="flex items-center gap-2 text-primary font-bold text-sm">
+                  <Link href={`${base}/program/${prog.slug || prog.id}`} className="flex items-center gap-2 text-primary font-bold text-sm">
                     Pelajari Selengkapnya <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform" />
                   </Link>
                 </div>

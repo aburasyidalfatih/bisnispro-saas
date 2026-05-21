@@ -15,13 +15,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, id } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
-  const facility = await db.facility.findFirst({ where: { id, tenantId: tenant.id } })
+  const facility = await db.facility.findFirst({ where: { OR: [{ id }, { slug: id }], tenantId: tenant.id } })
   if (!facility) return {}
   return {
     title: `${facility.name} - ${tenant.name}`,
     description: (facility.description ? facility.description.replace(/<[^>]*>?/gm, '') : `Fasilitas ${facility.name} di ${tenant.name}`),
     alternates: {
-      canonical: `/fasilitas/${facility.id}`,
+      canonical: `/fasilitas/${facility.slug || facility.id}`,
     },
   }
 }
@@ -31,7 +31,7 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
-  const facility = await db.facility.findFirst({ where: { id, tenantId: tenant.id } })
+  const facility = await db.facility.findFirst({ where: { OR: [{ id }, { slug: id }], tenantId: tenant.id } })
   if (!facility) notFound()
 
   const base = await getPublicBasePath(slug)

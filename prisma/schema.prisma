@@ -489,6 +489,7 @@ model Event {
   id            String   @id @default(cuid())
   tenantId      String
   title         String
+  slug          String
   description   String?
   location      String?
   contactPerson String?
@@ -499,6 +500,7 @@ model Event {
   viewCount     Int      @default(0)
   tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([startDate])
   @@index([createdAt])
@@ -510,6 +512,7 @@ model Achievement {
   id          String   @id @default(cuid())
   tenantId    String
   title       String
+  slug        String
   description String?
   date        DateTime
   level       String   @default("LOKAL")
@@ -519,6 +522,7 @@ model Achievement {
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, createdAt(sort: Desc)])
@@ -560,6 +564,7 @@ model Facility {
   id          String   @id @default(cuid())
   tenantId    String
   name        String
+  slug        String
   description String?
   imageUrl    String?
   category    String?
@@ -570,6 +575,7 @@ model Facility {
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, sortOrder])
@@ -581,6 +587,7 @@ model Extracurricular {
   id              String   @id @default(cuid())
   tenantId        String
   name            String
+  slug            String
   description     String?
   schedule        String?
   imageUrl        String?
@@ -591,6 +598,7 @@ model Extracurricular {
   updatedAt       DateTime @updatedAt
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, sortOrder])
@@ -602,6 +610,7 @@ model Program {
   id          String   @id @default(cuid())
   tenantId    String
   name        String
+  slug        String
   description String?
   imageUrl    String?
   focus       String?
@@ -611,6 +620,7 @@ model Program {
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, sortOrder])

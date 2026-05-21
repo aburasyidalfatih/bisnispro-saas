@@ -9,6 +9,7 @@ import { normalizeImageUrl } from "@/lib/utils"
 interface Extracurricular {
   id: string
   name: string
+  slug?: string
   description?: string | null
   schedule?: string | null
   imageUrl?: string | null
@@ -52,7 +53,7 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
           {displayed.map((ekskul, idx) => (
             <Link
               key={ekskul.id}
-              href={resolveHref(`/ekstrakurikuler/${ekskul.id}`)}
+              href={resolveHref(`/ekstrakurikuler/${ekskul.slug || ekskul.id}`)}
               className="group relative bg-background rounded-2xl border p-5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-purple-200"
             >
               <div className="relative mx-auto w-16 h-16 rounded-2xl overflow-hidden mb-4 shadow-sm border bg-muted/50 flex items-center justify-center">
