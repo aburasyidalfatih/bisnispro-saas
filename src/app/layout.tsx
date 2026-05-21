@@ -80,19 +80,37 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const colorTheme = cookieStore.get("color-theme")?.value || "aurora"
 
   let metaPixelId = ""
+  let cdnUrl = ""
   try {
-    const pixelSetting = await db.platformSetting.findUnique({
-      where: { key: "META_PIXEL_ID" }
+    const settings = await db.platformSetting.findMany({
+      where: { key: { in: ["META_PIXEL_ID", "S3_PUBLIC_URL"] } }
     })
-    if (pixelSetting && pixelSetting.value) {
-      metaPixelId = pixelSetting.value
-    }
+    
+    settings.forEach(s => {
+      if (s.key === "META_PIXEL_ID") metaPixelId = s.value
+      if (s.key === "S3_PUBLIC_URL") {
+        try {
+          const url = new URL(s.value)
+          cdnUrl = `${url.protocol}//${url.hostname}`
+        } catch (e) {
+          // ignore invalid url
+        }
+      }
+    })
   } catch (e) {
     // Abaikan error DB
   }
 
   return (
     <html lang="id" data-theme={colorTheme} suppressHydrationWarning>
+      <head>
+        {cdnUrl && (
+          <>
+            <link rel="preconnect" href={cdnUrl} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={cdnUrl} />
+          </>
+        )}
+      </head>
       <body className={`${inter.className} overflow-x-hidden w-full`} suppressHydrationWarning>
         <SessionProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
