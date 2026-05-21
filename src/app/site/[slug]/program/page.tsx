@@ -8,6 +8,27 @@ import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Program Unggulan`
+  const description = `Daftar program keahlian dan akademik unggulan di ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/program" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/program`,
+    }
+  }
+}
+
 export default async function ProgramPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)

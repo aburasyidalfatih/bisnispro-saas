@@ -9,6 +9,27 @@ import { id } from "date-fns/locale"
 import { db } from "@/lib/db"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Papan Pengumuman`
+  const description = `Informasi penting dan pengumuman resmi dari ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/pengumuman" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/pengumuman`,
+    }
+  }
+}
+
 export default async function PengumumanPage({ 
   params,
   searchParams 

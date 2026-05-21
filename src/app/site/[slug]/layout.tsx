@@ -35,9 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         template: `%s | ${tenant.name}`,
         default: tenant.seoTitle || tenant.name,
       },
-      alternates: {
-        canonical: "/",
-      },
+      alternates: {},
       icons: normalizedLogo ? { 
         icon: normalizedLogo, 
         shortcut: normalizedLogo, 

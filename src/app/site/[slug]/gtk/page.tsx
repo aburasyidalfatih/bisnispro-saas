@@ -8,6 +8,27 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Guru & Tenaga Kependidikan`
+  const description = `Profil dan direktori Guru & Tenaga Kependidikan (GTK) di ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/gtk" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/gtk`,
+    }
+  }
+}
+
 export default async function GTKPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)

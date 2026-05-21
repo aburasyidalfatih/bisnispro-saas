@@ -26,6 +26,27 @@ function SmartPlaceholder({ title, type }: { title: string, type: string }) {
   )
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Artikel & Berita Terbaru`
+  const description = `Kumpulan informasi, berita, dan artikel terbaru dari ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/berita" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/berita`,
+    }
+  }
+}
+
 export default async function BeritaPage({ 
   params,
   searchParams 

@@ -9,9 +9,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
+  
+  const title = `Galeri Dokumentasi`
+  const description = `Galeri dokumentasi kegiatan dan fasilitas unggulan di ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+
   return {
-    title: `Galeri | ${tenant.seoTitle || tenant.name}`,
-    description: `Galeri foto ${tenant.name}`,
+    title: `${title} | ${tenant.name}`,
+    description,
+    alternates: { canonical: "/gallery" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/gallery`,
+    }
   }
 }
 
