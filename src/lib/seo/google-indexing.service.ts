@@ -5,13 +5,21 @@ import { logger } from "@/lib/logger"
  * Service untuk memanggil Google Indexing API
  * Secara paksa meminta Google untuk mengindeks atau memperbarui halaman yang dikirim.
  */
-export async function submitToGoogleIndexing(url: string, type: "URL_UPDATED" | "URL_DELETED" = "URL_UPDATED"): Promise<boolean> {
-  // Untuk menjalankan fungsi ini, butuh variabel env GOOGLE_INDEXING_CLIENT_EMAIL dan GOOGLE_INDEXING_PRIVATE_KEY
-  const clientEmail = process.env.GOOGLE_INDEXING_CLIENT_EMAIL
-  const privateKey = process.env.GOOGLE_INDEXING_PRIVATE_KEY?.replace(/\\n/g, '\n')
+export async function submitToGoogleIndexing(
+  url: string, 
+  type: "URL_UPDATED" | "URL_DELETED" = "URL_UPDATED",
+  credentials?: { email: string, key: string }
+): Promise<boolean> {
+  // Gunakan kredensial tenant jika ada, atau fallback ke kredensial global server
+  const clientEmail = credentials?.email || process.env.GOOGLE_INDEXING_CLIENT_EMAIL
+  let privateKey = credentials?.key || process.env.GOOGLE_INDEXING_PRIVATE_KEY
+  
+  if (privateKey) {
+    privateKey = privateKey.replace(/\\n/g, '\n')
+  }
 
   if (!clientEmail || !privateKey) {
-    logger.warn("Google Indexing API credentials not found. Skipping indexing for: " + url)
+    logger.warn("Google Indexing API credentials not found (tenant/global). Skipping indexing for: " + url)
     return false
   }
 

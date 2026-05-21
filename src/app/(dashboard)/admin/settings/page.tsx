@@ -499,7 +499,25 @@ export default function SettingsGeneralPage() {
                     <Input type="password" value={orgForm.googleClientSecret} onChange={e => setOrgForm(p => ({ ...p, googleClientSecret: e.target.value }))} placeholder="Google Client Secret" className="rounded-xl h-9 text-xs font-mono" />
                   </div>
                 </div>
-                <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveOrg} disabled={savingOrg || !tenantId}>
+                {/* Google Indexing API Tenant */}
+                <div className="space-y-2 p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 mt-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Globe className="h-4 w-4 text-blue-500" />
+                    <Label className="font-semibold text-blue-600">Google Indexing API (SEO)</Label>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mb-3">Masukkan kredensial Service Account Google Cloud untuk melakukan indeksasi instan setiap kali Anda mempublikasikan berita/pengumuman. Jika dikosongkan, sistem akan menggunakan sistem indeksasi bawaan SchoolPro.</p>
+                  
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Client Email</Label>
+                    <Input value={rawSettings.googleIndexingEmail || ""} onChange={e => setRawSettings((p:any) => ({ ...p, googleIndexingEmail: e.target.value }))} placeholder="nama-akun@project-id.iam.gserviceaccount.com" className="rounded-xl h-9 text-xs font-mono" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Private Key (JSON)</Label>
+                    <Input type="password" value={rawSettings.googleIndexingKey || ""} onChange={e => setRawSettings((p:any) => ({ ...p, googleIndexingKey: e.target.value }))} placeholder="-----BEGIN PRIVATE KEY-----\n..." className="rounded-xl h-9 text-xs font-mono" />
+                  </div>
+                </div>
+
+                <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9 mt-4" onClick={handleSaveOrg} disabled={savingOrg || !tenantId}>
                   {savingOrg ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
                   Simpan Integrasi
                 </Button>
