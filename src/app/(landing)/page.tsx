@@ -29,144 +29,90 @@ import { normalizeImageUrl } from "@/lib/utils"
 const featureModules = [
   {
     id: "website",
-    title: "Website Terintegrasi",
+    title: "Website Profil (Gratis)",
     icon: Globe,
-    description: "Infrastruktur portal digital sekolah masa depan dengan performa tinggi dan pengelolaan cerdas.",
+    description: "Pondasi digital sekolah Anda. Desain profesional siap pakai tanpa biaya server.",
     features: [
-      { name: "Portal Profil Lembaga Profesional", status: "ready" },
-      { name: "Sistem Manajemen Konten (CMS) Cepat", status: "ready" },
-      { name: "SEO-Optimized untuk Visibilitas Tinggi", status: "ready" },
-      { name: "Pusat Informasi & Pengumuman Dinamis", status: "ready" },
-      { name: "Isolasi Tenant & Domain Terpusat", status: "ready" },
+      { name: "Profil Sekolah & Sejarah", status: "ready" },
+      { name: "Manajemen Fasilitas & Ekstrakurikuler", status: "ready" },
+      { name: "Galeri Kegiatan & Prestasi", status: "ready" },
+      { name: "Daftar Guru & Tenaga Kependidikan", status: "ready" },
+      { name: "Optimasi SEO (Mudah dicari di Google)", status: "ready" },
+    ],
+  },
+  {
+    id: "informasi",
+    title: "Pusat Informasi (Gratis)",
+    icon: Users,
+    description: "Portal komunikasi satu arah yang elegan antara sekolah dan masyarakat.",
+    features: [
+      { name: "Berita & Artikel Sekolah", status: "ready" },
+      { name: "Papan Pengumuman Resmi", status: "ready" },
+      { name: "Agenda Kegiatan Sekolah", status: "ready" },
+      { name: "Integrasi Kontak WhatsApp", status: "ready" },
+    ],
+  },
+  {
+    id: "data",
+    title: "Big Data Dasar (Gratis)",
+    icon: Database,
+    description: "Pusat data dasar untuk mengelola entitas operasional ringan.",
+    features: [
+      { name: "Kelola Data Siswa Dasar", status: "ready" },
+      { name: "Kelola Data Guru & Pegawai", status: "ready" },
+      { name: "Ekspor/Impor Data via Excel", status: "ready" },
     ],
   },
   {
     id: "ppdb",
-    title: "PPDB Online Pro",
-    icon: Users,
-    description: "Sistem otomasi rekrutmen siswa baru dari pendaftaran mandiri hingga konversi siswa aktif.",
+    title: "PPDB Smart Hub (Ekspansi Pro)",
+    icon: Zap,
+    description: "Tingkatkan website Anda dengan sistem otomasi penerimaan siswa baru.",
     features: [
-      { name: "Portal Pendaftaran & Verifikasi Mandiri", status: "ready" },
-      { name: "Auto-Generate Tagihan Formulir & Daftar Ulang", status: "ready" },
-      { name: "Sistem Kelulusan & Notifikasi Hasil Seleksi", status: "ready" },
-      { name: "Sinkronisasi Langsung ke Data Master Siswa", status: "ready" },
-      { name: "Kustomisasi Formulir Pendaftaran", status: "coming_soon" },
+      { name: "Portal Pendaftaran Mandiri", status: "ready" },
+      { name: "Auto-Generate Tagihan Formulir", status: "ready" },
+      { name: "Sistem Seleksi & Pengumuman Lulus", status: "ready" },
+      { name: "Sinkronisasi Langsung ke Master Siswa", status: "ready" },
     ],
   },
   {
     id: "keuangan",
-    title: "Core Banking Keuangan",
+    title: "Core Banking & Tagihan (Ekspansi Pro)",
     icon: Wallet,
-    description: "Ekosistem finansial tingkat lanjut untuk menekan tunggakan dan memantau arus kas real-time.",
+    description: "Ekosistem finansial tingkat lanjut untuk menekan tunggakan SPP.",
     features: [
-      { name: "Pembuatan Tagihan Otomatis Massal (SPP)", status: "ready" },
-      { name: "Auto-Reminder Jatuh Tempo via WA & Email", status: "ready" },
-      { name: "Pembayaran Online via Payment Gateway", status: "ready" },
-      { name: "Cetak Nota PDF & Rekap Excel Profesional", status: "ready" },
+      { name: "Tagihan SPP Massal Otomatis", status: "ready" },
+      { name: "Auto-Reminder Jatuh Tempo via WA", status: "ready" },
+      { name: "Pembayaran Online (Payment Gateway)", status: "ready" },
       { name: "Pembukuan Buku Kas Umum (BKU)", status: "ready" },
     ],
   },
   {
     id: "tabungan",
-    title: "E-Kantin & Tabungan",
+    title: "E-Kantin & Tabungan (Ekspansi Pro)",
     icon: PiggyBank,
-    description: "Digitalisasi ekosistem sekolah tanpa uang tunai (Cashless) berbasis QR Code pintar.",
+    description: "Digitalisasi transaksi kantin sekolah (Cashless) berbasis QR Code.",
     features: [
-      { name: "Dompet Digital (Wallet) per Siswa", status: "ready" },
-      { name: "Limit Belanja Harian & Verifikasi PIN", status: "ready" },
-      { name: "Transaksi Canteen via QR Code Scanner", status: "ready" },
-      { name: "Notifikasi Instan Saldo Terpotong", status: "ready" },
-      { name: "Cetak ID Card Barcode Cerdas", status: "coming_soon" },
-    ],
-  },
-  {
-    id: "enterprise",
-    title: "Arsitektur Enterprise",
-    icon: Zap,
-    description: "Dibangun dengan fondasi teknologi level korporasi yang tahan banting untuk puluhan ribu sekolah.",
-    features: [
-      { name: "BullMQ & Redis untuk Background Tasks", status: "ready" },
-      { name: "Isolasi Kredensial (Bring Your Own SMTP/WA)", status: "ready" },
-      { name: "Pengiriman Notifikasi Asynchronous Massal", status: "ready" },
-      { name: "Isolasi Database & Proteksi Data Anti-Bocor", status: "ready" },
-      { name: "Export/Import Massal Ribuan Data via Excel", status: "ready" },
-    ],
-  },
-  {
-    id: "portal",
-    title: "Akses Multi-Portal",
-    icon: MonitorSmartphone,
-    description: "Ekosistem terhubung untuk transparansi total antara pengurus yayasan, staf, dan orang tua.",
-    features: [
-      { name: "Dasbor Wali (Pantau SPP & Tabungan)", status: "ready" },
-      { name: "Notifikasi Real-time WA, Email & In-App", status: "ready" },
-      { name: "Hak Akses & Role-Based Control (RBAC)", status: "ready" },
-      { name: "Manajemen Catatan Kedisiplinan Siswa", status: "ready" },
-    ],
-  },
-  {
-    id: "data",
-    title: "Big Data & Keamanan",
-    icon: Database,
-    description: "Pusat komando data institusi Anda dengan sistem proteksi ketat dan migrasi mulus.",
-    features: [
-      { name: "Kelola Ribuan Data Petugas & Siswa", status: "ready" },
-      { name: "Proses Kenaikan Kelas Massal 1-Klik", status: "ready" },
-      { name: "Log Aktivitas (Audit Trail) Keamanan", status: "ready" },
-      { name: "Ekspor/Impor Data via Excel", status: "ready" },
+      { name: "Dompet Digital per Siswa", status: "ready" },
+      { name: "Limit Belanja Harian", status: "ready" },
+      { name: "Transaksi via QR Code Scanner", status: "ready" },
+      { name: "Notifikasi Saldo ke Ortu via WA", status: "ready" },
     ],
   },
   {
     id: "ai",
-    title: "AI & Analisis Prediktif",
+    title: "AI Analytics (Ekspansi Pro)",
     icon: Bot,
-    description: "Asisten kecerdasan buatan untuk membantu pengambilan keputusan strategis manajemen.",
+    description: "Asisten kecerdasan buatan untuk membantu manajemen pengurus yayasan.",
     features: [
-      { name: "Chatbot Analis Status Keuangan", status: "coming_soon" },
-      { name: "Prediksi Penurunan Nilai Akademik", status: "coming_soon" },
+      { name: "Chatbot Analis Keuangan", status: "coming_soon" },
+      { name: "Prediksi Penurunan Kinerja", status: "coming_soon" },
       { name: "Generator Draf Surat Resmi", status: "coming_soon" },
-      { name: "Natural Language Database Query", status: "coming_soon" },
     ],
   },
 ]
 
-const plans = [
-  {
-    name: "Starter",
-    price: "Rp 0",
-    period: "selamanya",
-    description: "Untuk sekolah yang baru memulai digitalisasi",
-    features: ["Portal Website Terintegrasi", "Akses Data Master Dasar", "Notifikasi In-App", "Dukungan Komunitas"],
-  },
-  {
-    name: "Pro",
-    price: "Rp 149.000",
-    period: "/bulan",
-    popular: true,
-    description: "Sistem operasional lengkap untuk otomasi tagihan",
-    features: [
-      "PPDB Online & Sinkronisasi Data",
-      "Core Banking Keuangan & Kas",
-      "Auto-Reminder WhatsApp & Email",
-      "Akses Multi-Portal (Orang Tua & Guru)",
-      "Log Aktivitas & Audit Trail",
-    ],
-  },
-  {
-    name: "Enterprise",
-    price: "Custom",
-    period: "/bulan",
-    description: "Arsitektur khusus untuk yayasan skala besar",
-    features: [
-      "Domain Sekolah Kustom (.sch.id)",
-      "Ekosistem Tabungan & E-Kantin",
-      "Bring Your Own SMTP & WA API",
-      "Dedicated Background Queue",
-      "Prioritas Bantuan (Dedicated Support)",
-    ],
-  },
-]
-
+// plans removed intentionally
 export default async function LandingPage() {
   const settings = await db.platformSetting.findMany({
     where: { key: { in: ["app_logo", "platform_name", "platform_tagline", "SUPPORT_WA_NUMBERS"] } },
@@ -182,7 +128,9 @@ export default async function LandingPage() {
     if (s.key === "platform_name" && s.value) platformName = s.value
     if (s.key === "platform_tagline" && s.value) platformTagline = s.value
     if (s.key === "SUPPORT_WA_NUMBERS" && s.value) {
-      try { supportWaNumbers = JSON.parse(s.value) } catch {}
+      try {
+        supportWaNumbers = JSON.parse(s.value)
+      } catch {}
     }
   })
 
@@ -202,20 +150,33 @@ export default async function LandingPage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <Image src={normalizeImageUrl(appLogo) || appLogo} alt={`${platformName} Logo`} width={120} height={32} className="h-8 w-auto object-contain" />
+            <Image
+              src={normalizeImageUrl(appLogo) || appLogo}
+              alt={`${platformName} Logo`}
+              width={120}
+              height={32}
+              className="h-8 w-auto object-contain"
+            />
             <span className="font-bold text-base md:text-lg tracking-tight">{platformName}</span>
           </Link>
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
-            <Link href="#fitur" className="hover:text-foreground transition-colors">Fitur</Link>
-            <Link href="#solusi" className="hover:text-foreground transition-colors">Solusi</Link>
+            <Link href="#fitur" className="hover:text-foreground transition-colors">
+              Fitur
+            </Link>
+            <Link href="#solusi" className="hover:text-foreground transition-colors">
+              Solusi
+            </Link>
           </div>
 
           {/* CTA + Mobile hint */}
           <div className="flex items-center gap-2">
             <Link href="/daftarkan-sekolah">
-              <Button size="sm" className="rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 text-xs md:text-sm">
+              <Button
+                size="sm"
+                className="rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 text-xs md:text-sm"
+              >
                 Daftar Gratis
               </Button>
             </Link>
@@ -268,22 +229,30 @@ export default async function LandingPage() {
 
             {/* Hero Title — smaller base size for mobile */}
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15]">
-              Sistem ERP & Keuangan <span className="text-gradient">Enterprise</span> Sekolah
+              Buat Website Resmi Sekolah Anda, <span className="text-gradient">100% Gratis</span> Selamanya
             </h1>
 
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
-              Satu platform cerdas untuk menyatukan seluruh ekosistem pendidikan.{" "}
-              Nikmati analitik keuangan real-time, otomatisasi tagihan massal, e-Kantin cashless, dan portal terintegrasi (Ortu, Guru, Siswa) tanpa batasan skalabilitas.
+              Tingkatkan kredibilitas sekolah Anda dalam 5 menit. Dapatkan website profesional yang cepat, aman, dan
+              mudah dikelola tanpa biaya server. Mulai dari website, tumbuh menjadi{" "}
+              <em className="italic font-medium text-foreground">Smart School</em> dengan ekosistem PPDB dan Keuangan.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
               <Link href="/daftarkan-sekolah" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full gap-2 rounded-xl btn-gradient text-white shadow-xl glow-primary h-12 md:h-14 px-6 md:px-8 text-sm md:text-base border-0">
-                  Daftarkan Sekolah Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                <Button
+                  size="lg"
+                  className="w-full gap-2 rounded-xl btn-gradient text-white shadow-xl glow-primary h-12 md:h-14 px-6 md:px-8 text-sm md:text-base border-0"
+                >
+                  Buat Website Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </Link>
               <Link href="#fitur" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full rounded-xl glass h-12 md:h-14 px-6 md:px-8 text-sm md:text-base">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full rounded-xl glass h-12 md:h-14 px-6 md:px-8 text-sm md:text-base"
+                >
                   Jelajahi Fitur
                 </Button>
               </Link>
@@ -309,7 +278,7 @@ export default async function LandingPage() {
           <div className="relative w-full overflow-hidden flex">
             <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-r from-background to-transparent" />
             <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-l from-background to-transparent" />
-            <div 
+            <div
               className="animate-marquee flex gap-8 md:gap-12 pl-8 md:pl-12 items-center"
               style={{ animationDuration: `${Math.max(activeTenants.length * 2, 10)}s` }}
             >
@@ -332,9 +301,18 @@ export default async function LandingPage() {
                   }
                 }
                 return (
-                  <div key={`${tenant.id}-${idx}`} className="flex items-center gap-3 shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
+                  <div
+                    key={`${tenant.id}-${idx}`}
+                    className="flex items-center gap-3 shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default"
+                  >
                     {tenant.logo ? (
-                      <Image src={normalizeImageUrl(tenant.logo) || tenant.logo} alt={tenant.name} width={48} height={48} className="h-10 w-10 md:h-12 md:w-12 object-contain rounded-full border bg-white p-1" />
+                      <Image
+                        src={normalizeImageUrl(tenant.logo) || tenant.logo}
+                        alt={tenant.name}
+                        width={48}
+                        height={48}
+                        className="h-10 w-10 md:h-12 md:w-12 object-contain rounded-full border bg-white p-1"
+                      />
                     ) : (
                       <div className="h-10 w-10 md:h-12 md:w-12 rounded-full border bg-muted flex items-center justify-center shrink-0">
                         <School className="h-5 w-5 text-muted-foreground" />
@@ -361,17 +339,18 @@ export default async function LandingPage() {
             {/* Left */}
             <div className="space-y-5">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Tinggalkan Proses Manual, Sambut Akurasi Real-Time
+                Langkah Pertama Menuju Digitalisasi Sekolah
               </h2>
               <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                Tingkatkan efisiensi lembaga pendidikan Anda ke level korporasi. Kami mendigitalisasi proses kompleks mulai dari pencatatan BKU (Buku Kas Umum), pelaporan arus kas, hingga komunikasi presisi ke wali murid.
+                Banyak sekolah kesulitan membuat website karena biaya hosting yang mahal dan perlunya keahlian coding.
+                Kami hadir menyelesaikan masalah tersebut sepenuhnya.
               </p>
               <ul className="space-y-3 pt-1">
                 {[
-                  "Dasbor analitik keuangan real-time & tanpa mock data.",
-                  "Sistem e-Kantin cashless dengan akurasi harian terjamin.",
-                  "Sinkronisasi data master guru, siswa & ortu bebas repot.",
-                  "Penerimaan Siswa Baru (PPDB) end-to-end terstruktur.",
+                  "Tanpa Biaya Hosting: Server super cepat & aman dari kami.",
+                  "Tanpa Coding: Desain siap pakai, tinggal upload logo.",
+                  "SEO Friendly: Mudah ditemukan orang tua di Google.",
+                  "Siap Upgrade: Ekosistem PPDB & Keuangan menunggu di dalam.",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary">
@@ -396,7 +375,8 @@ export default async function LandingPage() {
               </div>
               <div className="space-y-3">
                 <div className="rounded-xl bg-muted/50 p-3 md:p-4 text-xs md:text-sm border">
-                  &quot;Bapak/Ibu, tagihan SPP bulan ini sebesar Rp 150.000 telah terbit. Silakan lakukan pembayaran via transfer ke Virtual Account...&quot;
+                  &quot;Bapak/Ibu, tagihan SPP bulan ini sebesar Rp 150.000 telah terbit. Silakan lakukan pembayaran via
+                  transfer ke Virtual Account...&quot;
                 </div>
                 <div className="rounded-xl bg-muted/50 p-3 md:p-4 text-xs md:text-sm border">
                   &quot;Terima kasih! Pembayaran tagihan Buku Paket atas nama Budi telah kami terima.&quot;
@@ -415,10 +395,11 @@ export default async function LandingPage() {
             Modul Lengkap
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
-            Satu Platform, Beragam Solusi
+            Mulai dari Website, Tumbuh Menjadi Ekosistem
           </h2>
           <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto px-2">
-            Mulai dari website profil hingga manajemen tabungan kantin, semua terintegrasi di {platformName}.
+            Nikmati fasilitas website gratis selamanya. Kapan pun sekolah Anda siap, upgrade ke fitur Pro (PPDB,
+            Keuangan, Tabungan) hanya dengan satu klik di dalam dasbor.
           </p>
         </div>
 
@@ -491,7 +472,6 @@ export default async function LandingPage() {
         </Tabs>
       </section>
 
-
       {/* ====== CTA SECTION ====== */}
       <section className="container mx-auto px-4 py-12 md:py-20">
         <div className="glass rounded-[1.75rem] md:rounded-[2.5rem] p-8 md:p-20 text-center relative overflow-hidden border">
@@ -499,11 +479,12 @@ export default async function LandingPage() {
           <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full orb-2 opacity-20 blur-3xl" />
           <div className="relative space-y-6 md:space-y-8 max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-              Wujudkan Sekolah <br className="hidden sm:block" />
-              <span className="text-gradient">Bertaraf Digital</span>
+              Wujudkan Website <br className="hidden sm:block" />
+              <span className="text-gradient">Sekolah Profesional</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-lg">
-              Tingkatkan kredibilitas dan operasional lembaga Anda bersama platform yang dirancang khusus untuk ekosistem pendidikan masa depan.
+              Tidak perlu membuang jutaan rupiah untuk menyewa programmer dan hosting. Buat website sekolah Anda secara
+              gratis dalam hitungan menit.
             </p>
             <div className="pt-2">
               <Link href="/daftarkan-sekolah">
@@ -511,7 +492,7 @@ export default async function LandingPage() {
                   size="lg"
                   className="rounded-xl md:rounded-2xl btn-gradient text-white shadow-2xl glow-primary h-12 md:h-14 px-7 md:px-10 text-sm md:text-lg font-semibold gap-3 border-0 w-full sm:w-auto"
                 >
-                  Daftar & Mulai Sekarang <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                  Buat Website Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </Link>
             </div>
