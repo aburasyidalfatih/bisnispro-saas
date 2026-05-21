@@ -155,9 +155,9 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
 
         {/* Deskripsi */}
         {campaign.description && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <h2 className="font-bold mb-2">Tentang Kampanye</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{campaign.description}</p>
+          <div className="prose prose-slate max-w-none mb-8">
+            <h3 className="text-xl font-bold text-foreground mb-4">Cerita & Tujuan Donasi</h3>
+            <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: campaign.description }} />
           </div>
         )}
 

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!program) return {}
   return {
     title: `${program.name} - ${tenant.name}`,
-    description: program.description || `Informasi program keahlian ${program.name}`,
+    description: (program.description ? program.description.replace(/<[^>]*>?/gm, '') : `Informasi program keahlian ${program.name}`),
     alternates: {
       canonical: `/program/${program.id}`,
     },
@@ -97,7 +97,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
            <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
              <h3 className="text-xl font-bold mb-4 text-foreground">Tentang Program</h3>
              {program.description ? (
-               <p className="whitespace-pre-wrap">{program.description}</p>
+               <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: program.description }} />
              ) : (
                <p className="italic">Tidak ada deskripsi detail untuk program ini.</p>
              )}

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!achievement) return {}
   return {
     title: `${achievement.title} - ${tenant.name}`,
-    description: achievement.description || `Informasi prestasi ${achievement.title}`,
+    description: (achievement.description ? achievement.description.replace(/<[^>]*>?/gm, '') : `Informasi prestasi ${achievement.title}`),
     alternates: {
       canonical: `/prestasi/${achievement.id}`,
     },
@@ -85,7 +85,7 @@ export default async function AchievementDetailPage({ params }: { params: Promis
 
         <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
           {achievement.description ? (
-            <p className="whitespace-pre-wrap">{achievement.description}</p>
+            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: achievement.description }} />
           ) : (
             <p className="italic">Tidak ada detail deskripsi untuk prestasi ini.</p>
           )}

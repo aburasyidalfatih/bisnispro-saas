@@ -96,7 +96,7 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
                       {format(new Date(achievement.date), "dd MMMM yyyy", { locale: idLocale })}
                     </p>
                     {achievement.description && (
-                      <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">{achievement.description}</p>
+                      <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">{achievement.description.replace(/<[^>]*>?/gm, '')}</p>
                     )}
                   </div>
                 </div>

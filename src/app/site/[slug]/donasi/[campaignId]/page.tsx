@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props) {
 
   return {
     title: `${campaign.title} | Donasi ${campaign.tenant.name}`,
-    description: campaign.description || `Bantu kami mencapai target donasi Rp ${campaign.targetAmount.toLocaleString("id-ID")}`,
+    description: (campaign.description ? campaign.description.replace(/<[^>]*>?/gm, '') : `Bantu kami mencapai target donasi Rp ${campaign.targetAmount.toLocaleString("id-ID")}`),
     openGraph: { images: [{ url: ogImageUrl, width: 1200, height: 630 }] },
   }
 }

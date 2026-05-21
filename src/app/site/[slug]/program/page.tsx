@@ -66,8 +66,8 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                     <BookOpen className="h-6 w-6" />
                   </div>
                   <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">{prog.name}</h3>
-                  <p className="text-muted-foreground leading-relaxed mb-8 flex-grow line-clamp-6">
-                    {prog.description || "Program pendidikan yang dirancang khusus untuk mengoptimalkan potensi intelektual dan keterampilan siswa secara komprehensif."}
+                  <p className="text-muted-foreground line-clamp-2">
+                    {prog.description ? prog.description.replace(/<[^>]*>?/gm, '') : "Program pendidikan yang dirancang khusus untuk mengoptimalkan potensi intelektual dan keterampilan siswa secara komprehensif."}
                   </p>
                   <Link href={`${base}/program/${prog.id}`} className="flex items-center gap-2 text-primary font-bold text-sm">
                     Pelajari Selengkapnya <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform" />

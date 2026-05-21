@@ -67,7 +67,7 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
                 <p className="text-[10px] text-muted-foreground font-medium mt-1">{ekskul.schedule}</p>
               )}
               {ekskul.description && (
-                <p className="text-[11px] text-muted-foreground mt-2 line-clamp-2 opacity-60 group-hover:opacity-100 transition-opacity">{ekskul.description}</p>
+                <p className="text-[11px] text-muted-foreground mt-2 line-clamp-2 opacity-60 group-hover:opacity-100 transition-opacity">{ekskul.description.replace(/<[^>]*>?/gm, '')}</p>
               )}
             </Link>
           ))}

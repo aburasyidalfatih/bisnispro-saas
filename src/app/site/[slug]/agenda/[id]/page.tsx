@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!event) return {}
   return {
     title: `${event.title} - ${tenant.name}`,
-    description: event.description || `Agenda kegiatan ${event.title}`,
+    description: (event.description ? event.description.replace(/<[^>]*>?/gm, '') : `Agenda kegiatan ${event.title}`),
     alternates: {
       canonical: `/agenda/${event.id}`,
     },
@@ -139,7 +139,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
         <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
           <h3 className="text-xl font-bold text-foreground mb-4">Deskripsi Kegiatan</h3>
           {event.description ? (
-            <p className="whitespace-pre-wrap">{event.description}</p>
+            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: event.description }} />
           ) : (
             <p className="italic">Tidak ada deskripsi detail untuk agenda ini.</p>
           )}
