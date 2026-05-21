@@ -6,6 +6,7 @@ import { sendWhatsAppDirect, sendEmail } from "@/features/notification/services/
 import { ImportService } from "@/features/import/services/import.service"
 import { processGamificationPoints } from "@/features/gamification/services/gamification.service"
 import { FinanceService } from "@/features/finance/services/finance.service"
+import { syncPostViewsToDatabase, syncEventViewsToDatabase } from "@/features/post/services/views.service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -45,11 +46,39 @@ async function reportToSentry(workerName: string, job: Job | undefined, err: Err
 // ============================================================
 // 1. WhatsApp Notification Worker (handles both single + broadcast)
 // ============================================================
+
+// Per-tenant throttle: Max 1 message per 3 seconds per tenant
+const WA_THROTTLE_SECONDS = 3
+
+async function throttlePerTenant(tenantId: string | null): Promise<void> {
+  if (!tenantId) return
+  
+  const throttleKey = `wa:throttle:${tenantId}`
+  try {
+    const lastSent = await connection.get(throttleKey)
+    if (lastSent) {
+      const elapsed = Date.now() - parseInt(lastSent, 10)
+      const waitMs = WA_THROTTLE_SECONDS * 1000 - elapsed
+      if (waitMs > 0) {
+        await new Promise(resolve => setTimeout(resolve, waitMs))
+      }
+    }
+    // Mark timestamp
+    await connection.set(throttleKey, Date.now().toString(), "EX", WA_THROTTLE_SECONDS * 2)
+  } catch {
+    // If Redis fails, just add a safety delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
+  }
+}
+
 const waWorker = new Worker(
   "wa-queue",
   async (job: Job) => {
     const { tenantId, number, message, waQueueLogId, broadcastId, recipientName } = job.data
     console.log(`[wa-queue] Processing job ${job.id} for ${number}...`)
+
+    // [REDIS THROTTLE] Wait for tenant-specific rate limit
+    await throttlePerTenant(tenantId)
 
     try {
       const result = await sendWhatsAppDirect(number, message, tenantId)
@@ -105,7 +134,7 @@ const waWorker = new Worker(
   },
   {
     connection,
-    concurrency: 1, // WA worker WAJIB concurrency 1 agar delay antar pesan berfungsi
+    concurrency: 3, // Concurrency 3: memungkinkan tenant berbeda berjalan paralel, throttle per-tenant menjaga keamanan masing-masing
   }
 )
 
@@ -280,3 +309,19 @@ workers.forEach((w) => {
 console.log("✅ All BullMQ Workers are running and listening to queues!")
 console.log("   Queues: wa-queue, import-queue, billing-queue, gamification-queue, email-queue")
 console.log("   Features: retry (3x exponential), dead-letter logging, Sentry reporting")
+
+// ============================================================
+// CRON / INTERVAL JOBS
+// ============================================================
+setInterval(async () => {
+  try {
+    const p = await syncPostViewsToDatabase()
+    const e = await syncEventViewsToDatabase()
+    if (p > 0 || e > 0) {
+      console.log(`[cron] Synced ${p} post views and ${e} event views to DB`)
+    }
+  } catch (error) {
+    console.error("[cron] Failed to sync views", error)
+  }
+}, 10 * 60 * 1000) // 10 minutes
+

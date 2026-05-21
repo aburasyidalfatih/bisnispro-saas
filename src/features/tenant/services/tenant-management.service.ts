@@ -1,10 +1,27 @@
 import { db } from "@/lib/db"
 import { invalidatePublicTenantCache } from "./tenant-public.service"
+import { getRedis } from "@/lib/redis"
+
+const DASHBOARD_CACHE_PREFIX = "dashboard:website:"
+const DASHBOARD_CACHE_TTL = 900 // 15 minutes
 
 // ==========================================
 // Query: Data Website Tenant (Dashboard CMS)
 // ==========================================
 export async function getWebsiteData(tenantId: string) {
+  // Try Redis cache first
+  try {
+    const redis = getRedis()
+    if (redis) {
+      const cached = await redis.get(`${DASHBOARD_CACHE_PREFIX}${tenantId}`)
+      if (cached) {
+        return JSON.parse(cached)
+      }
+    }
+  } catch (e) {
+    // Cache miss or error, continue to DB
+  }
+
   const tenant = await db.tenant.findUnique({
     where: { id: tenantId },
     select: {
@@ -37,7 +54,32 @@ export async function getWebsiteData(tenantId: string) {
   })
 
   if (!tenant) throw new Error("Tenant tidak ditemukan")
+
+  // Cache in Redis
+  try {
+    const redis = getRedis()
+    if (redis) {
+      await redis.setex(`${DASHBOARD_CACHE_PREFIX}${tenantId}`, DASHBOARD_CACHE_TTL, JSON.stringify(tenant))
+    }
+  } catch (e) {
+    // Non-critical
+  }
+
   return tenant
+}
+
+/**
+ * Invalidate dashboard cache for a tenant (called after mutations)
+ */
+export async function invalidateDashboardCache(tenantId: string) {
+  try {
+    const redis = getRedis()
+    if (redis) {
+      await redis.del(`${DASHBOARD_CACHE_PREFIX}${tenantId}`)
+    }
+  } catch (e) {
+    // Non-critical
+  }
 }
 
 // ==========================================
@@ -75,6 +117,7 @@ export async function updateWebsiteData(tenantId: string, data: Record<string, a
 
   // Invalidate Redis cache so public site reflects changes immediately
   await invalidatePublicTenantCache(updated.slug)
+  await invalidateDashboardCache(tenantId)
   try {
     const { revalidatePath } = await import("next/cache")
     revalidatePath("/", "layout")

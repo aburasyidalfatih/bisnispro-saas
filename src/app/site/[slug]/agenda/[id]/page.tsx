@@ -5,8 +5,9 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { Calendar, ArrowLeft, Clock, MapPin, User } from "lucide-react"
 import { format } from "date-fns"
-import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
+import { EventViewCounter } from "./_components/view-counter"
+import { getEventViews } from "@/features/post/services/views.service"
 
 
 export const dynamicParams = true
@@ -35,6 +36,9 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
   if (!event) notFound()
 
   const base = await getPublicBasePath(slug)
+  
+  const redisViews = await getEventViews(id)
+  const totalViews = (event.viewCount || 0) + redisViews
 
   return (
     <div className="bg-background min-h-screen pb-16">
@@ -90,6 +94,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
                 <MapPin className="h-4 w-4" />
                 {event.location || "Area Kampus"}
              </div>
+             <EventViewCounter eventId={event.id} initialViews={totalViews} />
           </div>
           
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight">

@@ -12,10 +12,32 @@ import crypto from "crypto"
 export async function getStaff(tenantId: string) {
   await requireTenantAccess(tenantId)
   
-  return await db.staff.findMany({
+  const staff = await db.staff.findMany({
     where: { tenantId },
     orderBy: { sortOrder: 'asc' },
   })
+  
+  try {
+    const { getRedis } = await import("@/lib/redis")
+    const redis = getRedis()
+    if (redis && staff.length > 0) {
+      const userIds = staff.filter(s => s.userId).map(s => s.userId as string)
+      if (userIds.length > 0) {
+        const keys = userIds.map(id => `online_users:${tenantId}:${id}`)
+        const statuses = await redis.mget(keys)
+        
+        return staff.map(s => {
+          if (!s.userId) return { ...s, isOnline: false }
+          const idx = userIds.indexOf(s.userId)
+          return { ...s, isOnline: idx !== -1 && statuses[idx] === "1" }
+        })
+      }
+    }
+  } catch (error) {
+    console.error("[getStaff] Failed to get presence", error)
+  }
+  
+  return staff.map(s => ({ ...s, isOnline: false }))
 }
 
 export async function getStaffById(id: string, tenantId: string) {

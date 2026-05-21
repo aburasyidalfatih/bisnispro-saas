@@ -1,4 +1,5 @@
 import { db } from "@/lib/db"
+import { getRedis } from "@/lib/redis"
 
 export async function processLeaderboardSync() {
   const currentYear = new Date().getFullYear()
@@ -87,8 +88,25 @@ export async function processLeaderboardSync() {
   // Eksekusi batch
   await db.$transaction(updatePromises)
 
+  // [REDIS ZSET] Sync leaderboard to Redis for instant ranking queries
+  try {
+    const redis = getRedis()
+    if (redis) {
+      // Clear and rebuild the global leaderboard in one pipeline
+      const pipeline = redis.pipeline()
+      pipeline.del("leaderboard:global")
+      for (const score of scores) {
+        pipeline.zadd("leaderboard:global", score.totalScore, score.tenantId)
+      }
+      await pipeline.exec()
+    }
+  } catch (e) {
+    console.error("[LEADERBOARD] Failed to sync Redis ZSET", e)
+  }
+
   return {
     message: "Leaderboard synchronized successfully",
     processedCount: tenants.length
   }
 }
+
