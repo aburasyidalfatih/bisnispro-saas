@@ -70,6 +70,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Free disk space and set up swap
+        run: |
+          sudo swapoff -a
+          sudo fallocate -l 4G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
