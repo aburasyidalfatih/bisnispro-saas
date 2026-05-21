@@ -4,7 +4,7 @@ import { GraduationCap, Quote, MessageCircle, ExternalLink, Heart, Star, Award }
 import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
-import { cn } from "@/lib/utils"
+import { cn, normalizeImageUrl } from "@/lib/utils"
 
 export default async function AlumniPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -146,7 +146,7 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
                        <div className="flex gap-4 items-center">
                           <div className="h-12 w-12 rounded-xl overflow-hidden shrink-0">
                              <img 
-                               src={item.imageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974"} 
+                               src={normalizeImageUrl(item.imageUrl) || item.imageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974"} 
                                alt={item.name} 
                                className="h-full w-full object-cover" 
                              />
