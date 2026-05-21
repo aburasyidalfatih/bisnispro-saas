@@ -1,4 +1,4 @@
-import { getRedis } from "./index"
+import { getRedis } from "@/lib/redis"
 
 /**
  * Basic Sliding Window / Fixed Window Rate Limiter using Redis.

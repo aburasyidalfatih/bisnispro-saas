@@ -99,7 +99,7 @@ function createLimiter(upstashMax: number, upstashWindow: string, localMax: numb
   if (isUpstashConfigured) {
     return new Ratelimit({
       redis: Redis.fromEnv(),
-      limiter: Ratelimit.slidingWindow(upstashMax, upstashWindow),
+      limiter: Ratelimit.slidingWindow(upstashMax, upstashWindow as any),
       analytics: true,
       prefix,
     })

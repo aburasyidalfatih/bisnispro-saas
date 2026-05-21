@@ -74,7 +74,7 @@ export async function syncShareCountsToDatabase(): Promise<number> {
   try {
     const keys = await redis.keys(`${SHARE_PREFIX}*`)
     // Filter out detail keys (hash maps)
-    const countKeys = keys.filter(k => !k.includes(":detail:"))
+    const countKeys = keys.filter((k: string) => !k.includes(":detail:"))
     if (countKeys.length === 0) return 0
 
     let synced = 0

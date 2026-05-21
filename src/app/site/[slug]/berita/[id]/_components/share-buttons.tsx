@@ -53,7 +53,6 @@ export function ShareButtons({ url, title, postId, tenantId, initialShares = 0 }
         toast({
           title: `+${points} Poin Leaderboard! 🎮`,
           description: `Terima kasih sudah membagikan ke ${platform === "whatsapp" ? "WhatsApp" : platform === "facebook" ? "Facebook" : "X/Twitter"}!`,
-          className: "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-none",
         })
       }
     }
