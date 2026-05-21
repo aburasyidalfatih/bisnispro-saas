@@ -313,22 +313,16 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
   }
 }
 
-export const AI_PACKAGES: Record<string, { tokens: number, price: number }> = {
-  "pkg_5k": { tokens: 5000, price: 25000 },
-  "pkg_10k": { tokens: 10000, price: 45000 },
-  "pkg_50k": { tokens: 50000, price: 200000 },
-}
-
 /**
  * Membuat Invoice untuk Top-Up Token AI
  */
-export async function createAiAddonInvoice(tenantId: string, packageKey: string): Promise<InvoiceResultDTO> {
+export async function createAiAddonInvoice(tenantId: string, packageId: string): Promise<InvoiceResultDTO> {
   try {
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
     if (!tenant) return { success: false, error: "Tenant tidak ditemukan" }
     
-    const pkg = AI_PACKAGES[packageKey]
-    if (!pkg) return { success: false, error: "Paket AI tidak ditemukan" }
+    const pkg = await db.aiTokenPackage.findUnique({ where: { id: packageId } })
+    if (!pkg || !pkg.isActive) return { success: false, error: "Paket AI tidak ditemukan atau tidak aktif" }
 
     const reference = `INV-AI-${Date.now()}-${tenant.slug.toUpperCase()}`
     const expiryDays = await getInvoiceExpiryDays()
@@ -344,6 +338,8 @@ export async function createAiAddonInvoice(tenantId: string, packageKey: string)
         expiredAt: expiredAtInvoice,
         metadata: {
           aiTokens: pkg.tokens,
+          packageId: pkg.id,
+          packageName: pkg.name,
           tenantName: tenant.name,
           tenantSlug: tenant.slug,
           subTotal: pkg.price,
@@ -360,6 +356,7 @@ export async function createAiAddonInvoice(tenantId: string, packageKey: string)
         amount: payment.amount,
         subTotal: pkg.price,
         aiTokens: pkg.tokens,
+        packageName: pkg.name,
         tenantName: tenant.name,
         expiredAt: payment.expiredAt,
         status: payment.status,
