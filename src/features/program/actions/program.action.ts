@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { programSchema } from "@/features/program/schemas/program.schema"
 import { revalidatePath } from "next/cache"
+import { generateUniqueSlug } from "@/lib/utils/slug"
 
 
 
@@ -30,9 +31,12 @@ export async function createProgram(tenantId: string, data: any) {
   
   const parsed = programSchema.parse(data)
   
+  const slug = await generateUniqueSlug(db.program, tenantId, parsed.name)
+  
   const program = await db.program.create({
     data: {
       ...parsed,
+      slug,
       tenantId,
     }
   })

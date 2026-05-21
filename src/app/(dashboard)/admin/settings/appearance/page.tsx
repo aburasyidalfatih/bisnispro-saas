@@ -5,9 +5,11 @@ import { useTheme } from "next-themes"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useColorTheme } from "@/components/providers/color-theme-provider"
 import { themes } from "@/lib/themes"
-import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate, Lock, Loader2 } from "lucide-react"
+import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate, Lock, Loader2, Type } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 
@@ -34,12 +36,19 @@ export default function AppearancePage() {
   const [loadingConfig, setLoadingConfig] = useState(true)
   const [availableCustomThemes, setAvailableCustomThemes] = useState<any[]>([])
   
+  // Dynamic Theme Settings
+  const [dynamicSettings, setDynamicSettings] = useState({ primaryColor: "", secondaryColor: "", fontFamily: "" })
+  const [dbDynamicSettings, setDbDynamicSettings] = useState({ primaryColor: "", secondaryColor: "", fontFamily: "" })
+
   const isImpersonating = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
   const canChangeTheme = isImpersonating || session?.user?.tenants?.some((t: any) => 
     t.id === activeTenantId && (t.role === "owner" || t.role === "admin")
   ) || false
   const isSuperAdminOnly = session?.user?.isSuperAdmin && !isImpersonating
   const hasTemplateChanged = selectedTemplate !== dbTemplate
+  const hasSettingsChanged = dynamicSettings.primaryColor !== dbDynamicSettings.primaryColor || 
+                             dynamicSettings.secondaryColor !== dbDynamicSettings.secondaryColor || 
+                             dynamicSettings.fontFamily !== dbDynamicSettings.fontFamily
 
   // Fetch template + plan langsung dari database (bukan dari JWT session yang bisa stale)
   useEffect(() => {
@@ -56,6 +65,15 @@ export default function AppearancePage() {
         }
         if (data.plan) {
           setDbPlan(data.plan)
+        }
+        if (data.settings) {
+          const s = {
+            primaryColor: data.settings.primaryColor || "",
+            secondaryColor: data.settings.secondaryColor || "",
+            fontFamily: data.settings.fontFamily || "inter",
+          }
+          setDynamicSettings(s)
+          setDbDynamicSettings(s)
         }
       })
       .catch(() => {})
@@ -92,13 +110,14 @@ export default function AppearancePage() {
     try {
       const res = await fetch("/api/tenant/theme", {
         method: "PUT", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenantId, theme: previewTheme, template: selectedTemplate }),
+        body: JSON.stringify({ tenantId, theme: previewTheme, template: selectedTemplate, settings: dynamicSettings }),
       })
       if (res.ok) {
         const result = await res.json()
         // Update state lokal langsung tanpa reload
         setDbTemplate(result.template || selectedTemplate)
         setDbPlan(dbPlan) // plan tidak berubah
+        setDbDynamicSettings(dynamicSettings)
         toast({ title: "Tema disimpan ✅", description: `Template: ${selectedTemplate === "modern" ? "Modern Corporate" : "Classic Default"} | Warna: ${themes.find(t => t.id === previewTheme)?.name || previewTheme}` })
         // Reload untuk refresh session dan semua provider
         window.location.reload()
@@ -344,8 +363,91 @@ export default function AppearancePage() {
         </CardContent>
       </Card>
 
+      {/* Dynamic Theme Engine */}
+      <Card className="glass border-0">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-500/10">
+              <Palette className="h-4 w-4 text-pink-600" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Custom Theme (Khusus Website Publik)</CardTitle>
+              <CardDescription className="text-xs">Ubah warna dan font khusus untuk halaman depan pengunjung</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-6 sm:grid-cols-2 rounded-xl p-4 bg-muted/20 border-2 border-transparent hover:border-border transition-colors">
+            <div className="space-y-3">
+              <Label className="flex items-center gap-2 text-sm font-semibold"><Palette className="h-4 w-4 text-muted-foreground" /> Warna Tema Custom</Label>
+              <div className="flex flex-col gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">Warna Utama</Label>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="color" 
+                      value={dynamicSettings.primaryColor || "#4f46e5"} 
+                      onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))}
+                      className="h-9 w-12 rounded cursor-pointer border p-0 bg-transparent"
+                    />
+                    <Input 
+                      value={dynamicSettings.primaryColor || "#4f46e5"} 
+                      onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))}
+                      className="w-24 h-9 text-xs font-mono rounded-lg"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">Warna Sekunder</Label>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="color" 
+                      value={dynamicSettings.secondaryColor || "#ec4899"} 
+                      onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))}
+                      className="h-9 w-12 rounded cursor-pointer border p-0 bg-transparent"
+                    />
+                    <Input 
+                      value={dynamicSettings.secondaryColor || "#ec4899"} 
+                      onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))}
+                      className="w-24 h-9 text-xs font-mono rounded-lg"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                *Warna ini akan menimpa skema warna dasar (Base Theme) di halaman Website Publik. Kosongkan untuk menggunakan warna Base Theme.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Label className="flex items-center gap-2 text-sm font-semibold"><Type className="h-4 w-4 text-muted-foreground" /> Tipografi (Gaya Font)</Label>
+              <select
+                value={dynamicSettings.fontFamily || "inter"}
+                onChange={(e) => setDynamicSettings(p => ({ ...p, fontFamily: e.target.value }))}
+                className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              >
+                <option value="inter">Modern Minimalist (Inter)</option>
+                <option value="plus-jakarta">Professional (Plus Jakarta Sans)</option>
+                <option value="playfair">Klasik & Elegan (Playfair Display)</option>
+                <option value="outfit">Ceria & Kreatif (Outfit)</option>
+              </select>
+              <div className="p-4 border rounded-xl bg-background mt-3 flex items-center justify-center min-h-[80px]">
+                <p className={cn(
+                  "text-lg",
+                  dynamicSettings.fontFamily === "playfair" ? "font-serif" :
+                  dynamicSettings.fontFamily === "outfit" ? "font-sans font-bold tracking-tight" :
+                  "font-sans"
+                )}>
+                  Aura Sekolah Anda.
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* ── Sticky Save Bar (selalu terlihat saat ada perubahan) ── */}
-      {canChangeTheme && (hasUnsavedChanges || hasTemplateChanged) && (
+      {canChangeTheme && (hasUnsavedChanges || hasTemplateChanged || hasSettingsChanged) && (
         <div className="sticky bottom-0 z-50 -mx-4 sm:-mx-6 lg:-mx-8">
           <div className="bg-card/95 backdrop-blur-lg border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] px-4 sm:px-6 py-3">
             <div className="flex items-center justify-between max-w-3xl mx-auto">

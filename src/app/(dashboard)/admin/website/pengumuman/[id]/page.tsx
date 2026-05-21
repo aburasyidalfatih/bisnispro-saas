@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, Loader2, Search, Sparkles, Wand2 } from "lucide-react"
 import Link from "next/link"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
 import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
 import { normalizeImageUrl } from "@/lib/utils"
 import {

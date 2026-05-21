@@ -26,6 +26,27 @@ function SmartPlaceholder({ title, type }: { title: string, type: string }) {
   )
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Artikel & Berita Terbaru`
+  const description = `Kumpulan informasi, berita, dan artikel terbaru dari ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/berita" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/berita`,
+    }
+  }
+}
+
 export default async function BeritaPage({ 
   params,
   searchParams 
@@ -162,7 +183,7 @@ export default async function BeritaPage({
             {/* Hero Post */}
             {posts[0] && (
               <Link 
-                href={`${base}/berita/${posts[0].id}`}
+                href={`${base}/berita/${posts[0].slug}`}
                 className="group relative flex flex-col lg:flex-row bg-white rounded-[2.5rem] overflow-hidden border border-border/50 hover:shadow-2xl transition-all duration-500"
               >
                 <div className="w-full lg:w-3/5 aspect-[16/10] lg:aspect-auto relative overflow-hidden bg-muted">
@@ -198,7 +219,7 @@ export default async function BeritaPage({
                 {posts.slice(1).map((post: any) => (
                   <Link 
                     key={post.id} 
-                    href={`${base}/berita/${post.id}`}
+                    href={`${base}/berita/${post.slug}`}
                     className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-border/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="aspect-[16/10] relative overflow-hidden bg-muted">

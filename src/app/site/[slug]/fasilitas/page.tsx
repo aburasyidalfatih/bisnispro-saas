@@ -9,6 +9,27 @@ import Link from "next/link"
 import { db } from "@/lib/db"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Fasilitas Sekolah`
+  const description = `Sarana dan prasarana pendukung pendidikan berkualitas di ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/fasilitas" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/fasilitas`,
+    }
+  }
+}
+
 export default async function FasilitasPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)
@@ -100,7 +121,7 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
               return (
                 <Link 
                   key={facility.id} 
-                  href={`${base}/fasilitas/${facility.id}`}
+                  href={`${base}/fasilitas/${facility.slug || facility.id}`}
                   className={cn(
                     "group relative overflow-hidden rounded-[2.5rem] flex flex-col shadow-sm hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 border border-border/40",
                     spanClass

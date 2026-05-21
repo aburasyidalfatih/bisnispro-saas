@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { achievementSchema } from "@/features/achievement/schemas/achievement.schema"
 import { revalidatePath } from "next/cache"
+import { generateUniqueSlug } from "@/lib/utils/slug"
 
 export async function getAchievements(tenantId: string) {
   await requireTenantAccess(tenantId)
@@ -31,9 +32,12 @@ export async function createAchievement(tenantId: string, data: any) {
   
   const parsed = achievementSchema.parse(data)
   
+  const slug = await generateUniqueSlug(db.achievement, tenantId, parsed.title)
+  
   const achievement = await db.achievement.create({
     data: {
       ...parsed,
+      slug,
       tenantId,
     }
   })

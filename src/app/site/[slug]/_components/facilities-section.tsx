@@ -9,6 +9,7 @@ import { normalizeImageUrl } from "@/lib/utils"
 interface Facility {
   id: string
   name: string
+  slug?: string
   description?: string | null
   imageUrl?: string | null
 }
@@ -67,7 +68,7 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
             return (
               <Link
                 key={facility.id}
-                href={resolveHref(`/fasilitas/${facility.id}`)}
+                href={resolveHref(`/fasilitas/${facility.slug || facility.id}`)}
                 className={`group relative rounded-[2rem] overflow-hidden border border-border/40 bg-muted/30 transition-all duration-700 hover:shadow-2xl hover:-translate-y-1.5 ${spanClass}`}
               >
                 {facility.imageUrl ? (

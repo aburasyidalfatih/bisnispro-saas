@@ -77,7 +77,7 @@ export default function EditStaffPage() {
               education: (d as any).education || "",
               password: ""
             })
-            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl) || null)
           }
           setLoading(false)
         })

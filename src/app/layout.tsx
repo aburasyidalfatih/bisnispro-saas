@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next"
-import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
 import "./globals.css"
 import { ThemeProvider } from "@/components/providers/theme-provider"
@@ -11,7 +10,12 @@ import { MetaPixel } from "@/components/shared/meta-pixel"
 
 import { ConfirmProvider } from "@/components/providers/confirm-provider"
 
-const inter = Inter({ subsets: ["latin"] })
+import { Inter, Plus_Jakarta_Sans, Playfair_Display, Outfit } from "next/font/google"
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" })
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" })
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" })
 
 import { db } from "@/lib/db"
 import { normalizeImageUrl } from "@/lib/utils"
@@ -111,7 +115,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </>
         )}
       </head>
-      <body className={`${inter.className} overflow-x-hidden w-full`} suppressHydrationWarning>
+      <body className={`${inter.className} ${inter.variable} ${plusJakarta.variable} ${playfair.variable} ${outfit.variable} overflow-x-hidden w-full`} suppressHydrationWarning>
         <SessionProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
             <ColorThemeProvider>

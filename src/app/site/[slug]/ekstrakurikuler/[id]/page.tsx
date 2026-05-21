@@ -15,13 +15,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, id } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
-  const extra = (tenant.extracurriculars || []).find((e: any) => e.id === id)
+  const extra = (tenant.extracurriculars || []).find((e: any) => e.id === id || e.slug === id)
   if (!extra) return {}
   return {
     title: `${extra.name} - ${tenant.name}`,
     description: (extra.description ? extra.description.replace(/<[^>]*>?/gm, '') : `Informasi Ekstrakurikuler ${extra.name}`),
     alternates: {
-      canonical: `/ekstrakurikuler/${extra.id}`,
+      canonical: `/ekstrakurikuler/${extra.slug || extra.id}`,
     },
   }
 }
@@ -31,7 +31,7 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
-  const extra = (tenant.extracurriculars || []).find((e: any) => e.id === id)
+  const extra = (tenant.extracurriculars || []).find((e: any) => e.id === id || e.slug === id)
   if (!extra) notFound()
 
   const base = await getPublicBasePath(slug)
@@ -133,7 +133,7 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/ekstrakurikuler/${extra.id}`} 
+          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/ekstrakurikuler/${extra.slug || extra.id}`} 
           title={extra.name}
           tenantId={tenant.id}
         />

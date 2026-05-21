@@ -70,7 +70,7 @@ export default function EditAlumniPage() {
               testimonial: d.testimonial || "",
               imageUrl: d.imageUrl || ""
             })
-            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl) || null)
           }
           setLoading(false)
         })

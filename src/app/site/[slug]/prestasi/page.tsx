@@ -49,7 +49,7 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {achievements.map((item: any, index: number) => (
               <Link 
-                href={`${base}/prestasi/${item.id}`}
+                href={`${base}/prestasi/${item.slug || item.id}`}
                 key={item.id} 
                 className="group relative flex flex-col bg-white rounded-[2rem] overflow-hidden border border-border shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
               >

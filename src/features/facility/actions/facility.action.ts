@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { revalidatePath } from "next/cache"
 import { facilitySchema } from "@/features/facility/schemas/facility.schema"
+import { generateUniqueSlug } from "@/lib/utils/slug"
 
 export async function getFacilities(tenantId: string) {
   await requireTenantAccess(tenantId)
@@ -27,9 +28,12 @@ export async function createFacility(tenantId: string, data: any) {
   
   const parsed = facilitySchema.parse(data)
   
+  const slug = await generateUniqueSlug(db.facility, tenantId, parsed.name)
+  
   const facility = await db.facility.create({
     data: {
       ...parsed,
+      slug,
       tenantId,
     }
   })

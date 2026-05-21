@@ -174,8 +174,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic routes: Berita & Pengumuman
   if (tenant.posts) {
     tenant.posts.forEach((post: any) => {
+      const isPengumuman = post.type?.includes("PENGUMUMAN")
+      const prefix = isPengumuman ? "pengumuman" : "berita"
       routes.push({
-        url: `${domainUrl}/berita/${post.id}`,
+        url: `${domainUrl}/${prefix}/${post.id}`,
         lastModified: post.updatedAt || post.createdAt,
         changeFrequency: "weekly",
         priority: 0.7,
@@ -200,9 +202,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     tenant.programs.forEach((program: any) => {
       routes.push({
         url: `${domainUrl}/program/${program.id}`,
-        lastModified: new Date(),
+        lastModified: program.updatedAt || program.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
+      })
+    })
+  }
+
+  // Dynamic routes: Agenda
+  if (tenant.events) {
+    tenant.events.forEach((event: any) => {
+      routes.push({
+        url: `${domainUrl}/agenda/${event.id}`,
+        lastModified: event.updatedAt || event.createdAt,
+        changeFrequency: "monthly",
+        priority: 0.6,
+      })
+    })
+  }
+
+  // Dynamic routes: Fasilitas
+  if (tenant.facilities) {
+    tenant.facilities.forEach((facility: any) => {
+      routes.push({
+        url: `${domainUrl}/fasilitas/${facility.id}`,
+        lastModified: facility.updatedAt || facility.createdAt,
+        changeFrequency: "yearly",
+        priority: 0.5,
+      })
+    })
+  }
+
+  // Dynamic routes: GTK (Staff)
+  if (tenant.staff) {
+    tenant.staff.forEach((staff: any) => {
+      const slugifiedName = staff.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      routes.push({
+        url: `${domainUrl}/gtk/${slugifiedName}`,
+        lastModified: staff.updatedAt || staff.createdAt,
+        changeFrequency: "yearly",
+        priority: 0.5,
       })
     })
   }

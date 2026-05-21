@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X, Phone, MapPin, Mail, MessageCircle, Megaphone, Sparkles, Wand2, Loader2 as Loader2Icon } from "lucide-react"
+import { Save, Info, ExternalLink, Globe, Upload, Building2, ShieldCheck, ShieldOff, ArrowRight, X, Phone, MapPin, Mail, MessageCircle, Megaphone, Sparkles, Wand2, Loader2 as Loader2Icon, Palette, Type } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
 import { getStaff } from "@/features/staff/actions/staff.action"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
 import Image from "next/image"
 
 export default function WebsiteAboutPage() {
@@ -380,6 +380,8 @@ export default function WebsiteAboutPage() {
             </div>
           </CardContent>
         </Card>
+
+
 
         {/* Kontak & Lokasi */}
         <Card className="glass border-0 lg:col-span-2">

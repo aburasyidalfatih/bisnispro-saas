@@ -9,6 +9,7 @@ import { normalizeImageUrl } from "@/lib/utils"
 interface Program {
   id: string
   name: string
+  slug?: string
   description?: string | null
   imageUrl?: string | null
 }
@@ -67,7 +68,7 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
             return (
               <Link
                 key={program.id}
-                href={resolveHref(`/program/${program.id}`)}
+                href={resolveHref(`/program/${program.slug || program.id}`)}
                 className={`group relative rounded-2xl border bg-background overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${color.border}`}
               >
                 {/* Image / Gradient Header */}

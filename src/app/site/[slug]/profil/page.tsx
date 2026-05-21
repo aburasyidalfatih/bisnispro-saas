@@ -12,6 +12,27 @@ import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Profil & Sejarah`
+  const description = tenant.about?.replace(/<[^>]*>/g, "").substring(0, 160) || `Informasi lengkap mengenai profil, sejarah, visi, dan misi ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/profil" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/profil`,
+    }
+  }
+}
+
 export default async function ProfilTerpaduPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)

@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
-import ExcelJS from "exceljs"
+
 
 export async function GET(req: Request) {
   try {
@@ -37,6 +37,7 @@ export async function GET(req: Request) {
     }
 
     // Buat Workbook ExcelJS
+    const ExcelJS = (await import("exceljs")).default
     const workbook = new ExcelJS.Workbook()
     const worksheet = workbook.addWorksheet("F-PD Dapodik")
 

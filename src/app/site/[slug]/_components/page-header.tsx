@@ -61,6 +61,31 @@ export function PageHeader({ title, description, breadcrumbs }: PageHeaderProps)
           ))}
         </nav>
 
+        {/* JSON-LD Structured Data for Breadcrumbs */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Beranda",
+                  "item": "/"
+                },
+                ...breadcrumbs.map((item, index) => ({
+                  "@type": "ListItem",
+                  "position": index + 2,
+                  "name": item.label,
+                  ...(item.href ? { "item": item.href } : {})
+                }))
+              ]
+            })
+          }}
+        />
+
         {/* Title & Description */}
         <div className="max-w-3xl">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary mb-4">

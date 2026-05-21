@@ -17,6 +17,9 @@ model Tenant {
   plan                 String                @default("free")
   theme                String                @default("aurora")
   isActive             Boolean               @default(true)
+  lastActiveAt         DateTime              @default(now())
+  retentionStatus      String                @default("ACTIVE")
+  deletedAt            DateTime?
   settings             Json?
   tagline              String?
   about                String?
@@ -489,6 +492,7 @@ model Event {
   id            String   @id @default(cuid())
   tenantId      String
   title         String
+  slug          String
   description   String?
   location      String?
   contactPerson String?
@@ -499,6 +503,7 @@ model Event {
   viewCount     Int      @default(0)
   tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([startDate])
   @@index([createdAt])
@@ -510,6 +515,7 @@ model Achievement {
   id          String   @id @default(cuid())
   tenantId    String
   title       String
+  slug        String
   description String?
   date        DateTime
   level       String   @default("LOKAL")
@@ -519,6 +525,7 @@ model Achievement {
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, createdAt(sort: Desc)])
@@ -560,6 +567,7 @@ model Facility {
   id          String   @id @default(cuid())
   tenantId    String
   name        String
+  slug        String
   description String?
   imageUrl    String?
   category    String?
@@ -570,6 +578,7 @@ model Facility {
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, sortOrder])
@@ -581,6 +590,7 @@ model Extracurricular {
   id              String   @id @default(cuid())
   tenantId        String
   name            String
+  slug            String
   description     String?
   schedule        String?
   imageUrl        String?
@@ -591,6 +601,7 @@ model Extracurricular {
   updatedAt       DateTime @updatedAt
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, sortOrder])
@@ -602,6 +613,7 @@ model Program {
   id          String   @id @default(cuid())
   tenantId    String
   name        String
+  slug        String
   description String?
   imageUrl    String?
   focus       String?
@@ -611,6 +623,7 @@ model Program {
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, sortOrder])
@@ -721,23 +734,23 @@ model Slider {
 }
 
 model SubscriptionPlan {
-  id            String         @id @default(cuid())
-  name          String
-  slug          String         @unique
-  description   String?
-  price         Float          @default(0)
-  interval      String         @default("MONTHLY")
-  features      Json?
-  maxStudents   Int            @default(0)
-  maxStorage    Int            @default(0)
-  monthlyAiTokens Int          @default(0)
-  isActive      Boolean        @default(true)
-  isPopular     Boolean        @default(false)
-  sortOrder     Int            @default(0)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  subscriptions Subscription[]
-  tenants       Tenant[]
+  id              String         @id @default(cuid())
+  name            String
+  slug            String         @unique
+  description     String?
+  price           Float          @default(0)
+  interval        String         @default("MONTHLY")
+  features        Json?
+  maxStudents     Int            @default(0)
+  maxStorage      Int            @default(0)
+  monthlyAiTokens Int            @default(0)
+  isActive        Boolean        @default(true)
+  isPopular       Boolean        @default(false)
+  sortOrder       Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  subscriptions   Subscription[]
+  tenants         Tenant[]
 
   @@index([createdAt])
   @@map("subscription_plans")
@@ -1393,7 +1406,7 @@ model AttendanceSession {
 }
 
 model AttendanceRecord {
-  id           String            // Hapus @id standalone
+  id           String // Hapus @id standalone
   sessionId    String
   tenantId     String
   studentId    String
@@ -1636,21 +1649,21 @@ model JournalPresence {
 }
 
 model DisciplineRecord {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   tenantId    String
   studentId   String
   staffId     String
   type        String
   category    String
   description String
-  points      Int      @default(0)
-  date        DateTime @db.Date
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  points      Int       @default(0)
+  date        DateTime  @db.Date
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  staff       Staff    @relation(fields: [staffId], references: [id])
-  student     Student  @relation(fields: [studentId], references: [id])
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  staff       Staff     @relation(fields: [staffId], references: [id])
+  student     Student   @relation(fields: [studentId], references: [id])
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, studentId])
   @@index([tenantId, createdAt(sort: Desc)])
@@ -1876,37 +1889,37 @@ model TenantNotification {
 }
 
 model CustomTheme {
-  id                    String   @id @default(cuid())
-  name                  String
-  author                String?
-  version               String   @default("1.0.0")
-  thumbnail             String?
-  layoutHtml            String
-  indexHtml             String
-  facilityHtml          String?
-  customCss             String
-  customJs              String
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  aboutHtml             String?
-  achievementHtml       String?
-  contactHtml           String?
-  extracurricularHtml   String?
-  galleryHtml           String?
-  newsDetailHtml        String?
-  newsHtml              String?
-  programHtml           String?
-  staffHtml             String?
-  isActive              Boolean  @default(true)
+  id                   String   @id @default(cuid())
+  name                 String
+  author               String?
+  version              String   @default("1.0.0")
+  thumbnail            String?
+  layoutHtml           String
+  indexHtml            String
+  facilityHtml         String?
+  customCss            String
+  customJs             String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  aboutHtml            String?
+  achievementHtml      String?
+  contactHtml          String?
+  extracurricularHtml  String?
+  galleryHtml          String?
+  newsDetailHtml       String?
+  newsHtml             String?
+  programHtml          String?
+  staffHtml            String?
+  isActive             Boolean  @default(true)
   // New template columns
-  pengumumanHtml        String?
-  pengumumanDetailHtml  String?
-  ppdbHtml              String?
-  alumniHtml            String?
-  agendaHtml            String?
-  unduhanHtml           String?
-  staffDetailHtml       String?
-  tenants               Tenant[]
+  pengumumanHtml       String?
+  pengumumanDetailHtml String?
+  ppdbHtml             String?
+  alumniHtml           String?
+  agendaHtml           String?
+  unduhanHtml          String?
+  staffDetailHtml      String?
+  tenants              Tenant[]
 
   @@map("custom_themes")
 }

@@ -17,13 +17,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, id } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
-  const achievement = (tenant.achievements || []).find((a: any) => a.id === id)
+  const achievement = (tenant.achievements || []).find((a: any) => a.id === id || a.slug === id)
   if (!achievement) return {}
   return {
     title: `${achievement.title} - ${tenant.name}`,
     description: (achievement.description ? achievement.description.replace(/<[^>]*>?/gm, '') : `Informasi prestasi ${achievement.title}`),
     alternates: {
-      canonical: `/prestasi/${achievement.id}`,
+      canonical: `/prestasi/${achievement.slug || achievement.id}`,
     },
   }
 }
@@ -33,7 +33,7 @@ export default async function AchievementDetailPage({ params }: { params: Promis
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
-  const achievement = (tenant.achievements || []).find((a: any) => a.id === id)
+  const achievement = (tenant.achievements || []).find((a: any) => a.id === id || a.slug === id)
   if (!achievement) notFound()
 
   const base = await getPublicBasePath(slug)
@@ -93,7 +93,7 @@ export default async function AchievementDetailPage({ params }: { params: Promis
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/prestasi/${achievement.id}`} 
+          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/prestasi/${achievement.slug || achievement.id}`} 
           title={achievement.title}
           tenantId={tenant.id}
         />

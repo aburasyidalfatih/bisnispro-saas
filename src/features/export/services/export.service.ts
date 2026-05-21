@@ -1,4 +1,4 @@
-import ExcelJS from "exceljs"
+
 
 export interface ExportColumn {
   header: string
@@ -22,6 +22,7 @@ export async function exportToExcel(
       return { success: false, error: "Tidak ada data untuk diexport" }
     }
 
+    const ExcelJS = (await import("exceljs")).default
     const workbook = new ExcelJS.Workbook()
     workbook.creator = "SchoolPro"
     workbook.created = new Date()

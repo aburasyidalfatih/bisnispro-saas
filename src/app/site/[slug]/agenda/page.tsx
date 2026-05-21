@@ -7,6 +7,27 @@ import { Calendar, MapPin, Clock, ArrowRight, Search } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Agenda Kegiatan`
+  const description = `Jadwal kegiatan akademik, hari besar, dan acara menarik di ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/agenda" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/agenda`,
+    }
+  }
+}
+
 export default async function AgendaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)
@@ -54,7 +75,7 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
             {events.map((event: any) => (
               <Link 
                 key={event.id} 
-                href={`${base}/agenda/${event.id}`}
+                href={`${base}/agenda/${event.slug || event.id}`}
                 className="group flex flex-col md:flex-row bg-white rounded-3xl overflow-hidden border border-border/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative"
               >
                 {/* Decoration line */}

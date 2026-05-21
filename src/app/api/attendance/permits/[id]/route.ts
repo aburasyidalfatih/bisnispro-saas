@@ -38,9 +38,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     await Promise.all(
       sessions.map(s =>
         db.attendanceRecord.upsert({
-          where: { sessionId_studentId: { sessionId: s.id, studentId: permit.studentId } },
+          where: { sessionId_studentId_academicYear: { sessionId: s.id, studentId: permit.studentId, academicYear: "2025/2026" } },
           update: { status: permit.type, notes: permit.reason },
           create: {
+            id: crypto.randomUUID(),
+            academicYear: "2025/2026",
             sessionId: s.id,
             tenantId,
             studentId: permit.studentId,

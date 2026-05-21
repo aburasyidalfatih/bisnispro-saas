@@ -8,6 +8,27 @@ import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const tenant = await getPublicTenantBySlug(slug)
+  if (!tenant) return {}
+  
+  const title = `Program Unggulan`
+  const description = `Daftar program keahlian dan akademik unggulan di ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: "/program" },
+    openGraph: {
+      title: `${title} | ${tenant.name}`,
+      description,
+      url: `${domainUrl}/program`,
+    }
+  }
+}
+
 export default async function ProgramPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const tenant = await getPublicTenantBySlug(slug)
@@ -69,7 +90,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                   <p className="text-muted-foreground line-clamp-2">
                     {prog.description ? prog.description.replace(/<[^>]*>?/gm, '') : "Program pendidikan yang dirancang khusus untuk mengoptimalkan potensi intelektual dan keterampilan siswa secara komprehensif."}
                   </p>
-                  <Link href={`${base}/program/${prog.id}`} className="flex items-center gap-2 text-primary font-bold text-sm">
+                  <Link href={`${base}/program/${prog.slug || prog.id}`} className="flex items-center gap-2 text-primary font-bold text-sm">
                     Pelajari Selengkapnya <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform" />
                   </Link>
                 </div>

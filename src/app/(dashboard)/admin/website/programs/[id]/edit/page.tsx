@@ -66,7 +66,7 @@ export default function EditProgramPage() {
               focus: d.focus || "",
               prospects: d.prospects || ""
             })
-            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl))
+            if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl) || null)
           }
           setLoading(false)
         })

@@ -67,6 +67,7 @@ export default function AiSettingsPage() {
         setLoading(false)
       })
       
+    fetch(`/api/tenant/ai-settings/logs?tenantId=${tenantId}`)
       .then(res => res.json())
       .then(data => {
         setLogs(data.data || [])

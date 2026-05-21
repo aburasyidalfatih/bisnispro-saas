@@ -53,7 +53,7 @@ export default function EditPartnershipPage() {
               isActive: d.isActive,
               imageUrl: d.imageUrl
             })
-            setPreviewUrl(normalizeImageUrl(d.imageUrl))
+            setPreviewUrl(normalizeImageUrl(d.imageUrl) || null)
           }
           setLoading(false)
         })

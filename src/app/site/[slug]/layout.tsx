@@ -35,9 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         template: `%s | ${tenant.name}`,
         default: tenant.seoTitle || tenant.name,
       },
-      alternates: {
-        canonical: "/",
-      },
+      alternates: {},
       icons: normalizedLogo ? { 
         icon: normalizedLogo, 
         shortcut: normalizedLogo, 
@@ -121,7 +119,7 @@ export default async function WebsiteLayout({
           }}
         />
 
-        <ThemeInjector theme={tenant.theme} />
+        <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme */}
         {!tenant.customThemeId && <WebsiteNavbar tenant={tenant} />}

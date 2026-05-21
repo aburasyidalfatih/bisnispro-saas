@@ -105,8 +105,9 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   // Dynamic routes: Berita
   if (tenant.posts) {
     tenant.posts.forEach((post: any) => {
+      const typePath = post.type === "PENGUMUMAN" ? "pengumuman" : "berita";
       routes.push({
-        url: `${baseUrl}/berita/${post.id}`,
+        url: `${baseUrl}/${typePath}/${post.slug}`,
         lastModified: post.updatedAt || post.createdAt,
         changeFrequency: "weekly",
         priority: 0.7,
@@ -118,7 +119,7 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   if (tenant.achievements) {
     tenant.achievements.forEach((achievement: any) => {
       routes.push({
-        url: `${baseUrl}/prestasi/${achievement.id}`,
+        url: `${baseUrl}/prestasi/${achievement.slug || achievement.id}`,
         lastModified: new Date(),
         changeFrequency: "yearly",
         priority: 0.6,
@@ -130,10 +131,46 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   if (tenant.programs) {
     tenant.programs.forEach((program: any) => {
       routes.push({
-        url: `${baseUrl}/program/${program.id}`,
+        url: `${baseUrl}/program/${program.slug || program.id}`,
         lastModified: new Date(),
         changeFrequency: "yearly",
         priority: 0.6,
+      })
+    })
+  }
+
+  // Dynamic routes: Fasilitas
+  if (tenant.facilities) {
+    tenant.facilities.forEach((facility: any) => {
+      routes.push({
+        url: `${baseUrl}/fasilitas/${facility.slug || facility.id}`,
+        lastModified: new Date(),
+        changeFrequency: "yearly",
+        priority: 0.5,
+      })
+    })
+  }
+
+  // Dynamic routes: Ekstrakurikuler
+  if (tenant.extracurriculars) {
+    tenant.extracurriculars.forEach((extra: any) => {
+      routes.push({
+        url: `${baseUrl}/ekstrakurikuler/${extra.slug || extra.id}`,
+        lastModified: new Date(),
+        changeFrequency: "yearly",
+        priority: 0.5,
+      })
+    })
+  }
+
+  // Dynamic routes: Agenda
+  if (tenant.events) {
+    tenant.events.forEach((event: any) => {
+      routes.push({
+        url: `${baseUrl}/agenda/${event.slug || event.id}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.7,
       })
     })
   }

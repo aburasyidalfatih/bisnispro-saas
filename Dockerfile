@@ -1,4 +1,4 @@
-FROM node:20-slim AS base
+FROM node:22-slim AS base
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # --- Dependencies ---
@@ -72,6 +72,7 @@ RUN npm install --omit=dev --legacy-peer-deps
 
 # Re-copy prisma CLI after npm install (npm install --omit=dev removes devDeps including prisma)
 COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
+COPY --from=deps /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
 
 RUN mkdir -p ./uploads ./.next/cache && chown -R nextjs:nodejs ./uploads ./.next/cache
 

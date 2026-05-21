@@ -5,6 +5,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { Calendar, ArrowLeft, Clock, MapPin, User } from "lucide-react"
 import { format } from "date-fns"
+import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 import { EventViewCounter } from "./_components/view-counter"
 import { getEventViews } from "@/features/post/services/views.service"
@@ -16,13 +17,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, id } = await params
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) return {}
-  const event = (tenant.events || []).find((e: any) => e.id === id)
+  const event = (tenant.events || []).find((e: any) => e.id === id || e.slug === id)
   if (!event) return {}
   return {
     title: `${event.title} - ${tenant.name}`,
     description: (event.description ? event.description.replace(/<[^>]*>?/gm, '') : `Agenda kegiatan ${event.title}`),
     alternates: {
-      canonical: `/agenda/${event.id}`,
+      canonical: `/agenda/${event.slug || event.id}`,
     },
   }
 }
@@ -32,7 +33,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
   const tenant = await getPublicTenantBySlug(slug)
   if (!tenant) notFound()
 
-  const event = (tenant.events || []).find((e: any) => e.id === id)
+  const event = (tenant.events || []).find((e: any) => e.id === id || e.slug === id)
   if (!event) notFound()
 
   const base = await getPublicBasePath(slug)
@@ -152,7 +153,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/agenda/${event.id}`} 
+          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/agenda/${event.slug || event.id}`} 
           title={event.title}
           tenantId={tenant.id}
         />

@@ -11,6 +11,7 @@ import { normalizeImageUrl } from "@/lib/utils"
 interface Achievement {
   id: string
   title: string
+  slug?: string
   description?: string | null
   date: string | Date
   level: string
@@ -71,7 +72,7 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
             return (
               <Link
                 key={achievement.id}
-                href={resolveHref(`/prestasi/${achievement.id}`)}
+                href={resolveHref(`/prestasi/${achievement.slug || achievement.id}`)}
                 className={`group rounded-2xl border p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${config.bg}`}
               >
                 <div className="flex items-start gap-4">
