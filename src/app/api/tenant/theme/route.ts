@@ -35,7 +35,6 @@ export async function PUT(req: Request) {
     }
 
 
-
     const dataToUpdate: any = {}
     if (theme) dataToUpdate.theme = theme
     if (template) {
@@ -46,6 +45,11 @@ export async function PUT(req: Request) {
         dataToUpdate.template = "custom"
         dataToUpdate.customThemeId = template
       }
+    }
+
+    if (parsed.data.settings) {
+      const tenant = tenantUser?.tenant || await db.tenant.findUnique({ where: { id: tenantId } })
+      dataToUpdate.settings = { ...(tenant?.settings as any || {}), ...parsed.data.settings }
     }
 
     const updated = await db.tenant.update({

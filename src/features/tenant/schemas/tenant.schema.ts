@@ -43,6 +43,7 @@ export const themeSchema = z.object({
   tenantId: cuidString,
   theme: z.string().min(1).max(50).optional(),
   template: z.string().min(1).max(50).optional(),
+  settings: z.any().optional(),
 })
 
 export type InviteInput = z.infer<typeof inviteSchema>

@@ -121,7 +121,7 @@ export default async function WebsiteLayout({
           }}
         />
 
-        <ThemeInjector theme={tenant.theme} />
+        <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme */}
         {!tenant.customThemeId && <WebsiteNavbar tenant={tenant} />}

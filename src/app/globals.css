@@ -238,3 +238,11 @@
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+
+/* Dynamic Font Families */
+html[data-font="inter"] body { font-family: var(--font-inter), sans-serif; }
+html[data-font="plus-jakarta"] body { font-family: var(--font-jakarta), sans-serif; }
+html[data-font="playfair"] body { font-family: var(--font-playfair), serif; }
+html[data-font="outfit"] body { font-family: var(--font-outfit), sans-serif; }
+
