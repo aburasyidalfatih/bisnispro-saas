@@ -3,13 +3,26 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { createTransaction } from "@/features/finance/services/payment.service"
 import { logger } from "@/lib/logger"
-import { getCurrentTenant } from "@/lib/session"
+import { headers } from "next/headers"
 
 export async function POST(req: Request) {
-  const session = await auth()
+  const session = await auth() as any
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const tenant = getCurrentTenant(session)
+  const headersList = await headers()
+  let slug = headersList.get("x-tenant-slug")
+  
+  if (!slug) {
+    const host = headersList.get("host") || ""
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.test"
+    if (host.endsWith(`.${rootDomain}`)) {
+      slug = host.replace(`.${rootDomain}`, "")
+    } else if (host !== rootDomain && !host.startsWith("www.")) {
+      slug = host.split(".")[0]
+    }
+  }
+
+  const tenant = session?.user?.tenants?.find((t: any) => t.slug === slug)
   if (!tenant) return NextResponse.json({ error: "Tenant not found" }, { status: 404 })
 
   try {
