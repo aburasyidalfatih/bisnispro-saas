@@ -81,7 +81,15 @@ export async function createPost(params: {
 
   // Invalidate cache
   const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) await invalidatePublicTenantCache(tenant.slug)
+  if (tenant) {
+    await invalidatePublicTenantCache(tenant.slug)
+    try {
+      const { revalidatePath } = await import("next/cache")
+      revalidatePath("/", "layout")
+    } catch (e) {
+      console.error("Failed to revalidate path", e)
+    }
+  }
 
   // TRIGGER GAMIFICATION (Direct DB call)
   try {
@@ -148,7 +156,15 @@ export async function createEvent(params: {
   })
 
   const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) await invalidatePublicTenantCache(tenant.slug)
+  if (tenant) {
+    await invalidatePublicTenantCache(tenant.slug)
+    try {
+      const { revalidatePath } = await import("next/cache")
+      revalidatePath("/", "layout")
+    } catch (e) {
+      console.error("Failed to revalidate path", e)
+    }
+  }
 
   // Audit Log
   await tenantDb.auditLog.create({

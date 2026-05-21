@@ -8,7 +8,7 @@ import Image from "next/image"
 import { ArrowLeft, Activity, Clock } from "lucide-react"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
-export const revalidate = 300
+
 export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {

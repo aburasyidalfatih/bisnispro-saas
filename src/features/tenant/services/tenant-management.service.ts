@@ -75,6 +75,12 @@ export async function updateWebsiteData(tenantId: string, data: Record<string, a
 
   // Invalidate Redis cache so public site reflects changes immediately
   await invalidatePublicTenantCache(updated.slug)
+  try {
+    const { revalidatePath } = await import("next/cache")
+    revalidatePath("/", "layout")
+  } catch (e) {
+    console.error("Failed to revalidate path", e)
+  }
 
   return updated
 }
@@ -127,6 +133,12 @@ export async function updateTenantSettings(tenantId: string, settings: Record<st
   })
 
   await invalidatePublicTenantCache(updated.slug)
+  try {
+    const { revalidatePath } = await import("next/cache")
+    revalidatePath("/", "layout")
+  } catch (e) {
+    console.error("Failed to revalidate path", e)
+  }
 
   return { message: "Pengaturan disimpan" }
 }
@@ -185,6 +197,12 @@ export async function changeSubdomain(tenantId: string, newSlug: string, userId:
     await invalidatePublicTenantCache(tenant.slug)
   }
   await invalidatePublicTenantCache(newSlug)
+  try {
+    const { revalidatePath } = await import("next/cache")
+    revalidatePath("/", "layout")
+  } catch (e) {
+    console.error("Failed to revalidate path", e)
+  }
 
   return { message: "Subdomain berhasil diubah" }
 }

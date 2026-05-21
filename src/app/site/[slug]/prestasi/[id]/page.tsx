@@ -10,7 +10,7 @@ import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 
-export const revalidate = 300
+
 export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
