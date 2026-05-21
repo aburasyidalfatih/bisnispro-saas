@@ -314,6 +314,7 @@ export default function SuperAdminSettingsPage() {
             <TabsTrigger value="plan_access" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kendali Fitur</TabsTrigger>
             <TabsTrigger value="ai" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kecerdasan Buatan (AI)</TabsTrigger>
             <TabsTrigger value="backup" onClick={() => { if (!backupData) fetchBackupData() }} className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">🔒 Backup DB</TabsTrigger>
+            <TabsTrigger value="retention" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Retensi Tenant</TabsTrigger>
           </TabsList>
         </div>
 
