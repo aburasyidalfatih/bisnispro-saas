@@ -22,8 +22,6 @@ export default function AiSettingsPage() {
   const [tenantId, setTenantId] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    useCustomApiKey: false,
-    customOpenAiKey: "",
     aiTokens: 0,
   })
 
@@ -56,8 +54,6 @@ export default function AiSettingsPage() {
       .then(res => res.json())
       .then(data => {
         setFormData({
-          useCustomApiKey: data.useCustomApiKey || false,
-          customOpenAiKey: data.customOpenAiKey || "",
           aiTokens: data.aiTokens || 0,
         })
         setLoading(false)
@@ -86,28 +82,7 @@ export default function AiSettingsPage() {
       .catch(() => {})
   }, [tenantId])
 
-  const handleSave = async () => {
-    if (!tenantId) return
-    setSaving(true)
-    try {
-      const res = await fetch(`/api/tenant/ai-settings?tenantId=${tenantId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          useCustomApiKey: formData.useCustomApiKey,
-          customOpenAiKey: formData.customOpenAiKey,
-        }),
-      })
 
-      if (!res.ok) throw new Error("Gagal menyimpan pengaturan")
-      
-      toast({ title: "Tersimpan", description: "Pengaturan AI berhasil diperbarui" })
-    } catch (error) {
-      toast({ title: "Error", description: "Terjadi kesalahan saat menyimpan pengaturan", variant: "destructive" })
-    } finally {
-      setSaving(false)
-    }
-  }
 
   const handleCheckoutAi = async () => {
     setCheckingOutAi(true)
@@ -140,172 +115,86 @@ export default function AiSettingsPage() {
         <p className="text-muted-foreground mt-1">Kelola penggunaan AI dan API Key untuk fitur otomatisasi sekolah.</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="glass border-0">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-                <Coins className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Sisa Kuota Token AI</CardTitle>
-                <CardDescription>Digunakan untuk membuat soal CBT dan asisten RPP.</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-primary">{formData.aiTokens.toLocaleString("id-ID")}</div>
-          </CardContent>
-          <CardFooter>
-            {/* Tombol dihapus karena pindah ke card topup */}
-          </CardFooter>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card className="glass border-0 flex flex-col justify-center items-center text-center py-8">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mb-4">
+             <Coins className="h-8 w-8 text-primary" />
+          </div>
+          <CardTitle className="text-xl mb-2">Sisa Kuota Token AI</CardTitle>
+          <CardDescription className="mb-6 max-w-[250px] mx-auto">Digunakan untuk fitur otomatisasi, pembuatan soal CBT, dan asisten RPP.</CardDescription>
+          <div className="text-5xl font-black text-primary bg-primary/5 px-8 py-5 rounded-3xl border border-primary/10 shadow-inner">
+            {formData.aiTokens.toLocaleString("id-ID")}
+          </div>
         </Card>
 
-        <Card className="glass border-0">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
-                <Key className="h-4 w-4 text-orange-500" />
+        {/* ── Card Top Up Token AI ── */}
+        <Card className="glass border-0 overflow-hidden relative lg:col-span-2">
+          <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+            <Zap className="h-40 w-40" />
+          </div>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10">
+                <Zap className="h-5 w-5 text-blue-500" />
               </div>
               <div>
-                <CardTitle className="text-lg">Bring Your Own Key (BYOK)</CardTitle>
-                <CardDescription>
-                  Gunakan API Key OpenAI milik sekolah Anda sendiri untuk penggunaan tanpa batas kuota.
-                </CardDescription>
+                <CardTitle>Top-Up Token AI</CardTitle>
+                <CardDescription>Beli kuota tambahan untuk layanan Kecerdasan Buatan (AI) di SchoolPro.</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between rounded-xl border p-4 bg-background">
-              <div className="space-y-0.5">
-                <Label className="text-base flex items-center gap-2">
-                  Gunakan API Key Sendiri
-                  {isFreePlan && (
-                    <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full tracking-wider">Premium</span>
+          <CardContent className="flex flex-col h-[calc(100%-80px)]">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6 flex-1">
+              {aiPackages.map((pkg) => (
+                <div 
+                  key={pkg.id}
+                  onClick={() => setSelectedAiPkg(pkg.id)}
+                  className={cn(
+                    "cursor-pointer rounded-2xl border-2 p-5 transition-all relative overflow-hidden group flex flex-col",
+                    selectedAiPkg === pkg.id 
+                      ? "border-blue-500 bg-blue-500/5 shadow-md shadow-blue-500/10" 
+                      : "border-border/40 hover:border-blue-500/50 hover:bg-muted/50"
                   )}
-                </Label>
-                <p className="text-sm text-muted-foreground">Aktifkan untuk mode BYOK.</p>
-              </div>
-              <Switch
-                disabled={isFreePlan}
-                checked={formData.useCustomApiKey}
-                onCheckedChange={(checked) => setFormData({ ...formData, useCustomApiKey: checked })}
-              />
-            </div>
-
-            {isFreePlan && (
-              <div className="rounded-xl border border-dashed border-amber-500/50 bg-amber-500/5 p-4 text-center space-y-3">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/20 mb-2">
-                  <Sparkles className="h-5 w-5 text-amber-600" />
-                </div>
-                <h4 className="text-sm font-semibold text-foreground">Fitur Terkunci (Paket Gratis)</h4>
-                <p className="text-xs text-muted-foreground">
-                  Kemampuan menggunakan API Key OpenAI milik sendiri hanya tersedia untuk paket Premium/Pro.
-                </p>
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  className="mt-2 h-8 text-xs font-medium border-amber-500/20 bg-background hover:bg-amber-500/10 hover:text-amber-700"
-                  onClick={() => router.push("/admin/billing")}
                 >
-                  Upgrade Sekarang <ArrowRight className="ml-1 h-3 w-3" />
-                </Button>
-              </div>
-            )}
-
-            {formData.useCustomApiKey && (
-              <div className="space-y-3 p-4 rounded-xl bg-orange-500/5 border border-orange-500/20 animate-in fade-in slide-in-from-top-2">
-                <div className="space-y-1">
-                  <Label htmlFor="apiKey" className="text-xs">OpenAI API Key (sk-...)</Label>
-                  <Input
-                    id="apiKey"
-                    type="password"
-                    placeholder="sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx"
-                    value={formData.customOpenAiKey}
-                    onChange={(e) => setFormData({ ...formData, customOpenAiKey: e.target.value })}
-                    className="bg-background rounded-xl h-9 text-sm font-mono"
-                  />
+                  {selectedAiPkg === pkg.id && (
+                    <div className="absolute top-3 right-3 text-blue-500">
+                      <CheckCircle2 className="h-5 w-5" />
+                    </div>
+                  )}
+                  <p className="text-muted-foreground font-semibold text-sm mb-1">{pkg.name}</p>
+                  <div className="flex items-end gap-1 text-foreground mb-4">
+                    <span className="text-sm font-semibold">Rp</span>
+                    <span className="text-2xl font-bold">{pkg.price.toLocaleString("id-ID")}</span>
+                  </div>
+                  <div className="mt-auto">
+                    <p className="text-xs text-blue-600 font-medium bg-blue-500/10 inline-block px-2 py-1 rounded-md mb-1.5">
+                      {pkg.tokens.toLocaleString("id-ID")} Token
+                    </p>
+                    <p className="text-[10px] text-muted-foreground leading-tight">
+                      Bisa digunakan untuk menulis <strong className="text-foreground">~{Math.floor(pkg.tokens / 50).toLocaleString("id-ID")}</strong> artikel berita.
+                    </p>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Kunci ini dienkripsi dengan aman. Tagihan API ditanggung akun OpenAI Anda sendiri.
-                </p>
-              </div>
-            )}
-            
-            <Button 
-              className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" 
-              onClick={handleSave} 
-              disabled={saving || isFreePlan}
-            >
-              {saving ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
-              {saving ? "Menyimpan..." : "Simpan Pengaturan"}
-            </Button>
+              ))}
+              {aiPackages.length === 0 && (
+                <div className="col-span-full flex items-center justify-center text-muted-foreground italic p-4 border rounded-xl h-32">
+                  Belum ada paket AI yang tersedia.
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end pt-4 border-t border-border/50">
+              <Button 
+                className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2 font-semibold min-w-[200px]"
+                disabled={checkingOutAi || !selectedAiPkg}
+                onClick={handleCheckoutAi}
+              >
+                {checkingOutAi ? "Memproses..." : "Beli Token AI"}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* ── Card Top Up Token AI ── */}
-      <Card className="glass border-0 overflow-hidden relative">
-        <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
-          <Zap className="h-40 w-40" />
-        </div>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10">
-              <Zap className="h-5 w-5 text-blue-500" />
-            </div>
-            <div>
-              <CardTitle>Top-Up Token AI</CardTitle>
-              <CardDescription>Beli kuota tambahan untuk layanan Kecerdasan Buatan (AI) di SchoolPro.</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-4 mb-6">
-            {aiPackages.map((pkg) => (
-              <div 
-                key={pkg.id}
-                onClick={() => setSelectedAiPkg(pkg.id)}
-                className={cn(
-                  "cursor-pointer rounded-2xl border-2 p-5 transition-all relative overflow-hidden group",
-                  selectedAiPkg === pkg.id 
-                    ? "border-blue-500 bg-blue-500/5 shadow-md shadow-blue-500/10" 
-                    : "border-border/40 hover:border-blue-500/50 hover:bg-muted/50"
-                )}
-              >
-                {selectedAiPkg === pkg.id && (
-                  <div className="absolute top-3 right-3 text-blue-500">
-                    <CheckCircle2 className="h-5 w-5" />
-                  </div>
-                )}
-                <p className="text-muted-foreground font-semibold text-sm mb-1">{pkg.name}</p>
-                <div className="flex items-end gap-1 text-foreground">
-                  <span className="text-sm font-semibold">Rp</span>
-                  <span className="text-2xl font-bold">{pkg.price.toLocaleString("id-ID")}</span>
-                </div>
-                <p className="text-xs text-blue-600 font-medium mt-2 bg-blue-500/10 inline-block px-2 py-1 rounded-md">
-                  {pkg.tokens.toLocaleString("id-ID")} Token
-                </p>
-              </div>
-            ))}
-            {aiPackages.length === 0 && (
-              <div className="col-span-full text-center text-muted-foreground italic p-4 border rounded-xl">
-                Belum ada paket AI yang tersedia.
-              </div>
-            )}
-          </div>
-          <div className="flex justify-end">
-            <Button 
-              className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2 font-semibold min-w-[200px]"
-              disabled={checkingOutAi}
-              onClick={handleCheckoutAi}
-            >
-              {checkingOutAi ? "Memproses..." : "Beli Token AI"}
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
 
       <Card className="glass border-0">

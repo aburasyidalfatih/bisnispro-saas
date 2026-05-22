@@ -254,6 +254,11 @@ export default function AiPackagesPage() {
                     onChange={e => setEditingPackage({ ...editingPackage, tokens: Number(e.target.value) })}
                     className="rounded-xl font-bold text-blue-600 bg-blue-50/50"
                   />
+                  {!!editingPackage.tokens && editingPackage.tokens > 0 && (
+                    <p className="text-[10px] text-muted-foreground pt-1 pl-1 leading-tight">
+                      Setara dengan <strong className="text-blue-600">~{Math.floor(editingPackage.tokens / 50).toLocaleString("id-ID")}</strong> artikel berita.
+                    </p>
+                  )}
                 </div>
               </div>
 
