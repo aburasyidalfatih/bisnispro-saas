@@ -253,7 +253,7 @@ export default function PaymentsPage() {
                         {new Date(p.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
                       </td>
                       <td className="py-4 px-2 text-right">
-                        {p.status === "pending" ? (
+                        {p.status === "pending" || p.status === "expired" ? (
                           <Button
                             size="sm"
                             onClick={() => setConfirmTarget(p)}
