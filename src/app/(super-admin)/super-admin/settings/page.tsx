@@ -80,7 +80,7 @@ export default function SuperAdminSettingsPage() {
     WA_SUBJECT_APPROVED: "",
     WA_TEMPLATE_APPROVED: `Halo {{adminName}},\n\nPendaftaran sekolah {{schoolName}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan kredensial berikut:\n\nURL Login: {{loginUrl}}\nEmail: {{adminEmail}}\nPassword Sementara: {{tempPwd}}\n\n⚠️ PENTING: Harap segera mengganti password Anda setelah berhasil login pertama kali demi keamanan akun Anda.\n\nTerima kasih.`,
     WA_SUBJECT_REVISION: "",
-    WA_TEMPLATE_REVISION: `Halo {{adminName}},\n\nTerima kasih telah mendaftar. Namun, ada beberapa data yang perlu diperbaiki:\n\n"{{adminMessage}}"\n\nSilakan hubungi kami untuk melakukan perbaikan data.`,
+    WA_TEMPLATE_REVISION: `Halo {{adminName}},\n\nTerima kasih telah mendaftar. Namun, ada beberapa data yang perlu diperbaiki:\n\n"{{adminMessage}}"\n\nSilakan klik tautan berikut untuk melengkapi data pendaftaran Anda:\n{{revisionUrl}}\n\nTerima kasih.`,
     WA_SUBJECT_REJECTED: "",
     WA_TEMPLATE_REJECTED: `Halo {{adminName}},\n\nMohon maaf, pendaftaran sekolah {{schoolName}} belum dapat kami setujui saat ini.\n\nAlasan: {{adminMessage}}\n\nTerima kasih atas minat Anda.`,
     WA_TEMPLATE_ALERT_SUPERADMIN: `*PENDAFTARAN SEKOLAH BARU*\n\nSekolah: {{schoolName}}\nAdmin: {{adminName}}\nWA: {{adminPhone}}\nSubdomain: {{schoolSlug}}.schoolpro.id\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`,
@@ -796,7 +796,7 @@ export default function SuperAdminSettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-amber-600 font-bold">3. Revisi Data (REVISION)</Label>
-                  <Textarea value={form.WA_TEMPLATE_REVISION} onChange={e => setForm({...form, WA_TEMPLATE_REVISION: e.target.value})} placeholder={`Halo {{adminName}},\nRevisi: {{adminMessage}}`} className="min-h-[100px] text-xs font-mono" />
+                  <Textarea value={form.WA_TEMPLATE_REVISION} onChange={e => setForm({...form, WA_TEMPLATE_REVISION: e.target.value})} placeholder={`Halo {{adminName}},\nRevisi: {{adminMessage}}\n\nKlik disini: {{revisionUrl}}`} className="min-h-[100px] text-xs font-mono" />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-red-600 font-bold">4. Pendaftaran Ditolak (REJECTED)</Label>
