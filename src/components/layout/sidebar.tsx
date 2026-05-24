@@ -485,6 +485,11 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
           href: "/super-admin/analytics",
           icon: BarChart3,
         },
+        {
+          label: "Analisa Iklan",
+          href: "/super-admin/ads-analytics",
+          icon: Megaphone,
+        },
       ],
     },
     {

@@ -18,13 +18,28 @@ export default async function AffiliateReferralsPage() {
   // Ambil calon sekolah (Leads)
   const applications = await db.tenantApplication.findMany({
     where: { affiliateId: affiliate.id },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      schoolName: true,
+      adminName: true,
+      adminPhone: true,
+      status: true,
+      createdAt: true,
+    },
   })
 
   // Ambil sekolah aktif (Tenants)
   const tenants = await db.tenant.findMany({
     where: { affiliateId: affiliate.id },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      plan: true,
+      createdAt: true,
+    },
   })
 
   const getStatusBadge = (status: string) => {
@@ -101,6 +116,8 @@ export default async function AffiliateReferralsPage() {
                     <div>
                       {tenant.plan === "pro" ? (
                         <Badge className="bg-emerald-500 text-white border-0">PRO</Badge>
+                      ) : tenant.plan === "lite" ? (
+                        <Badge className="bg-blue-500 text-white border-0">LITE</Badge>
                       ) : (
                         <Badge variant="outline" className="bg-muted text-muted-foreground border-0">FREE</Badge>
                       )}

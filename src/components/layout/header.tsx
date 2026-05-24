@@ -49,6 +49,7 @@ const labelMap: Record<string, string> = {
   "super-admin": "Super Admin",
   payments: "Pembayaran",
   analytics: "Analitik",
+  "ads-analytics": "Analisa Iklan",
   "my-documents": "Dokumen Saya",
   "my-schedule": "Jadwal",
   "my-messages": "Pesan",

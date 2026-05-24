@@ -408,10 +408,17 @@ model TenantApplication {
   studentCount  Int               @default(0)
   affiliateId   String?
   emailOpenedAt DateTime?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  utmContent    String?
+  utmTerm       String?
   affiliate     AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 
   @@index([status])
   @@index([createdAt])
+  @@index([utmSource])
+  @@index([utmCampaign])
   @@map("tenant_applications")
 }
 
@@ -1968,4 +1975,19 @@ model PageView {
   @@index([tenantId, source])
   @@index([tenantId, path])
   @@map("page_views")
+}
+
+model AdBudget {
+  id        String   @id @default(cuid())
+  month     String
+  year      Int
+  platform  String   @default("meta")
+  budget    Int      @default(0)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([month, year, platform])
+  @@index([year])
+  @@map("ad_budgets")
 }

@@ -24,6 +24,11 @@ const registerSchoolSchema = z.object({
   logo: z.string().min(1, "Logo wajib diunggah"),
   studentCount: z.coerce.number().min(1, "Jumlah siswa harus lebih dari 0"),
   referralCode: z.string().optional(),
+  utmSource: z.string().optional(),
+  utmMedium: z.string().optional(),
+  utmCampaign: z.string().optional(),
+  utmContent: z.string().optional(),
+  utmTerm: z.string().optional(),
 })
 
 export async function POST(req: Request) {
@@ -33,7 +38,8 @@ export async function POST(req: Request) {
 
     const {
       schoolName, schoolSlug, npsn, schoolStatus,
-      province, regency, adminName, adminEmail, adminPhone, adminPosition, address, logo, studentCount, referralCode
+      province, regency, adminName, adminEmail, adminPhone, adminPosition, address, logo, studentCount, referralCode,
+      utmSource, utmMedium, utmCampaign, utmContent, utmTerm
     } = parsed.data
 
     // Cek ketersediaan slug/subdomain di tabel Tenant utama
@@ -103,7 +109,12 @@ export async function POST(req: Request) {
         logo,
         studentCount,
         status: "PENDING",
-        affiliateId
+        affiliateId,
+        utmSource: utmSource || null,
+        utmMedium: utmMedium || null,
+        utmCampaign: utmCampaign || null,
+        utmContent: utmContent || null,
+        utmTerm: utmTerm || null,
       }
     })
 

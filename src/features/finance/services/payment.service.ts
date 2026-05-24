@@ -366,6 +366,66 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
         type: "success"
       })
       } // end else
+      
+      // =============================================
+      // AFFILIATE COMMISSION: 20% recurring forever
+      // Berlaku untuk semua pembayaran platform (upgrade, addon, renewal)
+      // KECUALI wallet topup dan invoice (bukan pendapatan platform)
+      // =============================================
+      if (payment.plan !== "WALLET_TOPUP" && payment.plan !== "INVOICE") {
+        try {
+          const tenant = await db.tenant.findUnique({
+            where: { id: payment.tenantId },
+            select: { affiliateId: true, name: true },
+          })
+
+          if (tenant?.affiliateId) {
+            const commissionAmount = Math.round(payment.amount * 0.20)
+
+            // Guard duplikasi: paymentId unique constraint di AffiliateCommission
+            await db.affiliateCommission.create({
+              data: {
+                affiliateId: tenant.affiliateId,
+                tenantId: payment.tenantId,
+                paymentId: payment.id,
+                amount: commissionAmount,
+                status: "PAID",
+              },
+            })
+
+            await db.affiliateProfile.update({
+              where: { id: tenant.affiliateId },
+              data: {
+                balance: { increment: commissionAmount },
+                totalEarnings: { increment: commissionAmount },
+              },
+            })
+
+            // Notify affiliate via WA (async, non-blocking)
+            import("@/features/finance/services/billing-notification.service")
+              .then(({ notifyAffiliateCommission }) => {
+                notifyAffiliateCommission(tenant.affiliateId!, commissionAmount, tenant.name).catch(() => {})
+              })
+              .catch(() => {})
+
+            logger.info("[payment] Affiliate commission created", {
+              affiliateId: tenant.affiliateId,
+              paymentId: payment.id,
+              amount: commissionAmount,
+              plan: payment.plan,
+            })
+          }
+        } catch (commError: any) {
+          // Unique constraint violation = komisi sudah pernah dibuat untuk payment ini
+          if (commError?.code === "P2002") {
+            logger.info("[payment] Affiliate commission already exists, skipping duplicate", {
+              paymentId: payment.id,
+            })
+          } else {
+            logger.error("[payment] Failed to create affiliate commission", commError)
+          }
+        }
+      }
     }
 
     return { 
