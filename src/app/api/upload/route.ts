@@ -52,6 +52,7 @@ export async function POST(req: Request) {
         path: fileData.path,
         url: fileData.url,
       },
+      ...(result.storageWarning ? { storageWarning: result.storageWarning } : {}),
     })
   } catch (error) {
     logger.error("Upload failed", error, { path: "/api/upload" })
