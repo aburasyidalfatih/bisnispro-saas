@@ -45,6 +45,11 @@ export default function RegisterSchoolPage() {
     address: "",
     referralCode: "",
     studentCount: 0,
+    utmSource: "",
+    utmMedium: "",
+    utmCampaign: "",
+    utmContent: "",
+    utmTerm: "",
   })
 
   useEffect(() => {
@@ -57,6 +62,14 @@ export default function RegisterSchoolPage() {
       const urlParams = new URLSearchParams(window.location.search)
       const ref = urlParams.get('ref')
       let activeRef = ref
+
+      // Capture UTM parameters
+      const utmSource = urlParams.get('utm_source') || ''
+      const utmMedium = urlParams.get('utm_medium') || ''
+      const utmCampaign = urlParams.get('utm_campaign') || ''
+      const utmContent = urlParams.get('utm_content') || ''
+      const utmTerm = urlParams.get('utm_term') || ''
+      setForm(prev => ({ ...prev, utmSource, utmMedium, utmCampaign, utmContent, utmTerm }))
 
       if (ref) {
         setForm(prev => ({ ...prev, referralCode: ref }))
