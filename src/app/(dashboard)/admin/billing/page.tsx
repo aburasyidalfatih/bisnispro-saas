@@ -651,7 +651,6 @@ export default function BillingPage() {
           </div>
         </DialogContent>
       </Dialog>
-      </div>
 
 
 
