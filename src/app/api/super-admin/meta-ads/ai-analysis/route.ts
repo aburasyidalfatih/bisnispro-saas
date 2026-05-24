@@ -189,38 +189,68 @@ Berikan analisa dalam format Markdown dengan struktur berikut:
 4. [Aksi spesifik 4 — misal: Buat creative baru untuk kampanye Z]
 5. [Dst — berikan minimal 5 rekomendasi konkret]
 
-## ✍️ Rekomendasi Ad Copy (3 Variasi)
+## ✍️ Rekomendasi Ad Copy (5 Variasi untuk A/B Testing)
 
-Berdasarkan data demografi dan kampanye terbaik, buat 3 variasi ad copy yang optimal:
+Berdasarkan data demografi dan kampanye terbaik, buat 5 variasi ad copy yang optimal. Setiap variasi harus menggunakan pendekatan psikologi berbeda:
 
-### Variasi 1: [Tipe — misal: Pain Point / Testimoni / FOMO]
-- **Headline (max 40 karakter):** [...]
+### Variasi 1: Pain Point
+- **Headline (max 40 karakter):** [Menyentuh masalah utama target]
 - **Primary Text (max 125 karakter):** [...]  
-- **Description:** [Paragraf 2-3 kalimat yang persuasif, menyentuh pain point target audience berdasarkan data demografi]
+- **Description:** [Paragraf 2-3 kalimat yang persuasif, menyentuh frustrasi admin sekolah yang masih manual]
 - **CTA Button:** [Pilih: Daftar Sekarang / Pelajari Selengkapnya / Coba Gratis]
 - **Target Audience:** [Usia, gender, interest berdasarkan data]
 
-### Variasi 2: [Tipe]
-(format sama)
+### Variasi 2: Social Proof / Testimoni
+- **Headline:** [Angka pengguna/sekolah yang sudah pakai]
+- **Primary Text:** [...]
+- **Description:** [Bukti sosial, berapa sekolah sudah bergabung]
+- **CTA Button:** [...]
+- **Target Audience:** [...]
 
-### Variasi 3: [Tipe]
-(format sama)
+### Variasi 3: FOMO (Fear of Missing Out)
+- **Headline:** [Urgensi atau ketertinggalan]
+- **Primary Text:** [...]
+- **Description:** [Sekolah lain sudah digital, apakah Anda mau tertinggal?]
+- **CTA Button:** [...]
+- **Target Audience:** [...]
 
-## 🎨 Prompt Gambar Iklan (3 Variasi)
+### Variasi 4: Benefit / Value
+- **Headline:** [Manfaat utama yang didapat]
+- **Primary Text:** [...]
+- **Description:** [Fokus pada apa yang didapat: hemat waktu, profesional, otomatis]
+- **CTA Button:** [...]
+- **Target Audience:** [...]
 
-Buat 3 prompt detail untuk generate gambar iklan menggunakan AI image generator (Midjourney/DALL-E/Ideogram). Prompt harus spesifik, visual, dan sesuai dengan ad copy di atas.
+### Variasi 5: Free Trial / Gratis
+- **Headline:** [Menekankan gratis/tanpa risiko]
+- **Primary Text:** [...]
+- **Description:** [Ajakan coba gratis, tanpa kartu kredit, langsung bisa pakai]
+- **CTA Button:** [...]
+- **Target Audience:** [...]
 
-### Gambar 1: [Cocok untuk Variasi Ad Copy 1]
-**Prompt:** "[Prompt bahasa Inggris yang detail, termasuk: subject, style, colors, composition, mood, text overlay. Contoh: Modern flat illustration of an Indonesian school principal smiling while using a laptop dashboard, blue and white color scheme, clean professional design, text overlay: SchoolPro, 1200x628px Facebook ad format]"
+## 🎨 Prompt Gambar Iklan (5 Variasi)
+
+Buat 5 prompt detail untuk generate gambar iklan menggunakan AI image generator (Midjourney/DALL-E/Ideogram). Prompt harus spesifik dan sesuai ad copy di atas.
+
+### Gambar 1: Cocok untuk Ad Copy Pain Point
+**Prompt:** "[Prompt bahasa Inggris yang detail: subject, style, colors, composition, mood. Harus menggambarkan kontras antara cara manual vs digital. Format landscape]"
 **Format:** Facebook Feed (1200x628)
 
-### Gambar 2: [Cocok untuk Variasi Ad Copy 2]  
-**Prompt:** "[...]"
+### Gambar 2: Cocok untuk Ad Copy Social Proof
+**Prompt:** "[Menampilkan banyak sekolah/guru yang happy menggunakan platform. Warna cerah, profesional]"
+**Format:** Instagram Feed (1080x1080)
+
+### Gambar 3: Cocok untuk Ad Copy FOMO
+**Prompt:** "[Visual yang menunjukkan modernisasi/transformasi digital sekolah. Dramatic, eye-catching]"
 **Format:** Instagram Story (1080x1920)
 
-### Gambar 3: [Cocok untuk Variasi Ad Copy 3]
-**Prompt:** "[...]"
-**Format:** Instagram Feed (1080x1080)
+### Gambar 4: Cocok untuk Ad Copy Benefit
+**Prompt:** "[Dashboard mockup yang clean, menampilkan fitur-fitur utama. Professional, trust-building]"
+**Format:** Facebook Feed (1200x628)
+
+### Gambar 5: Cocok untuk Ad Copy Free Trial
+**Prompt:** "[Welcoming, friendly, mengajak coba. Warna hangat, inklusif, smartphone/laptop mockup]"
+**Format:** Instagram Reels Cover (1080x1920)
 
 ## 💰 Estimasi Optimasi
 - Potensi penghematan jika rekomendasi dijalankan
