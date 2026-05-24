@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, GraduationCap, Quote, User, GripVertical } from "lucide-react"
+import { Plus, Trash2, Edit, GraduationCap, Quote, User, GripVertical, Eye } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { getAlumni, deleteAlumni, updateAlumniOrder } from "@/features/alumni/actions/alumni.action"
@@ -168,6 +168,11 @@ export default function AlumniPage() {
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="font-bold text-sm truncate">{alumni.name}</h3>
                         <div className="flex gap-1">
+                          <Button asChild variant="ghost" size="icon" className="h-7 w-7 rounded-md text-muted-foreground hover:text-blue-600" title="Lihat di website">
+                            <a href={`/${branding.slug}/alumni`} target="_blank" rel="noopener noreferrer">
+                              <Eye className="h-3.5 w-3.5" />
+                            </a>
+                          </Button>
                           <Button asChild variant="ghost" size="icon" className="h-7 w-7 rounded-md">
                             <Link href={`/admin/website/alumni/${alumni.id}/edit`}>
                               <Edit className="h-3.5 w-3.5" />

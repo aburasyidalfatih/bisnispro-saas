@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Plus, Edit2, Trash2, Calendar, MapPin } from "lucide-react"
+import { Plus, Edit2, Trash2, Calendar, MapPin, Eye } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 
@@ -122,7 +122,12 @@ export default function EventsPage() {
                         ) : "-"}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-blue-500/10 hover:text-blue-600" title="Lihat di website">
+                            <a href={`/${branding.slug}/agenda`} target="_blank" rel="noopener noreferrer">
+                              <Eye className="h-4 w-4" />
+                            </a>
+                          </Button>
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 hover:text-primary">
                             <Link href={`/admin/website/events/${event.id}`}>
                               <Edit2 className="h-4 w-4" />

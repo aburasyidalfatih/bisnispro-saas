@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Building2, Image as ImageIcon, GripVertical } from "lucide-react"
+import { Plus, Trash2, Edit, Building2, Image as ImageIcon, GripVertical, Eye } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import Image from "next/image"
@@ -159,6 +159,11 @@ export default function FacilitiesPage() {
                         </div>
                       </div>
                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm" title="Lihat di website">
+                        <a href={`/${branding.slug}/fasilitas`} target="_blank" rel="noopener noreferrer">
+                          <Eye className="h-4 w-4" />
+                        </a>
+                      </Button>
                       <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-lg shadow-sm">
                         <Link href={`/admin/website/facilities/${facility.id}/edit`}>
                           <Edit className="h-4 w-4" />
