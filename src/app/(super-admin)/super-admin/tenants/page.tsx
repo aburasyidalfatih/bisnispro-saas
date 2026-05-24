@@ -40,6 +40,7 @@ interface TenantRow {
 
 const planBadge: Record<string, string> = {
   free: "bg-muted text-muted-foreground",
+  lite: "bg-blue-500/10 text-blue-600",
   pro: "bg-primary/10 text-primary",
 }
 
@@ -227,7 +228,15 @@ export default function TenantsPage() {
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Tenant / Institusi</th>
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Kontak Owner</th>
                 <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest hidden lg:table-cell">URL / Domain</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">Plan</th>
+                <th 
+                  className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleSort("plan")}
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    Plan
+                    <ArrowUpDown className="h-3 w-3" />
+                  </div>
+                </th>
                 <th 
                   className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("storage")}
@@ -419,6 +428,7 @@ export default function TenantsPage() {
                   className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm"
                 >
                   <option value="free">FREE</option>
+                  <option value="lite">LITE</option>
                   <option value="pro">PRO</option>
                 </select>
               </div>

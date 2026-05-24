@@ -86,7 +86,7 @@ export async function getTenantsForSuperAdmin(params: {
           take: 1,
         },
       },
-      orderBy: { createdAt: order as any },
+      orderBy: { [sort === "plan" ? "plan" : "createdAt"]: order as any },
       skip: (page - 1) * limit,
       take: limit,
     }),
