@@ -67,7 +67,8 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
           type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
         }, 
         orderBy: { createdAt: 'desc' }, 
-        take: 20 
+        take: 20,
+        include: { author: { select: { name: true, image: true } } }
       },
       events: { orderBy: { createdAt: 'desc' }, take: 6 },
       documents: { orderBy: { createdAt: 'desc' }, take: 10 },

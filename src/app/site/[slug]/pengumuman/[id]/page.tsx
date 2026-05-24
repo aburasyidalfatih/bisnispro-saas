@@ -99,7 +99,7 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
             "dateModified": post.updatedAt || post.createdAt,
             "author": {
               "@type": "Person",
-              "name": (post.author && typeof post.author === 'object') ? post.author.name : (post.author || "Admin")
+              "name": post.author?.name || "Tata Usaha"
             },
             "publisher": {
               "@type": "Organization",
@@ -134,7 +134,7 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                <User className="h-4 w-4" />
-               {post.author || "Tata Usaha"}
+               {post.author?.name || "Tata Usaha"}
              </div>
           </div>
           
