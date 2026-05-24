@@ -10,7 +10,9 @@ import { getActivePopup } from "@/features/popup/actions/popup.action"
 import { PopupRenderer } from "./_components/popup-renderer"
 import { normalizeImageUrl } from "@/lib/utils"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
+import { PageTracker } from "@/components/shared/page-tracker"
 import Script from "next/script"
+import { Suspense } from "react"
 
 export const dynamic = 'force-dynamic'
 
@@ -131,6 +133,9 @@ export default async function WebsiteLayout({
         
         {activePopup && <PopupRenderer popup={activePopup} />}
         <PwaInstaller tenantName={tenant.name} tenantLogo={normalizeImageUrl(tenant.logo) || tenant.logo} />
+        <Suspense fallback={null}>
+          <PageTracker tenantId={tenant.id} />
+        </Suspense>
         
 
       </div>

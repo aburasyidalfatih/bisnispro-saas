@@ -111,6 +111,7 @@ model Tenant {
   walletAccounts       WalletAccount[]
   walletTransactions   WalletTransaction[]
   websiteMenus         WebsiteMenu[]
+  pageViews            PageView[]
 
   @@index([isActive])
   @@index([plan])
@@ -1943,4 +1944,28 @@ model WebsiteMenu {
   @@index([tenantId])
   @@index([parentId])
   @@map("website_menus")
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  tenantId  String
+  path      String
+  referrer  String?
+  source    String?
+  medium    String?
+  campaign  String?
+  device    String?
+  browser   String?
+  country   String?
+  ipHash    String?
+  sessionId String?
+  createdAt DateTime @default(now())
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([tenantId, source])
+  @@index([tenantId, path])
+  @@map("page_views")
 }

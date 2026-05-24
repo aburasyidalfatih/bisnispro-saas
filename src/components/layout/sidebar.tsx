@@ -141,6 +141,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             { label: "Galeri Foto", href: `${basePath}/website/gallery`, icon: ImageIcon },
             { label: "Prestasi Siswa", href: `${basePath}/website/achievements`, icon: Award },
             { label: "Alumni Success", href: `${basePath}/website/alumni`, icon: GraduationCap },
+            { label: "Analitik Pengunjung", href: `${basePath}/website/visitor-analytics`, icon: BarChart3 },
           ],
         },
       ],
