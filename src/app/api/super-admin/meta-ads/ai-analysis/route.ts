@@ -140,9 +140,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: aiResult.error }, { status: 500 })
     }
 
-    const prompt = `Kamu adalah seorang Digital Marketing Expert dan Data Analyst profesional untuk platform SaaS bernama SchoolPro (platform manajemen sekolah). 
+    const prompt = `Kamu adalah seorang Digital Marketing Expert, Copywriter, dan Data Analyst profesional untuk platform SaaS bernama SchoolPro (platform manajemen sekolah berbasis web untuk SD, SMP, SMA, dan SMK di Indonesia).
 
-Analisa data iklan Meta Ads dan data internal SchoolPro berikut secara mendalam. Tujuan utama: **BIAYA SEMINIMAL MUNGKIN, HASIL SEMAKSIMAL MUNGKIN**.
+SchoolPro menawarkan:
+- Website sekolah profesional
+- Sistem akademik (absensi, nilai, rapor)  
+- Keuangan sekolah (SPP, pembayaran online)
+- PPDB Online
+- Paket: Free (gratis), Lite (Rp 500/siswa/bulan), Pro (Rp 1.000/siswa/bulan)
+- Target: Kepala Sekolah, Operator Sekolah, Yayasan Pendidikan
+
+Analisa data iklan Meta Ads dan data internal berikut secara mendalam. Tujuan utama: **BIAYA SEMINIMAL MUNGKIN, HASIL SEMAKSIMAL MUNGKIN**.
 
 DATA:
 ${JSON.stringify(dataSummary, null, 2)}
@@ -181,16 +189,50 @@ Berikan analisa dalam format Markdown dengan struktur berikut:
 4. [Aksi spesifik 4 — misal: Buat creative baru untuk kampanye Z]
 5. [Dst — berikan minimal 5 rekomendasi konkret]
 
+## ✍️ Rekomendasi Ad Copy (3 Variasi)
+
+Berdasarkan data demografi dan kampanye terbaik, buat 3 variasi ad copy yang optimal:
+
+### Variasi 1: [Tipe — misal: Pain Point / Testimoni / FOMO]
+- **Headline (max 40 karakter):** [...]
+- **Primary Text (max 125 karakter):** [...]  
+- **Description:** [Paragraf 2-3 kalimat yang persuasif, menyentuh pain point target audience berdasarkan data demografi]
+- **CTA Button:** [Pilih: Daftar Sekarang / Pelajari Selengkapnya / Coba Gratis]
+- **Target Audience:** [Usia, gender, interest berdasarkan data]
+
+### Variasi 2: [Tipe]
+(format sama)
+
+### Variasi 3: [Tipe]
+(format sama)
+
+## 🎨 Prompt Gambar Iklan (3 Variasi)
+
+Buat 3 prompt detail untuk generate gambar iklan menggunakan AI image generator (Midjourney/DALL-E/Ideogram). Prompt harus spesifik, visual, dan sesuai dengan ad copy di atas.
+
+### Gambar 1: [Cocok untuk Variasi Ad Copy 1]
+**Prompt:** "[Prompt bahasa Inggris yang detail, termasuk: subject, style, colors, composition, mood, text overlay. Contoh: Modern flat illustration of an Indonesian school principal smiling while using a laptop dashboard, blue and white color scheme, clean professional design, text overlay: SchoolPro, 1200x628px Facebook ad format]"
+**Format:** Facebook Feed (1200x628)
+
+### Gambar 2: [Cocok untuk Variasi Ad Copy 2]  
+**Prompt:** "[...]"
+**Format:** Instagram Story (1080x1920)
+
+### Gambar 3: [Cocok untuk Variasi Ad Copy 3]
+**Prompt:** "[...]"
+**Format:** Instagram Feed (1080x1080)
+
 ## 💰 Estimasi Optimasi
 - Potensi penghematan jika rekomendasi dijalankan
 - Estimasi peningkatan leads/registrasi
+- Budget optimal yang disarankan minggu depan
 
-Gunakan bahasa Indonesia yang profesional. Berikan angka konkret, bukan hanya saran umum.`
+Gunakan bahasa Indonesia yang profesional. Berikan angka konkret. Ad copy harus natural dan tidak terasa seperti spam. Prompt gambar harus dalam bahasa Inggris yang detail dan spesifik.`
 
     const { text } = await generateText({
       model: aiResult.model,
       prompt,
-      maxTokens: 4000,
+      maxTokens: 6000,
     })
 
     // 6. Save report
