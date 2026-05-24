@@ -123,10 +123,9 @@ export async function GET() {
       by: ['plan'],
       _count: { id: true },
     })
-    const planCountMap = new Map(planGroups.map(g => [g.plan.toUpperCase(), g._count.id]))
-    const planBreakdown = ['FREE', 'LITE', 'PRO'].map(plan => ({
-      name: plan,
-      value: planCountMap.get(plan) || 0,
+    const planBreakdown = planGroups.map(g => ({
+      name: g.plan.toUpperCase(),
+      value: g._count.id,
     }))
 
     // ============================================
