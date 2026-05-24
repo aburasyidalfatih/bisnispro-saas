@@ -101,6 +101,8 @@ export default async function AffiliateReferralsPage() {
                     <div>
                       {tenant.plan === "pro" ? (
                         <Badge className="bg-emerald-500 text-white border-0">PRO</Badge>
+                      ) : tenant.plan === "lite" ? (
+                        <Badge className="bg-blue-500 text-white border-0">LITE</Badge>
                       ) : (
                         <Badge variant="outline" className="bg-muted text-muted-foreground border-0">FREE</Badge>
                       )}

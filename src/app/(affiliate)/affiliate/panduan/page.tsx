@@ -61,7 +61,7 @@ export default async function AffiliateGuidePage() {
             <CardTitle className="text-lg">Terima Komisi</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Saat sekolah tersebut Upgrade ke paket berbayar, 20% komisi masuk ke dashboard Anda dan siap ditarik.
+            Saat sekolah tersebut Upgrade ke paket berbayar (Lite atau Pro), 20% komisi masuk ke dashboard Anda secara otomatis — berulang di setiap pembayaran, selamanya.
           </CardContent>
         </Card>
       </div>
@@ -94,7 +94,7 @@ export default async function AffiliateGuidePage() {
               </span>
             </summary>
             <p className="text-muted-foreground mt-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
-              Status sekolah akan tetap tercatat sebagai referral Anda ("Leads & Sekolah"). Namun komisi dalam bentuk saldo uang baru akan didapatkan ketika sekolah memutuskan untuk meningkatkan (Upgrade) layanannya ke paket berbayar.
+              Status sekolah akan tetap tercatat sebagai referral Anda ("Leads & Sekolah"). Namun komisi dalam bentuk saldo uang baru akan didapatkan ketika sekolah memutuskan untuk meningkatkan (Upgrade) layanannya ke paket berbayar (Lite atau Pro). Setiap kali sekolah tersebut membayar (termasuk perpanjangan), Anda otomatis mendapat 20% komisi — selamanya!
             </p>
           </details>
 
