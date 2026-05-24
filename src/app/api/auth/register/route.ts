@@ -80,8 +80,20 @@ export async function POST(req: Request) {
         data: { name, email, password: hashedPassword },
       })
 
+      // Lookup Free plan untuk bonus token awal & planId
+      const freePlan = await tx.subscriptionPlan.findUnique({
+        where: { slug: "free" },
+        select: { id: true, monthlyAiTokens: true },
+      })
+
       const tenant = await tx.tenant.create({
-        data: { name: tenantName, slug },
+        data: {
+          name: tenantName,
+          slug,
+          plan: "free",
+          planId: freePlan?.id || undefined,
+          aiTokens: freePlan?.monthlyAiTokens || 0, // Bonus token awal
+        },
       })
 
       await tx.tenantUser.create({

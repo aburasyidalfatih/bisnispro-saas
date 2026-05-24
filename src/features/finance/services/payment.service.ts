@@ -320,11 +320,45 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
 
       await retryAsync(
         async () => {
+          // Fetch current tenant to check existing expiresAt (for renewals)
+          const currentTenant = await db.tenant.findUnique({
+            where: { id: payment.tenantId },
+            select: { plan: true, expiresAt: true, studentQuota: true },
+          })
+
+          // Calculate expiresAt based on plan interval
+          const now = new Date()
+          let expiresAt: Date | null = null
+          if (plan) {
+            const baseDate = (currentTenant?.expiresAt && currentTenant.expiresAt > now && currentTenant.plan === plan.slug)
+              ? currentTenant.expiresAt  // Perpanjangan: extend dari existing expiry
+              : now                       // Upgrade baru: mulai dari sekarang
+
+            if (plan.interval === "MONTHLY") {
+              expiresAt = new Date(baseDate.getTime() + 30 * 24 * 60 * 60 * 1000)
+            } else if (plan.interval === "YEARLY") {
+              expiresAt = new Date(baseDate.getTime() + 365 * 24 * 60 * 60 * 1000)
+            }
+          }
+
+          // Check if this is an addon (existing Pro adding students)
+          const isAddon = currentTenant?.plan === "pro" && plan?.slug === "pro" && (payment.metadata as any)?.isAddon
+
           // Update tenant
           const updateData: any = {
             plan: plan?.slug || payment.plan,
             planId: plan?.id,
-            studentQuota: plan?.maxStudents || 0,
+          }
+
+          if (isAddon) {
+            // Addon: hanya tambah kuota, JANGAN ubah expiresAt
+            updateData.studentQuota = { increment: (payment.metadata as any)?.studentCount || 0 }
+          } else {
+            // Upgrade/renewal: set kuota dan expiresAt
+            updateData.studentQuota = plan?.maxStudents || 0
+            if (expiresAt) {
+              updateData.expiresAt = expiresAt
+            }
           }
 
           if (plan && plan.monthlyAiTokens > 0) {
@@ -345,12 +379,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
                 paymentId: payment.id,
                 status: "ACTIVE",
                 startDate: new Date(),
-                endDate:
-                  plan.interval === "MONTHLY"
-                    ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                    : plan.interval === "YEARLY"
-                      ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-                      : null,
+                endDate: expiresAt,
                 amount: payment.amount,
               },
             })
