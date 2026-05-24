@@ -117,7 +117,14 @@ export default function GTKPostsPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1">
+                          {post.status === "PUBLISHED" && (
+                            <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-blue-500/10 hover:text-blue-600 transition-colors" title="Lihat di website">
+                              <a href={`/${branding.slug}/berita/${post.slug}`} target="_blank" rel="noopener noreferrer">
+                                <Eye className="h-4 w-4" />
+                              </a>
+                            </Button>
+                          )}
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors">
                             <Link href={`/panel-gtk/posts/${post.id}`} title="Edit Artikel">
                               <Edit className="h-4 w-4" />
