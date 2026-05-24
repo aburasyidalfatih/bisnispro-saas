@@ -111,7 +111,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
             "dateModified": post.updatedAt || post.createdAt,
             "author": {
               "@type": "Person",
-              "name": (post.author && typeof post.author === 'object') ? post.author.name : (post.author || "Admin")
+              "name": post.author?.name || "Admin"
             },
             "publisher": {
               "@type": "Organization",
@@ -146,7 +146,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                <User className="h-4 w-4" />
-               {post.author || "Admin"}
+               {post.author?.name || "Admin"}
              </div>
              <PostViewCounter postId={post.id} initialViews={totalViews} />
           </div>

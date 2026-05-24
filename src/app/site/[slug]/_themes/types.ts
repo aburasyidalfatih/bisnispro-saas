@@ -67,6 +67,7 @@ export interface PublicPost {
   type: string
   createdAt: Date | string
   category?: { name: string } | null
+  author?: { name: string; image?: string | null } | null
 }
 
 export interface PublicEvent {
