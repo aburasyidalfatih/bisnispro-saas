@@ -87,6 +87,8 @@ import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
 // --- TENANT ADMIN MENU ---
 function getTenantMenu(basePath: string, plan: string = "free", access: Record<string, boolean>): MenuSection[] {
   const isFree = plan === "free"
+  const isLite = plan === "lite"
+  const isPro = plan === "pro"
 
   const menu: MenuSection[] = [
     {
@@ -148,19 +150,21 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
     {
       title: "Manajemen",
       items: [
-        {
-          label: "PPDB Online",
-          href: `${basePath}/ppdb`,
-          icon: UserPlus,
-          children: [
-            { label: "Overview PPDB", href: `${basePath}/ppdb`, icon: LayoutDashboard },
-            { label: "Gelombang / Periode", href: `${basePath}/ppdb/periode`, icon: Calendar },
-            { label: "Persyaratan Berkas", href: `${basePath}/ppdb/persyaratan`, icon: FileText },
-            { label: "Meja Pendaftar", href: `${basePath}/ppdb/pendaftar`, icon: Users },
-            { label: "Tagihan & Bayar", href: `${basePath}/ppdb/tagihan`, icon: Wallet },
-          ],
-        },
         ...(isFree ? [] : [
+          {
+            label: "PPDB Online",
+            href: `${basePath}/ppdb`,
+            icon: UserPlus,
+            children: [
+              { label: "Overview PPDB", href: `${basePath}/ppdb`, icon: LayoutDashboard },
+              { label: "Gelombang / Periode", href: `${basePath}/ppdb/periode`, icon: Calendar },
+              { label: "Persyaratan Berkas", href: `${basePath}/ppdb/persyaratan`, icon: FileText },
+              { label: "Meja Pendaftar", href: `${basePath}/ppdb/pendaftar`, icon: Users },
+              { label: "Tagihan & Bayar", href: `${basePath}/ppdb/tagihan`, icon: Wallet },
+            ],
+          },
+        ]),
+        ...(isPro ? [
           {
             label: "Akademik",
             href: `${basePath}/schedules`,
@@ -171,8 +175,8 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
               { label: "Catatan Perilaku (BK)", href: `${basePath}/discipline`, icon: ShieldCheck },
             ],
           }
-        ]),
-        ...(isFree ? [] : [
+        ] : []),
+        ...(isPro ? [
           {
             label: "Kehadiran",
             href: `${basePath}/attendance`,
@@ -184,36 +188,42 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
               { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
             ],
           }
-        ]),
-        {
-          label: "Keuangan & Kas",
-          href: `${basePath}/finance`,
-          icon: Wallet,
-          children: [
-            { label: "Dashboard Keuangan", href: `${basePath}/finance`, icon: PieChart },
-            { label: "Kelola Tabungan", href: `${basePath}/finance/wallet`, icon: Wallet },
-            { label: "Tagihan Siswa", href: `${basePath}/finance/invoice`, icon: Receipt },
-            { label: "Jenis Tagihan", href: `${basePath}/finance/billing-types`, icon: BadgeDollarSign },
-            { label: "Cashflow", href: `${basePath}/finance/cashflow`, icon: TrendingUp },
-          ],
-        },
-        {
-          label: "E-Kantin",
-          href: `${basePath}/canteen`,
-          icon: Store,
-          children: [
-            { label: "Overview Kantin", href: `${basePath}/canteen`, icon: LayoutDashboard },
-            { label: "Merchant", href: `${basePath}/canteen/merchants`, icon: Store },
-          ],
-        },
-        {
-          label: "Donasi & Infaq",
-          href: `${basePath}/donation/campaigns`,
-          icon: Heart,
-          children: [
-            { label: "Kampanye Donasi", href: `${basePath}/donation/campaigns`, icon: Heart },
-          ],
-        },
+        ] : []),
+        ...(isPro ? [
+          {
+            label: "Keuangan & Kas",
+            href: `${basePath}/finance`,
+            icon: Wallet,
+            children: [
+              { label: "Dashboard Keuangan", href: `${basePath}/finance`, icon: PieChart },
+              { label: "Kelola Tabungan", href: `${basePath}/finance/wallet`, icon: Wallet },
+              { label: "Tagihan Siswa", href: `${basePath}/finance/invoice`, icon: Receipt },
+              { label: "Jenis Tagihan", href: `${basePath}/finance/billing-types`, icon: BadgeDollarSign },
+              { label: "Cashflow", href: `${basePath}/finance/cashflow`, icon: TrendingUp },
+            ],
+          },
+        ] : []),
+        ...(isPro ? [
+          {
+            label: "E-Kantin",
+            href: `${basePath}/canteen`,
+            icon: Store,
+            children: [
+              { label: "Overview Kantin", href: `${basePath}/canteen`, icon: LayoutDashboard },
+              { label: "Merchant", href: `${basePath}/canteen/merchants`, icon: Store },
+            ],
+          },
+        ] : []),
+        ...(isPro ? [
+          {
+            label: "Donasi & Infaq",
+            href: `${basePath}/donation/campaigns`,
+            icon: Heart,
+            children: [
+              { label: "Kampanye Donasi", href: `${basePath}/donation/campaigns`, icon: Heart },
+            ],
+          },
+        ] : []),
         {
           label: "Data Master",
           href: `${basePath}/users`,
@@ -283,15 +293,12 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
     }
 
     menu.forEach(section => {
-      // Manajemen
+      // Manajemen — menu items sudah difilter by plan di atas
+      // Filter tambahan khusus free plan (access toggles)
       if (section.title === "Manajemen") {
         section.items = section.items.filter(item => {
           if (item.label === "PPDB Online") return access.enable_ppdb === true;
-          if (item.label === "Keuangan & Kas") return access.enable_finance === true;
-          if (item.label === "E-Kantin") return access.enable_finance === true; // kantin terkait finance
-          if (item.label === "Donasi & Infaq") return false; // Fitur PRO saja
-          if (item.label === "Akademik & Siswa") return false; // always false for free? Actually, we didn't add this toggle. Let's make it false or true depending on requirements. Let's make it false for free plan to encourage upgrade, or just true. Let's keep it true.
-          return true; // Data master dll
+          return true; // Data master dll tetap tampil
         });
       }
       
