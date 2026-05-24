@@ -91,6 +91,16 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
       
       onChange(uploadData.url)
       setPreviewUrl(uploadData.url)
+
+      // Show storage warning if quota is getting low
+      if (uploadData.storageWarning) {
+        toast({
+          title: uploadData.storageWarning.usagePercent >= 95 ? "⚠️ Penyimpanan Hampir Penuh!" : "📦 Penyimpanan Menipis",
+          description: uploadData.storageWarning.message,
+          variant: uploadData.storageWarning.usagePercent >= 95 ? "destructive" : "default",
+          duration: 8000,
+        })
+      }
     } catch (error: any) {
       toast({ title: "Gagal", description: error.message, variant: "destructive" })
       setPreviewUrl(value || null) // Revert

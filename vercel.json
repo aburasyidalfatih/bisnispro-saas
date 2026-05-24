@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/auto-debet-spp",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/monthly-ai-tokens",
+      "schedule": "0 0 1 * *"
     }
   ]
 }

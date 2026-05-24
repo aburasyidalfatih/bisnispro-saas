@@ -100,25 +100,6 @@ export default function PlansPage() {
     setIsDialogOpen(true)
   }
 
-  const openCreate = () => {
-    setEditingPlan({
-      name: "Lite",
-      slug: "lite",
-      description: "Paket menengah untuk sekolah yang sedang berkembang",
-      price: 1500000,
-      interval: "YEARLY",
-      maxStudents: 500,
-      maxStorage: 2048,
-      monthlyAiTokens: 0,
-      isActive: true,
-      isPopular: true,
-      sortOrder: 2,
-      features: ["Custom Domain", "Broadcast WhatsApp ke Guru", "Semua fitur Free"]
-    })
-    setFeatureInput("")
-    setIsDialogOpen(true)
-  }
-
   const addFeature = () => {
     const trimmed = featureInput.trim()
     if (!trimmed || !editingPlan) return
@@ -217,14 +198,9 @@ export default function PlansPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Paket & Harga</h1>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-1">
-          <p className="text-muted-foreground text-sm">
-            Kelola konfigurasi paket <strong>Free</strong>, <strong>Lite</strong>, dan <strong>PRO</strong> platform.
-          </p>
-          <Button onClick={openCreate} className="btn-gradient text-white border-0 rounded-xl gap-2 h-10 shadow-lg shadow-primary/20">
-            Tambah Paket Baru
-          </Button>
-        </div>
+        <p className="text-muted-foreground text-sm mt-1">
+          Kelola konfigurasi paket <strong>Free</strong>, <strong>Lite</strong>, dan <strong>PRO</strong> platform.
+        </p>
       </div>
 
       {/* Plan Cards */}

@@ -49,6 +49,7 @@ export type UploadResultDTO = {
   success: boolean
   data?: { path: string; url: string; name: string; size: number; mimeType: string }
   error?: string
+  storageWarning?: { message: string; usagePercent: number }
 }
 
 function sanitizeDirName(name: string): string {
@@ -71,6 +72,8 @@ export async function saveFile(
   allowedCategories?: (keyof typeof ALLOWED_MIME_TYPES)[]
 ): Promise<UploadResultDTO> {
   try {
+    let storageWarningResult: { message: string; usagePercent: number } | undefined
+
     if (file.size > MAX_FILE_SIZE) {
       return { success: false, error: `Ukuran file melebihi batas maksimum per file (${MAX_FILE_SIZE / 1024 / 1024}MB)` }
     }
@@ -95,6 +98,51 @@ export async function saveFile(
         if (currentUsageBytes + file.size > maxStorageBytes) {
           const maxLimitStr = maxStorage >= 1024 ? `${(maxStorage / 1024).toFixed(0)} GB` : `${maxStorage} MB`
           return { success: false, error: `Quota penyimpanan habis. Paket langganan Anda dibatasi maksimal ${maxLimitStr}. Silakan hapus file lama atau upgrade paket.` }
+        }
+
+        // Storage warning at 80%+ usage
+        const usageAfterUpload = currentUsageBytes + file.size
+        const usagePercent = Math.round((usageAfterUpload / maxStorageBytes) * 100)
+
+        if (usagePercent >= 80) {
+          const maxLimitStr = maxStorage >= 1024 ? `${(maxStorage / 1024).toFixed(1)} GB` : `${maxStorage} MB`
+          const usedStr = (usageAfterUpload / (1024 * 1024)).toFixed(1)
+
+          // Store warning for response
+          storageWarningResult = {
+            message: usagePercent >= 95
+              ? `⚠️ Penyimpanan hampir penuh! (${usagePercent}% dari ${maxLimitStr} terpakai). Segera upgrade paket atau hapus file lama.`
+              : `Penyimpanan ${usagePercent}% terpakai (${usedStr} MB dari ${maxLimitStr}). Pertimbangkan untuk upgrade paket.`,
+            usagePercent,
+          }
+
+          // Send notification at 90%+ (once per threshold)
+          if (usagePercent >= 90) {
+            try {
+              const cacheKey = `storage-warn:${tenantId}:${usagePercent >= 95 ? "95" : "90"}`
+              const { Redis } = await import("ioredis")
+              const redis = process.env.REDIS_URL
+                ? new Redis(process.env.REDIS_URL)
+                : new Redis({ host: process.env.REDIS_HOST || "127.0.0.1", port: parseInt(process.env.REDIS_PORT || "6379"), password: process.env.REDIS_PASSWORD || undefined })
+              
+              const alreadyWarned = await redis.get(cacheKey)
+              if (!alreadyWarned) {
+                const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service")
+                await notifyTenantAdmins(tenantId, {
+                  title: usagePercent >= 95 ? "⚠️ Penyimpanan Hampir Penuh!" : "📦 Penyimpanan Menipis",
+                  message: usagePercent >= 95
+                    ? `Penyimpanan sekolah Anda sudah ${usagePercent}% penuh (${usedStr} MB dari ${maxLimitStr}). Segera upgrade paket atau hapus file yang tidak diperlukan agar layanan tetap berjalan lancar.`
+                    : `Penyimpanan sekolah Anda sudah ${usagePercent}% terpakai (${usedStr} MB dari ${maxLimitStr}). Pertimbangkan upgrade paket untuk menambah kapasitas penyimpanan.`,
+                  type: "warning",
+                })
+                // Prevent duplicate notification for 24 hours
+                await redis.set(cacheKey, "1", "EX", 86400)
+              }
+              await redis.quit()
+            } catch {
+              // Non-fatal: notification failure should not block upload
+            }
+          }
         }
       }
     }
@@ -210,7 +258,8 @@ export async function saveFile(
         name: file.name,
         size: buffer.length,
         mimeType: mimeType,
-      }
+      },
+      storageWarning: storageWarningResult,
     }
   } catch (error) {
     logger.error("File upload failed", error)

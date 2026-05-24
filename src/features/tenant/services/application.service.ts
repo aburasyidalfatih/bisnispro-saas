@@ -263,6 +263,7 @@ export async function approveApplication(id: string) {
         plan: "free",
         planId: freePlan ? freePlan.id : undefined,
         studentQuota: quota,
+        aiTokens: freePlan?.monthlyAiTokens || 0, // Bonus token awal untuk Free
         affiliateId: app.affiliateId,
         settings: {
           npsn: app.npsn,
