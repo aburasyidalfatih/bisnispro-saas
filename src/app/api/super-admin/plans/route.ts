@@ -28,26 +28,12 @@ export async function GET() {
   return NextResponse.json(plans)
 }
 
-export async function POST(req: Request) {
-  const session = await auth()
-  if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-
-  try {
-    const body = await req.json()
-    const validated = subscriptionPlanSchema.parse(body)
-    
-    const plan = await db.subscriptionPlan.create({
-      data: {
-        ...validated,
-        features: safeParseFeatures(validated.features)
-      }
-    })
-
-    return NextResponse.json(plan)
-  } catch (error) {
-    logger.error("Plan create failed", error, { path: "/api/super-admin/plans" })
-    return NextResponse.json({ error: "Gagal membuat paket" }, { status: 400 })
-  }
+// POST disabled — plans are fixed (free, lite, pro)
+export async function POST() {
+  return NextResponse.json(
+    { error: "Paket sudah dipatenkan (Free, Lite, Pro). Tidak bisa menambah paket baru." },
+    { status: 403 }
+  )
 }
 
 export async function PUT(req: Request) {
@@ -76,19 +62,10 @@ export async function PUT(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
-  const session = await auth()
-  if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-
-  try {
-    const { searchParams } = new URL(req.url)
-    const id = searchParams.get("id")
-    if (!id) return NextResponse.json({ error: "ID is required" }, { status: 400 })
-
-    await db.subscriptionPlan.delete({ where: { id } })
-    return NextResponse.json({ message: "Plan deleted" })
-  } catch (error) {
-    logger.error("Plan delete failed", error, { path: "/api/super-admin/plans" })
-    return NextResponse.json({ error: "Gagal menghapus paket" }, { status: 400 })
-  }
+// DELETE disabled — plans are fixed (free, lite, pro)
+export async function DELETE() {
+  return NextResponse.json(
+    { error: "Paket sudah dipatenkan (Free, Lite, Pro). Tidak bisa menghapus paket." },
+    { status: 403 }
+  )
 }

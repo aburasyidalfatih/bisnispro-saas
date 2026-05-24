@@ -53,6 +53,7 @@ export default function BillingPage() {
   const [studentCount, setStudentCount] = useState(50)
   const [invoice, setInvoice] = useState<InvoiceData | null>(null)
   const [showInvoice, setShowInvoice] = useState(false)
+  const [showProCalculator, setShowProCalculator] = useState(false)
   const [copied, setCopied] = useState(false)
 
 
@@ -247,369 +248,409 @@ export default function BillingPage() {
         </Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      {/* ── Perbandingan 3 Paket ── */}
+      <div className="grid gap-6 md:grid-cols-3">
 
-        {/* ── Card Paket Saat Ini ── */}
+        {/* ── Card FREE ── */}
         <Card className={cn(
-          "lg:col-span-1 border-0 shadow-xl overflow-hidden flex flex-col relative",
-          isPro 
-            ? "bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-900 text-white border border-emerald-500/30" 
-            : isLite
-            ? "bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 text-white border border-blue-500/30"
-            : "glass border border-white/20"
+          "border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
+          billing?.plan === "free" ? "ring-2 ring-slate-400" : "glass"
         )}>
-          {/* Subtle overlay pattern for paid plans */}
-          {isPaid && (
-            <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay pointer-events-none" />
+          <div className="h-1.5 bg-slate-300" />
+          {billing?.plan === "free" && (
+            <div className="absolute top-4 right-4 z-10">
+              <Badge className="bg-slate-600 text-white text-[10px] shadow-md">Paket Anda</Badge>
+            </div>
           )}
-
-          <div className={cn("h-1.5 w-full relative z-10", isPro ? "bg-gradient-to-r from-yellow-300 to-yellow-500" : isLite ? "bg-gradient-to-r from-blue-300 to-indigo-400" : "bg-slate-300")} />
-          
-          <CardHeader className="relative z-10 pb-4">
-            <CardTitle className="text-base flex items-center gap-2.5">
-              {isPro ? (
-                <div className="h-9 w-9 rounded-xl bg-yellow-400/20 flex items-center justify-center border border-yellow-400/30 shadow-[0_0_15px_rgba(250,204,21,0.2)]">
-                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                </div>
-              ) : isLite ? (
-                <div className="h-9 w-9 rounded-xl bg-blue-400/20 flex items-center justify-center border border-blue-400/30 shadow-[0_0_15px_rgba(96,165,250,0.2)]">
-                  <ShieldCheck className="h-5 w-5 text-blue-300" />
-                </div>
-              ) : (
-                <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Zap className="h-5 w-5 text-primary" />
-                </div>
-              )}
-              <span className={cn("font-bold tracking-wide", isPaid && "text-white")}>Paket Saat Ini</span>
-            </CardTitle>
-            <CardDescription className={cn("mt-1", isPro ? "text-emerald-100/70" : isLite ? "text-blue-100/70" : "text-muted-foreground")}>
-              Status akun sekolah Anda
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent className="flex flex-col flex-1 space-y-5 relative z-10">
-            <div className="flex items-center gap-4">
-              <div className={cn(
-                "text-5xl font-black uppercase tracking-widest drop-shadow-sm",
-                isPro 
-                  ? "bg-gradient-to-b from-white via-emerald-50 to-emerald-200/80 bg-clip-text text-transparent" 
-                  : isLite
-                  ? "bg-gradient-to-b from-white via-blue-50 to-blue-200/80 bg-clip-text text-transparent"
-                  : "text-foreground"
-              )}>
-                {billing?.plan?.toUpperCase() || "FREE"}
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center dark:bg-slate-800">
+                <Zap className="h-5 w-5 text-slate-600 dark:text-slate-300" />
               </div>
-              
-              {isPro && (
-                <div className="flex flex-col border-l border-emerald-500/30 pl-4 py-1">
-                  <span className="text-[10px] font-bold text-emerald-300/80 uppercase tracking-widest mb-0.5">Kapasitas</span>
-                  <span className="text-xl font-black text-white flex items-center gap-1.5">
-                    {billing?.studentQuota || 0} 
-                    <span className="text-sm font-semibold text-emerald-100/70">Siswa</span>
-                  </span>
-                </div>
-              )}
-              {isLite && (
-                <div className="flex flex-col border-l border-blue-500/30 pl-4 py-1">
-                  <span className="text-[10px] font-bold text-blue-300/80 uppercase tracking-widest mb-0.5">Tipe</span>
-                  <span className="text-sm font-bold text-white">Biaya Tetap</span>
-                  <span className="text-[10px] text-blue-200/70">Per Tahun</span>
-                </div>
+              <div>
+                <CardTitle className="text-lg">Free</CardTitle>
+                <CardDescription>Untuk memulai digitalisasi</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="flex flex-col flex-1 space-y-4">
+            <div>
+              <div className="flex items-end gap-1">
+                <span className="text-3xl font-black">Gratis</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-1">Tanpa biaya selamanya</p>
+            </div>
+
+            <div className="border-t pt-4 space-y-2.5 flex-1">
+              {(freePlan?.features || []).length > 0 ? (
+                (freePlan?.features || []).map((feat: string, i: number) => (
+                  <div key={i} className="flex items-center gap-2.5 text-sm">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <span>{feat}</span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" /><span>Website Sekolah</span></div>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" /><span>Data Master</span></div>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" /><span>Subdomain Gratis</span></div>
+                </>
               )}
             </div>
 
-            {currentPlanFeatures.length > 0 && (
-              <div className={cn("pt-4 border-t space-y-3", isPro ? "border-emerald-500/30" : isLite ? "border-blue-500/30" : "border-border/40")}>
-                <p className={cn(
-                  "text-[10px] font-bold uppercase tracking-wider",
-                  isPro ? "text-emerald-300/80" : isLite ? "text-blue-300/80" : "text-muted-foreground"
-                )}>
-                  Fitur Paket
-                </p>
-                <ul className="space-y-2.5">
-                  {currentPlanFeatures.map((feat, i) => (
-                    <li key={i} className={cn("flex items-center gap-3 text-sm font-medium", isPro ? "text-emerald-50" : isLite ? "text-blue-50" : "text-foreground")}>
-                      <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", isPro ? "bg-yellow-400/20 border border-yellow-400/30" : isLite ? "bg-blue-400/20 border border-blue-400/30" : "bg-emerald-100")}>
-                        <CheckCircle2 className={cn("h-3.5 w-3.5", isPro ? "text-yellow-400" : isLite ? "text-blue-300" : "text-emerald-600")} />
-                      </div>
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {!isPaid && currentPlanFeatures.length === 0 && (
-              <div className="pt-3 border-t border-border/40">
-                <p className="text-xs text-muted-foreground flex items-start gap-2">
-                  <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                  Upgrade paket untuk akses fitur lengkap.
-                </p>
-              </div>
-            )}
-
-            <div className="mt-auto pt-4">
-              {isPaid ? (
-                 <div className={cn(
-                   "flex items-center justify-between rounded-xl px-4 py-3.5 backdrop-blur-sm",
-                   isPro ? "bg-emerald-950/40 border border-emerald-500/20" : "bg-blue-950/40 border border-blue-500/20"
-                 )}>
-                   <div className="flex flex-col">
-                     <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", isPro ? "text-emerald-300/80" : "text-blue-300/80")}>Status</span>
-                     <span className="text-sm font-bold text-white flex items-center gap-2">
-                       <div className="relative flex h-2.5 w-2.5">
-                         <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", isPro ? "bg-emerald-400" : "bg-blue-400")}></span>
-                         <span className={cn("relative inline-flex rounded-full h-2.5 w-2.5", isPro ? "bg-emerald-500" : "bg-blue-500")}></span>
-                       </div>
-                       Aktif
-                     </span>
-                   </div>
-                   <div className="flex flex-col text-right">
-                     <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", isPro ? "text-emerald-300/80" : "text-blue-300/80")}>Berlaku Hingga</span>
-                     <span className={cn("text-sm font-bold", isPro ? "text-emerald-50" : "text-blue-50")}>
-                       {billing?.expiresAt ? new Date(billing.expiresAt).toLocaleDateString("id-ID", { month: "long", year: "numeric", day: "numeric" }) : "Selamanya"}
-                     </span>
-                   </div>
-                 </div>
-              ) : (
+            <div className="mt-auto pt-3">
+              {billing?.plan === "free" ? (
                 <Button disabled className="w-full h-11 rounded-xl cursor-default" variant="outline">
-                  Paket Anda saat ini
+                  <CheckCircle2 className="h-4 w-4 mr-2" /> Paket Aktif
+                </Button>
+              ) : (
+                <Button disabled className="w-full h-11 rounded-xl cursor-default" variant="ghost">
+                  Paket Dasar
                 </Button>
               )}
             </div>
           </CardContent>
         </Card>
 
-        {/* ── Card Upgrade PRO ── */}
-        {billing?.upgradeEnabled ? (
-          <Card className="lg:col-span-2 glass border-0 overflow-hidden">
-            <div className="h-1.5 bg-gradient-to-r from-primary to-primary/60" />
-          <CardHeader>
+        {/* ── Card LITE ── */}
+        <Card className={cn(
+          "border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
+          billing?.plan === "lite" ? "ring-2 ring-blue-500" : "glass",
+          litePlan?.isPopular && billing?.plan !== "lite" && "ring-2 ring-primary/30"
+        )}>
+          <div className="h-1.5 bg-gradient-to-r from-blue-400 to-indigo-500" />
+          {billing?.plan === "lite" && (
+            <div className="absolute top-4 right-4 z-10">
+              <Badge className="bg-blue-600 text-white text-[10px] shadow-md">Paket Anda</Badge>
+            </div>
+          )}
+          {litePlan?.isPopular && billing?.plan !== "lite" && (
+            <div className="absolute top-4 right-4 z-10">
+              <Badge className="bg-primary/10 text-primary text-[10px]">Populer</Badge>
+            </div>
+          )}
+          <CardHeader className="pb-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                <ShieldCheck className="h-5 w-5 text-primary" />
+              <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <ShieldCheck className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <CardTitle>
-                  {isPro ? "Tambah Kuota Siswa" : isLite ? "Perpanjang atau Upgrade" : "Upgrade Paket Anda"}
-                </CardTitle>
-                <CardDescription>
-                  {isPro 
-                    ? `Biaya penambahan kuota akan disesuaikan (Pro-rata) dengan sisa masa aktif langganan Anda (${daysRemaining} hari).` 
-                    : isLite
-                    ? "Perpanjang paket Lite atau upgrade ke Pro untuk fitur lebih lengkap."
-                    : "Pilih paket yang sesuai dengan kebutuhan sekolah Anda"}
-                </CardDescription>
+                <CardTitle className="text-lg">Lite</CardTitle>
+                <CardDescription>{litePlan?.description || "Paket menengah untuk sekolah berkembang"}</CardDescription>
               </div>
             </div>
           </CardHeader>
-            <CardContent className="space-y-6">
-              {!isPro && !proPlan && !litePlan ? (
-                <div className="py-10 text-center space-y-3 border-2 border-dashed border-border/50 rounded-xl bg-muted/20">
-                  <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center mx-auto">
-                    <ShieldCheck className="h-6 w-6 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-muted-foreground">Tidak ada paket tersedia</h3>
-                  <p className="text-sm text-muted-foreground/80 max-w-md mx-auto">
-                    Saat ini tidak ada paket langganan tambahan yang dapat dibeli. Silakan hubungi admin untuk informasi lebih lanjut.
-                  </p>
-                </div>
-              ) : (
-                <>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Calculator */}
-                  <div className="space-y-4">
-                
-                {!isPro && (
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold">{isLite ? "Pilih Aksi" : "Pilih Paket"}</Label>
-                    <div className="flex gap-2">
-                      {isLite && litePlan && (
-                        <Button 
-                          variant={selectedPlanSlug === "lite" ? "default" : "outline"} 
-                          onClick={() => setSelectedPlanSlug("lite")}
-                          className="flex-1"
-                        >
-                          Perpanjang Lite
-                        </Button>
-                      )}
-                      {!isLite && litePlan && (
-                        <Button 
-                          variant={selectedPlanSlug === "lite" ? "default" : "outline"} 
-                          onClick={() => setSelectedPlanSlug("lite")}
-                          className="flex-1"
-                        >
-                          Lite
-                        </Button>
-                      )}
-                      {proPlan && (
-                        <Button 
-                          variant={selectedPlanSlug === "pro" ? "default" : "outline"} 
-                          onClick={() => setSelectedPlanSlug("pro")}
-                          className="flex-1"
-                        >
-                          {isLite ? "Upgrade ke Pro" : "PRO"}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {selectedPlanSlug === "pro" && (
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2 text-sm font-semibold">
-                      <Users className="h-4 w-4 text-primary" /> {isPro ? "Jumlah Tambah Siswa" : "Jumlah Siswa Aktif"}
-                    </Label>
-                    <Input
-                      type="number" min={minStudents}
-                      value={studentCount}
-                      onChange={(e) => setStudentCount(Number(e.target.value))}
-                      className="rounded-xl h-12 text-lg font-semibold"
-                    />
-                    <p className="text-[11px] text-muted-foreground">
-                      Minimal {isPro ? "tambah" : "upgrade"}: <strong>{minStudents} siswa</strong>
-                    </p>
-                  </div>
-                )}
-                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 space-y-1.5">
-                  <p className="text-xs text-muted-foreground font-medium">Estimasi Biaya {isPro && "(Pro-rata)"}</p>
-                  
-                  {isPro && (
-                    <div className="flex justify-between text-[11px] text-muted-foreground mb-1">
-                      <span>Harga Normal ({studentCount} siswa)</span>
-                      <span>Rp {baseSubTotal.toLocaleString("id-ID")}</span>
-                    </div>
-                  )}
-                  
-                  {appliedDiscount && (
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="text-muted-foreground line-through">Rp {subTotal.toLocaleString("id-ID")}</span>
-                      <span className="text-emerald-600 font-bold bg-emerald-100 px-1.5 py-0.5 rounded text-[10px]">-{appliedDiscount.percentage}%</span>
-                    </div>
-                  )}
-
-                  <div className="flex items-end gap-1 text-primary">
-                    <span className="text-sm font-semibold">Rp</span>
-                    <span className="text-3xl font-bold">{totalCost.toLocaleString("id-ID")}</span>
-                  </div>
-                  {selectedPlanSlug === "pro" ? (
-                    <p className="text-[11px] text-primary/70 italic">
-                      Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / siswa / tahun
-                      {isUsingLockedPrice && (
-                        <span className="ml-1.5 text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-semibold not-italic dark:bg-blue-900/30 dark:text-blue-400">Harga Kontrak</span>
-                      )}
-                    </p>
-                  ) : (
-                    <p className="text-[11px] text-primary/70 italic">
-                      Biaya Tetap (Per Tahun)
-                    </p>
-                  )}
-                </div>
-
-                {/* Discount Input */}
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground">
-                    <Tag className="h-3.5 w-3.5" /> Punya Kode Diskon?
-                  </Label>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Masukkan kode diskon..."
-                      value={discountCodeInput}
-                      onChange={(e) => setDiscountCodeInput(e.target.value.toUpperCase())}
-                      disabled={!!appliedDiscount || validatingDiscount}
-                      className="rounded-xl font-mono uppercase tracking-widest text-sm h-10"
-                    />
-                    {appliedDiscount ? (
-                      <Button variant="outline" className="rounded-xl h-10 text-destructive border-destructive/20 hover:bg-destructive/10" onClick={handleRemoveDiscount}>
-                        Hapus
-                      </Button>
-                    ) : (
-                      <Button variant="secondary" className="rounded-xl h-10 px-6 font-semibold" onClick={handleValidateDiscount} disabled={!discountCodeInput || validatingDiscount}>
-                        {validatingDiscount ? "..." : "Gunakan"}
-                      </Button>
-                    )}
-                  </div>
-                  {appliedDiscount && (
-                    <div className="flex flex-col gap-1 mt-1">
-                      <p className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
-                        <CheckCircle2 className="h-3 w-3" /> Kode {appliedDiscount.code} berhasil diterapkan!
-                      </p>
-                      {(appliedDiscount.bonusMonths ?? 0) > 0 && (
-                        <p className="text-[11px] text-blue-600 font-medium ml-4 mt-0.5">
-                          + Gratis Perpanjangan {appliedDiscount.bonusMonths} Bulan
-                        </p>
-                      )}
-                      {discountTimeLeft && (
-                        <p className="text-[10px] text-amber-600 font-medium ml-4 mt-0.5">
-                          kode diskon akan berakhir {discountTimeLeft}.
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
+          <CardContent className="flex flex-col flex-1 space-y-4">
+            <div>
+              <div className="flex items-end gap-1">
+                <span className="text-sm font-semibold text-muted-foreground">Rp</span>
+                <span className="text-3xl font-black">{(litePlan?.price || 1000000).toLocaleString("id-ID")}</span>
               </div>
-
-              {/* Features */}
-              <div className="space-y-3">
-                <Label className="text-sm font-semibold">Fitur yang Anda dapatkan:</Label>
-                {selectedPlanFeatures.length > 0 ? (
-                  <ul className="space-y-2">
-                    {selectedPlanFeatures.map((feat, i) => (
-                      <li key={i} className="flex items-center gap-2.5 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">Tidak ada fitur yang dikonfigurasi.</p>
-                )}
-              </div>
+              <p className="text-[11px] text-muted-foreground mt-1">Per tahun · Biaya tetap</p>
             </div>
 
-            {billing?.hasPendingInvoice && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-800 dark:bg-amber-950/20 dark:border-amber-800/30 dark:text-amber-400 mb-4">
-                <div className="flex gap-2 items-start">
-                  <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-                  <span>Kamu punya invoice aktif, jika ingin membuat invoice baru harap batalkan invoice sebelumnya.</span>
+            {/* Masa aktif jika Lite */}
+            {billing?.plan === "lite" && billing.expiresAt && (
+              <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/30 rounded-xl px-3 py-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                  </div>
+                  <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">Aktif</span>
                 </div>
-                <Link href="/admin/billing/history" className="font-bold underline underline-offset-2 text-amber-700 hover:text-amber-900 flex items-center gap-1 shrink-0 dark:text-amber-500 transition">
-                  Lihat Riwayat <ExternalLink className="h-3 w-3" />
-                </Link>
+                <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                  s/d {new Date(billing.expiresAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                </span>
               </div>
             )}
+
+            <div className="border-t pt-4 space-y-2.5 flex-1">
+              {(litePlan?.features || []).length > 0 ? (
+                (litePlan?.features || []).map((feat: string, i: number) => (
+                  <div key={i} className="flex items-center gap-2.5 text-sm">
+                    <CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" />
+                    <span>{feat}</span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Custom Domain</span></div>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Broadcast WhatsApp</span></div>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Semua fitur Free</span></div>
+                </>
+              )}
+            </div>
+
+            <div className="mt-auto pt-3">
+              {billing?.plan === "lite" ? (
+                <Button 
+                  className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20"
+                  disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
+                  onClick={() => { setSelectedPlanSlug("lite"); handleCheckout() }}
+                >
+                  {checkingOut && selectedPlanSlug === "lite" ? "Membuat Invoice..." : "Perpanjang Sekarang"}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              ) : billing?.plan === "pro" ? (
+                <Button disabled className="w-full h-11 rounded-xl cursor-default" variant="ghost">
+                  Sudah di paket PRO
+                </Button>
+              ) : (
+                <Button 
+                  className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2 font-semibold shadow-lg shadow-blue-500/20"
+                  disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
+                  onClick={() => { setSelectedPlanSlug("lite"); handleCheckout() }}
+                >
+                  {checkingOut && selectedPlanSlug === "lite" ? "Membuat Invoice..." : "Upgrade ke Lite"}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ── Card PRO ── */}
+        <Card className={cn(
+          "border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
+          billing?.plan === "pro" ? "ring-2 ring-emerald-500" : "glass"
+        )}>
+          <div className="h-1.5 bg-gradient-to-r from-yellow-400 to-amber-500" />
+          {billing?.plan === "pro" && (
+            <div className="absolute top-4 right-4 z-10">
+              <Badge className="bg-emerald-600 text-white text-[10px] shadow-md">Paket Anda</Badge>
+            </div>
+          )}
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                <Star className="h-5 w-5 fill-amber-500 text-amber-500" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">PRO</CardTitle>
+                <CardDescription>{proPlan?.description || "Fitur lengkap untuk sekolah modern"}</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="flex flex-col flex-1 space-y-4">
+            <div>
+              <div className="flex items-end gap-1">
+                <span className="text-sm font-semibold text-muted-foreground">Rp</span>
+                <span className="text-3xl font-black">{Number(effectivePricePerStudent).toLocaleString("id-ID")}</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-1">Per siswa / tahun · Min. {pricing.MIN_STUDENTS} siswa</p>
+              {isUsingLockedPrice && (
+                <span className="text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-semibold dark:bg-blue-900/30 dark:text-blue-400">Harga Kontrak</span>
+              )}
+            </div>
+
+            {/* Masa aktif + kapasitas jika Pro */}
+            {billing?.plan === "pro" && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/30 rounded-xl px-3 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </div>
+                    <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Aktif</span>
+                  </div>
+                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                    s/d {billing?.expiresAt ? new Date(billing.expiresAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "Selamanya"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between bg-muted/40 rounded-xl px-3 py-2">
+                  <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Kapasitas</span>
+                  <span className="text-sm font-bold flex items-center gap-1">
+                    <Users className="h-3.5 w-3.5 text-primary" /> {billing?.studentQuota || 0} Siswa
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="border-t pt-4 space-y-2.5 flex-1">
+              {(proPlan?.features || []).length > 0 ? (
+                (proPlan?.features || []).map((feat: string, i: number) => (
+                  <div key={i} className="flex items-center gap-2.5 text-sm">
+                    <CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" />
+                    <span>{feat}</span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Semua fitur Lite</span></div>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Akademik & E-Rapor</span></div>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Keuangan & E-Kantin</span></div>
+                  <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Kehadiran & Donasi</span></div>
+                </>
+              )}
+            </div>
+
+            <div className="mt-auto pt-3">
+              {billing?.plan === "pro" ? (
+                <Button 
+                  className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20"
+                  disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
+                  onClick={() => { setSelectedPlanSlug("pro"); setShowProCalculator(true) }}
+                >
+                  Tambah Kuota Siswa
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button 
+                  className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border-0 gap-2 font-semibold shadow-lg shadow-amber-500/20"
+                  disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
+                  onClick={() => { setSelectedPlanSlug("pro"); setShowProCalculator(true) }}
+                >
+                  {billing?.plan === "lite" ? "Upgrade ke Pro" : "Upgrade ke Pro"}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Pending Invoice Alert */}
+      {billing?.hasPendingInvoice && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-800 dark:bg-amber-950/20 dark:border-amber-800/30 dark:text-amber-400">
+          <div className="flex gap-2 items-start">
+            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+            <span>Kamu punya invoice aktif. Jika ingin membuat invoice baru, harap batalkan invoice sebelumnya.</span>
+          </div>
+          <Link href="/admin/billing/history" className="font-bold underline underline-offset-2 text-amber-700 hover:text-amber-900 flex items-center gap-1 shrink-0 dark:text-amber-500 transition">
+            Lihat Riwayat <ExternalLink className="h-3 w-3" />
+          </Link>
+        </div>
+      )}
+
+      {/* Upgrade disabled */}
+      {!billing?.upgradeEnabled && (
+        <div className="bg-muted/50 border rounded-xl p-4 text-center text-sm text-muted-foreground">
+          <ShieldCheck className="h-6 w-6 mx-auto mb-2 text-muted-foreground/50" />
+          Fitur upgrade paket sedang dinonaktifkan oleh Super Admin. Hubungi admin pusat untuk upgrade.
+        </div>
+      )}
+
+      {/* ── PRO Calculator Dialog ── */}
+      <Dialog open={showProCalculator} onOpenChange={setShowProCalculator}>
+        <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden border-0 shadow-2xl">
+          <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-500" />
+          <DialogHeader className="px-6 pt-5 pb-2">
+            <DialogTitle className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+              </div>
+              {isPro ? "Tambah Kuota Siswa" : "Upgrade ke PRO"}
+            </DialogTitle>
+            <DialogDescription>
+              {isPro 
+                ? `Biaya disesuaikan (pro-rata) dengan sisa masa aktif Anda (${daysRemaining} hari).`
+                : "Masukkan jumlah siswa untuk menghitung biaya."
+              }
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="px-6 py-4 space-y-4">
+            {/* Student Count */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-sm font-semibold">
+                <Users className="h-4 w-4 text-primary" /> {isPro ? "Jumlah Tambah Siswa" : "Jumlah Siswa Aktif"}
+              </Label>
+              <Input
+                type="number" min={minStudents}
+                value={studentCount}
+                onChange={(e) => setStudentCount(Number(e.target.value))}
+                className="rounded-xl h-12 text-lg font-semibold"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Minimal {isPro ? "tambah" : "upgrade"}: <strong>{minStudents} siswa</strong>
+              </p>
+            </div>
+
+            {/* Cost Calculation */}
+            <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 space-y-1.5">
+              <p className="text-xs text-muted-foreground font-medium">Estimasi Biaya {isPro && "(Pro-rata)"}</p>
+              
+              {isPro && (
+                <div className="flex justify-between text-[11px] text-muted-foreground mb-1">
+                  <span>Harga Normal ({studentCount} siswa)</span>
+                  <span>Rp {baseSubTotal.toLocaleString("id-ID")}</span>
+                </div>
+              )}
+              
+              {appliedDiscount && (
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-muted-foreground line-through">Rp {subTotal.toLocaleString("id-ID")}</span>
+                  <span className="text-emerald-600 font-bold bg-emerald-100 px-1.5 py-0.5 rounded text-[10px]">-{appliedDiscount.percentage}%</span>
+                </div>
+              )}
+
+              <div className="flex items-end gap-1 text-primary">
+                <span className="text-sm font-semibold">Rp</span>
+                <span className="text-3xl font-bold">{totalCost.toLocaleString("id-ID")}</span>
+              </div>
+              <p className="text-[11px] text-primary/70 italic">
+                Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / siswa / tahun
+                {isUsingLockedPrice && (
+                  <span className="ml-1.5 text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-semibold not-italic dark:bg-blue-900/30 dark:text-blue-400">Harga Kontrak</span>
+                )}
+              </p>
+            </div>
+
+            {/* Discount Input */}
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground">
+                <Tag className="h-3.5 w-3.5" /> Punya Kode Diskon?
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Masukkan kode diskon..."
+                  value={discountCodeInput}
+                  onChange={(e) => setDiscountCodeInput(e.target.value.toUpperCase())}
+                  disabled={!!appliedDiscount || validatingDiscount}
+                  className="rounded-xl font-mono uppercase tracking-widest text-sm h-10"
+                />
+                {appliedDiscount ? (
+                  <Button variant="outline" className="rounded-xl h-10 text-destructive border-destructive/20 hover:bg-destructive/10" onClick={handleRemoveDiscount}>
+                    Hapus
+                  </Button>
+                ) : (
+                  <Button variant="secondary" className="rounded-xl h-10 px-6 font-semibold" onClick={handleValidateDiscount} disabled={!discountCodeInput || validatingDiscount}>
+                    {validatingDiscount ? "..." : "Gunakan"}
+                  </Button>
+                )}
+              </div>
+              {appliedDiscount && (
+                <div className="flex flex-col gap-1 mt-1">
+                  <p className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
+                    <CheckCircle2 className="h-3 w-3" /> Kode {appliedDiscount.code} berhasil diterapkan!
+                  </p>
+                  {(appliedDiscount.bonusMonths ?? 0) > 0 && (
+                    <p className="text-[11px] text-blue-600 font-medium ml-4 mt-0.5">
+                      + Gratis Perpanjangan {appliedDiscount.bonusMonths} Bulan
+                    </p>
+                  )}
+                  {discountTimeLeft && (
+                    <p className="text-[10px] text-amber-600 font-medium ml-4 mt-0.5">
+                      kode diskon akan berakhir {discountTimeLeft}.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
 
             <Button
               className="w-full h-12 rounded-xl btn-gradient text-white border-0 gap-2 text-base font-semibold shadow-lg shadow-primary/20"
-              disabled={checkingOut || (selectedPlanSlug === "pro" && studentCount < minStudents) || billing?.hasPendingInvoice}
-              onClick={handleCheckout}
+              disabled={checkingOut || studentCount < minStudents || billing?.hasPendingInvoice}
+              onClick={() => { handleCheckout(); }}
             >
-              {checkingOut 
-                ? "Membuat Invoice..." 
-                : isPro 
-                ? "Buat Tagihan Penambahan Kuota" 
-                : isLite && selectedPlanSlug === "lite"
-                ? "Perpanjang Sekarang"
-                : isLite && selectedPlanSlug === "pro"
-                ? "Upgrade ke Pro Sekarang"
-                : "Upgrade Sekarang"}
+              {checkingOut ? "Membuat Invoice..." : isPro ? "Buat Tagihan Penambahan Kuota" : "Upgrade ke Pro Sekarang"}
               <ArrowRight className="h-5 w-5" />
             </Button>
-            </>
-            )}
-          </CardContent>
-        </Card>
-        ) : (
-          <Card className="lg:col-span-2 glass border-0 flex flex-col items-center justify-center p-10 text-center min-h-[350px]">
-            <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-5">
-              <ShieldCheck className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <CardTitle className="text-xl mb-2 text-muted-foreground">Upgrade Paket</CardTitle>
-            <CardDescription className="max-w-md mx-auto">
-              Fitur upgrade paket secara mandiri sedang dinonaktifkan sementara oleh Super Admin. Silakan hubungi admin pusat untuk melakukan upgrade paket langganan Anda.
-            </CardDescription>
-          </Card>
-        )}
+          </div>
+        </DialogContent>
+      </Dialog>
       </div>
 
 
