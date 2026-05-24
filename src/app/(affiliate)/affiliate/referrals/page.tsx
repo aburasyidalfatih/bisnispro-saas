@@ -18,13 +18,28 @@ export default async function AffiliateReferralsPage() {
   // Ambil calon sekolah (Leads)
   const applications = await db.tenantApplication.findMany({
     where: { affiliateId: affiliate.id },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      schoolName: true,
+      adminName: true,
+      adminPhone: true,
+      status: true,
+      createdAt: true,
+    },
   })
 
   // Ambil sekolah aktif (Tenants)
   const tenants = await db.tenant.findMany({
     where: { affiliateId: affiliate.id },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      plan: true,
+      createdAt: true,
+    },
   })
 
   const getStatusBadge = (status: string) => {
