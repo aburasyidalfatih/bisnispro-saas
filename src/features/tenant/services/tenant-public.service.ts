@@ -68,7 +68,7 @@ export const getPublicTenantBySlug = cache(async (slug: string) => {
         }, 
         orderBy: { createdAt: 'desc' }, 
         take: 20,
-        include: { author: { select: { name: true, image: true } } }
+        include: { author: { select: { name: true, avatar: true } } }
       },
       events: { orderBy: { createdAt: 'desc' }, take: 6 },
       documents: { orderBy: { createdAt: 'desc' }, take: 10 },
