@@ -313,7 +313,7 @@ export default function BillingPage() {
         </Card>
 
         {/* ── Card LITE ── */}
-        <Card className={cn(
+        {litePlan && <Card className={cn(
           "border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
           billing?.plan === "lite" ? "ring-2 ring-blue-500" : "glass",
           litePlan?.isPopular && billing?.plan !== "lite" && "ring-2 ring-primary/30"
@@ -408,10 +408,10 @@ export default function BillingPage() {
               )}
             </div>
           </CardContent>
-        </Card>
+        </Card>}
 
         {/* ── Card PRO ── */}
-        <Card className={cn(
+        {proPlan && <Card className={cn(
           "border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
           billing?.plan === "pro" ? "ring-2 ring-emerald-500" : "glass"
         )}>
@@ -508,7 +508,7 @@ export default function BillingPage() {
               )}
             </div>
           </CardContent>
-        </Card>
+        </Card>}
       </div>
 
       {/* Pending Invoice Alert */}
