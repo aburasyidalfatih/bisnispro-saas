@@ -8,7 +8,8 @@ import {
   Users, GraduationCap, Building2, TrendingUp, Loader2,
   Wifi, UserCheck, BookOpen, Megaphone, CalendarDays, Trophy,
   FileText, MessageSquare, School, Layers, BookMarked,
-  Search, ArrowUpDown, Heart, Receipt, Timer
+  Search, ArrowUpDown, Heart, Receipt, Timer,
+  Eye, Globe, Smartphone, Monitor, Tablet
 } from "lucide-react"
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
@@ -69,6 +70,20 @@ interface AnalyticsData {
     totalDonations: number
     activeCampaigns: number
     unpaidInvoices: number
+  }
+
+  visitorStats: {
+    totalPageViews: number
+    uniqueVisitors: number
+    todayPageViews: number
+    todayUniqueVisitors: number
+    sources: { name: string; views: number }[]
+    mediums: { name: string; views: number }[]
+    topPages: { path: string; views: number }[]
+    devices: { name: string; views: number }[]
+    browsers: { name: string; views: number }[]
+    trend7Days: { date: string; views: number; visitors: number }[]
+    topTrafficTenants: { name: string; views: number }[]
   }
 }
 
@@ -435,6 +450,204 @@ export default function AnalyticsPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* ============================================ */}
+      {/* SECTION 7: VISITOR TRACKING                  */}
+      {/* ============================================ */}
+      <div>
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+          <Globe className="h-5 w-5 text-cyan-500" /> Analitik Pengunjung Website (30 Hari)
+        </h2>
+
+        {/* Visitor Summary Cards */}
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-6">
+          <SummaryCard icon={Eye} label="Total Tampilan" value={data.visitorStats.totalPageViews} color="blue" />
+          <SummaryCard icon={Users} label="Pengunjung Unik" value={data.visitorStats.uniqueVisitors} color="emerald" />
+          <SummaryCard icon={TrendingUp} label="Tampilan Hari Ini" value={data.visitorStats.todayPageViews} color="violet" subtitle={`${data.visitorStats.todayUniqueVisitors} unik`} />
+          <SummaryCard icon={Globe} label="Rata-rata/Hari" value={data.visitorStats.totalPageViews > 0 ? Math.round(data.visitorStats.totalPageViews / 30) : 0} color="amber" />
+        </div>
+
+        {/* Visitor Trend Chart */}
+        <Card className="glass border-0 mb-6">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-cyan-500" /> Tren Pengunjung Website (7 Hari)
+            </CardTitle>
+            <CardDescription>Tampilan halaman dan pengunjung unik seluruh tenant.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[280px] w-full">
+              {data.visitorStats.trend7Days.every(d => d.views === 0) ? (
+                <div className="flex items-center justify-center h-full text-muted-foreground text-sm italic">
+                  Belum ada data pengunjung. Data akan muncul setelah website tenant dikunjungi.
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={data.visitorStats.trend7Days}>
+                    <defs>
+                      <linearGradient id="viewGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="visitorGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                    <XAxis dataKey="date" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Legend verticalAlign="top" height={36} />
+                    <Area type="monotone" dataKey="views" name="Tampilan" stroke="#06b6d4" strokeWidth={2} fill="url(#viewGrad)" dot={{ r: 3 }} />
+                    <Area type="monotone" dataKey="visitors" name="Pengunjung Unik" stroke="#10b981" strokeWidth={2} fill="url(#visitorGrad)" dot={{ r: 3 }} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Traffic Sources */}
+          <Card className="glass border-0">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Globe className="h-5 w-5 text-blue-500" /> Sumber Traffic
+              </CardTitle>
+              <CardDescription>Dari mana pengunjung website tenant berasal.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {data.visitorStats.sources.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic py-8 text-center">Belum ada data.</p>
+              ) : (
+                <div className="space-y-2">
+                  {data.visitorStats.sources.slice(0, 10).map((src, i) => {
+                    const pct = data.visitorStats.totalPageViews > 0 ? (src.views / data.visitorStats.totalPageViews * 100) : 0
+                    const icons: Record<string, string> = {
+                      google: '🔍', facebook: '📘', instagram: '📸', threads: '🧵',
+                      'x-twitter': '𝕏', tiktok: '🎵', youtube: '▶️', whatsapp: '💬',
+                      telegram: '✈️', direct: '🔗', schoolpro: '🏫', bing: '🔎',
+                    }
+                    return (
+                      <div key={src.name} className="flex items-center gap-3">
+                        <span className="text-lg w-7 text-center">{icons[src.name] || '🌐'}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium capitalize truncate">{src.name}</span>
+                            <span className="text-xs text-muted-foreground ml-2">{src.views} ({pct.toFixed(1)}%)</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                            <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Top Pages */}
+          <Card className="glass border-0">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Eye className="h-5 w-5 text-violet-500" /> Halaman Populer
+              </CardTitle>
+              <CardDescription>15 halaman yang paling sering dikunjungi.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {data.visitorStats.topPages.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic py-8 text-center">Belum ada data.</p>
+              ) : (
+                <div className="space-y-1.5 max-h-[320px] overflow-y-auto">
+                  {data.visitorStats.topPages.map((page, i) => (
+                    <div key={page.path} className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-muted/50 transition-colors">
+                      <span className="text-xs font-bold text-muted-foreground w-5 text-right">{i + 1}</span>
+                      <span className="flex-1 text-xs font-mono truncate text-foreground">{page.path}</span>
+                      <span className="text-xs font-bold text-primary">{page.views}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Devices & Browsers */}
+          <Card className="glass border-0">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Monitor className="h-5 w-5 text-amber-500" /> Perangkat & Browser
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Perangkat</p>
+                <div className="grid grid-cols-3 gap-3">
+                  {data.visitorStats.devices.map(d => {
+                    const DeviceIcon = d.name === 'mobile' ? Smartphone : d.name === 'tablet' ? Tablet : Monitor
+                    const pct = data.visitorStats.totalPageViews > 0 ? (d.views / data.visitorStats.totalPageViews * 100).toFixed(0) : '0'
+                    return (
+                      <div key={d.name} className="text-center p-3 rounded-xl border bg-card">
+                        <DeviceIcon className="h-6 w-6 mx-auto mb-1.5 text-muted-foreground" />
+                        <p className="text-lg font-bold">{pct}%</p>
+                        <p className="text-[10px] text-muted-foreground capitalize">{d.name}</p>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Browser</p>
+                <div className="space-y-2">
+                  {data.visitorStats.browsers.slice(0, 5).map((b, i) => {
+                    const pct = data.visitorStats.totalPageViews > 0 ? (b.views / data.visitorStats.totalPageViews * 100) : 0
+                    return (
+                      <div key={b.name} className="flex items-center gap-3">
+                        <span className="text-xs font-medium w-16 truncate">{b.name}</span>
+                        <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                          <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+                        </div>
+                        <span className="text-xs text-muted-foreground w-12 text-right">{pct.toFixed(0)}%</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Top Tenant by Traffic */}
+        {data.visitorStats.topTrafficTenants.length > 0 && (
+          <Card className="glass border-0 mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <TrendingUp className="h-5 w-5 text-cyan-500" /> Top 10 Tenant Website Terbanyak Dikunjungi
+              </CardTitle>
+              <CardDescription>Berdasarkan total tampilan halaman bulan ini.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[340px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.visitorStats.topTrafficTenants} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal vertical={false} stroke="#e5e7eb" />
+                    <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} width={120} />
+                    <RechartsTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Bar dataKey="views" name="Tampilan" fill="#06b6d4" radius={[0, 6, 6, 0]} barSize={20}>
+                      {data.visitorStats.topTrafficTenants.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* ======================================== */}

@@ -257,6 +257,104 @@ export async function GET() {
       _count: { id: true },
     })
 
+    // ============================================
+    // SECTION 7: Visitor Tracking (All Tenants)
+    // ============================================
+    const pageViews30Days = await db.pageView.findMany({
+      where: { createdAt: { gte: thirtyDaysAgo } },
+      select: {
+        path: true,
+        source: true,
+        medium: true,
+        device: true,
+        browser: true,
+        ipHash: true,
+        sessionId: true,
+        tenantId: true,
+        createdAt: true,
+      },
+    })
+
+    const totalPageViews = pageViews30Days.length
+    const uniqueVisitors = new Set(pageViews30Days.map(pv => pv.sessionId || pv.ipHash)).size
+    const todayPageViews = pageViews30Days.filter(pv => pv.createdAt >= startOfToday).length
+    const todayUniqueVisitors = new Set(
+      pageViews30Days.filter(pv => pv.createdAt >= startOfToday).map(pv => pv.sessionId || pv.ipHash)
+    ).size
+
+    // Traffic sources
+    const srcMap = new Map<string, number>()
+    pageViews30Days.forEach(pv => {
+      const src = pv.source || "direct"
+      srcMap.set(src, (srcMap.get(src) || 0) + 1)
+    })
+    const visitorSources = [...srcMap.entries()]
+      .map(([name, views]) => ({ name, views }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 15)
+
+    // Traffic medium
+    const medMap = new Map<string, number>()
+    pageViews30Days.forEach(pv => {
+      const med = pv.medium || "unknown"
+      medMap.set(med, (medMap.get(med) || 0) + 1)
+    })
+    const visitorMediums = [...medMap.entries()]
+      .map(([name, views]) => ({ name, views }))
+      .sort((a, b) => b.views - a.views)
+
+    // Top pages
+    const pgMap = new Map<string, number>()
+    pageViews30Days.forEach(pv => {
+      pgMap.set(pv.path, (pgMap.get(pv.path) || 0) + 1)
+    })
+    const visitorTopPages = [...pgMap.entries()]
+      .map(([path, views]) => ({ path, views }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 15)
+
+    // Device breakdown
+    const devMap = new Map<string, number>()
+    pageViews30Days.forEach(pv => {
+      devMap.set(pv.device || "unknown", (devMap.get(pv.device || "unknown") || 0) + 1)
+    })
+    const visitorDevices = [...devMap.entries()]
+      .map(([name, views]) => ({ name, views }))
+      .sort((a, b) => b.views - a.views)
+
+    // Browser breakdown
+    const brMap = new Map<string, number>()
+    pageViews30Days.forEach(pv => {
+      brMap.set(pv.browser || "unknown", (brMap.get(pv.browser || "unknown") || 0) + 1)
+    })
+    const visitorBrowsers = [...brMap.entries()]
+      .map(([name, views]) => ({ name, views }))
+      .sort((a, b) => b.views - a.views)
+
+    // Daily visitor trend (7 days)
+    const visitorTrend7Days = buildDailyTrendWithVisitors(pageViews30Days.filter(pv => pv.createdAt >= sevenDaysAgo), 7)
+
+    // Top 10 tenant by traffic
+    const tenantTrafficMap = new Map<string, number>()
+    pageViews30Days.forEach(pv => {
+      tenantTrafficMap.set(pv.tenantId, (tenantTrafficMap.get(pv.tenantId) || 0) + 1)
+    })
+    const topTrafficTenantIds = [...tenantTrafficMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+    let topTrafficTenants: { name: string; views: number }[] = []
+    if (topTrafficTenantIds.length > 0) {
+      const tNames = await db.tenant.findMany({
+        where: { id: { in: topTrafficTenantIds.map(t => t[0]) } },
+        select: { id: true, name: true },
+      })
+      const tnMap = new Map(tNames.map(t => [t.id, t.name]))
+      topTrafficTenants = topTrafficTenantIds.map(([id, views]) => ({
+        name: tnMap.get(id) || 'Unknown',
+        views,
+      }))
+    }
+
     return NextResponse.json({
       // Section 1
       onlineUsers: onlineUserIds.length,
@@ -312,6 +410,21 @@ export async function GET() {
         activeCampaigns,
         unpaidInvoices,
       },
+
+      // Section 7: Visitor Tracking
+      visitorStats: {
+        totalPageViews,
+        uniqueVisitors,
+        todayPageViews,
+        todayUniqueVisitors,
+        sources: visitorSources,
+        mediums: visitorMediums,
+        topPages: visitorTopPages,
+        devices: visitorDevices,
+        browsers: visitorBrowsers,
+        trend7Days: visitorTrend7Days,
+        topTrafficTenants,
+      },
     })
   } catch (error: any) {
     console.error("Analytics Error:", error)
@@ -364,6 +477,40 @@ function buildWeeklyTrend(dates: Date[], weeks: number) {
     if (weekIndex >= 0 && weekIndex < result.length) {
       result[weekIndex].count++
     }
+  })
+
+  return result
+}
+
+// ============================================
+// Helper: Build daily trend with views + unique visitors
+// ============================================
+function buildDailyTrendWithVisitors(pageViews: { createdAt: Date; sessionId: string | null; ipHash: string | null }[], days: number) {
+  const now = new Date()
+  const result: { date: string; views: number; visitors: number }[] = []
+  const visitorSets = new Map<string, Set<string>>()
+
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now)
+    d.setDate(d.getDate() - i)
+    const dateStr = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })
+    result.push({ date: dateStr, views: 0, visitors: 0 })
+    visitorSets.set(dateStr, new Set())
+  }
+
+  pageViews.forEach(pv => {
+    const dateStr = pv.createdAt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })
+    const found = result.find(r => r.date === dateStr)
+    if (found) {
+      found.views++
+      const set = visitorSets.get(dateStr)
+      if (set) set.add(pv.sessionId || pv.ipHash || 'unknown')
+    }
+  })
+
+  result.forEach(r => {
+    const set = visitorSets.get(r.date)
+    if (set) r.visitors = set.size
   })
 
   return result
