@@ -1171,53 +1171,14 @@ export default function SuperAdminSettingsPage() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><Settings2 className="h-4 w-4 text-primary" /></div>
-                <CardTitle className="text-lg">Kendali Akses Paket Free</CardTitle>
+                <CardTitle className="text-lg">Kendali Fitur Platform</CardTitle>
               </div>
-              <CardDescription>Aktifkan atau matikan modul mana saja yang dapat diakses oleh sekolah dengan paket gratis (Free Plan).</CardDescription>
+              <CardDescription>Fitur ini telah dipindahkan ke halaman khusus untuk kontrol yang lebih lengkap per paket (Free, Lite, Pro).</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {(() => {
-                let access: Record<string, boolean> = {};
-                try { access = JSON.parse(form.FREE_PLAN_ACCESS || "{}"); } catch (e) {}
-                
-                const toggleFeature = (key: string) => {
-                  const newAccess = { ...access, [key]: !access[key] };
-                  const newVal = JSON.stringify(newAccess);
-                  setForm({ ...form, FREE_PLAN_ACCESS: newVal });
-                  handleSaveBatch(['FREE_PLAN_ACCESS'], { FREE_PLAN_ACCESS: newVal });
-                };
-
-                const features = [
-                  { key: "enable_ppdb", title: "Modul PPDB Online", desc: "Izinkan penerimaan siswa baru online." },
-                  { key: "enable_finance", title: "Modul Keuangan (Tagihan)", desc: "Izinkan pencatatan tagihan dan integrasi SPP." },
-                  { key: "enable_whatsapp", title: "WhatsApp Gateway", desc: "Izinkan pengiriman pesan dan notifikasi otomatis." },
-                  { key: "enable_custom_domain", title: "Custom Domain", desc: "Izinkan pengaturan domain mandiri (.sch.id dll)." },
-                  { key: "enable_analytics", title: "Dashboard Analytics", desc: "Izinkan akses ke grafik analitik di halaman utama." },
-                  { key: "enable_parent_portal", title: "Portal Orang Tua", desc: "Izinkan akses portal mandiri bagi orang tua wali." }
-                ];
-
-                return features.map((f) => (
-                  <button
-                    key={f.key}
-                    onClick={() => toggleFeature(f.key)}
-                    className={cn(
-                      "flex w-full items-center justify-between rounded-xl border-2 p-4 transition-all duration-200 text-left",
-                      access[f.key] ? "border-primary bg-primary/5" : "border-transparent bg-muted/50 hover:bg-muted"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", access[f.key] ? "bg-primary/10" : "bg-muted")}>
-                        {access[f.key] ? <Eye className="h-5 w-5 text-primary" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">{f.title}</p>
-                        <p className="text-xs text-muted-foreground">{f.desc}</p>
-                      </div>
-                    </div>
-                    <div className={cn("h-2.5 w-2.5 rounded-full", access[f.key] ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
-                  </button>
-                ))
-              })()}
+            <CardContent>
+              <a href="/super-admin/features" className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+                <ArrowRight className="h-4 w-4" /> Buka Kendali Fitur
+              </a>
             </CardContent>
           </Card>
         </TabsContent>

@@ -12,7 +12,7 @@ import { TenantBrandingProvider } from "@/components/providers/tenant-branding-p
 import { MobileAppLayout } from "@/components/layout/mobile-app-layout"
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
 import { GtkAppLayout } from "@/components/layout/gtk-app-layout"
-import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
+import { usePlanAccess } from "@/hooks/use-free-plan-access"
 import { TenantCompletenessPopup } from "@/components/layout/tenant-completeness-popup"
 import { PresenceProvider } from "@/components/providers/presence-provider"
 import { ActivityTracker } from "@/components/providers/activity-tracker"
@@ -22,7 +22,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { access: freeAccess } = useFreePlanAccess()
+  const currentPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
+  const { access: planAccess } = usePlanAccess(currentPlan)
 
   // Determine if the user is a normal member (orangtua/siswa) instead of admin
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
@@ -78,9 +79,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             "/admin/my-messages"
           ]
           
-          if (freeAccess.enable_ppdb) allowedPaths.push("/admin/ppdb")
-          if (freeAccess.enable_finance) allowedPaths.push("/admin/finance", "/admin/canteen")
-          if (freeAccess.enable_analytics) allowedPaths.push("/admin/reports")
+          const pa = (planAccess as any)?._plan_access || {}
+          if (pa.ppdb) allowedPaths.push("/admin/ppdb")
+          if (pa.keuangan) allowedPaths.push("/admin/finance")
+          if (pa.e_kantin) allowedPaths.push("/admin/canteen")
+          if (pa.laporan) allowedPaths.push("/admin/reports")
+          if (pa.donasi) allowedPaths.push("/admin/donation")
+          if (pa.akademik) allowedPaths.push("/admin/schedules", "/admin/grades", "/admin/discipline")
+          if (pa.kehadiran) allowedPaths.push("/admin/attendance")
 
           const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(`${p}/`))
           
@@ -90,7 +96,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         }
       }
     }
-  }, [status, session, router, pathname, currentTenant, isAdminRole, freeAccess])
+  }, [status, session, router, pathname, currentTenant, isAdminRole, planAccess])
 
   if (status === "loading") {
     return (

@@ -82,13 +82,13 @@ interface MenuSection {
   items: MenuItem[]
 }
 
-import { useFreePlanAccess } from "@/hooks/use-free-plan-access"
+import { usePlanAccess } from "@/hooks/use-free-plan-access"
 
 // --- TENANT ADMIN MENU ---
 function getTenantMenu(basePath: string, plan: string = "free", access: Record<string, boolean>): MenuSection[] {
-  const isFree = plan === "free"
-  const isLite = plan === "lite"
-  const isPro = plan === "pro"
+  // Feature access dari database (diset oleh super admin)
+  const pa = (access as any)?._plan_access || {} as Record<string, boolean>
+  const has = (feature: string) => pa[feature] === true
 
   const menu: MenuSection[] = [
     {
@@ -150,7 +150,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
     {
       title: "Manajemen",
       items: [
-        ...(isFree ? [] : [
+        ...(has("ppdb") ? [
           {
             label: "PPDB Online",
             href: `${basePath}/ppdb`,
@@ -163,8 +163,8 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
               { label: "Tagihan & Bayar", href: `${basePath}/ppdb/tagihan`, icon: Wallet },
             ],
           },
-        ]),
-        ...(isPro ? [
+        ] : []),
+        ...(has("akademik") ? [
           {
             label: "Akademik",
             href: `${basePath}/schedules`,
@@ -176,7 +176,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             ],
           }
         ] : []),
-        ...(isPro ? [
+        ...(has("kehadiran") ? [
           {
             label: "Kehadiran",
             href: `${basePath}/attendance`,
@@ -189,7 +189,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             ],
           }
         ] : []),
-        ...(isPro ? [
+        ...(has("keuangan") ? [
           {
             label: "Keuangan & Kas",
             href: `${basePath}/finance`,
@@ -203,7 +203,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             ],
           },
         ] : []),
-        ...(isPro ? [
+        ...(has("e_kantin") ? [
           {
             label: "E-Kantin",
             href: `${basePath}/canteen`,
@@ -214,7 +214,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             ],
           },
         ] : []),
-        ...(isPro ? [
+        ...(has("donasi") ? [
           {
             label: "Donasi & Infaq",
             href: `${basePath}/donation/campaigns`,
@@ -285,66 +285,64 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
     },
   ]
 
-  if (isFree) {
-    // Sembunyikan menu Dashboard Utama untuk paket free
+  // Filter menu berdasarkan feature access dari database
+  // Dashboard hanya untuk plan yang punya dashboard_analytics
+  if (!has("dashboard_analytics")) {
     const dashboardSectionIndex = menu.findIndex(s => s.items.some(i => i.label === "Dashboard"));
     if (dashboardSectionIndex !== -1) {
       menu[dashboardSectionIndex].items = menu[dashboardSectionIndex].items.filter(i => i.label !== "Dashboard");
     }
-
-    menu.forEach(section => {
-      // Manajemen — menu items sudah difilter by plan di atas
-      // Filter tambahan khusus free plan (access toggles)
-      if (section.title === "Manajemen") {
-        section.items = section.items.filter(item => {
-          if (item.label === "PPDB Online") return access.enable_ppdb === true;
-          return true; // Data master dll tetap tampil
-        });
-      }
-      
-      // Laporan
-      if (section.title === "Laporan") {
-        section.items = section.items.filter(item => {
-          if (item.label === "Laporan Umum") return access.enable_analytics === true;
-          return true;
-        });
-      }
-      
-      // Aktivitas & Pesan
-      if (section.title === "Aktivitas & Pesan") {
-        section.items = section.items.filter(item => {
-          if (item.label === "Broadcast WA") return false; // Fitur PRO saja
-          if (item.label === "Log Antrean WA") return false; // Fitur PRO saja
-          return true;
-        });
-      }
-
-      // Konfigurasi
-      if (section.title === "Konfigurasi") {
-        section.items.forEach(item => {
-          if (item.label === "Pengaturan" && item.children) {
-            item.children = item.children.filter(child => {
-              if (child.label === "Custom Domain") return access.enable_custom_domain === true;
-              if (child.label === "WhatsApp Gateway") return access.enable_whatsapp === true;
-              if (child.label === "Payment Gateway") return access.enable_finance === true;
-              if (child.label === "Kecerdasan Buatan (AI)") return false; // Fitur PRO
-              if (child.label === "Email (SMTP)") return false; // Fitur PRO
-              return true;
-            });
-          }
-        });
-        section.items = section.items.filter(item => {
-          if (item.label === "Audit Log") return false; // Pro only
-          return true;
-        });
-      }
-    });
-
-    // Remove empty sections
-    return menu.filter(section => section.items && section.items.length > 0);
   }
 
-  return menu;
+  menu.forEach(section => {
+    // Data Master
+    if (section.title === "Manajemen") {
+      section.items = section.items.filter(item => {
+        if (item.label === "Data Master") return has("data_master");
+        return true;
+      });
+    }
+
+    // Laporan
+    if (section.title === "Laporan") {
+      section.items = section.items.filter(item => {
+        if (item.label === "Laporan Umum") return has("laporan");
+        return true;
+      });
+    }
+
+    // Aktivitas & Pesan
+    if (section.title === "Aktivitas & Pesan") {
+      section.items = section.items.filter(item => {
+        if (item.label === "Broadcast WA") return has("broadcast_wa");
+        if (item.label === "Log Antrean WA") return has("broadcast_wa");
+        return true;
+      });
+    }
+
+    // Konfigurasi
+    if (section.title === "Konfigurasi") {
+      section.items.forEach(item => {
+        if (item.label === "Pengaturan" && item.children) {
+          item.children = item.children.filter(child => {
+            if (child.label === "Custom Domain") return has("custom_domain");
+            if (child.label === "WhatsApp Gateway") return has("whatsapp_gateway");
+            if (child.label === "Payment Gateway") return has("payment_gateway");
+            if (child.label === "Kecerdasan Buatan (AI)") return has("ai_settings");
+            if (child.label === "Email (SMTP)") return has("email_smtp");
+            return true;
+          });
+        }
+      });
+      section.items = section.items.filter(item => {
+        if (item.label === "Audit Log") return has("audit_log");
+        return true;
+      });
+    }
+  });
+
+  // Remove empty sections
+  return menu.filter(section => section.items && section.items.length > 0);
 }
 
 // --- GTK MENU ---
@@ -536,6 +534,11 @@ function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
       title: "Sistem",
       items: [
         {
+          label: "Kendali Fitur",
+          href: "/super-admin/features",
+          icon: Shield,
+        },
+        {
           label: "Pengaturan",
           href: "/super-admin/settings",
           icon: Settings,
@@ -598,7 +601,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   const currentRole = currentTenant?.role || "orangtua"
   const currentPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
 
-  const { access: freeAccess } = useFreePlanAccess()
+  const { access: planAccess } = usePlanAccess(currentPlan)
 
   // Branding: pakai context (update instan) untuk nama & logo, fallback ke session
   const brandName = isSuperAdminPath ? "SchoolPro" : (branding.name || currentTenant?.name || "SchoolPro")
@@ -619,7 +622,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
     sections = getSuperAdminMenu(pendingPayments)
     homeHref = "/super-admin"
   } else if (isAdminRole) {
-    sections = getTenantMenu(basePath, currentPlan, freeAccess)
+    sections = getTenantMenu(basePath, currentPlan, planAccess as any)
   } else if (isGTK) {
     sections = getGTKMenu("/panel-gtk")
     homeHref = "/panel-gtk"
