@@ -355,6 +355,260 @@ export async function GET() {
       }))
     }
 
+    // ============================================
+    // SECTION 8: Revenue & Pendapatan
+    // ============================================
+    const allPaidPayments = await db.payment.findMany({
+      where: { status: "paid", deletedAt: null },
+      select: { amount: true, plan: true, paidAt: true, createdAt: true },
+    })
+
+    // Revenue per month (last 6 months)
+    const revenueTrendMap = new Map<string, number>()
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now)
+      d.setMonth(d.getMonth() - i)
+      const key = d.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })
+      revenueTrendMap.set(key, 0)
+    }
+    allPaidPayments.forEach(p => {
+      const d = p.paidAt || p.createdAt
+      const key = d.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })
+      if (revenueTrendMap.has(key)) {
+        revenueTrendMap.set(key, (revenueTrendMap.get(key) || 0) + p.amount)
+      }
+    })
+    const revenueTrend = [...revenueTrendMap.entries()].map(([month, amount]) => ({ month, amount }))
+
+    // Revenue per plan
+    const revenuePerPlanMap = new Map<string, number>()
+    allPaidPayments.forEach(p => {
+      const plan = (p.plan || 'unknown').toUpperCase()
+      revenuePerPlanMap.set(plan, (revenuePerPlanMap.get(plan) || 0) + p.amount)
+    })
+    const revenuePerPlan = [...revenuePerPlanMap.entries()]
+      .map(([name, amount]) => ({ name, amount }))
+      .sort((a, b) => b.amount - a.amount)
+
+    // Total revenue & this month revenue
+    const totalRevenue = allPaidPayments.reduce((sum, p) => sum + p.amount, 0)
+    const thisMonthRevenue = allPaidPayments
+      .filter(p => (p.paidAt || p.createdAt) >= startOfMonth)
+      .reduce((sum, p) => sum + p.amount, 0)
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const lastMonthRevenue = allPaidPayments
+      .filter(p => {
+        const d = p.paidAt || p.createdAt
+        return d >= lastMonthStart && d < startOfMonth
+      })
+      .reduce((sum, p) => sum + p.amount, 0)
+
+    // ARPU (Average Revenue Per User = total revenue / paying tenants)
+    const payingTenants = await db.payment.groupBy({
+      by: ['tenantId'],
+      where: { status: "paid", deletedAt: null },
+    })
+    const arpu = payingTenants.length > 0 ? Math.round(totalRevenue / payingTenants.length) : 0
+
+    // ============================================
+    // SECTION 9: Conversion Funnel
+    // ============================================
+    const [
+      totalApplications,
+      approvedApplications,
+      rejectedApplications,
+      pendingApplications,
+    ] = await Promise.all([
+      db.tenantApplication.count(),
+      db.tenantApplication.count({ where: { status: "APPROVED" } }),
+      db.tenantApplication.count({ where: { status: "REJECTED" } }),
+      db.tenantApplication.count({ where: { status: "PENDING" } }),
+    ])
+
+    const [freeTenants, liteTenants, proTenants] = await Promise.all([
+      db.tenant.count({ where: { plan: "free" } }),
+      db.tenant.count({ where: { plan: "lite" } }),
+      db.tenant.count({ where: { plan: "pro" } }),
+    ])
+
+    // Upgrade rate: paid tenants / total tenants
+    const paidTenantCount = liteTenants + proTenants
+    const upgradeRate = totalTenants > 0 ? ((paidTenantCount / totalTenants) * 100) : 0
+
+    // ============================================
+    // SECTION 10: Retention & Churn
+    // ============================================
+    const thirtyDaysAgoDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    const sixtyDaysAgoDate = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
+    const ninetyDaysAgoDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+
+    const [
+      activeRecently,
+      inactive30Days,
+      inactive60Days,
+      inactive90Days,
+      retentionActive,
+      retentionAtRisk,
+      retentionChurned,
+    ] = await Promise.all([
+      db.tenant.count({ where: { isActive: true, lastActiveAt: { gte: thirtyDaysAgoDate } } }),
+      db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: thirtyDaysAgoDate, gte: sixtyDaysAgoDate } } }),
+      db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: sixtyDaysAgoDate, gte: ninetyDaysAgoDate } } }),
+      db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: ninetyDaysAgoDate } } }),
+      db.tenant.count({ where: { retentionStatus: "ACTIVE" } }),
+      db.tenant.count({ where: { retentionStatus: "AT_RISK" } }),
+      db.tenant.count({ where: { retentionStatus: "CHURNED" } }),
+    ])
+
+    // Expired subscriptions not renewed
+    const expiredNotRenewed = await db.subscription.count({
+      where: {
+        status: "EXPIRED",
+        endDate: { lt: now },
+      },
+    })
+
+    // ============================================
+    // SECTION 11: Affiliate Performance
+    // ============================================
+    const [
+      totalAffiliates,
+      activeAffiliates,
+      totalAffiliateClicks,
+      totalCommissionsPaid,
+      pendingCommissions,
+    ] = await Promise.all([
+      db.affiliateProfile.count(),
+      db.affiliateProfile.count({ where: { isActive: true } }),
+      db.affiliateProfile.aggregate({ _sum: { clicks: true } }),
+      db.affiliateCommission.aggregate({
+        where: { status: "PAID" },
+        _sum: { amount: true },
+      }),
+      db.affiliateCommission.aggregate({
+        where: { status: "PENDING" },
+        _sum: { amount: true },
+      }),
+    ])
+
+    // Top 5 affiliates by earnings
+    const topAffiliates = await db.affiliateProfile.findMany({
+      where: { isActive: true, totalEarnings: { gt: 0 } },
+      select: {
+        id: true,
+        referralCode: true,
+        totalEarnings: true,
+        clicks: true,
+        user: { select: { name: true } },
+        _count: { select: { tenantApplications: true } },
+      },
+      orderBy: { totalEarnings: 'desc' },
+      take: 5,
+    })
+
+    // Affiliate conversion rate (applications from affiliates / total affiliate clicks)
+    const affiliateApplications = await db.tenantApplication.count({
+      where: { affiliateId: { not: null } },
+    })
+
+    // ============================================
+    // SECTION 12: Feature Adoption
+    // ============================================
+    const [
+      tenantsWithPpdb,
+      tenantsWithWaGateway,
+      tenantsWithDonasi,
+      tenantsWithCanteen,
+      tenantsWithCustomDomain,
+      tenantsWithAi,
+    ] = await Promise.all([
+      db.periodePpdb.groupBy({ by: ['tenantId'] }).then(r => r.length),
+      db.waSession.count({ where: { status: "CONNECTED" } }),
+      db.donationCampaign.groupBy({ by: ['tenantId'] }).then(r => r.length),
+      db.canteenMerchant.groupBy({ by: ['tenantId'] }).then(r => r.length),
+      db.tenant.count({ where: { domain: { not: null } } }),
+      db.tenant.count({ where: { OR: [{ useCustomApiKey: true }, { aiTokens: { gt: 0 } }] } }),
+    ])
+
+    const featureAdoption = [
+      { feature: "PPDB Online", count: tenantsWithPpdb, icon: "ppdb" },
+      { feature: "WhatsApp Gateway", count: tenantsWithWaGateway, icon: "wa" },
+      { feature: "Donasi & Infaq", count: tenantsWithDonasi, icon: "donasi" },
+      { feature: "E-Kantin", count: tenantsWithCanteen, icon: "kantin" },
+      { feature: "Custom Domain", count: tenantsWithCustomDomain, icon: "domain" },
+      { feature: "AI / Kecerdasan Buatan", count: tenantsWithAi, icon: "ai" },
+    ].sort((a, b) => b.count - a.count)
+
+    // ============================================
+    // SECTION 13: Geographic Distribution
+    // ============================================
+    const provinceGroups = await db.tenantApplication.groupBy({
+      by: ['province'],
+      where: { province: { not: null } },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+    })
+    const geoDistribution = provinceGroups
+      .filter(g => g.province)
+      .map(g => ({ name: g.province!, value: g._count.id }))
+      .slice(0, 15)
+
+    const regencyGroups = await db.tenantApplication.groupBy({
+      by: ['regency'],
+      where: { regency: { not: null } },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: 10,
+    })
+    const topRegencies = regencyGroups
+      .filter(g => g.regency)
+      .map(g => ({ name: g.regency!, value: g._count.id }))
+
+    // ============================================
+    // SECTION 14: Engagement Score
+    // ============================================
+    const tenantScores = await db.tenantScore.findMany({
+      select: {
+        totalScore: true,
+        contentScore: true,
+        trafficScore: true,
+        activityScore: true,
+        tenant: { select: { plan: true } },
+      },
+    })
+
+    // Average score per plan
+    const scoreByPlan = new Map<string, { sum: number; count: number }>()
+    tenantScores.forEach(ts => {
+      const plan = ts.tenant.plan.toUpperCase()
+      const existing = scoreByPlan.get(plan) || { sum: 0, count: 0 }
+      existing.sum += ts.totalScore
+      existing.count++
+      scoreByPlan.set(plan, existing)
+    })
+    const avgScorePerPlan = [...scoreByPlan.entries()].map(([plan, data]) => ({
+      plan,
+      avgScore: data.count > 0 ? Math.round(data.sum / data.count) : 0,
+      count: data.count,
+    }))
+
+    // Score distribution brackets
+    const scoreBrackets = [
+      { label: "0-20 (Rendah)", min: 0, max: 20, count: 0 },
+      { label: "21-40", min: 21, max: 40, count: 0 },
+      { label: "41-60", min: 41, max: 60, count: 0 },
+      { label: "61-80", min: 61, max: 80, count: 0 },
+      { label: "81-100 (Tinggi)", min: 81, max: 100, count: 0 },
+    ]
+    tenantScores.forEach(ts => {
+      const bracket = scoreBrackets.find(b => ts.totalScore >= b.min && ts.totalScore <= b.max)
+      if (bracket) bracket.count++
+    })
+
+    const avgTotalScore = tenantScores.length > 0
+      ? Math.round(tenantScores.reduce((sum, ts) => sum + ts.totalScore, 0) / tenantScores.length)
+      : 0
+
     return NextResponse.json({
       // Section 1
       onlineUsers: onlineUserIds.length,
@@ -424,6 +678,82 @@ export async function GET() {
         browsers: visitorBrowsers,
         trend7Days: visitorTrend7Days,
         topTrafficTenants,
+      },
+
+      // Section 8: Revenue
+      revenueStats: {
+        totalRevenue,
+        thisMonthRevenue,
+        lastMonthRevenue,
+        revenueGrowth: lastMonthRevenue > 0 ? (((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100) : 0,
+        arpu,
+        revenueTrend,
+        revenuePerPlan,
+        payingTenantCount: payingTenants.length,
+      },
+
+      // Section 9: Conversion Funnel
+      conversionFunnel: {
+        totalApplications,
+        approvedApplications,
+        rejectedApplications,
+        pendingApplications,
+        approvalRate: totalApplications > 0 ? ((approvedApplications / totalApplications) * 100) : 0,
+        freeTenants,
+        liteTenants,
+        proTenants,
+        upgradeRate: Math.round(upgradeRate * 10) / 10,
+      },
+
+      // Section 10: Retention
+      retentionStats: {
+        activeRecently,
+        inactive30Days,
+        inactive60Days,
+        inactive90Days,
+        retentionActive,
+        retentionAtRisk,
+        retentionChurned,
+        expiredNotRenewed,
+        churnRate: totalTenants > 0 ? Math.round(((inactive60Days + inactive90Days) / totalTenants) * 1000) / 10 : 0,
+      },
+
+      // Section 11: Affiliate
+      affiliateStats: {
+        totalAffiliates,
+        activeAffiliates,
+        totalClicks: totalAffiliateClicks._sum.clicks || 0,
+        totalCommissionsPaid: totalCommissionsPaid._sum.amount || 0,
+        pendingCommissions: pendingCommissions._sum.amount || 0,
+        affiliateApplications,
+        conversionRate: (totalAffiliateClicks._sum.clicks || 0) > 0
+          ? Math.round((affiliateApplications / (totalAffiliateClicks._sum.clicks || 1)) * 1000) / 10
+          : 0,
+        topAffiliates: topAffiliates.map(a => ({
+          name: a.user.name || a.referralCode,
+          code: a.referralCode,
+          earnings: a.totalEarnings,
+          clicks: a.clicks,
+          referrals: a._count.tenantApplications,
+        })),
+      },
+
+      // Section 12: Feature Adoption
+      featureAdoption,
+
+      // Section 13: Geographic
+      geoStats: {
+        provinces: geoDistribution,
+        topRegencies,
+        totalProvinces: geoDistribution.length,
+      },
+
+      // Section 14: Engagement
+      engagementStats: {
+        avgTotalScore,
+        avgScorePerPlan,
+        scoreBrackets: scoreBrackets.map(b => ({ name: b.label, value: b.count })),
+        totalScored: tenantScores.length,
       },
     })
   } catch (error: any) {
