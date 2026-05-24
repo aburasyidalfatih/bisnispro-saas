@@ -163,8 +163,24 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     fetch("/api/super-admin/analytics")
-      .then(res => res.json())
-      .then(setData)
+      .then(res => {
+        if (!res.ok) throw new Error("API error")
+        return res.json()
+      })
+      .then(d => {
+        // Safe defaults for new sections that may not exist yet
+        const defaults = {
+          visitorStats: { totalPageViews: 0, uniqueVisitors: 0, todayPageViews: 0, todayUniqueVisitors: 0, sources: [], mediums: [], topPages: [], devices: [], browsers: [], trend7Days: [], topTrafficTenants: [] },
+          revenueStats: { totalRevenue: 0, thisMonthRevenue: 0, lastMonthRevenue: 0, revenueGrowth: 0, arpu: 0, revenueTrend: [], revenuePerPlan: [], payingTenantCount: 0 },
+          conversionFunnel: { totalApplications: 0, approvedApplications: 0, rejectedApplications: 0, pendingApplications: 0, approvalRate: 0, freeTenants: 0, liteTenants: 0, proTenants: 0, upgradeRate: 0 },
+          retentionStats: { activeRecently: 0, inactive30Days: 0, inactive60Days: 0, inactive90Days: 0, retentionActive: 0, retentionAtRisk: 0, retentionChurned: 0, expiredNotRenewed: 0, churnRate: 0 },
+          affiliateStats: { totalAffiliates: 0, activeAffiliates: 0, totalClicks: 0, totalCommissionsPaid: 0, pendingCommissions: 0, affiliateApplications: 0, conversionRate: 0, topAffiliates: [] },
+          featureAdoption: [],
+          geoStats: { provinces: [], topRegencies: [], totalProvinces: 0 },
+          engagementStats: { avgTotalScore: 0, avgScorePerPlan: [], scoreBrackets: [], totalScored: 0 },
+        }
+        setData({ ...defaults, ...d })
+      })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])

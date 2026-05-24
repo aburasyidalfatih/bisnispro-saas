@@ -260,20 +260,25 @@ export async function GET() {
     // ============================================
     // SECTION 7: Visitor Tracking (All Tenants)
     // ============================================
-    const pageViews30Days = await db.pageView.findMany({
-      where: { createdAt: { gte: thirtyDaysAgo } },
-      select: {
-        path: true,
-        source: true,
-        medium: true,
-        device: true,
-        browser: true,
-        ipHash: true,
-        sessionId: true,
-        tenantId: true,
-        createdAt: true,
-      },
-    })
+    let pageViews30Days: { path: string; source: string | null; medium: string | null; device: string | null; browser: string | null; ipHash: string | null; sessionId: string | null; tenantId: string; createdAt: Date }[] = []
+    try {
+      pageViews30Days = await db.pageView.findMany({
+        where: { createdAt: { gte: thirtyDaysAgo } },
+        select: {
+          path: true,
+          source: true,
+          medium: true,
+          device: true,
+          browser: true,
+          ipHash: true,
+          sessionId: true,
+          tenantId: true,
+          createdAt: true,
+        },
+      })
+    } catch (e) {
+      console.warn("PageView table may not exist yet:", (e as any)?.message)
+    }
 
     const totalPageViews = pageViews30Days.length
     const uniqueVisitors = new Set(pageViews30Days.map(pv => pv.sessionId || pv.ipHash)).size
