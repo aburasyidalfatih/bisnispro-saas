@@ -109,7 +109,11 @@ export default function BillingPage() {
         setFreePlan(plansData.find((p) => p.slug === "free") || null)
         
         // Ensure default selected plan is valid
-        if (billingData?.plan !== "pro") {
+        if (billingData?.plan === "lite") {
+          // Lite tenant: default perpanjang Lite
+          setSelectedPlanSlug("lite")
+        } else if (billingData?.plan !== "pro") {
+          // Free tenant: default ke Pro, fallback ke Lite
           if (proData) {
             setSelectedPlanSlug("pro")
           } else if (liteData) {
@@ -129,6 +133,8 @@ export default function BillingPage() {
 
   const pricing = billing?.pricing || { PRICE_PER_STUDENT: 30000, MIN_STUDENTS: 50 }
   const isPro = billing?.plan === "pro"
+  const isLite = billing?.plan === "lite"
+  const isPaid = isPro || isLite // tenant sudah berbayar
   const minStudents = isPro ? 1 : pricing.MIN_STUDENTS
 
   // Harga efektif: PRO aktif → harga kontrak (locked), lainnya → harga terbaru
@@ -248,14 +254,16 @@ export default function BillingPage() {
           "lg:col-span-1 border-0 shadow-xl overflow-hidden flex flex-col relative",
           isPro 
             ? "bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-900 text-white border border-emerald-500/30" 
+            : isLite
+            ? "bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 text-white border border-blue-500/30"
             : "glass border border-white/20"
         )}>
-          {/* Subtle overlay pattern for PRO */}
-          {isPro && (
+          {/* Subtle overlay pattern for paid plans */}
+          {isPaid && (
             <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay pointer-events-none" />
           )}
 
-          <div className={cn("h-1.5 w-full relative z-10", isPro ? "bg-gradient-to-r from-yellow-300 to-yellow-500" : "bg-slate-300")} />
+          <div className={cn("h-1.5 w-full relative z-10", isPro ? "bg-gradient-to-r from-yellow-300 to-yellow-500" : isLite ? "bg-gradient-to-r from-blue-300 to-indigo-400" : "bg-slate-300")} />
           
           <CardHeader className="relative z-10 pb-4">
             <CardTitle className="text-base flex items-center gap-2.5">
@@ -263,14 +271,18 @@ export default function BillingPage() {
                 <div className="h-9 w-9 rounded-xl bg-yellow-400/20 flex items-center justify-center border border-yellow-400/30 shadow-[0_0_15px_rgba(250,204,21,0.2)]">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                 </div>
+              ) : isLite ? (
+                <div className="h-9 w-9 rounded-xl bg-blue-400/20 flex items-center justify-center border border-blue-400/30 shadow-[0_0_15px_rgba(96,165,250,0.2)]">
+                  <ShieldCheck className="h-5 w-5 text-blue-300" />
+                </div>
               ) : (
                 <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
                   <Zap className="h-5 w-5 text-primary" />
                 </div>
               )}
-              <span className={cn("font-bold tracking-wide", isPro && "text-white")}>Paket Saat Ini</span>
+              <span className={cn("font-bold tracking-wide", isPaid && "text-white")}>Paket Saat Ini</span>
             </CardTitle>
-            <CardDescription className={cn("mt-1", isPro ? "text-emerald-100/70" : "text-muted-foreground")}>
+            <CardDescription className={cn("mt-1", isPro ? "text-emerald-100/70" : isLite ? "text-blue-100/70" : "text-muted-foreground")}>
               Status akun sekolah Anda
             </CardDescription>
           </CardHeader>
@@ -281,6 +293,8 @@ export default function BillingPage() {
                 "text-5xl font-black uppercase tracking-widest drop-shadow-sm",
                 isPro 
                   ? "bg-gradient-to-b from-white via-emerald-50 to-emerald-200/80 bg-clip-text text-transparent" 
+                  : isLite
+                  ? "bg-gradient-to-b from-white via-blue-50 to-blue-200/80 bg-clip-text text-transparent"
                   : "text-foreground"
               )}>
                 {billing?.plan?.toUpperCase() || "FREE"}
@@ -295,21 +309,28 @@ export default function BillingPage() {
                   </span>
                 </div>
               )}
+              {isLite && (
+                <div className="flex flex-col border-l border-blue-500/30 pl-4 py-1">
+                  <span className="text-[10px] font-bold text-blue-300/80 uppercase tracking-widest mb-0.5">Tipe</span>
+                  <span className="text-sm font-bold text-white">Biaya Tetap</span>
+                  <span className="text-[10px] text-blue-200/70">Per Tahun</span>
+                </div>
+              )}
             </div>
 
             {currentPlanFeatures.length > 0 && (
-              <div className={cn("pt-4 border-t space-y-3", isPro ? "border-emerald-500/30" : "border-border/40")}>
+              <div className={cn("pt-4 border-t space-y-3", isPro ? "border-emerald-500/30" : isLite ? "border-blue-500/30" : "border-border/40")}>
                 <p className={cn(
                   "text-[10px] font-bold uppercase tracking-wider",
-                  isPro ? "text-emerald-300/80" : "text-muted-foreground"
+                  isPro ? "text-emerald-300/80" : isLite ? "text-blue-300/80" : "text-muted-foreground"
                 )}>
                   Fitur Paket
                 </p>
                 <ul className="space-y-2.5">
                   {currentPlanFeatures.map((feat, i) => (
-                    <li key={i} className={cn("flex items-center gap-3 text-sm font-medium", isPro ? "text-emerald-50" : "text-foreground")}>
-                      <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", isPro ? "bg-yellow-400/20 border border-yellow-400/30" : "bg-emerald-100")}>
-                        <CheckCircle2 className={cn("h-3.5 w-3.5", isPro ? "text-yellow-400" : "text-emerald-600")} />
+                    <li key={i} className={cn("flex items-center gap-3 text-sm font-medium", isPro ? "text-emerald-50" : isLite ? "text-blue-50" : "text-foreground")}>
+                      <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0", isPro ? "bg-yellow-400/20 border border-yellow-400/30" : isLite ? "bg-blue-400/20 border border-blue-400/30" : "bg-emerald-100")}>
+                        <CheckCircle2 className={cn("h-3.5 w-3.5", isPro ? "text-yellow-400" : isLite ? "text-blue-300" : "text-emerald-600")} />
                       </div>
                       <span>{feat}</span>
                     </li>
@@ -318,7 +339,7 @@ export default function BillingPage() {
               </div>
             )}
             
-            {!isPro && currentPlanFeatures.length === 0 && (
+            {!isPaid && currentPlanFeatures.length === 0 && (
               <div className="pt-3 border-t border-border/40">
                 <p className="text-xs text-muted-foreground flex items-start gap-2">
                   <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
@@ -328,22 +349,25 @@ export default function BillingPage() {
             )}
 
             <div className="mt-auto pt-4">
-              {isPro ? (
-                 <div className="flex items-center justify-between bg-emerald-950/40 border border-emerald-500/20 rounded-xl px-4 py-3.5 backdrop-blur-sm">
+              {isPaid ? (
+                 <div className={cn(
+                   "flex items-center justify-between rounded-xl px-4 py-3.5 backdrop-blur-sm",
+                   isPro ? "bg-emerald-950/40 border border-emerald-500/20" : "bg-blue-950/40 border border-blue-500/20"
+                 )}>
                    <div className="flex flex-col">
-                     <span className="text-[10px] text-emerald-300/80 font-bold uppercase tracking-widest mb-1">Status</span>
+                     <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", isPro ? "text-emerald-300/80" : "text-blue-300/80")}>Status</span>
                      <span className="text-sm font-bold text-white flex items-center gap-2">
                        <div className="relative flex h-2.5 w-2.5">
-                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                         <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                         <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", isPro ? "bg-emerald-400" : "bg-blue-400")}></span>
+                         <span className={cn("relative inline-flex rounded-full h-2.5 w-2.5", isPro ? "bg-emerald-500" : "bg-blue-500")}></span>
                        </div>
                        Aktif
                      </span>
                    </div>
                    <div className="flex flex-col text-right">
-                     <span className="text-[10px] text-emerald-300/80 font-bold uppercase tracking-widest mb-1">Berlaku Hingga</span>
-                     <span className="text-sm font-bold text-emerald-50">
-                       {billing?.expiresAt ? new Date(billing.expiresAt).toLocaleDateString("id-ID", { month: "short", year: "numeric", day: "numeric" }) : "Selamanya"}
+                     <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", isPro ? "text-emerald-300/80" : "text-blue-300/80")}>Berlaku Hingga</span>
+                     <span className={cn("text-sm font-bold", isPro ? "text-emerald-50" : "text-blue-50")}>
+                       {billing?.expiresAt ? new Date(billing.expiresAt).toLocaleDateString("id-ID", { month: "long", year: "numeric", day: "numeric" }) : "Selamanya"}
                      </span>
                    </div>
                  </div>
@@ -366,10 +390,14 @@ export default function BillingPage() {
                 <ShieldCheck className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <CardTitle>{isPro ? "Tambah Kuota Siswa" : "Upgrade Paket Anda"}</CardTitle>
+                <CardTitle>
+                  {isPro ? "Tambah Kuota Siswa" : isLite ? "Perpanjang atau Upgrade" : "Upgrade Paket Anda"}
+                </CardTitle>
                 <CardDescription>
                   {isPro 
                     ? `Biaya penambahan kuota akan disesuaikan (Pro-rata) dengan sisa masa aktif langganan Anda (${daysRemaining} hari).` 
+                    : isLite
+                    ? "Perpanjang paket Lite atau upgrade ke Pro untuk fitur lebih lengkap."
                     : "Pilih paket yang sesuai dengan kebutuhan sekolah Anda"}
                 </CardDescription>
               </div>
@@ -394,9 +422,18 @@ export default function BillingPage() {
                 
                 {!isPro && (
                   <div className="space-y-2">
-                    <Label className="text-sm font-semibold">Pilih Paket</Label>
+                    <Label className="text-sm font-semibold">{isLite ? "Pilih Aksi" : "Pilih Paket"}</Label>
                     <div className="flex gap-2">
-                      {litePlan && (
+                      {isLite && litePlan && (
+                        <Button 
+                          variant={selectedPlanSlug === "lite" ? "default" : "outline"} 
+                          onClick={() => setSelectedPlanSlug("lite")}
+                          className="flex-1"
+                        >
+                          Perpanjang Lite
+                        </Button>
+                      )}
+                      {!isLite && litePlan && (
                         <Button 
                           variant={selectedPlanSlug === "lite" ? "default" : "outline"} 
                           onClick={() => setSelectedPlanSlug("lite")}
@@ -411,7 +448,7 @@ export default function BillingPage() {
                           onClick={() => setSelectedPlanSlug("pro")}
                           className="flex-1"
                         >
-                          PRO
+                          {isLite ? "Upgrade ke Pro" : "PRO"}
                         </Button>
                       )}
                     </div>
@@ -547,7 +584,15 @@ export default function BillingPage() {
               disabled={checkingOut || (selectedPlanSlug === "pro" && studentCount < minStudents) || billing?.hasPendingInvoice}
               onClick={handleCheckout}
             >
-              {checkingOut ? "Membuat Invoice..." : (isPro ? "Buat Tagihan Penambahan Kuota" : "Upgrade Sekarang")}
+              {checkingOut 
+                ? "Membuat Invoice..." 
+                : isPro 
+                ? "Buat Tagihan Penambahan Kuota" 
+                : isLite && selectedPlanSlug === "lite"
+                ? "Perpanjang Sekarang"
+                : isLite && selectedPlanSlug === "pro"
+                ? "Upgrade ke Pro Sekarang"
+                : "Upgrade Sekarang"}
               <ArrowRight className="h-5 w-5" />
             </Button>
             </>
