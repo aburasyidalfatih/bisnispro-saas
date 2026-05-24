@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 
 export async function GET() {
-  const session = await getServerSession(authOptions)
-  if (!session || session.user?.role !== "SUPER_ADMIN") {
+  const session = await auth()
+  if (!session?.user?.isSuperAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -256,8 +255,8 @@ export async function GET() {
 
 // POST: Save ad budget
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions)
-  if (!session || session.user?.role !== "SUPER_ADMIN") {
+  const session = await auth()
+  if (!session?.user?.isSuperAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
