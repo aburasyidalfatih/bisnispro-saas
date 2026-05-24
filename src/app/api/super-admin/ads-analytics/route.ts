@@ -17,20 +17,36 @@ export async function GET() {
     // ============================================
     // 1. Total Applications by UTM Source
     // ============================================
-    const allApplications = await db.tenantApplication.findMany({
-      select: {
-        id: true,
-        schoolName: true,
-        status: true,
-        utmSource: true,
-        utmMedium: true,
-        utmCampaign: true,
-        utmContent: true,
-        createdAt: true,
-        affiliateId: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    })
+    let allApplications: { id: string; schoolName: string; status: string; utmSource: string | null; utmMedium: string | null; utmCampaign: string | null; utmContent: string | null; createdAt: Date; affiliateId: string | null }[] = []
+    try {
+      allApplications = await db.tenantApplication.findMany({
+        select: {
+          id: true,
+          schoolName: true,
+          status: true,
+          utmSource: true,
+          utmMedium: true,
+          utmCampaign: true,
+          utmContent: true,
+          createdAt: true,
+          affiliateId: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      })
+    } catch {
+      // UTM columns might not exist yet — fallback without UTM fields
+      const fallback = await db.tenantApplication.findMany({
+        select: {
+          id: true,
+          schoolName: true,
+          status: true,
+          createdAt: true,
+          affiliateId: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      })
+      allApplications = fallback.map(a => ({ ...a, utmSource: null, utmMedium: null, utmCampaign: null, utmContent: null }))
+    }
 
     // Applications with UTM tracking
     const trackedApplications = allApplications.filter(a => a.utmSource)
