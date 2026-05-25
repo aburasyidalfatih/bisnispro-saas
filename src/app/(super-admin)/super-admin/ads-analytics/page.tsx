@@ -196,10 +196,10 @@ export default function AdsAnalyticsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Megaphone className="h-6 w-6 text-blue-500" /> Analisa Meta Ads
+        <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+          <Megaphone className="h-5 sm:h-6 w-5 sm:w-6 text-blue-500" /> Analisa Meta Ads
         </h1>
-        <p className="text-muted-foreground text-sm mt-1">Kelola dan analisa kampanye iklan Facebook & Instagram langsung dari SchoolPro.</p>
+        <p className="text-muted-foreground text-xs sm:text-sm mt-1">Kelola dan analisa kampanye iklan Facebook & Instagram langsung dari SchoolPro.</p>
       </div>
 
       {/* ======== CONNECTION ======== */}
@@ -273,16 +273,16 @@ export default function AdsAnalyticsPage() {
       {metaConn?.connected && (
         <>
           {/* Date Filter */}
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex gap-1.5 flex-wrap">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
               {DATE_PRESETS.map(p => (
                 <button key={p.value} onClick={() => setDatePreset(p.value)}
-                  className={cn("px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+                  className={cn("px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap shrink-0",
                     datePreset === p.value ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted/50 text-muted-foreground hover:bg-muted"
                   )}>{p.label}</button>
               ))}
             </div>
-            <Button variant="outline" size="sm" onClick={() => fetchCampaigns(datePreset)} disabled={metaLoading} className="rounded-xl h-8">
+            <Button variant="outline" size="sm" onClick={() => fetchCampaigns(datePreset)} disabled={metaLoading} className="rounded-xl h-8 shrink-0">
               <RefreshCcw className={cn("h-3.5 w-3.5 mr-1.5", metaLoading && "animate-spin")} /> Refresh
             </Button>
           </div>
@@ -295,7 +295,7 @@ export default function AdsAnalyticsPage() {
           ) : metaData ? (
             <>
               {/* ======== SUMMARY CARDS ======== */}
-              <div className="grid gap-3 grid-cols-2 md:grid-cols-4 xl:grid-cols-8">
+              <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 xl:grid-cols-8">
                 <StatCard label="Spend" value={fmtRp(metaData.summary.totalSpend)} icon={DollarSign} color="rose" />
                 <StatCard label="Impressions" value={fmtNum(metaData.summary.totalImpressions)} icon={Eye} color="blue" />
                 <StatCard label="Reach" value={fmtNum(metaData.summary.totalReach)} icon={Users} color="violet" />
@@ -390,8 +390,10 @@ export default function AdsAnalyticsPage() {
                     {metaData.campaigns.length === 0 ? (
                       <p className="text-sm text-muted-foreground italic text-center py-8">Tidak ada kampanye.</p>
                     ) : (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-xs">
+                      <>
+                        {/* Desktop table */}
+                        <div className="hidden md:block overflow-x-auto">
+                          <table className="w-full text-xs">
                           <thead>
                             <tr className="border-b bg-muted/30">
                               <th className="px-2 py-2 text-left font-bold text-muted-foreground uppercase">Kampanye</th>
@@ -466,6 +468,46 @@ export default function AdsAnalyticsPage() {
                           </tbody>
                         </table>
                       </div>
+
+                      {/* Mobile campaign cards */}
+                      <div className="md:hidden divide-y divide-border/40">
+                        {metaData.campaigns.map(c => (
+                          <div key={c.id} className="p-4 space-y-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="text-sm font-bold truncate">{c.name}</p>
+                                <p className="text-[9px] text-muted-foreground capitalize">{c.objective?.replace(/_/g, ' ').toLowerCase()}</p>
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <Badge variant="outline" className={cn("text-[9px]",
+                                  c.status === 'ACTIVE' && 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                                  c.status === 'PAUSED' && 'bg-amber-50 text-amber-600 border-amber-200',
+                                  !['ACTIVE','PAUSED'].includes(c.status) && 'bg-gray-50 text-gray-500 border-gray-200',
+                                )}>{c.status === 'ACTIVE' ? 'Aktif' : c.status === 'PAUSED' ? 'Jeda' : c.status}</Badge>
+                                {(c.status === 'ACTIVE' || c.status === 'PAUSED') && (
+                                  <Button size="sm" variant="ghost" className="h-7 w-7 p-0 rounded-lg"
+                                    onClick={() => handleAction(c.id, c.status === 'ACTIVE' ? 'pause' : 'resume', c.name)}
+                                    disabled={actionLoading === c.id}>
+                                    {actionLoading === c.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> :
+                                      c.status === 'ACTIVE' ? <Pause className="h-3.5 w-3.5 text-amber-500" /> : <Play className="h-3.5 w-3.5 text-emerald-500" />}
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 text-xs">
+                              <div><span className="text-muted-foreground block text-[9px]">Spend</span><span className="font-bold text-rose-600">{c.spend > 0 ? fmtRp(c.spend) : '-'}</span></div>
+                              <div><span className="text-muted-foreground block text-[9px]">Clicks</span><span className="font-bold">{c.clicks > 0 ? fmtNum(c.clicks) : '-'}</span></div>
+                              <div><span className="text-muted-foreground block text-[9px]">CTR</span><span className="font-bold">{c.ctr > 0 ? `${c.ctr.toFixed(2)}%` : '-'}</span></div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 text-xs">
+                              <div><span className="text-muted-foreground block text-[9px]">CPC</span><span>{c.cpc > 0 ? fmtRp(c.cpc) : '-'}</span></div>
+                              <div><span className="text-muted-foreground block text-[9px]">Leads</span><span className="font-bold text-emerald-600">{c.leads > 0 ? c.leads : '-'}</span></div>
+                              <div><span className="text-muted-foreground block text-[9px]">Budget</span><span>{c.dailyBudget > 0 ? fmtRp(c.dailyBudget) : '-'}</span></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
                     )}
                   </CardContent>
                 )}

@@ -62,7 +62,7 @@ export function TenantLeaderboard() {
             {data.map((tenant, index) => {
               const city = tenant.address ? tenant.address.split(",").pop()?.trim() : "Indonesia"
               return (
-                <div key={tenant.id} className="flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors">
+                <div key={tenant.id} className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 hover:bg-muted/30 transition-colors">
                   <div className="flex-shrink-0 w-6 text-center font-bold text-lg">
                     {index === 0 && <span className="text-yellow-500">🥇</span>}
                     {index === 1 && <span className="text-slate-400">🥈</span>}
@@ -70,7 +70,7 @@ export function TenantLeaderboard() {
                     {index > 2 && <span className="text-muted-foreground text-sm">{index + 1}</span>}
                   </div>
                   
-                  <a href={`/site/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="relative shrink-0 transition-transform hover:scale-105 hover:shadow-md rounded-full h-10 w-10">
+                  <a href={`/site/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="relative shrink-0 transition-transform hover:scale-105 hover:shadow-md rounded-full h-8 w-8 sm:h-10 sm:w-10">
                     {tenant.logo ? (
                       <>
                         <Image 

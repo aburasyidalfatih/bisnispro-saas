@@ -227,8 +227,8 @@ export default function AnalyticsPage() {
     <div className="space-y-8 pb-12">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Analitik Platform</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Analitik Platform</h1>
+        <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
           Pantau aktivitas real-time, konten, dan pertumbuhan seluruh tenant di platform.
         </p>
       </div>
@@ -236,7 +236,7 @@ export default function AnalyticsPage() {
       {/* ========================= */}
       {/* SECTION 1: LIVE SUMMARY  */}
       {/* ========================= */}
-      <div className="grid gap-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-7">
         <SummaryCard icon={Wifi} label="Online Saat Ini" value={data.onlineUsers} color="emerald" pulse />
         <SummaryCard icon={UserCheck} label="Guru/Staff Online" value={data.onlineStaff} color="blue" />
         <SummaryCard icon={Users} label="Ortu/Siswa Online" value={data.onlineParents} color="violet" />
@@ -250,10 +250,10 @@ export default function AnalyticsPage() {
       {/* SECTION 2: CONTENT STATS */}
       {/* ========================= */}
       <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+        <h2 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-primary" /> Aktivitas Konten Platform
         </h2>
-        <div className="grid gap-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           <MiniStat icon={BookOpen} label="Artikel Published" value={data.contentStats.totalPosts} />
           <MiniStat icon={Megaphone} label="Pengumuman" value={data.contentStats.totalAnnouncements} />
           <MiniStat icon={BookMarked} label="Blog Guru" value={data.contentStats.totalBlogGuru} />
@@ -280,7 +280,7 @@ export default function AnalyticsPage() {
             <CardDescription>Jumlah login unik per hari dari seluruh tenant.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[280px] w-full">
+            <div className="h-[220px] sm:h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data.loginTrend7Days}>
                   <defs>
@@ -290,7 +290,7 @@ export default function AnalyticsPage() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis dataKey="date" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
                   <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   <Area type="monotone" dataKey="count" name="Login" stroke="#3b82f6" strokeWidth={3} fill="url(#loginGrad)" dot={{ r: 4, fill: "#3b82f6" }} activeDot={{ r: 6 }} />
@@ -309,11 +309,11 @@ export default function AnalyticsPage() {
             <CardDescription>Grafik jumlah lembaga baru yang mendaftar ke platform per bulan.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[280px] w-full">
+            <div className="h-[220px] sm:h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data.monthlyGrowth}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis dataKey="month" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="month" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
                   <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   <Line type="monotone" dataKey="count" name="Sekolah Baru" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 4, fill: "#8b5cf6" }} activeDot={{ r: 6 }} />
@@ -332,7 +332,7 @@ export default function AnalyticsPage() {
             <CardDescription>Berdasarkan total login bulan ini.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[340px] w-full">
+            <div className="h-[280px] sm:h-[340px] w-full">
               {data.topActiveTenants.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-sm italic">Belum ada data login bulan ini.</div>
               ) : (
@@ -340,7 +340,7 @@ export default function AnalyticsPage() {
                   <BarChart data={data.topActiveTenants} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" horizontal vertical={false} stroke="#e5e7eb" />
                     <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                    <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} width={120} tick={{ fontSize: 10 }} />
+                    <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} width={100} tick={{ fontSize: 9 }} />
                     <RechartsTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                     <Bar dataKey="logins" name="Login" fill="#10b981" radius={[0, 6, 6, 0]} barSize={20}>
                       {data.topActiveTenants.map((_, index) => (
@@ -363,7 +363,7 @@ export default function AnalyticsPage() {
             <CardDescription>Proporsi tenant berdasarkan tipe paket saat ini.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
-            <div className="h-[340px] w-full">
+            <div className="h-[280px] sm:h-[340px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -827,10 +827,10 @@ export default function AnalyticsPage() {
       {/* SECTION 8: REVENUE & PENDAPATAN              */}
       {/* ============================================ */}
       <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+        <h2 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2">
           <DollarSign className="h-5 w-5 text-emerald-500" /> Revenue &amp; Pendapatan
         </h2>
-        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-6">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6">
           <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600"><DollarSign className="h-5 w-5" /></div>
             <div><p className="text-[10px] text-muted-foreground font-medium">Total Revenue</p>
@@ -863,7 +863,7 @@ export default function AnalyticsPage() {
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="glass border-0">
             <CardHeader><CardTitle className="text-base flex items-center gap-2"><TrendingUp className="h-5 w-5 text-emerald-500" /> Tren Pendapatan (6 Bulan)</CardTitle></CardHeader>
-            <CardContent><div className="h-[260px] w-full">
+            <CardContent><div className="h-[220px] sm:h-[260px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data.revenueStats.revenueTrend}>
                   <defs><linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.3} /><stop offset="95%" stopColor="#10b981" stopOpacity={0} /></linearGradient></defs>
@@ -878,7 +878,7 @@ export default function AnalyticsPage() {
           </Card>
           <Card className="glass border-0">
             <CardHeader><CardTitle className="text-base flex items-center gap-2"><Layers className="h-5 w-5 text-violet-500" /> Revenue per Paket</CardTitle></CardHeader>
-            <CardContent><div className="h-[260px] w-full">
+            <CardContent><div className="h-[220px] sm:h-[260px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie data={data.revenueStats.revenuePerPlan} cx="50%" cy="45%" innerRadius={55} outerRadius={90} paddingAngle={4} dataKey="amount"
@@ -945,8 +945,8 @@ export default function AnalyticsPage() {
       {/* SECTION 10: RETENTION & CHURN                */}
       {/* ============================================ */}
       <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><UserX className="h-5 w-5 text-rose-500" /> Retensi &amp; Churn</h2>
-        <div className="grid gap-6 md:grid-cols-3">
+        <h2 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2"><UserX className="h-5 w-5 text-rose-500" /> Retensi &amp; Churn</h2>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           <Card className="glass border-0">
             <CardHeader><CardTitle className="text-base">Aktivitas Terakhir</CardTitle><CardDescription>Kapan terakhir tenant login.</CardDescription></CardHeader>
             <CardContent><div className="h-[220px] w-full">
@@ -996,8 +996,8 @@ export default function AnalyticsPage() {
       {/* SECTION 11: AFFILIATE PERFORMANCE            */}
       {/* ============================================ */}
       <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><UserPlus className="h-5 w-5 text-indigo-500" /> Performa Afiliasi</h2>
-        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-6">
+        <h2 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2"><UserPlus className="h-5 w-5 text-indigo-500" /> Performa Afiliasi</h2>
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-4 sm:mb-6">
           <SummaryCard icon={Users} label="Total Afiliasi" value={data.affiliateStats.totalAffiliates} color="blue" subtitle={`${data.affiliateStats.activeAffiliates} aktif`} />
           <SummaryCard icon={Eye} label="Total Klik" value={data.affiliateStats.totalClicks} color="violet" />
           <SummaryCard icon={Target} label="Konversi" value={data.affiliateStats.affiliateApplications} color="emerald" subtitle={`${data.affiliateStats.conversionRate}% rate`} />
@@ -1108,7 +1108,7 @@ export default function AnalyticsPage() {
       {/* ============================================ */}
       <div>
         <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Star className="h-5 w-5 text-yellow-500" /> Skor Engagement Tenant</h2>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           <Card className="glass border-0">
             <CardHeader><CardTitle className="text-base">Rata-rata Skor</CardTitle><CardDescription>{data.engagementStats.totalScored} tenant dinilai.</CardDescription></CardHeader>
             <CardContent className="flex items-center justify-center h-[200px]">

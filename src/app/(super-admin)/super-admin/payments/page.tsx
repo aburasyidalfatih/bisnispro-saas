@@ -103,10 +103,10 @@ export default function PaymentsPage() {
 
   return (
     <div className="space-y-6 pb-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Transaksi Platform</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Monitor dan konfirmasi pembayaran langganan tenant.</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Transaksi Platform</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Monitor dan konfirmasi pembayaran langganan tenant.</p>
         </div>
         <div className="flex items-center gap-2">
           {pendingPayments.length > 0 && (
@@ -122,7 +122,7 @@ export default function PaymentsPage() {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
         <Card className="glass border-0 shadow-lg shadow-emerald-500/5">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -183,24 +183,24 @@ export default function PaymentsPage() {
       {/* Filter & Table */}
       <Card className="glass border-0 shadow-xl shadow-primary/5">
         <CardHeader className="pb-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <CardTitle className="text-lg">Daftar Transaksi</CardTitle>
-            <div className="flex items-center gap-3">
-              <div className="relative">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <CardTitle className="text-base sm:text-lg">Daftar Transaksi</CardTitle>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="relative flex-1 sm:flex-none">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari Ref / Tenant..."
-                  className="rounded-xl pl-9 w-[200px] md:w-[250px] h-9"
+                  className="rounded-xl pl-9 w-full sm:w-[200px] md:w-[250px] h-9"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
               <select
-                className="h-9 rounded-xl border border-input bg-background px-3 text-xs focus:ring-2 focus:ring-primary outline-none"
+                className="h-9 rounded-xl border border-input bg-background px-2 sm:px-3 text-xs focus:ring-2 focus:ring-primary outline-none shrink-0"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
               >
-                <option value="all">Semua Status</option>
+                <option value="all">Semua</option>
                 <option value="paid">Berhasil</option>
                 <option value="pending">Menunggu</option>
                 <option value="expired">Kedaluwarsa</option>
@@ -210,7 +210,8 @@ export default function PaymentsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/50 text-muted-foreground font-medium">
@@ -274,6 +275,59 @@ export default function PaymentsPage() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card Layout */}
+          <div className="md:hidden">
+            {filteredPayments.length === 0 ? (
+              <div className="py-16 text-center text-muted-foreground italic text-sm">
+                Tidak ada transaksi ditemukan.
+              </div>
+            ) : (
+              <div className="divide-y divide-border/40">
+                {filteredPayments.map((p) => (
+                  <div key={p.id} className={cn("p-4 space-y-3", p.status === "pending" && "bg-amber-500/3")}>
+                    {/* Row 1: Tenant + Status */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                          <School className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold truncate">{p.tenant.name}</p>
+                          <p className="text-[10px] text-muted-foreground font-mono">{p.reference}</p>
+                        </div>
+                      </div>
+                      {getStatusBadge(p.status)}
+                    </div>
+
+                    {/* Row 2: Amount + Details */}
+                    <div className="flex items-center justify-between gap-2 text-sm">
+                      <span className="font-bold text-primary">Rp {p.amount.toLocaleString("id-ID")}</span>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="uppercase font-bold text-[10px] tracking-wider">{p.plan}</span>
+                        <span>·</span>
+                        <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}</span>
+                        <span>·</span>
+                        <span>{new Date(p.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</span>
+                      </div>
+                    </div>
+
+                    {/* Row 3: Action */}
+                    {(p.status === "pending" || p.status === "expired") && (
+                      <Button
+                        size="sm"
+                        onClick={() => setConfirmTarget(p)}
+                        className="w-full rounded-xl gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white border-0 h-9 text-xs font-bold shadow-md shadow-emerald-600/20"
+                      >
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        Konfirmasi Bayar
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
