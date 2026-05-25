@@ -128,9 +128,9 @@ jobs:
             set -e
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
             if [ "$BRANCH" = "main" ]; then
-              APP_DIR="/home/$REMOTE_USER/schoolpro-prod"
+              APP_DIR="/opt/schoolpro-prod"
             else
-              APP_DIR="/home/$REMOTE_USER/schoolpro-dev"
+              APP_DIR="/opt/schoolpro-dev"
             fi
             echo "Deploying branch $BRANCH to $APP_DIR"
             cd "$APP_DIR"
@@ -151,42 +151,25 @@ jobs:
               fi
             fi
 
-            git remote set-url origin https://oauth2:$GITHUB_TOKEN@github.com/$REPO.git
-            git fetch --all
-            git reset --hard origin/$BRANCH
-            
-            docker network ls | grep -q "shared-proxy" || docker network create shared-proxy
-            
-            export APP_IMAGE="ghcr.io/$REPO:$BRANCH"
-            if [ "$BRANCH" = "main" ]; then
-              export APP_ALIAS="schoolpro-prod-app"
-            else
-              export APP_ALIAS="schoolpro-dev-app"
-            fi
-            
-            docker compose pull app
-            
-            if [ "$BRANCH" = "main" ]; then
-              docker compose up -d --no-build app worker db redis --remove-orphans
-            else
-              docker compose up -d --no-build app worker --remove-orphans
-            fi
+            docker compose pull app worker
+            docker compose up -d --no-build --remove-orphans
             
             echo "Waiting for container to be ready..."
             sleep 10
             
             echo "Running database synchronization..."
-            docker compose exec -T app node node_modules/prisma/build/index.js db push --accept-data-loss --skip-generate 2>&1 || echo "⚠️ Synchronization failed!"
-            
             if [ "$BRANCH" = "main" ]; then
-              echo "Restarting Nginx proxy to flush DNS cache..."
-              docker compose restart nginx
+              export DATABASE_URL="postgresql://${POSTGRES_USER:-db_admin_schoolpro}:${POSTGRES_PASSWORD:-}@127.0.0.1:5432/${POSTGRES_DB:-saasmasterpro}"
+            else
+              export DATABASE_URL="postgresql://${POSTGRES_USER:-db_admin_dev}:${POSTGRES_PASSWORD:-}@127.0.0.1:5433/${POSTGRES_DB:-schoolpro_dev_db}"
             fi
+            source .env
+            npx -y prisma@6.19.3 db push --accept-data-loss --skip-generate 2>&1 || echo "⚠️ Synchronization failed!"
             
             echo "Running health check..."
             HEALTH_OK=false
             for i in $(seq 1 12); do
-              RESULT=$(docker compose exec -T app wget -qO- http://localhost:3000/api/health 2>/dev/null || echo "fail")
+              RESULT=$(docker exec ${APP_DIR##*/}-app-1 node -e "fetch('http://localhost:3000/api/health').then(r=>r.text()).then(console.log)" 2>/dev/null || echo "fail")
               if echo "$RESULT" | grep -q "healthy"; then
                 echo "✅ Health check passed!"
                 HEALTH_OK=true
