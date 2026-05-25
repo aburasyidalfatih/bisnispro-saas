@@ -17,6 +17,10 @@ RUN npm install --os=linux --cpu=x64 sharp --legacy-peer-deps
 # Generate Prisma client
 RUN npx prisma generate
 
+# --- Prod Dependencies ---
+FROM deps AS prod-deps
+RUN npm prune --omit=dev --legacy-peer-deps
+
 # --- Build ---
 FROM base AS builder
 WORKDIR /app
@@ -67,10 +71,10 @@ RUN npm install -g tsx
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
-# Install all production dependencies for worker to prevent MODULE_NOT_FOUND errors
-RUN npm install --omit=dev --legacy-peer-deps
+# Copy clean production dependencies for worker
+COPY --from=prod-deps /app/node_modules ./node_modules
 
-# Re-copy prisma CLI after npm install (npm install --omit=dev removes devDeps including prisma)
+# Re-copy prisma CLI after copying node_modules (npm prune might have removed devDeps including prisma cli, but engines are retained if Prisma manages them, though let's copy to be safe)
 COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
 COPY --from=deps /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
 
