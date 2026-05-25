@@ -38,6 +38,7 @@ export async function GET(req: Request) {
           const detailMap = Object.fromEntries(detailedScores.map(s => [s.tenantId, s]))
 
           const leaderboard = tenantIds.map((id, index) => ({
+            id: detailMap[id]?.tenantId || id,
             tenantId: id,
             totalScore: scoreMap[id],
             contentScore: detailMap[id]?.contentScore || 0,
