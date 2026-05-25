@@ -124,6 +124,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: GITHUB_TOKEN,ACTOR,CRON_SECRET,SENTRY_DSN,BRANCH,REPO,REMOTE_USER
+          command_timeout: 30m
           script: |
             set -e
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
