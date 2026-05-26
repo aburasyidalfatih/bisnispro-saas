@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
@@ -12,6 +12,12 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
   const { data: session, status } = useSession()
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const pathname = usePathname()
+
+  // Auto-close mobile sidebar on navigation
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
@@ -34,10 +40,10 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
 
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <div className="relative z-10 h-full w-[260px]">
+          <div className="absolute inset-0 bg-black/50 animate-in fade-in-0 duration-200" onClick={() => setMobileOpen(false)} />
+          <div className="relative z-10 h-full w-[260px] animate-in slide-in-from-left-full duration-200">
             <Sidebar />
-            <Button variant="ghost" size="icon" className="absolute top-4 right-[-48px] h-9 w-9 rounded-xl bg-background" onClick={() => setMobileOpen(false)}>
+            <Button variant="ghost" size="icon" className="absolute top-4 right-3 h-9 w-9 rounded-xl bg-background/80 backdrop-blur-sm shadow-md lg:hidden z-20" onClick={() => setMobileOpen(false)}>
               <X className="h-5 w-5" />
             </Button>
           </div>
@@ -45,13 +51,13 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
       )}
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 items-center justify-between border-b glass px-4 lg:px-6">
-          <Button variant="ghost" size="icon" className="lg:hidden h-9 w-9 rounded-xl mr-2" onClick={() => setMobileOpen(true)}>
+        <header className="flex h-14 sm:h-16 items-center justify-between border-b glass px-3 sm:px-4 lg:px-6">
+          <Button variant="ghost" size="icon" className="lg:hidden h-9 w-9 rounded-xl mr-1 sm:mr-2 shrink-0" onClick={() => setMobileOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
           <Header />
         </header>
-        <main className="flex-1 overflow-y-auto bg-mesh p-4 lg:p-6" style={{ viewTransitionName: "page-content" }}>
+        <main className="flex-1 overflow-y-auto bg-mesh p-3 sm:p-4 lg:p-6" style={{ viewTransitionName: "page-content" }}>
           {children}
         </main>
       </div>

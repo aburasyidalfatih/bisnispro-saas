@@ -42,11 +42,11 @@ export default function SuperAdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Super Admin Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Kelola dan pantau seluruh platform SchoolPro</p>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Super Admin Dashboard</h1>
+        <p className="text-muted-foreground mt-1 text-sm">Kelola dan pantau seluruh platform SchoolPro</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
         {cards.map((stat) => (
           <Link key={stat.label} href={stat.href}>
             <Card className="glass border-0 hover-lift cursor-pointer h-full">
@@ -65,11 +65,11 @@ export default function SuperAdminDashboard() {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-2 h-full">
           <TenantMap />
         </div>
-        <div className="lg:col-span-1 h-[580px] lg:h-auto">
+        <div className="h-[400px] sm:h-[580px] lg:h-auto">
           <TenantLeaderboard />
         </div>
       </div>

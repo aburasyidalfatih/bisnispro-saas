@@ -53,7 +53,7 @@ export default function BillingPage() {
   const [studentCount, setStudentCount] = useState(50)
   const [invoice, setInvoice] = useState<InvoiceData | null>(null)
   const [showInvoice, setShowInvoice] = useState(false)
-  const [showProCalculator, setShowProCalculator] = useState(false)
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false)
   const [copied, setCopied] = useState(false)
 
 
@@ -387,7 +387,7 @@ export default function BillingPage() {
                 <Button 
                   className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20"
                   disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
-                  onClick={() => { setSelectedPlanSlug("lite"); handleCheckout() }}
+                  onClick={() => { setSelectedPlanSlug("lite"); setShowCheckoutModal(true) }}
                 >
                   {checkingOut && selectedPlanSlug === "lite" ? "Membuat Invoice..." : "Perpanjang Sekarang"}
                   <ArrowRight className="h-4 w-4" />
@@ -400,7 +400,7 @@ export default function BillingPage() {
                 <Button 
                   className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2 font-semibold shadow-lg shadow-blue-500/20"
                   disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
-                  onClick={() => { setSelectedPlanSlug("lite"); handleCheckout() }}
+                  onClick={() => { setSelectedPlanSlug("lite"); setShowCheckoutModal(true) }}
                 >
                   {checkingOut && selectedPlanSlug === "lite" ? "Membuat Invoice..." : "Upgrade ke Lite"}
                   <ArrowRight className="h-4 w-4" />
@@ -491,7 +491,7 @@ export default function BillingPage() {
                 <Button 
                   className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20"
                   disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
-                  onClick={() => { setSelectedPlanSlug("pro"); setShowProCalculator(true) }}
+                  onClick={() => { setSelectedPlanSlug("pro"); setShowCheckoutModal(true) }}
                 >
                   Tambah Kuota Siswa
                   <ArrowRight className="h-4 w-4" />
@@ -500,7 +500,7 @@ export default function BillingPage() {
                 <Button 
                   className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border-0 gap-2 font-semibold shadow-lg shadow-amber-500/20"
                   disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
-                  onClick={() => { setSelectedPlanSlug("pro"); setShowProCalculator(true) }}
+                  onClick={() => { setSelectedPlanSlug("pro"); setShowCheckoutModal(true) }}
                 >
                   {billing?.plan === "lite" ? "Upgrade ke Pro" : "Upgrade ke Pro"}
                   <ArrowRight className="h-4 w-4" />
@@ -532,47 +532,61 @@ export default function BillingPage() {
         </div>
       )}
 
-      {/* ── PRO Calculator Dialog ── */}
-      <Dialog open={showProCalculator} onOpenChange={setShowProCalculator}>
+      {/* ── Checkout Dialog ── */}
+      <Dialog open={showCheckoutModal} onOpenChange={setShowCheckoutModal}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden border-0 shadow-2xl">
-          <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-500" />
+          <div className={cn(
+            "h-1.5",
+            selectedPlanSlug === "pro" ? "bg-gradient-to-r from-amber-400 to-orange-500" : "bg-gradient-to-r from-blue-400 to-indigo-500"
+          )} />
           <DialogHeader className="px-6 pt-5 pb-2">
             <DialogTitle className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
-              </div>
-              {isPro ? "Tambah Kuota Siswa" : "Upgrade ke PRO"}
+              {selectedPlanSlug === "pro" ? (
+                <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                  <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+                </div>
+              ) : (
+                <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <ShieldCheck className="h-4 w-4 text-blue-600" />
+                </div>
+              )}
+              {selectedPlanSlug === "pro" 
+                ? (isPro ? "Tambah Kuota Siswa" : "Upgrade ke PRO")
+                : (billing?.plan === "lite" ? "Perpanjang Paket LITE" : "Upgrade ke LITE")}
             </DialogTitle>
             <DialogDescription>
-              {isPro 
-                ? `Biaya disesuaikan (pro-rata) dengan sisa masa aktif Anda (${daysRemaining} hari).`
-                : "Masukkan jumlah siswa untuk menghitung biaya."
-              }
+              {selectedPlanSlug === "pro"
+                ? (isPro 
+                  ? `Biaya disesuaikan (pro-rata) dengan sisa masa aktif Anda (${daysRemaining} hari).`
+                  : "Masukkan jumlah siswa untuk menghitung biaya.")
+                : "Dapatkan fitur Lite untuk masa aktif 1 tahun ke depan."}
             </DialogDescription>
           </DialogHeader>
 
           <div className="px-6 py-4 space-y-4">
-            {/* Student Count */}
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-sm font-semibold">
-                <Users className="h-4 w-4 text-primary" /> {isPro ? "Jumlah Tambah Siswa" : "Jumlah Siswa Aktif"}
-              </Label>
-              <Input
-                type="number" min={minStudents}
-                value={studentCount}
-                onChange={(e) => setStudentCount(Number(e.target.value))}
-                className="rounded-xl h-12 text-lg font-semibold"
-              />
-              <p className="text-[11px] text-muted-foreground">
-                Minimal {isPro ? "tambah" : "upgrade"}: <strong>{minStudents} siswa</strong>
-              </p>
-            </div>
+            {/* Student Count - ONLY FOR PRO */}
+            {selectedPlanSlug === "pro" && (
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-sm font-semibold">
+                  <Users className="h-4 w-4 text-primary" /> {isPro ? "Jumlah Tambah Siswa" : "Jumlah Siswa Aktif"}
+                </Label>
+                <Input
+                  type="number" min={minStudents}
+                  value={studentCount}
+                  onChange={(e) => setStudentCount(Number(e.target.value))}
+                  className="rounded-xl h-12 text-lg font-semibold"
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  Minimal {isPro ? "tambah" : "upgrade"}: <strong>{minStudents} siswa</strong>
+                </p>
+              </div>
+            )}
 
             {/* Cost Calculation */}
             <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 space-y-1.5">
-              <p className="text-xs text-muted-foreground font-medium">Estimasi Biaya {isPro && "(Pro-rata)"}</p>
+              <p className="text-xs text-muted-foreground font-medium">Estimasi Biaya {(isPro && selectedPlanSlug === "pro") && "(Pro-rata)"}</p>
               
-              {isPro && (
+              {isPro && selectedPlanSlug === "pro" && (
                 <div className="flex justify-between text-[11px] text-muted-foreground mb-1">
                   <span>Harga Normal ({studentCount} siswa)</span>
                   <span>Rp {baseSubTotal.toLocaleString("id-ID")}</span>
@@ -591,8 +605,11 @@ export default function BillingPage() {
                 <span className="text-3xl font-bold">{totalCost.toLocaleString("id-ID")}</span>
               </div>
               <p className="text-[11px] text-primary/70 italic">
-                Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / siswa / tahun
-                {isUsingLockedPrice && (
+                {selectedPlanSlug === "pro" 
+                  ? <>Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / siswa / tahun</>
+                  : <>Biaya perpanjangan langganan tetap</>
+                }
+                {isUsingLockedPrice && selectedPlanSlug === "pro" && (
                   <span className="ml-1.5 text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-semibold not-italic dark:bg-blue-900/30 dark:text-blue-400">Harga Kontrak</span>
                 )}
               </p>
@@ -642,10 +659,13 @@ export default function BillingPage() {
 
             <Button
               className="w-full h-12 rounded-xl btn-gradient text-white border-0 gap-2 text-base font-semibold shadow-lg shadow-primary/20"
-              disabled={checkingOut || studentCount < minStudents || billing?.hasPendingInvoice}
+              disabled={checkingOut || (selectedPlanSlug === "pro" && studentCount < minStudents) || billing?.hasPendingInvoice}
               onClick={() => { handleCheckout(); }}
             >
-              {checkingOut ? "Membuat Invoice..." : isPro ? "Buat Tagihan Penambahan Kuota" : "Upgrade ke Pro Sekarang"}
+              {checkingOut ? "Membuat Invoice..." : 
+                selectedPlanSlug === "pro" 
+                  ? (isPro ? "Buat Tagihan Penambahan Kuota" : "Upgrade ke Pro Sekarang")
+                  : (billing?.plan === "lite" ? "Perpanjang Lite Sekarang" : "Upgrade ke Lite Sekarang")}
               <ArrowRight className="h-5 w-5" />
             </Button>
           </div>

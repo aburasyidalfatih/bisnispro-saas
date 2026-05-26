@@ -199,10 +199,10 @@ export default function TenantsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Manajemen Tenant</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Kelola sekolah dan lembaga yang terdaftar ({total} tenant)</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Manajemen Tenant</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola sekolah dan lembaga yang terdaftar ({total} tenant)</p>
         </div>
       </div>
 
@@ -221,7 +221,8 @@ export default function TenantsPage() {
 
       {/* Table */}
       <Card className="glass border-0 overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b bg-muted/30">
@@ -267,7 +268,6 @@ export default function TenantsPage() {
               ) : (
                 tenants.map((t) => (
                   <tr key={t.id} className="hover:bg-muted/20 transition-all group">
-                    {/* Tenant */}
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary font-bold shadow-sm">
@@ -279,16 +279,12 @@ export default function TenantsPage() {
                         </div>
                       </div>
                     </td>
-
-                    {/* Contact */}
                     <td className="px-4 py-4">
                       <div className="space-y-1">
                         <p className="text-xs font-medium">{t.owner?.name || "-"}</p>
                         <p className="text-[11px] text-muted-foreground">{t.owner?.email || "-"}</p>
                       </div>
                     </td>
-
-                    {/* Domain */}
                     <td className="px-4 py-4 hidden lg:table-cell">
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2 group/link">
@@ -319,23 +315,17 @@ export default function TenantsPage() {
                         )}
                       </div>
                     </td>
-
-                    {/* Plan */}
                     <td className="px-4 py-4 text-center">
                       <span className={cn("text-[10px] font-bold uppercase rounded-lg px-2 py-1 tracking-tighter", planBadge[t.plan] || planBadge.free)}>
                         {t.plan}
                       </span>
                       <p className="text-[9px] text-muted-foreground mt-1">{t.studentQuota} Siswa</p>
                     </td>
-
-                    {/* Disk Usage */}
                     <td className="px-4 py-4 text-center">
                       <span className="text-[11px] font-bold text-foreground">
                         {formatBytes(t.storageUsed || 0)}
                       </span>
                     </td>
-
-                    {/* Status */}
                     <td className="px-4 py-4 text-center">
                       <span className={cn(
                         "inline-flex items-center gap-1.5 text-[10px] font-bold uppercase rounded-full px-2.5 py-1",
@@ -344,8 +334,6 @@ export default function TenantsPage() {
                         {t.isActive ? "Aktif" : "Mati"}
                       </span>
                     </td>
-
-                    {/* Actions */}
                     <td className="px-4 py-4 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -387,6 +375,95 @@ export default function TenantsPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card Layout */}
+        <div className="md:hidden">
+          {loading ? (
+            <div className="p-4 space-y-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="skeleton h-32 w-full rounded-2xl" />
+              ))}
+            </div>
+          ) : tenants.length === 0 ? (
+            <div className="px-4 py-16 text-center">
+              <Building2 className="h-12 w-12 mx-auto text-muted-foreground/20 mb-4" />
+              <p className="text-muted-foreground italic text-sm">Belum ada tenant yang terdaftar.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border/40">
+              {tenants.map((t) => (
+                <div key={t.id} className="p-4 space-y-3">
+                  {/* Row 1: Name + Actions */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary font-bold shadow-sm">
+                        {t.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold truncate">{t.name}</p>
+                        <p className="text-[10px] text-muted-foreground font-mono">ID: {t.id.slice(-8).toUpperCase()}</p>
+                      </div>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-primary/10 shrink-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56 glass rounded-2xl p-2 shadow-2xl border-0 ring-1 ring-black/5">
+                        <DropdownMenuItem className="gap-2 rounded-xl h-10 cursor-pointer" onClick={() => handleEdit(t)}>
+                          <Pencil className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">Edit Tenant</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 rounded-xl h-10 cursor-pointer" onClick={() => { setResetTenant(t); setResetModalOpen(true) }}>
+                          <Key className="h-4 w-4 text-amber-500" />
+                          <span className="font-medium text-sm">Reset Password</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 rounded-xl h-10 cursor-pointer" onClick={() => handleLoginAs(t.id)}>
+                          <LogIn className="h-4 w-4 text-blue-500" />
+                          <span className="font-medium text-sm">Login Sebagai</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-border/40 my-1" />
+                        <ConfirmDialog
+                          trigger={
+                            <DropdownMenuItem className="gap-2 rounded-xl h-10 cursor-pointer text-rose-600" onSelect={(e) => e.preventDefault()}>
+                              <Trash2 className="h-4 w-4" />
+                              <span className="font-bold text-sm">Hapus Tenant</span>
+                            </DropdownMenuItem>
+                          }
+                          title={`Hapus total "${t.name}"?`}
+                          description="Tindakan ini akan menghapus permanen seluruh database sekolah ini."
+                          confirmText="Ya, Hapus Permanen"
+                          onConfirm={() => handleDelete(t.id, t.name)}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  {/* Row 2: Owner info */}
+                  <div className="text-xs space-y-0.5 pl-[52px]">
+                    <p className="font-medium">{t.owner?.name || "-"}</p>
+                    <p className="text-muted-foreground">{t.owner?.email || "-"}</p>
+                  </div>
+
+                  {/* Row 3: Badges row */}
+                  <div className="flex items-center gap-2 flex-wrap pl-[52px]">
+                    <span className={cn("text-[10px] font-bold uppercase rounded-lg px-2 py-1 tracking-tighter", planBadge[t.plan] || planBadge.free)}>
+                      {t.plan} · {t.studentQuota} siswa
+                    </span>
+                    <span className={cn(
+                      "inline-flex items-center text-[10px] font-bold uppercase rounded-full px-2 py-0.5",
+                      t.isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"
+                    )}>
+                      {t.isActive ? "Aktif" : "Mati"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">{formatBytes(t.storageUsed || 0)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Pagination */}

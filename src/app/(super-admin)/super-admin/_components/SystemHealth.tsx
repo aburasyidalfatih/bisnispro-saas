@@ -134,39 +134,42 @@ export function SystemHealth() {
   if (!metrics) return null
 
   return (
-    <div className="space-y-6">
-      <Card className="glass border-0 overflow-hidden relative">
-        <div className="absolute top-4 right-4 z-10 flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="h-8 rounded-xl bg-white/50 border-orange-200 text-orange-600 hover:bg-orange-50 gap-2"
-            onClick={handleClearCache}
-            disabled={clearing}
-          >
-            {clearing ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-            Clear Redis Cache
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 rounded-xl"
-            onClick={() => { setLoading(true); fetchMetrics(); }} 
-          >
-            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
-          </Button>
-        </div>
-        
+    <div className="space-y-4 sm:space-y-6">
+      <Card className="glass border-0 overflow-hidden">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Server className="h-5 w-5 text-blue-500" />
-            Kesehatan Sistem (VPS Host)
-          </CardTitle>
-          <CardDescription>Pemantauan sumber daya server secara real-time.</CardDescription>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                <Server className="h-5 w-5 text-blue-500" />
+                Kesehatan Sistem (VPS Host)
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Pemantauan sumber daya server secara real-time.</CardDescription>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8 rounded-xl bg-white/50 border-orange-200 text-orange-600 hover:bg-orange-50 gap-2 text-xs"
+                onClick={handleClearCache}
+                disabled={clearing}
+              >
+                {clearing ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                <span className="hidden sm:inline">Clear Redis</span><span className="sm:hidden">Cache</span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 rounded-xl"
+                onClick={() => { setLoading(true); fetchMetrics(); }} 
+              >
+                <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         
         <CardContent>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mt-4">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-4">
             {/* RAM Usage */}
             <div className="space-y-3 bg-background/50 p-4 rounded-xl border border-border/50">
               <div className="flex items-center justify-between">
@@ -267,7 +270,7 @@ export function SystemHealth() {
       </Card>
 
       {/* PM2 Processes */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
         {metrics.pm2.map((proc) => (
           <Card key={proc.name} className="glass border-0 overflow-hidden">
             <CardContent className="p-4 flex items-center justify-between">
