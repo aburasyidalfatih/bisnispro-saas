@@ -8,12 +8,11 @@ import { logger } from "@/lib/logger"
 const TRAEFIK_DYNAMIC_DIR = process.env.TRAEFIK_DYNAMIC_DIR || "/app/traefik-dynamic"
 
 /**
- * Nama container/service Next.js yang akan menjadi target reverse proxy
- * Di docker-compose.yml kita namanya adalah: compose-program-neural-port-6gtmbm-1-web@docker
- * Namun kita bisa mendapatkan nama ini dari environment atau default.
+ * Nama service Traefik (file-provider) yang didefinisikan di schoolpro.yml
+ * Service ini mengarah ke container produksi Next.js.
+ * Untuk dev, override via env: TRAEFIK_TARGET_SERVICE=schoolpro-dev
  */
-const TRAEFIK_TARGET_SERVICE = process.env.TRAEFIK_TARGET_SERVICE || "compose-program-neural-port-6gtmbm-1-web@docker"
-const TRAEFIK_TARGET_SERVICE_SECURE = process.env.TRAEFIK_TARGET_SERVICE_SECURE || "compose-program-neural-port-6gtmbm-1-websecure@docker"
+const TRAEFIK_TARGET_SERVICE = process.env.TRAEFIK_TARGET_SERVICE || "schoolpro-prod"
 
 /**
  * Membuat file YAML untuk Traefik Dynamic Configuration.
@@ -34,13 +33,15 @@ export async function createCustomDomainRoute(domain: string): Promise<boolean> 
       middlewares:
         - redirect-to-https@file
       service: ${TRAEFIK_TARGET_SERVICE}
+      priority: 100
     ${slug}-https:
       rule: "Host(\`${safeDomain}\`)"
       entryPoints:
         - websecure
       tls:
         certResolver: letsencrypt
-      service: ${TRAEFIK_TARGET_SERVICE_SECURE}
+      service: ${TRAEFIK_TARGET_SERVICE}
+      priority: 100
 `
 
   try {
