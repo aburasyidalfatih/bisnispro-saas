@@ -72,8 +72,6 @@ services:
       ADMIN_USERS: ${POSTGRES_USER:-postgres}
       AUTH_TYPE: scram-sha-256
       LISTEN_PORT: 5432
-    ports:
-      - "127.0.0.1:6432:5432"
     depends_on:
       db:
         condition: service_healthy
@@ -83,8 +81,6 @@ services:
 
   db:
     image: postgres:16-alpine
-    ports:
-      - "127.0.0.1:${DB_PORT:-5432}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -103,8 +99,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:
       - redisdata:/data
     restart: unless-stopped
