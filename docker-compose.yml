@@ -73,7 +73,7 @@ services:
       AUTH_TYPE: scram-sha-256
       LISTEN_PORT: 5432
     ports:
-      - "127.0.0.1:6434:5432"
+      - "127.0.0.1:${PGBOUNCER_PORT:-6434}:5432"
     depends_on:
       db:
         condition: service_healthy
