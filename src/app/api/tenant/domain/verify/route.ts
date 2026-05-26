@@ -21,6 +21,7 @@ import {
   invalidateDomainCache,
   type DomainStatus,
 } from "@/features/tenant/services/domain.service"
+import { createCustomDomainRoute } from "@/features/tenant/services/traefik.service"
 
 const verifySchema = z.object({
   tenantId: z.string().min(1, "tenantId harus diisi"),
@@ -92,6 +93,10 @@ export async function POST(req: Request) {
   if (result.success) {
     // Simpan ke cache agar proxy bisa resolve tanpa query DB
     await cacheDomainSlug(tenant.domain, tenant.slug)
+    
+    // Buat rute dinamis Traefik untuk SSL otomatis (hanya berjalan di production/VPS)
+    await createCustomDomainRoute(tenant.domain)
+    
     logger.info("Domain verified", { tenantId, domain: tenant.domain })
   } else {
     // Pastikan cache tidak menyimpan domain yang gagal

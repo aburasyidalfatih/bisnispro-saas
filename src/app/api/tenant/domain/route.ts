@@ -16,7 +16,9 @@ import {
   generateVerifyToken,
   getDomainSettings,
   invalidateDomainCache,
+  type CustomDomainSettings,
 } from "@/features/tenant/services/domain.service"
+import { removeCustomDomainRoute } from "@/features/tenant/services/traefik.service"
 
 // ==================== HELPERS ====================
 
@@ -157,6 +159,7 @@ export async function PUT(req: Request) {
   // Invalidate cache domain lama
   if (oldDomain && oldDomain !== domain) {
     await invalidateDomainCache(oldDomain)
+    await removeCustomDomainRoute(oldDomain)
   }
 
   await db.tenant.update({
@@ -204,6 +207,7 @@ export async function DELETE(req: Request) {
 
   // Invalidate cache
   await invalidateDomainCache(tenant.domain)
+  await removeCustomDomainRoute(tenant.domain)
 
   // Hapus domain dan customDomain dari settings
   const existingSettings = (tenant.settings as Record<string, any>) || {}

@@ -31,6 +31,7 @@ services:
     volumes:
       - uploads:/app/uploads
       - ./backups:/app/backups
+      - /etc/dokploy/traefik/dynamic:/app/traefik-dynamic:rw
     depends_on:
       pgbouncer:
         condition: service_started
@@ -51,6 +52,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@pgbouncer:5432/${POSTGRES_DB:-saasmasterpro}?pgbouncer=true&connection_limit=5
       - REDIS_URL=redis://redis:6379
+    volumes:
+      - /etc/dokploy/traefik/dynamic:/app/traefik-dynamic:rw
     command: npm run worker
     depends_on:
       pgbouncer:
