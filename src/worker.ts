@@ -89,12 +89,19 @@ const waWorker = new Worker(
         throw new Error(result.error || "Failed to send WhatsApp message")
       }
 
-      // Update WA queue log if exists (for queued messages via admin)
+      // Update WA queue log with retry mechanism for race conditions
       if (waQueueLogId) {
-        await db.waQueueLog.updateMany({
-          where: { id: waQueueLogId },
-          data: { status: "SENT", sentAt: new Date() },
-        })
+        let retries = 3;
+        while (retries > 0) {
+          const updateRes = await db.waQueueLog.updateMany({
+            where: { id: waQueueLogId },
+            data: { status: "SENT", sentAt: new Date() },
+          });
+          if (updateRes.count > 0) break;
+          // If 0 rows updated, wait and retry (row might not be fully visible yet)
+          await new Promise(r => setTimeout(r, 500));
+          retries--;
+        }
       }
 
       // Create individual delivery log for broadcast tracking
@@ -112,10 +119,16 @@ const waWorker = new Worker(
       return { success: true }
     } catch (error: any) {
       if (waQueueLogId) {
-        await db.waQueueLog.updateMany({
-          where: { id: waQueueLogId },
-          data: { status: "FAILED", error: error.message },
-        })
+        let retries = 3;
+        while (retries > 0) {
+          const updateRes = await db.waQueueLog.updateMany({
+            where: { id: waQueueLogId },
+            data: { status: "FAILED", error: error.message },
+          });
+          if (updateRes.count > 0) break;
+          await new Promise(r => setTimeout(r, 500));
+          retries--;
+        }
       }
 
       // On final attempt failure, log for broadcast
