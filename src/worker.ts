@@ -8,6 +8,7 @@ import { processGamificationPoints } from "@/features/gamification/services/gami
 import { FinanceService } from "@/features/finance/services/finance.service"
 import { syncPostViewsToDatabase, syncEventViewsToDatabase } from "@/features/post/services/views.service"
 import { syncShareCountsToDatabase } from "@/features/post/services/share.service"
+import { processLeaderboardSync } from "@/features/gamification/services/leaderboard.service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -326,6 +327,20 @@ setInterval(async () => {
     console.error("[cron] Failed to sync", error)
   }
 }, 10 * 60 * 1000) // 10 minutes
+
+// ============================================================
+// LEADERBOARD RECALCULATION & SYNC
+// ============================================================
+setInterval(async () => {
+  console.log("[cron] Running Leaderboard Sync...")
+  try {
+    const result = await processLeaderboardSync()
+    console.log(`[cron] Leaderboard sync success: ${result.message} (${result.processedCount} tenants)`)
+  } catch (error) {
+    console.error("[cron] Failed to sync leaderboard", error)
+  }
+}, 3 * 60 * 60 * 1000) // 3 hours
+
 
 // ============================================================
 // TENANT LIFECYCLE MANAGEMENT (RETENTION & CLEANUP)
