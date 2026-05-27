@@ -90,7 +90,7 @@ const waWorker = new Worker(
 
       // Update WA queue log if exists (for queued messages via admin)
       if (waQueueLogId) {
-        await db.waQueueLog.update({
+        await db.waQueueLog.updateMany({
           where: { id: waQueueLogId },
           data: { status: "SENT", sentAt: new Date() },
         })
@@ -111,7 +111,7 @@ const waWorker = new Worker(
       return { success: true }
     } catch (error: any) {
       if (waQueueLogId) {
-        await db.waQueueLog.update({
+        await db.waQueueLog.updateMany({
           where: { id: waQueueLogId },
           data: { status: "FAILED", error: error.message },
         })
