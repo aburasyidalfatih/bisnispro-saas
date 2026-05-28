@@ -7,6 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Building2, Users, CheckCircle, Tag } from "lucide-react"
 import { db } from "@/lib/db"
+import DOMPurify from "isomorphic-dompurify"
 
 
 export const dynamicParams = true
@@ -84,7 +85,7 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
               
               <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
                  {facility.description ? (
-                    <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: facility.description }} />
+                    <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(facility.description) }} />
                  ) : (
                     <p className="italic">Tidak ada penjelasan lebih detail mengenai fasilitas ini.</p>
                  )}

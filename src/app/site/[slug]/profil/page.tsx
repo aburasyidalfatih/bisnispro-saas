@@ -11,6 +11,7 @@ import { cn, normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import DOMPurify from "isomorphic-dompurify"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -154,7 +155,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
               <h2 className="text-3xl md:text-4xl font-extrabold text-foreground">Tentang {tenant.name}</h2>
               <div 
                  className="prose prose-slate leading-relaxed text-muted-foreground max-w-none" 
-                 dangerouslySetInnerHTML={{ __html: tenant.about || tenant.description || "Belum ada informasi profil sejarah sekolah." }} 
+                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tenant.about || tenant.description || "Belum ada informasi profil sejarah sekolah.") }} 
               />
            </div>
            
@@ -191,7 +192,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                        <Target className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="text-2xl font-black mb-4">Visi Kami</h3>
-                    <div className="text-lg leading-relaxed font-medium opacity-90 prose prose-invert" dangerouslySetInnerHTML={{ __html: settings.visi }} />
+                    <div className="text-lg leading-relaxed font-medium opacity-90 prose prose-invert" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(settings.visi) }} />
                  </div>
               )}
               {settings.misi && (
@@ -201,7 +202,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                        <CheckCircle className="h-7 w-7 text-primary" />
                     </div>
                     <h3 className="text-2xl font-black mb-4 text-foreground">Misi Kami</h3>
-                    <div className="space-y-3 prose prose-slate text-muted-foreground marker:text-primary max-w-none" dangerouslySetInnerHTML={{ __html: settings.misi }} />
+                    <div className="space-y-3 prose prose-slate text-muted-foreground marker:text-primary max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(settings.misi) }} />
                  </div>
               )}
            </div>

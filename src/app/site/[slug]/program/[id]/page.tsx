@@ -7,6 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, BookOpen } from "lucide-react"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
+import DOMPurify from "isomorphic-dompurify"
 
 
 export const dynamicParams = true
@@ -114,7 +115,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
            <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
              <h3 className="text-xl font-bold mb-4 text-foreground">Tentang Program</h3>
              {program.description ? (
-               <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: program.description }} />
+               <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(program.description) }} />
              ) : (
                <p className="italic">Tidak ada deskripsi detail untuk program ini.</p>
              )}

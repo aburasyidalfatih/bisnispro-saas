@@ -9,6 +9,7 @@ import { ArrowLeft, Trophy, Calendar, Medal } from "lucide-react"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
+import DOMPurify from "isomorphic-dompurify"
 
 
 export const dynamicParams = true
@@ -85,7 +86,7 @@ export default async function AchievementDetailPage({ params }: { params: Promis
 
         <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
           {achievement.description ? (
-            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: achievement.description }} />
+            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(achievement.description) }} />
           ) : (
             <p className="italic">Tidak ada detail deskripsi untuk prestasi ini.</p>
           )}
