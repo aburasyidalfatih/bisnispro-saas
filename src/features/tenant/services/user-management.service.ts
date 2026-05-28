@@ -153,6 +153,11 @@ export async function editTenantUser(params: {
     if (!callerTu || !["owner", "admin"].includes(callerTu.role)) {
       throw new Error("Tidak punya izin untuk mengedit user dari tenant ini")
     }
+
+    // Blokir Admin mengedit Owner
+    if (callerTu.role === "admin" && targetTu.role === "owner") {
+      throw new Error("Admin tidak diizinkan mengubah data Owner")
+    }
   }
 
   const existingEmailUser = await db.user.findUnique({ where: { email } })
@@ -161,7 +166,18 @@ export async function editTenantUser(params: {
   }
 
   const updateData: any = { name, email, phone }
+  
+  // Hanya Owner atau user itu sendiri yang bisa mengganti password via endpoint ini
   if (password && password.length >= 8) {
+    if (!isSuperAdmin) {
+      const isSelf = callerUserId === targetTu.userId
+      const callerTu = await tenantDb.tenantUser.findUnique({
+        where: { tenantId_userId: { tenantId: targetTu.tenantId, userId: callerUserId } }
+      })
+      if (!isSelf && callerTu?.role !== "owner") {
+        throw new Error("Hanya Owner yang dapat mengubah password user lain")
+      }
+    }
     updateData.password = await bcrypt.hash(password, 12)
   }
 

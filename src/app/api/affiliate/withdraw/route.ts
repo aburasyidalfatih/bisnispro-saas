@@ -43,10 +43,14 @@ export async function POST(req: Request) {
         }
       })
 
-      await tx.affiliateProfile.update({
+      const updatedAffiliate = await tx.affiliateProfile.update({
         where: { id: affiliate.id },
         data: { balance: { decrement: amount } }
       })
+      
+      if (updatedAffiliate.balance < 0) {
+        throw new Error("Saldo tidak mencukupi")
+      }
     })
 
     return NextResponse.json({ success: true })

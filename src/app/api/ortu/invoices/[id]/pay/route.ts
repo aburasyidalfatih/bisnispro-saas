@@ -55,6 +55,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           where: { id: wallet.id },
           data: { balance: { decrement: invoice.amountDue } }
         })
+        if (updatedWallet.balance < 0) {
+          throw new Error("Saldo tabungan tidak mencukupi")
+        }
         const newBalance = updatedWallet.balance
 
         // Add Transaction record

@@ -5,30 +5,12 @@ import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
-
-    const privateKey = process.env.TRIPAY_PRIVATE_KEY
-    if (!privateKey) {
-      logger.error("Payment callback: TRIPAY_PRIVATE_KEY is not configured")
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 })
-    }
+    const rawBody = await req.text()
+    const body = JSON.parse(rawBody)
 
     const callbackSignature = req.headers.get("x-callback-signature")
     if (!callbackSignature) {
       return NextResponse.json({ error: "Missing signature" }, { status: 403 })
-    }
-
-    // Verifikasi signature dari Tripay
-    const signature = crypto
-      .createHmac("sha256", privateKey)
-      .update(JSON.stringify(body))
-      .digest("hex")
-
-    if (callbackSignature !== signature) {
-      logger.warn("Payment callback: invalid signature", {
-        merchantRef: body.merchant_ref,
-      })
-      return NextResponse.json({ error: "Invalid signature" }, { status: 403 })
     }
 
     logger.info("Payment callback received", {
@@ -36,7 +18,7 @@ export async function POST(req: Request) {
       status: body.status,
     })
 
-    const res = await handleCallback(body)
+    const res = await handleCallback(body, rawBody, callbackSignature)
 
     if (!res.success) {
       logger.warn("Payment callback processing failed", {

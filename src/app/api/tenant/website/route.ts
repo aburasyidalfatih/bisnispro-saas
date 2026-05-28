@@ -25,8 +25,8 @@ const websiteSchema = z.object({
   youtube: z.string().max(100).optional().nullable(),
   tiktok: z.string().max(100).optional().nullable(),
   // Konten JSON
-  gallery: z.any().optional().nullable(),
-  settings: z.any().optional().nullable(),
+  gallery: z.array(z.any()).optional().nullable(),
+  settings: z.record(z.any()).optional().nullable(),
   // SEO
   seoTitle: z.string().max(70).optional().nullable(),
   seoDesc: z.string().max(160).optional().nullable(),
@@ -43,6 +43,9 @@ export async function GET(req: Request) {
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
+
+  const { error } = await (await import("@/lib/api-utils")).requireTenantMembership(tenantId)
+  if (error) return error
 
   try {
     const { getWebsiteData } = await import("@/features/tenant/services/tenant-management.service")
