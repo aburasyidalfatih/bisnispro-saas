@@ -149,10 +149,13 @@ export async function POST(req: Request) {
     for (const item of orderItems) {
       const product = products.find(p => p.id === item.productId)!
       if (product.stock !== -1) {
-        await tx.canteenProduct.update({
+        const updatedProduct = await tx.canteenProduct.update({
           where: { id: item.productId },
           data: { stock: { decrement: item.quantity } },
         })
+        if (updatedProduct.stock < 0) {
+          throw new Error(`Stok ${product.name} tidak mencukupi`)
+        }
       }
     }
 

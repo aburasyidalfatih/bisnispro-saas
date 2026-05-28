@@ -227,6 +227,9 @@ export class FinanceService {
             where: { id: wallet.id },
             data: { balance: { decrement: amount } },
           })
+          if (updatedWallet.balance < 0) {
+            throw new Error("Saldo tidak mencukupi")
+          }
           const newBalance = updatedWallet.balance
           const balanceBefore = newBalance + amount
 
