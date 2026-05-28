@@ -86,7 +86,6 @@ services:
     restart: unless-stopped
     networks:
       - default
-      - shared-proxy
 
   redis:
     image: redis:7-alpine
@@ -97,7 +96,6 @@ services:
     restart: unless-stopped
     networks:
       - default
-      - shared-proxy
 
 #  wa-gateway:
 #    profiles:
