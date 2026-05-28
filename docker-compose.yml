@@ -81,7 +81,6 @@ services:
     restart: unless-stopped
     networks:
       - default
-      - dokploy-network
 
   redis:
     image: redis:7-alpine
@@ -90,7 +89,6 @@ services:
     restart: unless-stopped
     networks:
       - default
-      - dokploy-network
 
 #  wa-gateway:
 #    profiles:
