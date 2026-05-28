@@ -213,7 +213,7 @@ function ExamContent() {
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-10 hide-scrollbar pb-32">
+        <main className="flex-1 overflow-y-auto p-4 md:p-10 scrollbar-hide pb-32">
           <div className="max-w-4xl mx-auto space-y-8">
             {/* Pertanyaan */}
             <div className="text-xl md:text-2xl leading-relaxed font-medium text-slate-800 whitespace-pre-wrap">
@@ -285,7 +285,7 @@ function ExamContent() {
       {/* RIGHT AREA: Navigasi Nomor (25%) */}
       <div className="w-full md:w-80 bg-white border-l h-screen flex flex-col hidden md:flex">
         <div className="p-4 border-b font-bold text-sm text-slate-500 uppercase tracking-wider text-center">Navigasi Soal</div>
-        <div className="flex-1 overflow-y-auto p-4 hide-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
           <div className="grid grid-cols-5 gap-2">
             {sessionData.questions.map((q: any, i: number) => {
               const isAns = !!answers[q.id]
