@@ -12,6 +12,7 @@ import { getStaff } from "@/features/staff/actions/staff.action"
 import { AboutFormState, AiPromptType } from "./_components/types"
 import { IdentityForm } from "./_components/identity-form"
 import { ContactForm } from "./_components/contact-form"
+import { SocialMediaForm } from "./_components/social-media-form"
 import { AboutDetailsForm } from "./_components/about-details-form"
 import { PrincipalSpeechForm } from "./_components/principal-speech-form"
 import { SeoForm } from "./_components/seo-form"
@@ -267,7 +268,8 @@ export default function WebsiteAboutPage() {
         <div className="flex justify-between items-center bg-white/50 p-1 rounded-2xl border backdrop-blur-sm sticky top-0 z-10">
           <TabsList className="bg-transparent border-0 h-11 flex overflow-x-auto w-full justify-start no-scrollbar">
             <TabsTrigger value="identity" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Identitas & Logo</TabsTrigger>
-            <TabsTrigger value="contact" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kontak & Sosial Media</TabsTrigger>
+            <TabsTrigger value="contact" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kontak & Lokasi</TabsTrigger>
+            <TabsTrigger value="social" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Media Sosial</TabsTrigger>
             <TabsTrigger value="about" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Detail Profil & Visi Misi</TabsTrigger>
             <TabsTrigger value="principal" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Sambutan Utama</TabsTrigger>
             <TabsTrigger value="seo" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">SEO & Meta</TabsTrigger>
@@ -284,6 +286,10 @@ export default function WebsiteAboutPage() {
 
         <TabsContent value="contact" className="outline-none">
           <ContactForm form={form} setForm={setForm} />
+        </TabsContent>
+
+        <TabsContent value="social" className="outline-none">
+          <SocialMediaForm form={form} setForm={setForm} />
         </TabsContent>
 
         <TabsContent value="about" className="outline-none">
