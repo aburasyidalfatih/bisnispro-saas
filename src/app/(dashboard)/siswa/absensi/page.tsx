@@ -25,7 +25,7 @@ export default function AbsensiSiswaPage() {
   }, [])
 
   if (loading) {
-    return <div className="h-screen w-full flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>
+    return <div className="h-[100dvh] w-full flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>
   }
 
   const records = data?.records || []

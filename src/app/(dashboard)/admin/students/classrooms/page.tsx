@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BookOpen, Plus, Users, Edit2, Trash2, Loader2, ChevronRight, GraduationCap } from "lucide-react"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import Link from "next/link"
@@ -18,9 +19,10 @@ export default function ClassroomsPage() {
   const { toast } = useToast()
   const tenant = session?.user?.tenants?.[0]
   const [classrooms, setClassrooms] = useState<any[]>([])
+  const [staffList, setStaffList] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ name: "", level: "", capacity: 30 })
+  const [form, setForm] = useState({ name: "", level: "", capacity: 30, waliKelasId: "none" })
   const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -28,8 +30,13 @@ export default function ClassroomsPage() {
   const fetchClassrooms = async () => {
     if (!tenant) return
     setLoading(true)
-    const res = await fetch(`/api/classrooms?tenantId=${tenant.id}`)
-    setClassrooms(await res.json())
+    const [resClass, resStaff] = await Promise.all([
+      fetch(`/api/classrooms?tenantId=${tenant.id}`),
+      fetch(`/api/gtk/staff?tenantId=${tenant.id}`)
+    ])
+    setClassrooms(await resClass.json())
+    const staffData = await resStaff.json()
+    setStaffList(staffData.staff || [])
     setLoading(false)
   }
 
@@ -39,18 +46,25 @@ export default function ClassroomsPage() {
     if (!tenant || !form.name) return toast({ title: "Nama kelas wajib diisi", variant: "destructive" })
     setSaving(true)
     try {
+      const payload = { 
+        tenantId: tenant.id, 
+        ...form, 
+        capacity: Number(form.capacity),
+        waliKelasId: form.waliKelasId === "none" ? null : form.waliKelasId 
+      }
+      
       let res;
       if (editId) {
         res = await fetch(`/api/classrooms/${editId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tenantId: tenant.id, ...form, capacity: Number(form.capacity) }),
+          body: JSON.stringify(payload),
         })
       } else {
         res = await fetch("/api/classrooms/create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tenantId: tenant.id, ...form, capacity: Number(form.capacity) }),
+          body: JSON.stringify(payload),
         })
       }
 
@@ -62,7 +76,7 @@ export default function ClassroomsPage() {
       toast({ title: editId ? "Kelas diperbarui!" : "Kelas ditambahkan!" })
       setShowForm(false)
       setEditId(null)
-      setForm({ name: "", level: "", capacity: 30 })
+      setForm({ name: "", level: "", capacity: 30, waliKelasId: "none" })
       fetchClassrooms()
     } catch (err: any) {
       toast({ title: "Gagal", description: err.message, variant: "destructive" })
@@ -73,7 +87,7 @@ export default function ClassroomsPage() {
 
   const handleEdit = (c: any) => {
     setEditId(c.id)
-    setForm({ name: c.name, level: c.level || "", capacity: c.capacity })
+    setForm({ name: c.name, level: c.level || "", capacity: c.capacity, waliKelasId: c.waliKelasId || "none" })
     setShowForm(true)
   }
 
@@ -96,7 +110,7 @@ export default function ClassroomsPage() {
         </div>
         <div className="flex gap-2">
           <Link href="/admin/students"><Button variant="outline" className="rounded-xl gap-2"><GraduationCap className="h-4 w-4" /> Data Siswa</Button></Link>
-          <Button className="rounded-xl gap-2" onClick={() => { setShowForm(!showForm); setEditId(null); setForm({ name: "", level: "", capacity: 30 }) }}>
+          <Button className="rounded-xl gap-2" onClick={() => { setShowForm(!showForm); setEditId(null); setForm({ name: "", level: "", capacity: 30, waliKelasId: "none" }) }}>
             <Plus className="h-4 w-4" /> Tambah Kelas
           </Button>
         </div>
@@ -129,9 +143,23 @@ export default function ClassroomsPage() {
           <CardContent className="p-5 space-y-4">
             <p className="font-bold text-sm">{editId ? "Edit Kelas" : "Tambah Kelas Baru"}</p>
             <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2 space-y-2">
+              <div className="col-span-2 md:col-span-1 space-y-2">
                 <Label>Nama Kelas *</Label>
                 <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="VII A / 10 IPA 1 / Kelas 4B" className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>Wali Kelas</Label>
+                <Select value={form.waliKelasId} onValueChange={v => setForm(f => ({ ...f, waliKelasId: v }))}>
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue placeholder="Pilih Wali Kelas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">-- Tanpa Wali Kelas --</SelectItem>
+                    {staffList.map((s: any) => (
+                      <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Level / Tingkat</Label>

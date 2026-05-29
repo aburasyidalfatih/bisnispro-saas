@@ -24,6 +24,7 @@ export default function AttendanceSessionsPage() {
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
   const [selectedClass, setSelectedClass] = useState("")
+  const [selectedType, setSelectedType] = useState("DAILY")
 
   useEffect(() => {
     if (!tenant) return
@@ -47,7 +48,7 @@ export default function AttendanceSessionsPage() {
           tenantId: tenant.id,
           classroomId: selectedClass,
           date: new Date().toISOString().split("T")[0],
-          type: "DAILY",
+          type: selectedType,
         }),
       })
       const data = await res.json()
@@ -98,6 +99,16 @@ export default function AttendanceSessionsPage() {
                 {classrooms.map((c: any) => (
                   <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedType} onValueChange={setSelectedType}>
+              <SelectTrigger className="rounded-xl glass border-0 w-32 md:w-40">
+                <SelectValue placeholder="Jenis Sesi" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="DAILY">Harian</SelectItem>
+                <SelectItem value="EXAM">Ujian</SelectItem>
+                <SelectItem value="EXTRACURRICULAR">Ekstrakurikuler</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={handleCreate} disabled={creating || !selectedClass} className="rounded-xl shrink-0">

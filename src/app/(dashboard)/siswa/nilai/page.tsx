@@ -25,7 +25,7 @@ export default function NilaiSiswaPage() {
   }, [])
 
   if (loading) {
-    return <div className="h-screen w-full flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>
+    return <div className="h-[100dvh] w-full flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>
   }
 
   const grades = data?.grades || []

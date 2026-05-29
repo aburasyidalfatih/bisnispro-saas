@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Users, Search, UserPlus, MoreHorizontal, Pencil, Trash2, LogIn,
-  ShieldCheck, GraduationCap, UserCheck,
+  ShieldCheck, GraduationCap, UserCheck, Download, Loader2
 } from "lucide-react"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -21,6 +21,7 @@ import {
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
+import * as XLSX from "xlsx"
 
 interface UserRow {
   id: string
@@ -72,6 +73,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
   const [addLoading, setAddLoading] = useState(false)
   const [editUser, setEditUser] = useState<UserRow | null>(null)
   const [editLoading, setEditLoading] = useState(false)
+  const [exporting, setExporting] = useState(false)
 
   const tenantId = session?.user?.tenants?.[0]?.id
   const currentRole = session?.user?.tenants?.[0]?.role
@@ -231,6 +233,29 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
     }
   }
 
+  const handleExport = () => {
+    if (!users.length) return toast({ title: "Tidak ada data untuk diekspor", variant: "destructive" })
+    setExporting(true)
+    try {
+      const formattedData = users.map((u: any) => ({
+        "Nama Lengkap": u.name,
+        "Email": u.email,
+        "No. Telepon": u.phone || "-",
+        "Bergabung": formatDate(u.createdAt),
+        "Status": u.isActive ? "Aktif" : "Nonaktif",
+      }))
+      const worksheet = XLSX.utils.json_to_sheet(formattedData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, `Data_${config.label}`)
+      XLSX.writeFile(workbook, `Data_${config.label.replace(/[^a-zA-Z0-9]/g, '_')}_${formatDate(new Date().toISOString()).replace(/\s/g, '_')}.xlsx`)
+      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+    } catch (e: any) {
+      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+    } finally {
+      setExporting(false)
+    }
+  }
+
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
 
@@ -244,6 +269,9 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
           <p className="text-muted-foreground mt-1">Kelola data {config.label.toLowerCase()} ({filtered.length} data)</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={handleExport} disabled={exporting}>
+            {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} Ekspor Excel
+          </Button>
           {role === "guru" && (
             <Button asChild variant="outline" className="gap-2 rounded-xl">
               <Link href="/admin/users/guru/import">

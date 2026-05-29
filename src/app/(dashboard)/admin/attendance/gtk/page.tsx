@@ -67,9 +67,9 @@ export default function AdminGTKAttendancePage() {
 
   useEffect(() => {
     if (!tenant) return
-    fetch(`/api/website/gtk?tenantId=${tenant.id}&take=100`)
+    fetch(`/api/gtk/staff?tenantId=${tenant.id}`)
       .then(r => r.json())
-      .then(d => setStaffList(d.data || []))
+      .then(d => setStaffList(d.staff || []))
       .catch(console.error)
   }, [tenant])
 
@@ -116,6 +116,30 @@ export default function AdminGTKAttendancePage() {
     }
   }
 
+  const handleExportCSV = () => {
+    const headers = ["Nama Guru/Staf", "Jabatan", "Hadir", "Izin", "Sakit", "Alpha", "Total", "Kehadiran %"]
+    const rows = staffSummary.map(s => {
+      const percentage = s.total > 0 ? Math.round((s.hadir / s.total) * 100) : 0;
+      return [
+        `"${s.name}"`, 
+        `"${s.role || "-"}"`, 
+        s.hadir, s.izin, s.sakit, s.alpha, s.total, `${percentage}%`
+      ]
+    })
+    
+    let csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n")
+      
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `Laporan_Kehadiran_GTK_${format(targetMonth, "MMM_yyyy", { locale: localeId })}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -125,6 +149,9 @@ export default function AdminGTKAttendancePage() {
           <p className="text-sm text-muted-foreground">Monitor kehadiran dengan rekap bulanan.</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex" onClick={handleExportCSV}>
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
           <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex" onClick={() => setShowManual(!showManual)}>
             <Edit2 className="h-4 w-4" /> Input Manual
           </Button>

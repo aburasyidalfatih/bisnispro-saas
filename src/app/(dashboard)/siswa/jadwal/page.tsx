@@ -25,7 +25,7 @@ export default function JadwalSiswaPage() {
   }, [])
 
   if (loading) {
-    return <div className="h-screen w-full flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+    return <div className="h-[100dvh] w-full flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
   }
 
   const scheduleToday = data?.scheduleToday || []

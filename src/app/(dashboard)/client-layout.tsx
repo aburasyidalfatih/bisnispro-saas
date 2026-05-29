@@ -100,7 +100,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (status === "loading") {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-[100dvh] items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     )
@@ -111,7 +111,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Mencegah flash UI (render salah) selama proses redirect super admin
   if (session.user?.isSuperAdmin && !document.cookie.includes("impersonate-tenant=")) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-[100dvh] items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     )
@@ -131,7 +131,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </MobileAppLayout>
       ) : (
-        <div className="flex h-screen overflow-hidden">
+        <div className="flex h-[100dvh] overflow-hidden">
           {/* Desktop sidebar */}
           <div className="hidden lg:block">
             <Sidebar />

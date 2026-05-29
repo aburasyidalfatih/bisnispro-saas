@@ -10,9 +10,10 @@ import { Badge } from "@/components/ui/badge"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
 import {
-  BookOpen, Plus, Edit2, Trash2, Loader2, Search, CheckCircle, XCircle
+  BookOpen, Plus, Edit2, Trash2, Loader2, Search, CheckCircle, XCircle, Download
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import * as XLSX from "xlsx"
 
 import { createSubject, updateSubject, deleteSubject } from "@/features/academic/actions/academic.action"
 
@@ -31,6 +32,7 @@ export default function SubjectsPage() {
   const [saving, setSaving] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [exporting, setExporting] = useState(false)
 
   const load = async () => {
     if (!tenant) return
@@ -95,6 +97,28 @@ export default function SubjectsPage() {
     }
   }
 
+  const handleExport = () => {
+    if (!subjects.length) return toast({ title: "Tidak ada data untuk diekspor", variant: "destructive" })
+    setExporting(true)
+    try {
+      const formattedData = subjects.map((s: any) => ({
+        "Nama Mata Pelajaran": s.name,
+        "Kode": s.code || "-",
+        "Deskripsi": s.description || "-",
+        "Status": s.isActive ? "Aktif" : "Nonaktif",
+      }))
+      const worksheet = XLSX.utils.json_to_sheet(formattedData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Data Mapel")
+      XLSX.writeFile(workbook, `Data_Mapel_${tenant?.name?.replace(/\s+/g, '_') || 'Tenant'}.xlsx`)
+      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+    } catch (e: any) {
+      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+    } finally {
+      setExporting(false)
+    }
+  }
+
   const filtered = subjects.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()) ||
     (s.code || "").toLowerCase().includes(search.toLowerCase())
@@ -107,9 +131,14 @@ export default function SubjectsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Mata Pelajaran</h1>
           <p className="text-muted-foreground">Kelola daftar mata pelajaran yang tersedia</p>
         </div>
-        <Button className="gap-2 btn-gradient" onClick={() => { resetForm(); setShowForm(true) }}>
-          <Plus className="h-4 w-4" /> Tambah Mapel
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" className="gap-2 rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50 hidden sm:flex" onClick={handleExport} disabled={exporting}>
+            {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} Ekspor Excel
+          </Button>
+          <Button className="gap-2 btn-gradient rounded-xl" onClick={() => { resetForm(); setShowForm(true) }}>
+            <Plus className="h-4 w-4" /> Tambah Mapel
+          </Button>
+        </div>
       </div>
 
       {/* Form */}
