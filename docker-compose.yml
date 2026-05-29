@@ -6,6 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: sh -c "npx prisma db push --accept-data-loss && node server.js"
     env_file:
       - .env
     environment:
