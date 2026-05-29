@@ -34,31 +34,45 @@ interface Stats {
 }
 
 export default function PaymentsPage() {
-  const [data, setData] = useState<{ payments: Payment[], stats: Stats }>({ payments: [], stats: { totalRevenue: 0, pendingCount: 0 } })
+  const [data, setData] = useState<{ payments: Payment[], stats: Stats, totalPages: number }>({ payments: [], stats: { totalRevenue: 0, pendingCount: 0 }, totalPages: 1 })
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>("all")
   const [search, setSearch] = useState("")
+  const [page, setPage] = useState(1)
   const [confirming, setConfirming] = useState<string | null>(null)
   const [confirmTarget, setConfirmTarget] = useState<Payment | null>(null)
+  const [canceling, setCanceling] = useState<string | null>(null)
+  const [cancelTarget, setCancelTarget] = useState<Payment | null>(null)
 
   const fetchPayments = useCallback(async () => {
     try {
-      const url = filter === "all" ? "/api/super-admin/payments" : `/api/super-admin/payments?status=${filter}`
-      const res = await fetch(url)
+      const url = new URL("/api/super-admin/payments", window.location.origin)
+      url.searchParams.set("status", filter)
+      url.searchParams.set("page", page.toString())
+      url.searchParams.set("limit", "10")
+      if (search) url.searchParams.set("search", search)
+      
+      const res = await fetch(url.toString())
       const result = await res.json()
       setData(result)
       setLoading(false)
     } catch {
       setLoading(false)
     }
-  }, [filter])
+  }, [filter, page, search])
 
-  useEffect(() => { fetchPayments() }, [fetchPayments])
+  // Reset page when search or filter changes
+  useEffect(() => {
+    setPage(1)
+  }, [search, filter])
 
-  const filteredPayments = data.payments.filter(p =>
-    p.reference.toLowerCase().includes(search.toLowerCase()) ||
-    p.tenant.name.toLowerCase().includes(search.toLowerCase())
-  )
+  // Debounced fetch
+  useEffect(() => { 
+    const timer = setTimeout(() => fetchPayments(), 500)
+    return () => clearTimeout(timer)
+  }, [fetchPayments])
+
+  const filteredPayments = data.payments || []
 
   const handleConfirm = async () => {
     if (!confirmTarget) return
@@ -79,6 +93,28 @@ export default function PaymentsPage() {
       }
     } finally {
       setConfirming(null)
+    }
+  }
+
+  const handleCancel = async () => {
+    if (!cancelTarget) return
+    setCanceling(cancelTarget.id)
+    try {
+      const res = await fetch("/api/super-admin/payments/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId: cancelTarget.id }),
+      })
+      const result = await res.json()
+      if (res.ok) {
+        toast({ title: "Dibatalkan", description: result.message })
+        setCancelTarget(null)
+        fetchPayments()
+      } else {
+        toast({ title: "Gagal", description: result.error, variant: "destructive" })
+      }
+    } finally {
+      setCanceling(null)
     }
   }
 
@@ -247,7 +283,10 @@ export default function PaymentsPage() {
                       <td className="py-4 px-2 uppercase text-[10px] font-bold tracking-wider">{p.plan}</td>
                       <td className="py-4 px-2 font-bold text-primary">Rp {p.amount.toLocaleString("id-ID")}</td>
                       <td className="py-4 px-2 text-xs text-muted-foreground">
-                        {(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}
+                        <div className="flex flex-col gap-1">
+                          <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}</span>
+                          {p.method && <span className="text-[9px] uppercase border px-1.5 py-0.5 rounded-sm w-fit bg-muted/50">{p.method}</span>}
+                        </div>
                       </td>
                       <td className="py-4 px-2">{getStatusBadge(p.status)}</td>
                       <td className="py-4 px-2 text-xs text-muted-foreground">
@@ -255,14 +294,24 @@ export default function PaymentsPage() {
                       </td>
                       <td className="py-4 px-2 text-right">
                         {p.status === "pending" || p.status === "expired" ? (
-                          <Button
-                            size="sm"
-                            onClick={() => setConfirmTarget(p)}
-                            className="rounded-xl gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white border-0 h-8 px-3 text-xs font-bold shadow-md shadow-emerald-600/20"
-                          >
-                            <ShieldCheck className="h-3.5 w-3.5" />
-                            Konfirmasi Bayar
-                          </Button>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              size="sm"
+                              onClick={() => setCancelTarget(p)}
+                              variant="outline"
+                              className="rounded-xl h-8 px-3 text-xs font-bold text-rose-600 border-rose-200 hover:bg-rose-50"
+                            >
+                              Tolak
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => setConfirmTarget(p)}
+                              className="rounded-xl gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white border-0 h-8 px-3 text-xs font-bold shadow-md shadow-emerald-600/20"
+                            >
+                              <ShieldCheck className="h-3.5 w-3.5" />
+                              Konfirmasi
+                            </Button>
+                          </div>
                         ) : p.status === "paid" ? (
                           <span className="text-[10px] text-emerald-600 font-medium flex items-center justify-end gap-1">
                             <CheckCircle2 className="h-3 w-3" />
@@ -315,14 +364,24 @@ export default function PaymentsPage() {
 
                     {/* Row 3: Action */}
                     {(p.status === "pending" || p.status === "expired") && (
-                      <Button
-                        size="sm"
-                        onClick={() => setConfirmTarget(p)}
-                        className="w-full rounded-xl gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white border-0 h-9 text-xs font-bold shadow-md shadow-emerald-600/20"
-                      >
-                        <ShieldCheck className="h-3.5 w-3.5" />
-                        Konfirmasi Bayar
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => setCancelTarget(p)}
+                          variant="outline"
+                          className="flex-1 rounded-xl text-xs font-bold text-rose-600 border-rose-200 hover:bg-rose-50 h-9"
+                        >
+                          Tolak
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => setConfirmTarget(p)}
+                          className="flex-[2] rounded-xl gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white border-0 h-9 text-xs font-bold shadow-md shadow-emerald-600/20"
+                        >
+                          <ShieldCheck className="h-3.5 w-3.5" />
+                          Konfirmasi
+                        </Button>
+                      </div>
                     )}
                   </div>
                 ))}
@@ -331,6 +390,33 @@ export default function PaymentsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Pagination Controls */}
+      {data.totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="rounded-xl"
+          >
+            Sebelumnya
+          </Button>
+          <span className="text-sm font-medium text-muted-foreground">
+            Halaman {page} dari {data.totalPages}
+          </span>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
+            disabled={page === data.totalPages}
+            className="rounded-xl"
+          >
+            Selanjutnya
+          </Button>
+        </div>
+      )}
 
       {/* Confirm Dialog */}
       <Dialog open={!!confirmTarget} onOpenChange={(o) => !o && setConfirmTarget(null)}>
@@ -385,6 +471,35 @@ export default function PaymentsPage() {
               ) : (
                 <><ShieldCheck className="h-4 w-4" /> Ya, Konfirmasi & Aktifkan Paket</>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel Dialog */}
+      <Dialog open={!!cancelTarget} onOpenChange={(o) => !o && setCancelTarget(null)}>
+        <DialogContent className="rounded-3xl max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-rose-600">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10">
+                <XCircle className="h-5 w-5" />
+              </div>
+              Tolak Pembayaran
+            </DialogTitle>
+            <DialogDescription>
+              Anda yakin ingin membatalkan transaksi dari <strong>{cancelTarget?.tenant.name}</strong> ini?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button variant="ghost" onClick={() => setCancelTarget(null)} disabled={!!canceling} className="rounded-xl">
+              Tutup
+            </Button>
+            <Button
+              onClick={handleCancel}
+              disabled={!!canceling}
+              className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white border-0 gap-2"
+            >
+              {canceling ? "Memproses..." : "Ya, Tolak Transaksi"}
             </Button>
           </DialogFooter>
         </DialogContent>
