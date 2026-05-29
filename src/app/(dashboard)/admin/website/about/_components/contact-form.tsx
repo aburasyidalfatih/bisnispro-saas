@@ -50,6 +50,7 @@ export function ContactForm({ form, setForm }: ContactFormProps) {
             </div>
           </div>
         </CardContent>
+      </Card>
     </>
   )
 }
