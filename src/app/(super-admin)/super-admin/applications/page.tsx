@@ -1,48 +1,17 @@
 "use client"
 
 import { useEffect, useState, useMemo } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
-import { 
-  CheckCircle, XCircle, Clock, RefreshCcw, Trash2,
-  School, Mail, Phone, MapPin, Landmark, Hash, Globe, ChevronLeft, MoreHorizontal, CheckSquare, Square, Eye, ShieldCheck, User, Search, MessageSquareOff, MessageSquare, MailOpen, MailX
-} from "lucide-react"
-import { cn, normalizeImageUrl } from "@/lib/utils"
-import { checkDataCompleteness, type CompletenessLevel } from "@/lib/utils/data-completeness"
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
-import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger
-} from "@/components/ui/dialog"
+import { CheckCircle, RefreshCcw, XCircle, Trash2, Mail, Search, MessageSquareOff, MessageSquare } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-interface Application {
-  id: string
-  schoolName: string
-  schoolSlug: string
-  npsn: string
-  schoolStatus: string
-  province: string
-  regency: string
-  adminName: string
-  adminPosition?: string | null
-  adminEmail: string
-  adminPhone: string
-  address: string
-  status: string
-  adminMessage: string
-  emailOpenedAt?: string | null
-  createdAt: string
-  updatedAt: string
-  logo?: string | null
-  studentCount?: number
-  affiliate?: { user: { name: string } } | null
-}
+import { Application } from "./_components/types"
+import { ApplicationTable } from "./_components/application-table"
+import { ApplicationDetailModal } from "./_components/application-detail-modal"
+import { ActionModal, BulkActionModal } from "./_components/action-modals"
 
 export default function SuperAdminApplicationsPage() {
   const [apps, setApps] = useState<Application[]>([])
@@ -224,7 +193,6 @@ export default function SuperAdminApplicationsPage() {
     }
   }
 
-
   const handleResendEmail = async (id: string) => {
     setIsUpdating(true)
     try {
@@ -244,17 +212,6 @@ export default function SuperAdminApplicationsPage() {
       toast({ title: "Error", description: "Terjadi kesalahan sistem.", variant: "destructive" })
     } finally {
       setIsUpdating(false)
-    }
-  }
-
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "PENDING": return <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 gap-1"><Clock className="h-3 w-3" /> Pending</Badge>
-      case "APPROVED": return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 gap-1"><CheckCircle className="h-3 w-3" /> Disetujui</Badge>
-      case "REVISION": return <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1"><RefreshCcw className="h-3 w-3" /> Revisi</Badge>
-      case "REJECTED": return <Badge variant="outline" className="bg-rose-500/10 text-rose-600 border-rose-500/20 gap-1"><XCircle className="h-3 w-3" /> Ditolak</Badge>
-      default: return <Badge>{status}</Badge>
     }
   }
 
@@ -363,387 +320,44 @@ export default function SuperAdminApplicationsPage() {
         </div>
       )}
 
-      <Card className="glass border-0 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground uppercase bg-muted/30 border-b">
-              <tr>
-                <th className="px-4 py-3 w-10 text-center">
-                  <input 
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300 accent-primary"
-                    checked={filteredApps.length > 0 && selectedIds.length === filteredApps.length} 
-                    onChange={toggleSelectAll} 
-                  />
-                </th>
-                <th className="px-4 py-3 font-semibold">Tenant (Sekolah)</th>
-                <th className="px-4 py-3 font-semibold">Penanggungjawab</th>
-                <th className="px-4 py-3 font-semibold">Kota / Provinsi</th>
-                <th className="px-4 py-3 font-semibold text-center">Jml. Siswa</th>
-                <th className="px-4 py-3 font-semibold">Affiliator</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 font-semibold text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {filteredApps.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran yang sesuai pencarian.</td>
-                </tr>
-              )}
-              {filteredApps.map((app) => (
-                <tr key={app.id} className={cn("hover:bg-muted/10 transition-colors", selectedIds.includes(app.id) && "bg-muted/30")}>
-                  <td className="px-4 py-4 text-center">
-                    <input 
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 accent-primary"
-                      checked={selectedIds.includes(app.id)} 
-                      onChange={() => toggleSelect(app.id)} 
-                    />
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden relative">
-                        {app.logo ? (
-                          <>
-                            <img 
-                              src={normalizeImageUrl(app.logo) || app.logo} 
-                              alt="Logo" 
-                              className="object-contain p-0.5 w-full h-full" 
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                                const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
-                                if (nextSibling) nextSibling.style.display = 'block';
-                              }}
-                            />
-                            <School className="h-5 w-5 text-muted-foreground hidden" />
-                          </>
-                        ) : (
-                          <School className="h-5 w-5 text-muted-foreground" />
-                        )}
-                        {(() => {
-                          const result = checkDataCompleteness(app)
-                          const color = result.level === 'complete' ? 'bg-emerald-500' : result.level === 'location' ? 'bg-amber-500' : 'bg-rose-500'
-                          return <span className={`absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white ${color}`} title={result.level === 'complete' ? 'Data Lengkap' : result.level === 'location' ? 'Lokasi tidak cocok dataset' : `Kurang: ${result.missingFields.join(', ')}`} />
-                        })()}
-                      </div>
-                      <div>
-                        <p className="font-bold">{app.schoolName}</p>
-                        <p className="text-[10px] text-muted-foreground">Subdomain: <span className="text-primary">{app.schoolSlug}.schoolpro.id</span></p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <p className="font-medium">{app.adminName}</p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5"><Phone className="h-3 w-3" /> {app.adminPhone}</p>
-                  </td>
-                  <td className="px-4 py-4">
-                    <p className="font-medium">{app.regency}</p>
-                    <p className="text-xs text-muted-foreground">{app.province}</p>
-                  </td>
-                  <td className="px-4 py-4 text-center">
-                    <span className="font-semibold">{app.studentCount ? app.studentCount.toLocaleString('id-ID') : '-'}</span>
-                  </td>
-                  <td className="px-4 py-4">
-                    {app.affiliate ? (
-                      <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">
-                        <User className="h-3 w-3" /> {app.affiliate.user.name}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">-</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-col gap-1.5 items-start">
-                      {getStatusBadge(app.status)}
-                      {app.status === 'APPROVED' && (
-                        app.emailOpenedAt ? (
-                          <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1 text-[10px] px-1.5 py-0" title={`Dibaca pada: ${new Date(app.emailOpenedAt).toLocaleString('id-ID')}`}>
-                            <MailOpen className="h-3 w-3" /> Dibaca
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 gap-1 text-[10px] px-1.5 py-0" title="Email belum dibuka">
-                            <MailX className="h-3 w-3" /> Belum Dibaca
-                          </Badge>
-                        )
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuLabel>Tindakan</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => viewDetail(app)}>
-                          <Eye className="h-4 w-4 mr-2 text-primary" /> Lihat Detail
-                        </DropdownMenuItem>
-                        {app.status === 'APPROVED' && !app.emailOpenedAt && (
-                          <DropdownMenuItem onClick={() => handleResendEmail(app.id)}>
-                            <Mail className="h-4 w-4 mr-2 text-blue-500" /> Kirim Ulang Email
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => openActionModal(app, "APPROVED")}>
-                          <CheckCircle className="h-4 w-4 mr-2 text-emerald-500" /> Setujui
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => openActionModal(app, "REVISION")}>
-                          <RefreshCcw className="h-4 w-4 mr-2 text-blue-500" /> Revisi
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => openActionModal(app, "REJECTED")} className="text-rose-600">
-                          <XCircle className="h-4 w-4 mr-2" /> Tolak
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => openActionModal(app, "DELETE")} className="text-red-600 focus:text-red-700 focus:bg-red-50">
-                          <Trash2 className="h-4 w-4 mr-2" /> Hapus Pengajuan
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+      <ApplicationTable 
+        filteredApps={filteredApps}
+        selectedIds={selectedIds}
+        toggleSelectAll={toggleSelectAll}
+        toggleSelect={toggleSelect}
+        viewDetail={viewDetail}
+        handleResendEmail={handleResendEmail}
+        openActionModal={openActionModal}
+      />
 
-      {/* Action Dialog (Single) */}
-      <Dialog open={actionModalOpen} onOpenChange={setActionModalOpen}>
-        <DialogContent className="glass border-0">
-          <DialogHeader>
-            <DialogTitle>
-              {actionType === "APPROVED" ? "Setujui Pendaftaran" : actionType === "REVISION" ? "Minta Revisi" : actionType === "DELETE" ? "Hapus Pengajuan" : actionType === "RESEND_EMAIL" ? "Kirim Ulang Email" : "Tolak Pendaftaran"}
-            </DialogTitle>
-            <DialogDescription>
-              {actionType === "DELETE" 
-                ? "Apakah Anda yakin ingin menghapus pengajuan ini? Data yang dihapus tidak dapat dikembalikan."
-                : `Tindakan ini akan mengirimkan notifikasi ke email `}
-              {actionType !== "DELETE" && <strong className="text-primary">{selectedApp?.adminEmail}</strong>}
-            </DialogDescription>
-          </DialogHeader>
-          {(actionType === "REVISION" || actionType === "REJECTED") && (
-            <div className="space-y-3 py-4">
-              <Label>Alasan {actionType === "REVISION" ? "Revisi" : "Penolakan"} (Wajib)</Label>
-              <Textarea 
-                placeholder="Tulis alasan secara detail agar sekolah dapat memperbaikinya..." 
-                value={adminMessage}
-                onChange={(e) => setAdminMessage(e.target.value)}
-                className="min-h-[100px]"
-              />
-            </div>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setActionModalOpen(false)}>Batal</Button>
-            <Button 
-              className={cn(
-                actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : actionType === "RESEND_EMAIL" ? "bg-purple-500 hover:bg-purple-600" : "bg-rose-500 hover:bg-rose-600",
-                "text-white"
-              )}
-              onClick={handleUpdateStatus}
-              disabled={isUpdating || ((actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim())}
-            >
-              {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus" : actionType === "RESEND_EMAIL" ? "Ya, Kirim" : "Konfirmasi"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ActionModal 
+        open={actionModalOpen}
+        setOpen={setActionModalOpen}
+        actionType={actionType}
+        selectedApp={selectedApp}
+        adminMessage={adminMessage}
+        setAdminMessage={setAdminMessage}
+        isUpdating={isUpdating}
+        handleUpdateStatus={handleUpdateStatus}
+      />
 
-      {/* Bulk Action Dialog */}
-      <Dialog open={bulkActionModalOpen} onOpenChange={setBulkActionModalOpen}>
-        <DialogContent className="glass border-0">
-          <DialogHeader>
-            <DialogTitle>
-              Konfirmasi Masal: {actionType === "APPROVED" ? "Setujui" : actionType === "REVISION" ? "Revisi" : actionType === "DELETE" ? "Hapus" : actionType === "RESEND_EMAIL" ? "Kirim Ulang Email" : "Tolak"} ({selectedIds.length} Sekolah)
-            </DialogTitle>
-            <DialogDescription>
-              {actionType === "DELETE" 
-                ? `Apakah Anda yakin ingin menghapus ${selectedIds.length} pengajuan secara permanen?`
-                : actionType === "RESEND_EMAIL"
-                ? `Apakah Anda yakin ingin mengirim ulang email konfirmasi ke ${selectedIds.length} pengajuan yang dipilih secara masal?`
-                : `Tindakan ini akan diproses untuk seluruh ${selectedIds.length} pengajuan yang dipilih secara masal.`}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {bulkProgress.show ? (
-            <div className="py-8 space-y-4">
-              <div className="flex justify-between text-sm font-medium">
-                <span>Memproses...</span>
-                <span>{bulkProgress.current} / {bulkProgress.total}</span>
-              </div>
-              <div className="w-full bg-secondary rounded-full h-3 overflow-hidden">
-                <div 
-                  className="bg-primary h-full transition-all duration-300 ease-out"
-                  style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%` }}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground text-center">Mohon jangan tutup jendela ini hingga proses selesai.</p>
-            </div>
-          ) : (
-            <>
-              {(actionType === "REVISION" || actionType === "REJECTED") && (
-                <div className="space-y-3 py-4">
-                  <Label>Alasan (Akan dikirim ke semua)</Label>
-                  <Textarea 
-                    placeholder="Tulis alasan..." 
-                    value={adminMessage}
-                    onChange={(e) => setAdminMessage(e.target.value)}
-                    className="min-h-[100px]"
-                  />
-                </div>
-              )}
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setBulkActionModalOpen(false)} disabled={isUpdating}>Batal</Button>
-                <Button 
-                  className={cn(
-                    actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : actionType === "RESEND_EMAIL" ? "bg-purple-500 hover:bg-purple-600" : "bg-rose-500 hover:bg-rose-600",
-                    "text-white"
-                  )}
-                  onClick={handleUpdateStatus}
-                  disabled={isUpdating || ((actionType === "REVISION" || actionType === "REJECTED") && !adminMessage.trim())}
-                >
-                  {isUpdating ? "Memproses..." : actionType === "DELETE" ? "Ya, Hapus Masal" : actionType === "RESEND_EMAIL" ? "Kirim Masal" : "Proses Masal"}
-                </Button>
-              </DialogFooter>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <BulkActionModal 
+        open={bulkActionModalOpen}
+        setOpen={setBulkActionModalOpen}
+        actionType={actionType}
+        selectedIds={selectedIds}
+        adminMessage={adminMessage}
+        setAdminMessage={setAdminMessage}
+        isUpdating={isUpdating}
+        bulkProgress={bulkProgress}
+        handleUpdateStatus={handleUpdateStatus}
+      />
 
-      {/* View Detail Dialog */}
-      <Dialog open={detailModalOpen} onOpenChange={setDetailModalOpen}>
-        <DialogContent className="max-w-3xl glass border-0 max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Detail Pendaftaran Tenant</DialogTitle>
-            <DialogDescription>Data lengkap pengajuan operasional platform.</DialogDescription>
-          </DialogHeader>
-          {selectedApp && (
-            <div className="space-y-6 py-4">
-              {/* Header with Logo & Status */}
-              <div className="flex items-center gap-4 bg-muted/20 p-4 rounded-xl border">
-                <div className="h-16 w-16 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden">
-                  {selectedApp.logo ? (
-                    <>
-                      <img 
-                        src={normalizeImageUrl(selectedApp.logo) || selectedApp.logo} 
-                        alt="Logo" 
-                        className="object-contain p-1 w-full h-full" 
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
-                          if (nextSibling) nextSibling.style.display = 'block';
-                        }}
-                      />
-                      <School className="h-8 w-8 text-muted-foreground hidden" />
-                    </>
-                  ) : (
-                    <School className="h-8 w-8 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-lg truncate">{selectedApp.schoolName}</h3>
-                  <p className="text-sm text-muted-foreground truncate">
-                    https://{selectedApp.schoolSlug}.schoolpro.id
-                  </p>
-                </div>
-                <div>{getStatusBadge(selectedApp.status)}</div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Informasi Sekolah */}
-                <div className="space-y-4">
-                  <h4 className="font-bold border-b pb-2 flex items-center gap-2"><School className="h-4 w-4" /> Informasi Sekolah</h4>
-                  <div className="grid grid-cols-2 gap-y-3 text-sm">
-                    <div className="text-muted-foreground">Nama Sekolah</div>
-                    <div className="font-medium">{selectedApp.schoolName}</div>
-                    
-                    <div className="text-muted-foreground">Status Lembaga</div>
-                    <div className="font-medium">{selectedApp.schoolStatus || '-'}</div>
-                    
-                    <div className="text-muted-foreground">NPSN</div>
-                    <div className="font-medium">{selectedApp.npsn || '-'}</div>
-                    
-                    <div className="text-muted-foreground">Subdomain</div>
-                    <div className="font-medium text-primary">{selectedApp.schoolSlug}.schoolpro.id</div>
-
-                    <div className="text-muted-foreground">Jumlah Siswa</div>
-                    <div className="font-medium">{selectedApp.studentCount ? selectedApp.studentCount.toLocaleString('id-ID') : '-'}</div>
-                  </div>
-                </div>
-
-                {/* Lokasi */}
-                <div className="space-y-4">
-                  <h4 className="font-bold border-b pb-2 flex items-center gap-2"><MapPin className="h-4 w-4" /> Lokasi</h4>
-                  <div className="grid grid-cols-2 gap-y-3 text-sm">
-                    <div className="text-muted-foreground">Provinsi</div>
-                    <div className="font-medium">{selectedApp.province || '-'}</div>
-
-                    <div className="text-muted-foreground">Kabupaten/Kota</div>
-                    <div className="font-medium">{selectedApp.regency || '-'}</div>
-
-                    <div className="text-muted-foreground col-span-2 mt-1">Alamat Lengkap</div>
-                    <div className="col-span-2 font-medium bg-muted/20 p-2 rounded-lg text-xs leading-relaxed">
-                      {selectedApp.address || '-'}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Penanggung Jawab */}
-                <div className="space-y-4">
-                  <h4 className="font-bold border-b pb-2 flex items-center gap-2"><User className="h-4 w-4" /> Penanggung Jawab</h4>
-                  <div className="grid grid-cols-2 gap-y-3 text-sm">
-                    <div className="text-muted-foreground">Nama Admin</div>
-                    <div className="font-medium">{selectedApp.adminName}</div>
-                    
-                    <div className="text-muted-foreground">Jabatan</div>
-                    <div className="font-medium">{selectedApp.adminPosition || '-'}</div>
-                    
-                    <div className="text-muted-foreground">Email</div>
-                    <div className="font-medium truncate">{selectedApp.adminEmail}</div>
-                    
-                    <div className="text-muted-foreground">WhatsApp</div>
-                    <div className="font-medium">{selectedApp.adminPhone}</div>
-                  </div>
-                </div>
-
-                {/* Metadata */}
-                <div className="space-y-4">
-                  <h4 className="font-bold border-b pb-2 flex items-center gap-2"><Clock className="h-4 w-4" /> Metadata</h4>
-                  <div className="grid grid-cols-2 gap-y-3 text-sm">
-                    <div className="text-muted-foreground">Tanggal Daftar</div>
-                    <div className="font-medium">{new Date(selectedApp.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
-
-                    <div className="text-muted-foreground">Terakhir Diperbarui</div>
-                    <div className="font-medium">{selectedApp.updatedAt ? new Date(selectedApp.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</div>
-
-                    {selectedApp.affiliate && (
-                      <>
-                        <div className="text-muted-foreground">Affiliator</div>
-                        <div className="font-bold text-emerald-600 flex items-center gap-1.5">
-                          <User className="h-3 w-3" /> {selectedApp.affiliate.user.name}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Admin Message (Catatan Revisi/Penolakan) */}
-              {selectedApp.adminMessage && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-4 space-y-1">
-                  <h5 className="font-bold text-sm flex items-center gap-2">
-                    <RefreshCcw className="h-4 w-4" /> Catatan Admin
-                  </h5>
-                  <p className="text-sm leading-relaxed">{selectedApp.adminMessage}</p>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <ApplicationDetailModal 
+        open={detailModalOpen}
+        setOpen={setDetailModalOpen}
+        selectedApp={selectedApp}
+      />
     </div>
   )
 }
