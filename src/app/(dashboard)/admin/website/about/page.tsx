@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
 import { Save, ExternalLink } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getStaff } from "@/features/staff/actions/staff.action"
 
 import { AboutFormState, AiPromptType } from "./_components/types"
@@ -261,22 +262,47 @@ export default function WebsiteAboutPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <IdentityForm
-          form={form} setForm={setForm}
-          logoPreview={logoPreview} uploadingLogo={uploadingLogo} handleLogoUpload={handleLogoUpload}
-          domainStatus={domainStatus} slug={slug} router={router}
-        />
+      <Tabs defaultValue="identity" className="space-y-6">
+        <div className="flex justify-between items-center bg-white/50 p-1 rounded-2xl border backdrop-blur-sm sticky top-0 z-10">
+          <TabsList className="bg-transparent border-0 h-11 flex overflow-x-auto w-full justify-start no-scrollbar">
+            <TabsTrigger value="identity" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Identitas & Logo</TabsTrigger>
+            <TabsTrigger value="contact" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kontak & Sosial Media</TabsTrigger>
+            <TabsTrigger value="about" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Detail Profil & Sambutan</TabsTrigger>
+            <TabsTrigger value="seo" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">SEO & Meta</TabsTrigger>
+          </TabsList>
+        </div>
 
-        <ContactForm form={form} setForm={setForm} />
+        <TabsContent value="identity" className="outline-none">
+          <div className="max-w-3xl">
+            <IdentityForm
+              form={form} setForm={setForm}
+              logoPreview={logoPreview} uploadingLogo={uploadingLogo} handleLogoUpload={handleLogoUpload}
+              domainStatus={domainStatus} slug={slug} router={router}
+            />
+          </div>
+        </TabsContent>
 
-        <AboutDetailsForm
-          form={form} setForm={setForm} staffList={staffList}
-          handlePrincipalImageUpload={handlePrincipalImageUpload} openAiModal={openAiModal}
-        />
+        <TabsContent value="contact" className="outline-none">
+          <div className="max-w-3xl">
+            <ContactForm form={form} setForm={setForm} />
+          </div>
+        </TabsContent>
 
-        <SeoForm form={form} setForm={setForm} />
-      </div>
+        <TabsContent value="about" className="outline-none">
+          <div className="max-w-3xl">
+            <AboutDetailsForm
+              form={form} setForm={setForm} staffList={staffList}
+              handlePrincipalImageUpload={handlePrincipalImageUpload} openAiModal={openAiModal}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="seo" className="outline-none">
+          <div className="max-w-3xl">
+            <SeoForm form={form} setForm={setForm} />
+          </div>
+        </TabsContent>
+      </Tabs>
 
       <AiContentModal
         aiModalOpen={aiModalOpen} setAiModalOpen={setAiModalOpen}
