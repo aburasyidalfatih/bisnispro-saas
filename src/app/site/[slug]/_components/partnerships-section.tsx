@@ -21,6 +21,8 @@ const PartnerImage = ({ src, alt }: { src: string | null | undefined, alt: strin
     <img 
       src={finalSrc}
       alt={alt}
+      loading="lazy"
+      decoding="async"
       className="absolute inset-0 w-full h-full object-contain"
       onError={() => setError(true)}
     />
