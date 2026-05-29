@@ -13,6 +13,7 @@ import { AboutFormState, AiPromptType } from "./_components/types"
 import { IdentityForm } from "./_components/identity-form"
 import { ContactForm } from "./_components/contact-form"
 import { AboutDetailsForm } from "./_components/about-details-form"
+import { PrincipalSpeechForm } from "./_components/principal-speech-form"
 import { SeoForm } from "./_components/seo-form"
 import { AiContentModal } from "./_components/ai-content-modal"
 
@@ -267,40 +268,40 @@ export default function WebsiteAboutPage() {
           <TabsList className="bg-transparent border-0 h-11 flex overflow-x-auto w-full justify-start no-scrollbar">
             <TabsTrigger value="identity" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Identitas & Logo</TabsTrigger>
             <TabsTrigger value="contact" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kontak & Sosial Media</TabsTrigger>
-            <TabsTrigger value="about" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Detail Profil & Sambutan</TabsTrigger>
+            <TabsTrigger value="about" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Detail Profil & Visi Misi</TabsTrigger>
+            <TabsTrigger value="principal" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Sambutan Utama</TabsTrigger>
             <TabsTrigger value="seo" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">SEO & Meta</TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value="identity" className="outline-none">
-          <div className="max-w-3xl">
-            <IdentityForm
-              form={form} setForm={setForm}
-              logoPreview={logoPreview} uploadingLogo={uploadingLogo} handleLogoUpload={handleLogoUpload}
-              domainStatus={domainStatus} slug={slug} router={router}
-            />
-          </div>
+          <IdentityForm
+            form={form} setForm={setForm}
+            logoPreview={logoPreview} uploadingLogo={uploadingLogo} handleLogoUpload={handleLogoUpload}
+            domainStatus={domainStatus} slug={slug} router={router}
+          />
         </TabsContent>
 
         <TabsContent value="contact" className="outline-none">
-          <div className="max-w-3xl">
-            <ContactForm form={form} setForm={setForm} />
-          </div>
+          <ContactForm form={form} setForm={setForm} />
         </TabsContent>
 
         <TabsContent value="about" className="outline-none">
-          <div className="max-w-3xl">
-            <AboutDetailsForm
-              form={form} setForm={setForm} staffList={staffList}
-              handlePrincipalImageUpload={handlePrincipalImageUpload} openAiModal={openAiModal}
-            />
-          </div>
+          <AboutDetailsForm
+            form={form} setForm={setForm} staffList={staffList}
+            openAiModal={openAiModal}
+          />
+        </TabsContent>
+
+        <TabsContent value="principal" className="outline-none">
+          <PrincipalSpeechForm
+            form={form} setForm={setForm} staffList={staffList}
+            handlePrincipalImageUpload={handlePrincipalImageUpload} openAiModal={openAiModal}
+          />
         </TabsContent>
 
         <TabsContent value="seo" className="outline-none">
-          <div className="max-w-3xl">
-            <SeoForm form={form} setForm={setForm} />
-          </div>
+          <SeoForm form={form} setForm={setForm} />
         </TabsContent>
       </Tabs>
 
