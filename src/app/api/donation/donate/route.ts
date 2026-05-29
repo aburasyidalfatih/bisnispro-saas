@@ -44,6 +44,9 @@ export async function POST(req: Request) {
     await db.$transaction(async (tx) => {
       // Potong saldo secara atomic
       const updatedWallet = await tx.walletAccount.update({ where: { id: wallet.id }, data: { balance: { decrement: amount } } })
+      if (updatedWallet.balance < 0) {
+        throw new Error("Saldo wallet tidak mencukupi")
+      }
       const newBalance = updatedWallet.balance
 
       await tx.walletTransaction.create({

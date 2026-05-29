@@ -188,16 +188,42 @@ export async function deleteTenantByAdmin(tenantId: string) {
 // ==========================================
 // Query: Payments (Super Admin)
 // ==========================================
-export async function getPaymentsForSuperAdmin(statusFilter?: string | null) {
-  const payments = await db.payment.findMany({
-    where: statusFilter ? { status: statusFilter } : undefined,
-    include: {
-      tenant: {
-        select: { name: true, slug: true }
-      }
-    },
-    orderBy: { createdAt: "desc" }
-  })
+export async function getPaymentsForSuperAdmin(params: {
+  page: number
+  limit: number
+  search: string
+  statusFilter?: string | null
+}) {
+  const { page, limit, search, statusFilter } = params
+
+  const where: any = {}
+
+  if (statusFilter && statusFilter !== "all") {
+    where.status = statusFilter
+  }
+
+  if (search) {
+    where.OR = [
+      { reference: { contains: search, mode: "insensitive" } },
+      { tenant: { name: { contains: search, mode: "insensitive" } } },
+      { tenant: { slug: { contains: search, mode: "insensitive" } } }
+    ]
+  }
+
+  const [payments, total] = await Promise.all([
+    db.payment.findMany({
+      where,
+      include: {
+        tenant: {
+          select: { name: true, slug: true }
+        }
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    db.payment.count({ where })
+  ])
 
   const totalRevenue = await db.payment.aggregate({
     _sum: { amount: true },
@@ -210,6 +236,10 @@ export async function getPaymentsForSuperAdmin(statusFilter?: string | null) {
 
   return {
     payments,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
     stats: {
       totalRevenue: totalRevenue._sum.amount || 0,
       pendingCount

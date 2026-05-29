@@ -1,0 +1,35 @@
+http:
+  middlewares:
+    dokploy-headers:
+      headers:
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
+          X-Forwarded-Host: "panel.schoolpro.id"
+
+  routers:
+    dokploy-panel-http:
+      rule: "Host(`panel.schoolpro.id`)"
+      entryPoints:
+        - web
+      middlewares:
+        - dokploy-headers
+      service: dokploy-panel
+      priority: 100
+
+    dokploy-panel-https:
+      rule: "Host(`panel.schoolpro.id`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - dokploy-headers
+      tls:
+        certResolver: letsencrypt
+      service: dokploy-panel
+      priority: 100
+
+  services:
+    dokploy-panel:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          - url: "http://172.17.0.1:3000"

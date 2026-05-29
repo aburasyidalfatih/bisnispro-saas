@@ -47,8 +47,7 @@ model Tenant {
   googleClientId       String?
   googleClientSecret   String?
   aiTokens             Int                   @default(0)
-  customOpenAiKey      String?
-  useCustomApiKey      Boolean               @default(false)
+  aiAddonTokens        Int                   @default(0)
   template             String                @default("default")
   customThemeId        String?
   achievements         Achievement[]

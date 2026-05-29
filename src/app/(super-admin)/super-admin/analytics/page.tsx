@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Users, GraduationCap, Building2, TrendingUp, Loader2,
   Wifi, UserCheck, BookOpen, Megaphone, CalendarDays, Trophy,
@@ -227,16 +228,27 @@ export default function AnalyticsPage() {
     <div className="space-y-8 pb-12">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Analitik Platform</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Analitik Platform</h1>
+        <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
           Pantau aktivitas real-time, konten, dan pertumbuhan seluruh tenant di platform.
         </p>
       </div>
 
-      {/* ========================= */}
+      
+      <Tabs defaultValue="overview" className="space-y-8">
+        <TabsList className="grid w-full sm:w-auto grid-cols-2 sm:grid-cols-5 h-auto gap-2 sm:gap-0 bg-transparent sm:bg-muted p-0 sm:p-1">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5">Overview</TabsTrigger>
+          <TabsTrigger value="growth" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5">Growth</TabsTrigger>
+          <TabsTrigger value="finance" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5">Finance</TabsTrigger>
+          <TabsTrigger value="engagement" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5">Engagement</TabsTrigger>
+          <TabsTrigger value="tenants" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 col-span-2 sm:col-span-1">Tenants</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-8 mt-6">
+{/* ========================= */}
       {/* SECTION 1: LIVE SUMMARY  */}
       {/* ========================= */}
-      <div className="grid gap-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-7">
         <SummaryCard icon={Wifi} label="Online Saat Ini" value={data.onlineUsers} color="emerald" pulse />
         <SummaryCard icon={UserCheck} label="Guru/Staff Online" value={data.onlineStaff} color="blue" />
         <SummaryCard icon={Users} label="Ortu/Siswa Online" value={data.onlineParents} color="violet" />
@@ -250,10 +262,10 @@ export default function AnalyticsPage() {
       {/* SECTION 2: CONTENT STATS */}
       {/* ========================= */}
       <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+        <h2 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-primary" /> Aktivitas Konten Platform
         </h2>
-        <div className="grid gap-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           <MiniStat icon={BookOpen} label="Artikel Published" value={data.contentStats.totalPosts} />
           <MiniStat icon={Megaphone} label="Pengumuman" value={data.contentStats.totalAnnouncements} />
           <MiniStat icon={BookMarked} label="Blog Guru" value={data.contentStats.totalBlogGuru} />
@@ -280,7 +292,7 @@ export default function AnalyticsPage() {
             <CardDescription>Jumlah login unik per hari dari seluruh tenant.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[280px] w-full">
+            <div className="h-[220px] sm:h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data.loginTrend7Days}>
                   <defs>
@@ -290,7 +302,7 @@ export default function AnalyticsPage() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis dataKey="date" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
                   <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   <Area type="monotone" dataKey="count" name="Login" stroke="#3b82f6" strokeWidth={3} fill="url(#loginGrad)" dot={{ r: 4, fill: "#3b82f6" }} activeDot={{ r: 6 }} />
@@ -309,11 +321,11 @@ export default function AnalyticsPage() {
             <CardDescription>Grafik jumlah lembaga baru yang mendaftar ke platform per bulan.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[280px] w-full">
+            <div className="h-[220px] sm:h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data.monthlyGrowth}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis dataKey="month" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="month" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
                   <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   <Line type="monotone" dataKey="count" name="Sekolah Baru" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 4, fill: "#8b5cf6" }} activeDot={{ r: 6 }} />
@@ -332,7 +344,7 @@ export default function AnalyticsPage() {
             <CardDescription>Berdasarkan total login bulan ini.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[340px] w-full">
+            <div className="h-[280px] sm:h-[340px] w-full">
               {data.topActiveTenants.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-sm italic">Belum ada data login bulan ini.</div>
               ) : (
@@ -340,7 +352,7 @@ export default function AnalyticsPage() {
                   <BarChart data={data.topActiveTenants} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" horizontal vertical={false} stroke="#e5e7eb" />
                     <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                    <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} width={120} tick={{ fontSize: 10 }} />
+                    <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} width={100} tick={{ fontSize: 9 }} />
                     <RechartsTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                     <Bar dataKey="logins" name="Login" fill="#10b981" radius={[0, 6, 6, 0]} barSize={20}>
                       {data.topActiveTenants.map((_, index) => (
@@ -363,7 +375,7 @@ export default function AnalyticsPage() {
             <CardDescription>Proporsi tenant berdasarkan tipe paket saat ini.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
-            <div className="h-[340px] w-full">
+            <div className="h-[280px] sm:h-[340px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -440,6 +452,102 @@ export default function AnalyticsPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      
+        </TabsContent>
+
+        <TabsContent value="growth" className="space-y-8 mt-6">
+{/* ============================================ */}
+      {/* SECTION 9: CONVERSION FUNNEL                 */}
+      {/* ============================================ */}
+      <div>
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Target className="h-5 w-5 text-blue-500" /> Corong Konversi</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Alur Pengajuan &rarr; Upgrade</CardTitle><CardDescription>Dari pendaftaran hingga menjadi tenant berbayar.</CardDescription></CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                { label: 'Pengajuan Masuk', value: data.conversionFunnel.totalApplications, color: 'bg-blue-500', pct: 100 },
+                { label: 'Disetujui', value: data.conversionFunnel.approvedApplications, color: 'bg-emerald-500', pct: data.conversionFunnel.totalApplications > 0 ? (data.conversionFunnel.approvedApplications / data.conversionFunnel.totalApplications * 100) : 0 },
+                { label: 'Paket Free', value: data.conversionFunnel.freeTenants, color: 'bg-slate-400', pct: data.conversionFunnel.totalApplications > 0 ? (data.conversionFunnel.freeTenants / data.conversionFunnel.totalApplications * 100) : 0 },
+                { label: 'Upgrade Lite', value: data.conversionFunnel.liteTenants, color: 'bg-blue-600', pct: data.conversionFunnel.totalApplications > 0 ? Math.max(8, data.conversionFunnel.liteTenants / data.conversionFunnel.totalApplications * 100) : 0 },
+                { label: 'Upgrade Pro', value: data.conversionFunnel.proTenants, color: 'bg-violet-500', pct: data.conversionFunnel.totalApplications > 0 ? Math.max(6, data.conversionFunnel.proTenants / data.conversionFunnel.totalApplications * 100) : 0 },
+              ].map((step) => (
+                <div key={step.label}>
+                  <div className="flex items-center justify-between mb-1"><span className="text-xs font-medium">{step.label}</span><span className="text-xs font-bold">{step.value}</span></div>
+                  <div className="h-7 rounded-lg bg-muted overflow-hidden" style={{ width: `${step.pct}%` }}>
+                    <div className={cn('h-full rounded-lg flex items-center px-2', step.color)}>
+                      <span className="text-[10px] text-white font-bold">{data.conversionFunnel.totalApplications > 0 ? `${(step.value / data.conversionFunnel.totalApplications * 100).toFixed(1)}%` : '0%'}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Metrik Konversi</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center p-4 rounded-xl border bg-card"><p className="text-3xl font-bold text-emerald-600">{data.conversionFunnel.approvalRate.toFixed(1)}%</p><p className="text-[10px] text-muted-foreground mt-1">Approval Rate</p></div>
+                <div className="text-center p-4 rounded-xl border bg-card"><p className="text-3xl font-bold text-violet-600">{data.conversionFunnel.upgradeRate}%</p><p className="text-[10px] text-muted-foreground mt-1">Upgrade Rate</p></div>
+              </div>
+              <div className="space-y-2 pt-3 border-t">
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Pending Review</span><Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">{data.conversionFunnel.pendingApplications}</Badge></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Ditolak</span><Badge variant="outline" className="bg-rose-50 text-rose-600 border-rose-200">{data.conversionFunnel.rejectedApplications}</Badge></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant FREE</span><span className="font-bold">{data.conversionFunnel.freeTenants}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant LITE</span><span className="font-bold text-blue-600">{data.conversionFunnel.liteTenants}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant PRO</span><span className="font-bold text-violet-600">{data.conversionFunnel.proTenants}</span></div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* ============================================ */}
+      {/* SECTION 13: GEOGRAPHIC DISTRIBUTION          */}
+      {/* ============================================ */}
+      <div>
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><MapPin className="h-5 w-5 text-rose-500" /> Sebaran Geografis ({data.geoStats.totalProvinces} Provinsi)</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Top Provinsi</CardTitle><CardDescription>Provinsi dengan jumlah sekolah terbanyak.</CardDescription></CardHeader>
+            <CardContent>{data.geoStats.provinces.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic py-8 text-center">Belum ada data.</p>
+            ) : (
+              <div className="h-[360px] w-full"><ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data.geoStats.provinces.slice(0, 10)} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal vertical={false} stroke="#e5e7eb" />
+                  <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={9} tickLine={false} axisLine={false} width={130} />
+                  <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  <Bar dataKey="value" name="Sekolah" radius={[0, 6, 6, 0]} barSize={18}>
+                    {data.geoStats.provinces.slice(0, 10).map((_, index) => (<Cell key={index} fill={COLORS[index % COLORS.length]} />))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer></div>
+            )}</CardContent>
+          </Card>
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Top Kota/Kabupaten</CardTitle><CardDescription>10 kota/kabupaten dengan sekolah terbanyak.</CardDescription></CardHeader>
+            <CardContent>{data.geoStats.topRegencies.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic py-8 text-center">Belum ada data.</p>
+            ) : (
+              <div className="space-y-2">{data.geoStats.topRegencies.map((r, i) => {
+                const maxVal = data.geoStats.topRegencies[0]?.value || 1
+                return (
+                  <div key={r.name} className="flex items-center gap-3">
+                    <span className="text-xs font-bold text-muted-foreground w-5 text-right">{i + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1"><span className="text-xs font-medium truncate">{r.name}</span><span className="text-xs font-bold text-primary">{r.value}</span></div>
+                      <div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-rose-500 transition-all" style={{ width: `${(r.value / maxVal) * 100}%` }} /></div>
+                    </div>
+                  </div>
+                )
+              })}</div>
+            )}</CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* ======================================== */}
@@ -532,7 +640,125 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
+      
+        </TabsContent>
+
+        <TabsContent value="finance" className="space-y-8 mt-6">
+{/* ============================================ */}
+      {/* SECTION 8: REVENUE & PENDAPATAN              */}
       {/* ============================================ */}
+      <div>
+        <h2 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2">
+          <DollarSign className="h-5 w-5 text-emerald-500" /> Revenue &amp; Pendapatan
+        </h2>
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+          <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600"><DollarSign className="h-5 w-5" /></div>
+            <div><p className="text-[10px] text-muted-foreground font-medium">Total Revenue</p>
+            <h3 className="text-lg font-bold">Rp {(data.revenueStats.totalRevenue / 1000).toFixed(0)}K</h3></div>
+          </div></CardContent></Card>
+          <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600"><TrendingUp className="h-5 w-5" /></div>
+            <div><p className="text-[10px] text-muted-foreground font-medium">Bulan Ini</p>
+            <div className="flex items-baseline gap-1.5">
+              <h3 className="text-lg font-bold">Rp {(data.revenueStats.thisMonthRevenue / 1000).toFixed(0)}K</h3>
+              {data.revenueStats.revenueGrowth !== 0 && (
+                <span className={cn("text-[10px] font-bold flex items-center", data.revenueStats.revenueGrowth > 0 ? "text-emerald-600" : "text-rose-600")}>
+                  {data.revenueStats.revenueGrowth > 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                  {Math.abs(data.revenueStats.revenueGrowth).toFixed(0)}%
+                </span>
+              )}
+            </div></div>
+          </div></CardContent></Card>
+          <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-600"><Users className="h-5 w-5" /></div>
+            <div><p className="text-[10px] text-muted-foreground font-medium">ARPU</p>
+            <h3 className="text-lg font-bold">Rp {data.revenueStats.arpu.toLocaleString('id-ID')}</h3></div>
+          </div></CardContent></Card>
+          <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600"><Target className="h-5 w-5" /></div>
+            <div><p className="text-[10px] text-muted-foreground font-medium">Tenant Bayar</p>
+            <h3 className="text-lg font-bold">{data.revenueStats.payingTenantCount}</h3></div>
+          </div></CardContent></Card>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base flex items-center gap-2"><TrendingUp className="h-5 w-5 text-emerald-500" /> Tren Pendapatan (6 Bulan)</CardTitle></CardHeader>
+            <CardContent><div className="h-[220px] sm:h-[260px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data.revenueStats.revenueTrend}>
+                  <defs><linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.3} /><stop offset="95%" stopColor="#10b981" stopOpacity={0} /></linearGradient></defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="month" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
+                  <RechartsTooltip formatter={(v: any) => `Rp ${Number(v).toLocaleString('id-ID')}`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  <Area type="monotone" dataKey="amount" name="Pendapatan" stroke="#10b981" strokeWidth={2.5} fill="url(#revenueGrad)" dot={{ r: 4, fill: '#10b981' }} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div></CardContent>
+          </Card>
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base flex items-center gap-2"><Layers className="h-5 w-5 text-violet-500" /> Revenue per Paket</CardTitle></CardHeader>
+            <CardContent><div className="h-[220px] sm:h-[260px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={data.revenueStats.revenuePerPlan} cx="50%" cy="45%" innerRadius={55} outerRadius={90} paddingAngle={4} dataKey="amount"
+                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`} labelLine={false}>
+                    {data.revenueStats.revenuePerPlan.map((_, i) => (
+                      <Cell key={i} fill={[PLAN_COLORS.LITE || '#3b82f6', PLAN_COLORS.PRO || '#8b5cf6', '#f59e0b'][i] || COLORS[i % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip formatter={(v: any) => `Rp ${Number(v).toLocaleString('id-ID')}`} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div></CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* ============================================ */}
+      {/* SECTION 11: AFFILIATE PERFORMANCE            */}
+      {/* ============================================ */}
+      <div>
+        <h2 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2"><UserPlus className="h-5 w-5 text-indigo-500" /> Performa Afiliasi</h2>
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-4 sm:mb-6">
+          <SummaryCard icon={Users} label="Total Afiliasi" value={data.affiliateStats.totalAffiliates} color="blue" subtitle={`${data.affiliateStats.activeAffiliates} aktif`} />
+          <SummaryCard icon={Eye} label="Total Klik" value={data.affiliateStats.totalClicks} color="violet" />
+          <SummaryCard icon={Target} label="Konversi" value={data.affiliateStats.affiliateApplications} color="emerald" subtitle={`${data.affiliateStats.conversionRate}% rate`} />
+          <SummaryCard icon={DollarSign} label="Komisi Dibayar" value={data.affiliateStats.totalCommissionsPaid} color="amber" />
+        </div>
+        {data.affiliateStats.topAffiliates.length > 0 && (
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Top 5 Afiliasi</CardTitle><CardDescription>Berdasarkan total pendapatan.</CardDescription></CardHeader>
+            <CardContent><div className="overflow-x-auto"><table className="w-full text-sm">
+              <thead><tr className="border-b bg-muted/30">
+                <th className="px-3 py-2 text-left text-xs font-bold text-muted-foreground uppercase">#</th>
+                <th className="px-3 py-2 text-left text-xs font-bold text-muted-foreground uppercase">Nama</th>
+                <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Kode</th>
+                <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Klik</th>
+                <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Referral</th>
+                <th className="px-3 py-2 text-right text-xs font-bold text-muted-foreground uppercase">Pendapatan</th>
+              </tr></thead>
+              <tbody>{data.affiliateStats.topAffiliates.map((a, i) => (
+                <tr key={a.code} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                  <td className="px-3 py-2.5 font-bold text-muted-foreground">{i + 1}</td>
+                  <td className="px-3 py-2.5 font-medium">{a.name}</td>
+                  <td className="px-3 py-2.5 text-center"><code className="text-xs bg-muted px-2 py-0.5 rounded">{a.code}</code></td>
+                  <td className="px-3 py-2.5 text-center">{a.clicks}</td>
+                  <td className="px-3 py-2.5 text-center">{a.referrals}</td>
+                  <td className="px-3 py-2.5 text-right font-bold text-emerald-600">Rp {a.earnings.toLocaleString('id-ID')}</td>
+                </tr>
+              ))}</tbody>
+            </table></div></CardContent>
+          </Card>
+        )}
+      </div>
+
+      
+        </TabsContent>
+
+        <TabsContent value="engagement" className="space-y-8 mt-6">
+{/* ============================================ */}
       {/* SECTION 7: VISITOR TRACKING                  */}
       {/* ============================================ */}
       <div>
@@ -730,7 +956,149 @@ export default function AnalyticsPage() {
         )}
       </div>
 
-      {/* ======================================== */}
+      {/* ============================================ */}
+      {/* SECTION 10: RETENTION & CHURN                */}
+      {/* ============================================ */}
+      <div>
+        <h2 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2"><UserX className="h-5 w-5 text-rose-500" /> Retensi &amp; Churn</h2>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Aktivitas Terakhir</CardTitle><CardDescription>Kapan terakhir tenant login.</CardDescription></CardHeader>
+            <CardContent><div className="h-[220px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={[
+                  { label: 'Aktif (<30h)', value: data.retentionStats.activeRecently },
+                  { label: 'Tidur (30-60h)', value: data.retentionStats.inactive30Days },
+                  { label: 'Risiko (60-90h)', value: data.retentionStats.inactive60Days },
+                  { label: 'Dorman (>90h)', value: data.retentionStats.inactive90Days },
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="label" stroke="#6b7280" fontSize={9} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  <Bar dataKey="value" name="Tenant" radius={[6, 6, 0, 0]} barSize={36}>
+                    <Cell fill="#10b981" /><Cell fill="#f59e0b" /><Cell fill="#f97316" /><Cell fill="#ef4444" />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div></CardContent>
+          </Card>
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Status Retensi</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="text-center p-4 rounded-xl border bg-card"><p className="text-3xl font-bold text-rose-600">{data.retentionStats.churnRate}%</p><p className="text-[10px] text-muted-foreground mt-1">Churn Rate</p></div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Aktif</span><span className="font-bold">{data.retentionStats.retentionActive}</span></div>
+                <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Berisiko</span><span className="font-bold text-amber-600">{data.retentionStats.retentionAtRisk}</span></div>
+                <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-rose-500" /> Churned</span><span className="font-bold text-rose-600">{data.retentionStats.retentionChurned}</span></div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Langganan Expired</CardTitle></CardHeader>
+            <CardContent className="flex flex-col items-center justify-center h-[220px]">
+              <div className="text-center">
+                <p className="text-5xl font-bold text-amber-600">{data.retentionStats.expiredNotRenewed}</p>
+                <p className="text-sm text-muted-foreground mt-2">Langganan expired belum diperpanjang</p>
+                <p className="text-[10px] text-muted-foreground mt-1 italic">Potensi revenue hilang — follow up!</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* ============================================ */}
+      {/* SECTION 14: ENGAGEMENT SCORE                 */}
+      {/* ============================================ */}
+      <div>
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Star className="h-5 w-5 text-yellow-500" /> Skor Engagement Tenant</h2>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Rata-rata Skor</CardTitle><CardDescription>{data.engagementStats.totalScored} tenant dinilai.</CardDescription></CardHeader>
+            <CardContent className="flex items-center justify-center h-[200px]">
+              <div className="text-center">
+                <div className="relative w-28 h-28 mx-auto mb-3">
+                  <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="8" className="text-muted" />
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="url(#scoreGrad2)" strokeWidth="8" strokeLinecap="round" strokeDasharray={`${(data.engagementStats.avgTotalScore / 100) * 264} 264`} />
+                    <defs><linearGradient id="scoreGrad2"><stop stopColor="#f59e0b" /><stop offset="1" stopColor="#10b981" /></linearGradient></defs>
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold">{data.engagementStats.avgTotalScore}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">dari 100 poin</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Skor per Paket</CardTitle><CardDescription>Rata-rata engagement berdasarkan plan.</CardDescription></CardHeader>
+            <CardContent><div className="space-y-4">
+              {data.engagementStats.avgScorePerPlan.map(ps => (
+                <div key={ps.plan}>
+                  <div className="flex items-center justify-between mb-1">
+                    <Badge variant="outline" className={cn(
+                      ps.plan === 'FREE' && 'bg-slate-50 text-slate-600 border-slate-200',
+                      ps.plan === 'LITE' && 'bg-blue-50 text-blue-600 border-blue-200',
+                      ps.plan === 'PRO' && 'bg-violet-50 text-violet-600 border-violet-200',
+                    )}>{ps.plan}</Badge>
+                    <span className="text-sm font-bold">{ps.avgScore}/100 <span className="text-[10px] text-muted-foreground font-normal">({ps.count} tenant)</span></span>
+                  </div>
+                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                    <div className="h-full rounded-full transition-all" style={{ width: `${ps.avgScore}%`, backgroundColor: ps.plan === 'FREE' ? '#94a3b8' : ps.plan === 'LITE' ? '#3b82f6' : '#8b5cf6' }} />
+                  </div>
+                </div>
+              ))}
+            </div></CardContent>
+          </Card>
+          <Card className="glass border-0">
+            <CardHeader><CardTitle className="text-base">Distribusi Skor</CardTitle><CardDescription>Sebaran skor engagement seluruh tenant.</CardDescription></CardHeader>
+            <CardContent><div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data.engagementStats.scoreBrackets}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="name" stroke="#6b7280" fontSize={8} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  <Bar dataKey="value" name="Tenant" radius={[6, 6, 0, 0]} barSize={36}>
+                    <Cell fill="#ef4444" /><Cell fill="#f97316" /><Cell fill="#f59e0b" /><Cell fill="#3b82f6" /><Cell fill="#10b981" />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div></CardContent>
+          </Card>
+        </div>
+      </div>
+{/* ============================================ */}
+      {/* SECTION 12: FEATURE ADOPTION                 */}
+      {/* ============================================ */}
+      <div>
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Zap className="h-5 w-5 text-amber-500" /> Adopsi Fitur</h2>
+        <Card className="glass border-0">
+          <CardHeader><CardTitle className="text-base">Fitur yang Digunakan Tenant</CardTitle><CardDescription>Berapa banyak tenant yang mengaktifkan setiap fitur. Data ini menentukan selling point.</CardDescription></CardHeader>
+          <CardContent><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {data.featureAdoption.map((f) => {
+              const pct = data.totalTenants > 0 ? (f.count / data.totalTenants * 100) : 0
+              const featureIcons: Record<string, any> = { ppdb: GraduationCap, wa: MessageSquare, donasi: Heart, kantin: Store, domain: Globe, ai: BrainCircuit }
+              const FIcon = featureIcons[f.icon] || Zap
+              return (
+                <div key={f.feature} className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:shadow-md transition-shadow">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600"><FIcon className="h-5 w-5" /></div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1"><span className="text-xs font-medium truncate">{f.feature}</span><span className="text-xs font-bold text-primary ml-2">{f.count}</span></div>
+                    <div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-amber-500 transition-all" style={{ width: `${pct}%` }} /></div>
+                    <p className="text-[9px] text-muted-foreground mt-0.5">{pct.toFixed(1)}% dari {data.totalTenants} tenant</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div></CardContent>
+        </Card>
+      </div>
+
+      
+        </TabsContent>
+
+        <TabsContent value="tenants" className="space-y-8 mt-6">
+{/* ======================================== */}
       {/* SECTION 4: TENANT ACTIVITY TABLE         */}
       {/* ======================================== */}
       <Card className="glass border-0 shadow-xl shadow-primary/5">
@@ -823,346 +1191,9 @@ export default function AnalyticsPage() {
         </CardContent>
       </Card>
 
-      {/* ============================================ */}
-      {/* SECTION 8: REVENUE & PENDAPATAN              */}
-      {/* ============================================ */}
-      <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-          <DollarSign className="h-5 w-5 text-emerald-500" /> Revenue &amp; Pendapatan
-        </h2>
-        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-6">
-          <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600"><DollarSign className="h-5 w-5" /></div>
-            <div><p className="text-[10px] text-muted-foreground font-medium">Total Revenue</p>
-            <h3 className="text-lg font-bold">Rp {(data.revenueStats.totalRevenue / 1000).toFixed(0)}K</h3></div>
-          </div></CardContent></Card>
-          <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600"><TrendingUp className="h-5 w-5" /></div>
-            <div><p className="text-[10px] text-muted-foreground font-medium">Bulan Ini</p>
-            <div className="flex items-baseline gap-1.5">
-              <h3 className="text-lg font-bold">Rp {(data.revenueStats.thisMonthRevenue / 1000).toFixed(0)}K</h3>
-              {data.revenueStats.revenueGrowth !== 0 && (
-                <span className={cn("text-[10px] font-bold flex items-center", data.revenueStats.revenueGrowth > 0 ? "text-emerald-600" : "text-rose-600")}>
-                  {data.revenueStats.revenueGrowth > 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                  {Math.abs(data.revenueStats.revenueGrowth).toFixed(0)}%
-                </span>
-              )}
-            </div></div>
-          </div></CardContent></Card>
-          <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-600"><Users className="h-5 w-5" /></div>
-            <div><p className="text-[10px] text-muted-foreground font-medium">ARPU</p>
-            <h3 className="text-lg font-bold">Rp {data.revenueStats.arpu.toLocaleString('id-ID')}</h3></div>
-          </div></CardContent></Card>
-          <Card className="glass border-0"><CardContent className="p-4"><div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600"><Target className="h-5 w-5" /></div>
-            <div><p className="text-[10px] text-muted-foreground font-medium">Tenant Bayar</p>
-            <h3 className="text-lg font-bold">{data.revenueStats.payingTenantCount}</h3></div>
-          </div></CardContent></Card>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base flex items-center gap-2"><TrendingUp className="h-5 w-5 text-emerald-500" /> Tren Pendapatan (6 Bulan)</CardTitle></CardHeader>
-            <CardContent><div className="h-[260px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data.revenueStats.revenueTrend}>
-                  <defs><linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.3} /><stop offset="95%" stopColor="#10b981" stopOpacity={0} /></linearGradient></defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis dataKey="month" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
-                  <RechartsTooltip formatter={(v: any) => `Rp ${Number(v).toLocaleString('id-ID')}`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Area type="monotone" dataKey="amount" name="Pendapatan" stroke="#10b981" strokeWidth={2.5} fill="url(#revenueGrad)" dot={{ r: 4, fill: '#10b981' }} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div></CardContent>
-          </Card>
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base flex items-center gap-2"><Layers className="h-5 w-5 text-violet-500" /> Revenue per Paket</CardTitle></CardHeader>
-            <CardContent><div className="h-[260px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={data.revenueStats.revenuePerPlan} cx="50%" cy="45%" innerRadius={55} outerRadius={90} paddingAngle={4} dataKey="amount"
-                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`} labelLine={false}>
-                    {data.revenueStats.revenuePerPlan.map((_, i) => (
-                      <Cell key={i} fill={[PLAN_COLORS.LITE || '#3b82f6', PLAN_COLORS.PRO || '#8b5cf6', '#f59e0b'][i] || COLORS[i % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <RechartsTooltip formatter={(v: any) => `Rp ${Number(v).toLocaleString('id-ID')}`} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div></CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* ============================================ */}
-      {/* SECTION 9: CONVERSION FUNNEL                 */}
-      {/* ============================================ */}
-      <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Target className="h-5 w-5 text-blue-500" /> Corong Konversi</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Alur Pengajuan &rarr; Upgrade</CardTitle><CardDescription>Dari pendaftaran hingga menjadi tenant berbayar.</CardDescription></CardHeader>
-            <CardContent className="space-y-3">
-              {[
-                { label: 'Pengajuan Masuk', value: data.conversionFunnel.totalApplications, color: 'bg-blue-500', pct: 100 },
-                { label: 'Disetujui', value: data.conversionFunnel.approvedApplications, color: 'bg-emerald-500', pct: data.conversionFunnel.totalApplications > 0 ? (data.conversionFunnel.approvedApplications / data.conversionFunnel.totalApplications * 100) : 0 },
-                { label: 'Paket Free', value: data.conversionFunnel.freeTenants, color: 'bg-slate-400', pct: data.conversionFunnel.totalApplications > 0 ? (data.conversionFunnel.freeTenants / data.conversionFunnel.totalApplications * 100) : 0 },
-                { label: 'Upgrade Lite', value: data.conversionFunnel.liteTenants, color: 'bg-blue-600', pct: data.conversionFunnel.totalApplications > 0 ? Math.max(8, data.conversionFunnel.liteTenants / data.conversionFunnel.totalApplications * 100) : 0 },
-                { label: 'Upgrade Pro', value: data.conversionFunnel.proTenants, color: 'bg-violet-500', pct: data.conversionFunnel.totalApplications > 0 ? Math.max(6, data.conversionFunnel.proTenants / data.conversionFunnel.totalApplications * 100) : 0 },
-              ].map((step) => (
-                <div key={step.label}>
-                  <div className="flex items-center justify-between mb-1"><span className="text-xs font-medium">{step.label}</span><span className="text-xs font-bold">{step.value}</span></div>
-                  <div className="h-7 rounded-lg bg-muted overflow-hidden" style={{ width: `${step.pct}%` }}>
-                    <div className={cn('h-full rounded-lg flex items-center px-2', step.color)}>
-                      <span className="text-[10px] text-white font-bold">{data.conversionFunnel.totalApplications > 0 ? `${(step.value / data.conversionFunnel.totalApplications * 100).toFixed(1)}%` : '0%'}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Metrik Konversi</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-center p-4 rounded-xl border bg-card"><p className="text-3xl font-bold text-emerald-600">{data.conversionFunnel.approvalRate.toFixed(1)}%</p><p className="text-[10px] text-muted-foreground mt-1">Approval Rate</p></div>
-                <div className="text-center p-4 rounded-xl border bg-card"><p className="text-3xl font-bold text-violet-600">{data.conversionFunnel.upgradeRate}%</p><p className="text-[10px] text-muted-foreground mt-1">Upgrade Rate</p></div>
-              </div>
-              <div className="space-y-2 pt-3 border-t">
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Pending Review</span><Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">{data.conversionFunnel.pendingApplications}</Badge></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Ditolak</span><Badge variant="outline" className="bg-rose-50 text-rose-600 border-rose-200">{data.conversionFunnel.rejectedApplications}</Badge></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant FREE</span><span className="font-bold">{data.conversionFunnel.freeTenants}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant LITE</span><span className="font-bold text-blue-600">{data.conversionFunnel.liteTenants}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant PRO</span><span className="font-bold text-violet-600">{data.conversionFunnel.proTenants}</span></div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* ============================================ */}
-      {/* SECTION 10: RETENTION & CHURN                */}
-      {/* ============================================ */}
-      <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><UserX className="h-5 w-5 text-rose-500" /> Retensi &amp; Churn</h2>
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Aktivitas Terakhir</CardTitle><CardDescription>Kapan terakhir tenant login.</CardDescription></CardHeader>
-            <CardContent><div className="h-[220px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={[
-                  { label: 'Aktif (<30h)', value: data.retentionStats.activeRecently },
-                  { label: 'Tidur (30-60h)', value: data.retentionStats.inactive30Days },
-                  { label: 'Risiko (60-90h)', value: data.retentionStats.inactive60Days },
-                  { label: 'Dorman (>90h)', value: data.retentionStats.inactive90Days },
-                ]}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis dataKey="label" stroke="#6b7280" fontSize={9} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                  <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Bar dataKey="value" name="Tenant" radius={[6, 6, 0, 0]} barSize={36}>
-                    <Cell fill="#10b981" /><Cell fill="#f59e0b" /><Cell fill="#f97316" /><Cell fill="#ef4444" />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div></CardContent>
-          </Card>
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Status Retensi</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-center p-4 rounded-xl border bg-card"><p className="text-3xl font-bold text-rose-600">{data.retentionStats.churnRate}%</p><p className="text-[10px] text-muted-foreground mt-1">Churn Rate</p></div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Aktif</span><span className="font-bold">{data.retentionStats.retentionActive}</span></div>
-                <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Berisiko</span><span className="font-bold text-amber-600">{data.retentionStats.retentionAtRisk}</span></div>
-                <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-rose-500" /> Churned</span><span className="font-bold text-rose-600">{data.retentionStats.retentionChurned}</span></div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Langganan Expired</CardTitle></CardHeader>
-            <CardContent className="flex flex-col items-center justify-center h-[220px]">
-              <div className="text-center">
-                <p className="text-5xl font-bold text-amber-600">{data.retentionStats.expiredNotRenewed}</p>
-                <p className="text-sm text-muted-foreground mt-2">Langganan expired belum diperpanjang</p>
-                <p className="text-[10px] text-muted-foreground mt-1 italic">Potensi revenue hilang — follow up!</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* ============================================ */}
-      {/* SECTION 11: AFFILIATE PERFORMANCE            */}
-      {/* ============================================ */}
-      <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><UserPlus className="h-5 w-5 text-indigo-500" /> Performa Afiliasi</h2>
-        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-6">
-          <SummaryCard icon={Users} label="Total Afiliasi" value={data.affiliateStats.totalAffiliates} color="blue" subtitle={`${data.affiliateStats.activeAffiliates} aktif`} />
-          <SummaryCard icon={Eye} label="Total Klik" value={data.affiliateStats.totalClicks} color="violet" />
-          <SummaryCard icon={Target} label="Konversi" value={data.affiliateStats.affiliateApplications} color="emerald" subtitle={`${data.affiliateStats.conversionRate}% rate`} />
-          <SummaryCard icon={DollarSign} label="Komisi Dibayar" value={data.affiliateStats.totalCommissionsPaid} color="amber" />
-        </div>
-        {data.affiliateStats.topAffiliates.length > 0 && (
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Top 5 Afiliasi</CardTitle><CardDescription>Berdasarkan total pendapatan.</CardDescription></CardHeader>
-            <CardContent><div className="overflow-x-auto"><table className="w-full text-sm">
-              <thead><tr className="border-b bg-muted/30">
-                <th className="px-3 py-2 text-left text-xs font-bold text-muted-foreground uppercase">#</th>
-                <th className="px-3 py-2 text-left text-xs font-bold text-muted-foreground uppercase">Nama</th>
-                <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Kode</th>
-                <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Klik</th>
-                <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Referral</th>
-                <th className="px-3 py-2 text-right text-xs font-bold text-muted-foreground uppercase">Pendapatan</th>
-              </tr></thead>
-              <tbody>{data.affiliateStats.topAffiliates.map((a, i) => (
-                <tr key={a.code} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-3 py-2.5 font-bold text-muted-foreground">{i + 1}</td>
-                  <td className="px-3 py-2.5 font-medium">{a.name}</td>
-                  <td className="px-3 py-2.5 text-center"><code className="text-xs bg-muted px-2 py-0.5 rounded">{a.code}</code></td>
-                  <td className="px-3 py-2.5 text-center">{a.clicks}</td>
-                  <td className="px-3 py-2.5 text-center">{a.referrals}</td>
-                  <td className="px-3 py-2.5 text-right font-bold text-emerald-600">Rp {a.earnings.toLocaleString('id-ID')}</td>
-                </tr>
-              ))}</tbody>
-            </table></div></CardContent>
-          </Card>
-        )}
-      </div>
-
-      {/* ============================================ */}
-      {/* SECTION 12: FEATURE ADOPTION                 */}
-      {/* ============================================ */}
-      <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Zap className="h-5 w-5 text-amber-500" /> Adopsi Fitur</h2>
-        <Card className="glass border-0">
-          <CardHeader><CardTitle className="text-base">Fitur yang Digunakan Tenant</CardTitle><CardDescription>Berapa banyak tenant yang mengaktifkan setiap fitur. Data ini menentukan selling point.</CardDescription></CardHeader>
-          <CardContent><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {data.featureAdoption.map((f) => {
-              const pct = data.totalTenants > 0 ? (f.count / data.totalTenants * 100) : 0
-              const featureIcons: Record<string, any> = { ppdb: GraduationCap, wa: MessageSquare, donasi: Heart, kantin: Store, domain: Globe, ai: BrainCircuit }
-              const FIcon = featureIcons[f.icon] || Zap
-              return (
-                <div key={f.feature} className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:shadow-md transition-shadow">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600"><FIcon className="h-5 w-5" /></div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1"><span className="text-xs font-medium truncate">{f.feature}</span><span className="text-xs font-bold text-primary ml-2">{f.count}</span></div>
-                    <div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-amber-500 transition-all" style={{ width: `${pct}%` }} /></div>
-                    <p className="text-[9px] text-muted-foreground mt-0.5">{pct.toFixed(1)}% dari {data.totalTenants} tenant</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div></CardContent>
-        </Card>
-      </div>
-
-      {/* ============================================ */}
-      {/* SECTION 13: GEOGRAPHIC DISTRIBUTION          */}
-      {/* ============================================ */}
-      <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><MapPin className="h-5 w-5 text-rose-500" /> Sebaran Geografis ({data.geoStats.totalProvinces} Provinsi)</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Top Provinsi</CardTitle><CardDescription>Provinsi dengan jumlah sekolah terbanyak.</CardDescription></CardHeader>
-            <CardContent>{data.geoStats.provinces.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic py-8 text-center">Belum ada data.</p>
-            ) : (
-              <div className="h-[360px] w-full"><ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.geoStats.provinces.slice(0, 10)} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal vertical={false} stroke="#e5e7eb" />
-                  <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                  <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={9} tickLine={false} axisLine={false} width={130} />
-                  <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Bar dataKey="value" name="Sekolah" radius={[0, 6, 6, 0]} barSize={18}>
-                    {data.geoStats.provinces.slice(0, 10).map((_, index) => (<Cell key={index} fill={COLORS[index % COLORS.length]} />))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer></div>
-            )}</CardContent>
-          </Card>
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Top Kota/Kabupaten</CardTitle><CardDescription>10 kota/kabupaten dengan sekolah terbanyak.</CardDescription></CardHeader>
-            <CardContent>{data.geoStats.topRegencies.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic py-8 text-center">Belum ada data.</p>
-            ) : (
-              <div className="space-y-2">{data.geoStats.topRegencies.map((r, i) => {
-                const maxVal = data.geoStats.topRegencies[0]?.value || 1
-                return (
-                  <div key={r.name} className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-muted-foreground w-5 text-right">{i + 1}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1"><span className="text-xs font-medium truncate">{r.name}</span><span className="text-xs font-bold text-primary">{r.value}</span></div>
-                      <div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-rose-500 transition-all" style={{ width: `${(r.value / maxVal) * 100}%` }} /></div>
-                    </div>
-                  </div>
-                )
-              })}</div>
-            )}</CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* ============================================ */}
-      {/* SECTION 14: ENGAGEMENT SCORE                 */}
-      {/* ============================================ */}
-      <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Star className="h-5 w-5 text-yellow-500" /> Skor Engagement Tenant</h2>
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Rata-rata Skor</CardTitle><CardDescription>{data.engagementStats.totalScored} tenant dinilai.</CardDescription></CardHeader>
-            <CardContent className="flex items-center justify-center h-[200px]">
-              <div className="text-center">
-                <div className="relative w-28 h-28 mx-auto mb-3">
-                  <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="8" className="text-muted" />
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="url(#scoreGrad2)" strokeWidth="8" strokeLinecap="round" strokeDasharray={`${(data.engagementStats.avgTotalScore / 100) * 264} 264`} />
-                    <defs><linearGradient id="scoreGrad2"><stop stopColor="#f59e0b" /><stop offset="1" stopColor="#10b981" /></linearGradient></defs>
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold">{data.engagementStats.avgTotalScore}</span>
-                </div>
-                <p className="text-xs text-muted-foreground">dari 100 poin</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Skor per Paket</CardTitle><CardDescription>Rata-rata engagement berdasarkan plan.</CardDescription></CardHeader>
-            <CardContent><div className="space-y-4">
-              {data.engagementStats.avgScorePerPlan.map(ps => (
-                <div key={ps.plan}>
-                  <div className="flex items-center justify-between mb-1">
-                    <Badge variant="outline" className={cn(
-                      ps.plan === 'FREE' && 'bg-slate-50 text-slate-600 border-slate-200',
-                      ps.plan === 'LITE' && 'bg-blue-50 text-blue-600 border-blue-200',
-                      ps.plan === 'PRO' && 'bg-violet-50 text-violet-600 border-violet-200',
-                    )}>{ps.plan}</Badge>
-                    <span className="text-sm font-bold">{ps.avgScore}/100 <span className="text-[10px] text-muted-foreground font-normal">({ps.count} tenant)</span></span>
-                  </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
-                    <div className="h-full rounded-full transition-all" style={{ width: `${ps.avgScore}%`, backgroundColor: ps.plan === 'FREE' ? '#94a3b8' : ps.plan === 'LITE' ? '#3b82f6' : '#8b5cf6' }} />
-                  </div>
-                </div>
-              ))}
-            </div></CardContent>
-          </Card>
-          <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Distribusi Skor</CardTitle><CardDescription>Sebaran skor engagement seluruh tenant.</CardDescription></CardHeader>
-            <CardContent><div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.engagementStats.scoreBrackets}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis dataKey="name" stroke="#6b7280" fontSize={8} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                  <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Bar dataKey="value" name="Tenant" radius={[6, 6, 0, 0]} barSize={36}>
-                    <Cell fill="#ef4444" /><Cell fill="#f97316" /><Cell fill="#f59e0b" /><Cell fill="#3b82f6" /><Cell fill="#10b981" />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div></CardContent>
-          </Card>
-        </div>
-      </div>
+      
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

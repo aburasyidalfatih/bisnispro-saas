@@ -12,6 +12,7 @@ import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
+import DOMPurify from "isomorphic-dompurify"
 
 const QUICK_AMOUNTS = [10000, 25000, 50000, 100000, 250000, 500000]
 
@@ -157,7 +158,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
         {campaign.description && (
           <div className="prose prose-slate max-w-none mb-8">
             <h3 className="text-xl font-bold text-foreground mb-4">Cerita & Tujuan Donasi</h3>
-            <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: campaign.description }} />
+            <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaign.description) }} />
           </div>
         )}
 

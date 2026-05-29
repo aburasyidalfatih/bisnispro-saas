@@ -9,6 +9,7 @@ import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 import { EventViewCounter } from "./_components/view-counter"
 import { getEventViews } from "@/features/post/services/views.service"
+import DOMPurify from "isomorphic-dompurify"
 
 
 export const dynamicParams = true
@@ -145,7 +146,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
         <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
           <h3 className="text-xl font-bold text-foreground mb-4">Deskripsi Kegiatan</h3>
           {event.description ? (
-            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: event.description }} />
+            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.description) }} />
           ) : (
             <p className="italic">Tidak ada deskripsi detail untuk agenda ini.</p>
           )}

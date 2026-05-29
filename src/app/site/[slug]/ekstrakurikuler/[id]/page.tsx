@@ -7,6 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Activity, Clock } from "lucide-react"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
+import DOMPurify from "isomorphic-dompurify"
 
 
 export const dynamicParams = true
@@ -84,7 +85,7 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
               <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
                 <h3 className="text-xl font-bold mb-4 text-foreground">Mengenal {extra.name}</h3>
                 {extra.description ? (
-                  <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: extra.description }} />
+                  <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(extra.description) }} />
                 ) : (
                   <p className="italic">Tidak ada deskripsi detail untuk ekstrakurikuler ini.</p>
                 )}

@@ -94,23 +94,54 @@ function HeaderBreadcrumb() {
     return { href, label, isLast }
   })
 
+  // On mobile: show only Home > Last (collapse middle segments)
+  const visibleCrumbs = crumbs.slice(1)
+  const showCollapsed = visibleCrumbs.length > 2
+
   return (
-    <nav className="flex items-center gap-1 text-sm">
-      <Link href={`/${segments[0]}`} className="text-muted-foreground hover:text-foreground transition-colors">
+    <nav className="flex items-center gap-1 text-sm min-w-0">
+      <Link href={`/${segments[0]}`} className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
         <Home className="h-3.5 w-3.5" />
       </Link>
-      {crumbs.slice(1).map((crumb) => (
-        <span key={crumb.href} className="flex items-center gap-1">
-          <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
-          {crumb.isLast ? (
-            <span className="font-semibold text-foreground">{crumb.label}</span>
-          ) : (
-            <Link href={crumb.href} className="text-muted-foreground hover:text-foreground transition-colors">
-              {crumb.label}
-            </Link>
-          )}
-        </span>
-      ))}
+      {showCollapsed ? (
+        <>
+          {/* Mobile: collapsed middle */}
+          <span className="flex items-center gap-1 sm:hidden">
+            <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
+            <span className="text-muted-foreground/50">…</span>
+            <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
+            <span className="font-semibold text-foreground truncate max-w-[120px]">{visibleCrumbs[visibleCrumbs.length - 1].label}</span>
+          </span>
+          {/* Desktop: all crumbs */}
+          <span className="hidden sm:contents">
+            {visibleCrumbs.map((crumb) => (
+              <span key={crumb.href} className="flex items-center gap-1">
+                <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
+                {crumb.isLast ? (
+                  <span className="font-semibold text-foreground">{crumb.label}</span>
+                ) : (
+                  <Link href={crumb.href} className="text-muted-foreground hover:text-foreground transition-colors">
+                    {crumb.label}
+                  </Link>
+                )}
+              </span>
+            ))}
+          </span>
+        </>
+      ) : (
+        visibleCrumbs.map((crumb) => (
+          <span key={crumb.href} className="flex items-center gap-1 min-w-0">
+            <ChevronRight className="h-3 w-3 text-muted-foreground/40 shrink-0" />
+            {crumb.isLast ? (
+              <span className="font-semibold text-foreground truncate">{crumb.label}</span>
+            ) : (
+              <Link href={crumb.href} className="text-muted-foreground hover:text-foreground transition-colors truncate">
+                {crumb.label}
+              </Link>
+            )}
+          </span>
+        ))
+      )}
     </nav>
   )
 }
@@ -136,12 +167,12 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   return (
     <>
-      <div className="flex items-center gap-3 min-w-0">
+      <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 overflow-hidden">
         <HeaderBreadcrumb />
         {!isSuperAdminPanel && <TenantSwitcher />}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         {/* Search */}
         <div className="hidden md:flex relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

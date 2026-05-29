@@ -4,6 +4,7 @@ import { Quote, ChevronDown, ChevronUp } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { cn, normalizeImageUrl } from "@/lib/utils"
+import DOMPurify from "isomorphic-dompurify"
 
 interface PrincipalWelcomeProps {
   tenantName: string
@@ -108,7 +109,7 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
               
               <div className="pb-4 prose prose-p:leading-relaxed prose-headings:text-foreground prose-a:text-primary max-w-none text-muted-foreground text-base md:text-lg">
                 {isHtml ? (
-                  <div dangerouslySetInnerHTML={{ __html: principalMessage }} />
+                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(principalMessage) }} />
                 ) : (
                   <div className="space-y-6">
                     {paragraphs.map((p: string, idx: number) => (

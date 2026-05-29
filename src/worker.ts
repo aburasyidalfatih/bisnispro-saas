@@ -8,6 +8,7 @@ import { processGamificationPoints } from "@/features/gamification/services/gami
 import { FinanceService } from "@/features/finance/services/finance.service"
 import { syncPostViewsToDatabase, syncEventViewsToDatabase } from "@/features/post/services/views.service"
 import { syncShareCountsToDatabase } from "@/features/post/services/share.service"
+import { processLeaderboardSync } from "@/features/gamification/services/leaderboard.service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -88,12 +89,19 @@ const waWorker = new Worker(
         throw new Error(result.error || "Failed to send WhatsApp message")
       }
 
-      // Update WA queue log if exists (for queued messages via admin)
+      // Update WA queue log with retry mechanism for race conditions
       if (waQueueLogId) {
-        await db.waQueueLog.update({
-          where: { id: waQueueLogId },
-          data: { status: "SENT", sentAt: new Date() },
-        })
+        let retries = 3;
+        while (retries > 0) {
+          const updateRes = await db.waQueueLog.updateMany({
+            where: { id: waQueueLogId },
+            data: { status: "SENT", sentAt: new Date() },
+          });
+          if (updateRes.count > 0) break;
+          // If 0 rows updated, wait and retry (row might not be fully visible yet)
+          await new Promise(r => setTimeout(r, 500));
+          retries--;
+        }
       }
 
       // Create individual delivery log for broadcast tracking
@@ -111,10 +119,16 @@ const waWorker = new Worker(
       return { success: true }
     } catch (error: any) {
       if (waQueueLogId) {
-        await db.waQueueLog.update({
-          where: { id: waQueueLogId },
-          data: { status: "FAILED", error: error.message },
-        })
+        let retries = 3;
+        while (retries > 0) {
+          const updateRes = await db.waQueueLog.updateMany({
+            where: { id: waQueueLogId },
+            data: { status: "FAILED", error: error.message },
+          });
+          if (updateRes.count > 0) break;
+          await new Promise(r => setTimeout(r, 500));
+          retries--;
+        }
       }
 
       // On final attempt failure, log for broadcast
@@ -326,6 +340,20 @@ setInterval(async () => {
     console.error("[cron] Failed to sync", error)
   }
 }, 10 * 60 * 1000) // 10 minutes
+
+// ============================================================
+// LEADERBOARD RECALCULATION & SYNC
+// ============================================================
+setInterval(async () => {
+  console.log("[cron] Running Leaderboard Sync...")
+  try {
+    const result = await processLeaderboardSync()
+    console.log(`[cron] Leaderboard sync success: ${result.message} (${result.processedCount} tenants)`)
+  } catch (error) {
+    console.error("[cron] Failed to sync leaderboard", error)
+  }
+}, 3 * 60 * 60 * 1000) // 3 hours
+
 
 // ============================================================
 // TENANT LIFECYCLE MANAGEMENT (RETENTION & CLEANUP)

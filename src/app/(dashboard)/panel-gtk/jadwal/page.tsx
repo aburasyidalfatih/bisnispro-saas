@@ -58,7 +58,7 @@ export default function JadwalPage() {
       </div>
 
       {/* Day Tabs */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-2 py-2">
+      <div className="flex overflow-x-auto scrollbar-hide gap-2 py-2">
         {grouped.map(group => (
           <button
             key={group.dayIndex}
@@ -150,11 +150,6 @@ export default function JadwalPage() {
           </div>
         )}
       </div>
-
-      <style dangerouslySetInnerHTML={{__html: `
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}} />
     </div>
   )
 }

@@ -75,11 +75,11 @@ export async function GET(req: Request) {
         const plan = planMap.get(tenant.planId!)
         if (!plan || plan.monthlyAiTokens <= 0) continue
 
-        // Add monthly tokens
+        // Set monthly tokens (reset to limit)
         await db.tenant.update({
           where: { id: tenant.id },
           data: {
-            aiTokens: { increment: plan.monthlyAiTokens },
+            aiTokens: plan.monthlyAiTokens,
           },
         })
 

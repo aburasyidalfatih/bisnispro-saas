@@ -18,8 +18,9 @@ export function AiTokenBadge() {
       fetch(`/api/tenant/ai-settings?tenantId=${tenantId}`)
         .then(res => res.json())
         .then(data => {
-          if (data && typeof data.aiTokens === 'number') {
-            setTokens(data.aiTokens)
+          if (data && (typeof data.aiTokens === 'number' || typeof data.aiAddonTokens === 'number')) {
+            const total = (data.aiTokens || 0) + (data.aiAddonTokens || 0)
+            setTokens(total)
           }
         })
         .catch(() => {})

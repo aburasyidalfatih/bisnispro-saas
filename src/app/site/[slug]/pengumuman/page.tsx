@@ -47,18 +47,6 @@ export default async function PengumumanPage({
 
   const base = await getPublicBasePath(slug)
 
-  // Custom Theme rendering
-  if (tenant.customThemeId && tenant.customTheme?.pengumumanHtml) {
-    const rendered = renderCustomTheme({
-      templateHtml: tenant.customTheme.pengumumanHtml,
-      layoutHtml: tenant.customTheme.layoutHtml,
-      customCss: tenant.customTheme.customCss,
-      customJs: tenant.customTheme.customJs,
-      context: { tenant, base, settings: tenant.settings || {} },
-    })
-    if (rendered) return rendered
-  }
-
   // Fetch paginated pengumuman directly from DB
   const posts = await db.post.findMany({
     where: { 
@@ -70,7 +58,13 @@ export default async function PengumumanPage({
     skip: (page - 1) * perPage,
     take: perPage,
     include: {
-      category: true
+      category: true,
+      author: {
+        select: {
+          name: true,
+          avatar: true
+        }
+      }
     }
   })
 
@@ -82,6 +76,23 @@ export default async function PengumumanPage({
     }
   })
   const totalPages = Math.ceil(totalPosts / perPage)
+
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.pengumumanHtml) {
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.pengumumanHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { 
+        tenant: { ...tenant, posts }, 
+        base, 
+        settings: tenant.settings || {},
+        pagination: { page, totalPages, hasNext: page < totalPages, hasPrev: page > 1 }
+      },
+    })
+    if (rendered) return rendered
+  }
 
   return (
     <div className="bg-background min-h-screen pb-12">

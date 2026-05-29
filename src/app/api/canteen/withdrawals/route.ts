@@ -53,10 +53,13 @@ export async function POST(req: Request) {
 
   // Kurangi saldo merchant + buat pengajuan
   const withdrawal = await db.$transaction(async (tx) => {
-    await tx.canteenMerchant.update({
+    const updatedMerchant = await tx.canteenMerchant.update({
       where: { id: merchant.id },
       data: { balance: { decrement: amount } },
     })
+    if (updatedMerchant.balance < 0) {
+      throw new Error("Saldo merchant tidak mencukupi")
+    }
     return tx.canteenWithdrawal.create({
       data: { tenantId, merchantId, amount, notes },
     })

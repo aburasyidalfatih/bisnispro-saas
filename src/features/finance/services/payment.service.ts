@@ -161,17 +161,21 @@ export async function createTransaction(params: CreateTransactionParamsDTO): Pro
  * Tripay signs callbacks with HMAC SHA256 using the private key.
  */
 export function verifyCallbackSignature(
-  body: TripayCallbackBodyDTO,
-  privateKey: string
+  rawBody: string,
+  privateKey: string,
+  callbackSignature: string
 ): boolean {
+  if (!privateKey || privateKey.trim() === "") {
+    return false;
+  }
   const signature = crypto
     .createHmac("sha256", privateKey)
-    .update(JSON.stringify(body))
+    .update(rawBody)
     .digest("hex")
-  return signature === body.signature
+  return signature === callbackSignature
 }
 
-export async function handleCallback(body: TripayCallbackBodyDTO): Promise<CallbackResultDTO> {
+export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: string, callbackSignature: string): Promise<CallbackResultDTO> {
   try {
     // Step 1: Find the payment by merchant reference
     const payment = await db.payment.findUnique({
@@ -191,7 +195,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
 
     // Step 2: Verify callback signature
     const cfg = await getTripayConfig(payment.tenantId)
-    if (!verifyCallbackSignature(body, cfg.privateKey)) {
+    if (!verifyCallbackSignature(rawBody, cfg.privateKey, callbackSignature)) {
       logger.warn("[payment] Invalid callback signature", {
         merchantRef: body.merchant_ref,
       })
@@ -299,7 +303,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO): Promise<Callb
              await db.tenant.update({
                where: { id: payment.tenantId },
                data: { 
-                 aiTokens: { increment: Number(metadata.aiTokens) } 
+                 aiAddonTokens: { increment: Number(metadata.aiTokens) } 
                }
              })
 

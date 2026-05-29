@@ -125,38 +125,52 @@ export async function POST(request: Request) {
       // Non-fatal: continue if Handlebars module fails to load
     }
 
-    // Save to DB
-    const newTheme = await db.customTheme.create({
-      data: {
-        name: themeMeta.name,
-        author: themeMeta.author || "Unknown",
-        version: themeMeta.version || "1.0.0",
-        thumbnail: themeMeta.thumbnail || null,
-        layoutHtml,
-        indexHtml,
-        facilityHtml: facilityHtml || null,
-        aboutHtml: aboutHtml || null,
-        staffHtml: staffHtml || null,
-        newsHtml: newsHtml || null,
-        newsDetailHtml: newsDetailHtml || null,
-        galleryHtml: galleryHtml || null,
-        contactHtml: contactHtml || null,
-        extracurricularHtml: extracurricularHtml || null,
-        programHtml: programHtml || null,
-        achievementHtml: achievementHtml || null,
-        pengumumanHtml: pengumumanHtml || null,
-        pengumumanDetailHtml: pengumumanDetailHtml || null,
-        ppdbHtml: ppdbHtml || null,
-        alumniHtml: alumniHtml || null,
-        agendaHtml: agendaHtml || null,
-        unduhanHtml: unduhanHtml || null,
-        staffDetailHtml: staffDetailHtml || null,
-        customCss,
-        customJs
-      }
+    // Save or Update DB
+    const existingTheme = await db.customTheme.findFirst({
+      where: { name: themeMeta.name }
     })
 
-    return NextResponse.json({ success: true, theme: newTheme })
+    const themeData = {
+      name: themeMeta.name,
+      author: themeMeta.author || "Unknown",
+      version: themeMeta.version || "1.0.0",
+      thumbnail: themeMeta.thumbnail || null,
+      layoutHtml,
+      indexHtml,
+      facilityHtml: facilityHtml || null,
+      aboutHtml: aboutHtml || null,
+      staffHtml: staffHtml || null,
+      newsHtml: newsHtml || null,
+      newsDetailHtml: newsDetailHtml || null,
+      galleryHtml: galleryHtml || null,
+      contactHtml: contactHtml || null,
+      extracurricularHtml: extracurricularHtml || null,
+      programHtml: programHtml || null,
+      achievementHtml: achievementHtml || null,
+      pengumumanHtml: pengumumanHtml || null,
+      pengumumanDetailHtml: pengumumanDetailHtml || null,
+      ppdbHtml: ppdbHtml || null,
+      alumniHtml: alumniHtml || null,
+      agendaHtml: agendaHtml || null,
+      unduhanHtml: unduhanHtml || null,
+      staffDetailHtml: staffDetailHtml || null,
+      customCss,
+      customJs
+    }
+
+    let savedTheme;
+    if (existingTheme) {
+      savedTheme = await db.customTheme.update({
+        where: { id: existingTheme.id },
+        data: themeData
+      })
+    } else {
+      savedTheme = await db.customTheme.create({
+        data: themeData
+      })
+    }
+
+    return NextResponse.json({ success: true, theme: savedTheme })
   } catch (error: any) {
     console.error("Theme upload error:", error)
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 })

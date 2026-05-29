@@ -7,31 +7,15 @@ import { logger } from "@/lib/logger"
 export async function getAiSettings(tenantId: string) {
   const tenant = await db.tenant.findUnique({
     where: { id: tenantId },
-    select: { aiTokens: true, useCustomApiKey: true, customOpenAiKey: true }
+    select: { aiTokens: true, aiAddonTokens: true }
   })
 
   if (!tenant) throw new Error("Tenant not found")
 
   return {
     aiTokens: tenant.aiTokens,
-    useCustomApiKey: tenant.useCustomApiKey,
-    customOpenAiKey: tenant.customOpenAiKey || ""
+    aiAddonTokens: tenant.aiAddonTokens
   }
-}
-
-// ==========================================
-// Mutation: Update AI Settings
-// ==========================================
-export async function updateAiSettings(tenantId: string, useCustomApiKey: boolean, customOpenAiKey?: string) {
-  await db.tenant.update({
-    where: { id: tenantId },
-    data: {
-      useCustomApiKey: Boolean(useCustomApiKey),
-      customOpenAiKey: customOpenAiKey || null
-    }
-  })
-
-  return { success: true }
 }
 
 // ==========================================

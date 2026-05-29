@@ -43,8 +43,18 @@ export async function GET(request: Request) {
       if (theme.extracurricularHtml) zip.file("templates/ekstrakurikuler.hbs", theme.extracurricularHtml)
       if (theme.programHtml) zip.file("templates/program.hbs", theme.programHtml)
       if (theme.achievementHtml) zip.file("templates/prestasi.hbs", theme.achievementHtml)
+      if (theme.pengumumanHtml) zip.file("templates/pengumuman.hbs", theme.pengumumanHtml)
+      if (theme.pengumumanDetailHtml) zip.file("templates/pengumuman-detail.hbs", theme.pengumumanDetailHtml)
+      if (theme.ppdbHtml) zip.file("templates/ppdb.hbs", theme.ppdbHtml)
+      if (theme.alumniHtml) zip.file("templates/alumni.hbs", theme.alumniHtml)
+      if (theme.agendaHtml) zip.file("templates/agenda.hbs", theme.agendaHtml)
+      if (theme.unduhanHtml) zip.file("templates/unduhan.hbs", theme.unduhanHtml)
+      if (theme.staffDetailHtml) zip.file("templates/guru-detail.hbs", theme.staffDetailHtml)
       if (theme.customCss) zip.file("assets/styles.css", theme.customCss)
       if (theme.customJs) zip.file("assets/scripts.js", theme.customJs)
+      
+      zip.file("README.md", STARTER_README)
+
 
       const buffer = await zip.generateAsync({ type: "nodebuffer" })
       return new NextResponse(new Uint8Array(buffer), {
