@@ -532,7 +532,7 @@ export async function GET() {
       db.donationCampaign.groupBy({ by: ['tenantId'] }).then(r => r.length),
       db.canteenMerchant.groupBy({ by: ['tenantId'] }).then(r => r.length),
       db.tenant.count({ where: { domain: { not: null } } }),
-      db.tenant.count({ where: { OR: [{ useCustomApiKey: true }, { aiTokens: { gt: 0 } }] } }),
+      db.tenant.count({ where: { aiTokens: { gt: 0 } } }),
     ])
 
     const featureAdoption = [

@@ -13,7 +13,7 @@ export async function getAiModel(tenantId: string): Promise<AiModelResult> {
   try {
     const tenant = await db.tenant.findUnique({
       where: { id: tenantId },
-      select: { customOpenAiKey: true, useCustomApiKey: true }
+      select: { id: true }
     })
 
     // Fetch global AI settings
@@ -26,12 +26,6 @@ export async function getAiModel(tenantId: string): Promise<AiModelResult> {
 
     const aiProvider = settingsMap.AI_PROVIDER || "openai"
     
-    // Check Tenant Custom Key first (BYOK is currently OpenAI only)
-    if (tenant?.useCustomApiKey && tenant?.customOpenAiKey) {
-      const provider = createOpenAI({ apiKey: tenant.customOpenAiKey })
-      return { success: true, model: provider("gpt-4o-mini") }
-    }
-
     if (aiProvider === "gemini") {
       const apiKey = settingsMap.GEMINI_API_KEY || process.env.GEMINI_API_KEY
       if (!apiKey) return { success: false, error: "Gemini API Key not configured." }
@@ -74,11 +68,20 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
       }
     })
 
-    // Deduct tokens ONLY IF not using custom API key
-    if (!tenant.useCustomApiKey) {
+    // Deduct tokens
+    if (tenant.aiTokens >= tokensUsed) {
       await db.tenant.update({
         where: { id: tenantId },
         data: { aiTokens: { decrement: tokensUsed } }
+      })
+    } else {
+      const remainingToDeduct = tokensUsed - tenant.aiTokens
+      await db.tenant.update({
+        where: { id: tenantId },
+        data: { 
+          aiTokens: 0,
+          aiAddonTokens: { decrement: remainingToDeduct }
+        }
       })
     }
     return { success: true }
@@ -92,11 +95,8 @@ export async function checkAiTokenBalance(tenantId: string) {
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
     if (!tenant) return { success: false, hasBalance: false, error: "Tenant not found" }
     
-    if (tenant.useCustomApiKey) {
-      return { success: true, hasBalance: true } // Bypass if using own key
-    }
-    
-    return { success: true, hasBalance: tenant.aiTokens > 0 } // Need at least 1 token
+    const totalTokens = tenant.aiTokens + tenant.aiAddonTokens
+    return { success: true, hasBalance: totalTokens >= 10 } // Need at least 10 tokens buffer
   } catch (error) {
     return { success: false, hasBalance: false, error: "Failed to check balance" }
   }

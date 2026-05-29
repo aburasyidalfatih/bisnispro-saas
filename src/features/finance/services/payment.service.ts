@@ -303,7 +303,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
              await db.tenant.update({
                where: { id: payment.tenantId },
                data: { 
-                 aiTokens: { increment: Number(metadata.aiTokens) } 
+                 aiAddonTokens: { increment: Number(metadata.aiTokens) } 
                }
              })
 

@@ -108,7 +108,7 @@ Kata Kunci Testimoni: ${inputs?.text || ''}`
         return NextResponse.json({ error: "Invalid prompt type" }, { status: 400 })
     }
 
-    const { object } = await generateObject({
+    const { object, usage } = await generateObject({
       model,
       system: systemPrompt,
       prompt: userPrompt,
@@ -117,8 +117,9 @@ Kata Kunci Testimoni: ${inputs?.text || ''}`
       })
     })
 
-    // Deduct token
-    await deductAiToken(tenantId, TOKEN_COST, session.user.id, `generate_${promptType}`)
+    // Deduct actual tokens used (or fallback to TOKEN_COST if undefined)
+    const tokensToDeduct = usage?.totalTokens || TOKEN_COST
+    await deductAiToken(tenantId, tokensToDeduct, session.user.id, `generate_${promptType}`)
 
     return NextResponse.json({ success: true, data: object })
 

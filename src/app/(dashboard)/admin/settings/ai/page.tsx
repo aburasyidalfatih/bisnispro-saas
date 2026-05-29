@@ -54,7 +54,7 @@ export default function AiSettingsPage() {
       .then(res => res.json())
       .then(data => {
         setFormData({
-          aiTokens: data.aiTokens || 0,
+          aiTokens: (data.aiTokens || 0) + (data.aiAddonTokens || 0),
         })
         setLoading(false)
       })

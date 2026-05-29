@@ -24,7 +24,7 @@ export async function getSuperAdminAiModel() {
     const map: Record<string, string> = {}
     settings.forEach(s => { map[s.key] = s.value })
 
-    const provider = map.AI_PROVIDER || "gemini"
+    const provider = map.AI_PROVIDER || "openai"
 
     if (provider === "gemini") {
       const apiKey = map.GEMINI_API_KEY || process.env.GEMINI_API_KEY
