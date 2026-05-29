@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Users, CreditCard, Wallet, Search, Ban, CheckCircle2, ChevronRight } from "lucide-react"
+import { Users, CreditCard, Wallet, Search, Ban, CheckCircle2, ChevronRight, Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -93,12 +93,20 @@ export default function SuperAdminAffiliatesPage() {
           <h1 className="text-3xl font-bold tracking-tight">Manajemen Afiliasi</h1>
           <p className="text-muted-foreground mt-1">Kelola mitra afiliasi, komisi, dan permintaan penarikan dana.</p>
         </div>
-        <Link href="/super-admin/affiliates/withdrawals">
-          <Button className="rounded-xl gap-2 bg-amber-600 hover:bg-amber-700 text-white border-0 shadow-md">
-            <CreditCard className="h-4 w-4" />
-            Antrian Penarikan Dana
-          </Button>
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/super-admin/affiliates/leaderboard">
+            <Button variant="outline" className="rounded-xl gap-2 border-amber-200 bg-amber-50/50 hover:bg-amber-100 text-amber-700 shadow-sm">
+              <Trophy className="h-4 w-4" />
+              Leaderboard
+            </Button>
+          </Link>
+          <Link href="/super-admin/affiliates/withdrawals">
+            <Button className="rounded-xl gap-2 bg-amber-600 hover:bg-amber-700 text-white border-0 shadow-md">
+              <CreditCard className="h-4 w-4" />
+              Antrian Penarikan Dana
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
