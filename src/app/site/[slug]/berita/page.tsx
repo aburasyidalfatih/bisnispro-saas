@@ -66,19 +66,6 @@ export default async function BeritaPage({
 
   const base = await getPublicBasePath(slug)
 
-  // Custom Theme rendering
-  if (tenant.customThemeId && tenant.customTheme?.newsHtml) {
-    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
-    const rendered = renderCustomTheme({
-      templateHtml: tenant.customTheme.newsHtml,
-      layoutHtml: tenant.customTheme.layoutHtml,
-      customCss: tenant.customTheme.customCss,
-      customJs: tenant.customTheme.customJs,
-      context: { tenant, base, settings: tenant.settings || {} },
-    })
-    if (rendered) return rendered
-  }
-  
   const excludedTypes = ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA", "PENGUMUMAN"]
 
   // Ambil kategori yang sudah memiliki artikel terpublikasi
@@ -112,12 +99,39 @@ export default async function BeritaPage({
     orderBy: { createdAt: 'desc' },
     skip: (page - 1) * perPage,
     take: perPage,
+    include: {
+      category: true,
+      author: {
+        select: {
+          name: true,
+          avatar: true
+        }
+      }
+    }
   })
 
   const totalPosts = await db.post.count({
     where: whereClause
   })
   const totalPages = Math.ceil(totalPosts / perPage)
+  
+  // Custom Theme rendering
+  if (tenant.customThemeId && tenant.customTheme?.newsHtml) {
+    const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
+    const rendered = renderCustomTheme({
+      templateHtml: tenant.customTheme.newsHtml,
+      layoutHtml: tenant.customTheme.layoutHtml,
+      customCss: tenant.customTheme.customCss,
+      customJs: tenant.customTheme.customJs,
+      context: { 
+        tenant: { ...tenant, posts }, 
+        base, 
+        settings: tenant.settings || {},
+        pagination: { page, totalPages, hasNext: page < totalPages, hasPrev: page > 1 }
+      },
+    })
+    if (rendered) return rendered
+  }
   
 
 
