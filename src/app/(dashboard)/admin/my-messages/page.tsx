@@ -1,42 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import DOMPurify from "isomorphic-dompurify"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { MessageSquare, Loader2, Inbox, Mail, Check, Trash2, ChevronDown, ChevronUp, Users, Globe, Pencil } from "lucide-react"
-import { format } from "date-fns"
-import { id } from "date-fns/locale"
+import { MessageSquare, Users, Globe } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Plus } from "lucide-react"
 
-interface Message {
-  id: string
-  subject: string | null
-  body: string
-  createdAt: string
-  senderId: string
-  receiverId: string | null
-  sender: { name: string; avatar: string | null }
-  receiver?: { name: string; avatar: string | null }
-}
-
-interface Submission {
-  id: string
-  name: string
-  email: string
-  phone: string | null
-  subject: string | null
-  message: string
-  isRead: boolean
-  createdAt: string
-}
+import { Message, Submission } from "./_components/types"
+import { InternalMessages } from "./_components/internal-messages"
+import { WebsiteMessages } from "./_components/website-messages"
+import { Announcements } from "./_components/announcements"
 
 export default function AdminMessagesPage() {
   const { branding } = useTenantBranding()
@@ -294,386 +267,51 @@ export default function AdminMessagesPage() {
       </div>
 
       {activeTab === "internal" && (
-        <Card className="glass border-0 min-h-[400px]">
-          <CardHeader className="pb-3 border-b border-border/50 flex flex-row items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-                <Users className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Pesan Internal</CardTitle>
-                <CardDescription>Komunikasi antar guru dan staf</CardDescription>
-              </div>
-            </div>
-            <Dialog open={showComposeModal} onOpenChange={setShowComposeModal}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="gap-2 rounded-xl">
-                  <Plus className="h-4 w-4" /> Tulis Pesan
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Tulis Pesan Internal</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label>Kirim Ke</Label>
-                    <select 
-                      value={composeForm.receiverId} 
-                      onChange={e => setComposeForm(p => ({...p, receiverId: e.target.value}))}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      disabled={loadingUsers}
-                    >
-                      <option value="">-- Pilih Penerima --</option>
-                      {tenantUsers.map(u => (
-                        <option key={u.id} value={u.id}>{u.name} ({u.role.toUpperCase()})</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Subjek (Opsional)</Label>
-                    <Input value={composeForm.subject} onChange={e => setComposeForm(p => ({...p, subject: e.target.value}))} placeholder="Contoh: Rapat Koordinasi" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Pesan</Label>
-                    <textarea 
-                      value={composeForm.body} 
-                      onChange={e => setComposeForm(p => ({...p, body: e.target.value}))}
-                      className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      placeholder="Tulis pesan..."
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setShowComposeModal(false)}>Batal</Button>
-                  <Button onClick={submitComposeMessage} disabled={submittingCompose}>
-                    {submittingCompose ? "Mengirim..." : "Kirim Pesan"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              {loadingInternal ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              ) : messages.length === 0 ? (
-                <div className="text-center py-16 flex flex-col items-center">
-                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-3">
-                    <MessageSquare className="h-6 w-6 text-muted-foreground/50" />
-                  </div>
-                  <p className="text-muted-foreground">Kotak masuk Anda kosong.</p>
-                </div>
-              ) : (
-                messages.map((msg) => (
-                  <div key={msg.id} className="p-4 rounded-xl border border-border/50 bg-background/50 hover:bg-muted/20 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                          {msg.sender.name.charAt(0)}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm">
-                            {msg.sender.name}
-                          </p>
-                          <p className="text-[11px] text-muted-foreground">
-                            {format(new Date(msg.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    {msg.subject && (
-                      <p className="font-semibold text-sm mb-1 mt-3">{msg.subject}</p>
-                    )}
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{msg.body}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <InternalMessages
+          messages={messages}
+          loadingInternal={loadingInternal}
+          showComposeModal={showComposeModal}
+          setShowComposeModal={setShowComposeModal}
+          composeForm={composeForm}
+          setComposeForm={setComposeForm}
+          loadingUsers={loadingUsers}
+          tenantUsers={tenantUsers}
+          submitComposeMessage={submitComposeMessage}
+          submittingCompose={submittingCompose}
+        />
       )}
 
       {activeTab === "website" && (
-        <Card className="glass border-0">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-                  <Inbox className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Pesan Website Publik</CardTitle>
-                  <CardDescription>
-                    {unread > 0 ? `${unread} pesan belum dibaca` : "Semua pesan sudah dibaca"}
-                  </CardDescription>
-                </div>
-              </div>
-              {unread > 0 && (
-                <Button variant="outline" size="sm" className="gap-2 rounded-xl" onClick={markAllRead}>
-                  <Check className="h-3.5 w-3.5" /> Tandai Semua Dibaca
-                </Button>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            {loadingWebsite ? (
-              <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-16 rounded-xl bg-muted animate-pulse" />)}</div>
-            ) : submissions.length === 0 ? (
-              <div className="text-center py-12">
-                <Inbox className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
-                <p className="text-sm text-muted-foreground">Belum ada pesan dari pengunjung website</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {submissions.map(sub => (
-                  <div key={sub.id}
-                    className={cn("rounded-xl border transition-colors",
-                      !sub.isRead ? "border-primary/30 bg-primary/5" : "border-border")}>
-                    <button
-                      onClick={() => toggleExpand(sub.id)}
-                      className="flex w-full items-center gap-3 p-4 text-left">
-                      <div className={cn("h-2 w-2 rounded-full shrink-0", !sub.isRead ? "bg-primary" : "bg-transparent")} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className={cn("text-sm truncate", !sub.isRead && "font-semibold")}>{sub.name}</p>
-                          <span className="text-xs text-muted-foreground shrink-0">{sub.email}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground truncate mt-0.5">
-                          {sub.subject ? `${sub.subject}: ` : ""}{sub.message}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(sub.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
-                        </span>
-                        {expandedId === sub.id ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
-                      </div>
-                    </button>
-
-                    {expandedId === sub.id && (
-                      <div className="px-4 pb-4 border-t pt-3 space-y-3">
-                        <div className="grid sm:grid-cols-3 gap-3 text-sm">
-                          <div>
-                            <p className="text-xs text-muted-foreground">Nama</p>
-                            <p className="font-medium">{sub.name}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground">Email</p>
-                            <a href={`mailto:${sub.email}`} className="font-medium text-primary hover:underline">{sub.email}</a>
-                          </div>
-                          {sub.phone && (
-                            <div>
-                              <p className="text-xs text-muted-foreground">Telepon</p>
-                              <a href={`tel:${sub.phone}`} className="font-medium text-primary hover:underline">{sub.phone}</a>
-                            </div>
-                          )}
-                        </div>
-                        {sub.subject && (
-                          <div>
-                            <p className="text-xs text-muted-foreground">Subjek</p>
-                            <p className="text-sm font-medium">{sub.subject}</p>
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-1">Pesan</p>
-                          <p className="text-sm bg-muted/40 rounded-xl p-3 whitespace-pre-wrap">{sub.message}</p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs text-muted-foreground">
-                            Diterima: {new Date(sub.createdAt).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-                          </p>
-                          <div className="flex gap-2">
-                            <a href={`mailto:${sub.email}?subject=Re: ${sub.subject || "Pesan Anda"}`}
-                              className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
-                              <Mail className="h-3.5 w-3.5" /> Balas via Email
-                            </a>
-                            <ConfirmDialog
-                              trigger={
-                                <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive hover:text-destructive gap-1">
-                                  <Trash2 className="h-3.5 w-3.5" /> Hapus
-                                </Button>
-                              }
-                              title="Hapus pesan ini?"
-                              description="Pesan akan dihapus secara permanen."
-                              confirmText="Ya, hapus"
-                              onConfirm={() => deleteSubmission(sub.id)}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <WebsiteMessages
+          submissions={submissions}
+          loadingWebsite={loadingWebsite}
+          unread={unread}
+          markAllRead={markAllRead}
+          expandedId={expandedId}
+          toggleExpand={toggleExpand}
+          deleteSubmission={deleteSubmission}
+        />
       )}
-      {activeTab === "pengumuman" && (
-        <Card className="glass border-0">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-                  <MessageSquare className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Papan Pengumuman</CardTitle>
-                  <CardDescription>
-                    Pesan siaran untuk dibaca oleh target civitas akademika
-                  </CardDescription>
-                </div>
-              </div>
-              <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-                <DialogTrigger asChild>
-                  <Button size="sm" className="gap-2 rounded-xl">
-                    <Plus className="h-4 w-4" /> Tambah Pengumuman
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Tambah Pengumuman Baru</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label>Tujuan Pengumuman</Label>
-                      <select 
-                        value={addForm.target} 
-                        onChange={e => setAddForm(p => ({...p, target: e.target.value}))}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      >
-                        <option value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</option>
-                        <option value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</option>
-                        <option value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</option>
-                        <option value="PENGUMUMAN_SISWA">Khusus Siswa</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Judul Pengumuman</Label>
-                      <Input value={addForm.title} onChange={e => setAddForm(p => ({...p, title: e.target.value}))} placeholder="Contoh: Libur Nasional..." />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Isi Pengumuman</Label>
-                      <textarea 
-                        value={addForm.content} 
-                        onChange={e => setAddForm(p => ({...p, content: e.target.value}))}
-                        className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                        placeholder="Tulis detail pengumuman..."
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setShowAddModal(false)}>Batal</Button>
-                    <Button onClick={submitAnnouncement} disabled={submittingAnnounce}>
-                      {submittingAnnounce ? "Menyimpan..." : "Terbitkan"}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
 
-              <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Edit Pengumuman</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label>Tujuan Pengumuman</Label>
-                      <select 
-                        value={editForm.target} 
-                        onChange={e => setEditForm(p => ({...p, target: e.target.value}))}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      >
-                        <option value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</option>
-                        <option value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</option>
-                        <option value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</option>
-                        <option value="PENGUMUMAN_SISWA">Khusus Siswa</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Judul Pengumuman</Label>
-                      <Input value={editForm.title} onChange={e => setEditForm(p => ({...p, title: e.target.value}))} placeholder="Contoh: Libur Nasional..." />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Isi Pengumuman</Label>
-                      <textarea 
-                        value={editForm.content} 
-                        onChange={e => setEditForm(p => ({...p, content: e.target.value}))}
-                        className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                        placeholder="Tulis detail pengumuman..."
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setShowEditModal(false)}>Batal</Button>
-                    <Button onClick={submitEditAnnouncement} disabled={submittingEdit}>
-                      {submittingEdit ? "Menyimpan..." : "Simpan Perubahan"}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {loadingAnnouncements ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              </div>
-            ) : announcements.length === 0 ? (
-              <div className="text-center py-12">
-                <MessageSquare className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
-                <p className="text-sm text-muted-foreground">Belum ada pengumuman yang diterbitkan.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {announcements.map((post) => (
-                  <div key={post.id} className="p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                          {post.author?.name?.charAt(0) || "A"}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm">{post.author?.name || "Admin Sekolah"}</p>
-                          <p className="text-[11px] text-muted-foreground">
-                            {format(new Date(post.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
-                          {post.type === "PENGUMUMAN_SEMUA" ? "TARGET: SEMUA" :
-                           post.type === "PENGUMUMAN_GTK" ? "TARGET: GTK" :
-                           post.type === "PENGUMUMAN_ORTU" ? "TARGET: ORANGTUA" :
-                           post.type === "PENGUMUMAN_SISWA" ? "TARGET: SISWA" : "PENGUMUMAN"}
-                        </span>
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEditModal(post)}>
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <ConfirmDialog
-                          trigger={
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive hover:text-destructive">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          }
-                          title="Hapus pengumuman ini?"
-                          description="Pengumuman akan dihapus secara permanen dari sistem."
-                          confirmText="Ya, hapus"
-                          onConfirm={() => deleteAnnouncement(post.id)}
-                        />
-                      </div>
-                    </div>
-                    <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
-                    <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {activeTab === "pengumuman" && (
+        <Announcements
+          announcements={announcements}
+          loadingAnnouncements={loadingAnnouncements}
+          showAddModal={showAddModal}
+          setShowAddModal={setShowAddModal}
+          addForm={addForm}
+          setAddForm={setAddForm}
+          submitAnnouncement={submitAnnouncement}
+          submittingAnnounce={submittingAnnounce}
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          editForm={editForm}
+          setEditForm={setEditForm}
+          submitEditAnnouncement={submitEditAnnouncement}
+          submittingEdit={submittingEdit}
+          openEditModal={openEditModal}
+          deleteAnnouncement={deleteAnnouncement}
+        />
       )}
     </div>
   )
