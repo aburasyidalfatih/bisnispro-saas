@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Trophy, ArrowLeft, TrendingUp, Users, Target, Crown, Award, Medal } from "lucide-react"
+import { Trophy, ArrowLeft, TrendingUp, Users, Target, Crown, Award, Medal, Info } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -119,9 +119,11 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                       <h3 className="font-bold text-lg line-clamp-1">{top3[1].name}</h3>
                       <p className="text-sm text-muted-foreground font-mono">{top3[1].referralCode}</p>
                     </div>
-                    <div className="bg-white/60 p-3 rounded-xl border border-slate-100 shadow-sm flex justify-center gap-4">
-                      <div className="text-center"><div className="text-xs text-muted-foreground">Skor</div><div className="font-bold text-slate-700">{top3[1].score.toFixed(1)}</div></div>
-                      <div className="text-center"><div className="text-xs text-muted-foreground">Pro</div><div className="font-bold text-indigo-600">{top3[1].pro}</div></div>
+                    <div className="bg-white/60 p-3 rounded-xl border border-slate-100 shadow-sm flex justify-center">
+                      <div className="text-center">
+                        <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">Skor <Info className="w-3.5 h-3.5 text-slate-400" title="Sistem Penilaian: Pengajuan (0.5), Free (1), Lite (3), Pro (5)" /></div>
+                        <div className="font-bold text-slate-700 text-xl">{top3[1].score.toFixed(1)}</div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -141,9 +143,11 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                     <h3 className="font-bold text-xl line-clamp-1 text-amber-900">{top3[0].name}</h3>
                     <p className="text-sm text-amber-700/70 font-mono">{top3[0].referralCode}</p>
                   </div>
-                  <div className="bg-white/80 p-4 rounded-xl border border-amber-100 shadow-sm flex justify-center gap-6">
-                    <div className="text-center"><div className="text-xs text-amber-600/70 font-medium">Total Skor</div><div className="font-black text-2xl text-amber-600">{top3[0].score.toFixed(1)}</div></div>
-                    <div className="text-center"><div className="text-xs text-amber-600/70 font-medium">Tenant Pro</div><div className="font-black text-2xl text-indigo-600">{top3[0].pro}</div></div>
+                  <div className="bg-white/80 p-4 rounded-xl border border-amber-100 shadow-sm flex justify-center">
+                    <div className="text-center">
+                      <div className="text-xs text-amber-600/70 font-medium flex items-center justify-center gap-1">Total Skor <Info className="w-4 h-4 text-amber-500/70" title="Sistem Penilaian: Pengajuan (0.5), Free (1), Lite (3), Pro (5)" /></div>
+                      <div className="font-black text-3xl text-amber-600">{top3[0].score.toFixed(1)}</div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -162,9 +166,11 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                       <h3 className="font-bold text-md line-clamp-1">{top3[2].name}</h3>
                       <p className="text-xs text-muted-foreground font-mono">{top3[2].referralCode}</p>
                     </div>
-                    <div className="bg-white/60 p-2 rounded-xl border border-orange-100 shadow-sm flex justify-center gap-4">
-                      <div className="text-center"><div className="text-[10px] text-muted-foreground">Skor</div><div className="font-bold text-orange-700 text-sm">{top3[2].score.toFixed(1)}</div></div>
-                      <div className="text-center"><div className="text-[10px] text-muted-foreground">Pro</div><div className="font-bold text-indigo-600 text-sm">{top3[2].pro}</div></div>
+                    <div className="bg-white/60 p-2 rounded-xl border border-orange-100 shadow-sm flex justify-center">
+                      <div className="text-center">
+                        <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1">Skor <Info className="w-3 h-3 text-slate-400" title="Sistem Penilaian: Pengajuan (0.5), Free (1), Lite (3), Pro (5)" /></div>
+                        <div className="font-bold text-orange-700 text-lg">{top3[2].score.toFixed(1)}</div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
