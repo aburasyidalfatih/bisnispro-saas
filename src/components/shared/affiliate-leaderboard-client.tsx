@@ -26,6 +26,31 @@ interface AffiliateLeaderboardClientProps {
   backHref?: string
 }
 
+function ScoreInfoTooltip({ iconClass }: { iconClass: string }) {
+  const [open, setOpen] = useState(false)
+  
+  return (
+    <div 
+      className="relative inline-flex items-center cursor-pointer"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setOpen(!open)
+      }}
+    >
+      <Info className={iconClass} />
+      {open && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2 bg-slate-800 text-white text-[10px] rounded-lg shadow-xl z-50 text-center leading-tight font-normal">
+          Sistem Penilaian: Pengajuan (0.5), Free (1), Lite (3), Pro (5)
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-slate-800"></div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardClientProps) {
   const [data, setData] = useState<LeaderboardItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -121,7 +146,7 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                     </div>
                     <div className="bg-white/60 p-3 rounded-xl border border-slate-100 shadow-sm flex justify-center">
                       <div className="text-center">
-                        <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">Skor <Info className="w-3.5 h-3.5 text-slate-400" title="Sistem Penilaian: Pengajuan (0.5), Free (1), Lite (3), Pro (5)" /></div>
+                        <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">Skor <ScoreInfoTooltip iconClass="w-3.5 h-3.5 text-slate-400" /></div>
                         <div className="font-bold text-slate-700 text-xl">{top3[1].score.toFixed(1)}</div>
                       </div>
                     </div>
@@ -145,7 +170,7 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                   </div>
                   <div className="bg-white/80 p-4 rounded-xl border border-amber-100 shadow-sm flex justify-center">
                     <div className="text-center">
-                      <div className="text-xs text-amber-600/70 font-medium flex items-center justify-center gap-1">Total Skor <Info className="w-4 h-4 text-amber-500/70" title="Sistem Penilaian: Pengajuan (0.5), Free (1), Lite (3), Pro (5)" /></div>
+                      <div className="text-xs text-amber-600/70 font-medium flex items-center justify-center gap-1">Total Skor <ScoreInfoTooltip iconClass="w-4 h-4 text-amber-500/70" /></div>
                       <div className="font-black text-3xl text-amber-600">{top3[0].score.toFixed(1)}</div>
                     </div>
                   </div>
@@ -168,7 +193,7 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                     </div>
                     <div className="bg-white/60 p-2 rounded-xl border border-orange-100 shadow-sm flex justify-center">
                       <div className="text-center">
-                        <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1">Skor <Info className="w-3 h-3 text-slate-400" title="Sistem Penilaian: Pengajuan (0.5), Free (1), Lite (3), Pro (5)" /></div>
+                        <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1">Skor <ScoreInfoTooltip iconClass="w-3 h-3 text-slate-400" /></div>
                         <div className="font-bold text-orange-700 text-lg">{top3[2].score.toFixed(1)}</div>
                       </div>
                     </div>
