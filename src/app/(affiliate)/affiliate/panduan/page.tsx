@@ -2,10 +2,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BookOpen, Infinity, Landmark, Sparkles, TrendingUp, Users } from "lucide-react"
 import { CommissionSimulator } from "./_components/commission-simulator"
 import { getPricingConfig } from "@/features/finance/services/billing.service"
+import { db } from "@/lib/db"
 
 export default async function AffiliateGuidePage() {
   const pricing = await getPricingConfig()
   const pricePerStudent = pricing.PRICE_PER_STUDENT
+
+  const litePlan = await db.subscriptionPlan.findUnique({ where: { slug: "lite" } })
+  const priceLite = litePlan?.price || 1000000
+
 
   return (
     <div className="space-y-6">
@@ -30,7 +35,7 @@ export default async function AffiliateGuidePage() {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6 mt-2">
-            <CommissionSimulator pricePerStudent={pricePerStudent} />
+            <CommissionSimulator pricePerStudent={pricePerStudent} priceLite={priceLite} />
           </div>
         </CardContent>
       </Card>
