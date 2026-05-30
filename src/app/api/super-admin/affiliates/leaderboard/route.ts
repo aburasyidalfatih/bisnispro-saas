@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 
 export async function GET(req: Request) {
   const session = await auth()
-  if (!session?.user?.isSuperAdmin) {
+  if (!session?.user?.isSuperAdmin && !session?.user?.isAffiliate) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
