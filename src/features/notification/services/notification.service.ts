@@ -63,12 +63,26 @@ export async function sendEmail(to: string, subject: string, html: string, tenan
   const config = await getEmailTransporter(tenantId)
   if (!config) return { success: false, error: "SMTP belum dikonfigurasi" }
   
+  // Pastikan html dibungkus dengan tag standar agar tidak dibaca kosong oleh klien email tertentu
+  const wrappedHtml = html.toLowerCase().includes("<html") ? html : `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: sans-serif;">
+  ${html}
+</body>
+</html>
+  `.trim()
+
   try {
     const res = await config.transporter.sendMail({
       from: config.fromName ? `"${config.fromName}" <${config.from}>` : config.from,
       to,
       subject,
-      html,
+      html: wrappedHtml,
     })
     return { success: true, res }
   } catch (error: any) {
