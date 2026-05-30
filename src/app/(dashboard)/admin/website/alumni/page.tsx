@@ -169,7 +169,7 @@ export default function AlumniPage() {
                         <h3 className="font-bold text-sm truncate">{alumni.name}</h3>
                         <div className="flex gap-1">
                           <Button asChild variant="ghost" size="icon" className="h-7 w-7 rounded-md text-muted-foreground hover:text-blue-600" title="Lihat di website">
-                            <a href={`/${branding.slug}/alumni`} target="_blank" rel="noopener noreferrer">
+                            <a href={`/alumni`} target="_blank" rel="noopener noreferrer">
                               <Eye className="h-3.5 w-3.5" />
                             </a>
                           </Button>

@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react"
 interface TenantBranding {
   id: string | null
   name: string
+  slug?: string
   logo: string | null
 }
 
@@ -26,7 +27,7 @@ interface TenantBrandingContextValue {
 }
 
 const TenantBrandingContext = createContext<TenantBrandingContextValue>({
-  branding: { id: null, name: "SchoolPro", logo: null },
+  branding: { id: null, name: "SchoolPro", slug: "", logo: null },
   updateBranding: () => {},
   isLoadingTenant: true,
 })
@@ -37,6 +38,7 @@ export function TenantBrandingProvider({ children }: { children: React.ReactNode
   const [branding, setBranding] = useState<TenantBranding>({
     id: null,
     name: "SchoolPro",
+    slug: "",
     logo: null,
   })
   
@@ -58,6 +60,7 @@ export function TenantBrandingProvider({ children }: { children: React.ReactNode
             setBranding({
               id: data.id,
               name: data.name || "SchoolPro",
+              slug: data.slug || impSlug,
               logo: data.logo || null,
             })
           }
@@ -70,6 +73,7 @@ export function TenantBrandingProvider({ children }: { children: React.ReactNode
           setBranding({
             id: tenant.id,
             name: tenant.name || "SchoolPro",
+            slug: (tenant as any).slug || "",
             logo: (tenant as any).logo || null,
           })
         }
