@@ -99,17 +99,17 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-            <p className="text-xs text-emerald-700 mb-1 font-medium">{selectedPlan === "pro" ? "Total Siswa Keseluruhan" : "Total Biaya Langganan"}</p>
+            <p className="text-xs text-emerald-700 mb-1 font-medium">{selectedPlan === "pro" ? "Total Siswa Keseluruhan" : "Biaya Langganan/ Sekolah"}</p>
             <p className="text-lg font-bold text-emerald-900">
               {selectedPlan === "pro" 
                 ? `${totalStudents.toLocaleString("id-ID")} Siswa` 
-                : `Rp ${(priceLite/1000).toLocaleString("id-ID")}rb/Sekolah`}
+                : `Rp ${priceLite.toLocaleString("id-ID")} / Tahun`}
             </p>
           </div>
           <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 hidden md:block">
-            <p className="text-xs text-emerald-700 mb-1 font-medium">Tagihan / Tahun</p>
+            <p className="text-xs text-emerald-700 mb-1 font-medium">Omset / Tahun</p>
             <p className="text-lg font-bold text-emerald-900">
-              Rp {(totalTagihan/1000000).toFixed(1)} Juta
+              Rp {totalTagihan.toLocaleString("id-ID")}
             </p>
           </div>
           <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-4 rounded-xl text-white shadow-lg shadow-emerald-500/20 col-span-2 md:col-span-1">
