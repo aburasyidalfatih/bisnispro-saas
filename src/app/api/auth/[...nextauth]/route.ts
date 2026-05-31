@@ -35,11 +35,22 @@ async function getDynamicConfig(req: NextRequest) {
     googleClientId = map.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID
     googleClientSecret = map.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET
   } else {
-    const slug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
-    const tenant = await db.tenant.findUnique({
-      where: { slug },
-      select: { googleClientId: true, googleClientSecret: true },
-    })
+    let slug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+    const isSubdomain = hostWithoutPort.endsWith(`.${rootDomain}`)
+    
+    let tenant;
+    if (isSubdomain) {
+      tenant = await db.tenant.findUnique({
+        where: { slug },
+        select: { googleClientId: true, googleClientSecret: true },
+      })
+    } else {
+      tenant = await db.tenant.findUnique({
+        where: { domain: hostWithoutPort },
+        select: { googleClientId: true, googleClientSecret: true },
+      })
+    }
+    
     googleClientId = tenant?.googleClientId ?? undefined
     googleClientSecret = tenant?.googleClientSecret ?? undefined
   }
