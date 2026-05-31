@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description,
     alternates: { canonical: "/agenda" },
     openGraph: {
-      title: `${title} | ${tenant.name}`,
+      title,
       description,
       url: `${domainUrl}/agenda`,
     }

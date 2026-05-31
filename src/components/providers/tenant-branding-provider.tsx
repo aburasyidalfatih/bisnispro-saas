@@ -18,6 +18,7 @@ interface TenantBranding {
   name: string
   slug?: string
   logo: string | null
+  plan?: string
 }
 
 interface TenantBrandingContextValue {
@@ -27,7 +28,7 @@ interface TenantBrandingContextValue {
 }
 
 const TenantBrandingContext = createContext<TenantBrandingContextValue>({
-  branding: { id: null, name: "SchoolPro", slug: "", logo: null },
+  branding: { id: null, name: "SchoolPro", slug: "", logo: null, plan: "free" },
   updateBranding: () => {},
   isLoadingTenant: true,
 })
@@ -40,6 +41,7 @@ export function TenantBrandingProvider({ children }: { children: React.ReactNode
     name: "SchoolPro",
     slug: "",
     logo: null,
+    plan: "free",
   })
   
   const [isLoadingTenant, setIsLoadingTenant] = useState(true)
@@ -62,6 +64,7 @@ export function TenantBrandingProvider({ children }: { children: React.ReactNode
               name: data.name || "SchoolPro",
               slug: data.slug || impSlug,
               logo: data.logo || null,
+              plan: data.plan || "free",
             })
           }
         } catch (e) {
@@ -70,11 +73,28 @@ export function TenantBrandingProvider({ children }: { children: React.ReactNode
       } else {
         const tenant = session?.user?.tenants?.[0]
         if (tenant) {
+          try {
+            const res = await fetch(`/api/tenant/by-slug?slug=${(tenant as any).slug}`)
+            const data = await res.json()
+            if (data && data.id) {
+              setBranding({
+                id: data.id,
+                name: data.name || tenant.name || "SchoolPro",
+                slug: data.slug || (tenant as any).slug || "",
+                logo: data.logo || (tenant as any).logo || null,
+                plan: data.plan || (tenant as any).plan || "free",
+              })
+              setIsLoadingTenant(false)
+              return
+            }
+          } catch(e) {}
+          
           setBranding({
             id: tenant.id,
             name: tenant.name || "SchoolPro",
             slug: (tenant as any).slug || "",
             logo: (tenant as any).logo || null,
+            plan: (tenant as any).plan || "free",
           })
         }
       }

@@ -15,11 +15,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
 
   return {
-    title: `${title} | ${tenant.name}`,
+    title,
     description,
     alternates: { canonical: "/gallery" },
     openGraph: {
-      title: `${title} | ${tenant.name}`,
+      title,
       description,
       url: `${domainUrl}/gallery`,
     }

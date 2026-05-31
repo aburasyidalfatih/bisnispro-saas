@@ -599,7 +599,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
   const currentTenant = session?.user?.tenants?.find((t) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
   const currentRole = currentTenant?.role || "orangtua"
-  const currentPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
+  const currentPlan = (branding as any).plan || (session?.user as any)?.tenants?.[0]?.plan || "free"
 
   const { access: planAccess } = usePlanAccess(currentPlan)
 
