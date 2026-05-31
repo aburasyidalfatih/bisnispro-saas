@@ -43,6 +43,8 @@ export default function PaymentsPage() {
   const [confirmTarget, setConfirmTarget] = useState<Payment | null>(null)
   const [canceling, setCanceling] = useState<string | null>(null)
   const [cancelTarget, setCancelTarget] = useState<Payment | null>(null)
+  const [refunding, setRefunding] = useState<string | null>(null)
+  const [refundTarget, setRefundTarget] = useState<Payment | null>(null)
 
   const fetchPayments = useCallback(async () => {
     try {
@@ -118,6 +120,28 @@ export default function PaymentsPage() {
     }
   }
 
+  const handleRefund = async () => {
+    if (!refundTarget) return
+    setRefunding(refundTarget.id)
+    try {
+      const res = await fetch("/api/super-admin/payments/refund", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId: refundTarget.id }),
+      })
+      const result = await res.json()
+      if (res.ok) {
+        toast({ title: "Refund Berhasil", description: result.message })
+        setRefundTarget(null)
+        fetchPayments()
+      } else {
+        toast({ title: "Gagal", description: result.error, variant: "destructive" })
+      }
+    } finally {
+      setRefunding(null)
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case "paid":
@@ -128,6 +152,8 @@ export default function PaymentsPage() {
         return <Badge className="bg-slate-500/10 text-slate-600 border-slate-500/20 gap-1"><AlertCircle className="h-3 w-3" /> Kedaluwarsa</Badge>
       case "failed":
         return <Badge className="bg-rose-500/10 text-rose-600 border-rose-500/20 gap-1"><XCircle className="h-3 w-3" /> Gagal</Badge>
+      case "refunded":
+        return <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20 gap-1"><AlertCircle className="h-3 w-3" /> Refunded</Badge>
       default:
         return <Badge>{status}</Badge>
     }
@@ -241,6 +267,7 @@ export default function PaymentsPage() {
                 <option value="pending">Menunggu</option>
                 <option value="expired">Kedaluwarsa</option>
                 <option value="failed">Gagal</option>
+                <option value="refunded">Refunded</option>
               </select>
             </div>
           </div>
@@ -313,10 +340,20 @@ export default function PaymentsPage() {
                             </Button>
                           </div>
                         ) : p.status === "paid" ? (
-                          <span className="text-[10px] text-emerald-600 font-medium flex items-center justify-end gap-1">
-                            <CheckCircle2 className="h-3 w-3" />
-                            Terkonfirmasi
-                          </span>
+                          <div className="flex items-center justify-end gap-3">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setRefundTarget(p)}
+                              className="h-7 px-2 text-[10px] text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                            >
+                              Refund/Batal
+                            </Button>
+                            <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+                              <CheckCircle2 className="h-3 w-3" />
+                              Terkonfirmasi
+                            </span>
+                          </div>
                         ) : null}
                       </td>
                     </tr>
@@ -380,6 +417,18 @@ export default function PaymentsPage() {
                         >
                           <ShieldCheck className="h-3.5 w-3.5" />
                           Konfirmasi
+                        </Button>
+                      </div>
+                    )}
+                    {p.status === "paid" && (
+                      <div className="flex justify-end pt-2 border-t border-border/40">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setRefundTarget(p)}
+                          className="h-8 text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                        >
+                          Refund / Batalkan
                         </Button>
                       </div>
                     )}
@@ -500,6 +549,35 @@ export default function PaymentsPage() {
               className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white border-0 gap-2"
             >
               {canceling ? "Memproses..." : "Ya, Tolak Transaksi"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Refund Dialog */}
+      <Dialog open={!!refundTarget} onOpenChange={(o) => !o && setRefundTarget(null)}>
+        <DialogContent className="rounded-3xl max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-orange-600">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
+                <AlertCircle className="h-5 w-5" />
+              </div>
+              Refund & Batalkan Langganan
+            </DialogTitle>
+            <DialogDescription>
+              Tindakan ini akan mengembalikan status transaksi menjadi <strong>Refunded</strong>, mengurangi angka omset, dan langsung menurunkan paket <strong>{refundTarget?.tenant.name}</strong> menjadi FREE.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button variant="ghost" onClick={() => setRefundTarget(null)} disabled={!!refunding} className="rounded-xl">
+              Batal
+            </Button>
+            <Button
+              onClick={handleRefund}
+              disabled={!!refunding}
+              className="rounded-xl bg-orange-600 hover:bg-orange-700 text-white border-0 gap-2"
+            >
+              {refunding ? "Memproses..." : "Ya, Refund Sekarang"}
             </Button>
           </DialogFooter>
         </DialogContent>
