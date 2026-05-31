@@ -63,8 +63,8 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
   }
 
   const handleUpload = async (file: File) => {
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: "File terlalu besar", description: "Maksimal 5MB", variant: "destructive" })
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ title: "File terlalu besar", description: "gambar harus kurang dari 2 mb", variant: "destructive" })
       return
     }
 
@@ -187,7 +187,7 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
                   <ImageIcon className="h-6 w-6 text-primary" />
                 </div>
                 <p className="text-sm font-medium">Klik untuk upload gambar</p>
-                <p className="text-xs text-muted-foreground mt-1">Format: JPG, PNG, WebP (Maks 5MB)</p>
+                <p className="text-xs text-muted-foreground mt-1">Format: JPG, PNG, WebP (Maks 2MB)</p>
                 {hint && <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">{hint}</p>}
               </>
             )}
