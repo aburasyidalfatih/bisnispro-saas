@@ -41,14 +41,29 @@ export default async function LoginPage() {
     }
   } else {
     const rootDomain = getRootDomain(host)
-    const slug = host.replace(`.${rootDomain}`, "").split('.')[0]
-    const tenant = await getPublicTenantBySlug(slug)
+    let slug = host.replace(`.${rootDomain}`, "").split('.')[0]
+    const isSubdomain = host.endsWith(`.${rootDomain}`)
     
-    // Fetch tenant auth separately to avoid caching secrets in Redis
-    const tenantAuth = await db.tenant.findUnique({
-      where: { slug },
-      select: { googleClientId: true, googleClientSecret: true }
-    })
+    let tenant = null;
+    let tenantAuth = null;
+    
+    if (isSubdomain) {
+      tenant = await getPublicTenantBySlug(slug)
+      tenantAuth = await db.tenant.findUnique({
+        where: { slug },
+        select: { googleClientId: true, googleClientSecret: true }
+      })
+    } else {
+      const tenantRecord = await db.tenant.findUnique({
+        where: { domain: host },
+        select: { slug: true, googleClientId: true, googleClientSecret: true }
+      })
+      if (tenantRecord) {
+        slug = tenantRecord.slug
+        tenant = await getPublicTenantBySlug(slug)
+        tenantAuth = tenantRecord
+      }
+    }
     
     if (tenantAuth && tenantAuth.googleClientId && tenantAuth.googleClientSecret) {
       googleAuthEnabled = true
