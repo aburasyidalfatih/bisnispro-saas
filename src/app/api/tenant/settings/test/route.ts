@@ -4,7 +4,7 @@ import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
 
 const testSchema = z.object({
-  type: z.enum(["smtp", "whatsapp", "meta_wa"]),
+  type: z.enum(["smtp", "whatsapp", "meta_wa", "wavio"]),
   // SMTP fields
   smtpHost: z.string().optional(),
   smtpPort: z.number().optional(),
@@ -20,6 +20,9 @@ const testSchema = z.object({
   // Meta WA fields
   metaPhoneId: z.string().optional(),
   metaToken: z.string().optional(),
+  // Wavio fields
+  wavioApiKey: z.string().optional(),
+  wavioNumberId: z.string().optional(),
 })
 
 export async function POST(req: Request) {
@@ -140,6 +143,51 @@ export async function POST(req: Request) {
     } catch (err: any) {
       return NextResponse.json(
         { error: `Koneksi Meta API gagal: ${err.message}` },
+        { status: 400 }
+      )
+    }
+  }
+
+  // ==================== TEST WAVIO ====================
+  if (data.type === "wavio") {
+    if (!data.wavioApiKey || !data.wavioNumberId || !data.waPhone) {
+      return NextResponse.json(
+        { error: "Lengkapi konfigurasi Wavio: API Key, Number ID, dan Nomor Tujuan" },
+        { status: 400 }
+      )
+    }
+    try {
+      let toPhone = data.waPhone.replace(/\D/g, "")
+      if (toPhone.startsWith("0")) {
+        toPhone = "62" + toPhone.slice(1)
+      }
+      if (!toPhone.startsWith("+")) {
+        toPhone = "+" + toPhone
+      }
+      
+      const res = await fetch(`https://api.wavio.web.id/api/v1/public/messages/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-Key": data.wavioApiKey,
+        },
+        body: JSON.stringify({
+          numberId: data.wavioNumberId,
+          to: toPhone,
+          text: `Test pesan Wavio API dari SchoolPro. Waktu: ${new Date().toLocaleString("id-ID")}`
+        }),
+      })
+      const result = await res.json()
+      if (!res.ok || !result.success) {
+        return NextResponse.json(
+          { error: `Wavio API error: ${result.message || res.statusText}` },
+          { status: 400 }
+        )
+      }
+      return NextResponse.json({ message: "Pesan Wavio test berhasil dikirim!" })
+    } catch (err: any) {
+      return NextResponse.json(
+        { error: `Koneksi Wavio API gagal: ${err.message}` },
         { status: 400 }
       )
     }

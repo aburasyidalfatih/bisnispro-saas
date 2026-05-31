@@ -34,6 +34,8 @@ export type SettingsForm = {
   STARSENDER_DEVICE_ID: string;
   STARSENDER_DELAY_MIN: string;
   STARSENDER_DELAY_MAX: string;
+  WAVIO_API_KEY: string;
+  WAVIO_NUMBER_ID: string;
   WA_SUBJECT_PENDING: string;
   WA_TEMPLATE_PENDING: string;
   WA_SUBJECT_APPROVED: string;
@@ -131,6 +133,8 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   STARSENDER_DEVICE_ID: "",
   STARSENDER_DELAY_MIN: "5",
   STARSENDER_DELAY_MAX: "15",
+  WAVIO_API_KEY: "",
+  WAVIO_NUMBER_ID: "",
   WA_SUBJECT_PENDING: "",
   WA_TEMPLATE_PENDING: `Halo {{adminName}},\n\nSelamat! Formulir pendaftaran sekolah {{schoolName}} telah kami terima dan saat ini sudah masuk ke dalam antrean peninjauan tim kami.\n\nKami akan segera menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih.`,
   WA_SUBJECT_APPROVED: "",

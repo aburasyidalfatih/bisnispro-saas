@@ -100,6 +100,8 @@ export interface WaConfig {
   provider?: string
   metaPhoneId?: string
   metaToken?: string
+  wavioApiKey?: string
+  wavioNumberId?: string
   delayMin?: number
   delayMax?: number
 }
@@ -128,18 +130,28 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
   }
   // Fallback ke platform settings dari database, lalu env var
   const platformSettings = await db.platformSetting.findMany({
-    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID", "WA_ACTIVE_PROVIDER", "META_WA_PHONE_NUMBER_ID", "META_WA_ACCESS_TOKEN", "STARSENDER_DELAY_MIN", "STARSENDER_DELAY_MAX"] } },
+    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID", "WA_ACTIVE_PROVIDER", "META_WA_PHONE_NUMBER_ID", "META_WA_ACCESS_TOKEN", "WAVIO_API_KEY", "WAVIO_NUMBER_ID", "STARSENDER_DELAY_MIN", "STARSENDER_DELAY_MAX"] } },
   })
   const map = Object.fromEntries(
     platformSettings.filter((s) => s.value).map((s) => [s.key, s.value!])
   )
+  
+  let provider = map.WA_ACTIVE_PROVIDER || "internal";
+  
+  // Permintaan khusus: Jangan gunakan Wavio untuk Tenant. Hanya untuk Super Admin.
+  if (tenantId && provider === "wavio") {
+    provider = "starsender";
+  }
+
   return {
-    provider: map.WA_ACTIVE_PROVIDER || "internal",
+    provider,
     apiUrl: map.STARSENDER_API_URL || process.env.STARSENDER_API_URL || "https://api.starsender.online/api",
     apiKey: map.STARSENDER_API_KEY || process.env.STARSENDER_API_KEY || "",
     deviceId: map.STARSENDER_DEVICE_ID || process.env.STARSENDER_DEVICE_ID,
     metaPhoneId: map.META_WA_PHONE_NUMBER_ID,
     metaToken: map.META_WA_ACCESS_TOKEN,
+    wavioApiKey: map.WAVIO_API_KEY,
+    wavioNumberId: map.WAVIO_NUMBER_ID,
     delayMin: Number(map.WA_DELAY_MIN) || Number(map.STARSENDER_DELAY_MIN) || 0,
     delayMax: Number(map.WA_DELAY_MAX) || Number(map.STARSENDER_DELAY_MAX) || 0,
   }
@@ -215,6 +227,41 @@ export async function sendWhatsAppDirect(
             return { success: true }
           } catch (err: any) {
             logger.error("Meta WA exception", err, { phone })
+            return { success: false, error: err.message }
+          }
+        }
+
+        // 1. WAVIO API
+        if (config.provider === "wavio") {
+          if (!config.wavioApiKey || !config.wavioNumberId) {
+            return { success: false, error: "Wavio API credentials not configured" }
+          }
+          try {
+            let toPhone = phone.replace(/\D/g, "")
+            if (toPhone.startsWith("0")) toPhone = "62" + toPhone.slice(1)
+            if (!toPhone.startsWith("+")) toPhone = "+" + toPhone
+            
+            const res = await fetch(`https://api.wavio.web.id/api/v1/public/messages/send`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-API-Key": config.wavioApiKey,
+              },
+              body: JSON.stringify({
+                numberId: config.wavioNumberId,
+                to: toPhone,
+                text: message,
+              }),
+            })
+
+            const result = await res.json().catch(() => ({}))
+            if (!res.ok || !result.success) {
+              logger.error("Wavio send failed", { phone, status: res.status, body: result })
+              return { success: false, error: `Wavio API error: ${result.message || res.status}` }
+            }
+            return { success: true }
+          } catch (err: any) {
+            logger.error("Wavio WA exception", err, { phone })
             return { success: false, error: err.message }
           }
         }
