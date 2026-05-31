@@ -98,7 +98,6 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
           title: uploadData.storageWarning.usagePercent >= 95 ? "⚠️ Penyimpanan Hampir Penuh!" : "📦 Penyimpanan Menipis",
           description: uploadData.storageWarning.message,
           variant: uploadData.storageWarning.usagePercent >= 95 ? "destructive" : "default",
-          duration: 8000,
         })
       }
     } catch (error: any) {

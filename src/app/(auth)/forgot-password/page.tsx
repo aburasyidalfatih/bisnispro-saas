@@ -24,8 +24,23 @@ export default async function ForgotPasswordPage() {
     }
   } else {
     const rootDomain = getRootDomain(host)
-    const tenantSlug = host.replace(`.${rootDomain}`, "").split('.')[0]
-    const tenant = await getPublicTenantBySlug(tenantSlug)
+    let tenantSlug = host.replace(`.${rootDomain}`, "").split('.')[0]
+    const isSubdomain = host.endsWith(`.${rootDomain}`)
+    
+    let tenant = null;
+
+    if (isSubdomain) {
+      tenant = await getPublicTenantBySlug(tenantSlug)
+    } else {
+      const tenantRecord = await db.tenant.findUnique({
+        where: { domain: host },
+        select: { slug: true }
+      })
+      if (tenantRecord) {
+        tenantSlug = tenantRecord.slug
+        tenant = await getPublicTenantBySlug(tenantSlug)
+      }
+    }
     
     if (tenant) {
       tenantNameDisplay = tenant.name

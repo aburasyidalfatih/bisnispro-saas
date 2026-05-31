@@ -10,8 +10,13 @@ export async function GET(
 ) {
   const { slug } = await params
 
-  const tenant = await db.tenant.findUnique({
-    where: { slug },
+  const tenant = await db.tenant.findFirst({
+    where: {
+      OR: [
+        { slug: slug },
+        { domain: slug }
+      ]
+    },
     select: {
       id: true,
       name: true,

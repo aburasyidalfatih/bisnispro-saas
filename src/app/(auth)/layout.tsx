@@ -12,8 +12,24 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   
   if (!isMainDomain) {
     const rootDomain = getRootDomain(host)
-    const slug = host.replace(`.${rootDomain}`, "").split('.')[0]
-    const tenant = await getPublicTenantBySlug(slug)
+    let slug = host.replace(`.${rootDomain}`, "").split('.')[0]
+    const isSubdomain = host.endsWith(`.${rootDomain}`)
+    
+    let tenant = null;
+
+    if (isSubdomain) {
+      tenant = await getPublicTenantBySlug(slug)
+    } else {
+      const { db } = await import("@/lib/db")
+      const tenantRecord = await db.tenant.findUnique({
+        where: { domain: host },
+        select: { slug: true }
+      })
+      if (tenantRecord) {
+        slug = tenantRecord.slug
+        tenant = await getPublicTenantBySlug(slug)
+      }
+    }
     
     if (tenant && tenant.theme) {
       theme = tenant.theme

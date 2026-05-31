@@ -37,12 +37,28 @@ export default async function RegisterPage() {
   } else {
     const rootDomain = getRootDomain(host)
     tenantSlug = host.replace(`.${rootDomain}`, "").split('.')[0]
-    const tenant = await getPublicTenantBySlug(tenantSlug)
-    
-    const tenantAuth = await db.tenant.findUnique({
-      where: { slug: tenantSlug },
-      select: { googleClientId: true, googleClientSecret: true }
-    })
+    const isSubdomain = host.endsWith(`.${rootDomain}`)
+
+    let tenant = null;
+    let tenantAuth = null;
+
+    if (isSubdomain) {
+      tenant = await getPublicTenantBySlug(tenantSlug)
+      tenantAuth = await db.tenant.findUnique({
+        where: { slug: tenantSlug },
+        select: { googleClientId: true, googleClientSecret: true }
+      })
+    } else {
+      const tenantRecord = await db.tenant.findUnique({
+        where: { domain: host },
+        select: { slug: true, googleClientId: true, googleClientSecret: true }
+      })
+      if (tenantRecord) {
+        tenantSlug = tenantRecord.slug
+        tenant = await getPublicTenantBySlug(tenantSlug)
+        tenantAuth = tenantRecord
+      }
+    }
     
     if (tenantAuth && tenantAuth.googleClientId && tenantAuth.googleClientSecret) {
       googleAuthEnabled = true

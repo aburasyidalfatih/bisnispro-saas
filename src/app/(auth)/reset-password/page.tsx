@@ -26,8 +26,9 @@ export default function ResetPasswordPage() {
     setIsMainDomain(main)
     
     if (!main) {
-      const slug = host.split('.')[0]
-      fetch(`/api/website/${slug}`)
+      const isSubdomain = host.endsWith(`.${rootDomain}`)
+      const slugOrDomain = isSubdomain ? host.replace(`.${rootDomain}`, "") : host
+      fetch(`/api/website/${slugOrDomain}`)
         .then(res => res.json())
         .then(data => {
           if (data && data.name) {
