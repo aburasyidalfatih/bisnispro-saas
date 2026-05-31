@@ -117,8 +117,19 @@ export const authOptions: NextAuthConfig = {
             )
           }
         } else {
-          // Subdomain: Check if user belongs to this tenant
-          const slug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+          // Subdomain or Custom Domain: Check if user belongs to this tenant
+          let slug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+          const isSubdomain = hostWithoutPort.endsWith(`.${rootDomain}`)
+          
+          if (!isSubdomain) {
+            const tenantByDomain = await db.tenant.findUnique({ where: { domain: hostWithoutPort }, select: { slug: true } })
+            if (tenantByDomain) {
+              slug = tenantByDomain.slug
+            } else {
+              throw new CustomAuthError("Sekolah tidak ditemukan untuk domain ini.")
+            }
+          }
+
           const belongsToTenant = user.tenants.some((t) => t.tenant.slug === slug)
           if (!belongsToTenant) {
             throw new CustomAuthError("Akses ditolak: Anda tidak terdaftar di sekolah ini.")
@@ -173,7 +184,15 @@ export const authOptions: NextAuthConfig = {
 
         let targetTenantSlug: string | null = null
         if (!isMainDomain) {
-          targetTenantSlug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+          const isSubdomain = hostWithoutPort.endsWith(`.${rootDomain}`)
+          if (isSubdomain) {
+            targetTenantSlug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+          } else {
+            const tenantByDomain = await db.tenant.findUnique({ where: { domain: hostWithoutPort }, select: { slug: true } })
+            if (tenantByDomain) {
+              targetTenantSlug = tenantByDomain.slug
+            }
+          }
         }
 
         const { cookies } = await import("next/headers")
@@ -281,7 +300,15 @@ export const authOptions: NextAuthConfig = {
 
         let targetTenantSlug: string | null = null
         if (!isMainDomain) {
-          targetTenantSlug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+          const isSubdomain = hostWithoutPort.endsWith(`.${rootDomain}`)
+          if (isSubdomain) {
+            targetTenantSlug = hostWithoutPort.replace(`.${rootDomain}`, "").split(".")[0]
+          } else {
+            const tenantByDomain = await db.tenant.findUnique({ where: { domain: hostWithoutPort }, select: { slug: true } })
+            if (tenantByDomain) {
+              targetTenantSlug = tenantByDomain.slug
+            }
+          }
         }
         
         let tenantId = null;
