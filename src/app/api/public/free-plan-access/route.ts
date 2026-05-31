@@ -43,7 +43,8 @@ export async function GET(req: NextRequest) {
 
     if (newSetting?.value) {
       const allPlans = JSON.parse(newSetting.value)
-      const planAccess = allPlans[plan] || allPlans["free"] || {}
+      const normalizedPlan = plan.toLowerCase()
+      const planAccess = allPlans[normalizedPlan] || allPlans["free"] || {}
 
       // Convert ke format lama untuk backward compatibility dengan hook
       const legacyFormat: Record<string, boolean> = { ...DEFAULT_FREE_ACCESS }

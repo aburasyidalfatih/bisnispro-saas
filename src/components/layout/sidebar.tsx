@@ -91,12 +91,12 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
   const has = (feature: string) => pa[feature] === true
 
   const menu: MenuSection[] = [
-    {
+    ...(has("dashboard_analytics") ? [{
       items: [
         { label: "Dashboard", href: basePath, icon: LayoutDashboard },
       ],
-    },
-    {
+    }] : []),
+    ...(has("website_content") ? [{
       title: "Konten Website",
       items: [
         {
@@ -146,7 +146,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           ],
         },
       ],
-    },
+    }] : []),
     {
       title: "Manajemen",
       items: [
@@ -224,7 +224,7 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             ],
           },
         ] : []),
-        {
+        ...(has("data_master") ? [{
           label: "Data Master",
           href: `${basePath}/users`,
           icon: Database,
@@ -236,22 +236,22 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
             { label: "Manajemen Kelas", href: `${basePath}/students/classrooms`, icon: BookOpen },
             { label: "Mata Pelajaran", href: `${basePath}/subjects`, icon: BookOpen },
           ],
-        },
+        }] : []),
       ],
     },
-    {
+    ...(has("laporan") ? [{
       title: "Laporan",
       items: [
         { label: "Laporan Umum", href: `${basePath}/reports`, icon: FileText },
       ]
-    },
+    }] : []),
     {
       title: "Aktivitas & Pesan",
       items: [
         { label: "Notifikasi", href: `${basePath}/notifications`, icon: Bell },
         { label: "Pesan", href: `${basePath}/my-messages`, icon: Mail },
-        { label: "Broadcast WA", href: `${basePath}/broadcast`, icon: Megaphone },
-        { label: "Log Antrean WA", href: `${basePath}/wa-logs`, icon: ClipboardList },
+        ...(has("broadcast_wa") ? [{ label: "Broadcast WA", href: `${basePath}/broadcast`, icon: Megaphone }] : []),
+        ...(has("whatsapp_gateway") ? [{ label: "Log Antrean WA", href: `${basePath}/wa-logs`, icon: ClipboardList }] : []),
       ],
     },
     {
@@ -263,15 +263,15 @@ function getTenantMenu(basePath: string, plan: string = "free", access: Record<s
           icon: Settings,
           children: [
             { label: "Umum", href: `${basePath}/settings`, icon: Building2 },
-            { label: "Custom Domain", href: `${basePath}/settings/domain`, icon: Globe },
+            ...(has("custom_domain") ? [{ label: "Custom Domain", href: `${basePath}/settings/domain`, icon: Globe }] : []),
             { label: "Tampilan & Tema", href: `${basePath}/settings/appearance`, icon: Palette },
-            { label: "Kecerdasan Buatan (AI)", href: `${basePath}/settings/ai`, icon: BrainCircuit },
-            { label: "Email (SMTP)", href: `${basePath}/settings/email`, icon: Mail },
-            { label: "WhatsApp Gateway", href: `${basePath}/settings/whatsapp`, icon: Megaphone },
-            { label: "Payment Gateway", href: `${basePath}/settings/payment`, icon: CreditCard },
+            ...(has("ai_settings") ? [{ label: "Kecerdasan Buatan (AI)", href: `${basePath}/settings/ai`, icon: BrainCircuit }] : []),
+            ...(has("email_smtp") ? [{ label: "Email (SMTP)", href: `${basePath}/settings/email`, icon: Mail }] : []),
+            ...(has("whatsapp_gateway") ? [{ label: "WhatsApp Gateway", href: `${basePath}/settings/whatsapp`, icon: Megaphone }] : []),
+            ...(has("payment_gateway") ? [{ label: "Payment Gateway", href: `${basePath}/settings/payment`, icon: CreditCard }] : []),
           ],
         },
-        { label: "Audit Log", href: `${basePath}/audit`, icon: FileText },
+        ...(has("audit_log") ? [{ label: "Audit Log", href: `${basePath}/audit`, icon: FileText }] : []),
         {
           label: "Langganan",
           href: `${basePath}/billing`,
