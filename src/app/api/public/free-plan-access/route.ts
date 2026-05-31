@@ -1,6 +1,8 @@
 import { db } from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 const DEFAULT_FREE_ACCESS: Record<string, boolean> = {
   enable_ppdb: false,
   enable_finance: false,

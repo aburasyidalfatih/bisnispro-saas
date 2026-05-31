@@ -36,7 +36,7 @@ export function usePlanAccess(plan: string = "free") {
       setLoading(false)
       return
     }
-    fetch(`/api/public/free-plan-access?plan=${plan}`)
+    fetch(`/api/public/free-plan-access?plan=${plan}`, { cache: "no-store" })
       .then(res => res.json())
       .then(data => {
         cachedAccess[plan] = data
