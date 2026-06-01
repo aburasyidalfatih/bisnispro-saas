@@ -45,6 +45,7 @@ export async function GET(req: Request) {
         plan: true,
         planId: true,
         aiTokens: true,
+        aiAddonTokens: true,
         expiresAt: true,
       },
     })
@@ -74,6 +75,20 @@ export async function GET(req: Request) {
       try {
         const plan = planMap.get(tenant.planId!)
         if (!plan || plan.monthlyAiTokens <= 0) continue
+
+        // Skip if tenant has negative addon tokens (abusers/debt)
+        if (tenant.aiAddonTokens < 0) {
+          try {
+            const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service")
+            await notifyTenantAdmins(tenant.id, {
+              title: "Peringatan: Token AI Minus ⚠️",
+              message: `Bonus Token AI bulanan Anda ditangguhkan karena Anda memiliki tunggakan/minus (${tenant.aiAddonTokens.toLocaleString("id-ID")} token). Silakan isi ulang kuota Add-On untuk membuka kembali bonus bulanan Anda.`,
+              type: "warning",
+            })
+          } catch {}
+          logger.info(`[cron] Skipped monthly AI tokens for ${tenant.slug} due to negative balance (${tenant.aiAddonTokens})`)
+          continue
+        }
 
         // Add monthly tokens (accumulate)
         await db.tenant.update({
