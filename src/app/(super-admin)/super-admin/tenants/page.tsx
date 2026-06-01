@@ -240,6 +240,15 @@ export default function TenantsPage() {
                 </th>
                 <th 
                   className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleSort("aiTokens")}
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    Token AI
+                    <ArrowUpDown className="h-3 w-3" />
+                  </div>
+                </th>
+                <th 
+                  className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("storage")}
                 >
                   <div className="flex items-center justify-center gap-1">
@@ -255,12 +264,12 @@ export default function TenantsPage() {
               {loading ? (
                 [...Array(3)].map((_, i) => (
                   <tr key={i} className="border-b">
-                    <td className="px-4 py-5" colSpan={7}><div className="skeleton h-10 w-full rounded-xl" /></td>
+                    <td className="px-4 py-5" colSpan={8}><div className="skeleton h-10 w-full rounded-xl" /></td>
                   </tr>
                 ))
               ) : tenants.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-20 text-center">
+                  <td colSpan={8} className="px-4 py-20 text-center">
                     <Building2 className="h-12 w-12 mx-auto text-muted-foreground/20 mb-4" />
                     <p className="text-muted-foreground italic">Belum ada tenant yang terdaftar.</p>
                   </td>
@@ -320,6 +329,11 @@ export default function TenantsPage() {
                         {t.plan}
                       </span>
                       <p className="text-[9px] text-muted-foreground mt-1">{t.studentQuota} Siswa</p>
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      <span className="text-[11px] font-bold text-foreground">
+                        {(t.aiTokens || 0).toLocaleString("id-ID")}
+                      </span>
                     </td>
                     <td className="px-4 py-4 text-center">
                       <span className="text-[11px] font-bold text-foreground">
@@ -457,6 +471,9 @@ export default function TenantsPage() {
                       t.isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"
                     )}>
                       {t.isActive ? "Aktif" : "Mati"}
+                    </span>
+                    <span className="text-[10px] font-bold text-purple-600 bg-purple-500/10 px-2 py-0.5 rounded-lg">
+                      🤖 {(t.aiTokens || 0).toLocaleString("id-ID")}
                     </span>
                     <span className="text-[10px] text-muted-foreground">{formatBytes(t.storageUsed || 0)}</span>
                   </div>
