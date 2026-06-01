@@ -1,22 +1,10 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { getAiModel, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
+import { getAiModel, checkAiTokenBalance, deductAiToken, getAiTokenCosts } from "@/features/ai/services/ai.service"
 import { generateObject } from "ai"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
-
-const TOKEN_COSTS: Record<string, number> = {
-  "vision-mission": 15,
-  "about": 30,
-  "principal-speech": 25,
-  "program": 15,
-  "facility": 10,
-  "teacher-bio": 10,
-  "extracurricular": 15,
-  "event": 10,
-  "achievement": 10,
-  "alumni": 5,
-}
+import { db } from "@/lib/db"
 
 export async function POST(req: Request) {
   try {
@@ -134,7 +122,8 @@ Kata Kunci Testimoni: ${inputs?.text || ''}`
     })
 
     // Deduct flat tokens cost
-    const tokensToDeduct = TOKEN_COSTS[promptType] || 25
+    const tokenCosts = await getAiTokenCosts()
+    const tokensToDeduct = tokenCosts[promptType] || 25
     await deductAiToken(tenantId, tokensToDeduct, session.user.id, `generate_${promptType}`)
 
     return NextResponse.json({ success: true, data: object })

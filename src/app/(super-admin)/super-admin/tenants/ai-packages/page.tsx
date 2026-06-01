@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
+import { AiRatesManager } from "./_components/ai-rates-manager"
 
 interface AiTokenPackage {
   id: string
@@ -231,6 +232,10 @@ export default function AiPackagesPage() {
             <p className="text-sm text-muted-foreground">Buat paket top-up Token AI pertama Anda sekarang.</p>
           </div>
         )}
+      </div>
+
+      <div className="pt-6">
+        <AiRatesManager />
       </div>
 
       <div className="pt-8">

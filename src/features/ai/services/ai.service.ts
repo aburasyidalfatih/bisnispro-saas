@@ -9,6 +9,30 @@ export type AiModelResult = {
   error?: string
 }
 
+export const DEFAULT_AI_TOKEN_COSTS: Record<string, number> = {
+  "vision-mission": 15,
+  "about": 30,
+  "principal-speech": 25,
+  "program": 15,
+  "facility": 10,
+  "teacher-bio": 10,
+  "extracurricular": 15,
+  "event": 10,
+  "achievement": 10,
+  "alumni": 5,
+  "post": 50,
+}
+
+export async function getAiTokenCosts(): Promise<Record<string, number>> {
+  const setting = await db.platformSetting.findUnique({ where: { key: "AI_TOKEN_RATES" } })
+  if (setting && setting.value) {
+    try {
+      return { ...DEFAULT_AI_TOKEN_COSTS, ...JSON.parse(setting.value) }
+    } catch(e) {}
+  }
+  return DEFAULT_AI_TOKEN_COSTS
+}
+
 export async function getAiModel(tenantId: string): Promise<AiModelResult> {
   try {
     const tenant = await db.tenant.findUnique({

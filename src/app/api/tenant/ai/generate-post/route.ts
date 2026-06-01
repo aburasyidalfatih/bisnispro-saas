@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { getAiModel, checkAiTokenBalance, deductAiToken } from "@/features/ai/services/ai.service"
+import { getAiModel, checkAiTokenBalance, deductAiToken, getAiTokenCosts } from "@/features/ai/services/ai.service"
 import { generateObject } from "ai"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
-
-const TOKEN_COST_PER_ARTICLE = 50
 
 export async function POST(req: Request) {
   try {
@@ -62,7 +60,9 @@ Aturan penulisan:
     })
 
     // Deduct token
-    await deductAiToken(tenantId, TOKEN_COST_PER_ARTICLE, session.user.id, "generate_post")
+    const tokenCosts = await getAiTokenCosts()
+    const cost = tokenCosts["post"] || 50
+    await deductAiToken(tenantId, cost, session.user.id, "generate_post")
 
     return NextResponse.json({ success: true, data: object })
 
