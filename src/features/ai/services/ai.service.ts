@@ -93,11 +93,12 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
 export async function checkAiTokenBalance(tenantId: string) {
   try {
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
-    if (!tenant) return { success: false, hasBalance: false, error: "Tenant not found" }
+    if (!tenant) return { success: false, hasBalance: false, balance: 0, error: "Tenant not found" }
     
     const totalTokens = tenant.aiTokens + tenant.aiAddonTokens
-    return { success: true, hasBalance: totalTokens >= 10 } // Need at least 10 tokens buffer
+    // Require at least 50 tokens buffer to start a request
+    return { success: true, hasBalance: totalTokens >= 50, balance: totalTokens }
   } catch (error) {
-    return { success: false, hasBalance: false, error: "Failed to check balance" }
+    return { success: false, hasBalance: false, balance: 0, error: "Failed to check balance" }
   }
 }
