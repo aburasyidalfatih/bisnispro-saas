@@ -117,8 +117,8 @@ Kata Kunci Testimoni: ${inputs?.text || ''}`
       })
     })
 
-    // Deduct actual tokens used (or fallback to TOKEN_COST if undefined)
-    const tokensToDeduct = usage?.totalTokens || TOKEN_COST
+    // Deduct flat tokens cost
+    const tokensToDeduct = TOKEN_COST
     await deductAiToken(tenantId, tokensToDeduct, session.user.id, `generate_${promptType}`)
 
     return NextResponse.json({ success: true, data: object })
