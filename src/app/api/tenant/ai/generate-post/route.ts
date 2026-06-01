@@ -47,7 +47,7 @@ Aturan penulisan:
 3. Buatkan judul (title) yang menarik (maksimal 60 karakter).
 4. Buatkan ringkasan SEO (seoDesc) maksimal 150 karakter.
 5. Format isi artikel (content) WAJIB MENGGUNAKAN HTML (hanya gunakan tag <p>, <h2>, <strong>, <ul>, <li>). JANGAN gunakan Markdown (tanpa \`\`\`html atau **tebal**).
-6. Artikel harus terdiri dari 3-5 paragraf. Paragraf pertama adalah pembuka (lead), lalu isi utama, dan selalu ditutup dengan paragraf harapan atau motivasi ke depannya.`
+6. SANGAT PENTING: Artikel harus terdiri dari 3-5 paragraf pendek dengan total kata maksimal 300 kata. Jangan membuat artikel yang terlalu panjang. Paragraf pertama adalah pembuka (lead), lalu isi utama, dan selalu ditutup dengan paragraf harapan atau motivasi ke depannya.`
 
     const { object } = await generateObject({
       model,
@@ -57,7 +57,7 @@ Aturan penulisan:
         title: z.string().describe("Judul artikel yang menarik, maksimal 60 karakter"),
         seoTitle: z.string().describe("Judul SEO friendly, maksimal 60 karakter"),
         seoDesc: z.string().describe("Deskripsi meta SEO, ringkasan 1-2 kalimat, maksimal 150 karakter"),
-        content: z.string().describe("Isi artikel utuh berformat HTML murni (<p>, <h2>, dll). Tanpa markdown.")
+        content: z.string().describe("Isi artikel utuh berformat HTML murni (<p>, <h2>, dll). SANGAT PENTING: Maksimal 300 kata dan 3-5 paragraf pendek.")
       })
     })
 

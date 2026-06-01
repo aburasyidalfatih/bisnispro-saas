@@ -5,7 +5,18 @@ import { generateObject } from "ai"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
 
-const TOKEN_COST = 25
+const TOKEN_COSTS: Record<string, number> = {
+  "vision-mission": 15,
+  "about": 30,
+  "principal-speech": 25,
+  "program": 15,
+  "facility": 10,
+  "teacher-bio": 10,
+  "extracurricular": 15,
+  "event": 10,
+  "achievement": 10,
+  "alumni": 5,
+}
 
 export async function POST(req: Request) {
   try {
@@ -44,63 +55,68 @@ export async function POST(req: Request) {
       case "vision-mission":
         systemPrompt = `Anda adalah ahli branding dan tata bahasa profesional untuk lembaga pendidikan di Indonesia. 
 Tugas Anda adalah merapikan, memperjelas, dan membuat visi & misi sekolah menjadi lebih inspiratif dan modern tanpa mengubah inti tujuannya.
+SANGAT PENTING: Batasi panjang teks maksimal 100 kata. Buat dalam bentuk bullet points yang singkat dan padat.
 Format hasilnya menggunakan HTML murni (gunakan tag <p>, <ul>, <li>, <strong>). Jangan gunakan Markdown.`
         userPrompt = `Poles Visi dan Misi berikut:\n${inputs.text}`
         break
       case "about":
         systemPrompt = `Anda adalah humas profesional untuk sekolah di Indonesia. 
 Ubah poin-poin singkat menjadi cerita "Tentang Kami" atau Sejarah Sekolah yang membanggakan, profesional, dan mengalir (storytelling).
+SANGAT PENTING: Teks harus terdiri dari 3-4 paragraf dan maksimal 300 kata. Jangan membuat narasi yang terlalu panjang.
 Format hasilnya menggunakan HTML murni (tag <p>, <h2>, <strong>). Jangan gunakan Markdown.`
         userPrompt = `Buat cerita profil sekolah dari fakta berikut:\n${inputs.text}`
         break
       case 'principal-speech':
         systemPrompt = `Anda adalah penulis pidato (speechwriter) untuk Kepala Sekolah di Indonesia.
-Buatlah kata sambutan resmi untuk di halaman depan website sekolah yang berwibawa, hangat, dan visioner (sekitar 3-4 paragraf).
+Buatlah kata sambutan resmi untuk di halaman depan website sekolah yang berwibawa, hangat, dan visioner.
+SANGAT PENTING: Teks harus terdiri dari 3 paragraf pendek dan maksimal 250 kata. Jangan bertele-tele. (Paragraf pembuka, isi/pesan, harapan penutup).
 Format hasilnya menggunakan HTML murni (tag <p>, <strong>). Jangan gunakan Markdown.`
         userPrompt = `Nama Kepala Sekolah: ${inputs?.name || 'Kepala Sekolah'}
 Pesan / Fokus / Harapan utama: ${inputs?.text || ''}`
         break
       case 'program':
         systemPrompt = `Anda adalah seorang *copywriter* pendidikan profesional. Tugas Anda adalah mengubah poin-poin fokus pembelajaran dan prospek jurusan menjadi sebuah paragraf deskripsi program unggulan atau jurusan yang sangat menarik dan persuasif bagi calon siswa.
-Hasilkan 2 paragraf maksimal. Paragraf pertama fokus pada keunggulan program, paragraf kedua fokus pada peluang masa depan (prospek karir/lanjutan). Jangan gunakan tag HTML, kembalikan plain text saja.`
+SANGAT PENTING: Hasilkan tepat 2 paragraf dengan total maksimal 150 kata. Paragraf pertama fokus pada keunggulan program, paragraf kedua fokus pada peluang masa depan (prospek karir/lanjutan). Jangan gunakan tag HTML, kembalikan plain text saja.`
         userPrompt = `Nama Program: ${inputs?.name || ''}
 Fokus / Keunggulan: ${inputs?.text || ''}`
         break
       case 'facility':
         systemPrompt = `Anda adalah seorang *copywriter* pendidikan profesional. Tugas Anda adalah mengubah poin-poin tentang kondisi sebuah fasilitas sekolah menjadi paragraf deskripsi yang menarik. Tujuannya adalah meyakinkan calon siswa dan orang tua bahwa sekolah memiliki fasilitas yang modern, memadai, dan sangat mendukung kegiatan belajar.
-Hasilkan 1-2 paragraf pendek. Jangan gunakan tag HTML, kembalikan plain text saja.`
+SANGAT PENTING: Hasilkan 1-2 paragraf pendek dengan total maksimal 100 kata. Jangan gunakan tag HTML, kembalikan plain text saja.`
         userPrompt = `Nama Fasilitas: ${inputs?.name || ''}
 Kondisi / Kelengkapan: ${inputs?.text || ''}`
         break
       case "teacher-bio":
-        systemPrompt = `Anda adalah copywriter profesional. Buatlah profil/biodata singkat (maksimal 2 paragraf) untuk seorang guru.
+        systemPrompt = `Anda adalah copywriter profesional. Buatlah profil/biodata singkat untuk seorang guru.
 Gunakan bahasa yang profesional namun hangat, menunjukkan bahwa guru ini kompeten dan peduli pada siswa.
+SANGAT PENTING: Batasi panjang teks 1-2 paragraf pendek dan maksimal 100 kata.
 Format hasilnya menggunakan HTML murni (tag <p>, <strong>). Jangan gunakan Markdown.`
         userPrompt = `Nama: ${inputs.name}\nJabatan/Pelajaran: ${inputs.role}\nInformasi Tambahan (Hobi/Karakter/Pengalaman): ${inputs.text}`
         break
       case "extracurricular":
         systemPrompt = `Anda adalah humas sekolah yang jago membuat konten marketing. 
 Buatlah deskripsi promosi yang menarik untuk ekstrakurikuler sekolah agar siswa baru tertarik untuk bergabung. Jelaskan manfaat dan nilai positifnya.
+SANGAT PENTING: Batasi panjang teks maksimal 150 kata (2 paragraf + poin-poin jika perlu).
 Format hasilnya menggunakan HTML murni (tag <p>, <ul>, <li>, <strong>). Jangan gunakan Markdown.`
         userPrompt = `Nama Ekstrakurikuler: ${inputs.name}\nPoin-poin kegiatan/tujuan: ${inputs.text}`
         break
       case 'event':
         systemPrompt = `Anda adalah penulis konten profesional. Tugas Anda adalah membuat deskripsi acara/agenda (event) sekolah yang menarik dan informatif berdasarkan poin-poin yang diberikan.
-Tujuannya agar pembaca (siswa/orang tua) tertarik untuk hadir atau berpartisipasi.
-Hasilkan 1-2 paragraf pendek. Jangan gunakan tag HTML, kembalikan plain text saja.`
+Tujuannya agar pembaca (siswa/orang tua) tertarik untuk hadir atau berpartisipasi. Fokus pada formula 5W+1H (Who, What, Where, When, Why, How).
+SANGAT PENTING: Hasilkan 1-2 paragraf pendek dengan total maksimal 100 kata. Jangan gunakan tag HTML, kembalikan plain text saja.`
         userPrompt = `Judul Acara: ${inputs?.name || ''}
 Detail/Poin Acara: ${inputs?.text || ''}`
         break
       case 'achievement':
         systemPrompt = `Anda adalah penulis konten profesional. Tugas Anda adalah membuat deskripsi prestasi sekolah atau siswa yang membanggakan dan menginspirasi berdasarkan poin-poin yang diberikan.
-Hasilkan 1-2 paragraf pendek yang menunjukkan kebanggaan dan apresiasi. Jangan gunakan tag HTML, kembalikan plain text saja.`
+SANGAT PENTING: Hasilkan 1-2 paragraf pendek dengan total maksimal 100 kata (berisi apresiasi dan kebanggaan). Jangan gunakan tag HTML, kembalikan plain text saja.`
         userPrompt = `Judul Prestasi: ${inputs?.name || ''}
 Detail Prestasi: ${inputs?.text || ''}`
         break
       case 'alumni':
         systemPrompt = `Anda adalah penulis *copywriter*. Tugas Anda adalah membuat draf testimoni alumni yang natural, positif, dan menginspirasi berdasarkan kata kunci yang diberikan. 
 Testimoni harus menonjolkan bagaimana sekolah/kampus membantu karir/studi mereka saat ini.
-Hasilkan 1 paragraf singkat bergaya kutipan (quote). Jangan gunakan tag HTML, kembalikan plain text saja.`
+SANGAT PENTING: Hasilkan tepat 1 paragraf singkat bergaya kutipan (quote) dengan maksimal 50 kata. Buat se-impactful mungkin. Jangan gunakan tag HTML, kembalikan plain text saja.`
         userPrompt = `Status Saat Ini: ${inputs?.name || ''}
 Kata Kunci Testimoni: ${inputs?.text || ''}`
         break
@@ -118,7 +134,7 @@ Kata Kunci Testimoni: ${inputs?.text || ''}`
     })
 
     // Deduct flat tokens cost
-    const tokensToDeduct = TOKEN_COST
+    const tokensToDeduct = TOKEN_COSTS[promptType] || 25
     await deductAiToken(tenantId, tokensToDeduct, session.user.id, `generate_${promptType}`)
 
     return NextResponse.json({ success: true, data: object })
