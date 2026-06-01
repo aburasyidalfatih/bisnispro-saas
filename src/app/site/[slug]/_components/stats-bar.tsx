@@ -1,6 +1,47 @@
-import { Users, BookOpen, Award, Clock } from "lucide-react"
+"use client"
+
+import { useEffect, useRef } from "react"
+import { useInView, useMotionValue, useSpring } from "framer-motion"
 
 interface Stat { value: string; label: string; icon: string }
+
+function AnimatedCounter({ value }: { value: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  
+  // Extract number and suffix (e.g. "100+" -> num: 100, suffix: "+")
+  const numericMatch = value.match(/(\d+)/)
+  const numValue = numericMatch ? parseInt(numericMatch[0], 10) : 0
+  const suffix = value.replace(/\d/g, "")
+  
+  const inView = useInView(ref, { once: true, margin: "-50px" })
+  const motionValue = useMotionValue(0)
+  const springValue = useSpring(motionValue, {
+    damping: 50,
+    stiffness: 100,
+    duration: 2000, // 2 seconds
+  })
+  
+  useEffect(() => {
+    if (inView && numValue > 0) {
+      motionValue.set(numValue)
+    }
+  }, [motionValue, inView, numValue])
+  
+  useEffect(() => {
+    if (numValue === 0) return
+    return springValue.on("change", (latest) => {
+      if (ref.current) {
+        ref.current.textContent = Intl.NumberFormat("id-ID").format(Math.floor(latest)) + suffix
+      }
+    })
+  }, [springValue, numValue, suffix])
+
+  if (numValue === 0) {
+    return <span>{value}</span>
+  }
+
+  return <span ref={ref}>0{suffix}</span>
+}
 
 export function StatsBar({ stats }: { stats: Stat[] }) {
   if (!stats || stats.length === 0) return null
@@ -26,8 +67,8 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
              {/* Hover shine effect */}
              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
              
-             <p className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-md relative z-10">
-               {stat.value}
+             <p className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-md relative z-10 flex items-center justify-center">
+               <AnimatedCounter value={stat.value} />
              </p>
              <p className="text-[10px] sm:text-xs md:text-sm font-bold text-white/80 uppercase tracking-widest relative z-10">
                {stat.label}

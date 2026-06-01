@@ -11,6 +11,7 @@ import { PopupRenderer } from "./_components/popup-renderer"
 import { normalizeImageUrl } from "@/lib/utils"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
 import { PageTracker } from "@/components/shared/page-tracker"
+import { FloatingWhatsApp } from "./_components/floating-whatsapp"
 import Script from "next/script"
 import { Suspense } from "react"
 
@@ -132,6 +133,12 @@ export default async function WebsiteLayout({
         {!tenant.customThemeId && <WebsiteFooter tenant={tenant} />}
         
         {activePopup && <PopupRenderer popup={activePopup} />}
+        
+        {/* Floating WhatsApp Widget */}
+        {tenant.whatsapp && !tenant.customThemeId && (
+          <FloatingWhatsApp whatsappNumber={tenant.whatsapp} message={`Halo Admin ${tenant.name}, saya ingin bertanya mengenai info di website.`} />
+        )}
+
         <PwaInstaller tenantName={tenant.name} tenantLogo={normalizeImageUrl(tenant.logo) || tenant.logo} />
         <Suspense fallback={null}>
           <PageTracker tenantId={tenant.id} />
