@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
-import { Users, Building2, Wallet, ArrowUpRight, MousePointerClick } from "lucide-react"
+import { Users, Building2, Wallet, ArrowUpRight, MousePointerClick, MessageCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { redirect } from "next/navigation"
@@ -50,21 +50,43 @@ export default async function AffiliateDashboardPage() {
         <p className="text-muted-foreground mt-1">Pantau performa referral dan komisi Anda.</p>
       </div>
 
-      {/* Referral Link Card */}
-      <Card className="glass border-emerald-500/20 bg-emerald-500/5">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-center gap-4 justify-between">
-            <div className="space-y-1 text-center md:text-left">
-              <h3 className="font-semibold text-emerald-800 dark:text-emerald-400">Link Referral Anda</h3>
-              <p className="text-sm text-emerald-600 dark:text-emerald-500">Bagikan link ini ke calon sekolah untuk mendapatkan komisi.</p>
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Referral Link Card */}
+        <Card className="glass border-emerald-500/20 bg-emerald-500/5 h-full">
+          <CardContent className="p-6 h-full flex flex-col justify-center">
+            <div className="flex flex-col lg:flex-row items-center gap-4 justify-between">
+              <div className="space-y-1 text-center lg:text-left">
+                <h3 className="font-semibold text-emerald-800 dark:text-emerald-400">Link Referral Anda</h3>
+                <p className="text-sm text-emerald-600 dark:text-emerald-500">Bagikan link ini ke calon sekolah untuk mendapatkan komisi.</p>
+              </div>
+              <div className="flex items-center gap-2 bg-background p-2 rounded-xl border w-full lg:w-auto">
+                <code className="px-3 py-1 text-sm font-semibold flex-1 lg:w-48 xl:w-80 truncate">{referralLink}</code>
+                <CopyLinkButton link={referralLink} />
+              </div>
             </div>
-            <div className="flex items-center gap-2 bg-background p-2 rounded-xl border w-full md:w-auto">
-              <code className="px-3 py-1 text-sm font-semibold flex-1 md:w-80 truncate">{referralLink}</code>
-              <CopyLinkButton link={referralLink} />
+          </CardContent>
+        </Card>
+
+        {/* WhatsApp Group Card */}
+        <Card className="glass border-blue-500/20 bg-blue-500/5 h-full">
+          <CardContent className="p-6 h-full flex flex-col justify-center">
+            <div className="flex flex-col lg:flex-row items-center gap-4 justify-between">
+              <div className="space-y-1 text-center lg:text-left">
+                <h3 className="font-semibold text-blue-800 dark:text-blue-400">Komunitas Mitra SchoolPro</h3>
+                <p className="text-sm text-blue-600 dark:text-blue-500">Gabung grup WhatsApp untuk info terbaru dan diskusi kemitraan.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <a href="https://chat.whatsapp.com/EpCkrF5mTnhBEQMNFrawhk" target="_blank" rel="noopener noreferrer">
+                  <Button variant="default" className="bg-[#25D366] hover:bg-[#128C7E] text-white">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Gabung Grup WA
+                  </Button>
+                </a>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
