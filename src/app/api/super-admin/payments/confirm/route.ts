@@ -44,6 +44,14 @@ export async function POST(req: Request) {
       }
     }
 
+    // Fetch plan details if it's a regular plan upgrade
+    let subscriptionPlan = null
+    if (payment.plan && !isAddon && !isAiAddon) {
+      subscriptionPlan = await db.subscriptionPlan.findUnique({
+        where: { slug: payment.plan }
+      })
+    }
+
     // Tenant update payload
     let tenantUpdateData: any = { isActive: true }
     if (isAiAddon) {
@@ -53,6 +61,14 @@ export async function POST(req: Request) {
       tenantUpdateData.studentQuota = { increment: studentCount }
     } else {
       tenantUpdateData.plan = payment.plan || "pro"
+      
+      if (subscriptionPlan) {
+        tenantUpdateData.planId = subscriptionPlan.id
+        if (subscriptionPlan.monthlyAiTokens > 0) {
+          tenantUpdateData.aiTokens = { increment: subscriptionPlan.monthlyAiTokens }
+        }
+      }
+
       // Untuk renewal: pertahankan kuota tertinggi (jangan timpa addon)
       if (studentCount > 0) {
         const currentQuota = payment.tenant.studentQuota || 0
