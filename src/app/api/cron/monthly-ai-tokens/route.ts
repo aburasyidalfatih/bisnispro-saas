@@ -73,28 +73,31 @@ export async function GET(req: Request) {
 
     for (const tenant of eligibleTenants) {
       try {
-        const plan = planMap.get(tenant.planId!)
-        if (!plan || plan.monthlyAiTokens <= 0) continue
+        let newAiTokens = tenant.aiTokens
+        let newAiAddonTokens = tenant.aiAddonTokens
+        let tokensToAdd = plan.monthlyAiTokens
 
-        // Skip if tenant has negative addon tokens (abusers/debt)
-        if (tenant.aiAddonTokens < 0) {
-          try {
-            const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service")
-            await notifyTenantAdmins(tenant.id, {
-              title: "Peringatan: Token AI Minus ⚠️",
-              message: `Bonus Token AI bulanan Anda ditangguhkan karena Anda memiliki tunggakan/minus (${tenant.aiAddonTokens.toLocaleString("id-ID")} token). Silakan isi ulang kuota Add-On untuk membuka kembali bonus bulanan Anda.`,
-              type: "warning",
-            })
-          } catch {}
-          logger.info(`[cron] Skipped monthly AI tokens for ${tenant.slug} due to negative balance (${tenant.aiAddonTokens})`)
-          continue
+        // Handle negative balance (debt repayment)
+        if (newAiAddonTokens < 0) {
+          const debt = Math.abs(newAiAddonTokens)
+          if (tokensToAdd >= debt) {
+            newAiAddonTokens = 0
+            tokensToAdd -= debt
+            newAiTokens += tokensToAdd
+          } else {
+            newAiAddonTokens += tokensToAdd
+            tokensToAdd = 0
+          }
+        } else {
+          newAiTokens += tokensToAdd
         }
 
-        // Add monthly tokens (accumulate)
+        // Add monthly tokens / pay debt
         await db.tenant.update({
           where: { id: tenant.id },
           data: {
-            aiTokens: { increment: plan.monthlyAiTokens },
+            aiTokens: newAiTokens,
+            aiAddonTokens: newAiAddonTokens,
           },
         })
 
@@ -109,24 +112,31 @@ export async function GET(req: Request) {
             newData: JSON.stringify({
               plan: tenant.plan,
               tokensAdded: plan.monthlyAiTokens,
-              previousBalance: tenant.aiTokens,
-              newBalance: tenant.aiTokens + plan.monthlyAiTokens,
+              previousBalance: tenant.aiTokens + tenant.aiAddonTokens,
+              newBalance: newAiTokens + newAiAddonTokens,
               month: monthLabel,
             }),
           },
         })
 
-        // Notify tenant admin
+        // Notify tenant admin (inform them if debt was paid)
         try {
           const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service")
+          
+          let title = "Bonus Token AI Bulanan 🤖"
+          let message = `Selamat! Anda menerima bonus ${plan.monthlyAiTokens.toLocaleString("id-ID")} Token AI untuk bulan ${monthLabel}. Saldo total: ${(newAiTokens + newAiAddonTokens).toLocaleString("id-ID")} token.`
+          
+          if (tenant.aiAddonTokens < 0) {
+             title = "Pemotongan Token AI (Pelunasan Minus) ⚠️"
+             message = `Bonus Token AI bulanan Anda (${plan.monthlyAiTokens.toLocaleString("id-ID")} token) telah digunakan untuk melunasi tunggakan minus sebelumnya. Saldo total saat ini: ${(newAiTokens + newAiAddonTokens).toLocaleString("id-ID")} token. Jika masih belum mencukupi untuk menggunakan AI, silakan top-up Add-on.`
+          }
+
           await notifyTenantAdmins(tenant.id, {
-            title: "Bonus Token AI Bulanan 🤖",
-            message: `Selamat! Anda menerima bonus ${plan.monthlyAiTokens.toLocaleString("id-ID")} Token AI untuk bulan ${monthLabel}. Saldo total: ${(tenant.aiTokens + plan.monthlyAiTokens).toLocaleString("id-ID")} token.`,
-            type: "info",
+            title,
+            message,
+            type: tenant.aiAddonTokens < 0 ? "warning" : "info",
           })
-        } catch {
-          // Notification failure should not block distribution
-        }
+        } catch {}
 
         distributedCount++
         totalTokensDistributed += plan.monthlyAiTokens
