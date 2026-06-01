@@ -382,94 +382,110 @@ export async function processAutoDebetSPP() {
     errors: [] as string[],
   };
 
-  const invoices = await db.invoice.findMany({
-    where: {
-      isAutoDebet: true,
-      deletedAt: null,
-      dueDate: { lte: endOfDay(today) },
-      status: { in: ["UNPAID", "PARTIAL"] },
-    },
-    include: {
-      student: {
-        include: {
-          walletAccount: true,
+  let cursorId: string | undefined = undefined;
+  let hasMore = true;
+  const BATCH_SIZE = 500;
+
+  while (hasMore) {
+    const invoices = await db.invoice.findMany({
+      take: BATCH_SIZE,
+      skip: cursorId ? 1 : 0,
+      cursor: cursorId ? { id: cursorId } : undefined,
+      orderBy: { id: "asc" },
+      where: {
+        isAutoDebet: true,
+        deletedAt: null,
+        dueDate: { lte: endOfDay(today) },
+        status: { in: ["UNPAID", "PARTIAL"] },
+      },
+      include: {
+        student: {
+          include: {
+            walletAccount: true,
+          },
         },
       },
-    },
-  });
+    }) as any[];
 
-  results.processed = invoices.length;
-
-  for (const invoice of invoices) {
-    const wallet = invoice.student?.walletAccount;
-    const amountToPay = invoice.amountDue;
-
-    if (!wallet || wallet.balance < amountToPay) {
-      results.skipped++;
-      continue;
+    if (invoices.length === 0) {
+      hasMore = false;
+      break;
     }
 
-    try {
-      await db.$transaction(async (tx) => {
-        const updatedWallet = await tx.walletAccount.update({
-          where: { id: wallet.id },
-          data: { balance: { decrement: amountToPay } },
-        });
-        const newBalance = updatedWallet.balance;
+    cursorId = invoices[invoices.length - 1].id;
+    results.processed += invoices.length;
 
-        await tx.walletTransaction.create({
-          data: {
-            walletId: wallet.id,
-            tenantId: invoice.tenantId,
-            type: "PAYMENT",
-            amount: amountToPay,
-            balanceBefore: wallet.balance,
-            balanceAfter: newBalance,
-            referenceId: invoice.code,
-            description: `[AUTO-DEBET] ${invoice.title}`,
-            status: "SUCCESS",
-          },
+    for (const invoice of invoices) {
+      const wallet = invoice.student?.walletAccount;
+      const amountToPay = invoice.amountDue;
+
+      if (!wallet || wallet.balance < amountToPay) {
+        results.skipped++;
+        continue;
+      }
+
+      try {
+        await db.$transaction(async (tx) => {
+          const updatedWallet = await tx.walletAccount.update({
+            where: { id: wallet.id },
+            data: { balance: { decrement: amountToPay } },
+          });
+          const newBalance = updatedWallet.balance;
+
+          await tx.walletTransaction.create({
+            data: {
+              walletId: wallet.id,
+              tenantId: invoice.tenantId,
+              type: "PAYMENT",
+              amount: amountToPay,
+              balanceBefore: newBalance + amountToPay,
+              balanceAfter: newBalance,
+              referenceId: invoice.code,
+              description: `[AUTO-DEBET] ${invoice.title}`,
+              status: "SUCCESS",
+            },
+          });
+
+          await tx.invoicePayment.create({
+            data: {
+              invoiceId: invoice.id,
+              tenantId: invoice.tenantId,
+              amount: amountToPay,
+              method: "WALLET",
+              status: "VERIFIED",
+              verifiedAt: new Date(),
+              verifiedBy: "SYSTEM_CRON",
+              paidAt: new Date(),
+              notes: "Auto-debet otomatis oleh sistem",
+            },
+          });
+
+          await tx.invoice.update({
+            where: { id: invoice.id },
+            data: {
+              amountPaid: invoice.amountPaid + amountToPay,
+              amountDue: 0,
+              status: "PAID",
+            },
+          });
+
+          await tx.cashflow.create({
+            data: {
+              tenantId: invoice.tenantId,
+              type: "INCOME",
+              category: "SPP",
+              amount: amountToPay,
+              description: `[AUTO] ${invoice.title} — ${invoice.student.name}`,
+              referenceId: invoice.code,
+            },
+          });
         });
 
-        await tx.invoicePayment.create({
-          data: {
-            invoiceId: invoice.id,
-            tenantId: invoice.tenantId,
-            amount: amountToPay,
-            method: "WALLET",
-            status: "VERIFIED",
-            verifiedAt: new Date(),
-            verifiedBy: "SYSTEM_CRON",
-            paidAt: new Date(),
-            notes: "Auto-debet otomatis oleh sistem",
-          },
-        });
-
-        await tx.invoice.update({
-          where: { id: invoice.id },
-          data: {
-            amountPaid: invoice.amountPaid + amountToPay,
-            amountDue: 0,
-            status: "PAID",
-          },
-        });
-
-        await tx.cashflow.create({
-          data: {
-            tenantId: invoice.tenantId,
-            type: "INCOME",
-            category: "SPP",
-            amount: amountToPay,
-            description: `[AUTO] ${invoice.title} — ${invoice.student.name}`,
-            referenceId: invoice.code,
-          },
-        });
-      });
-
-      results.succeeded++;
-    } catch (err: any) {
-      results.failed++;
-      results.errors.push(`Invoice ${invoice.code}: ${err.message}`);
+        results.succeeded++;
+      } catch (err: any) {
+        results.failed++;
+        results.errors.push(`Invoice ${invoice.code}: ${err.message}`);
+      }
     }
   }
 

@@ -30,6 +30,13 @@ export async function POST(req: Request) {
         where: { id: sessionId },
         data: { status: "FINISHED", endTime: new Date() }
       })
+      
+      const { cbtQueue } = await import("@/lib/queue")
+      await cbtQueue.add("score-session", { 
+        sessionId: cbtSession.id, 
+        examId: cbtSession.examId 
+      })
+
       return NextResponse.json({ success: true })
     }
 

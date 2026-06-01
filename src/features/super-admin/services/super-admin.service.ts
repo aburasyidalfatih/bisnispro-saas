@@ -25,9 +25,41 @@ export async function getTenantsForSuperAdmin(params: {
     : {}
 
   if (sort === "storage") {
-    // In-memory sort for storage
-    const allTenants = await db.tenant.findMany({
+    // Optimized: Only fetch IDs to prevent OOM
+    const matchingTenants = await db.tenant.findMany({
       where,
+      select: { id: true }
+    })
+    const tenantIds = matchingTenants.map(t => t.id)
+    const total = tenantIds.length
+
+    // Get storage usage for these tenants
+    const storageGroups = await db.fileUpload.groupBy({
+      by: ['tenantId'],
+      where: { tenantId: { in: tenantIds } },
+      _sum: { size: true }
+    })
+    
+    const storageMap = new Map()
+    tenantIds.forEach(id => storageMap.set(id, 0)) // Init with 0
+    storageGroups.forEach(g => {
+      if (g.tenantId) storageMap.set(g.tenantId, g._sum.size || 0)
+    })
+
+    // Sort IDs by storage
+    const sortedTenantIds = [...tenantIds].sort((a, b) => {
+      const sizeA = storageMap.get(a)
+      const sizeB = storageMap.get(b)
+      if (order === "asc") return sizeA - sizeB
+      return sizeB - sizeA
+    })
+
+    // Paginate IDs
+    const paginatedIds = sortedTenantIds.slice((page - 1) * limit, page * limit)
+
+    // Fetch full data ONLY for paginated IDs
+    const paginatedTenants = await db.tenant.findMany({
+      where: { id: { in: paginatedIds } },
       include: {
         _count: { select: { users: true } },
         users: {
@@ -38,38 +70,21 @@ export async function getTenantsForSuperAdmin(params: {
       },
     })
 
-    const tenantIds = allTenants.map(t => t.id)
-    const storageGroups = await db.fileUpload.groupBy({
-      by: ['tenantId'],
-      where: { tenantId: { in: tenantIds } },
-      _sum: { size: true }
-    })
-    
-    const storageMap = new Map()
-    storageGroups.forEach(g => {
-      if (g.tenantId) storageMap.set(g.tenantId, g._sum.size || 0)
-    })
+    // Re-order to match paginatedIds
+    const tenantDataMap = new Map()
+    paginatedTenants.forEach(t => tenantDataMap.set(t.id, t))
 
-    const mapped = allTenants.map(t => ({
-      ...t,
-      storageUsed: storageMap.get(t.id) || 0
-    }))
-
-    mapped.sort((a, b) => {
-      if (order === "asc") return a.storageUsed - b.storageUsed
-      return b.storageUsed - a.storageUsed
-    })
-
-    const total = mapped.length
-    const paginated = mapped.slice((page - 1) * limit, page * limit)
-
-    const result = paginated.map(t => ({
-      id: t.id, name: t.name, slug: t.slug, domain: t.domain,
-      plan: t.plan, theme: t.theme, isActive: t.isActive, createdAt: t.createdAt,
-      studentQuota: t.studentQuota, aiTokens: t.aiTokens,
-      userCount: t._count.users, owner: t.users[0]?.user || null,
-      storageUsed: t.storageUsed
-    }))
+    const result = paginatedIds.map(id => {
+      const t = tenantDataMap.get(id)
+      if (!t) return null
+      return {
+        id: t.id, name: t.name, slug: t.slug, domain: t.domain,
+        plan: t.plan, theme: t.theme, isActive: t.isActive, createdAt: t.createdAt,
+        studentQuota: t.studentQuota, aiTokens: t.aiTokens,
+        userCount: t._count.users, owner: t.users[0]?.user || null,
+        storageUsed: storageMap.get(t.id) || 0
+      }
+    }).filter(Boolean)
 
     return { data: result, total, page, limit, totalPages: Math.ceil(total / limit) }
   }

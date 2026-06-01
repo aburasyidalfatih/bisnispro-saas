@@ -135,7 +135,7 @@ export async function POST(req: Request) {
         tenantId,
         type: "PAYMENT",
         amount: total,
-        balanceBefore: wallet.balance, // Snapshot the previous known balance
+        balanceBefore: updatedWallet.balance + total, // Snapshot the previous known balance atomically
         balanceAfter: updatedWallet.balance,
         description: `Kantin: ${merchant.name}`,
         status: "SUCCESS",

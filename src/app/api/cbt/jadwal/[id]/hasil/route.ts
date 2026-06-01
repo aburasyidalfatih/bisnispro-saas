@@ -16,48 +16,35 @@ export async function GET(
     const exam = await db.cbtExam.findFirst({
       where: { id, tenantId },
       include: {
-        questionBank: {
-          include: { questions: true }
+        _count: {
+          select: { sessions: true }
         },
         sessions: {
           include: {
             student: true,
-            answers: true
+            // We no longer include 'answers' to prevent OOM
+            _count: {
+              select: { answers: { where: { isCorrect: true } } }
+            }
           },
-          orderBy: { createdAt: 'desc' }
+          orderBy: { score: 'desc' }
+        },
+        questionBank: {
+          select: {
+            _count: {
+              select: { questions: true }
+            }
+          }
         }
       }
     })
 
     if (!exam) return NextResponse.json({ error: "Ujian tidak ditemukan" }, { status: 404 })
 
-    // Calculate scores on the fly
-    const questions = exam.questionBank.questions
-    const totalPoints = questions.reduce((sum, q) => sum + q.points, 0) || 1
+    const totalQuestions = exam.questionBank._count.questions
 
     const results = exam.sessions.map(s => {
-      let earned = 0
-      const detailAnswers = questions.map(q => {
-        const studentAns = s.answers.find(a => a.questionId === q.id)
-        
-        let isCorrect = false
-        if (q.type === "MULTIPLE_CHOICE" && q.options) {
-          const options = q.options as any[]
-          const correctOpt = options.find(o => o.isCorrect)
-          if (correctOpt && studentAns?.answer === correctOpt.id) {
-            isCorrect = true
-            earned += q.points
-          }
-        }
-        return {
-          questionId: q.id,
-          isCorrect,
-          studentAnswer: studentAns?.answer || null
-        }
-      })
-
-      const finalScore = (earned / totalPoints) * 100
-
+      // If score is null (still grading or not finished), we show 0 or "Proses"
       return {
         sessionId: s.id,
         studentName: s.student.name,
@@ -66,9 +53,9 @@ export async function GET(
         status: s.status,
         startTime: s.startTime,
         endTime: s.endTime,
-        score: Math.round(finalScore * 100) / 100,
-        correctCount: detailAnswers.filter(a => a.isCorrect).length,
-        totalQuestions: questions.length,
+        score: s.score || 0,
+        correctCount: s._count.answers,
+        totalQuestions,
         cheatCount: s.cheatCount
       }
     })

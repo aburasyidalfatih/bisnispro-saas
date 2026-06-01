@@ -45,3 +45,9 @@ export const emailQueue = new Queue("email-queue", {
   connection: redisConnection,
   defaultJobOptions,
 })
+
+// Queue for processing CBT background scoring
+export const cbtQueue = new Queue("cbt-queue", {
+  connection: redisConnection,
+  defaultJobOptions,
+})

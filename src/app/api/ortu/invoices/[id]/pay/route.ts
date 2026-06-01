@@ -67,7 +67,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             tenantId: invoice.tenantId,
             type: "WITHDRAWAL",
             amount: invoice.amountDue,
-            balanceBefore: wallet.balance,
+            balanceBefore: newBalance + invoice.amountDue,
             balanceAfter: newBalance,
             referenceId: invoice.code,
             description: `Pembayaran Tagihan: ${invoice.title}`,

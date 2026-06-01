@@ -33,12 +33,22 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
       img.src = URL.createObjectURL(file)
       img.onload = () => {
         const canvas = document.createElement("canvas")
+        const MAX_SIZE = 1920
         let { width, height } = img
-        // Resize to max 1920x1080 to keep it lightweight
-        if (width > 1920) {
-          height = Math.round((height * 1920) / width)
-          width = 1920
+        
+        // Proporsional resize berdasarkan sisi terpanjang
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height = Math.round(height * (MAX_SIZE / width))
+            width = MAX_SIZE
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width = Math.round(width * (MAX_SIZE / height))
+            height = MAX_SIZE
+          }
         }
+        
         canvas.width = width
         canvas.height = height
         const ctx = canvas.getContext("2d")
@@ -63,8 +73,9 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
   }
 
   const handleUpload = async (file: File) => {
-    if (file.size > 2 * 1024 * 1024) {
-      toast({ title: "File terlalu besar", description: "gambar harus kurang dari 2 mb", variant: "destructive" })
+    // Batas file asli sebelum dikompresi: 10 MB (mempermudah upload foto HP)
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: "File terlalu besar", description: "Ukuran file asli tidak boleh lebih dari 10 MB", variant: "destructive" })
       return
     }
 
@@ -76,6 +87,14 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
       setPreviewUrl(tempUrl)
       
       const compressedFile = await compressImage(file)
+      
+      // Batas setelah dikompresi wajib di bawah 2 MB untuk keamanan server
+      if (compressedFile.size > 2 * 1024 * 1024) {
+        setUploading(false)
+        setPreviewUrl(value || null)
+        toast({ title: "Gagal Kompresi", description: "Setelah dikompresi, file masih lebih dari 2 MB. Gunakan gambar lain.", variant: "destructive" })
+        return
+      }
       
       const fd = new FormData()
       fd.append("file", compressedFile)
@@ -186,7 +205,7 @@ export function ImageUploadDirect({ value, onChange, tenantId, subDir = "posts",
                   <ImageIcon className="h-6 w-6 text-primary" />
                 </div>
                 <p className="text-sm font-medium">Klik untuk upload gambar</p>
-                <p className="text-xs text-muted-foreground mt-1">Format: JPG, PNG, WebP (Maks 2MB)</p>
+                <p className="text-xs text-muted-foreground mt-1">Format: JPG, PNG, WebP (Maks asli 10MB, Otomatis dikompres)</p>
                 {hint && <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">{hint}</p>}
               </>
             )}

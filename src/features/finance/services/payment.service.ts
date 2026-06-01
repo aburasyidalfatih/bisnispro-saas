@@ -233,25 +233,25 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
              // Gunakan transaksi untuk menjamin integritas uang & log
              await db.$transaction(async (tx) => {
                // 1. Update Wallet Balance atomically
-               await tx.walletAccount.update({
-                 where: { id: wallet.id },
-                 data: { balance: { increment: payment.amount } }
-               })
-               
-               // 2. Insert WalletTransaction
-               await tx.walletTransaction.create({
-                 data: {
-                   walletId: wallet.id,
-                   tenantId: payment.tenantId,
-                   type: "DEPOSIT",
-                   amount: payment.amount,
-                   balanceBefore: wallet.balance,
-                   balanceAfter: wallet.balance + payment.amount,
-                   referenceId: payment.reference,
-                   description: "Top-Up via Tripay",
-                   status: "SUCCESS"
-                 }
-               })
+              const updatedWallet = await tx.walletAccount.update({
+                where: { id: wallet.id },
+                data: { balance: { increment: payment.amount } }
+              })
+              
+              // 2. Insert WalletTransaction
+              await tx.walletTransaction.create({
+                data: {
+                  walletId: wallet.id,
+                  tenantId: payment.tenantId,
+                  type: "DEPOSIT",
+                  amount: payment.amount,
+                  balanceBefore: updatedWallet.balance - payment.amount,
+                  balanceAfter: updatedWallet.balance,
+                  referenceId: payment.reference,
+                  description: "Top-Up via Tripay",
+                  status: "SUCCESS"
+                }
+              })
              })
 
              // 3. Notify Admin

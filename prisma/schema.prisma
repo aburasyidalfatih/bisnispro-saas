@@ -340,6 +340,7 @@ model AuditLog {
   @@index([createdAt])
   @@index([tenantId, entity])
   @@index([tenantId, createdAt])
+  @@index([action, createdAt])
   @@map("audit_logs")
 }
 

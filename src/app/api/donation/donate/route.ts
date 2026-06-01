@@ -55,7 +55,7 @@ export async function POST(req: Request) {
           tenantId,
           type: "WITHDRAWAL",
           amount,
-          balanceBefore: wallet.balance,
+          balanceBefore: newBalance + amount,
           balanceAfter: newBalance,
           referenceId: campaignId,
           description: `Donasi: ${campaign.title}`,
