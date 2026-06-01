@@ -17,6 +17,10 @@ export type BillingSettingsDTO = {
   enablePaymentConfirmed: boolean
   enableAffiliateCommission: boolean
   enableSubscriptionReminder: boolean
+  emailEnableInvoiceCreated: boolean
+  emailEnablePaymentConfirmed: boolean
+  emailEnableAffiliateCommission: boolean
+  emailEnableSubscriptionReminder: boolean
 }
 
 export type SubscriptionReminderResultDTO = {
@@ -37,7 +41,9 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     "WA_TEMPLATE_INVOICE_CREATED", "WA_TEMPLATE_PAYMENT_CONFIRMED",
     "WA_TEMPLATE_AFFILIATE_COMMISSION", "WA_TEMPLATE_SUBSCRIPTION_REMINDER",
     "WA_ENABLE_INVOICE_CREATED", "WA_ENABLE_PAYMENT_CONFIRMED",
-    "WA_ENABLE_AFFILIATE_COMMISSION", "WA_ENABLE_SUBSCRIPTION_REMINDER"
+    "WA_ENABLE_AFFILIATE_COMMISSION", "WA_ENABLE_SUBSCRIPTION_REMINDER",
+    "EMAIL_ENABLE_INVOICE_CREATED", "EMAIL_ENABLE_PAYMENT_CONFIRMED",
+    "EMAIL_ENABLE_AFFILIATE_COMMISSION", "EMAIL_ENABLE_SUBSCRIPTION_REMINDER"
   ]
   const settings = await db.platformSetting.findMany({ where: { key: { in: keys } } })
   const map: Record<string, string> = {}
@@ -58,6 +64,10 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     enablePaymentConfirmed: map.WA_ENABLE_PAYMENT_CONFIRMED !== "false",
     enableAffiliateCommission: map.WA_ENABLE_AFFILIATE_COMMISSION !== "false",
     enableSubscriptionReminder: map.WA_ENABLE_SUBSCRIPTION_REMINDER !== "false",
+    emailEnableInvoiceCreated: map.EMAIL_ENABLE_INVOICE_CREATED !== "false",
+    emailEnablePaymentConfirmed: map.EMAIL_ENABLE_PAYMENT_CONFIRMED !== "false",
+    emailEnableAffiliateCommission: map.EMAIL_ENABLE_AFFILIATE_COMMISSION !== "false",
+    emailEnableSubscriptionReminder: map.EMAIL_ENABLE_SUBSCRIPTION_REMINDER !== "false",
   }
 }
 
@@ -176,7 +186,7 @@ Terima kasih! 🙏`
       if (owner.user.phone && cfg.enableInvoiceCreated) {
         sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
       }
-      if (owner.user.email) {
+      if (owner.user.email && cfg.emailEnableInvoiceCreated) {
         sendEmail(owner.user.email, `Invoice ${type} - ${payment.reference}`, emailHtml).catch(() => {})
       }
     }
@@ -327,7 +337,7 @@ Selamat menggunakan fitur premium ${cfg.platformName}! 🎉`
       if (owner.user.phone && cfg.enablePaymentConfirmed) {
         sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
       }
-      if (owner.user.email) {
+      if (owner.user.email && cfg.emailEnablePaymentConfirmed) {
         sendEmail(owner.user.email, `Pembayaran Dikonfirmasi - ${payment.reference}`, emailHtml).catch(() => {})
       }
     }
@@ -398,7 +408,7 @@ Terima kasih sudah menjadi mitra ${cfg.platformName}! 🤝`
     if (affiliate.user.phone && cfg.enableAffiliateCommission) {
       await sendWhatsApp(affiliate.user.phone, waMessage).catch(() => {})
     }
-    if (affiliate.user.email) {
+    if (affiliate.user.email && cfg.emailEnableAffiliateCommission) {
       await sendEmail(affiliate.user.email, `Komisi Masuk - Rp ${formatCurrency(commissionAmount)}`, emailHtml).catch(() => {})
     }
 

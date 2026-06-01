@@ -30,10 +30,12 @@ export async function sendApplicationNotification(applicationId: string) {
   let subject = ""
   let message = ""
   let waEnabled = true;
+  let emailEnabled = true;
 
   switch (app.status) {
     case "PENDING": {
       waEnabled = settings.WA_ENABLE_PENDING !== "false";
+      emailEnabled = settings.EMAIL_ENABLE_PENDING !== "false";
       subject = settings.WA_SUBJECT_PENDING || `Pendaftaran ${app.schoolName} Berhasil Diterima`
       const tpl =
         settings.WA_TEMPLATE_PENDING ||
@@ -45,6 +47,7 @@ export async function sendApplicationNotification(applicationId: string) {
     }
     case "APPROVED": {
       waEnabled = settings.WA_ENABLE_APPROVED !== "false";
+      emailEnabled = settings.EMAIL_ENABLE_APPROVED !== "false";
       const tempPwd = app.adminMessage?.startsWith("temp_pwd:")
         ? app.adminMessage.replace("temp_pwd:", "")
         : "Hubungi admin untuk mendapatkan password"
@@ -63,6 +66,7 @@ export async function sendApplicationNotification(applicationId: string) {
     }
     case "REVISION": {
       waEnabled = settings.WA_ENABLE_REVISION !== "false";
+      emailEnabled = settings.EMAIL_ENABLE_REVISION !== "false";
       subject = settings.WA_SUBJECT_REVISION || `Permintaan Revisi Pendaftaran: ${app.schoolName}`
       const revisionUrl = `https://${rootDomain}/revisi-pengajuan/${app.id}`
       const tpl =
@@ -76,6 +80,7 @@ export async function sendApplicationNotification(applicationId: string) {
     }
     case "REJECTED": {
       waEnabled = settings.WA_ENABLE_REJECTED !== "false";
+      emailEnabled = settings.EMAIL_ENABLE_REJECTED !== "false";
       subject = settings.WA_SUBJECT_REJECTED || `Update Pendaftaran: ${app.schoolName}`
       const tpl =
         settings.WA_TEMPLATE_REJECTED ||
@@ -106,9 +111,13 @@ export async function sendApplicationNotification(applicationId: string) {
       <img src="https://${rootDomain}/api/public/track-email/${app.id}" width="1" height="1" style="display:none;" alt="" />
     </div>`
 
-  await sendEmail(app.adminEmail, subject, emailHtml)
-    .then(() => logger.info("Application email sent", { applicationId, status: app.status }))
-    .catch((err) => logger.error("Application email failed", err, { applicationId }))
+  if (emailEnabled) {
+    await sendEmail(app.adminEmail, subject, emailHtml)
+      .then(() => logger.info("Application email sent", { applicationId, status: app.status }))
+      .catch((err) => logger.error("Application email failed", err, { applicationId }))
+  } else {
+    logger.info("Application email skipped via settings", { applicationId })
+  }
 
   // 2. Kirim WhatsApp ke pendaftar (menggunakan helper terpusat)
   const disableWa = settings.DISABLE_WA_NOTIFICATION === "true" || process.env.DISABLE_WA_NOTIFICATION === "true"
@@ -152,6 +161,7 @@ export async function sendNewApplicationAlerts(
     .replace(/{{schoolSlug}}/g, app.schoolSlug)
 
   const waEnabledSuperAdmin = settings.WA_ENABLE_ALERT_SUPERADMIN !== "false";
+  const emailEnabledSuperAdmin = settings.EMAIL_ENABLE_ALERT_SUPERADMIN !== "false";
 
   for (const admin of superAdmins) {
     if (admin.phone && waEnabledSuperAdmin) {
@@ -161,7 +171,7 @@ export async function sendNewApplicationAlerts(
     } else {
       logger.warn("Super Admin has no phone number — alert skipped", { adminId: admin.id })
     }
-    if (admin.email) {
+    if (admin.email && emailEnabledSuperAdmin) {
       await sendEmail(
         admin.email,
         "PENDAFTARAN SEKOLAH BARU",
@@ -178,6 +188,8 @@ export async function sendNewApplicationAlerts(
           </div>
         </div>`
       ).catch(err => logger.error("Super Admin email alert failed", err, { adminId: admin.id }))
+    } else if (admin.email && !emailEnabledSuperAdmin) {
+      logger.info("Super Admin email alert skipped via settings")
     }
   }
 
@@ -197,6 +209,7 @@ export async function sendNewApplicationAlerts(
       .replace(/{{schoolName}}/g, app.schoolName)
 
     const waEnabledAffiliate = settings.WA_ENABLE_ALERT_AFFILIATE !== "false";
+    const emailEnabledAffiliate = settings.EMAIL_ENABLE_ALERT_AFFILIATE !== "false";
 
     if (affiliate.user.phone && waEnabledAffiliate) {
       await sendWhatsApp(affiliate.user.phone, affiliateMsg)
@@ -206,7 +219,7 @@ export async function sendNewApplicationAlerts(
       logger.warn("Affiliate has no phone number — alert skipped", { affiliateId })
     }
 
-    if (affiliate.user.email) {
+    if (affiliate.user.email && emailEnabledAffiliate) {
       await sendEmail(
         affiliate.user.email,
         "LEAD SEKOLAH BARU! 🎉",
@@ -223,6 +236,8 @@ export async function sendNewApplicationAlerts(
           </div>
         </div>`
       ).catch(err => logger.error("Affiliate email alert failed", err, { affiliateId }))
+    } else if (affiliate.user.email && !emailEnabledAffiliate) {
+      logger.info("Affiliate email alert skipped via settings")
     }
   }
 }

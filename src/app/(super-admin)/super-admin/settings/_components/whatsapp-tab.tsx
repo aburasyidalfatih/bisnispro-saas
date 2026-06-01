@@ -349,46 +349,64 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <Label className="text-emerald-600 font-bold">1. Pendaftaran Diterima (PENDING)</Label>
-                <Switch checked={form.WA_ENABLE_PENDING === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_PENDING: checked ? "true" : "false"})} />
+                <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_PENDING === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_PENDING: checked ? "true" : "false"})} /></div>
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_PENDING === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_PENDING: checked ? "true" : "false"})} /></div>
+                </div>
               </div>
-              <Textarea value={form.WA_TEMPLATE_PENDING} onChange={e => setForm({...form, WA_TEMPLATE_PENDING: e.target.value})} placeholder={`Halo {{adminName}},\nSelamat! Pendaftaran {{schoolName}} diterima.`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_PENDING !== "true"} />
+              <Textarea value={form.WA_TEMPLATE_PENDING} onChange={e => setForm({...form, WA_TEMPLATE_PENDING: e.target.value})} placeholder={`Halo {{adminName}},\nSelamat! Pendaftaran {{schoolName}} diterima.`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_PENDING !== "true" && form.EMAIL_ENABLE_PENDING !== "true"} />
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <Label className="text-blue-600 font-bold">2. Pendaftaran Disetujui (APPROVED)</Label>
-                <Switch checked={form.WA_ENABLE_APPROVED === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_APPROVED: checked ? "true" : "false"})} />
+                <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_APPROVED === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_APPROVED: checked ? "true" : "false"})} /></div>
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_APPROVED === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_APPROVED: checked ? "true" : "false"})} /></div>
+                </div>
               </div>
-              <Textarea value={form.WA_TEMPLATE_APPROVED} onChange={e => setForm({...form, WA_TEMPLATE_APPROVED: e.target.value})} placeholder={`Halo {{adminName}},\nPendaftaran {{schoolName}} disetujui. URL: {{loginUrl}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_APPROVED !== "true"} />
+              <Textarea value={form.WA_TEMPLATE_APPROVED} onChange={e => setForm({...form, WA_TEMPLATE_APPROVED: e.target.value})} placeholder={`Halo {{adminName}},\nPendaftaran {{schoolName}} disetujui. URL: {{loginUrl}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_APPROVED !== "true" && form.EMAIL_ENABLE_APPROVED !== "true"} />
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <Label className="text-amber-600 font-bold">3. Revisi Data (REVISION)</Label>
-                <Switch checked={form.WA_ENABLE_REVISION === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_REVISION: checked ? "true" : "false"})} />
+                <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_REVISION === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_REVISION: checked ? "true" : "false"})} /></div>
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_REVISION === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_REVISION: checked ? "true" : "false"})} /></div>
+                </div>
               </div>
-              <Textarea value={form.WA_TEMPLATE_REVISION} onChange={e => setForm({...form, WA_TEMPLATE_REVISION: e.target.value})} placeholder={`Halo {{adminName}},\nRevisi: {{adminMessage}}\n\nKlik disini: {{revisionUrl}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_REVISION !== "true"} />
+              <Textarea value={form.WA_TEMPLATE_REVISION} onChange={e => setForm({...form, WA_TEMPLATE_REVISION: e.target.value})} placeholder={`Halo {{adminName}},\nRevisi: {{adminMessage}}\n\nKlik disini: {{revisionUrl}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_REVISION !== "true" && form.EMAIL_ENABLE_REVISION !== "true"} />
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <Label className="text-red-600 font-bold">4. Pendaftaran Ditolak (REJECTED)</Label>
-                <Switch checked={form.WA_ENABLE_REJECTED === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_REJECTED: checked ? "true" : "false"})} />
+                <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_REJECTED === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_REJECTED: checked ? "true" : "false"})} /></div>
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_REJECTED === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_REJECTED: checked ? "true" : "false"})} /></div>
+                </div>
               </div>
-              <Textarea value={form.WA_TEMPLATE_REJECTED} onChange={e => setForm({...form, WA_TEMPLATE_REJECTED: e.target.value})} placeholder={`Halo {{adminName}},\nDitolak: {{adminMessage}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_REJECTED !== "true"} />
+              <Textarea value={form.WA_TEMPLATE_REJECTED} onChange={e => setForm({...form, WA_TEMPLATE_REJECTED: e.target.value})} placeholder={`Halo {{adminName}},\nDitolak: {{adminMessage}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_REJECTED !== "true" && form.EMAIL_ENABLE_REJECTED !== "true"} />
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <Label className="text-purple-600 font-bold">5. Alert ke Super Admin</Label>
-                <Switch checked={form.WA_ENABLE_ALERT_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_ALERT_SUPERADMIN: checked ? "true" : "false"})} />
+                <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_ALERT_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_ALERT_SUPERADMIN: checked ? "true" : "false"})} /></div>
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_ALERT_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_ALERT_SUPERADMIN: checked ? "true" : "false"})} /></div>
+                </div>
               </div>
-              <Textarea value={form.WA_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder={`Sekolah Baru: {{schoolName}}\nWA: {{adminPhone}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_SUPERADMIN !== "true"} />
+              <Textarea value={form.WA_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder={`Sekolah Baru: {{schoolName}}\nWA: {{adminPhone}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_SUPERADMIN !== "true" && form.EMAIL_ENABLE_ALERT_SUPERADMIN !== "true"} />
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <Label className="text-orange-600 font-bold">6. Alert ke Marketer (Afiliasi)</Label>
-                <Switch checked={form.WA_ENABLE_ALERT_AFFILIATE === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_ALERT_AFFILIATE: checked ? "true" : "false"})} />
+                <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_ALERT_AFFILIATE === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_ALERT_AFFILIATE: checked ? "true" : "false"})} /></div>
+                  <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_ALERT_AFFILIATE === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_ALERT_AFFILIATE: checked ? "true" : "false"})} /></div>
+                </div>
               </div>
-              <Textarea value={form.WA_TEMPLATE_ALERT_AFFILIATE} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_AFFILIATE: e.target.value})} placeholder={`Halo {{affiliateName}},\nLead baru: {{schoolName}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_AFFILIATE !== "true"} />
+              <Textarea value={form.WA_TEMPLATE_ALERT_AFFILIATE} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_AFFILIATE: e.target.value})} placeholder={`Halo {{affiliateName}},\nLead baru: {{schoolName}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_AFFILIATE !== "true" && form.EMAIL_ENABLE_ALERT_AFFILIATE !== "true"} />
             </div>
           </div>
 
@@ -400,32 +418,44 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
             <p className="text-xs text-muted-foreground mb-4">Variabel: {'{{tenantName}}, {{reference}}, {{amount}}, {{expiredAt}}, {{expiresAt}}, {{invoiceType}}, {{bankName}}, {{bankNumber}}, {{bankAccountName}}, {{adminWA}}, {{studentQuota}}, {{affiliateName}}, {{commissionAmount}}, {{currentBalance}}, {{daysRemaining}}, {{urgency}}'}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                   <Label className="text-indigo-600 font-bold">7. Invoice Dibuat → Tenant</Label>
-                  <Switch checked={form.WA_ENABLE_INVOICE_CREATED === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_INVOICE_CREATED: checked ? "true" : "false"})} />
+                  <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_INVOICE_CREATED === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_INVOICE_CREATED: checked ? "true" : "false"})} /></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_INVOICE_CREATED === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_INVOICE_CREATED: checked ? "true" : "false"})} /></div>
+                  </div>
                 </div>
-                <Textarea value={form.WA_TEMPLATE_INVOICE_CREATED} onChange={e => setForm({...form, WA_TEMPLATE_INVOICE_CREATED: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_INVOICE_CREATED !== "true"} />
+                <Textarea value={form.WA_TEMPLATE_INVOICE_CREATED} onChange={e => setForm({...form, WA_TEMPLATE_INVOICE_CREATED: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_INVOICE_CREATED !== "true" && form.EMAIL_ENABLE_INVOICE_CREATED !== "true"} />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                   <Label className="text-green-600 font-bold">8. Pembayaran Dikonfirmasi → Tenant</Label>
-                  <Switch checked={form.WA_ENABLE_PAYMENT_CONFIRMED === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_PAYMENT_CONFIRMED: checked ? "true" : "false"})} />
+                  <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_PAYMENT_CONFIRMED === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_PAYMENT_CONFIRMED: checked ? "true" : "false"})} /></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_PAYMENT_CONFIRMED === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_PAYMENT_CONFIRMED: checked ? "true" : "false"})} /></div>
+                  </div>
                 </div>
-                <Textarea value={form.WA_TEMPLATE_PAYMENT_CONFIRMED} onChange={e => setForm({...form, WA_TEMPLATE_PAYMENT_CONFIRMED: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_PAYMENT_CONFIRMED !== "true"} />
+                <Textarea value={form.WA_TEMPLATE_PAYMENT_CONFIRMED} onChange={e => setForm({...form, WA_TEMPLATE_PAYMENT_CONFIRMED: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_PAYMENT_CONFIRMED !== "true" && form.EMAIL_ENABLE_PAYMENT_CONFIRMED !== "true"} />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                   <Label className="text-amber-600 font-bold">9. Komisi Masuk → Afiliasi</Label>
-                  <Switch checked={form.WA_ENABLE_AFFILIATE_COMMISSION === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_AFFILIATE_COMMISSION: checked ? "true" : "false"})} />
+                  <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_AFFILIATE_COMMISSION === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_AFFILIATE_COMMISSION: checked ? "true" : "false"})} /></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_AFFILIATE_COMMISSION === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_AFFILIATE_COMMISSION: checked ? "true" : "false"})} /></div>
+                  </div>
                 </div>
-                <Textarea value={form.WA_TEMPLATE_AFFILIATE_COMMISSION} onChange={e => setForm({...form, WA_TEMPLATE_AFFILIATE_COMMISSION: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_AFFILIATE_COMMISSION !== "true"} />
+                <Textarea value={form.WA_TEMPLATE_AFFILIATE_COMMISSION} onChange={e => setForm({...form, WA_TEMPLATE_AFFILIATE_COMMISSION: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_AFFILIATE_COMMISSION !== "true" && form.EMAIL_ENABLE_AFFILIATE_COMMISSION !== "true"} />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                   <Label className="text-red-600 font-bold">10. Pengingat Langganan → Tenant</Label>
-                  <Switch checked={form.WA_ENABLE_SUBSCRIPTION_REMINDER === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_SUBSCRIPTION_REMINDER: checked ? "true" : "false"})} />
+                  <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_SUBSCRIPTION_REMINDER === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_SUBSCRIPTION_REMINDER: checked ? "true" : "false"})} /></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_SUBSCRIPTION_REMINDER === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_SUBSCRIPTION_REMINDER: checked ? "true" : "false"})} /></div>
+                  </div>
                 </div>
-                <Textarea value={form.WA_TEMPLATE_SUBSCRIPTION_REMINDER} onChange={e => setForm({...form, WA_TEMPLATE_SUBSCRIPTION_REMINDER: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_SUBSCRIPTION_REMINDER !== "true"} />
+                <Textarea value={form.WA_TEMPLATE_SUBSCRIPTION_REMINDER} onChange={e => setForm({...form, WA_TEMPLATE_SUBSCRIPTION_REMINDER: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_SUBSCRIPTION_REMINDER !== "true" && form.EMAIL_ENABLE_SUBSCRIPTION_REMINDER !== "true"} />
               </div>
             </div>
           </div>
@@ -433,16 +463,16 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
           <Button 
             className="w-full gap-2 btn-gradient text-white border-0 rounded-xl" 
             onClick={() => handleSaveBatch([
-              'WA_TEMPLATE_PENDING', 'WA_ENABLE_PENDING',
-              'WA_TEMPLATE_APPROVED', 'WA_ENABLE_APPROVED',
-              'WA_TEMPLATE_REVISION', 'WA_ENABLE_REVISION',
-              'WA_TEMPLATE_REJECTED', 'WA_ENABLE_REJECTED',
-              'WA_TEMPLATE_ALERT_SUPERADMIN', 'WA_ENABLE_ALERT_SUPERADMIN',
-              'WA_TEMPLATE_ALERT_AFFILIATE', 'WA_ENABLE_ALERT_AFFILIATE',
-              'WA_TEMPLATE_INVOICE_CREATED', 'WA_ENABLE_INVOICE_CREATED',
-              'WA_TEMPLATE_PAYMENT_CONFIRMED', 'WA_ENABLE_PAYMENT_CONFIRMED',
-              'WA_TEMPLATE_AFFILIATE_COMMISSION', 'WA_ENABLE_AFFILIATE_COMMISSION',
-              'WA_TEMPLATE_SUBSCRIPTION_REMINDER', 'WA_ENABLE_SUBSCRIPTION_REMINDER'
+              'WA_TEMPLATE_PENDING', 'WA_ENABLE_PENDING', 'EMAIL_ENABLE_PENDING',
+              'WA_TEMPLATE_APPROVED', 'WA_ENABLE_APPROVED', 'EMAIL_ENABLE_APPROVED',
+              'WA_TEMPLATE_REVISION', 'WA_ENABLE_REVISION', 'EMAIL_ENABLE_REVISION',
+              'WA_TEMPLATE_REJECTED', 'WA_ENABLE_REJECTED', 'EMAIL_ENABLE_REJECTED',
+              'WA_TEMPLATE_ALERT_SUPERADMIN', 'WA_ENABLE_ALERT_SUPERADMIN', 'EMAIL_ENABLE_ALERT_SUPERADMIN',
+              'WA_TEMPLATE_ALERT_AFFILIATE', 'WA_ENABLE_ALERT_AFFILIATE', 'EMAIL_ENABLE_ALERT_AFFILIATE',
+              'WA_TEMPLATE_INVOICE_CREATED', 'WA_ENABLE_INVOICE_CREATED', 'EMAIL_ENABLE_INVOICE_CREATED',
+              'WA_TEMPLATE_PAYMENT_CONFIRMED', 'WA_ENABLE_PAYMENT_CONFIRMED', 'EMAIL_ENABLE_PAYMENT_CONFIRMED',
+              'WA_TEMPLATE_AFFILIATE_COMMISSION', 'WA_ENABLE_AFFILIATE_COMMISSION', 'EMAIL_ENABLE_AFFILIATE_COMMISSION',
+              'WA_TEMPLATE_SUBSCRIPTION_REMINDER', 'WA_ENABLE_SUBSCRIPTION_REMINDER', 'EMAIL_ENABLE_SUBSCRIPTION_REMINDER'
             ])} 
             disabled={saving}
           >
