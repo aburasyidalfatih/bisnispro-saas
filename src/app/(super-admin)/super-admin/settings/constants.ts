@@ -58,6 +58,15 @@ export type SettingsForm = {
   WA_TEMPLATE_ALERT_AFFILIATE: string;
   WA_ENABLE_ALERT_AFFILIATE: string;
   EMAIL_ENABLE_ALERT_AFFILIATE: string;
+  WA_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN: string;
+  WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN: string;
+  EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN: string;
+  WA_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN: string;
+  WA_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN: string;
+  EMAIL_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN: string;
+  WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: string;
+  WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN: string;
+  EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN: string;
 
   // Billing Templates
   WA_TEMPLATE_INVOICE_CREATED: string;
@@ -177,6 +186,15 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   WA_TEMPLATE_ALERT_AFFILIATE: `*LEAD SEKOLAH BARU! 🎉*\n\nHalo {{affiliateName}},\nKabar baik! Pendaftaran sekolah baru telah masuk menggunakan kode referral Anda ({{referralCode}}).\n\nSekolah: {{schoolName}}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`,
   WA_ENABLE_ALERT_AFFILIATE: "true",
   EMAIL_ENABLE_ALERT_AFFILIATE: "true",
+  WA_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN: `*PEMBAYARAN BERHASIL! 💰*\n\nHore! Pembayaran sebesar Rp {{amount}} dari sekolah {{tenantName}} telah berhasil.\n\nTipe: {{invoiceType}}\nReference: {{reference}}\n\nSilakan cek dashboard untuk detail lebih lanjut.`,
+  WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN: "true",
+  EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN: "true",
+  WA_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN: `*🚨 PERMINTAAN PENARIKAN DANA BARU*\n\nAfiliasi: {{affiliateName}}\nJumlah: Rp {{amount}}\nBank: {{bankName}} - {{bankAccount}}\na.n: {{accountName}}\n\nSilakan proses pembayaran dan update status di Dashboard Super Admin.`,
+  WA_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN: "true",
+  EMAIL_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN: "true",
+  WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: `*⚠️ INVOICE KEDALUWARSA*\n\nInvoice dari tenant {{tenantName}} telah kedaluwarsa dan gagal dibayar.\n\nReference: {{reference}}\nNominal: Rp {{amount}}\n\nMohon tim sales mem-follow up sekolah ini.`,
+  WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN: "true",
+  EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN: "true",
 
   // Billing Templates
   WA_TEMPLATE_INVOICE_CREATED: `*Invoice {{invoiceType}} - SchoolPro*\n\nHalo,\n\nInvoice untuk {{invoiceType}} {{tenantName}} telah dibuat:\n\n📋 No. Invoice: {{reference}}\n💰 Total: Rp {{amount}}\n⏰ Batas Bayar: {{expiredAt}}\n\nSilakan transfer ke:\n🏦 {{bankName}}\n💳 {{bankNumber}}\n📛 a.n. {{bankAccountName}}\n\nSetelah transfer, hubungi admin via WA {{adminWA}} untuk konfirmasi.\n\nTerima kasih! 🙏`,

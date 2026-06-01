@@ -459,6 +459,21 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
           }
         }
       }
+
+      // Notify Super Admin (async non-blocking)
+      import("@/features/finance/services/billing-notification.service")
+        .then(({ notifySuperAdminPaymentSuccess }) => {
+          notifySuperAdminPaymentSuccess(payment.id).catch(() => {})
+        })
+        .catch(() => {})
+
+    } else if (body.status === "EXPIRED" || body.status === "FAILED") {
+      // Notify Super Admin if payment failed / expired
+      import("@/features/finance/services/billing-notification.service")
+        .then(({ notifySuperAdminInvoiceExpired }) => {
+          notifySuperAdminInvoiceExpired(payment.id).catch(() => {})
+        })
+        .catch(() => {})
     }
 
     return { 

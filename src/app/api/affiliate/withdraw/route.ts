@@ -31,8 +31,8 @@ export async function POST(req: Request) {
     }
 
     // Buat withdrawal dan potong balance dalam transaksi
-    await db.$transaction(async (tx) => {
-      await tx.affiliateWithdrawal.create({
+    const withdrawal = await db.$transaction(async (tx) => {
+      const newWithdrawal = await tx.affiliateWithdrawal.create({
         data: {
           affiliateId: affiliate.id,
           amount: amount,
@@ -51,7 +51,16 @@ export async function POST(req: Request) {
       if (updatedAffiliate.balance < 0) {
         throw new Error("Saldo tidak mencukupi")
       }
+      
+      return newWithdrawal
     })
+
+    // Notify Super Admin
+    import("@/features/finance/services/billing-notification.service")
+      .then(({ notifySuperAdminWithdrawalRequest }) => {
+        notifySuperAdminWithdrawalRequest(withdrawal.id).catch(() => {})
+      })
+      .catch(() => {})
 
     return NextResponse.json({ success: true })
   } catch (error) {

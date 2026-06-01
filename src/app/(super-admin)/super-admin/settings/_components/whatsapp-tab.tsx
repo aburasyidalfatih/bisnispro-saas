@@ -458,6 +458,48 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
                 <Textarea value={form.WA_TEMPLATE_SUBSCRIPTION_REMINDER} onChange={e => setForm({...form, WA_TEMPLATE_SUBSCRIPTION_REMINDER: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_SUBSCRIPTION_REMINDER !== "true" && form.EMAIL_ENABLE_SUBSCRIPTION_REMINDER !== "true"} />
               </div>
             </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t pt-6 mt-6">
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldAlert className="h-4 w-4 text-rose-500" />
+              <h4 className="font-bold text-base">Alert Super Admin (Sistem & Finansial)</h4>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">Variabel: {'{{tenantName}}, {{reference}}, {{amount}}, {{invoiceType}}, {{affiliateName}}, {{bankName}}, {{bankAccount}}, {{accountName}}'}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+                  <Label className="text-emerald-600 font-bold">11. Pembayaran Berhasil</Label>
+                  <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN: checked ? "true" : "false"})} /></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN: checked ? "true" : "false"})} /></div>
+                  </div>
+                </div>
+                <Textarea value={form.WA_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN !== "true" && form.EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN !== "true"} />
+              </div>
+              <div className="space-y-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+                  <Label className="text-orange-600 font-bold">12. Permintaan Penarikan Dana</Label>
+                  <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN: checked ? "true" : "false"})} /></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN: checked ? "true" : "false"})} /></div>
+                  </div>
+                </div>
+                <Textarea value={form.WA_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN !== "true" && form.EMAIL_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN !== "true"} />
+              </div>
+              <div className="space-y-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+                  <Label className="text-rose-600 font-bold">13. Invoice Kedaluwarsa</Label>
+                  <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN: checked ? "true" : "false"})} /></div>
+                    <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN: checked ? "true" : "false"})} /></div>
+                  </div>
+                </div>
+                <Textarea value={form.WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN !== "true" && form.EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN !== "true"} />
+              </div>
+            </div>
           </div>
 
           <Button 
@@ -472,7 +514,10 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
               'WA_TEMPLATE_INVOICE_CREATED', 'WA_ENABLE_INVOICE_CREATED', 'EMAIL_ENABLE_INVOICE_CREATED',
               'WA_TEMPLATE_PAYMENT_CONFIRMED', 'WA_ENABLE_PAYMENT_CONFIRMED', 'EMAIL_ENABLE_PAYMENT_CONFIRMED',
               'WA_TEMPLATE_AFFILIATE_COMMISSION', 'WA_ENABLE_AFFILIATE_COMMISSION', 'EMAIL_ENABLE_AFFILIATE_COMMISSION',
-              'WA_TEMPLATE_SUBSCRIPTION_REMINDER', 'WA_ENABLE_SUBSCRIPTION_REMINDER', 'EMAIL_ENABLE_SUBSCRIPTION_REMINDER'
+              'WA_TEMPLATE_SUBSCRIPTION_REMINDER', 'WA_ENABLE_SUBSCRIPTION_REMINDER', 'EMAIL_ENABLE_SUBSCRIPTION_REMINDER',
+              'WA_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN', 'WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN', 'EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN',
+              'WA_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN', 'WA_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN', 'EMAIL_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN',
+              'WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN', 'WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN', 'EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN'
             ])} 
             disabled={saving}
           >
