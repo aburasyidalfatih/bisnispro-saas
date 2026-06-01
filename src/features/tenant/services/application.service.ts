@@ -29,9 +29,11 @@ export async function sendApplicationNotification(applicationId: string) {
 
   let subject = ""
   let message = ""
+  let waEnabled = true;
 
   switch (app.status) {
     case "PENDING": {
+      waEnabled = settings.WA_ENABLE_PENDING !== "false";
       subject = settings.WA_SUBJECT_PENDING || `Pendaftaran ${app.schoolName} Berhasil Diterima`
       const tpl =
         settings.WA_TEMPLATE_PENDING ||
@@ -42,6 +44,7 @@ export async function sendApplicationNotification(applicationId: string) {
       break
     }
     case "APPROVED": {
+      waEnabled = settings.WA_ENABLE_APPROVED !== "false";
       const tempPwd = app.adminMessage?.startsWith("temp_pwd:")
         ? app.adminMessage.replace("temp_pwd:", "")
         : "Hubungi admin untuk mendapatkan password"
@@ -59,6 +62,7 @@ export async function sendApplicationNotification(applicationId: string) {
       break
     }
     case "REVISION": {
+      waEnabled = settings.WA_ENABLE_REVISION !== "false";
       subject = settings.WA_SUBJECT_REVISION || `Permintaan Revisi Pendaftaran: ${app.schoolName}`
       const revisionUrl = `https://${rootDomain}/revisi-pengajuan/${app.id}`
       const tpl =
@@ -71,6 +75,7 @@ export async function sendApplicationNotification(applicationId: string) {
       break
     }
     case "REJECTED": {
+      waEnabled = settings.WA_ENABLE_REJECTED !== "false";
       subject = settings.WA_SUBJECT_REJECTED || `Update Pendaftaran: ${app.schoolName}`
       const tpl =
         settings.WA_TEMPLATE_REJECTED ||
@@ -107,15 +112,15 @@ export async function sendApplicationNotification(applicationId: string) {
 
   // 2. Kirim WhatsApp ke pendaftar (menggunakan helper terpusat)
   const disableWa = settings.DISABLE_WA_NOTIFICATION === "true" || process.env.DISABLE_WA_NOTIFICATION === "true"
-  if (!disableWa && app.adminPhone) {
+  if (!disableWa && waEnabled && app.adminPhone) {
     const result = await sendWhatsApp(app.adminPhone, `*${subject}*\n\n${message}`)
     if (!result.success) {
       logger.warn("Application WA notification skipped", { applicationId, error: result.error })
     } else {
       logger.info("Application WA sent", { applicationId, status: app.status })
     }
-  } else if (disableWa) {
-    logger.info("WhatsApp notification disabled globally via settings", { applicationId })
+  } else if (disableWa || !waEnabled) {
+    logger.info("WhatsApp notification disabled globally or via template setting", { applicationId })
   }
 }
 
@@ -146,9 +151,13 @@ export async function sendNewApplicationAlerts(
     .replace(/{{adminPhone}}/g, app.adminPhone)
     .replace(/{{schoolSlug}}/g, app.schoolSlug)
 
+  const waEnabledSuperAdmin = settings.WA_ENABLE_ALERT_SUPERADMIN !== "false";
+
   for (const admin of superAdmins) {
-    if (admin.phone) {
+    if (admin.phone && waEnabledSuperAdmin) {
       await sendWhatsApp(admin.phone, adminMsg)
+    } else if (admin.phone && !waEnabledSuperAdmin) {
+      logger.info("Super Admin WA alert skipped via settings")
     } else {
       logger.warn("Super Admin has no phone number — alert skipped", { adminId: admin.id })
     }
@@ -187,8 +196,12 @@ export async function sendNewApplicationAlerts(
       .replace(/{{referralCode}}/g, affiliate.referralCode)
       .replace(/{{schoolName}}/g, app.schoolName)
 
-    if (affiliate.user.phone) {
+    const waEnabledAffiliate = settings.WA_ENABLE_ALERT_AFFILIATE !== "false";
+
+    if (affiliate.user.phone && waEnabledAffiliate) {
       await sendWhatsApp(affiliate.user.phone, affiliateMsg)
+    } else if (affiliate.user.phone && !waEnabledAffiliate) {
+      logger.info("Affiliate WA alert skipped via settings")
     } else {
       logger.warn("Affiliate has no phone number — alert skipped", { affiliateId })
     }

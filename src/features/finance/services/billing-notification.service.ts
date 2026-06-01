@@ -13,6 +13,10 @@ export type BillingSettingsDTO = {
   tplPaymentConfirmed: string
   tplAffiliateCommission: string
   tplSubscriptionReminder: string
+  enableInvoiceCreated: boolean
+  enablePaymentConfirmed: boolean
+  enableAffiliateCommission: boolean
+  enableSubscriptionReminder: boolean
 }
 
 export type SubscriptionReminderResultDTO = {
@@ -31,7 +35,9 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     "MANUAL_PAYMENT_BANK", "MANUAL_PAYMENT_NUMBER",
     "MANUAL_PAYMENT_NAME", "MANUAL_PAYMENT_WA",
     "WA_TEMPLATE_INVOICE_CREATED", "WA_TEMPLATE_PAYMENT_CONFIRMED",
-    "WA_TEMPLATE_AFFILIATE_COMMISSION", "WA_TEMPLATE_SUBSCRIPTION_REMINDER"
+    "WA_TEMPLATE_AFFILIATE_COMMISSION", "WA_TEMPLATE_SUBSCRIPTION_REMINDER",
+    "WA_ENABLE_INVOICE_CREATED", "WA_ENABLE_PAYMENT_CONFIRMED",
+    "WA_ENABLE_AFFILIATE_COMMISSION", "WA_ENABLE_SUBSCRIPTION_REMINDER"
   ]
   const settings = await db.platformSetting.findMany({ where: { key: { in: keys } } })
   const map: Record<string, string> = {}
@@ -48,6 +54,10 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     tplPaymentConfirmed: map.WA_TEMPLATE_PAYMENT_CONFIRMED || "",
     tplAffiliateCommission: map.WA_TEMPLATE_AFFILIATE_COMMISSION || "",
     tplSubscriptionReminder: map.WA_TEMPLATE_SUBSCRIPTION_REMINDER || "",
+    enableInvoiceCreated: map.WA_ENABLE_INVOICE_CREATED !== "false",
+    enablePaymentConfirmed: map.WA_ENABLE_PAYMENT_CONFIRMED !== "false",
+    enableAffiliateCommission: map.WA_ENABLE_AFFILIATE_COMMISSION !== "false",
+    enableSubscriptionReminder: map.WA_ENABLE_SUBSCRIPTION_REMINDER !== "false",
   }
 }
 
@@ -163,7 +173,7 @@ Terima kasih! 🙏`
     })
 
     for (const owner of owners) {
-      if (owner.user.phone) {
+      if (owner.user.phone && cfg.enableInvoiceCreated) {
         sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
       }
       if (owner.user.email) {
@@ -314,7 +324,7 @@ Selamat menggunakan fitur premium ${cfg.platformName}! 🎉`
     })
 
     for (const owner of owners) {
-      if (owner.user.phone) {
+      if (owner.user.phone && cfg.enablePaymentConfirmed) {
         sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
       }
       if (owner.user.email) {
@@ -385,7 +395,7 @@ Terima kasih sudah menjadi mitra ${cfg.platformName}! 🤝`
         </div>
       </div>`
 
-    if (affiliate.user.phone) {
+    if (affiliate.user.phone && cfg.enableAffiliateCommission) {
       await sendWhatsApp(affiliate.user.phone, waMessage).catch(() => {})
     }
     if (affiliate.user.email) {
@@ -513,7 +523,7 @@ Kunjungi: Menu Langganan di Dashboard Admin.`
       })
 
       for (const owner of owners) {
-        if (owner.user.phone) {
+        if (owner.user.phone && cfg.enableSubscriptionReminder) {
           sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
         }
       }
