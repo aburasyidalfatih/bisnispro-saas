@@ -166,13 +166,11 @@ export default function AiSettingsPage() {
                     <span className="text-sm font-semibold">Rp</span>
                     <span className="text-2xl font-bold">{pkg.price.toLocaleString("id-ID")}</span>
                   </div>
-                  <div className="mt-auto">
-                    <p className="text-xs text-blue-600 font-medium bg-blue-500/10 inline-block px-2 py-1 rounded-md mb-1.5">
+                  <div className="mt-auto pt-2">
+                    <div className="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-600 font-semibold px-3 py-1.5 rounded-full text-xs">
+                      <Zap className="h-3.5 w-3.5" />
                       {pkg.tokens.toLocaleString("id-ID")} Token
-                    </p>
-                    <p className="text-[10px] text-muted-foreground leading-tight">
-                      Bisa digunakan untuk menulis <strong className="text-foreground">~{Math.floor(pkg.tokens / 50).toLocaleString("id-ID")}</strong> artikel berita.
-                    </p>
+                    </div>
                   </div>
                 </div>
               ))}
