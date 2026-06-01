@@ -19,6 +19,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "File harus diupload" }, { status: 400 })
     }
 
+    if (file.size > 2 * 1024 * 1024) {
+      return NextResponse.json({ error: "Ukuran file terlalu besar. Maksimal 2 MB." }, { status: 400 })
+    }
+
     const allowedTypes = [
       "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
       "application/pdf",

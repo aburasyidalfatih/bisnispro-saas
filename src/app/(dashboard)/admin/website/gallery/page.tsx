@@ -66,6 +66,10 @@ export default function WebsiteGalleryPage() {
     setUploading(true)
     const uploaded: GalleryItem[] = []
     for (const file of Array.from(files)) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({ title: `File ${file.name} terlalu besar`, description: "Ukuran gambar maksimal adalah 2 MB. Silakan kompres gambar Anda.", variant: "destructive" })
+        continue
+      }
       try {
         const fd = new FormData()
         fd.append("file", file)
@@ -208,7 +212,7 @@ export default function WebsiteGalleryPage() {
                   : <Upload className="h-8 w-8 text-muted-foreground/50" />}
                 <div className="text-center">
                   <p className="text-sm font-medium">{uploading ? "Mengunggah..." : "Klik atau drag foto ke sini"}</p>
-                  <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP, GIF · Maks 5MB per file · Bisa pilih banyak</p>
+                  <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP, GIF · Maks 2MB per file · Bisa pilih banyak</p>
                   <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">Rekomendasi rasio 16:9 atau 4:3 (Landscape)</p>
                 </div>
               </button>

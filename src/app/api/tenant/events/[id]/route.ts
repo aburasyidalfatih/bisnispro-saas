@@ -58,7 +58,13 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   }
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) await invalidatePublicTenantCache(tenant.slug)
+  if (tenant) {
+    await invalidatePublicTenantCache(tenant.slug)
+    try {
+      const { revalidatePath } = await import("next/cache")
+      revalidatePath("/", "layout")
+    } catch (e) {}
+  }
 
   return NextResponse.json({ message: "Acara berhasil diperbarui" })
 }
@@ -92,7 +98,13 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   }
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) await invalidatePublicTenantCache(tenant.slug)
+  if (tenant) {
+    await invalidatePublicTenantCache(tenant.slug)
+    try {
+      const { revalidatePath } = await import("next/cache")
+      revalidatePath("/", "layout")
+    } catch (e) {}
+  }
 
   return NextResponse.json({ message: "Acara berhasil dihapus" })
 }
