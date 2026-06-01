@@ -332,7 +332,7 @@ export default function TenantsPage() {
                     </td>
                     <td className="px-4 py-4 text-center">
                       <span className="text-[11px] font-bold text-foreground">
-                        {(t.aiTokens || 0).toLocaleString("id-ID")}
+                        {((t.aiTokens || 0) + (t.aiAddonTokens || 0)).toLocaleString("id-ID")}
                       </span>
                     </td>
                     <td className="px-4 py-4 text-center">
@@ -473,7 +473,7 @@ export default function TenantsPage() {
                       {t.isActive ? "Aktif" : "Mati"}
                     </span>
                     <span className="text-[10px] font-bold text-purple-600 bg-purple-500/10 px-2 py-0.5 rounded-lg">
-                      🤖 {(t.aiTokens || 0).toLocaleString("id-ID")}
+                      🤖 {((t.aiTokens || 0) + (t.aiAddonTokens || 0)).toLocaleString("id-ID")}
                     </span>
                     <span className="text-[10px] text-muted-foreground">{formatBytes(t.storageUsed || 0)}</span>
                   </div>
