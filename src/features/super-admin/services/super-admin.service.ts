@@ -193,6 +193,23 @@ export async function deleteTenantByAdmin(tenantId: string) {
   await db.tenant.delete({ where: { id: tenantId } })
 
   if (existing?.slug) {
+    // Hapus aplikasi terkait agar NPSN/slug bisa didaftarkan ulang
+    const deletedApps = await db.tenantApplication.findMany({
+      where: { schoolSlug: existing.slug }
+    })
+    
+    for (const app of deletedApps) {
+      await db.tenantApplication.delete({ where: { id: app.id } })
+      // Cek apakah user adminEmail masih punya tenant lain
+      const user = await db.user.findUnique({ where: { email: app.adminEmail } })
+      if (user) {
+        const tenantCount = await db.tenantUser.count({ where: { userId: user.id } })
+        if (tenantCount === 0 && !user.isSuperAdmin) {
+          await db.user.delete({ where: { id: user.id } }).catch(() => {})
+        }
+      }
+    }
+
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(existing.slug)
   }
