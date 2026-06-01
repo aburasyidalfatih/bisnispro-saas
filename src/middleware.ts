@@ -130,6 +130,12 @@ export default async function middleware(request: NextRequest) {
   const isSubdomain = !isMainDomain && subdomain !== "" && subdomain !== "www"
   const isCustomDomain = !isMainDomain && !isSubdomain
 
+  let resolvedCustomSlug: string | null = null;
+  if (isCustomDomain) {
+    resolvedCustomSlug = await resolveCustomDomain(hostname, request.url);
+    if (!resolvedCustomSlug) return addSecurityHeaders(NextResponse.rewrite(new URL("/not-found", request.url)));
+  }
+
   // ============================================================
   // GLOBAL AUTHORIZATION & ROLE ISOLATION
   // ============================================================
@@ -145,7 +151,11 @@ export default async function middleware(request: NextRequest) {
     const impersonateRole = request.cookies.get("impersonate-user-role")?.value
     const isSuperAdmin = session.user?.isSuperAdmin
     const isAffiliate = session.user?.isAffiliate
-    const activeRole = impersonateRole || session.user?.tenants?.[0]?.role
+    
+    // Temukan role berdasarkan tenant yang sedang diakses (untuk mencegah role collision)
+    const currentSlug = isSubdomain ? subdomain : resolvedCustomSlug;
+    const currentTenant = currentSlug ? session.user?.tenants?.find((t: any) => t.slug === currentSlug) : null;
+    const activeRole = impersonateRole || currentTenant?.role || session.user?.tenants?.[0]?.role
 
     if (pathname.startsWith("/admin")) {
       if (!isSuperAdmin && !isAffiliate && activeRole !== "owner" && activeRole !== "admin") {
@@ -287,9 +297,8 @@ export default async function middleware(request: NextRequest) {
   // ============================================================
   // C. CUSTOM DOMAIN
   // ============================================================
-  if (isCustomDomain) {
-    const slug = await resolveCustomDomain(hostname, request.url)
-    if (!slug) return addSecurityHeaders(NextResponse.rewrite(new URL("/not-found", request.url)))
+  if (isCustomDomain && resolvedCustomSlug) {
+    const slug = resolvedCustomSlug;
 
     // Per-Tenant Rate Limiting (Task 3.4)
     const { success: tenantSuccess } = await tenantRateLimit.limit(`rl:tenant:${slug}`)
