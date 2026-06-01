@@ -138,9 +138,8 @@ export default function IDCardPrintPage() {
         @media print {
           body * { visibility: hidden; }
           html, body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .max-w-6xl > div:last-child, .max-w-6xl > div:last-child * { visibility: visible; }
-          .max-w-6xl > div:last-child { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; padding: 0; margin: 0; }
-          .print-container { width: 100%; padding: 0; }
+          .print-container, .print-container * { visibility: visible; }
+          .print-container { position: absolute; left: 0; top: 0; width: 100%; }
           .id-card-wrapper { margin-bottom: 20px; page-break-inside: avoid; }
         }
       `}} />
