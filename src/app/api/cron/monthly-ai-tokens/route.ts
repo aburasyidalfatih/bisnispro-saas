@@ -73,6 +73,9 @@ export async function GET(req: Request) {
 
     for (const tenant of eligibleTenants) {
       try {
+        const plan = tenant.planId ? planMap.get(tenant.planId) : null
+        if (!plan || !plan.monthlyAiTokens) continue
+        
         let newAiTokens = tenant.aiTokens
         let newAiAddonTokens = tenant.aiAddonTokens
         let tokensToAdd = plan.monthlyAiTokens

@@ -127,7 +127,7 @@ export default function BillingPage() {
   const discountAmount = appliedDiscount ? subTotal * (appliedDiscount.percentage / 100) : 0
   const totalCost = subTotal - discountAmount
 
-  const handleValidateDiscount = async () => {
+  const handleValidateDiscount = async (isAuto = false) => {
     if (!discountCodeInput) return
     setValidatingDiscount(true)
     try {
@@ -139,14 +139,30 @@ export default function BillingPage() {
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Kode tidak valid")
       setAppliedDiscount({ code: result.code, percentage: result.percentage, expiresAt: result.expiresAt, bonusMonths: result.bonusMonths })
-      toast({ title: "Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
+      if (!isAuto) {
+        toast({ title: "Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
+      }
     } catch (err: any) {
       setAppliedDiscount(null)
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      if (!isAuto) {
+        toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      }
     } finally {
       setValidatingDiscount(false)
     }
   }
+
+  // Auto-apply discount code
+  useEffect(() => {
+    if (discountCodeInput.length >= 3 && !appliedDiscount) {
+      const handler = setTimeout(() => {
+        handleValidateDiscount(true)
+      }, 800)
+      return () => clearTimeout(handler)
+    } else if (!discountCodeInput && appliedDiscount) {
+      setAppliedDiscount(null)
+    }
+  }, [discountCodeInput])
 
   const handleRemoveDiscount = () => {
     setAppliedDiscount(null)
