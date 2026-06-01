@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MessageSquare, Save, Eye, EyeOff, Smartphone, ShieldCheck, Settings2, CreditCard } from "lucide-react"
+import { MessageSquare, Save, Eye, EyeOff, Smartphone, ShieldCheck, ShieldAlert, Settings2, CreditCard } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
 import type { SettingsForm } from "../constants"
@@ -456,8 +456,6 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
                   </div>
                 </div>
                 <Textarea value={form.WA_TEMPLATE_SUBSCRIPTION_REMINDER} onChange={e => setForm({...form, WA_TEMPLATE_SUBSCRIPTION_REMINDER: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_SUBSCRIPTION_REMINDER !== "true" && form.EMAIL_ENABLE_SUBSCRIPTION_REMINDER !== "true"} />
-              </div>
-            </div>
               </div>
             </div>
           </div>
