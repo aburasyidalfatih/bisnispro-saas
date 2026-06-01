@@ -10,7 +10,7 @@
     },
     {
       "path": "/api/cron/monthly-ai-tokens",
-      "schedule": "0 0 1 * *"
+      "schedule": "0 17 * * *"
     }
   ]
 }

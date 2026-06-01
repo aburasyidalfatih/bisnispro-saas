@@ -8,11 +8,11 @@ export const maxDuration = 300 // 5 minutes timeout for cron job
 /**
  * CRON: Monthly AI Token Distribution
  * 
- * Runs on the 1st of every month at 00:00 UTC.
+ * Runs daily at 17:00 UTC, but only processes on the 1st of the month WIB (UTC+7) at 00:00.
  * Distributes AI token bonus to all active Lite & Pro tenants
  * whose subscription has not expired.
  * 
- * Schedule: 0 0 1 * * (vercel.json)
+ * Schedule: 0 17 * * * (vercel.json)
  */
 export async function GET(req: Request) {
   // Verify Vercel CRON secret
@@ -23,7 +23,15 @@ export async function GET(req: Request) {
 
   try {
     const now = new Date()
-    const monthLabel = now.toLocaleDateString("id-ID", { month: "long", year: "numeric" })
+    // Convert to WIB (UTC+7)
+    const wibTime = new Date(now.getTime() + (7 * 60 * 60 * 1000))
+    
+    // Only run if it is the 1st day of the month in WIB
+    if (wibTime.getDate() !== 1) {
+      return NextResponse.json({ success: true, message: "Not the 1st of the month in WIB" })
+    }
+
+    const monthLabel = wibTime.toLocaleDateString("id-ID", { month: "long", year: "numeric" })
 
     logger.info(`[cron] Monthly AI Token Distribution started for ${monthLabel}`)
 
