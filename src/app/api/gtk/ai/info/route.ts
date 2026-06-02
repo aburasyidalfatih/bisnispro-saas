@@ -5,7 +5,7 @@ import { getPaymentChannels } from "@/features/finance/services/payment.service"
 
 export async function GET(req: Request) {
   const session = await auth()
-  if (!session?.user || session.user.role !== "TEACHER") {
+  if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
