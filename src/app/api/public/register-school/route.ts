@@ -3,6 +3,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { sendApplicationNotification, sendNewApplicationAlerts } from "@/features/tenant/services/application.service"
+import { checkWhatsAppNumber } from "@/features/notification/services/notification.service"
 import { parseBody } from "@/lib/api-utils"
 
 const registerSchoolSchema = z.object({
@@ -41,6 +42,14 @@ export async function POST(req: Request) {
       province, regency, adminName, adminEmail, adminPhone, adminPosition, address, logo, studentCount, referralCode,
       utmSource, utmMedium, utmCampaign, utmContent, utmTerm
     } = parsed.data
+
+    // Validasi Nomor WhatsApp Admin
+    const waCheck = await checkWhatsAppNumber(adminPhone)
+    if (!waCheck.isValid) {
+      return NextResponse.json({ 
+        error: "Nomor telepon Admin tidak valid atau tidak terdaftar di WhatsApp. Pastikan menggunakan nomor Indonesia (awalan 08/628)." 
+      }, { status: 400 })
+    }
 
     // Cek ketersediaan slug/subdomain di tabel Tenant utama
     const existingTenant = await db.tenant.findUnique({ where: { slug: schoolSlug } })
@@ -103,7 +112,7 @@ export async function POST(req: Request) {
         regency,
         adminName,
         adminEmail,
-        adminPhone,
+        adminPhone: waCheck.formatted || adminPhone,
         adminPosition,
         address,
         logo,

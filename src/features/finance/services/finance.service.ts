@@ -138,7 +138,9 @@ export class FinanceService {
             amount: invoice.amountDue.toLocaleString('id-ID'),
             dueDate: format(new Date(invoice.dueDate), "d MMMM yyyy", { locale: localeId }),
             schoolName: tenant?.name || "Sekolah",
-            invoiceTitle: invoice.title
+            invoiceTitle: invoice.title,
+            pdfUrl: `${process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'https://schoolpro.id'}/api/public/invoice/${invoice.id}/pdf?type=student&tenantId=${invoice.tenantId}`
+
           },
           targetUserId: parent.userId
         })

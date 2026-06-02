@@ -242,7 +242,14 @@ Terima kasih! 🙏`
           "8": cfg.bankAccountName,
           "9": cfg.adminWA
         }
-        sendWhatsApp(owner.user.phone, waMessage, undefined, { name: cfg.wavioTplInvoiceCreated, variables: wavioVars }).catch(() => {})
+        const pdfUrl = `${cfg.rootDomain}/api/public/invoice/${paymentId}/pdf?type=tenant`
+        const finalWaMessage = `${waMessage}\n\n📄 Unduh Invoice PDF:\n${pdfUrl}`
+
+        sendWhatsApp(owner.user.phone, finalWaMessage, undefined, { 
+          name: cfg.wavioTplInvoiceCreated, 
+          variables: wavioVars,
+          buttonVariables: [`api/public/invoice/${paymentId}/pdf?type=tenant`] 
+        }).catch(() => {})
       }
       if (owner.user.email && cfg.emailEnableInvoiceCreated) {
         sendEmail(owner.user.email, `Invoice ${type} - ${payment.reference}`, emailHtml).catch(() => {})

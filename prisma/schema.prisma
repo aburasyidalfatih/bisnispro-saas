@@ -1127,6 +1127,22 @@ model WaMessage {
   @@map("wa_messages")
 }
 
+model WavioMessageLog {
+  id        String   @id @default(cuid())
+  messageId String?  @unique
+  tenantId  String?
+  phone     String
+  status    String   @default("PENDING") // PENDING, SENT, DELIVERED, READ, FAILED
+  errorMsg  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([messageId])
+  @@index([tenantId])
+  @@index([status])
+  @@map("wavio_message_logs")
+}
+
 model WalletAccount {
   id           String              @id @default(cuid())
   tenantId     String

@@ -164,6 +164,7 @@ export interface TemplateData {
   name: string
   language?: string
   variables?: Record<string, string>
+  buttonVariables?: string[]
 }
 
 /**
@@ -173,10 +174,28 @@ export interface TemplateData {
 export async function sendWhatsApp(
   phone: string,
   message: string,
-  tenantId?: string,
+  tenantId?: string | null,
   templateData?: TemplateData
 ): Promise<{ success: boolean; error?: string }> {
   return enqueueWhatsApp(phone, message, tenantId, templateData);
+}
+
+/**
+ * Memvalidasi apakah nomor telepon aktif dan terdaftar di WhatsApp (Mock WABA Contact Validator).
+ * Saat ini melakukan validasi format Indonesia, ke depannya dapat dihubungkan ke endpoint API Meta/Wavio.
+ */
+export async function checkWhatsAppNumber(phone: string): Promise<{ isValid: boolean; formatted?: string }> {
+  // Membersihkan karakter selain angka
+  let p = phone.replace(/\D/g, "");
+  // Format menjadi standar 62...
+  if (p.startsWith("0")) p = "62" + p.substring(1);
+  if (p.startsWith("8")) p = "62" + p;
+  
+  // Asumsi hanya untuk nomor Indonesia untuk saat ini
+  if (!p.startsWith("628")) return { isValid: false };
+  if (p.length < 10 || p.length > 15) return { isValid: false };
+
+  return { isValid: true, formatted: p };
 }
 
 /**
@@ -259,18 +278,34 @@ export async function sendWhatsAppDirect(
             if (templateData && templateData.name) {
               wavioUrl = `https://api.wavio.web.id/api/v1/public/messages/send-template`
               
-              // Wavio expects components for variables?
-              // The API docs say components: array
               const components = []
-              if (templateData.variables && Object.keys(templateData.variables).length > 0) {
-                 const parameters = Object.keys(templateData.variables).map(key => ({
-                    type: "text",
-                    text: templateData.variables![key]
-                 }))
-                 components.push({
-                   type: "body",
-                   parameters
-                 })
+              if (templateData.variables) {
+                const varValues = Object.values(templateData.variables)
+                if (varValues.length > 0) {
+                  components.push({
+                    type: "body",
+                    parameters: varValues.map((val) => ({
+                      type: "text",
+                      text: val,
+                    })),
+                  })
+                }
+              }
+
+              if (templateData.buttonVariables && templateData.buttonVariables.length > 0) {
+                templateData.buttonVariables.forEach((val, index) => {
+                  components.push({
+                    type: "button",
+                    sub_type: "url",
+                    index: index.toString(),
+                    parameters: [
+                      {
+                        type: "text",
+                        text: val,
+                      },
+                    ],
+                  })
+                })
               }
 
               requestBody = {
@@ -296,6 +331,20 @@ export async function sendWhatsAppDirect(
               logger.error("Wavio send failed", { phone, status: res.status, body: result })
               return { success: false, error: `Wavio API error: ${result.message || res.status}` }
             }
+
+            // Simpan log pesan Wavio untuk update dari webhook
+            const messageId = result.data?.message_id || result.data?.id || result.message_id || result.id || null
+            if (messageId) {
+               await (db as any).wavioMessageLog.create({
+                  data: {
+                     messageId: String(messageId),
+                     tenantId,
+                     phone: toPhone,
+                     status: "SENT"
+                  }
+               }).catch((e: any) => logger.error("Failed to save WavioMessageLog", e))
+            }
+
             return { success: true }
           } catch (err: any) {
             logger.error("Wavio WA exception", err, { phone })
@@ -523,6 +572,16 @@ export async function processTemplateNotification({
     message = message.replace(regex, value)
   }
 
+  // Khusus penanganan PDF link agar tidak merusak urutan/jumlah variabel Meta Template
+  let buttonVariables: string[] | undefined
+  const wavioVars = { ...variables }
+  
+  if (wavioVars.pdfUrl) {
+    message += `\n\n📄 Unduh Invoice PDF:\n${wavioVars.pdfUrl}`
+    buttonVariables = [wavioVars.pdfUrl.split('/').slice(3).join('/')] // Ambil relative path e.g. 'api/public/...'
+    delete wavioVars.pdfUrl
+  }
+
   await sendNotification({
     tenantId,
     userId: targetUserId,
@@ -532,7 +591,8 @@ export async function processTemplateNotification({
     channels,
     waTemplateData: {
       name: settings[`WAVIO_TEMPLATE_${templateId}`] || templateId,
-      variables // we pass raw variables, Wavio/Meta will receive them in Object.keys order
+      variables: wavioVars, // Variabel sisa yang sudah dibersihkan
+      buttonVariables
     }
   })
 }
@@ -550,4 +610,9 @@ export async function sendTemplateNotification(payload: {
   } catch (err: any) {
     logger.error("sendTemplateNotification failed", err)
   }
+}
+
+export async function createNotification(data: { userId: string, title: string, message: string, type?: string }) {
+  // Stub for creating system notification
+  logger.info("createNotification stub called", data)
 }
