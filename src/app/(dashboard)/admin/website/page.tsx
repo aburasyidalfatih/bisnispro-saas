@@ -9,7 +9,7 @@ import {
   Briefcase, Info, LayoutTemplate, ArrowRight, Eye, Trophy,
   CheckCircle, AlertCircle, ShieldCheck, ShieldOff, Download,
   Building2, Award, GraduationCap, Activity, Megaphone, BookOpen,
-  BarChart3, MessageSquare, SlidersHorizontal, Handshake, CalendarDays
+  BarChart3, MessageSquare, SlidersHorizontal, Handshake, CalendarDays, Sparkles
 } from "lucide-react"
 import { cn, getRootDomain } from "@/lib/utils"
 import Link from "next/link"
