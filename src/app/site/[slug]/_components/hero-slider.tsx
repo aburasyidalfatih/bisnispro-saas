@@ -291,8 +291,8 @@ export function HeroSlider({ slides }: HeroSliderProps) {
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes kenburns {
-          from { transform: scale(1.04) translate(0, 0); }
-          to   { transform: scale(1.10) translate(-1%, -1%); }
+          from { transform: scale(1.04) translate3d(0, 0, 0); }
+          to   { transform: scale(1.10) translate3d(-1%, -1%, 0); }
         }
       `}</style>
     </section>
@@ -313,7 +313,11 @@ function SlideBackground({ slide, isPriority }: { slide: Slide, isPriority?: boo
           sizes="100vw"
           quality={75}
           className="object-cover object-center"
-          style={{ animation: "kenburns 20s ease-in-out infinite alternate" }}
+          style={{ 
+            animation: "kenburns 20s ease-in-out infinite alternate",
+            willChange: "transform",
+            backfaceVisibility: "hidden"
+          }}
         />
       ) : (
         <div

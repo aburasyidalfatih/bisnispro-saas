@@ -10,22 +10,24 @@ interface FloatingWhatsAppProps {
 
 export function FloatingWhatsApp({ whatsappNumber, message = "Halo, saya ingin bertanya tentang pendaftaran." }: FloatingWhatsAppProps) {
   const [isVisible, setIsVisible] = useState(false)
+  const [hasScrolled, setHasScrolled] = useState(false)
 
   // Munculkan widget setelah di-scroll sedikit untuk tidak menutupi hero
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 300) {
         setIsVisible(true)
+        setHasScrolled(true)
       } else {
         setIsVisible(false)
       }
     }
     
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  if (!whatsappNumber) return null
+  if (!whatsappNumber || !hasScrolled) return null
 
   // Format the number to only include digits, ensuring country code +62 instead of leading 0
   let formattedNumber = whatsappNumber.replace(/\D/g, '')

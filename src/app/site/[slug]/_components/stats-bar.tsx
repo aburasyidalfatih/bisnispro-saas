@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import { useInView, useMotionValue, useSpring } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
 
 interface Stat { value: string; label: string; icon: string }
 
@@ -13,34 +12,51 @@ function AnimatedCounter({ value }: { value: string }) {
   const numValue = numericMatch ? parseInt(numericMatch[0], 10) : 0
   const suffix = value.replace(/\d/g, "")
   
-  const inView = useInView(ref, { once: true, margin: "-50px" })
-  const motionValue = useMotionValue(0)
-  const springValue = useSpring(motionValue, {
-    damping: 50,
-    stiffness: 100,
-    duration: 2000, // 2 seconds
-  })
-  
-  useEffect(() => {
-    if (inView && numValue > 0) {
-      motionValue.set(numValue)
-    }
-  }, [motionValue, inView, numValue])
-  
-  useEffect(() => {
-    if (numValue === 0) return
-    return springValue.on("change", (latest) => {
-      if (ref.current) {
-        ref.current.textContent = Intl.NumberFormat("id-ID").format(Math.floor(latest)) + suffix
-      }
-    })
-  }, [springValue, numValue, suffix])
+  const [displayValue, setDisplayValue] = useState(numValue === 0 ? value : `0${suffix}`)
 
-  if (numValue === 0) {
-    return <span>{value}</span>
-  }
+  useEffect(() => {
+    if (numValue === 0 || !ref.current) return
 
-  return <span ref={ref}>0{suffix}</span>
+    const element = ref.current
+    let hasAnimated = false
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasAnimated) {
+          hasAnimated = true
+          let startTimestamp: number | null = null
+          const duration = 2000 // 2 seconds
+
+          const step = (timestamp: number) => {
+            if (!startTimestamp) startTimestamp = timestamp
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1)
+            
+            // Ease-out cubic function for smooth deceleration
+            const easeOutProgress = 1 - Math.pow(1 - progress, 3)
+            const currentCount = Math.floor(easeOutProgress * numValue)
+            
+            setDisplayValue(`${Intl.NumberFormat("id-ID").format(currentCount)}${suffix}`)
+
+            if (progress < 1) {
+              window.requestAnimationFrame(step)
+            } else {
+              setDisplayValue(`${Intl.NumberFormat("id-ID").format(numValue)}${suffix}`)
+            }
+          }
+
+          window.requestAnimationFrame(step)
+          observer.unobserve(element)
+        }
+      },
+      { threshold: 0.1, rootMargin: "-50px" }
+    )
+
+    observer.observe(element)
+
+    return () => observer.disconnect()
+  }, [numValue, suffix])
+
+  return <span ref={ref}>{displayValue}</span>
 }
 
 export function StatsBar({ stats }: { stats: Stat[] }) {
