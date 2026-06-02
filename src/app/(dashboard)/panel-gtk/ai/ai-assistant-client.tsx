@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Bot, Send, User, Coins, CreditCard, Sparkles, CheckCircle2, History } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import { GtkAiUsageHistory } from "./_components/gtk-ai-usage-history"
 
 export default function AiAssistantClient({ 
   userTokens, 
@@ -175,9 +176,10 @@ export default function AiAssistantClient({
       <div className="lg:col-span-3">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="flex items-center justify-between mb-4">
-             <TabsList>
+              <TabsList>
                <TabsTrigger value="chat" className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Asisten AI</TabsTrigger>
                <TabsTrigger value="topup" className="flex items-center gap-2"><CreditCard className="h-4 w-4" /> Top-Up Token</TabsTrigger>
+               <TabsTrigger value="history" className="flex items-center gap-2"><History className="h-4 w-4" /> Histori Potongan</TabsTrigger>
              </TabsList>
           </div>
 
@@ -367,9 +369,13 @@ export default function AiAssistantClient({
                          {isLoadingTopup ? "Memproses..." : "Bayar Sekarang"}
                       </Button>
                    </CardFooter>
-                </Card>
-             </div>
-          </TabsContent>
+                 </Card>
+              </div>
+           </TabsContent>
+
+           <TabsContent value="history" className="m-0">
+             <GtkAiUsageHistory />
+           </TabsContent>
         </Tabs>
       </div>
     </div>
