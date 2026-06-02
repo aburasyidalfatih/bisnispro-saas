@@ -199,10 +199,15 @@ export async function sendNewApplicationAlerts(
 
   const waEnabledSuperAdmin = settings.WA_ENABLE_ALERT_SUPERADMIN !== "false";
   const emailEnabledSuperAdmin = settings.EMAIL_ENABLE_ALERT_SUPERADMIN !== "false";
+  const wavioTplSuperadmin = settings.WAVIO_TEMPLATE_ALERT_SUPERADMIN || "superadmin_alert_new_school"
+  const wavioVarsSuperadmin = {
+    "1": app.schoolName,
+    "2": app.adminPhone
+  }
 
   for (const admin of superAdmins) {
     if (admin.phone && waEnabledSuperAdmin) {
-      await sendWhatsApp(admin.phone, adminMsg)
+      await sendWhatsApp(admin.phone, adminMsg, undefined, { name: wavioTplSuperadmin, variables: wavioVarsSuperadmin })
     } else if (admin.phone && !waEnabledSuperAdmin) {
       logger.info("Super Admin WA alert skipped via settings")
     } else {
@@ -248,8 +253,15 @@ export async function sendNewApplicationAlerts(
     const waEnabledAffiliate = settings.WA_ENABLE_ALERT_AFFILIATE !== "false";
     const emailEnabledAffiliate = settings.EMAIL_ENABLE_ALERT_AFFILIATE !== "false";
 
+    const wavioTplAffiliate = settings.WAVIO_TEMPLATE_ALERT_AFFILIATE || "affiliate_alert_new_lead"
+    const wavioVarsAffiliate = {
+      "1": affiliate.user.name || "Mitra",
+      "2": app.schoolName,
+      "3": affiliate.referralCode
+    }
+
     if (affiliate.user.phone && waEnabledAffiliate) {
-      await sendWhatsApp(affiliate.user.phone, affiliateMsg)
+      await sendWhatsApp(affiliate.user.phone, affiliateMsg, undefined, { name: wavioTplAffiliate, variables: wavioVarsAffiliate })
     } else if (affiliate.user.phone && !waEnabledAffiliate) {
       logger.info("Affiliate WA alert skipped via settings")
     } else {

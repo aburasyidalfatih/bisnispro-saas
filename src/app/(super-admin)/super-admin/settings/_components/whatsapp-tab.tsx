@@ -552,12 +552,36 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
                 ))}
               </datalist>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2"><Label className="text-emerald-600 font-bold">1. Pendaftaran Diterima (PENDING)</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_PENDING} onChange={e => setForm({...form, WAVIO_TEMPLATE_PENDING: e.target.value})} placeholder="school_registration_pending" className="rounded-xl" /></div>
-                <div className="space-y-2"><Label className="text-blue-600 font-bold">2. Pendaftaran Disetujui (APPROVED)</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_APPROVED} onChange={e => setForm({...form, WAVIO_TEMPLATE_APPROVED: e.target.value})} placeholder="school_registration_approved" className="rounded-xl" /></div>
-                <div className="space-y-2"><Label className="text-amber-600 font-bold">3. Revisi Data (REVISION)</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_REVISION} onChange={e => setForm({...form, WAVIO_TEMPLATE_REVISION: e.target.value})} placeholder="school_registration_revision" className="rounded-xl" /></div>
-                <div className="space-y-2"><Label className="text-red-600 font-bold">4. Pendaftaran Ditolak (REJECTED)</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_REJECTED} onChange={e => setForm({...form, WAVIO_TEMPLATE_REJECTED: e.target.value})} placeholder="school_registration_rejected" className="rounded-xl" /></div>
-                <div className="space-y-2"><Label className="text-purple-600 font-bold">5. Alert ke Super Admin</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_new_school" className="rounded-xl" /></div>
-                <div className="space-y-2"><Label className="text-orange-600 font-bold">6. Alert ke Marketer (Afiliasi)</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_ALERT_AFFILIATE} onChange={e => setForm({...form, WAVIO_TEMPLATE_ALERT_AFFILIATE: e.target.value})} placeholder="affiliate_alert_new_lead" className="rounded-xl" /></div>
+                <div className="space-y-2">
+                  <Label className="text-emerald-600 font-bold">1. Pendaftaran Diterima (PENDING)</Label>
+                  <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_PENDING} onChange={e => setForm({...form, WAVIO_TEMPLATE_PENDING: e.target.value})} placeholder="school_registration_pending" className="rounded-xl" />
+                  <WavioTemplateHelper text={`Halo {{1}},\n\nSelamat! Formulir pendaftaran sekolah {{2}} telah kami terima dan saat ini sudah masuk ke dalam antrean peninjauan tim kami.\n\nKami akan segera menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih.`} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-blue-600 font-bold">2. Pendaftaran Disetujui (APPROVED)</Label>
+                  <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_APPROVED} onChange={e => setForm({...form, WAVIO_TEMPLATE_APPROVED: e.target.value})} placeholder="school_registration_approved" className="rounded-xl" />
+                  <WavioTemplateHelper text={`Halo {{1}},\n\nPendaftaran sekolah {{2}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan kredensial berikut:\n\nURL Login: {{3}}\nEmail: {{4}}\nPassword Sementara: {{5}}\n\n⚠️ PENTING: Harap segera mengganti password Anda setelah berhasil login pertama kali demi keamanan akun Anda.\n\nTerima kasih.`} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-amber-600 font-bold">3. Revisi Data (REVISION)</Label>
+                  <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_REVISION} onChange={e => setForm({...form, WAVIO_TEMPLATE_REVISION: e.target.value})} placeholder="school_registration_revision" className="rounded-xl" />
+                  <WavioTemplateHelper text={`Halo {{1}},\n\nTerima kasih telah mendaftar. Namun, ada beberapa data yang perlu diperbaiki:\n\n"{{2}}"\n\nSilakan klik tautan berikut untuk melengkapi data: {{3}}`} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-red-600 font-bold">4. Pendaftaran Ditolak (REJECTED)</Label>
+                  <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_REJECTED} onChange={e => setForm({...form, WAVIO_TEMPLATE_REJECTED: e.target.value})} placeholder="school_registration_rejected" className="rounded-xl" />
+                  <WavioTemplateHelper text={`Halo {{1}},\n\nMohon maaf, pendaftaran sekolah {{2}} belum dapat kami setujui saat ini.\n\nAlasan: {{3}}\n\nTerima kasih atas minat Anda.`} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-purple-600 font-bold">5. Alert ke Super Admin</Label>
+                  <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_new_school" className="rounded-xl" />
+                  <WavioTemplateHelper text={`*PENDAFTARAN SEKOLAH BARU*\n\nSekolah: {{1}}\nWA Pendaftar: {{2}}\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-orange-600 font-bold">6. Alert ke Marketer (Afiliasi)</Label>
+                  <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_ALERT_AFFILIATE} onChange={e => setForm({...form, WAVIO_TEMPLATE_ALERT_AFFILIATE: e.target.value})} placeholder="affiliate_alert_new_lead" className="rounded-xl" />
+                  <WavioTemplateHelper text={`Halo {{1}},\n\nAda pendaftaran sekolah baru ({{2}}) menggunakan kode referral Anda ({{3}}).\n\nPantau statusnya melalui Dashboard Afiliasi Anda. Terus semangat!`} />
+                </div>
               </div>
               
               <div className="border-t pt-6 mt-6">
@@ -566,10 +590,26 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
                   <h4 className="font-bold text-base">Template Notifikasi Billing (WABA)</h4>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2"><Label className="text-indigo-600 font-bold">7. Invoice Dibuat → Tenant</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_INVOICE_CREATED} onChange={e => setForm({...form, WAVIO_TEMPLATE_INVOICE_CREATED: e.target.value})} placeholder="billing_invoice_created" className="rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-green-600 font-bold">8. Pembayaran Dikonfirmasi → Tenant</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_PAYMENT_CONFIRMED} onChange={e => setForm({...form, WAVIO_TEMPLATE_PAYMENT_CONFIRMED: e.target.value})} placeholder="billing_payment_confirmed" className="rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-amber-600 font-bold">9. Komisi Masuk → Afiliasi</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_AFFILIATE_COMMISSION} onChange={e => setForm({...form, WAVIO_TEMPLATE_AFFILIATE_COMMISSION: e.target.value})} placeholder="billing_affiliate_commission" className="rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-red-600 font-bold">10. Pengingat Langganan → Tenant</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER} onChange={e => setForm({...form, WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER: e.target.value})} placeholder="billing_subscription_reminder" className="rounded-xl" /></div>
+                  <div className="space-y-2">
+                    <Label className="text-indigo-600 font-bold">7. Invoice Dibuat → Tenant</Label>
+                    <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_INVOICE_CREATED} onChange={e => setForm({...form, WAVIO_TEMPLATE_INVOICE_CREATED: e.target.value})} placeholder="billing_invoice_created" className="rounded-xl" />
+                    <WavioTemplateHelper text={`Halo Admin {{1}},\n\nTagihan baru untuk layanan SchoolPro telah diterbitkan.\nNomor Invoice: {{2}}\nLayanan: {{3}}\nJumlah Tagihan: *{{4}}*\nBatas Pembayaran: {{5}}\n\nSilakan lakukan transfer ke rekening berikut:\nBank: {{6}}\nNo Rekening: {{7}}\nAtas Nama: {{8}}\n\nHubungi kami di {{9}} jika butuh bantuan.`} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-green-600 font-bold">8. Pembayaran Dikonfirmasi → Tenant</Label>
+                    <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_PAYMENT_CONFIRMED} onChange={e => setForm({...form, WAVIO_TEMPLATE_PAYMENT_CONFIRMED: e.target.value})} placeholder="billing_payment_confirmed" className="rounded-xl" />
+                    <WavioTemplateHelper text={`Halo Admin {{1}},\n\nTerima kasih. Pembayaran Anda untuk Tagihan {{2}} (Layanan: {{3}}) senilai *{{4}}* telah berhasil kami konfirmasi.\n\nLimit Kuota Siswa: {{5}}\nMasa Aktif Hingga: {{6}}\n\nTerima kasih telah mempercayakan sistem manajemen sekolah Anda pada SchoolPro.`} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-amber-600 font-bold">9. Komisi Masuk → Afiliasi</Label>
+                    <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_AFFILIATE_COMMISSION} onChange={e => setForm({...form, WAVIO_TEMPLATE_AFFILIATE_COMMISSION: e.target.value})} placeholder="billing_affiliate_commission" className="rounded-xl" />
+                    <WavioTemplateHelper text={`Halo {{1}},\n\nKabar baik! Anda baru saja mendapatkan komisi sebesar *{{2}}* dari pembayaran sekolah {{3}}.\n\nTotal Saldo Aktif Anda saat ini adalah: {{4}}\n\nTingkatkan terus pendaftaran sekolah melalui tautan referral Anda!`} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-red-600 font-bold">10. Pengingat Langganan → Tenant</Label>
+                    <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER} onChange={e => setForm({...form, WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER: e.target.value})} placeholder="billing_subscription_reminder" className="rounded-xl" />
+                    <WavioTemplateHelper text={`Halo Admin {{1}},\n\n⚠️ PENGINGAT LAYANAN\n\nLayanan SchoolPro Anda akan segera berakhir pada {{2}} ({{3}} hari lagi).\nHarap segera melunasi / memperpanjang paket agar akses sistem sekolah Anda tetap berjalan dengan lancar.`} />
+                  </div>
                 </div>
               </div>
 
@@ -579,9 +619,21 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
                   <h4 className="font-bold text-base">Alert Super Admin (Sistem & Finansial WABA)</h4>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2"><Label className="text-emerald-600 font-bold">11. Pembayaran Berhasil</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_payment_success" className="rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-orange-600 font-bold">12. Permintaan Penarikan Dana</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_withdrawal_request" className="rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="text-rose-600 font-bold">13. Invoice Kedaluwarsa</Label><Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_invoice_expired" className="rounded-xl" /></div>
+                  <div className="space-y-2">
+                    <Label className="text-emerald-600 font-bold">11. Pembayaran Berhasil</Label>
+                    <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_payment_success" className="rounded-xl" />
+                    <WavioTemplateHelper text={`*PEMBAYARAN BERHASIL ({{1}})*\n\nTenant: {{2}}\nNo Invoice: {{3}}\nNominal: {{4}}\n\nPembayaran langganan ini telah disahkan oleh sistem secara otomatis.`} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-orange-600 font-bold">12. Permintaan Penarikan Dana</Label>
+                    <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_withdrawal_request" className="rounded-xl" />
+                    <WavioTemplateHelper text={`*PERMINTAAN PENARIKAN DANA AFILIASI*\n\nNama Afiliasi: {{1}}\nNominal Ditarik: {{2}}\nTujuan Transfer: {{3}} ({{4}} - a/n {{5}})\n\nSilakan proses transfer melalui Panel Finansial Super Admin.`} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-rose-600 font-bold">13. Invoice Kedaluwarsa</Label>
+                    <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_invoice_expired" className="rounded-xl" />
+                    <WavioTemplateHelper text={`*INVOICE KEDALUWARSA (EXPIRED)*\n\nInvoice {{1}} milik tenant {{2}} senilai {{3}} telah melewati batas waktu dan dibatalkan otomatis oleh sistem.`} />
+                  </div>
                 </div>
               </div>
             </TabsContent>
@@ -615,5 +667,20 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+function WavioTemplateHelper({ text }: { text: string }) {
+  return (
+    <details className="text-xs text-muted-foreground mt-1 cursor-pointer group">
+      <summary className="font-medium hover:text-primary list-none flex items-center gap-1">
+        <span className="text-primary group-open:hidden">▶</span>
+        <span className="text-primary hidden group-open:inline">▼</span>
+        Lihat teks untuk di-copy ke Wavio
+      </summary>
+      <div className="mt-2 p-3 bg-muted/50 border rounded-lg whitespace-pre-wrap font-mono text-[11px] select-all text-foreground leading-relaxed cursor-text">
+        {text}
+      </div>
+    </details>
   )
 }
