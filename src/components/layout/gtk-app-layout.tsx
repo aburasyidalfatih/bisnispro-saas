@@ -65,7 +65,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </Link>
 
-            <nav className="flex items-center gap-1">
+            <nav className="flex items-center gap-1 overflow-x-auto scrollbar-hide max-w-[calc(100vw-300px)] lg:max-w-[50vw] xl:max-w-none">
               {navItems.map((item) => {
                 const isActive = pathname === item.href || (item.href !== "/panel-gtk" && pathname.startsWith(item.href))
                 return (
@@ -73,7 +73,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-colors",
+                      "flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-colors",
                       isActive 
                         ? "bg-primary/10 text-primary" 
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
