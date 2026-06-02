@@ -265,60 +265,56 @@ export default function WebsiteAboutPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="identity" className="flex flex-col md:flex-row gap-6 mt-6">
-        <div className="w-full md:w-64 shrink-0">
-          <div className="bg-white/50 dark:bg-slate-900/50 p-2 rounded-2xl border backdrop-blur-sm md:sticky md:top-24">
-            <TabsList className="bg-transparent border-0 h-auto flex flex-row md:flex-col overflow-x-auto w-full justify-start no-scrollbar gap-1">
-              <TabsTrigger value="identity" className="w-full justify-start rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap text-left text-sm font-medium">Identitas & Logo</TabsTrigger>
-              <TabsTrigger value="contact" className="w-full justify-start rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap text-left text-sm font-medium">Kontak & Lokasi</TabsTrigger>
-              <TabsTrigger value="social" className="w-full justify-start rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap text-left text-sm font-medium">Media Sosial</TabsTrigger>
-              <TabsTrigger value="about" className="w-full justify-start rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap text-left text-sm font-medium">Detail Profil & Visi Misi</TabsTrigger>
-              <TabsTrigger value="principal" className="w-full justify-start rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap text-left text-sm font-medium">Sambutan Utama</TabsTrigger>
-              <TabsTrigger value="labels" className="w-full justify-start rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap text-left text-sm font-medium">Teks & Label</TabsTrigger>
-              <TabsTrigger value="seo" className="w-full justify-start rounded-xl px-4 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap text-left text-sm font-medium">SEO & Meta</TabsTrigger>
-            </TabsList>
-          </div>
+      <Tabs defaultValue="identity" className="space-y-6">
+        <div className="flex justify-between items-center bg-white/50 p-1 rounded-2xl border backdrop-blur-sm sticky top-0 z-10">
+          <TabsList className="bg-transparent border-0 h-11 flex overflow-x-auto w-full justify-start no-scrollbar">
+            <TabsTrigger value="identity" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Identitas & Logo</TabsTrigger>
+            <TabsTrigger value="contact" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kontak & Lokasi</TabsTrigger>
+            <TabsTrigger value="social" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Media Sosial</TabsTrigger>
+            <TabsTrigger value="about" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Detail Profil & Visi Misi</TabsTrigger>
+            <TabsTrigger value="principal" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Sambutan Utama</TabsTrigger>
+            <TabsTrigger value="labels" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Teks & Label</TabsTrigger>
+            <TabsTrigger value="seo" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">SEO & Meta</TabsTrigger>
+          </TabsList>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <TabsContent value="identity" className="mt-0 outline-none">
-            <IdentityForm
-              form={form} setForm={setForm}
-              logoPreview={logoPreview} uploadingLogo={uploadingLogo} handleLogoUpload={handleLogoUpload}
-              domainStatus={domainStatus} slug={slug} router={router}
-            />
-          </TabsContent>
+        <TabsContent value="identity" className="outline-none">
+          <IdentityForm
+            form={form} setForm={setForm}
+            logoPreview={logoPreview} uploadingLogo={uploadingLogo} handleLogoUpload={handleLogoUpload}
+            domainStatus={domainStatus} slug={slug} router={router}
+          />
+        </TabsContent>
 
-          <TabsContent value="contact" className="mt-0 outline-none">
-            <ContactForm form={form} setForm={setForm} />
-          </TabsContent>
+        <TabsContent value="contact" className="outline-none">
+          <ContactForm form={form} setForm={setForm} />
+        </TabsContent>
 
-          <TabsContent value="social" className="mt-0 outline-none">
-            <SocialMediaForm form={form} setForm={setForm} />
-          </TabsContent>
+        <TabsContent value="social" className="outline-none">
+          <SocialMediaForm form={form} setForm={setForm} />
+        </TabsContent>
 
-          <TabsContent value="about" className="mt-0 outline-none">
-            <AboutDetailsForm
-              form={form} setForm={setForm} staffList={staffList}
-              openAiModal={openAiModal}
-            />
-          </TabsContent>
+        <TabsContent value="about" className="outline-none">
+          <AboutDetailsForm
+            form={form} setForm={setForm} staffList={staffList}
+            openAiModal={openAiModal}
+          />
+        </TabsContent>
 
-          <TabsContent value="principal" className="mt-0 outline-none">
-            <PrincipalSpeechForm
-              form={form} setForm={setForm} staffList={staffList}
-              handlePrincipalImageUpload={handlePrincipalImageUpload} openAiModal={openAiModal}
-            />
-          </TabsContent>
+        <TabsContent value="principal" className="outline-none">
+          <PrincipalSpeechForm
+            form={form} setForm={setForm} staffList={staffList}
+            handlePrincipalImageUpload={handlePrincipalImageUpload} openAiModal={openAiModal}
+          />
+        </TabsContent>
 
-          <TabsContent value="labels" className="mt-0 outline-none">
-            <LabelsForm form={form} setForm={setForm} />
-          </TabsContent>
+        <TabsContent value="labels" className="outline-none">
+          <LabelsForm form={form} setForm={setForm} />
+        </TabsContent>
 
-          <TabsContent value="seo" className="mt-0 outline-none">
-            <SeoForm form={form} setForm={setForm} />
-          </TabsContent>
-        </div>
+        <TabsContent value="seo" className="outline-none">
+          <SeoForm form={form} setForm={setForm} />
+        </TabsContent>
       </Tabs>
 
       <AiContentModal

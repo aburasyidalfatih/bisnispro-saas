@@ -64,7 +64,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.hero?.cta1 || ""} 
                    onChange={e => updateLabel("hero", "cta1", e.target.value)}
-                   placeholder="Contoh: Hubungi Kami" 
+                   placeholder="Hubungi Kami" 
                    className="rounded-xl h-9" 
                  />
                  <p className="text-[10px] text-muted-foreground">Default: "Hubungi Kami"</p>
@@ -74,7 +74,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.hero?.cta2 || ""} 
                    onChange={e => updateLabel("hero", "cta2", e.target.value)}
-                   placeholder="Contoh: Tentang Kami" 
+                   placeholder="Tentang Kami" 
                    className="rounded-xl h-9" 
                  />
                  <p className="text-[10px] text-muted-foreground">Default: "Tentang Kami"</p>
@@ -89,7 +89,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.programs?.sectionTitle || ""} 
                    onChange={e => updateLabel("programs", "sectionTitle", e.target.value)}
-                   placeholder="Contoh: Program Keahlian Kami" 
+                   placeholder="Program Keahlian Kami" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -98,7 +98,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.programs?.buttonText || ""} 
                    onChange={e => updateLabel("programs", "buttonText", e.target.value)}
-                   placeholder="Contoh: Lihat Semua Program" 
+                   placeholder="Lihat Semua" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -108,7 +108,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <Input 
                  value={labels?.programs?.sectionSubtitle || ""} 
                  onChange={e => updateLabel("programs", "sectionSubtitle", e.target.value)}
-                 placeholder="Contoh: Berbagai program keahlian yang dirancang..." 
+                 placeholder="Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja." 
                  className="rounded-xl h-9" 
                />
              </div>
@@ -121,7 +121,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.staff?.sectionTitle || ""} 
                    onChange={e => updateLabel("staff", "sectionTitle", e.target.value)}
-                   placeholder="Contoh: Tenaga Pendidik Kami" 
+                   placeholder="Guru & Tenaga Kependidikan" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -130,7 +130,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.staff?.buttonText || ""} 
                    onChange={e => updateLabel("staff", "buttonText", e.target.value)}
-                   placeholder="Contoh: Lihat Semua" 
+                   placeholder="Lihat Semua" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -140,7 +140,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <Input 
                  value={labels?.staff?.sectionSubtitle || ""} 
                  onChange={e => updateLabel("staff", "sectionSubtitle", e.target.value)}
-                 placeholder="Contoh: Didukung oleh pengajar profesional..." 
+                 placeholder="Tim pengajar profesional dan berdedikasi yang siap membimbing siswa menuju kesuksesan." 
                  className="rounded-xl h-9" 
                />
              </div>
@@ -153,7 +153,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.gallery?.sectionTitle || ""} 
                    onChange={e => updateLabel("gallery", "sectionTitle", e.target.value)}
-                   placeholder="Contoh: Dokumentasi Kami" 
+                   placeholder="Dokumentasi Kami" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -162,7 +162,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.gallery?.buttonText || ""} 
                    onChange={e => updateLabel("gallery", "buttonText", e.target.value)}
-                   placeholder="Contoh: Lihat Galeri Lengkap" 
+                   placeholder="Lihat Semua" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -172,7 +172,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <Input 
                  value={labels?.gallery?.sectionSubtitle || ""} 
                  onChange={e => updateLabel("gallery", "sectionSubtitle", e.target.value)}
-                 placeholder="Contoh: Kumpulan momen dan kegiatan..." 
+                 placeholder="Kumpulan momen dan kegiatan berharga yang telah kami abadikan." 
                  className="rounded-xl h-9" 
                />
              </div>
@@ -187,7 +187,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Input 
                      value={labels?.contact?.sectionTitle || ""} 
                      onChange={e => updateLabel("contact", "sectionTitle", e.target.value)}
-                     placeholder="Contoh: Hubungi Kami" 
+                     placeholder="Hubungi Kami" 
                      className="rounded-xl h-9" 
                    />
                  </div>
@@ -196,7 +196,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Input 
                      value={labels?.contact?.sectionSubtitle || ""} 
                      onChange={e => updateLabel("contact", "sectionSubtitle", e.target.value)}
-                     placeholder="Contoh: Kami siap membantu Anda..." 
+                     placeholder="Kami siap membantu Anda. Jangan ragu untuk menghubungi kami." 
                      className="rounded-xl h-9" 
                    />
                  </div>
@@ -205,7 +205,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Input 
                      value={labels?.contact?.btnWa || ""} 
                      onChange={e => updateLabel("contact", "btnWa", e.target.value)}
-                     placeholder="Contoh: Chat WhatsApp" 
+                     placeholder="Chat via WhatsApp" 
                      className="rounded-xl h-9" 
                    />
                  </div>
@@ -214,7 +214,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Input 
                      value={labels?.contact?.btnEmail || ""} 
                      onChange={e => updateLabel("contact", "btnEmail", e.target.value)}
-                     placeholder="Contoh: Kirim Pesan" 
+                     placeholder="Kirim Email" 
                      className="rounded-xl h-9" 
                    />
                  </div>
@@ -229,7 +229,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Input 
                      value={labels?.widget?.facilities || ""} 
                      onChange={e => updateLabel("widget", "facilities", e.target.value)}
-                     placeholder="Contoh: Fasilitas Sekolah" 
+                     placeholder="Fasilitas Sekolah" 
                      className="rounded-xl h-9" 
                    />
                  </div>
@@ -238,7 +238,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Input 
                      value={labels?.widget?.extracurriculars || ""} 
                      onChange={e => updateLabel("widget", "extracurriculars", e.target.value)}
-                     placeholder="Contoh: Ekstrakurikuler" 
+                     placeholder="Kegiatan Ekstrakurikuler" 
                      className="rounded-xl h-9" 
                    />
                  </div>
@@ -247,8 +247,32 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Input 
                      value={labels?.widget?.achievements || ""} 
                      onChange={e => updateLabel("widget", "achievements", e.target.value)}
-                     placeholder="Contoh: Prestasi" 
+                     placeholder="Prestasi Membanggakan" 
                      className="rounded-xl h-9" 
+                   />
+                 </div>
+               </div>
+             </div>
+             <div className="space-y-4 border-t pt-4 mt-6">
+               <h4 className="text-sm font-semibold">Halaman Profil Lembaga (Call to Action)</h4>
+               <div className="grid md:grid-cols-2 gap-4">
+                 <div className="space-y-1.5">
+                   <Label>Judul Ajakan</Label>
+                   <Input 
+                     value={form.settings?.profilCtaTitle || ""} 
+                     onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, profilCtaTitle: e.target.value } }))} 
+                     placeholder="Jadilah Bagian dari Kami" 
+                     className="rounded-xl h-9" 
+                   />
+                 </div>
+                 <div className="space-y-1.5">
+                   <Label>Deskripsi Ajakan</Label>
+                   <textarea 
+                     value={form.settings?.profilCtaDescription || ""} 
+                     onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, profilCtaDescription: e.target.value } }))}
+                     placeholder="Pintu kami selalu terbuka untuk Anda yang ingin berkonsultasi..." 
+                     rows={3}
+                     className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[36px]" 
                    />
                  </div>
                </div>
