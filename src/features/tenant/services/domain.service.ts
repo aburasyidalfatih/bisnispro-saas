@@ -99,6 +99,21 @@ export async function invalidateDomainCache(domain: string): Promise<void> {
   await redis.del(`${CACHE_PREFIX}${domain}`)
 }
 
+export async function cacheSlugDomain(slug: string, domain: string): Promise<void> {
+  const redis = await getRedisClient()
+  await redis.set(`smp:slug-domain:${slug}`, domain, CACHE_TTL_SECONDS)
+}
+
+export async function getCachedSlugDomain(slug: string): Promise<string | null> {
+  const redis = await getRedisClient()
+  return redis.get(`smp:slug-domain:${slug}`)
+}
+
+export async function invalidateSlugCache(slug: string): Promise<void> {
+  const redis = await getRedisClient()
+  await redis.del(`smp:slug-domain:${slug}`)
+}
+
 // ==================== DB HELPERS ====================
 
 /**
@@ -134,5 +149,33 @@ export async function resolveDomainToSlug(domain: string): Promise<string | null
 
   // Simpan ke cache untuk request berikutnya
   await cacheDomainSlug(domain, tenant.slug)
+  await cacheSlugDomain(tenant.slug, domain)
   return tenant.slug
+}
+
+/**
+ * Resolve custom domain dari tenant slug.
+ * Urutan: cache → database.
+ */
+export async function resolveSlugToDomain(slug: string): Promise<string | null> {
+  // 1. Cek cache
+  const cached = await getCachedSlugDomain(slug)
+  if (cached) return cached
+
+  // 2. Fallback ke database
+  const tenant = await db.tenant.findUnique({
+    where: { slug, isActive: true },
+    select: { domain: true, settings: true },
+  })
+
+  if (!tenant || !tenant.domain) return null
+
+  // Hanya serve jika domain sudah verified
+  const domainSettings = getDomainSettings(tenant.settings as any)
+  if (domainSettings?.status !== "verified") return null
+
+  // Simpan ke cache untuk request berikutnya
+  await cacheSlugDomain(slug, tenant.domain)
+  await cacheDomainSlug(tenant.domain, slug)
+  return tenant.domain
 }

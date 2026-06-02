@@ -1,7 +1,7 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { Trophy, Calendar, Medal, Award, Star } from "lucide-react"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantAchievements } from "@/features/tenant/services/tenant-modular.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
@@ -12,11 +12,12 @@ import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export default async function PrestasiPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   
   if (!tenant) notFound()
 
-  const achievements = tenant.achievements || []
+  const achievementsData = await getTenantAchievements(slug)
+  const achievements = achievementsData?.achievements || []
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering

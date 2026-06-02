@@ -1,18 +1,19 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { GraduationCap, Quote, MessageCircle, ExternalLink, Heart, Star, Award } from "lucide-react"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantAlumni } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 
 export default async function AlumniPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   
   if (!tenant) notFound()
 
-  const alumni = tenant.alumni || []
+  const alumniData = await getTenantAlumni(slug)
+  const alumni = alumniData?.alumni || []
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering

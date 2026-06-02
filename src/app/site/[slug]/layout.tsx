@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { notFound } from "next/navigation"
 import { WebsiteNavbar } from "./_components/navbar"
 import { WebsiteFooter } from "./_components/footer"
@@ -19,7 +19,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
 
   const canonicalDomain = tenant.domain 
@@ -83,7 +83,7 @@ export default async function WebsiteLayout({
   const isSubdomain = hostname.endsWith(`.${rootDomain}`) && !isMainDomain
   const isCustomDomain = !isMainDomain && !isSubdomain
 
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
 
   if (!tenant || !tenant.isActive) notFound()
 

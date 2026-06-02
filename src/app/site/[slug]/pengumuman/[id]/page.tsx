@@ -1,5 +1,36 @@
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
+import { db } from "@/lib/db"
+import { cache } from "react"
+
+const getPengumuman = cache(async (tenantId: string, slugOrId: string) => {
+  return db.post.findFirst({
+    where: {
+      tenantId,
+      status: "PUBLISHED",
+      OR: [{ id: slugOrId }, { slug: slugOrId }],
+      type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
+    },
+    include: {
+      author: { select: { name: true, avatar: true } },
+      category: true
+    }
+  })
+})
+
+const getRelatedPengumuman = cache(async (tenantId: string, currentId: string) => {
+  return db.post.findMany({
+    where: {
+      tenantId,
+      status: "PUBLISHED",
+      id: { not: currentId },
+      type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
+    },
+    orderBy: { createdAt: "desc" },
+    take: 3,
+    include: { category: true }
+  })
+})
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
@@ -15,10 +46,10 @@ export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   const slugDecoded = decodeURIComponent(id)
-  const post = (tenant.posts || []).find((p: any) => p.id === id || p.slug === slugDecoded)
+  const post = await getPengumuman(tenant.id, slugDecoded)
   if (!post) return {}
   const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
   let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
@@ -56,11 +87,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PengumumanDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
   const decodedId = decodeURIComponent(id)
-  const post = (tenant.posts || []).find((p: any) => p.id === id || p.slug === decodedId)
+  const post = await getPengumuman(tenant.id, decodedId)
   if (!post) notFound()
 
   const base = await getPublicBasePath(slug)
@@ -79,9 +110,7 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
   }
 
   // Get related pengumuman
-  const relatedPosts = (tenant.posts || [])
-    .filter((p: any) => p.id !== id && p.type === "PENGUMUMAN")
-    .slice(0, 3)
+  const relatedPosts = await getRelatedPengumuman(tenant.id, post.id)
 
   return (
     <div className="bg-background min-h-screen pt-4 md:pt-12 pb-24 font-sans text-foreground">

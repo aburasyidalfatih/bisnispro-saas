@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next"
 import { headers } from "next/headers"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { db } from "@/lib/db"
 import { resolveDomainToSlug } from "@/features/tenant/services/domain.service"
 
 export const revalidate = 3600 // Edge Caching ISR (1 jam)
@@ -92,7 +92,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   if (!slug) return []
 
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await db.tenant.findUnique({
+    where: { slug },
+    select: { id: true, isActive: true }
+  })
   if (!tenant || !tenant.isActive) return []
 
   // Static routes for tenant
@@ -172,12 +175,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   // Dynamic routes: Berita & Pengumuman
-  if (tenant.posts) {
-    tenant.posts.forEach((post: any) => {
+  const posts = await db.post.findMany({
+    where: { tenantId: tenant.id, status: "PUBLISHED" },
+    select: { id: true, slug: true, type: true, updatedAt: true, createdAt: true }
+  })
+  if (posts.length > 0) {
+    posts.forEach((post) => {
       const isPengumuman = post.type?.includes("PENGUMUMAN")
       const prefix = isPengumuman ? "pengumuman" : "berita"
       routes.push({
-        url: `${domainUrl}/${prefix}/${post.id}`,
+        url: `${domainUrl}/${prefix}/${post.slug || post.id}`,
         lastModified: post.updatedAt || post.createdAt,
         changeFrequency: "weekly",
         priority: 0.7,
@@ -186,11 +193,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Dynamic routes: Prestasi
-  if (tenant.achievements) {
-    tenant.achievements.forEach((achievement: any) => {
+  const achievements = await db.achievement.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (achievements.length > 0) {
+    achievements.forEach((achievement) => {
       routes.push({
-        url: `${domainUrl}/prestasi/${achievement.id}`,
-        lastModified: new Date(),
+        url: `${domainUrl}/prestasi/${achievement.slug || achievement.id}`,
+        lastModified: achievement.updatedAt || achievement.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
       })
@@ -198,10 +209,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Dynamic routes: Program
-  if (tenant.programs) {
-    tenant.programs.forEach((program: any) => {
+  const programs = await db.program.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (programs.length > 0) {
+    programs.forEach((program) => {
       routes.push({
-        url: `${domainUrl}/program/${program.id}`,
+        url: `${domainUrl}/program/${program.slug || program.id}`,
         lastModified: program.updatedAt || program.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
@@ -210,10 +225,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Dynamic routes: Agenda
-  if (tenant.events) {
-    tenant.events.forEach((event: any) => {
+  const events = await db.event.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (events.length > 0) {
+    events.forEach((event) => {
       routes.push({
-        url: `${domainUrl}/agenda/${event.id}`,
+        url: `${domainUrl}/agenda/${event.slug || event.id}`,
         lastModified: event.updatedAt || event.createdAt,
         changeFrequency: "monthly",
         priority: 0.6,
@@ -222,10 +241,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Dynamic routes: Fasilitas
-  if (tenant.facilities) {
-    tenant.facilities.forEach((facility: any) => {
+  const facilities = await db.facility.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (facilities.length > 0) {
+    facilities.forEach((facility) => {
       routes.push({
-        url: `${domainUrl}/fasilitas/${facility.id}`,
+        url: `${domainUrl}/fasilitas/${facility.slug || facility.id}`,
         lastModified: facility.updatedAt || facility.createdAt,
         changeFrequency: "yearly",
         priority: 0.5,
@@ -234,12 +257,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Dynamic routes: GTK (Staff)
-  if (tenant.staff) {
-    tenant.staff.forEach((staff: any) => {
-      const slugifiedName = staff.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  const staff = await db.staff.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, name: true, updatedAt: true, createdAt: true }
+  })
+  if (staff.length > 0) {
+    staff.forEach((s) => {
+      const slugifiedName = s.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       routes.push({
         url: `${domainUrl}/gtk/${slugifiedName}`,
-        lastModified: staff.updatedAt || staff.createdAt,
+        lastModified: s.updatedAt || s.createdAt,
         changeFrequency: "yearly",
         priority: 0.5,
       })

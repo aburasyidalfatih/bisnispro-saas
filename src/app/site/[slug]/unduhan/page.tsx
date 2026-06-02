@@ -1,7 +1,8 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
+import { db } from "@/lib/db"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Download, FileText, ExternalLink, Search } from "lucide-react"
 import { format } from "date-fns"
@@ -9,10 +10,13 @@ import { id } from "date-fns/locale"
 
 export default async function UnduhanPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
-  const documents = tenant.documents || []
+  const documents = await db.document.findMany({
+    where: { tenantId: tenant.id },
+    orderBy: { createdAt: "desc" }
+  })
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering

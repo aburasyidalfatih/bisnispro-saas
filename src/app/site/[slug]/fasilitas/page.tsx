@@ -1,7 +1,7 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { Building2, Info, MapPin } from "lucide-react"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantFacilities } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
@@ -11,7 +11,7 @@ import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   
   const title = `Fasilitas Sekolah`
@@ -32,15 +32,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function FasilitasPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   
   if (!tenant) notFound()
 
-  // Fetch ALL facilities directly
-  const facilities = await db.facility.findMany({
-    where: { tenantId: tenant.id },
-    orderBy: { createdAt: "desc" },
-  })
+  const facilitiesData = await getTenantFacilities(slug)
+  const facilities = facilitiesData?.facilities || []
   const base = await getPublicBasePath(slug)
 
   // Jika sekolah menggunakan Custom Theme dan menyediakan template fasilitas

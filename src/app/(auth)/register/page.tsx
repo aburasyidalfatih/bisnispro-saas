@@ -1,6 +1,6 @@
 import { headers } from "next/headers"
 import { checkIsMainDomain, getRootDomain } from "@/lib/utils"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { db } from "@/lib/db"
 import ClientRegisterPage from "./client-page"
 
@@ -43,7 +43,7 @@ export default async function RegisterPage() {
     let tenantAuth = null;
 
     if (isSubdomain) {
-      tenant = await getPublicTenantBySlug(tenantSlug)
+      tenant = await getTenantLayoutData(tenantSlug)
       tenantAuth = await db.tenant.findUnique({
         where: { slug: tenantSlug },
         select: { googleClientId: true, googleClientSecret: true }
@@ -55,7 +55,7 @@ export default async function RegisterPage() {
       })
       if (tenantRecord) {
         tenantSlug = tenantRecord.slug
-        tenant = await getPublicTenantBySlug(tenantSlug)
+        tenant = await getTenantLayoutData(tenantSlug)
         tenantAuth = tenantRecord
       }
     }

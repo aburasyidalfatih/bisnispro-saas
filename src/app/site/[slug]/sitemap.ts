@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
-import { getPublicBasePath } from "@/lib/utils/public-path"
+import { db } from "@/lib/db"
 import { headers } from "next/headers"
 
 export const revalidate = 3600 // Edge Caching ISR (1 jam)
@@ -9,8 +8,11 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   const { slug } = await params
   
   // Get tenant data
-  const tenant = await getPublicTenantBySlug(slug)
-  if (!tenant) return []
+  const tenant = await db.tenant.findUnique({
+    where: { slug },
+    select: { id: true, isActive: true }
+  })
+  if (!tenant || !tenant.isActive) return []
 
   // Determine base URL dynamically based on headers
   const headerList = await headers()
@@ -102,12 +104,16 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
     },
   ]
 
-  // Dynamic routes: Berita
-  if (tenant.posts) {
-    tenant.posts.forEach((post: any) => {
-      const typePath = post.type === "PENGUMUMAN" ? "pengumuman" : "berita";
+  // Dynamic routes: Berita & Pengumuman
+  const posts = await db.post.findMany({
+    where: { tenantId: tenant.id, status: "PUBLISHED" },
+    select: { id: true, slug: true, type: true, updatedAt: true, createdAt: true }
+  })
+  if (posts.length > 0) {
+    posts.forEach((post) => {
+      const typePath = post.type?.includes("PENGUMUMAN") ? "pengumuman" : "berita";
       routes.push({
-        url: `${baseUrl}/${typePath}/${post.slug}`,
+        url: `${baseUrl}/${typePath}/${post.slug || post.id}`,
         lastModified: post.updatedAt || post.createdAt,
         changeFrequency: "weekly",
         priority: 0.7,
@@ -116,11 +122,15 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Prestasi
-  if (tenant.achievements) {
-    tenant.achievements.forEach((achievement: any) => {
+  const achievements = await db.achievement.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (achievements.length > 0) {
+    achievements.forEach((achievement) => {
       routes.push({
         url: `${baseUrl}/prestasi/${achievement.slug || achievement.id}`,
-        lastModified: new Date(),
+        lastModified: achievement.updatedAt || achievement.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
       })
@@ -128,11 +138,15 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Program
-  if (tenant.programs) {
-    tenant.programs.forEach((program: any) => {
+  const programs = await db.program.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (programs.length > 0) {
+    programs.forEach((program) => {
       routes.push({
         url: `${baseUrl}/program/${program.slug || program.id}`,
-        lastModified: new Date(),
+        lastModified: program.updatedAt || program.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
       })
@@ -140,11 +154,15 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Fasilitas
-  if (tenant.facilities) {
-    tenant.facilities.forEach((facility: any) => {
+  const facilities = await db.facility.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (facilities.length > 0) {
+    facilities.forEach((facility) => {
       routes.push({
         url: `${baseUrl}/fasilitas/${facility.slug || facility.id}`,
-        lastModified: new Date(),
+        lastModified: facility.updatedAt || facility.createdAt,
         changeFrequency: "yearly",
         priority: 0.5,
       })
@@ -152,11 +170,15 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Ekstrakurikuler
-  if (tenant.extracurriculars) {
-    tenant.extracurriculars.forEach((extra: any) => {
+  const extracurriculars = await db.extracurricular.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (extracurriculars.length > 0) {
+    extracurriculars.forEach((extra) => {
       routes.push({
         url: `${baseUrl}/ekstrakurikuler/${extra.slug || extra.id}`,
-        lastModified: new Date(),
+        lastModified: extra.updatedAt || extra.createdAt,
         changeFrequency: "yearly",
         priority: 0.5,
       })
@@ -164,11 +186,15 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Agenda
-  if (tenant.events) {
-    tenant.events.forEach((event: any) => {
+  const events = await db.event.findMany({
+    where: { tenantId: tenant.id },
+    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+  })
+  if (events.length > 0) {
+    events.forEach((event) => {
       routes.push({
         url: `${baseUrl}/agenda/${event.slug || event.id}`,
-        lastModified: new Date(),
+        lastModified: event.updatedAt || event.createdAt,
         changeFrequency: "weekly",
         priority: 0.7,
       })

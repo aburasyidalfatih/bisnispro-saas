@@ -1,6 +1,6 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantPosts } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
@@ -19,10 +19,11 @@ export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
+  const postData = await getTenantPosts(slug)
   const staffSlugDecoded = decodeURIComponent(id)
-  const post = (tenant.posts || []).find((p: any) => p.id === id || p.slug === staffSlugDecoded)
+  const post = (postData?.posts || []).find((p: any) => p.id === id || p.slug === staffSlugDecoded)
   if (!post) return {}
   const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
   let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
@@ -60,11 +61,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BeritaDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
+  const postData = await getTenantPosts(slug)
   const decodedId = decodeURIComponent(id)
-  const post = (tenant.posts || []).find((p: any) => p.id === id || p.slug === decodedId)
+  const post = (postData?.posts || []).find((p: any) => p.id === id || p.slug === decodedId)
   if (!post) notFound()
 
   const base = await getPublicBasePath(slug)
@@ -83,8 +85,8 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
   }
 
   // Get related posts (same type, exclude current)
-  const relatedPosts = (tenant.posts || [])
-    .filter((p: any) => p.id !== id)
+  const relatedPosts = (postData?.posts || [])
+    .filter((p: any) => p.id !== post.id)
     .slice(0, 3)
 
   // Get live views from Redis + Postgres baseline

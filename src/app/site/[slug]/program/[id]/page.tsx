@@ -1,6 +1,6 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantPrograms } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
@@ -14,9 +14,10 @@ export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
-  const program = (tenant.programs || []).find((p: any) => p.id === id || p.slug === id)
+  const programsData = await getTenantPrograms(slug)
+  const program = (programsData?.programs || []).find((p: any) => p.id === id || p.slug === id)
   if (!program) return {}
   return {
     title: `${program.name} - ${tenant.name}`,
@@ -29,10 +30,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProgramDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
-  const program = (tenant.programs || []).find((p: any) => p.id === id || p.slug === id)
+  const programsData = await getTenantPrograms(slug)
+  const program = (programsData?.programs || []).find((p: any) => p.id === id || p.slug === id)
   if (!program) notFound()
 
   const base = await getPublicBasePath(slug)

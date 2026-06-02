@@ -8,9 +8,11 @@ import { AboutFormState } from "./types"
 interface SeoFormProps {
   form: AboutFormState
   setForm: React.Dispatch<React.SetStateAction<AboutFormState>>
+  domainStatus?: { domain: string | null; status: string | null }
+  slug?: string | null
 }
 
-export function SeoForm({ form, setForm }: SeoFormProps) {
+export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
   return (
     <Card className="glass border-0 lg:col-span-2">
       <CardHeader>
@@ -54,7 +56,11 @@ export function SeoForm({ form, setForm }: SeoFormProps) {
             <p className="text-blue-600 text-base font-medium leading-tight">
               {form.seoTitle || form.name || "Nama Website"}
             </p>
-            <p className="text-green-700 text-xs mt-0.5">https://yourdomain.com</p>
+            <p className="text-green-700 text-xs mt-0.5">
+              {domainStatus?.domain 
+                ? `https://${domainStatus.domain}` 
+                : `https://${slug || "tenant"}.${typeof window !== "undefined" && window.location.hostname.includes(".") ? window.location.hostname.split(".").slice(-2).join(".") : "schoolpro.id"}`}
+            </p>
             <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
               {form.seoDesc || form.description || "Deskripsi website Anda akan muncul di sini..."}
             </p>

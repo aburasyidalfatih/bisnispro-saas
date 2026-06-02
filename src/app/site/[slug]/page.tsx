@@ -8,7 +8,7 @@ import parse from "html-react-parser"
 import { renderCustomTheme } from "./_themes/custom-renderer"
 import { HeroSlider } from "./_components/hero-slider"
 import { StatsBar } from "./_components/stats-bar"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantHomeData, getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { PrincipalWelcome } from "./_components/principal-welcome"
 import { InfoBoard } from "./_components/info-board"
@@ -25,7 +25,7 @@ import { DefaultTheme } from "./_themes/default"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   const title = tenant.seoTitle || tenant.name
   const description = tenant.seoDesc || tenant.description || tenant.tagline || `Website resmi ${tenant.name}`
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function SitePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
 
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantHomeData(slug)
 
   if (!tenant) notFound()
 

@@ -1,6 +1,6 @@
 import { headers } from "next/headers"
 import { checkIsMainDomain, getRootDomain } from "@/lib/utils"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const headerList = await headers()
@@ -18,7 +18,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
     let tenant = null;
 
     if (isSubdomain) {
-      tenant = await getPublicTenantBySlug(slug)
+      tenant = await getTenantLayoutData(slug)
     } else {
       const { db } = await import("@/lib/db")
       const tenantRecord = await db.tenant.findUnique({
@@ -27,7 +27,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       })
       if (tenantRecord) {
         slug = tenantRecord.slug
-        tenant = await getPublicTenantBySlug(slug)
+        tenant = await getTenantLayoutData(slug)
       }
     }
     

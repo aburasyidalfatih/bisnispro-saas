@@ -1,7 +1,8 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
+import { db } from "@/lib/db"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Calendar, MapPin, Clock, ArrowRight, Search } from "lucide-react"
 import { format } from "date-fns"
@@ -9,7 +10,7 @@ import { id } from "date-fns/locale"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   
   const title = `Agenda Kegiatan`
@@ -30,10 +31,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function AgendaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
-  const events = tenant.events || []
+  const events = await db.event.findMany({
+    where: { tenantId: tenant.id },
+    orderBy: { startDate: "desc" }
+  })
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering

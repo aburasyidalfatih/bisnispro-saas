@@ -1,6 +1,17 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
+import { db } from "@/lib/db"
+import { cache } from "react"
+
+const getEvent = cache(async (tenantId: string, slugOrId: string) => {
+  return db.event.findFirst({
+    where: {
+      tenantId,
+      OR: [{ id: slugOrId }, { slug: slugOrId }]
+    }
+  })
+})
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { Calendar, ArrowLeft, Clock, MapPin, User } from "lucide-react"
@@ -16,9 +27,9 @@ export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
-  const event = (tenant.events || []).find((e: any) => e.id === id || e.slug === id)
+  const event = await getEvent(tenant.id, id)
   if (!event) return {}
   return {
     title: `${event.title} - ${tenant.name}`,
@@ -31,10 +42,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function AgendaDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
-  const event = (tenant.events || []).find((e: any) => e.id === id || e.slug === id)
+  const event = await getEvent(tenant.id, id)
   if (!event) notFound()
 
   const base = await getPublicBasePath(slug)

@@ -312,8 +312,8 @@ export default function WebsiteAboutPage() {
           <LabelsForm form={form} setForm={setForm} />
         </TabsContent>
 
-        <TabsContent value="seo" className="outline-none">
-          <SeoForm form={form} setForm={setForm} />
+        <TabsContent value="seo" className="mt-0 outline-none">
+          <SeoForm form={form} setForm={setForm} domainStatus={domainStatus} slug={slug} />
         </TabsContent>
       </Tabs>
 

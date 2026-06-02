@@ -5,7 +5,7 @@ import {
   BookOpen, CheckCircle, Quote, MapPin, Phone, Mail,
   Play, Target, Award, ArrowRight, ShieldCheck
 } from "lucide-react"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantProfileData } from "@/features/tenant/services/tenant-modular.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
@@ -15,7 +15,7 @@ import DOMPurify from "isomorphic-dompurify"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   
   const title = `Profil & Sejarah`
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProfilTerpaduPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)
@@ -68,9 +68,11 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
     }
   }
   
-  const totalStaff = tenant.staff?.length || 0
-  const totalAlumni = tenant.alumni?.length || 0
-  const totalEkskul = tenant.extracurriculars?.length || 0
+  const profileData = await getTenantProfileData(slug)
+  const totalStaff = profileData?._count?.staff || 0
+  const totalAlumni = profileData?._count?.alumni || 0
+  const totalEkskul = profileData?._count?.extracurriculars || 0
+  const totalPrograms = profileData?._count?.programs || 0
 
   return (
     <div className="bg-background">
@@ -221,7 +223,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                <p className="text-sm font-semibold uppercase tracking-widest opacity-80">Lulusan Sukses</p>
             </div>
             <div>
-               <p className="text-4xl md:text-5xl font-black text-primary mb-2">{tenant.programs?.length || 0}</p>
+               <p className="text-4xl md:text-5xl font-black text-primary mb-2">{totalPrograms}</p>
                <p className="text-sm font-semibold uppercase tracking-widest opacity-80">Program Studi</p>
             </div>
             <div>

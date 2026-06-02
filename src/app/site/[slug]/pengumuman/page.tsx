@@ -1,7 +1,7 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Megaphone, ArrowRight, Search, Calendar } from "lucide-react"
 import { format } from "date-fns"
@@ -11,7 +11,7 @@ import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   
   const title = `Papan Pengumuman`
@@ -42,7 +42,7 @@ export default async function PengumumanPage({
   const page = typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page) : 1
   const perPage = 10
 
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)

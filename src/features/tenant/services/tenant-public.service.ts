@@ -1,110 +1,35 @@
-import { db } from "@/lib/db"
 import { getRedisClient } from "@/lib/redis"
-import { cache } from "react"
 import { logger } from "@/lib/logger"
 
-const CACHE_TTL_SECONDS = 60 * 60 // 1 hour
 export const TENANT_PUBLIC_CACHE_PREFIX = "smp:tenant:public:"
 
-export const getPublicTenantBySlug = cache(async (slug: string) => {
-  const cacheKey = `${TENANT_PUBLIC_CACHE_PREFIX}${slug}`
-  
-  try {
-    const redis = await getRedisClient()
-    
-    // 1. Try to get from Redis
-    const cached = await redis.get(cacheKey)
-    if (cached) {
-      // redis.get returns string if found
-      return typeof cached === "string" ? JSON.parse(cached) : cached
-    }
-  } catch (error) {
-    logger.error("Redis get error in getPublicTenantBySlug", { error: String(error) })
-  }
+/**
+ * @deprecated Gunakan modular fetchers dari `tenant-modular.service.ts` seperti `getTenantLayoutData`, `getTenantHomeData`, dsb.
+ * Fungsi ini dibiarkan untuk mencegah build error jika ada sisa import yang terlewat, 
+ * namun akan langsung mengembalikan error jika dipanggil.
+ */
+export const getPublicTenantBySlug = async (slug: string) => {
+  throw new Error("getPublicTenantBySlug is deprecated and removed for performance reasons. Please use modular fetchers from tenant-modular.service.ts.")
+}
 
-  // 2. Fallback to DB
-  const tenant = await db.tenant.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      tagline: true,
-      description: true,
-      about: true,
-      heroImage: true,
-      gallery: true,
-      phone: true,
-      whatsapp: true,
-      address: true,
-      email: true,
-      logo: true,
-      seoTitle: true,
-      seoDesc: true,
-      theme: true,
-      template: true,
-      customThemeId: true,
-      customTheme: true,
-      isActive: true,
-      instagram: true,
-      facebook: true,
-      youtube: true,
-      tiktok: true,
-      staff: { orderBy: { sortOrder: 'asc' }, take: 100 },
-      alumni: { orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
-      programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 10 },
-      extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
-      facilities: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
-      achievements: { orderBy: [{ order: 'asc' }, { date: 'desc' }], take: 10 },
-      websiteMenus: { 
-        where: { isActive: true, parentId: null },
-        orderBy: { order: 'asc' },
-        include: { children: { where: { isActive: true }, orderBy: { order: 'asc' } } }
-      },
-      posts: { 
-        where: { 
-          status: "PUBLISHED",
-          type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
-        }, 
-        orderBy: { createdAt: 'desc' }, 
-        take: 20,
-        include: { author: { select: { name: true, avatar: true } } }
-      },
-      events: { orderBy: { createdAt: 'desc' }, take: 6 },
-      documents: { orderBy: { createdAt: 'desc' }, take: 10 },
-      sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
-      partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
-      settings: true,
-      createdAt: true,
-      _count: {
-        select: {
-          staff: true,
-          programs: true,
-          achievements: true,
-        }
-      }
-    },
-  })
-
-  // 3. Save to Redis
-  if (tenant) {
-    try {
-      const redis = await getRedisClient()
-      // Match the interface: set(key, value, exSeconds?)
-      await redis.set(cacheKey, JSON.stringify(tenant), CACHE_TTL_SECONDS)
-    } catch (error) {
-      logger.error("Redis set error in getPublicTenantBySlug", { error: String(error) })
-    }
-  }
-
-  return tenant
-})
-
+/**
+ * Menghapus semua cache Redis yang berkaitan dengan tenant (monolith maupun modular).
+ * Fungsi ini dipanggil setiap kali ada perubahan data tenant dari sisi admin/super-admin.
+ */
 export async function invalidatePublicTenantCache(slug: string) {
   try {
     const redis = await getRedisClient()
-    const cacheKey = `${TENANT_PUBLIC_CACHE_PREFIX}${slug}`
-    await redis.del(cacheKey)
+    const keysToDelete = [
+      `${TENANT_PUBLIC_CACHE_PREFIX}${slug}`, // Legacy monolith key
+      `smp:tenant:layout:${slug}`,
+      `smp:tenant:home:${slug}`,
+      `smp:tenant:posts:${slug}`,
+      `smp:tenant:achievements:${slug}`,
+      `smp:tenant:programs:${slug}`,
+      `smp:tenant:facilities:${slug}`,
+      `smp:tenant:ekskul:${slug}`,
+    ]
+    await redis.del(...keysToDelete)
   } catch (error) {
     logger.error("Redis del error in invalidatePublicTenantCache", { error: String(error) })
   }

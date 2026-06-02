@@ -54,6 +54,40 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
   }
 }
 
+/**
+ * Resolve tenant slug via internal API with Edge Redis Cache
+ */
+async function getCustomDomainForSlug(slug: string, requestUrl: string): Promise<string | null> {
+  try {
+    if (redis) {
+      const cached = await redis.get(`smp:slug-domain:${slug}`)
+      if (cached) return cached as string
+    }
+
+    const port = process.env.PORT || "3000"
+    const res = await fetch(
+      `http://127.0.0.1:${port}/api/internal/slug-lookup?slug=${encodeURIComponent(slug)}`,
+      {
+        headers: {
+          "x-internal-secret": INTERNAL_SECRET,
+        },
+      }
+    )
+
+    if (!res.ok) return null
+    const data = await res.json()
+    const domain = data.domain
+
+    if (redis && domain) {
+      await redis.set(`smp:slug-domain:${slug}`, domain, { ex: 300 })
+    }
+
+    return domain
+  } catch {
+    return null
+  }
+}
+
 function addSecurityHeaders(response: NextResponse, routeType: "public" | "protected" | "static" = "public"): NextResponse {
   response.headers.set("X-Frame-Options", "DENY")
   response.headers.set("X-Content-Type-Options", "nosniff")
@@ -64,11 +98,14 @@ function addSecurityHeaders(response: NextResponse, routeType: "public" | "prote
     "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ws: wss: https://cloudflareinsights.com https://static.cloudflareinsights.com; frame-src 'self' https://challenges.cloudflare.com https://www.openstreetmap.org https://maps.google.com; frame-ancestors 'none'"
   )
 
-  // Aggressive SEO Indexing Header for public pages
+  // Aggressive SEO Indexing Header & Edge Caching for public pages
   if (routeType === "public") {
     response.headers.set("X-Robots-Tag", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1")
+    // Enable CDN Edge Caching: Cache at edge for 60 seconds, serve stale while revalidating for up to 5 minutes
+    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300")
   } else if (routeType === "protected" || routeType === "static") {
     response.headers.set("X-Robots-Tag", "noindex, nofollow")
+    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
   }
 
   return response
@@ -235,6 +272,17 @@ export default async function middleware(request: NextRequest) {
   // A. MAIN DOMAIN
   // ============================================================
   if (isMainDomain) {
+    // REDIRECT: Cegah akses langsung ke route internal /site/[slug] demi SEO
+    if (pathname.startsWith("/site/")) {
+      const parts = pathname.split("/")
+      if (parts.length > 2 && parts[2]) {
+        const slug = parts[2]
+        const restPath = parts.slice(3).join("/")
+        const redirectUrl = `https://${slug}.${rootDomain}/${restPath}${request.nextUrl.search}`
+        return addSecurityHeaders(NextResponse.redirect(redirectUrl, 301))
+      }
+    }
+
     // Cek Affiliate Shortlink (contoh: /bdi123, /ref-abc, /mitra123)
     // Hindari rute sistem yang valid
     const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/forgot-password", "/reset-password", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy", "/siswa", "/ujian"]
@@ -256,6 +304,13 @@ export default async function middleware(request: NextRequest) {
   // B. SUBDOMAIN
   // ============================================================
   if (isSubdomain) {
+    // Cek apakah subdomain memiliki custom domain
+    const customDomain = await getCustomDomainForSlug(subdomain, request.url)
+    if (customDomain) {
+      const redirectUrl = `https://${customDomain}${pathname}${request.nextUrl.search}`
+      return addSecurityHeaders(NextResponse.redirect(redirectUrl, 301))
+    }
+
     // Per-Tenant Rate Limiting (Task 3.4)
     const { success: tenantSuccess } = await tenantRateLimit.limit(`rl:tenant:${subdomain}`)
     if (!tenantSuccess) {

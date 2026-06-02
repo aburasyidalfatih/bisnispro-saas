@@ -1,6 +1,6 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantAchievements } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
@@ -16,9 +16,10 @@ export const dynamicParams = true
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
-  const achievement = (tenant.achievements || []).find((a: any) => a.id === id || a.slug === id)
+  const achievementsData = await getTenantAchievements(slug)
+  const achievement = (achievementsData?.achievements || []).find((a: any) => a.id === id || a.slug === id)
   if (!achievement) return {}
   return {
     title: `${achievement.title} - ${tenant.name}`,
@@ -31,10 +32,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function AchievementDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
-  const achievement = (tenant.achievements || []).find((a: any) => a.id === id || a.slug === id)
+  const achievementsData = await getTenantAchievements(slug)
+  const achievement = (achievementsData?.achievements || []).find((a: any) => a.id === id || a.slug === id)
   if (!achievement) notFound()
 
   const base = await getPublicBasePath(slug)

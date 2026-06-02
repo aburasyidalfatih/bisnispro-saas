@@ -1,6 +1,6 @@
 import { headers } from "next/headers"
 import { checkIsMainDomain, getRootDomain } from "@/lib/utils"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { db } from "@/lib/db"
 import ClientForgotPasswordPage from "./client-page"
 
@@ -30,7 +30,7 @@ export default async function ForgotPasswordPage() {
     let tenant = null;
 
     if (isSubdomain) {
-      tenant = await getPublicTenantBySlug(tenantSlug)
+      tenant = await getTenantLayoutData(tenantSlug)
     } else {
       const tenantRecord = await db.tenant.findUnique({
         where: { domain: host },
@@ -38,7 +38,7 @@ export default async function ForgotPasswordPage() {
       })
       if (tenantRecord) {
         tenantSlug = tenantRecord.slug
-        tenant = await getPublicTenantBySlug(tenantSlug)
+        tenant = await getTenantLayoutData(tenantSlug)
       }
     }
     

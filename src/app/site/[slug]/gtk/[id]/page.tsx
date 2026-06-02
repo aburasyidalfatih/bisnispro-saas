@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantStaff, getTenantPosts } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
@@ -15,11 +15,12 @@ function slugify(text: string) {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   
+  const staffData = await getTenantStaff(slug)
   const staffSlugDecoded = decodeURIComponent(id)
-  const staff = (tenant.staff || []).find((s: any) => 
+  const staff = (staffData?.staff || []).find((s: any) => 
     s.id === id || slugify(s.name) === staffSlugDecoded
   )
   if (!staff) return {}
@@ -35,11 +36,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function GTKDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
+  const staffData = await getTenantStaff(slug)
   const staffSlugDecoded = decodeURIComponent(id)
-  const staff = (tenant.staff || []).find((s: any) => 
+  const staff = (staffData?.staff || []).find((s: any) => 
     s.id === id || slugify(s.name) === staffSlugDecoded
   )
   if (!staff) notFound()
@@ -60,9 +62,11 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
   }
   
   // Get articles written by this staff member
-  const articles = staff.userId 
-    ? (tenant.posts || []).filter((p: any) => p.authorId === staff.userId)
-    : []
+  let articles: any[] = []
+  if (staff.userId) {
+    const postsData = await getTenantPosts(slug)
+    articles = (postsData?.posts || []).filter((p: any) => p.authorId === staff.userId)
+  }
 
   return (
     <div className="bg-background min-h-screen pb-20">

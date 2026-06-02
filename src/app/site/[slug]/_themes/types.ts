@@ -1,6 +1,6 @@
 /**
  * Public Tenant Types for Website Rendering
- * These types define the shape of data returned by getPublicTenantBySlug()
+ * These types define the shape of data returned by getTenantLayoutData()
  * and used across all theme components, navbar, and footer.
  */
 

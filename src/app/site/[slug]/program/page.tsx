@@ -1,7 +1,7 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { BookOpen, Target, ArrowRight, Star, CheckCircle2, Award } from "lucide-react"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantPrograms } from "@/features/tenant/services/tenant-modular.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -10,8 +10,9 @@ import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
-  if (!tenant) return {}
+  const tenant = await getTenantLayoutData(slug)
+  const programData = await getTenantPrograms(slug)
+  const programs = programData?.programs || []
   
   const title = `Program Unggulan`
   const description = `Daftar program keahlian dan akademik unggulan di ${tenant.name}`
@@ -31,11 +32,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProgramPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   
   if (!tenant) notFound()
 
-  const programs = tenant.programs || []
+  const programData = await getTenantPrograms(slug)
+  const programs = programData?.programs || []
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { Users, GraduationCap, Mail, MessageSquare, Award, BookOpen } from "lucide-react"
-import { getPublicTenantBySlug } from "@/features/tenant/services/tenant-public.service"
+import { getTenantLayoutData, getTenantStaff } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
@@ -10,7 +10,7 @@ import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   
   const title = `Guru & Tenaga Kependidikan`
@@ -31,11 +31,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function GTKPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const tenant = await getPublicTenantBySlug(slug)
+  const tenant = await getTenantLayoutData(slug)
   
   if (!tenant) notFound()
 
-  const staff = tenant.staff || []
+  const staffData = await getTenantStaff(slug)
+  const staff = staffData?.staff || []
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering
