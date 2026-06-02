@@ -130,7 +130,7 @@ export default function EditStaffPage() {
         setUploading(false)
       }
       
-      await updateStaff(id, tenantId, {
+      const result = await updateStaff(id, tenantId, {
         name: formData.name,
         role: formData.role,
         bio: formData.bio,
@@ -142,6 +142,10 @@ export default function EditStaffPage() {
         education: formData.education,
         password: formData.password
       })
+
+      if (result?.error) {
+        throw new Error(result.error)
+      }
 
       toast({ title: "Data GTK berhasil diperbarui!" })
       router.push("/admin/website/gtk")

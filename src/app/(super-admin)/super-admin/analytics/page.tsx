@@ -9,7 +9,8 @@ import { OverviewTab } from "./_components/overview-tab"
 import { GrowthTab } from "./_components/growth-tab"
 import { FinanceTab } from "./_components/finance-tab"
 import { EngagementTab } from "./_components/engagement-tab"
-import { TenantsTab } from "./_components/tenants-tab"
+import { AiInfraTab } from "./_components/ai-infra-tab"
+import { EcosystemTab } from "./_components/ecosystem-tab"
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null)
@@ -32,6 +33,9 @@ export default function AnalyticsPage() {
           featureAdoption: [],
           geoStats: { provinces: [], topRegencies: [], totalProvinces: 0 },
           engagementStats: { avgTotalScore: 0, avgScorePerPlan: [], scoreBrackets: [], totalScored: 0 },
+          ecosystemStats: { totalGmv: 0, canteenGmv: 0, savingDeposits: 0, savingWithdrawals: 0, ppdbPayments: 0 },
+          aiInfraStats: { totalAiTokensUsed: 0, topAiTenants: [], waSent: 0, waFailed: 0, totalStorageBytes: 0 },
+          academicStats: { totalCbtExams: 0, totalTeacherJournals: 0 },
         }
         setData({ ...defaults, ...d })
       })
@@ -50,7 +54,7 @@ export default function AnalyticsPage() {
   if (!data) return <div>Gagal memuat data analitik.</div>
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Analitik Platform</h1>
@@ -60,13 +64,17 @@ export default function AnalyticsPage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-8">
-        <TabsList className="grid w-full sm:w-auto grid-cols-2 sm:grid-cols-5 h-auto gap-2 sm:gap-0 bg-transparent sm:bg-muted p-0 sm:p-1">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5">Overview</TabsTrigger>
-          <TabsTrigger value="growth" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5">Growth</TabsTrigger>
-          <TabsTrigger value="finance" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5">Finance</TabsTrigger>
-          <TabsTrigger value="engagement" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5">Engagement</TabsTrigger>
-          <TabsTrigger value="tenants" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 col-span-2 sm:col-span-1">Tenants</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
+          <TabsList className="inline-flex w-max sm:w-auto h-auto gap-2 bg-transparent sm:bg-muted p-0 sm:p-1">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">Overview</TabsTrigger>
+            <TabsTrigger value="growth" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">Growth</TabsTrigger>
+            <TabsTrigger value="finance" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">SaaS Finance</TabsTrigger>
+            <TabsTrigger value="ecosystem" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">Ecosystem GMV</TabsTrigger>
+            <TabsTrigger value="ai-infra" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">AI & Infra</TabsTrigger>
+            <TabsTrigger value="engagement" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">Engagement</TabsTrigger>
+            <TabsTrigger value="tenants" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">Tenants</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="overview">
           <OverviewTab data={data} />
@@ -78,6 +86,14 @@ export default function AnalyticsPage() {
 
         <TabsContent value="finance">
           <FinanceTab data={data} />
+        </TabsContent>
+
+        <TabsContent value="ecosystem">
+          <EcosystemTab data={data} />
+        </TabsContent>
+
+        <TabsContent value="ai-infra">
+          <AiInfraTab data={data} />
         </TabsContent>
 
         <TabsContent value="engagement">

@@ -127,6 +127,27 @@ export interface AnalyticsData {
     scoreBrackets: { name: string; value: number }[]
     totalScored: number
   }
+
+  ecosystemStats?: {
+    totalGmv: number
+    canteenGmv: number
+    savingDeposits: number
+    savingWithdrawals: number
+    ppdbPayments: number
+  }
+
+  aiInfraStats?: {
+    totalAiTokensUsed: number
+    topAiTenants: { name: string; tokens: number }[]
+    waSent: number
+    waFailed: number
+    totalStorageBytes: number
+  }
+
+  academicStats?: {
+    totalCbtExams: number
+    totalTeacherJournals: number
+  }
 }
 
 export const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#64748b']

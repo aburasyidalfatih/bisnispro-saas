@@ -92,7 +92,7 @@ export default function NewStaffPage() {
         setUploading(false)
       }
       
-      await createStaff(tenantId, {
+      const result = await createStaff(tenantId, {
         name: formData.name,
         role: formData.role,
         bio: formData.bio,
@@ -104,6 +104,10 @@ export default function NewStaffPage() {
         education: formData.education,
         password: formData.password
       })
+
+      if (result?.error) {
+        throw new Error(result.error)
+      }
 
       toast({ title: "Data GTK berhasil disimpan!" })
       router.push("/admin/website/gtk")

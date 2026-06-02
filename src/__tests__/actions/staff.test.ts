@@ -18,7 +18,8 @@ vi.mock('@/features/tenant/services/tenant-public.service', () => ({
 describe('Server Actions: Staff', () => {
 
   it('TC1: Menolak jika nama staff kosong (Zod validation)', async () => {
-    await expect(createStaff('tenant-1', { name: '', role: '' })).rejects.toThrow()
+    const result = await createStaff('tenant-1', { name: '', role: '' })
+    expect(result.error).toBeDefined()
     expect(db.staff.create).not.toHaveBeenCalled()
   })
 
@@ -37,7 +38,8 @@ describe('Server Actions: Staff', () => {
         tenantId: 'tenant-1',
       }),
     })
-    expect(result.id).toBe('staff-1')
+    expect(result.success).toBe(true)
+    expect(result.data.id).toBe('staff-1')
     // Pastikan TIDAK membuat user karena email kosong
     expect(db.user.findUnique).not.toHaveBeenCalled()
   })
@@ -92,6 +94,7 @@ describe('Server Actions: Staff', () => {
     const result = await createStaff('tenant-1', data)
 
     expect(db.user.findUnique).toHaveBeenCalledWith({ where: { email: 'sari@school.com' } })
-    expect(result.id).toBe('staff-2')
+    expect(result.success).toBe(true)
+    expect(result.data.id).toBe('staff-2')
   })
 })

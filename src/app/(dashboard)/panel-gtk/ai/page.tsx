@@ -11,19 +11,29 @@ export const metadata = {
 
 export default async function AiAssistantPage() {
   const session = await auth()
-  if (!session?.user || session.user.role !== "TEACHER") {
+  if (!session?.user) {
     redirect("/login")
   }
+
+  const tenantId = session.user.tenants?.[0]?.id
 
   const user = await db.user.findUnique({
     where: { id: session.user.id },
     select: { 
       aiTokens: true, 
-      tenant: {
-        select: { aiTokens: true, aiAddonTokens: true }
-      }
     }
   })
+
+  let tenantTokens = 0
+  if (tenantId) {
+    const tenant = await db.tenant.findUnique({
+      where: { id: tenantId },
+      select: { aiTokens: true, aiAddonTokens: true }
+    })
+    if (tenant) {
+      tenantTokens = (tenant.aiTokens || 0) + (tenant.aiAddonTokens || 0)
+    }
+  }
 
   if (!user) redirect("/login")
 
@@ -69,7 +79,7 @@ export default async function AiAssistantPage() {
       
       <AiAssistantClient 
         userTokens={user.aiTokens || 0} 
-        tenantTokens={(user.tenant?.aiTokens || 0) + (user.tenant?.aiAddonTokens || 0)}
+        tenantTokens={tenantTokens}
         paymentChannels={paymentChannels}
         aiPackages={aiPackages}
         manualPayment={manualPayment}

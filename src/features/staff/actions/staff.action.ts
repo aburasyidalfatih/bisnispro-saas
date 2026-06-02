@@ -49,157 +49,161 @@ export async function getStaffById(id: string, tenantId: string) {
 }
 
 export async function createStaff(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
-  
-  const parsed = staffSchema.parse(data)
-  
-  let userId: string | null = null
+  try {
+    await requireTenantAccess(tenantId)
+    
+    const parsed = staffSchema.parse(data)
+    
+    let userId: string | null = null
 
-  // Jika email diisi, buat akun User untuk "Data Master -> Menu Guru"
-  if (parsed.email && parsed.email.trim() !== '') {
-    const email = parsed.email.trim().toLowerCase()
-    let user = await db.user.findUnique({ where: { email } })
+    if (parsed.email && parsed.email.trim() !== '') {
+      const email = parsed.email.trim().toLowerCase()
+      let user = await db.user.findUnique({ where: { email } })
 
-    if (!user) {
-      const bcrypt = await import("bcryptjs")
-      const tempPassword = parsed.password && parsed.password.trim() !== '' ? parsed.password.trim() : crypto.randomBytes(8).toString("base64url")
-      const hashedPassword = await (bcrypt.default || bcrypt).hash(tempPassword, 12)
-      user = await db.user.create({
-        data: { name: parsed.name, email, password: hashedPassword },
+      if (!user) {
+        const bcrypt = await import("bcryptjs")
+        const tempPassword = parsed.password && parsed.password.trim() !== '' ? parsed.password.trim() : crypto.randomBytes(8).toString("base64url")
+        const hashedPassword = await (bcrypt.default || bcrypt).hash(tempPassword, 12)
+        user = await db.user.create({
+          data: { name: parsed.name, email, password: hashedPassword },
+        })
+      } else if (parsed.password && parsed.password.trim() !== '') {
+        const bcrypt = await import("bcryptjs")
+        const hashedPassword = await (bcrypt.default || bcrypt).hash(parsed.password.trim(), 12)
+        user = await db.user.update({
+          where: { id: user.id },
+          data: { password: hashedPassword },
+        })
+      }
+
+      const existingTu = await db.tenantUser.findUnique({
+        where: { tenantId_userId: { tenantId, userId: user.id } },
       })
-    } else if (parsed.password && parsed.password.trim() !== '') {
-      // Jika user sudah ada dan admin memasukkan password baru, update passwordnya
-      const bcrypt = await import("bcryptjs")
-      const hashedPassword = await (bcrypt.default || bcrypt).hash(parsed.password.trim(), 12)
-      user = await db.user.update({
-        where: { id: user.id },
-        data: { password: hashedPassword },
-      })
+
+      if (!existingTu) {
+        await db.tenantUser.create({
+          data: { tenantId, userId: user.id, role: "guru" },
+        })
+      } else if (existingTu.role !== "guru") {
+        const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+        const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
+        return { error: `Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat profil Guru.` }
+      }
+
+      userId = user.id
     }
-
-    const existingTu = await db.tenantUser.findUnique({
-      where: { tenantId_userId: { tenantId, userId: user.id } },
+    
+    const staff = await db.staff.create({
+      data: {
+        name: parsed.name,
+        role: parsed.role,
+        bio: parsed.bio,
+        imageUrl: parsed.imageUrl,
+        sortOrder: parsed.sortOrder,
+        email: parsed.email || null,
+        phone: parsed.phone || null,
+        subject: parsed.subject || null,
+        education: parsed.education || null,
+        userId,
+        tenantId,
+      }
     })
-
-    if (!existingTu) {
-      await db.tenantUser.create({
-        data: { tenantId, userId: user.id, role: "guru" },
-      })
-    } else if (existingTu.role !== "guru") {
-      const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
-      const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
-      throw new Error(`Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat profil Guru.`)
+    
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+    if (tenant) {
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+      await invalidatePublicTenantCache(tenant.slug)
+      revalidatePath(`/site/${tenant.slug}/gtk`, "page")
+      revalidatePath(`/site/${tenant.slug}`, "page")
+      revalidatePath("/gtk", "page")
+      revalidatePath("/", "layout")
     }
-
-    userId = user.id
+    
+    revalidatePath("/(dashboard)/admin/website/gtk", "page")
+    return { success: true, data: staff }
+  } catch (error: any) {
+    console.error("[createStaff] Error:", error)
+    return { error: error.message || "Terjadi kesalahan internal" }
   }
-  
-  const staff = await db.staff.create({
-    data: {
-      name: parsed.name,
-      role: parsed.role,
-      bio: parsed.bio,
-      imageUrl: parsed.imageUrl,
-      sortOrder: parsed.sortOrder,
-      email: parsed.email || null,
-      phone: parsed.phone || null,
-      subject: parsed.subject || null,
-      education: parsed.education || null,
-      userId,
-      tenantId,
-    }
-  })
-
-  // Auto-sync logic removed to prevent overriding explicit website settings
-  
-  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
-    await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}/gtk`, "page")
-    revalidatePath(`/site/${tenant.slug}`, "page")
-    revalidatePath("/gtk", "page")
-    revalidatePath("/", "layout")
-  }
-  
-  revalidatePath("/(dashboard)/admin/website/gtk", "page")
-  return staff
 }
 
 export async function updateStaff(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
-  
-  const parsed = staffSchema.parse(data)
-  
-  let userId: string | null = null
+  try {
+    await requireTenantAccess(tenantId)
+    
+    const parsed = staffSchema.parse(data)
+    
+    let userId: string | null = null
 
-  if (parsed.email && parsed.email.trim() !== '') {
-    const email = parsed.email.trim().toLowerCase()
-    let user = await db.user.findUnique({ where: { email } })
+    if (parsed.email && parsed.email.trim() !== '') {
+      const email = parsed.email.trim().toLowerCase()
+      let user = await db.user.findUnique({ where: { email } })
 
-    if (!user) {
-      const bcrypt = await import("bcryptjs")
-      const tempPassword = parsed.password && parsed.password.trim() !== '' ? parsed.password.trim() : crypto.randomBytes(8).toString("base64url")
-      const hashedPassword = await (bcrypt.default || bcrypt).hash(tempPassword, 12)
-      user = await db.user.create({
-        data: { name: parsed.name, email, password: hashedPassword },
+      if (!user) {
+        const bcrypt = await import("bcryptjs")
+        const tempPassword = parsed.password && parsed.password.trim() !== '' ? parsed.password.trim() : crypto.randomBytes(8).toString("base64url")
+        const hashedPassword = await (bcrypt.default || bcrypt).hash(tempPassword, 12)
+        user = await db.user.create({
+          data: { name: parsed.name, email, password: hashedPassword },
+        })
+      } else if (parsed.password && parsed.password.trim() !== '') {
+        const bcrypt = await import("bcryptjs")
+        const hashedPassword = await (bcrypt.default || bcrypt).hash(parsed.password.trim(), 12)
+        user = await db.user.update({
+          where: { id: user.id },
+          data: { password: hashedPassword },
+        })
+      }
+
+      const existingTu = await db.tenantUser.findUnique({
+        where: { tenantId_userId: { tenantId, userId: user.id } },
       })
-    } else if (parsed.password && parsed.password.trim() !== '') {
-      // Jika user sudah ada dan admin memasukkan password baru, update passwordnya
-      const bcrypt = await import("bcryptjs")
-      const hashedPassword = await (bcrypt.default || bcrypt).hash(parsed.password.trim(), 12)
-      user = await db.user.update({
-        where: { id: user.id },
-        data: { password: hashedPassword },
-      })
+
+      if (!existingTu) {
+        await db.tenantUser.create({
+          data: { tenantId, userId: user.id, role: "guru" },
+        })
+      } else if (existingTu.role !== "guru") {
+        const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+        const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
+        return { error: `Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat profil Guru.` }
+      }
+
+      userId = user.id
     }
 
-    const existingTu = await db.tenantUser.findUnique({
-      where: { tenantId_userId: { tenantId, userId: user.id } },
+    await db.staff.update({
+      where: { id, tenantId },
+      data: {
+        name: parsed.name,
+        role: parsed.role,
+        bio: parsed.bio,
+        imageUrl: parsed.imageUrl,
+        sortOrder: parsed.sortOrder,
+        email: parsed.email || null,
+        phone: parsed.phone || null,
+        subject: parsed.subject || null,
+        education: parsed.education || null,
+        userId,
+      }
     })
-
-    if (!existingTu) {
-      await db.tenantUser.create({
-        data: { tenantId, userId: user.id, role: "guru" },
-      })
-    } else if (existingTu.role !== "guru") {
-      const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
-      const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
-      throw new Error(`Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat profil Guru.`)
+    
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+    if (tenant) {
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+      await invalidatePublicTenantCache(tenant.slug)
+      revalidatePath(`/site/${tenant.slug}/gtk`, "page")
+      revalidatePath(`/site/${tenant.slug}`, "page")
+      revalidatePath("/gtk", "page")
+      revalidatePath("/", "layout")
     }
-
-    userId = user.id
+    
+    revalidatePath("/(dashboard)/admin/website/gtk", "page")
+    return { success: true }
+  } catch (error: any) {
+    console.error("[updateStaff] Error:", error)
+    return { error: error.message || "Terjadi kesalahan internal" }
   }
-
-  await db.staff.update({
-    where: { id, tenantId },
-    data: {
-      name: parsed.name,
-      role: parsed.role,
-      bio: parsed.bio,
-      imageUrl: parsed.imageUrl,
-      sortOrder: parsed.sortOrder,
-      email: parsed.email || null,
-      phone: parsed.phone || null,
-      subject: parsed.subject || null,
-      education: parsed.education || null,
-      userId,
-    }
-  })
-
-  // Auto-sync logic removed to prevent overriding explicit website settings
-  
-  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
-    await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}/gtk`, "page")
-    revalidatePath(`/site/${tenant.slug}`, "page")
-    revalidatePath("/gtk", "page")
-    revalidatePath("/", "layout")
-  }
-  
-  revalidatePath("/(dashboard)/admin/website/gtk", "page")
 }
 
 export async function deleteStaff(id: string, tenantId: string) {

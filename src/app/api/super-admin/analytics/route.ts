@@ -614,6 +614,53 @@ export async function GET() {
       ? Math.round(tenantScores.reduce((sum, ts) => sum + ts.totalScore, 0) / tenantScores.length)
       : 0
 
+    // ============================================
+    // SECTION 15: Ecosystem Transaksi (GMV)
+    // ============================================
+    const [canteenGmvAgg, savingDepositAgg, savingWithdrawalAgg, ppdbPaymentAgg] = await Promise.all([
+      db.canteenOrder.aggregate({ where: { status: "COMPLETED" }, _sum: { totalAmount: true } }),
+      db.walletTransaction.aggregate({ where: { type: "DEPOSIT", status: "SUCCESS" }, _sum: { amount: true } }),
+      db.walletTransaction.aggregate({ where: { type: "WITHDRAWAL", status: "SUCCESS" }, _sum: { amount: true } }),
+      db.pembayaranPpdb.aggregate({ where: { status: "LUNAS" }, _sum: { nominal: true } })
+    ])
+    const totalGmv = (canteenGmvAgg._sum.totalAmount || 0) + (savingDepositAgg._sum.amount || 0) + (ppdbPaymentAgg._sum.nominal || 0)
+
+    // ============================================
+    // SECTION 16: AI & Infrastructure
+    // ============================================
+    const [aiUsageAgg, totalWaSent, totalWaFailed, totalStorageAgg] = await Promise.all([
+      db.aiUsageLog.aggregate({ _sum: { tokens: true } }),
+      db.waQueueLog.count({ where: { status: "SENT" } }),
+      db.waQueueLog.count({ where: { status: "FAILED" } }),
+      db.fileUpload.aggregate({ _sum: { size: true } })
+    ])
+
+    const aiUsersGroups = await db.aiUsageLog.groupBy({
+      by: ['tenantId'],
+      _sum: { tokens: true },
+      orderBy: { _sum: { tokens: 'desc' } },
+      take: 5
+    })
+    
+    let topAiTenants: { name: string; tokens: number }[] = []
+    if (aiUsersGroups.length > 0) {
+      const aiTenantIds = aiUsersGroups.map(g => g.tenantId)
+      const tNames = await db.tenant.findMany({ where: { id: { in: aiTenantIds } }, select: { id: true, name: true } })
+      const tnMap = new Map(tNames.map(t => [t.id, t.name]))
+      topAiTenants = aiUsersGroups.map(g => ({
+        name: tnMap.get(g.tenantId) || 'Unknown',
+        tokens: g._sum.tokens || 0
+      }))
+    }
+
+    // ============================================
+    // SECTION 17: Academic Stickiness
+    // ============================================
+    const [totalCbtExams, totalTeacherJournals] = await Promise.all([
+      db.cbtExam.count(),
+      db.teacherJournal.count()
+    ])
+
     return NextResponse.json({
       // Section 1
       onlineUsers: onlineUserIds.length,
@@ -760,6 +807,30 @@ export async function GET() {
         scoreBrackets: scoreBrackets.map(b => ({ name: b.label, value: b.count })),
         totalScored: tenantScores.length,
       },
+
+      // Section 15: Ecosystem Transaksi
+      ecosystemStats: {
+        totalGmv,
+        canteenGmv: canteenGmvAgg._sum.totalAmount || 0,
+        savingDeposits: savingDepositAgg._sum.amount || 0,
+        savingWithdrawals: savingWithdrawalAgg._sum.amount || 0,
+        ppdbPayments: ppdbPaymentAgg._sum.nominal || 0,
+      },
+
+      // Section 16: AI & Infrastructure
+      aiInfraStats: {
+        totalAiTokensUsed: aiUsageAgg._sum.tokens || 0,
+        topAiTenants,
+        waSent: totalWaSent,
+        waFailed: totalWaFailed,
+        totalStorageBytes: totalStorageAgg._sum.size || 0,
+      },
+
+      // Section 17: Academic Stickiness
+      academicStats: {
+        totalCbtExams,
+        totalTeacherJournals,
+      }
     })
   } catch (error: any) {
     console.error("Analytics Error:", error)
