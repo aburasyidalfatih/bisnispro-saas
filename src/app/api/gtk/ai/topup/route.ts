@@ -10,13 +10,22 @@ export async function POST(req: Request) {
   }
 
   try {
-    let { amount, method, aiTokens } = await req.json()
-    amount = Math.round(Number(amount))
-    aiTokens = Math.round(Number(aiTokens))
+    let { packageId, method } = await req.json()
 
-    if (!amount || isNaN(amount) || !method || !aiTokens || isNaN(aiTokens)) {
+    if (!packageId || !method) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 })
     }
+
+    const aiPackage = await db.aiTokenPackage.findUnique({
+      where: { id: packageId, isActive: true }
+    })
+
+    if (!aiPackage) {
+      return NextResponse.json({ error: "Paket token tidak ditemukan atau sudah tidak aktif" }, { status: 404 })
+    }
+
+    const amount = Math.round(Number(aiPackage.price))
+    const aiTokens = Math.round(Number(aiPackage.tokens))
 
     // Determine tenantId to link the transaction
     const user = await db.user.findUnique({

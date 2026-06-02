@@ -15,18 +15,20 @@ export default function AiAssistantClient({
   userTokens, 
   tenantTokens, 
   paymentChannels,
+  aiPackages,
   chatSessions
 }: { 
   userTokens: number, 
   tenantTokens: number,
   paymentChannels: any[],
+  aiPackages: any[],
   chatSessions: any[]
 }) {
   const [activeTab, setActiveTab] = useState("chat")
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   
   // Topup states
-  const [amountTokens, setAmountTokens] = useState<number>(50000)
+  const [selectedPackageId, setSelectedPackageId] = useState<string>("")
   const [selectedMethod, setSelectedMethod] = useState<string>("")
   const [isLoadingTopup, setIsLoadingTopup] = useState(false)
 
@@ -45,13 +47,13 @@ export default function AiAssistantClient({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  const totalTokens = userTokens + tenantTokens
+  const totalTokens = userTokens
   
-  // Token Pricing (Rp 1 per 1 token approx or Rp 10.000 for 50,000 tokens?)
-  // Let's say Rp 50.000 = 50.000 tokens. Price = Tokens.
-  const calculatePrice = (tokens: number) => tokens
-
   const handleTopup = async () => {
+    if (!selectedPackageId) {
+      alert("Pilih paket token terlebih dahulu")
+      return
+    }
     if (!selectedMethod) {
       alert("Pilih metode pembayaran terlebih dahulu")
       return
@@ -63,9 +65,8 @@ export default function AiAssistantClient({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: calculatePrice(amountTokens),
-          method: selectedMethod,
-          aiTokens: amountTokens
+          packageId: selectedPackageId,
+          method: selectedMethod
         })
       })
       const data = await res.json()
@@ -265,25 +266,35 @@ export default function AiAssistantClient({
                    </CardHeader>
                    <CardContent className="space-y-6">
                       <div className="grid grid-cols-2 gap-3">
-                         {[50000, 100000, 250000, 500000].map(amt => (
+                         {aiPackages?.map(pkg => (
                            <div 
-                             key={amt}
-                             onClick={() => setAmountTokens(amt)}
-                             className={`cursor-pointer border rounded-xl p-4 text-center transition-all ${amountTokens === amt ? 'border-amber-500 bg-amber-500/10 ring-1 ring-amber-500/50' : 'border-border hover:border-amber-500/30 hover:bg-amber-500/5'}`}
+                             key={pkg.id}
+                             onClick={() => setSelectedPackageId(pkg.id)}
+                             className={`cursor-pointer border rounded-xl p-4 text-center transition-all ${selectedPackageId === pkg.id ? 'border-amber-500 bg-amber-500/10 ring-1 ring-amber-500/50' : 'border-border hover:border-amber-500/30 hover:bg-amber-500/5'}`}
                            >
-                              <div className="text-xl font-bold text-amber-600 dark:text-amber-400">{amt.toLocaleString("id-ID")}</div>
+                              <div className="font-semibold text-sm mb-1">{pkg.name}</div>
+                              <div className="text-xl font-bold text-amber-600 dark:text-amber-400">{pkg.tokens.toLocaleString("id-ID")}</div>
                               <div className="text-xs text-muted-foreground mt-1">Token AI</div>
                            </div>
                          ))}
+                         {aiPackages?.length === 0 && (
+                            <div className="col-span-2 text-center p-4 text-sm text-muted-foreground border rounded-xl">
+                               Belum ada paket token tersedia.
+                            </div>
+                         )}
                       </div>
                       
-                      <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
-                         <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm font-medium">Total Pembayaran:</span>
-                            <span className="text-xl font-bold text-primary">Rp {calculatePrice(amountTokens).toLocaleString("id-ID")}</span>
-                         </div>
-                         <p className="text-[11px] text-muted-foreground text-right">*Belum termasuk biaya layanan (jika ada)</p>
-                      </div>
+                      {selectedPackageId && (
+                        <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
+                           <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-medium">Total Pembayaran:</span>
+                              <span className="text-xl font-bold text-primary">
+                                Rp {aiPackages.find(p => p.id === selectedPackageId)?.price?.toLocaleString("id-ID") || 0}
+                              </span>
+                           </div>
+                           <p className="text-[11px] text-muted-foreground text-right">*Belum termasuk biaya layanan (jika ada)</p>
+                        </div>
+                      )}
                    </CardContent>
                 </Card>
 
@@ -331,7 +342,7 @@ export default function AiAssistantClient({
                         onClick={handleTopup} 
                         className="w-full" 
                         size="lg" 
-                        disabled={isLoadingTopup || !selectedMethod}
+                        disabled={isLoadingTopup || !selectedMethod || !selectedPackageId}
                       >
                          {isLoadingTopup ? "Memproses..." : "Bayar Sekarang"}
                       </Button>

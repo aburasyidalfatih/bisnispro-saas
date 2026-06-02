@@ -93,16 +93,20 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
       }
     })
 
-    // 1. Prioritize deducting from User's personal AI tokens if they have any
-    if (user && user.aiTokens >= tokensUsed) {
-      await db.user.update({
-        where: { id: userId },
-        data: { aiTokens: { decrement: tokensUsed } }
-      })
-      return { success: true, source: "user" }
+    // Strict separation: If user is TEACHER, they MUST use their own tokens.
+    if (user?.role === "TEACHER") {
+      if (user.aiTokens >= tokensUsed) {
+        await db.user.update({
+          where: { id: userId },
+          data: { aiTokens: { decrement: tokensUsed } }
+        })
+        return { success: true, source: "user" }
+      } else {
+        return { success: false, error: "Token AI pribadi tidak mencukupi" }
+      }
     }
 
-    // 2. Fallback to deducting from Tenant's tokens
+    // For other roles (ADMIN, SUPERADMIN, etc), use Tenant's tokens
     if (tenant.aiTokens >= tokensUsed) {
       await db.tenant.update({
         where: { id: tenantId },
@@ -129,14 +133,22 @@ export async function checkAiTokenBalance(tenantId: string, userId?: string) {
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
     if (!tenant) return { success: false, hasBalance: false, balance: 0, error: "Tenant not found" }
     
-    // Check user balance first if userId is provided
+    // Strict separation for Teachers
     if (userId) {
       const user = await db.user.findUnique({ where: { id: userId } })
-      if (user && user.aiTokens >= 50) {
-        return { success: true, hasBalance: true, balance: user.aiTokens, source: "user" }
+      if (user?.role === "TEACHER") {
+        // Teacher must have personal tokens (e.g. >= 50)
+        return { 
+          success: true, 
+          hasBalance: user.aiTokens >= 50, 
+          balance: user.aiTokens, 
+          source: "user",
+          error: user.aiTokens < 50 ? "Token AI tidak mencukupi" : undefined
+        }
       }
     }
 
+    // For other roles, use tenant tokens
     const totalTokens = tenant.aiTokens + tenant.aiAddonTokens
     // Require at least 50 tokens buffer to start a request
     return { success: true, hasBalance: totalTokens >= 50, balance: totalTokens, source: "tenant" }

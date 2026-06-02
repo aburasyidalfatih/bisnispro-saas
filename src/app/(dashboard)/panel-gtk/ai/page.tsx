@@ -32,6 +32,12 @@ export default async function AiAssistantPage() {
   // getPaymentChannels("NOT_FOUND") will fallback to platform tripay.
   const paymentChannels = await getPaymentChannels("NOT_FOUND")
 
+  // Fetch AI Token Packages from DB
+  const aiPackages = await db.aiTokenPackage.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" }
+  })
+
   // Get chat history
   const chatSessions = await db.aiChatSession.findMany({
     where: { userId: session.user.id },
@@ -52,6 +58,7 @@ export default async function AiAssistantPage() {
         userTokens={user.aiTokens || 0} 
         tenantTokens={(user.tenant?.aiTokens || 0) + (user.tenant?.aiAddonTokens || 0)}
         paymentChannels={paymentChannels}
+        aiPackages={aiPackages}
         chatSessions={chatSessions.map(s => ({
           ...s,
           messages: typeof s.messages === "string" ? JSON.parse(s.messages) : s.messages
