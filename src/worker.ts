@@ -76,14 +76,14 @@ async function throttlePerTenant(tenantId: string | null): Promise<void> {
 const waWorker = new Worker(
   "wa-queue",
   async (job: Job) => {
-    const { tenantId, number, message, waQueueLogId, broadcastId, recipientName } = job.data
+    const { tenantId, number, message, waQueueLogId, broadcastId, recipientName, templateData } = job.data
     console.log(`[wa-queue] Processing job ${job.id} for ${number}...`)
 
     // [REDIS THROTTLE] Wait for tenant-specific rate limit
     await throttlePerTenant(tenantId)
 
     try {
-      const result = await sendWhatsAppDirect(number, message, tenantId)
+      const result = await sendWhatsAppDirect(number, message, tenantId, templateData)
 
       if (!result.success) {
         throw new Error(result.error || "Failed to send WhatsApp message")

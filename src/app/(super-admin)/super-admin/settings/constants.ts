@@ -82,6 +82,21 @@ export type SettingsForm = {
   WA_ENABLE_SUBSCRIPTION_REMINDER: string;
   EMAIL_ENABLE_SUBSCRIPTION_REMINDER: string;
   
+  // Wavio Templates
+  WAVIO_TEMPLATE_PENDING: string;
+  WAVIO_TEMPLATE_APPROVED: string;
+  WAVIO_TEMPLATE_REVISION: string;
+  WAVIO_TEMPLATE_REJECTED: string;
+  WAVIO_TEMPLATE_ALERT_SUPERADMIN: string;
+  WAVIO_TEMPLATE_ALERT_AFFILIATE: string;
+  WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN: string;
+  WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN: string;
+  WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: string;
+  WAVIO_TEMPLATE_INVOICE_CREATED: string;
+  WAVIO_TEMPLATE_PAYMENT_CONFIRMED: string;
+  WAVIO_TEMPLATE_AFFILIATE_COMMISSION: string;
+  WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER: string;
+  
   // Payment
   TRIPAY_API_KEY: string;
   TRIPAY_PRIVATE_KEY: string;
@@ -209,6 +224,21 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   WA_TEMPLATE_SUBSCRIPTION_REMINDER: `*{{urgency}} Pengingat Langganan - SchoolPro*\n\nHalo,\n\nLangganan PRO untuk {{tenantName}} akan berakhir dalam *{{daysRemaining}} hari* ({{expiresAt}}).\n\nSegera perpanjang langganan agar tidak kehilangan akses fitur premium.\n\nKunjungi: Menu Langganan di Dashboard Admin.`,
   WA_ENABLE_SUBSCRIPTION_REMINDER: "true",
   EMAIL_ENABLE_SUBSCRIPTION_REMINDER: "true",
+  
+  // Wavio Templates
+  WAVIO_TEMPLATE_PENDING: "school_registration_pending",
+  WAVIO_TEMPLATE_APPROVED: "school_registration_approved",
+  WAVIO_TEMPLATE_REVISION: "school_registration_revision",
+  WAVIO_TEMPLATE_REJECTED: "school_registration_rejected",
+  WAVIO_TEMPLATE_ALERT_SUPERADMIN: "superadmin_alert_new_school",
+  WAVIO_TEMPLATE_ALERT_AFFILIATE: "affiliate_alert_new_lead",
+  WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN: "superadmin_alert_payment_success",
+  WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN: "superadmin_alert_withdrawal_request",
+  WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: "superadmin_alert_invoice_expired",
+  WAVIO_TEMPLATE_INVOICE_CREATED: "billing_invoice_created",
+  WAVIO_TEMPLATE_PAYMENT_CONFIRMED: "billing_payment_confirmed",
+  WAVIO_TEMPLATE_AFFILIATE_COMMISSION: "billing_affiliate_commission",
+  WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER: "billing_subscription_reminder",
   
   // Payment
   TRIPAY_API_KEY: "",

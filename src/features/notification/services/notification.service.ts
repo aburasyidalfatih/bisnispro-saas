@@ -160,6 +160,12 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
 
 import { enqueueWhatsApp } from "./wa-queue.service"
 
+export interface TemplateData {
+  name: string
+  language?: string
+  variables?: Record<string, string>
+}
+
 /**
  * Fungsi pengiriman WA terpusat — Memprioritaskan Internal Gateway, fallback ke StarSender.
  * Fungsi ini melempar pesan ke dalam BullMQ agar aman dari restart server.
@@ -167,9 +173,10 @@ import { enqueueWhatsApp } from "./wa-queue.service"
 export async function sendWhatsApp(
   phone: string,
   message: string,
-  tenantId?: string
+  tenantId?: string,
+  templateData?: TemplateData
 ): Promise<{ success: boolean; error?: string }> {
-  return enqueueWhatsApp(phone, message, tenantId);
+  return enqueueWhatsApp(phone, message, tenantId, templateData);
 }
 
 /**
@@ -178,7 +185,8 @@ export async function sendWhatsApp(
 export async function sendWhatsAppDirect(
   phone: string,
   message: string,
-  tenantId?: string | null
+  tenantId?: string | null,
+  templateData?: TemplateData
 ): Promise<{ success: boolean; error?: string }> {
   
   try {
@@ -241,17 +249,46 @@ export async function sendWhatsAppDirect(
             if (toPhone.startsWith("0")) toPhone = "62" + toPhone.slice(1)
             if (!toPhone.startsWith("+")) toPhone = "+" + toPhone
             
-            const res = await fetch(`https://api.wavio.web.id/api/v1/public/messages/send`, {
+            let wavioUrl = `https://api.wavio.web.id/api/v1/public/messages/send`
+            let requestBody: any = {
+              numberId: config.wavioNumberId,
+              to: toPhone,
+              text: message,
+            }
+
+            if (templateData && templateData.name) {
+              wavioUrl = `https://api.wavio.web.id/api/v1/public/messages/send-template`
+              
+              // Wavio expects components for variables?
+              // The API docs say components: array
+              const components = []
+              if (templateData.variables && Object.keys(templateData.variables).length > 0) {
+                 const parameters = Object.keys(templateData.variables).map(key => ({
+                    type: "text",
+                    text: templateData.variables![key]
+                 }))
+                 components.push({
+                   type: "body",
+                   parameters
+                 })
+              }
+
+              requestBody = {
+                numberId: config.wavioNumberId,
+                to: toPhone,
+                templateName: templateData.name,
+                templateLanguage: templateData.language || "id",
+                components,
+              }
+            }
+            
+            const res = await fetch(wavioUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
                 "X-API-Key": config.wavioApiKey,
               },
-              body: JSON.stringify({
-                numberId: config.wavioNumberId,
-                to: toPhone,
-                text: message,
-              }),
+              body: JSON.stringify(requestBody),
             })
 
             const result = await res.json().catch(() => ({}))
@@ -338,6 +375,7 @@ export async function sendNotification(params: {
   message: string
   type?: string
   channels?: ("inapp" | "email" | "whatsapp")[]
+  waTemplateData?: TemplateData
 }) {
   const channels = params.channels || ["inapp"]
 
@@ -369,7 +407,8 @@ export async function sendNotification(params: {
           await sendWhatsApp(
             user.phone,
             `${params.title}\n\n${params.message}`,
-            params.tenantId
+            params.tenantId,
+            params.waTemplateData
           )
         }
         break
@@ -490,7 +529,11 @@ export async function processTemplateNotification({
     title,
     message,
     type: "info",
-    channels
+    channels,
+    waTemplateData: {
+      name: settings[`WAVIO_TEMPLATE_${templateId}`] || templateId,
+      variables // we pass raw variables, Wavio/Meta will receive them in Object.keys order
+    }
   })
 }
 

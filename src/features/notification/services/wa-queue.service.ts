@@ -2,6 +2,8 @@ import { logger } from "@/lib/logger"
 import { waQueue } from "@/lib/queue"
 import { db } from "@/lib/db"
 
+import { TemplateData } from "./notification.service"
+
 export type WaQueueResultDTO = {
   success: boolean
   logId?: string
@@ -12,7 +14,7 @@ export type WaQueueResultDTO = {
  * Memasukkan pesan WA ke database sebagai PENDING, lalu mendorongnya ke BullMQ.
  * Worker terpisah (src/worker.ts) akan mengeksekusi pesan ini secara background.
  */
-export const enqueueWhatsApp = async (phone: string, message: string, tenantId?: string | null): Promise<WaQueueResultDTO> => {
+export const enqueueWhatsApp = async (phone: string, message: string, tenantId?: string | null, templateData?: TemplateData): Promise<WaQueueResultDTO> => {
   try {
     // 1. Tulis ke DB sebagai PENDING
     const log = await db.waQueueLog.create({
@@ -27,7 +29,7 @@ export const enqueueWhatsApp = async (phone: string, message: string, tenantId?:
     // 2. Masukkan ke BullMQ
     await waQueue.add(
       'send-wa',
-      { tenantId: tenantId || null, number: phone, message, waQueueLogId: log.id },
+      { tenantId: tenantId || null, number: phone, message, waQueueLogId: log.id, templateData },
       { jobId: log.id }
     );
 

@@ -31,6 +31,9 @@ export async function sendApplicationNotification(applicationId: string) {
   let message = ""
   let waEnabled = true;
   let emailEnabled = true;
+  
+  let wavioTemplateName = ""
+  let wavioVariables: Record<string, string> = {}
 
   switch (app.status) {
     case "PENDING": {
@@ -43,6 +46,12 @@ export async function sendApplicationNotification(applicationId: string) {
       message = tpl
         .replace(/{{adminName}}/g, app.adminName)
         .replace(/{{schoolName}}/g, app.schoolName)
+        
+      wavioTemplateName = settings.WAVIO_TEMPLATE_PENDING || "school_registration_pending"
+      wavioVariables = {
+        "1": app.adminName,
+        "2": app.schoolName
+      }
       break
     }
     case "APPROVED": {
@@ -62,6 +71,15 @@ export async function sendApplicationNotification(applicationId: string) {
         .replace(/{{loginUrl}}/g, loginUrl)
         .replace(/{{adminEmail}}/g, app.adminEmail)
         .replace(/{{tempPwd}}/g, tempPwd)
+        
+      wavioTemplateName = settings.WAVIO_TEMPLATE_APPROVED || "school_registration_approved"
+      wavioVariables = {
+        "1": app.adminName,
+        "2": app.schoolName,
+        "3": loginUrl,
+        "4": app.adminEmail,
+        "5": tempPwd
+      }
       break
     }
     case "REVISION": {
@@ -76,6 +94,13 @@ export async function sendApplicationNotification(applicationId: string) {
         .replace(/{{adminName}}/g, app.adminName)
         .replace(/{{adminMessage}}/g, app.adminMessage || "")
         .replace(/{{revisionUrl}}/g, revisionUrl)
+        
+      wavioTemplateName = settings.WAVIO_TEMPLATE_REVISION || "school_registration_revision"
+      wavioVariables = {
+        "1": app.adminName,
+        "2": app.adminMessage || "",
+        "3": revisionUrl
+      }
       break
     }
     case "REJECTED": {
@@ -89,6 +114,13 @@ export async function sendApplicationNotification(applicationId: string) {
         .replace(/{{adminName}}/g, app.adminName)
         .replace(/{{schoolName}}/g, app.schoolName)
         .replace(/{{adminMessage}}/g, app.adminMessage || "")
+        
+      wavioTemplateName = settings.WAVIO_TEMPLATE_REJECTED || "school_registration_rejected"
+      wavioVariables = {
+        "1": app.adminName,
+        "2": app.schoolName,
+        "3": app.adminMessage || ""
+      }
       break
     }
   }
@@ -122,7 +154,12 @@ export async function sendApplicationNotification(applicationId: string) {
   // 2. Kirim WhatsApp ke pendaftar (menggunakan helper terpusat)
   const disableWa = settings.DISABLE_WA_NOTIFICATION === "true" || process.env.DISABLE_WA_NOTIFICATION === "true"
   if (!disableWa && waEnabled && app.adminPhone) {
-    const result = await sendWhatsApp(app.adminPhone, `*${subject}*\n\n${message}`)
+    const result = await sendWhatsApp(
+      app.adminPhone, 
+      `*${subject}*\n\n${message}`,
+      undefined, // no tenantId for platform admin
+      wavioTemplateName ? { name: wavioTemplateName, variables: wavioVariables } : undefined
+    )
     if (!result.success) {
       logger.warn("Application WA notification skipped", { applicationId, error: result.error })
     } else {

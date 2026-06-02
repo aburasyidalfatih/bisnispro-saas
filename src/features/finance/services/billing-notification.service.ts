@@ -34,6 +34,15 @@ export type BillingSettingsDTO = {
   tplInvoiceExpiredSuperAdmin: string
   enableInvoiceExpiredSuperAdmin: boolean
   emailEnableInvoiceExpiredSuperAdmin: boolean
+
+  // Wavio Templates
+  wavioTplInvoiceCreated: string
+  wavioTplPaymentConfirmed: string
+  wavioTplAffiliateCommission: string
+  wavioTplSubscriptionReminder: string
+  wavioTplPaymentSuccessSuperAdmin: string
+  wavioTplWithdrawalRequestSuperAdmin: string
+  wavioTplInvoiceExpiredSuperAdmin: string
 }
 
 export type SubscriptionReminderResultDTO = {
@@ -59,7 +68,9 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     "EMAIL_ENABLE_AFFILIATE_COMMISSION", "EMAIL_ENABLE_SUBSCRIPTION_REMINDER",
     "WA_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN", "WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN", "EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN",
     "WA_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN", "WA_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN", "EMAIL_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN",
-    "WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN", "WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN", "EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN"
+    "WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN", "WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN", "EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN",
+    "WAVIO_TEMPLATE_INVOICE_CREATED", "WAVIO_TEMPLATE_PAYMENT_CONFIRMED", "WAVIO_TEMPLATE_AFFILIATE_COMMISSION", "WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER",
+    "WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN", "WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN", "WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN"
   ]
   const settings = await db.platformSetting.findMany({ where: { key: { in: keys } } })
   const map: Record<string, string> = {}
@@ -96,6 +107,14 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     tplInvoiceExpiredSuperAdmin: map.WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN || "",
     enableInvoiceExpiredSuperAdmin: map.WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN !== "false",
     emailEnableInvoiceExpiredSuperAdmin: map.EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN !== "false",
+
+    wavioTplInvoiceCreated: map.WAVIO_TEMPLATE_INVOICE_CREATED || "billing_invoice_created",
+    wavioTplPaymentConfirmed: map.WAVIO_TEMPLATE_PAYMENT_CONFIRMED || "billing_payment_confirmed",
+    wavioTplAffiliateCommission: map.WAVIO_TEMPLATE_AFFILIATE_COMMISSION || "billing_affiliate_commission",
+    wavioTplSubscriptionReminder: map.WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER || "billing_subscription_reminder",
+    wavioTplPaymentSuccessSuperAdmin: map.WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN || "superadmin_alert_payment_success",
+    wavioTplWithdrawalRequestSuperAdmin: map.WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN || "superadmin_alert_withdrawal_request",
+    wavioTplInvoiceExpiredSuperAdmin: map.WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN || "superadmin_alert_invoice_expired",
   }
 }
 
@@ -212,7 +231,18 @@ Terima kasih! 🙏`
 
     for (const owner of owners) {
       if (owner.user.phone && cfg.enableInvoiceCreated) {
-        sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
+        const wavioVars = {
+          "1": type,
+          "2": payment.tenant.name,
+          "3": payment.reference,
+          "4": formatCurrency(payment.amount),
+          "5": payment.expiredAt ? formatDate(payment.expiredAt) : "-",
+          "6": cfg.bankName,
+          "7": cfg.bankNumber,
+          "8": cfg.bankAccountName,
+          "9": cfg.adminWA
+        }
+        sendWhatsApp(owner.user.phone, waMessage, undefined, { name: cfg.wavioTplInvoiceCreated, variables: wavioVars }).catch(() => {})
       }
       if (owner.user.email && cfg.emailEnableInvoiceCreated) {
         sendEmail(owner.user.email, `Invoice ${type} - ${payment.reference}`, emailHtml).catch(() => {})
@@ -257,7 +287,14 @@ Silakan pantau di Panel Super Admin.`
 
     for (const admin of superAdmins) {
       if (admin.phone) {
-        sendWhatsApp(admin.phone, waMessage).catch(() => {})
+        const wavioVars = {
+          "1": payment.tenant.name,
+          "2": type,
+          "3": formatCurrency(payment.amount),
+          "4": payment.reference
+        }
+        const cfg = await getBillingSettings()
+        sendWhatsApp(admin.phone, waMessage, undefined, { name: cfg.wavioTplPaymentSuccessSuperAdmin, variables: wavioVars }).catch(() => {})
       }
     }
 
@@ -363,7 +400,15 @@ Selamat menggunakan fitur premium ${cfg.platformName}! 🎉`
 
     for (const owner of owners) {
       if (owner.user.phone && cfg.enablePaymentConfirmed) {
-        sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
+        const wavioVars = {
+          "1": tenant.name,
+          "2": payment.reference,
+          "3": formatCurrency(payment.amount),
+          "4": type,
+          "5": String(tenant.studentQuota || 0),
+          "6": tenant.expiresAt ? formatDate(tenant.expiresAt) : "-"
+        }
+        sendWhatsApp(owner.user.phone, waMessage, undefined, { name: cfg.wavioTplPaymentConfirmed, variables: wavioVars }).catch(() => {})
       }
       if (owner.user.email && cfg.emailEnablePaymentConfirmed) {
         sendEmail(owner.user.email, `Pembayaran Dikonfirmasi - ${payment.reference}`, emailHtml).catch(() => {})
@@ -434,7 +479,14 @@ Terima kasih sudah menjadi mitra ${cfg.platformName}! 🤝`
       </div>`
 
     if (affiliate.user.phone && cfg.enableAffiliateCommission) {
-      await sendWhatsApp(affiliate.user.phone, waMessage).catch(() => {})
+      const wavioVars = {
+        "1": affiliate.user.name || "Mitra",
+        "2": tenantName,
+        "3": formatCurrency(commissionAmount),
+        "4": formatCurrency(affiliate.balance),
+        "5": formatCurrency(affiliate.totalEarnings)
+      }
+      await sendWhatsApp(affiliate.user.phone, waMessage, undefined, { name: cfg.wavioTplAffiliateCommission, variables: wavioVars }).catch(() => {})
     }
     if (affiliate.user.email && cfg.emailEnableAffiliateCommission) {
       await sendEmail(affiliate.user.email, `Komisi Masuk - Rp ${formatCurrency(commissionAmount)}`, emailHtml).catch(() => {})
@@ -481,7 +533,13 @@ Terima kasih.`
 
       for (const owner of owners) {
         if (owner.user.phone) {
-          sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
+          const cfg = await getBillingSettings()
+          const wavioVars = {
+            "1": payment.reference,
+            "2": payment.tenant.name,
+            "3": formatCurrency(payment.amount)
+          }
+          sendWhatsApp(owner.user.phone, waMessage, undefined, { name: cfg.wavioTplInvoiceExpiredSuperAdmin, variables: wavioVars }).catch(() => {})
         }
       }
     }
@@ -562,7 +620,14 @@ Kunjungi: Menu Langganan di Dashboard Admin.`
 
       for (const owner of owners) {
         if (owner.user.phone && cfg.enableSubscriptionReminder) {
-          sendWhatsApp(owner.user.phone, waMessage).catch(() => {})
+          const wavioVars = {
+            "1": urgency,
+            "2": tenant.plan?.toUpperCase() || "Premium",
+            "3": tenant.name,
+            "4": String(diffDays),
+            "5": formatDate(tenant.expiresAt)
+          }
+          sendWhatsApp(owner.user.phone, waMessage, undefined, { name: cfg.wavioTplSubscriptionReminder, variables: wavioVars }).catch(() => {})
         }
       }
 
@@ -623,7 +688,13 @@ export async function notifySuperAdminPaymentSuccess(paymentId: string): Promise
 
     for (const admin of superAdmins) {
       if (admin.phone && cfg.enablePaymentSuccessSuperAdmin) {
-        sendWhatsApp(admin.phone, waMessage).catch(() => {})
+        const wavioVars = {
+          "1": templateVars.amount,
+          "2": templateVars.tenantName,
+          "3": templateVars.invoiceType,
+          "4": templateVars.reference
+        }
+        sendWhatsApp(admin.phone, waMessage, undefined, { name: cfg.wavioTplPaymentSuccessSuperAdmin, variables: wavioVars }).catch(() => {})
       }
       if (admin.email && cfg.emailEnablePaymentSuccessSuperAdmin) {
         sendEmail(admin.email, `💰 Pembayaran Berhasil - ${payment.reference}`, emailHtml).catch(() => {})
@@ -677,7 +748,14 @@ export async function notifySuperAdminWithdrawalRequest(withdrawalId: string): P
 
     for (const admin of superAdmins) {
       if (admin.phone && cfg.enableWithdrawalRequestSuperAdmin) {
-        sendWhatsApp(admin.phone, waMessage).catch(() => {})
+        const wavioVars = {
+          "1": templateVars.affiliateName,
+          "2": templateVars.amount,
+          "3": templateVars.bankName,
+          "4": templateVars.bankAccount,
+          "5": templateVars.accountName
+        }
+        sendWhatsApp(admin.phone, waMessage, undefined, { name: cfg.wavioTplWithdrawalRequestSuperAdmin, variables: wavioVars }).catch(() => {})
       }
       if (admin.email && cfg.emailEnableWithdrawalRequestSuperAdmin) {
         sendEmail(admin.email, `🚨 Permintaan Penarikan Dana Baru - Rp ${templateVars.amount}`, emailHtml).catch(() => {})
@@ -729,7 +807,12 @@ export async function notifySuperAdminInvoiceExpired(paymentId: string): Promise
 
     for (const admin of superAdmins) {
       if (admin.phone && cfg.enableInvoiceExpiredSuperAdmin) {
-        sendWhatsApp(admin.phone, waMessage).catch(() => {})
+        const wavioVars = {
+          "1": templateVars.tenantName,
+          "2": templateVars.reference,
+          "3": templateVars.amount
+        }
+        sendWhatsApp(admin.phone, waMessage, undefined, { name: cfg.wavioTplInvoiceExpiredSuperAdmin, variables: wavioVars }).catch(() => {})
       }
       if (admin.email && cfg.emailEnableInvoiceExpiredSuperAdmin) {
         sendEmail(admin.email, `⚠️ Invoice Kedaluwarsa - ${payment.reference}`, emailHtml).catch(() => {})
