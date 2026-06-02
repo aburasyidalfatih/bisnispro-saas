@@ -9,7 +9,7 @@ COPY package.json package-lock.json ./
 COPY prisma ./prisma
 
 # Install dependencies menggunakan lockfile yang baru
-RUN npm ci --legacy-peer-deps
+RUN npm install --legacy-peer-deps --no-audit --no-fund
 
 # Install sharp for Linux (diperlukan untuk image processing)
 RUN npm install --os=linux --cpu=x64 sharp --legacy-peer-deps
