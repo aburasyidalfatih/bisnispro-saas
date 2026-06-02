@@ -1,14 +1,14 @@
-import React from "react"
-import DOMPurify from "isomorphic-dompurify"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { MessageSquare, Plus, Loader2, Pencil, Trash2 } from "lucide-react"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
+import React from"react"
+import DOMPurify from"isomorphic-dompurify"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from"@/components/ui/dialog"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { MessageSquare, Plus, Loader2, Pencil, Trash2 } from"lucide-react"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
 
 interface AnnouncementsProps {
   announcements: any[]
@@ -91,7 +91,7 @@ export function Announcements({
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowAddModal(false)}>Batal</Button>
                 <Button onClick={submitAnnouncement} disabled={submittingAnnounce}>
-                  {submittingAnnounce ? "Menyimpan..." : "Terbitkan"}
+                  {submittingAnnounce ?"Menyimpan..." :"Terbitkan"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -133,7 +133,7 @@ export function Announcements({
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowEditModal(false)}>Batal</Button>
                 <Button onClick={submitEditAnnouncement} disabled={submittingEdit}>
-                  {submittingEdit ? "Menyimpan..." : "Simpan Perubahan"}
+                  {submittingEdit ?"Menyimpan..." :"Simpan Perubahan"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -157,21 +157,21 @@ export function Announcements({
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                      {post.author?.name?.charAt(0) || "A"}
+                      {post.author?.name?.charAt(0) ||"A"}
                     </div>
                     <div>
-                      <p className="font-semibold text-sm">{post.author?.name || "Admin Sekolah"}</p>
+                      <p className="font-semibold text-sm">{post.author?.name ||"Admin Sekolah"}</p>
                       <p className="text-[11px] text-muted-foreground">
-                        {format(new Date(post.createdAt), "dd MMM yyyy, HH:mm", { locale: localeId })}
+                        {format(new Date(post.createdAt),"dd MMM yyyy, HH:mm", { locale: localeId })}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
-                      {post.type === "PENGUMUMAN_SEMUA" ? "TARGET: SEMUA" :
-                       post.type === "PENGUMUMAN_GTK" ? "TARGET: GTK" :
-                       post.type === "PENGUMUMAN_ORTU" ? "TARGET: ORANGTUA" :
-                       post.type === "PENGUMUMAN_SISWA" ? "TARGET: SISWA" : "PENGUMUMAN"}
+                      {post.type ==="PENGUMUMAN_SEMUA" ?"TARGET: SEMUA" :
+                       post.type ==="PENGUMUMAN_GTK" ?"TARGET: GTK" :
+                       post.type ==="PENGUMUMAN_ORTU" ?"TARGET: ORANGTUA" :
+                       post.type ==="PENGUMUMAN_SISWA" ?"TARGET: SISWA" :"PENGUMUMAN"}
                     </span>
                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEditModal(post)}>
                       <Pencil className="h-4 w-4" />
@@ -190,7 +190,7 @@ export function Announcements({
                   </div>
                 </div>
                 <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
-                <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }} />
+                <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content ||"") }} />
               </div>
             ))}
           </div>

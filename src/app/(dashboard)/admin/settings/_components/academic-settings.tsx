@@ -1,9 +1,9 @@
-import React from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { BookOpen, Save } from "lucide-react"
+import React from"react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { BookOpen, Save } from"lucide-react"
 
 interface AcademicSettingsProps {
   rawSettings: any
@@ -34,7 +34,7 @@ export function AcademicSettings({
           <div className="space-y-1.5">
             <Label className="text-xs">Tahun Ajaran Aktif</Label>
             <Input 
-              value={rawSettings.academicYear || "2024/2025"} 
+              value={rawSettings.academicYear ||"2024/2025"} 
               onChange={e => setRawSettings((p:any) => ({ ...p, academicYear: e.target.value }))} 
               placeholder="Contoh: 2024/2025" 
               className="rounded-xl h-9 text-sm" 
@@ -43,7 +43,7 @@ export function AcademicSettings({
           <div className="space-y-1.5">
             <Label className="text-xs">Semester Aktif</Label>
             <select 
-              value={rawSettings.academicSemester || "Ganjil"} 
+              value={rawSettings.academicSemester ||"Ganjil"} 
               onChange={e => setRawSettings((p:any) => ({ ...p, academicSemester: e.target.value }))} 
               className="flex h-9 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >

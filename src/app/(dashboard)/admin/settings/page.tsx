@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { toast } from "@/hooks/use-toast"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
+import { useEffect, useState, useRef } from"react"
+import { useSession } from"next-auth/react"
+import { useRouter } from"next/navigation"
+import { toast } from"@/hooks/use-toast"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
 
-import { ProfileSettings } from "./_components/profile-settings"
-import { AcademicSettings } from "./_components/academic-settings"
-import { IntegrationSettings } from "./_components/integration-settings"
-import { AttendanceSettings } from "./_components/attendance-settings"
-import { NotificationSettings } from "./_components/notification-settings"
+import { ProfileSettings } from"./_components/profile-settings"
+import { AcademicSettings } from"./_components/academic-settings"
+import { IntegrationSettings } from"./_components/integration-settings"
+import { AttendanceSettings } from"./_components/attendance-settings"
+import { NotificationSettings } from"./_components/notification-settings"
 
 export default function SettingsGeneralPage() {
   const { data: session, status, update: updateSession } = useSession()
@@ -22,20 +22,20 @@ export default function SettingsGeneralPage() {
   // Role check — card Lembaga hanya untuk owner/admin
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
   const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
-  const currentRole = currentTenant?.role || "orangtua"
+  const currentRole = currentTenant?.role ||"orangtua"
   
-  const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
-  const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
-  const isAdminRole = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
+  const isImpersonatingUser = typeof document !=="undefined" && document.cookie.includes("impersonate-user=")
+  const isImpersonatingTenant = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
+  const isAdminRole = !isImpersonatingUser && (currentRole ==="owner" || currentRole ==="admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
 
   useEffect(() => {
-    if (!isAdminRole && status !== "loading") {
+    if (!isAdminRole && status !=="loading") {
       router.replace("/ortu/profil")
     }
   }, [isAdminRole, status, router])
 
   // Profile
-  const [profileForm, setProfileForm] = useState({ name: "", phone: "", email: "" })
+  const [profileForm, setProfileForm] = useState({ name:"", phone:"", email:"" })
   const [savingProfile, setSavingProfile] = useState(false)
   const [avatarPreview, setAvatarPreview] = useState("")
   const [avatarUrl, setAvatarUrl] = useState("")
@@ -43,12 +43,12 @@ export default function SettingsGeneralPage() {
   const avatarInputRef = useRef<HTMLInputElement>(null)
 
   // Password
-  const [passwordForm, setPasswordForm] = useState({ current: "", newPass: "", confirm: "" })
+  const [passwordForm, setPasswordForm] = useState({ current:"", newPass:"", confirm:"" })
   const [savingPassword, setSavingPassword] = useState(false)
   const [showPw, setShowPw] = useState({ current: false, newPass: false, confirm: false })
 
   // Integrations
-  const [orgForm, setOrgForm] = useState({ googleClientId: "", googleClientSecret: "" })
+  const [orgForm, setOrgForm] = useState({ googleClientId:"", googleClientSecret:"" })
   const [rawSettings, setRawSettings] = useState<any>({})
   const [savingOrg, setSavingOrg] = useState(false)
 
@@ -68,9 +68,9 @@ export default function SettingsGeneralPage() {
 
   useEffect(() => {
     if (!session?.user) return
-    setProfileForm({ name: session.user.name || "", phone: (session.user as any).phone || "", email: session.user.email || "" })
-    setAvatarPreview(session.user.image || "")
-    setAvatarUrl(session.user.image || "")
+    setProfileForm({ name: session.user.name ||"", phone: (session.user as any).phone ||"", email: session.user.email ||"" })
+    setAvatarPreview(session.user.image ||"")
+    setAvatarUrl(session.user.image ||"")
   }, [session?.user])
 
   useEffect(() => {
@@ -78,8 +78,8 @@ export default function SettingsGeneralPage() {
     fetch(`/api/tenant/website?tenantId=${tenantId}`).then(r => r.json()).then(d => {
       const s = d.settings || {}
       setOrgForm({ 
-        googleClientId: d.googleClientId || "",
-        googleClientSecret: d.googleClientSecret || ""
+        googleClientId: d.googleClientId ||"",
+        googleClientSecret: d.googleClientSecret ||""
       })
       setRawSettings(s)
     })
@@ -95,7 +95,7 @@ export default function SettingsGeneralPage() {
     })
   }, [])
 
-  if (!isAdminRole && status !== "loading") {
+  if (!isAdminRole && status !=="loading") {
     return null
   }
 
@@ -103,16 +103,16 @@ export default function SettingsGeneralPage() {
     if (!session?.user?.id) return
     setSavingProfile(true)
     const res = await fetch("/api/user/profile", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
+      method:"PUT", headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ name: profileForm.name, phone: profileForm.phone, email: profileForm.email, avatar: avatarUrl || null }),
     })
     setSavingProfile(false)
     if (res.ok) {
       await updateSession({ forceRefresh: true })
-      toast({ title: "Profil disimpan" })
+      toast({ title:"Profil disimpan" })
     } else {
       const d = await res.json().catch(() => ({}))
-      toast({ title: "Gagal", description: d.error, variant: "destructive" })
+      toast({ title:"Gagal", description: d.error, variant:"destructive" })
     }
   }
 
@@ -123,38 +123,38 @@ export default function SettingsGeneralPage() {
     try {
       const fd = new FormData()
       fd.append("file", file)
-      fd.append("subDir", "avatars")
+      fd.append("subDir","avatars")
       if (tenantId) fd.append("tenantId", tenantId)
-      const res = await fetch("/api/upload", { method: "POST", body: fd })
+      const res = await fetch("/api/upload", { method:"POST", body: fd })
       const d = await res.json()
-      if (res.ok && d.url) { setAvatarPreview(d.url); setAvatarUrl(d.url); toast({ title: "Foto diunggah", description: "Klik Simpan Profil untuk menyimpan." }) }
-      else toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
-    } catch { toast({ title: "Gagal upload", variant: "destructive" }) }
-    finally { setUploadingAvatar(false); e.target.value = "" }
+      if (res.ok && d.url) { setAvatarPreview(d.url); setAvatarUrl(d.url); toast({ title:"Foto diunggah", description:"Klik Simpan Profil untuk menyimpan." }) }
+      else toast({ title:"Gagal upload", description: d.error, variant:"destructive" })
+    } catch { toast({ title:"Gagal upload", variant:"destructive" }) }
+    finally { setUploadingAvatar(false); e.target.value ="" }
   }
 
   const handleChangePassword = async () => {
     if (!passwordForm.current || !passwordForm.newPass || !passwordForm.confirm) {
-      return toast({ title: "Lengkapi semua field password", variant: "destructive" })
+      return toast({ title:"Lengkapi semua field password", variant:"destructive" })
     }
-    if (passwordForm.newPass.length < 8) return toast({ title: "Password minimal 8 karakter", variant: "destructive" })
-    if (passwordForm.newPass !== passwordForm.confirm) return toast({ title: "Password tidak cocok", variant: "destructive" })
+    if (passwordForm.newPass.length < 8) return toast({ title:"Password minimal 8 karakter", variant:"destructive" })
+    if (passwordForm.newPass !== passwordForm.confirm) return toast({ title:"Password tidak cocok", variant:"destructive" })
     setSavingPassword(true)
     const res = await fetch("/api/user/change-password", {
-      method: "POST", headers: { "Content-Type": "application/json" },
+      method:"POST", headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ currentPassword: passwordForm.current, newPassword: passwordForm.newPass }),
     })
     const d = await res.json()
     setSavingPassword(false)
-    if (res.ok) { setPasswordForm({ current: "", newPass: "", confirm: "" }); toast({ title: "Password diubah" }) }
-    else toast({ title: "Gagal", description: d.error, variant: "destructive" })
+    if (res.ok) { setPasswordForm({ current:"", newPass:"", confirm:"" }); toast({ title:"Password diubah" }) }
+    else toast({ title:"Gagal", description: d.error, variant:"destructive" })
   }
 
   const handleSaveOrg = async () => {
     if (!tenantId) return
     setSavingOrg(true)
     const res = await fetch("/api/tenant/website", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
+      method:"PUT", headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ 
         tenantId, 
         googleClientId: orgForm.googleClientId || null,
@@ -166,10 +166,10 @@ export default function SettingsGeneralPage() {
     if (res.ok) {
       await updateSession({ forceRefresh: true })
       router.refresh()
-      toast({ title: "Lembaga disimpan" })
+      toast({ title:"Lembaga disimpan" })
     } else {
       const d = await res.json().catch(() => ({}))
-      toast({ title: "Gagal", description: d.error, variant: "destructive" })
+      toast({ title:"Gagal", description: d.error, variant:"destructive" })
     }
   }
 
@@ -177,10 +177,10 @@ export default function SettingsGeneralPage() {
     const newVal = !notifPrefs[channel]
     setNotifPrefs(prev => ({ ...prev, [channel]: newVal }))
     await fetch("/api/tenant/notifications/preferences", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
+      method:"PUT", headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ channel, enabled: newVal }),
     })
-    toast({ title: newVal ? "Diaktifkan" : "Dinonaktifkan", description: `Notifikasi ${channel} telah diubah.` })
+    toast({ title: newVal ?"Diaktifkan" :"Dinonaktifkan", description: `Notifikasi ${channel} telah diubah.` })
   }
 
   return (

@@ -1,17 +1,17 @@
 "use client"
 
-import { useState } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { ArrowLeft, Loader2, Heart } from "lucide-react"
-import Link from "next/link"
-import dynamic from "next/dynamic"
+import { useState } from"react"
+import { useSession } from"next-auth/react"
+import { useRouter } from"next/navigation"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { ArrowLeft, Loader2, Heart } from"lucide-react"
+import Link from"next/link"
+import dynamic from"next/dynamic"
 
 export default function CreateCampaignPage() {
   const { data: session } = useSession()
@@ -20,38 +20,38 @@ export default function CreateCampaignPage() {
   const tenant = session?.user?.tenants?.[0]
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
-    title: "",
-    description: "",
-    imageUrl: "",
+    title:"",
+    description:"",
+    imageUrl:"",
     targetAmount: 0,
     startDate: new Date().toISOString().split("T")[0],
-    endDate: "",
+    endDate:"",
     isPublic: true,
-    slug: "",
+    slug:"",
   })
 
   const handleSubmit = async () => {
     if (!tenant) return
-    if (!form.title || !form.targetAmount) return toast({ title: "Judul dan target wajib diisi", variant: "destructive" })
+    if (!form.title || !form.targetAmount) return toast({ title:"Judul dan target wajib diisi", variant:"destructive" })
     setLoading(true)
     try {
       const res = await fetch("/api/donation/campaigns", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId: tenant.id, ...form, targetAmount: Number(form.targetAmount) }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error?.message || data.error || "Gagal membuat kampanye")
-      toast({ title: "Kampanye berhasil dibuat!" })
+      if (!res.ok) throw new Error(data.error?.message || data.error ||"Gagal membuat kampanye")
+      toast({ title:"Kampanye berhasil dibuat!" })
       router.push("/admin/donation/campaigns")
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
   }
 
-  const autoSlug = form.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")
+  const autoSlug = form.title.toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,"")
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-12">
@@ -86,7 +86,7 @@ export default function CreateCampaignPage() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Target Dana (Rp) *</Label>
-              <Input type="number" value={form.targetAmount || ""} onChange={e => setForm(f => ({ ...f, targetAmount: Number(e.target.value) }))} placeholder="50000000" className="rounded-xl" />
+              <Input type="number" value={form.targetAmount ||""} onChange={e => setForm(f => ({ ...f, targetAmount: Number(e.target.value) }))} placeholder="50000000" className="rounded-xl" />
             </div>
             <div className="space-y-2">
               <Label>URL Gambar</Label>
@@ -110,10 +110,10 @@ export default function CreateCampaignPage() {
             <Input
               value={form.slug || autoSlug}
               onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
-              placeholder={autoSlug || "pembangunan-masjid"}
+              placeholder={autoSlug ||"pembangunan-masjid"}
               className="rounded-xl font-mono text-sm"
             />
-            <p className="text-xs text-muted-foreground">Akses publik: /donasi/{form.slug || autoSlug || "slug-kampanye"}</p>
+            <p className="text-xs text-muted-foreground">Akses publik: /donasi/{form.slug || autoSlug ||"slug-kampanye"}</p>
           </div>
 
           <div className="flex items-center justify-between p-4 rounded-xl bg-rose-500/5 border border-rose-500/10">

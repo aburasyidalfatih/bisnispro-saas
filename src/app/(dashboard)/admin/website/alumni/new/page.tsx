@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, User, Quote, Sparkles, Wand2, Loader2 as Loader2Icon } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { createAlumni } from "@/features/alumni/actions/alumni.action"
+import { useState, useRef } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, User, Quote, Sparkles, Wand2, Loader2 as Loader2Icon } from"lucide-react"
+import Link from"next/link"
+import { useRouter } from"next/navigation"
+import { createAlumni } from"@/features/alumni/actions/alumni.action"
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from"@/components/ui/dialog"
 
 export default function NewAlumniPage() {
   const router = useRouter()
@@ -33,11 +33,11 @@ export default function NewAlumniPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    name: "",
+    name:"",
     graduationYear: new Date().getFullYear().toString(),
-    currentStatus: "KULIAH",
-    institutionName: "",
-    testimonial: ""
+    currentStatus:"KULIAH",
+    institutionName:"",
+    testimonial:""
   })
 
   // AI State
@@ -51,7 +51,7 @@ export default function NewAlumniPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 2 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 2MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 2MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -62,7 +62,7 @@ export default function NewAlumniPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!tenantId || !formData.name || !formData.graduationYear) {
-      toast({ title: "Nama dan Tahun Lulus wajib diisi", variant: "destructive" })
+      toast({ title:"Nama dan Tahun Lulus wajib diisi", variant:"destructive" })
       return
     }
 
@@ -76,13 +76,13 @@ export default function NewAlumniPage() {
         const fd = new FormData()
         fd.append("file", file)
         fd.append("tenantId", tenantId)
-        fd.append("subDir", "alumni")
+        fd.append("subDir","alumni")
         
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+        const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
         const uploadData = await uploadRes.json()
         
         if (!uploadRes.ok || !uploadData.url) {
-          throw new Error(uploadData.error || "Gagal mengunggah foto")
+          throw new Error(uploadData.error ||"Gagal mengunggah foto")
         }
         
         imageUrl = uploadData.url
@@ -98,10 +98,10 @@ export default function NewAlumniPage() {
         imageUrl: imageUrl,
       })
 
-      toast({ title: "Data alumni berhasil disimpan!" })
+      toast({ title:"Data alumni berhasil disimpan!" })
       router.push("/admin/website/alumni")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -109,18 +109,18 @@ export default function NewAlumniPage() {
 
   const handleGenerateAI = async () => {
     if (!aiInputText.trim()) {
-      toast({ title: "Input kosong", description: "Silakan masukkan kata kunci testimoni.", variant: "destructive" })
+      toast({ title:"Input kosong", description:"Silakan masukkan kata kunci testimoni.", variant:"destructive" })
       return
     }
 
     setAiLoading(true)
     try {
       const res = await fetch("/api/tenant/ai/generate-content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ 
           tenantId, 
-          promptType: "alumni", 
+          promptType:"alumni", 
           inputs: { text: aiInputText, name: formData.currentStatus } 
         })
       })
@@ -129,12 +129,12 @@ export default function NewAlumniPage() {
         setFormData(p => ({ ...p, testimonial: d.data.result }))
         setAiModalOpen(false)
         setAiInputText("")
-        toast({ title: "Berhasil", description: "Testimoni berhasil di-generate AI." })
+        toast({ title:"Berhasil", description:"Testimoni berhasil di-generate AI." })
       } else {
-        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+        toast({ title:"Gagal", description: d.error ||"Terjadi kesalahan", variant:"destructive" })
       }
     } catch (err) {
-      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+      toast({ title:"Error", description:"Gagal menghubungi server AI", variant:"destructive" })
     } finally {
       setAiLoading(false)
     }
@@ -283,7 +283,7 @@ export default function NewAlumniPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Data Alumni</>
@@ -340,7 +340,7 @@ export default function NewAlumniPage() {
               className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
             >
               {aiLoading ? <Loader2Icon className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {aiLoading ? "Memproses..." : "Generate Testimoni"}
+              {aiLoading ?"Memproses..." :"Generate Testimoni"}
             </Button>
           </DialogFooter>
         </DialogContent>

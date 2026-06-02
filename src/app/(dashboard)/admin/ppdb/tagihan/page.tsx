@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { CheckCircle, XCircle, Wallet, Eye, Search } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useToast } from "@/hooks/use-toast"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
-import { normalizeImageUrl } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Button } from"@/components/ui/button"
+import { CheckCircle, XCircle, Wallet, Eye, Search } from"lucide-react"
+import { Card, CardContent } from"@/components/ui/card"
+import { Badge } from"@/components/ui/badge"
+import { Input } from"@/components/ui/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from"@/components/ui/dialog"
+import { useToast } from"@/hooks/use-toast"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
+import { normalizeImageUrl } from"@/lib/utils"
 
 
 export default function PpdbTagihanPage() {
@@ -53,24 +53,24 @@ export default function PpdbTagihanPage() {
   const handleVerify = async (tagihanId: string, pembayaranId: string, status: string) => {
     try {
       const res = await fetch(`/api/ppdb/tagihan/${tagihanId}`, {
-        method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: status === "SUCCESS" ? "LUNAS" : "BELUM_LUNAS", pembayaranId, pembayaranStatus: status })
+        method:"PATCH", headers: {"Content-Type":"application/json" },
+        body: JSON.stringify({ status: status ==="SUCCESS" ?"LUNAS" :"BELUM_LUNAS", pembayaranId, pembayaranStatus: status })
       })
       if (res.ok) {
-        toast({ title: "Berhasil", description: `Pembayaran telah diperbarui` })
+        toast({ title:"Berhasil", description: `Pembayaran telah diperbarui` })
         setIsDialogOpen(false)
         fetchBillings()
       }
     } catch { }
   }
 
-  const hasPendingPayment = (b: any) => b.pembayaran?.some((p: any) => p.status === "PENDING")
+  const hasPendingPayment = (b: any) => b.pembayaran?.some((p: any) => p.status ==="PENDING")
 
   const counts = {
     all: billings.length,
-    lunas: billings.filter(b => b.status === "LUNAS").length,
+    lunas: billings.filter(b => b.status ==="LUNAS").length,
     pending: billings.filter(b => hasPendingPayment(b)).length,
-    belum: billings.filter(b => b.status !== "LUNAS" && !hasPendingPayment(b)).length,
+    belum: billings.filter(b => b.status !=="LUNAS" && !hasPendingPayment(b)).length,
   }
 
   return (
@@ -87,10 +87,10 @@ export default function PpdbTagihanPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total Tagihan", value: counts.all, color: "text-foreground" },
-          { label: "Menunggu Verifikasi", value: counts.pending, color: "text-amber-500" },
-          { label: "Lunas", value: counts.lunas, color: "text-emerald-500" },
-          { label: "Belum Bayar", value: counts.belum, color: "text-red-500" },
+          { label:"Total Tagihan", value: counts.all, color:"text-foreground" },
+          { label:"Menunggu Verifikasi", value: counts.pending, color:"text-amber-500" },
+          { label:"Lunas", value: counts.lunas, color:"text-emerald-500" },
+          { label:"Belum Bayar", value: counts.belum, color:"text-red-500" },
         ].map(s => (
           <Card key={s.label} className="glass border-0">
             <CardContent className="p-4 text-center">
@@ -136,7 +136,7 @@ export default function PpdbTagihanPage() {
               <tbody className="divide-y divide-border/30">
                 {filtered.map(b => {
                   const latestPembayaran = b.pembayaran?.[0]
-                  const isPending = latestPembayaran?.status === "PENDING"
+                  const isPending = latestPembayaran?.status ==="PENDING"
                   return (
                     <tr key={b.id} className="hover:bg-muted/30 transition-colors group">
                       <td className="px-6 py-4">
@@ -148,7 +148,7 @@ export default function PpdbTagihanPage() {
                       </td>
                       <td className="px-4 py-4 font-bold">Rp {b.nominal?.toLocaleString()}</td>
                       <td className="px-4 py-4">
-                        <Badge className={b.status === "LUNAS" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-red-500/10 text-red-600 border-red-500/20"}>
+                        <Badge className={b.status ==="LUNAS" ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :"bg-red-500/10 text-red-600 border-red-500/20"}>
                           {b.status}
                         </Badge>
                       </td>
@@ -156,9 +156,8 @@ export default function PpdbTagihanPage() {
                         {latestPembayaran ? (
                           <div className="flex items-center gap-2">
                             <Badge className={
-                              latestPembayaran.status === "SUCCESS" ? "bg-emerald-100 text-emerald-700" :
-                              latestPembayaran.status === "PENDING" ? "bg-amber-100 text-amber-700" :
-                              "bg-red-100 text-red-700"
+                              latestPembayaran.status ==="SUCCESS" ?"bg-emerald-100 text-emerald-700" :
+                              latestPembayaran.status ==="PENDING" ?"bg-amber-100 text-amber-700" :"bg-red-100 text-red-700"
                             }>
                               {latestPembayaran.status}
                             </Badge>
@@ -217,9 +216,9 @@ export default function PpdbTagihanPage() {
                       <div className="flex justify-between items-center">
                         <div>
                           <p className="font-bold">Rp {p.nominal?.toLocaleString()}</p>
-                          <p className="text-[11px] text-muted-foreground">{format(new Date(p.createdAt), "d MMM yyyy, HH:mm", { locale: localeId })}</p>
+                          <p className="text-[11px] text-muted-foreground">{format(new Date(p.createdAt),"d MMM yyyy, HH:mm", { locale: localeId })}</p>
                         </div>
-                        <Badge className={p.status === "SUCCESS" ? "bg-emerald-500 text-white" : p.status === "PENDING" ? "bg-amber-500 text-white" : "bg-red-500 text-white"}>
+                        <Badge className={p.status ==="SUCCESS" ?"bg-emerald-500 text-white" : p.status ==="PENDING" ?"bg-amber-500 text-white" :"bg-red-500 text-white"}>
                           {p.status}
                         </Badge>
                       </div>
@@ -231,12 +230,12 @@ export default function PpdbTagihanPage() {
                           </a>
                         </div>
                       )}
-                      {p.status === "PENDING" && (
+                      {p.status ==="PENDING" && (
                         <div className="flex gap-2 pt-1">
-                          <Button className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white border-0 gap-1" onClick={() => handleVerify(selectedTagihan.id, p.id, "SUCCESS")}>
+                          <Button className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white border-0 gap-1" onClick={() => handleVerify(selectedTagihan.id, p.id,"SUCCESS")}>
                             <CheckCircle className="h-4 w-4" /> Terima
                           </Button>
-                          <Button variant="outline" className="flex-1 rounded-xl text-red-600 border-red-200 hover:bg-red-50 gap-1" onClick={() => handleVerify(selectedTagihan.id, p.id, "FAILED")}>
+                          <Button variant="outline" className="flex-1 rounded-xl text-red-600 border-red-200 hover:bg-red-50 gap-1" onClick={() => handleVerify(selectedTagihan.id, p.id,"FAILED")}>
                             <XCircle className="h-4 w-4" /> Tolak
                           </Button>
                         </div>

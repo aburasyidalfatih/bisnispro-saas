@@ -1,23 +1,23 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Eye, Users, Search, Trash2, FileSpreadsheet } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
-import Link from "next/link"
-import { useConfirm } from "@/components/providers/confirm-provider"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Button } from"@/components/ui/button"
+import { Eye, Users, Search, Trash2, FileSpreadsheet } from"lucide-react"
+import { Card, CardContent } from"@/components/ui/card"
+import { Badge } from"@/components/ui/badge"
+import { Input } from"@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
+import Link from"next/link"
+import { useConfirm } from"@/components/providers/confirm-provider"
 
 const statusConfig: Record<string, { label: string; class: string }> = {
-  MENUNGGU: { label: "Menunggu", class: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
-  TERVERIFIKASI: { label: "Terverifikasi", class: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-  DITERIMA: { label: "Diterima", class: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" },
-  DITOLAK: { label: "Ditolak", class: "bg-red-500/10 text-red-600 border-red-500/20" },
+  MENUNGGU: { label:"Menunggu", class:"bg-amber-500/10 text-amber-600 border-amber-500/20" },
+  TERVERIFIKASI: { label:"Terverifikasi", class:"bg-blue-500/10 text-blue-600 border-blue-500/20" },
+  DITERIMA: { label:"Diterima", class:"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" },
+  DITOLAK: { label:"Ditolak", class:"bg-red-500/10 text-red-600 border-red-500/20" },
 }
 
 export default function PpdbPendaftarPage() {
@@ -47,8 +47,8 @@ export default function PpdbPendaftarPage() {
     setLoading(true)
     try {
       let url = `/api/ppdb/pendaftar?tenantId=${tenantId}`
-      if (statusFilter !== "ALL") url += `&status=${statusFilter}`
-      if (periodeFilter !== "ALL") url += `&periodeId=${periodeFilter}`
+      if (statusFilter !=="ALL") url += `&status=${statusFilter}`
+      if (periodeFilter !=="ALL") url += `&periodeId=${periodeFilter}`
       const res = await fetch(url)
       const data = await res.json()
       const arr = Array.isArray(data) ? data : []
@@ -67,11 +67,11 @@ export default function PpdbPendaftarPage() {
 
   const handleDelete = async (id: string) => {
     const isConfirmed = await confirm({
-      title: "Hapus Pendaftar?",
-      description: "Apakah Anda yakin ingin menghapus pendaftar ini secara permanen? Semua data tagihan dan berkas terkait akan ikut terhapus.",
-      confirmText: "Hapus Sekarang",
-      cancelText: "Batal",
-      variant: "destructive"
+      title:"Hapus Pendaftar?",
+      description:"Apakah Anda yakin ingin menghapus pendaftar ini secara permanen? Semua data tagihan dan berkas terkait akan ikut terhapus.",
+      confirmText:"Hapus Sekarang",
+      cancelText:"Batal",
+      variant:"destructive"
     })
     
     if (!isConfirmed) return;
@@ -92,18 +92,18 @@ export default function PpdbPendaftarPage() {
   }
 
   const handleExportDapodik = () => {
-    if (periodeFilter === "ALL") {
+    if (periodeFilter ==="ALL") {
       alert("Silakan pilih gelombang tertentu terlebih dahulu untuk mengekspor data Dapodik.");
       return;
     }
-    window.open(`/api/ppdb/export-dapodik?tenantId=${tenantId}&periodeId=${periodeFilter}`, "_blank");
+    window.open(`/api/ppdb/export-dapodik?tenantId=${tenantId}&periodeId=${periodeFilter}`,"_blank");
   }
 
   const counts = {
     all: applicants.length,
-    menunggu: applicants.filter(a => a.status === "MENUNGGU").length,
-    diterima: applicants.filter(a => a.status === "DITERIMA").length,
-    ditolak: applicants.filter(a => a.status === "DITOLAK").length,
+    menunggu: applicants.filter(a => a.status ==="MENUNGGU").length,
+    diterima: applicants.filter(a => a.status ==="DITERIMA").length,
+    ditolak: applicants.filter(a => a.status ==="DITOLAK").length,
   }
 
   return (
@@ -130,10 +130,10 @@ export default function PpdbPendaftarPage() {
       {/* Stats Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total", value: counts.all, color: "text-foreground" },
-          { label: "Menunggu", value: counts.menunggu, color: "text-amber-500" },
-          { label: "Diterima", value: counts.diterima, color: "text-emerald-500" },
-          { label: "Ditolak", value: counts.ditolak, color: "text-red-500" },
+          { label:"Total", value: counts.all, color:"text-foreground" },
+          { label:"Menunggu", value: counts.menunggu, color:"text-amber-500" },
+          { label:"Diterima", value: counts.diterima, color:"text-emerald-500" },
+          { label:"Ditolak", value: counts.ditolak, color:"text-red-500" },
         ].map(s => (
           <Card key={s.label} className="glass border-0">
             <CardContent className="p-4 text-center">
@@ -201,9 +201,9 @@ export default function PpdbPendaftarPage() {
               </thead>
               <tbody className="divide-y divide-border/30">
                 {filtered.map(a => {
-                  const tagihanPendaftaran = a.tagihan?.find((t: any) => t.jenis === "PENDAFTARAN")
-                  const tagihanDU = a.tagihan?.find((t: any) => t.jenis === "DAFTAR_ULANG")
-                  const st = statusConfig[a.status] ?? { label: a.status, class: "bg-muted text-muted-foreground" }
+                  const tagihanPendaftaran = a.tagihan?.find((t: any) => t.jenis ==="PENDAFTARAN")
+                  const tagihanDU = a.tagihan?.find((t: any) => t.jenis ==="DAFTAR_ULANG")
+                  const st = statusConfig[a.status] ?? { label: a.status, class:"bg-muted text-muted-foreground" }
                   
                   return (
                     <tr key={a.id} className="hover:bg-muted/30 transition-colors group">
@@ -213,17 +213,17 @@ export default function PpdbPendaftarPage() {
                         <div className="flex items-center gap-1.5 mt-1 text-[11px] text-muted-foreground">
                           <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-foreground">{a.noPendaftaran}</code>
                           <span>•</span>
-                          <span>{a.periode?.nama || "—"}</span>
+                          <span>{a.periode?.nama ||"—"}</span>
                           <span>•</span>
-                          <span>{format(new Date(a.createdAt), "d MMM yyyy", { locale: localeId })}</span>
+                          <span>{format(new Date(a.createdAt),"d MMM yyyy", { locale: localeId })}</span>
                         </div>
                       </td>
                       
                       {/* Kolom Pembayaran Pendaftaran */}
                       <td className="px-4 py-4">
                         {tagihanPendaftaran ? (
-                          <Badge className={tagihanPendaftaran.status === "LUNAS" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-red-500/10 text-red-600 border-red-500/20"}>
-                            {tagihanPendaftaran.status === "LUNAS" ? "Lunas" : "Belum Bayar"}
+                          <Badge className={tagihanPendaftaran.status ==="LUNAS" ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :"bg-red-500/10 text-red-600 border-red-500/20"}>
+                            {tagihanPendaftaran.status ==="LUNAS" ?"Lunas" :"Belum Bayar"}
                           </Badge>
                         ) : <span className="text-muted-foreground text-xs font-medium italic">Tidak ada</span>}
                       </td>
@@ -237,7 +237,7 @@ export default function PpdbPendaftarPage() {
                            </div>
                            <div className="flex items-center gap-1">
                              <span className="text-muted-foreground">Berkas:</span>
-                             <span className={a.berkas?.length > 0 ? "text-emerald-500" : "text-amber-500"}>{a.berkas?.length || 0} Diunggah</span>
+                             <span className={a.berkas?.length > 0 ?"text-emerald-500" :"text-amber-500"}>{a.berkas?.length || 0} Diunggah</span>
                            </div>
                         </div>
                       </td>
@@ -245,8 +245,8 @@ export default function PpdbPendaftarPage() {
                       {/* Kolom Daftar Ulang */}
                       <td className="px-4 py-4">
                         {tagihanDU ? (
-                          <Badge className={tagihanDU.status === "LUNAS" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 border-amber-500/20"}>
-                            {tagihanDU.status === "LUNAS" ? "Lunas" : "Menunggu"}
+                          <Badge className={tagihanDU.status ==="LUNAS" ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :"bg-amber-500/10 text-amber-600 border-amber-500/20"}>
+                            {tagihanDU.status ==="LUNAS" ?"Lunas" :"Menunggu"}
                           </Badge>
                         ) : <span className="text-muted-foreground text-xs">—</span>}
                       </td>

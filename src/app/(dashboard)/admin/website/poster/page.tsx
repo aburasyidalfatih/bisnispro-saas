@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { useSession } from "next-auth/react"
-import QRCode from "react-qr-code"
-import { Button } from "@/components/ui/button"
-import { Printer, ArrowLeft, Globe, ScanFace } from "lucide-react"
-import Link from "next/link"
-import { getRootDomain, normalizeImageUrl } from "@/lib/utils"
+import { useEffect, useState, useRef } from"react"
+import { useSession } from"next-auth/react"
+import QRCode from"react-qr-code"
+import { Button } from"@/components/ui/button"
+import { Printer, ArrowLeft, Globe, ScanFace } from"lucide-react"
+import Link from"next/link"
+import { getRootDomain, normalizeImageUrl } from"@/lib/utils"
 
 export default function WebsitePosterPage() {
   const { data: session } = useSession()
@@ -31,7 +31,7 @@ export default function WebsitePosterPage() {
             const rootDomain = getRootDomain()
             let protocol = window.location.protocol
             
-            if (domainData?.customDomain?.status === "verified" && domainData.domain) {
+            if (domainData?.customDomain?.status ==="verified" && domainData.domain) {
               setWebsiteUrl(`https://${domainData.domain}`)
             } else if (slug) {
               setWebsiteUrl(`${protocol}//${slug}.${rootDomain}`)
@@ -80,10 +80,10 @@ export default function WebsitePosterPage() {
           )}
           <div>
             <h1 className="text-5xl font-black tracking-tight text-slate-900 uppercase">
-              {tenant?.name || "Nama Lembaga"}
+              {tenant?.name ||"Nama Lembaga"}
             </h1>
             <p className="text-xl text-slate-600 mt-3 font-medium">
-              {tenant?.tagline || "Portal Informasi Resmi"}
+              {tenant?.tagline ||"Portal Informasi Resmi"}
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function WebsitePosterPage() {
         {/* Footer */}
         <div className="text-center pb-8 border-t pt-8">
           <p className="text-slate-500 font-medium">
-            {tenant?.address || "Alamat belum diatur"}
+            {tenant?.address ||"Alamat belum diatur"}
           </p>
           <div className="flex items-center justify-center gap-6 mt-3 text-sm text-slate-400">
             {tenant?.phone && <span>📞 {tenant.phone}</span>}

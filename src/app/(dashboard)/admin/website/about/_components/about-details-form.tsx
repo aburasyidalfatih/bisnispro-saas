@@ -1,12 +1,12 @@
-import React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Info, Sparkles, Upload, X } from "lucide-react"
-import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
-import { normalizeImageUrl } from "@/lib/utils"
-import { AboutFormState, AiPromptType } from "./types"
+import React from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Info, Sparkles, Upload, X } from"lucide-react"
+import { LazyRichTextEditor as RichTextEditor } from"@/components/ui/lazy-rich-text-editor"
+import { normalizeImageUrl } from"@/lib/utils"
+import { AboutFormState, AiPromptType } from"./types"
 
 interface AboutDetailsFormProps {
   form: AboutFormState
@@ -38,7 +38,7 @@ export function AboutDetailsForm({
         <CardContent>
           <div className="space-y-2">
             <RichTextEditor 
-              value={form.about || ""}
+              value={form.about ||""}
               onChange={val => setForm(p => ({ ...p, about: val }))}
               placeholder="Ceritakan tentang lembaga Anda, sejarah panjang..."
             />
@@ -46,28 +46,28 @@ export function AboutDetailsForm({
           
           <div className="space-y-1.5 mt-4">
             <Label>Link Video Profil (YouTube)</Label>
-            <Input value={form.settings?.videoProfil || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, videoProfil: e.target.value } }))} placeholder="https://youtube.com/watch?v=..." className="rounded-xl h-9" />
+            <Input value={form.settings?.videoProfil ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, videoProfil: e.target.value } }))} placeholder="https://youtube.com/watch?v=..." className="rounded-xl h-9" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div className="space-y-1.5">
               <Label>NPSN</Label>
-              <Input value={form.settings?.npsn || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, npsn: e.target.value } }))} placeholder="Nomor Pokok Sekolah Nasional" className="rounded-xl h-9" />
+              <Input value={form.settings?.npsn ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, npsn: e.target.value } }))} placeholder="Nomor Pokok Sekolah Nasional" className="rounded-xl h-9" />
             </div>
             <div className="space-y-1.5">
               <Label>Akreditasi</Label>
-              <Input value={form.settings?.akreditasi || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, akreditasi: e.target.value } }))} placeholder="Contoh: A (Sangat Baik)" className="rounded-xl h-9" />
+              <Input value={form.settings?.akreditasi ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, akreditasi: e.target.value } }))} placeholder="Contoh: A (Sangat Baik)" className="rounded-xl h-9" />
             </div>
             <div className="space-y-1.5">
               <Label>Tahun Berdiri</Label>
-              <Input value={form.settings?.establishedYear || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, establishedYear: e.target.value } }))} placeholder="Contoh: 1998" className="rounded-xl h-9" />
+              <Input value={form.settings?.establishedYear ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, establishedYear: e.target.value } }))} placeholder="Contoh: 1998" className="rounded-xl h-9" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
             <div className="space-y-1.5">
               <Label>Jam Operasional</Label>
-              <textarea value={form.settings?.operationalHours || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, operationalHours: e.target.value } }))}
+              <textarea value={form.settings?.operationalHours ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, operationalHours: e.target.value } }))}
                 placeholder="Senin - Jumat: 07.00 - 16.00&#10;Sabtu: 07.00 - 12.00" rows={3}
                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
             </div>
@@ -82,7 +82,7 @@ export function AboutDetailsForm({
             <div className="space-y-1.5 md:col-span-2 mt-8">
               <Label>Visi</Label>
               <RichTextEditor 
-                value={form.settings?.visi || ""}
+                value={form.settings?.visi ||""}
                 onChange={val => setForm(p => ({ ...p, settings: { ...p.settings, visi: val } }))}
                 placeholder="Visi sekolah..."
               />
@@ -90,7 +90,7 @@ export function AboutDetailsForm({
             <div className="space-y-1.5 md:col-span-2">
               <Label>Misi</Label>
               <RichTextEditor 
-                value={form.settings?.misi || ""}
+                value={form.settings?.misi ||""}
                 onChange={val => setForm(p => ({ ...p, settings: { ...p.settings, misi: val } }))}
                 placeholder="Misi sekolah..."
               />

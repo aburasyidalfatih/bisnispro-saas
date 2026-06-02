@@ -1,23 +1,23 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { useToast as useT } from "@/hooks/use-toast"
+import { use, useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
+import { Badge } from"@/components/ui/badge"
+import { useToast as useT } from"@/hooks/use-toast"
 import {
   ArrowLeft, Save, Loader2, GraduationCap, Wallet,
   Receipt, UserCheck, Phone, Calendar, MapPin
-} from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
+} from"lucide-react"
+import Link from"next/link"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
 
 export default function StudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -38,19 +38,19 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
     ]).then(([studentData, classData]) => {
       setStudent(studentData)
       setForm({
-        name: studentData.name || "",
-        nis: studentData.nis || "",
-        nisn: studentData.nisn || "",
-        gender: studentData.gender || "",
-        birthPlace: studentData.birthPlace || "",
-        birthDate: studentData.birthDate ? new Date(studentData.birthDate).toISOString().split("T")[0] : "",
-        address: studentData.address || "",
-        phone: studentData.phone || "",
-        email: studentData.email || "",
-        fatherName: studentData.fatherName || "",
-        motherName: studentData.motherName || "",
-        guardianName: studentData.guardianName || "",
-        classroomId: studentData.classroomId || "",
+        name: studentData.name ||"",
+        nis: studentData.nis ||"",
+        nisn: studentData.nisn ||"",
+        gender: studentData.gender ||"",
+        birthPlace: studentData.birthPlace ||"",
+        birthDate: studentData.birthDate ? new Date(studentData.birthDate).toISOString().split("T")[0] :"",
+        address: studentData.address ||"",
+        phone: studentData.phone ||"",
+        email: studentData.email ||"",
+        fatherName: studentData.fatherName ||"",
+        motherName: studentData.motherName ||"",
+        guardianName: studentData.guardianName ||"",
+        classroomId: studentData.classroomId ||"",
       })
       setClassrooms(classData || [])
     }).catch(console.error).finally(() => setLoading(false))
@@ -61,32 +61,32 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
     setSaving(true)
     try {
       const res = await fetch(`/api/students/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        method:"PATCH",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId: tenant.id, ...form }),
       })
       if (!res.ok) throw new Error((await res.json()).error)
-      toast({ title: "Data siswa berhasil disimpan!" })
+      toast({ title:"Data siswa berhasil disimpan!" })
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     } finally {
       setSaving(false)
     }
   }
 
   const statusCfg: Record<string, { label: string; color: string }> = {
-    UNPAID: { label: "Belum Bayar", color: "bg-red-500/10 text-red-600 border-red-200" },
-    PAID: { label: "Lunas", color: "bg-emerald-500/10 text-emerald-600 border-emerald-200" },
-    PARTIAL: { label: "Sebagian", color: "bg-amber-500/10 text-amber-600 border-amber-200" },
+    UNPAID: { label:"Belum Bayar", color:"bg-red-500/10 text-red-600 border-red-200" },
+    PAID: { label:"Lunas", color:"bg-emerald-500/10 text-emerald-600 border-emerald-200" },
+    PARTIAL: { label:"Sebagian", color:"bg-amber-500/10 text-amber-600 border-amber-200" },
   }
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
   if (!student) return <div className="py-20 text-center text-muted-foreground">Siswa tidak ditemukan.</div>
 
   const field = (key: string) => ({
-    value: form[key] || "",
+    value: form[key] ||"",
     onChange: (e: any) => setForm((f: any) => ({ ...f, [key]: e.target.value })),
-    className: "rounded-xl",
+    className:"rounded-xl",
   })
 
   return (
@@ -104,8 +104,8 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
             <h1 className="text-xl font-bold">{student.name}</h1>
             <div className="flex gap-2">
               {student.classroom && <Badge className="bg-blue-500/10 text-blue-600 border-blue-200 border text-xs">{student.classroom.name}</Badge>}
-              <Badge className={student.isActive ? "bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-xs" : "bg-slate-500/10 text-slate-500 border text-xs"}>
-                {student.isActive ? "Aktif" : "Nonaktif"}
+              <Badge className={student.isActive ?"bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-xs" :"bg-slate-500/10 text-slate-500 border text-xs"}>
+                {student.isActive ?"Aktif" :"Nonaktif"}
               </Badge>
             </div>
           </div>
@@ -119,10 +119,10 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: "Saldo Wallet", value: student.walletAccount ? `Rp ${student.walletAccount.balance.toLocaleString("id-ID")}` : "Belum Ada", icon: Wallet, color: "text-indigo-600" },
-          { label: "Total Tagihan", value: student._count?.invoices || 0, icon: Receipt, color: "text-red-600" },
-          { label: "Orang Tua", value: `${student.parents?.length || 0} akun`, icon: UserCheck, color: "text-emerald-600" },
-          { label: "Absensi", value: student._count?.AttendanceRecord || 0, icon: Calendar, color: "text-amber-600" },
+          { label:"Saldo Wallet", value: student.walletAccount ? `Rp ${student.walletAccount.balance.toLocaleString("id-ID")}` :"Belum Ada", icon: Wallet, color:"text-indigo-600" },
+          { label:"Total Tagihan", value: student._count?.invoices || 0, icon: Receipt, color:"text-red-600" },
+          { label:"Orang Tua", value: `${student.parents?.length || 0} akun`, icon: UserCheck, color:"text-emerald-600" },
+          { label:"Absensi", value: student._count?.AttendanceRecord || 0, icon: Calendar, color:"text-amber-600" },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
             <CardContent className="p-4">
@@ -147,7 +147,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
             <CardContent className="grid md:grid-cols-2 gap-5">
               <F label="Nama Lengkap *"><Input {...field("name")} /></F>
               <F label="Kelas">
-                <Select value={form.classroomId || "none"} onValueChange={v => setForm((f: any) => ({ ...f, classroomId: v === "none" ? null : v }))}>
+                <Select value={form.classroomId ||"none"} onValueChange={v => setForm((f: any) => ({ ...f, classroomId: v ==="none" ? null : v }))}>
                   <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih kelas..." /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Tanpa Kelas</SelectItem>
@@ -158,7 +158,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
               <F label="NIS"><Input {...field("nis")} placeholder="Nomor Induk Siswa" /></F>
               <F label="NISN"><Input {...field("nisn")} placeholder="Nomor Induk Siswa Nasional" /></F>
               <F label="Jenis Kelamin">
-                <Select value={form.gender || ""} onValueChange={v => setForm((f: any) => ({ ...f, gender: v }))}>
+                <Select value={form.gender ||""} onValueChange={v => setForm((f: any) => ({ ...f, gender: v }))}>
                   <SelectTrigger className="rounded-xl"><SelectValue placeholder="Pilih..." /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="L">Laki-laki</SelectItem>
@@ -196,7 +196,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
                   <CardContent className="p-4 flex items-center justify-between">
                     <div>
                       <p className="font-semibold text-sm">{inv.title}</p>
-                      <p className="text-xs text-muted-foreground font-mono">{inv.code} · {format(new Date(inv.dueDate), "d MMM yyyy", { locale: localeId })}</p>
+                      <p className="text-xs text-muted-foreground font-mono">{inv.code} · {format(new Date(inv.dueDate),"d MMM yyyy", { locale: localeId })}</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <p className="font-black text-sm">Rp {inv.amount.toLocaleString("id-ID")}</p>
@@ -227,8 +227,8 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
                     <UserCheck className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold">{p.user?.name || "—"}</p>
-                    <p className="text-xs text-muted-foreground">{p.user?.email} · {p.relation || "Orang Tua"}</p>
+                    <p className="font-semibold">{p.user?.name ||"—"}</p>
+                    <p className="text-xs text-muted-foreground">{p.user?.email} · {p.relation ||"Orang Tua"}</p>
                   </div>
                   {p.user?.phone && (
                     <a href={`tel:${p.user.phone}`}>

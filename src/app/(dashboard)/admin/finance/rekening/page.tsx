@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Landmark, Plus, Trash2, Edit, Loader2, Building } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from"@/components/ui/dialog"
+import { Landmark, Plus, Trash2, Edit, Loader2, Building } from"lucide-react"
+import { useToast } from"@/hooks/use-toast"
 
 export default function RekeningPage() {
   const { data: session } = useSession()
@@ -21,7 +21,7 @@ export default function RekeningPage() {
   
   const [open, setOpen] = useState(false)
   const [editIndex, setEditIndex] = useState<number | null>(null)
-  const [formData, setFormData] = useState({ bank: "", account: "", name: "" })
+  const [formData, setFormData] = useState({ bank:"", account:"", name:"" })
 
   const fetchData = async () => {
     if (!tenantId) return
@@ -32,7 +32,7 @@ export default function RekeningPage() {
       setSettings(json)
       setBanks(json.manualBanks || [])
     } catch (e) {
-      toast({ title: "Gagal memuat pengaturan", variant: "destructive" })
+      toast({ title:"Gagal memuat pengaturan", variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -44,8 +44,8 @@ export default function RekeningPage() {
     setSaving(true)
     try {
       const res = await fetch("/api/tenant/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        method:"PUT",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId,
           settings: { ...settings, manualBanks: updatedBanks }
@@ -54,12 +54,12 @@ export default function RekeningPage() {
       if (!res.ok) throw new Error("Gagal menyimpan rekening")
       
       setBanks(updatedBanks)
-      toast({ title: "Berhasil", description: "Rekening bank berhasil diperbarui" })
+      toast({ title:"Berhasil", description:"Rekening bank berhasil diperbarui" })
       setOpen(false)
-      setFormData({ bank: "", account: "", name: "" })
+      setFormData({ bank:"", account:"", name:"" })
       setEditIndex(null)
     } catch (e: any) {
-      toast({ title: "Gagal", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal", description: e.message, variant:"destructive" })
     } finally {
       setSaving(false)
     }
@@ -96,13 +96,13 @@ export default function RekeningPage() {
           <h1 className="text-2xl font-bold tracking-tight">Rekening Bank Tujuan</h1>
           <p className="text-sm text-muted-foreground">Kelola rekening tujuan untuk opsi pembayaran transfer manual (Non-Tripay).</p>
         </div>
-        <Dialog open={open} onOpenChange={(val) => { setOpen(val); if(!val) { setFormData({ bank: "", account: "", name: "" }); setEditIndex(null) } }}>
+        <Dialog open={open} onOpenChange={(val) => { setOpen(val); if(!val) { setFormData({ bank:"", account:"", name:"" }); setEditIndex(null) } }}>
           <DialogTrigger asChild>
             <Button className="rounded-xl shadow-md shadow-primary/20"><Plus className="h-4 w-4 mr-2" /> Tambah Rekening</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>{editIndex !== null ? "Edit Rekening" : "Tambah Rekening Baru"}</DialogTitle>
+              <DialogTitle>{editIndex !== null ?"Edit Rekening" :"Tambah Rekening Baru"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div className="space-y-2">
@@ -118,7 +118,7 @@ export default function RekeningPage() {
                 <Input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Contoh: Yayasan Pendidikan Maju" />
               </div>
               <Button type="submit" disabled={saving} className="w-full h-12 rounded-xl text-md font-bold mt-2">
-                {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : "Simpan Rekening"}
+                {saving ? <Loader2 className="h-5 w-5 animate-spin" /> :"Simpan Rekening"}
               </Button>
             </form>
           </DialogContent>

@@ -1,22 +1,22 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, ArrowRight, User, Users, CheckCircle, Loader2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from"react"
+import { useRouter } from"next/navigation"
+import { useSession } from"next-auth/react"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Textarea } from"@/components/ui/textarea"
+import { ArrowLeft, ArrowRight, User, Users, CheckCircle, Loader2 } from"lucide-react"
+import { useToast } from"@/hooks/use-toast"
+import Link from"next/link"
+import { cn } from"@/lib/utils"
 
 const STEPS = [
-  { id: 1, title: "Data Siswa", icon: User, desc: "Informasi identitas dan pribadi" },
-  { id: 2, title: "Data Orang Tua & Kelas", icon: Users, desc: "Informasi orang tua dan penempatan kelas" },
+  { id: 1, title:"Data Siswa", icon: User, desc:"Informasi identitas dan pribadi" },
+  { id: 2, title:"Data Orang Tua & Kelas", icon: Users, desc:"Informasi orang tua dan penempatan kelas" },
 ]
 
 export default function AddStudentManualPage() {
@@ -29,19 +29,19 @@ export default function AddStudentManualPage() {
   const [classrooms, setClassrooms] = useState<any[]>([])
 
   const [formData, setFormData] = useState({
-    name: "",
-    nis: "",
-    nisn: "",
-    gender: "",
-    birthPlace: "",
-    birthDate: "",
-    address: "",
-    phone: "",
-    email: "",
-    fatherName: "",
-    motherName: "",
-    guardianName: "",
-    classroomId: "none",
+    name:"",
+    nis:"",
+    nisn:"",
+    gender:"",
+    birthPlace:"",
+    birthDate:"",
+    address:"",
+    phone:"",
+    email:"",
+    fatherName:"",
+    motherName:"",
+    guardianName:"",
+    classroomId:"none",
   })
 
   useEffect(() => {
@@ -57,24 +57,24 @@ export default function AddStudentManualPage() {
     setSubmitting(true)
     try {
       const res = await fetch("/api/students", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId,
           ...formData,
-          classroomId: formData.classroomId === "none" ? undefined : formData.classroomId
+          classroomId: formData.classroomId ==="none" ? undefined : formData.classroomId
         }),
       })
 
       if (res.ok) {
-        toast({ title: "Berhasil!", description: "Data siswa baru berhasil ditambahkan secara manual." })
+        toast({ title:"Berhasil!", description:"Data siswa baru berhasil ditambahkan secara manual." })
         router.push("/admin/students")
       } else {
         const error = await res.json()
-        toast({ title: "Gagal Menyimpan", description: error.error || "Terjadi kesalahan.", variant: "destructive" })
+        toast({ title:"Gagal Menyimpan", description: error.error ||"Terjadi kesalahan.", variant:"destructive" })
       }
     } catch {
-      toast({ title: "Error", description: "Gagal terhubung ke server.", variant: "destructive" })
+      toast({ title:"Error", description:"Gagal terhubung ke server.", variant:"destructive" })
     } finally {
       setSubmitting(false)
     }
@@ -109,21 +109,19 @@ export default function AddStudentManualPage() {
                 onClick={() => currentStep > step.id && setCurrentStep(step.id)}
                 className="flex items-center gap-3 group"
               >
-                <div className={cn(
-                  "h-9 w-9 rounded-full flex items-center justify-center border-2 font-bold text-sm shrink-0 transition-all",
-                  currentStep > step.id ? "bg-emerald-500 border-emerald-500 text-white" :
-                  currentStep === step.id ? "bg-primary border-primary text-white shadow-lg shadow-primary/30" :
-                  "border-muted-foreground/30 text-muted-foreground"
+                <div className={cn("h-9 w-9 rounded-full flex items-center justify-center border-2 font-bold text-sm shrink-0 transition-all",
+                  currentStep > step.id ?"bg-emerald-500 border-emerald-500 text-white" :
+                  currentStep === step.id ?"bg-primary border-primary text-white shadow-lg shadow-primary/30" :"border-muted-foreground/30 text-muted-foreground"
                 )}>
                   {currentStep > step.id ? <CheckCircle className="h-4 w-4" /> : step.id}
                 </div>
                 <div className="text-left hidden sm:block">
-                  <p className={cn("text-xs font-bold leading-none", currentStep === step.id ? "text-foreground" : "text-muted-foreground")}>{step.title}</p>
+                  <p className={cn("text-xs font-bold leading-none", currentStep === step.id ?"text-foreground" :"text-muted-foreground")}>{step.title}</p>
                   <p className="text-[10px] text-muted-foreground leading-none mt-0.5 hidden md:block">{step.desc}</p>
                 </div>
               </button>
               {idx < STEPS.length - 1 && (
-                <div className={cn("h-0.5 flex-1 mx-3 rounded", currentStep > step.id + 1 || (currentStep > step.id) ? "bg-emerald-400" : "bg-muted")} />
+                <div className={cn("h-0.5 flex-1 mx-3 rounded", currentStep > step.id + 1 || (currentStep > step.id) ?"bg-emerald-400" :"bg-muted")} />
               )}
             </div>
           ))}
@@ -246,7 +244,7 @@ export default function AddStudentManualPage() {
             onClick={() => currentStep > 1 ? setCurrentStep(s => s - 1) : router.push("/admin/students")}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {currentStep === 1 ? "Batal" : "Kembali"}
+            {currentStep === 1 ?"Batal" :"Kembali"}
           </Button>
 
           {currentStep < STEPS.length ? (
@@ -265,7 +263,7 @@ export default function AddStudentManualPage() {
               disabled={submitting}
             >
               {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-2 h-4 w-4" />}
-              {submitting ? "Menyimpan..." : "Simpan Data Siswa"}
+              {submitting ?"Menyimpan..." :"Simpan Data Siswa"}
             </Button>
           )}
         </div>

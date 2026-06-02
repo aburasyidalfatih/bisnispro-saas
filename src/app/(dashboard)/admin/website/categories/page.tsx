@@ -1,26 +1,26 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Tag, Loader2 } from "lucide-react"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, Tag, Loader2 } from"lucide-react"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { categorySchema } from "@/features/post/schemas/category.schema"
-import * as z from "zod"
+} from"@/components/ui/dialog"
+import { useForm } from"react-hook-form"
+import { zodResolver } from"@hookform/resolvers/zod"
+import { categorySchema } from"@/features/post/schemas/category.schema"
+import * as z from"zod"
 
 type FormData = z.infer<typeof categorySchema>
 
@@ -47,9 +47,9 @@ export default function CategoryPage() {
   const form = useForm<FormData>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
-      name: "",
-      slug: "",
-      description: ""
+      name:"",
+      slug:"",
+      description:""
     }
   })
 
@@ -74,7 +74,7 @@ export default function CategoryPage() {
       const data = await res.json()
       setItems(Array.isArray(data) ? data : [])
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" })
+      toast({ title:"Error", description: err.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -91,14 +91,14 @@ export default function CategoryPage() {
     form.reset({
       name: category.name,
       slug: category.slug,
-      description: category.description || ""
+      description: category.description ||""
     })
     setOpen(true)
   }
 
   const handleCreate = () => {
     setEditingId(null)
-    form.reset({ name: "", slug: "", description: "" })
+    form.reset({ name:"", slug:"", description:"" })
     setOpen(true)
   }
 
@@ -106,13 +106,13 @@ export default function CategoryPage() {
     if (!tenantId) return
     try {
       const res = await fetch(`/api/tenant/categories/${id}?tenantId=${tenantId}`, {
-        method: "DELETE"
+        method:"DELETE"
       })
       if (!res.ok) throw new Error("Gagal menghapus")
-      toast({ title: "Kategori dihapus" })
+      toast({ title:"Kategori dihapus" })
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
@@ -121,23 +121,23 @@ export default function CategoryPage() {
     setIsSaving(true)
     try {
       const url = editingId ? `/api/tenant/categories/${editingId}` : `/api/tenant/categories`
-      const method = editingId ? "PUT" : "POST"
+      const method = editingId ?"PUT" :"POST"
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ ...data, tenantId })
       })
 
       const resData = await res.json()
 
-      if (!res.ok) throw new Error(resData.error || "Gagal menyimpan")
+      if (!res.ok) throw new Error(resData.error ||"Gagal menyimpan")
       
-      toast({ title: "Berhasil", description: resData.message })
+      toast({ title:"Berhasil", description: resData.message })
       setOpen(false)
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     } finally {
       setIsSaving(false)
     }
@@ -191,7 +191,7 @@ export default function CategoryPage() {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           }
-                          title={`Hapus kategori "${item.name}"?`}
+                          title={`Hapus kategori"${item.name}"?`}
                           description="Artikel yang menggunakan kategori ini akan kehilangan relasinya (tetapi artikel tidak ikut terhapus)."
                           confirmText="Ya, hapus"
                           onConfirm={() => handleDelete(item.id)}
@@ -201,7 +201,7 @@ export default function CategoryPage() {
                     <h3 className="font-bold truncate text-lg">{item.name}</h3>
                     <p className="text-xs text-muted-foreground mb-3 font-mono">/{item.slug}</p>
                     <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
-                      {item.description || "Tidak ada deskripsi."}
+                      {item.description ||"Tidak ada deskripsi."}
                     </p>
                   </CardContent>
                 </Card>
@@ -214,7 +214,7 @@ export default function CategoryPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px] rounded-2xl">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Kategori" : "Tambah Kategori Baru"}</DialogTitle>
+            <DialogTitle>{editingId ?"Edit Kategori" :"Tambah Kategori Baru"}</DialogTitle>
             <DialogDescription>
               Buat kategori baru untuk mengelompokkan artikel Anda.
             </DialogDescription>
@@ -260,7 +260,7 @@ export default function CategoryPage() {
               </Button>
               <Button type="submit" disabled={isSaving} className="rounded-xl btn-gradient text-white border-0">
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                {editingId ? "Simpan Perubahan" : "Buat Kategori"}
+                {editingId ?"Simpan Perubahan" :"Buat Kategori"}
               </Button>
             </div>
           </form>

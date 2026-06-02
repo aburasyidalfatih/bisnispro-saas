@@ -1,27 +1,27 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useEffect, useState, useCallback } from"react"
+import { useSession } from"next-auth/react"
+import Link from"next/link"
+import { Card } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
 import {
   Users, Search, UserPlus, MoreHorizontal, Pencil, Trash2, LogIn,
   ShieldCheck, GraduationCap, UserCheck, Download, Loader2
-} from "lucide-react"
+} from"lucide-react"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from"@/components/ui/dropdown-menu"
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
-} from "@/components/ui/dialog"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { cn } from "@/lib/utils"
-import { toast } from "@/hooks/use-toast"
-import * as XLSX from "xlsx"
+} from"@/components/ui/dialog"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { cn } from"@/lib/utils"
+import { toast } from"@/hooks/use-toast"
+import * as XLSX from"xlsx"
 
 interface UserRow {
   id: string
@@ -36,30 +36,30 @@ interface UserRow {
 
 const roleConfig: Record<string, { label: string; badge: string; icon: any; addLabel: string; emptyLabel: string }> = {
   admin: {
-    label: "Admin",
-    badge: "bg-primary/10 text-primary",
+    label:"Admin",
+    badge:"bg-primary/10 text-primary",
     icon: ShieldCheck,
-    addLabel: "Tambah Admin",
-    emptyLabel: "Belum ada admin",
+    addLabel:"Tambah Admin",
+    emptyLabel:"Belum ada admin",
   },
   guru: {
-    label: "Guru / Tenaga Kependidikan",
-    badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+    label:"Guru / Tenaga Kependidikan",
+    badge:"bg-blue-500/10 text-blue-600 dark:text-blue-400",
     icon: Users,
-    addLabel: "Tambah Guru",
-    emptyLabel: "Belum ada guru",
+    addLabel:"Tambah Guru",
+    emptyLabel:"Belum ada guru",
   },
   orangtua: {
-    label: "Orang Tua / Wali",
-    badge: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+    label:"Orang Tua / Wali",
+    badge:"bg-purple-500/10 text-purple-600 dark:text-purple-400",
     icon: UserCheck,
-    addLabel: "Tambah Orang Tua",
-    emptyLabel: "Belum ada orang tua",
+    addLabel:"Tambah Orang Tua",
+    emptyLabel:"Belum ada orang tua",
   },
 }
 
 interface RoleUserPageProps {
-  role: "admin" | "guru" | "orangtua"
+  role:"admin" |"guru" |"orangtua"
 }
 
 export function RoleUserPage({ role }: RoleUserPageProps) {
@@ -77,9 +77,9 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
 
   const tenantId = session?.user?.tenants?.[0]?.id
   const currentRole = session?.user?.tenants?.[0]?.role
-  const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
-  const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
-  const isAdmin = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || session?.user?.isSuperAdmin)
+  const isImpersonatingUser = typeof document !=="undefined" && document.cookie.includes("impersonate-user=")
+  const isImpersonatingTenant = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
+  const isAdmin = !isImpersonatingUser && (currentRole ==="owner" || currentRole ==="admin" || session?.user?.isSuperAdmin)
 
   const [resolvedTenantId, setResolvedTenantId] = useState<string | null>(tenantId || null)
 
@@ -98,7 +98,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
   }, [tenantId, isImpersonatingTenant])
 
   useEffect(() => {
-    if (status === "authenticated" && !isAdmin) {
+    if (status ==="authenticated" && !isAdmin) {
       window.location.replace("/admin")
     }
   }, [status, isAdmin])
@@ -134,7 +134,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
           setVisibleCount((prev) => prev + 20)
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin:"200px" }
     )
     
     const target = document.getElementById("scroll-observer-users")
@@ -150,8 +150,8 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
     setAddLoading(true)
     const fd = new FormData(e.currentTarget)
     const res = await fetch("/api/tenant/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method:"POST",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({
         tenantId: resolvedTenantId,
         name: fd.get("name"),
@@ -164,11 +164,11 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
     const data = await res.json()
     setAddLoading(false)
     if (res.ok) {
-      toast({ title: "Berhasil", description: `${config.label} berhasil ditambahkan.` })
+      toast({ title:"Berhasil", description: `${config.label} berhasil ditambahkan.` })
       setShowAdd(false)
       fetchUsers()
     } else {
-      toast({ title: "Gagal", description: data.error, variant: "destructive" })
+      toast({ title:"Gagal", description: data.error, variant:"destructive" })
     }
   }
 
@@ -178,86 +178,81 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
     setEditLoading(true)
     const fd = new FormData(e.currentTarget)
     const res = await fetch("/api/tenant/users", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method:"PATCH",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({
         tenantUserId: editUser.tenantUserId,
         name: fd.get("name"),
         email: fd.get("email"),
         phone: fd.get("phone"),
-        password: fd.get("password") || "",
+        password: fd.get("password") ||"",
       }),
     })
     const data = await res.json()
     setEditLoading(false)
     if (res.ok) {
-      toast({ title: "Berhasil", description: "Data berhasil diperbarui." })
+      toast({ title:"Berhasil", description:"Data berhasil diperbarui." })
       setEditUser(null)
       fetchUsers()
     } else {
-      toast({ title: "Gagal", description: data.error, variant: "destructive" })
+      toast({ title:"Gagal", description: data.error, variant:"destructive" })
     }
   }
 
   const handleDelete = async (tenantUserId: string, name: string) => {
     const res = await fetch("/api/tenant/users", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      method:"DELETE",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ tenantUserId }),
     })
     if (res.ok) {
-      toast({ title: "Dihapus", description: `${name} telah dihapus.` })
+      toast({ title:"Dihapus", description: `${name} telah dihapus.` })
       fetchUsers()
     }
   }
 
   const handleLoginAs = async (userId: string, name: string) => {
     if (!resolvedTenantId) {
-      toast({ title: "Gagal", description: "Tenant belum terdeteksi, coba refresh halaman.", variant: "destructive" })
+      toast({ title:"Gagal", description:"Tenant belum terdeteksi, coba refresh halaman.", variant:"destructive" })
       return
     }
     try {
       const res = await fetch("/api/tenant/impersonate-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ userId, tenantId: resolvedTenantId }),
       })
       if (res.ok) {
         window.location.reload()
       } else {
-        const data = await res.json().catch(() => ({ error: "Terjadi kesalahan" }))
-        toast({ title: "Gagal", description: data.error, variant: "destructive" })
+        const data = await res.json().catch(() => ({ error:"Terjadi kesalahan" }))
+        toast({ title:"Gagal", description: data.error, variant:"destructive" })
       }
     } catch {
-      toast({ title: "Gagal", description: "Tidak dapat terhubung ke server", variant: "destructive" })
+      toast({ title:"Gagal", description:"Tidak dapat terhubung ke server", variant:"destructive" })
     }
   }
 
   const handleExport = () => {
-    if (!users.length) return toast({ title: "Tidak ada data untuk diekspor", variant: "destructive" })
+    if (!users.length) return toast({ title:"Tidak ada data untuk diekspor", variant:"destructive" })
     setExporting(true)
     try {
-      const formattedData = users.map((u: any) => ({
-        "Nama Lengkap": u.name,
-        "Email": u.email,
-        "No. Telepon": u.phone || "-",
-        "Bergabung": formatDate(u.createdAt),
-        "Status": u.isActive ? "Aktif" : "Nonaktif",
+      const formattedData = users.map((u: any) => ({"Nama Lengkap": u.name,"Email": u.email,"No. Telepon": u.phone ||"-","Bergabung": formatDate(u.createdAt),"Status": u.isActive ?"Aktif" :"Nonaktif",
       }))
       const worksheet = XLSX.utils.json_to_sheet(formattedData)
       const workbook = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(workbook, worksheet, `Data_${config.label}`)
       XLSX.writeFile(workbook, `Data_${config.label.replace(/[^a-zA-Z0-9]/g, '_')}_${formatDate(new Date().toISOString()).replace(/\s/g, '_')}.xlsx`)
-      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+      toast({ title:"Berhasil", description:"File Excel berhasil diunduh" })
     } catch (e: any) {
-      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal Ekspor", description: e.message, variant:"destructive" })
     } finally {
       setExporting(false)
     }
   }
 
   const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
+    new Date(d).toLocaleDateString("id-ID", { day:"2-digit", month:"short", year:"numeric" })
 
   const RoleIcon = config.icon
 
@@ -272,7 +267,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
           <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={handleExport} disabled={exporting}>
             {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} Ekspor Excel
           </Button>
-          {role === "guru" && (
+          {role ==="guru" && (
             <Button asChild variant="outline" className="gap-2 rounded-xl">
               <Link href="/admin/users/guru/import">
                 <UserPlus className="h-4 w-4" />
@@ -280,7 +275,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
               </Link>
             </Button>
           )}
-          {role === "guru" ? (
+          {role ==="guru" ? (
             <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
               <Link href="/admin/website/gtk/new">
                 <UserPlus className="h-4 w-4" />
@@ -322,7 +317,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
             </div>
             <div className="flex items-end gap-2 md:col-span-2 lg:col-span-4">
               <Button type="submit" className="btn-gradient text-white border-0 rounded-xl" disabled={addLoading}>
-                {addLoading ? "Menyimpan..." : "Simpan"}
+                {addLoading ?"Menyimpan..." :"Simpan"}
               </Button>
               <Button type="button" variant="outline" className="rounded-xl" onClick={() => setShowAdd(false)}>
                 Batal
@@ -353,7 +348,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
               </div>
               <div className="space-y-2">
                 <Label>No. Telepon</Label>
-                <Input name="phone" defaultValue={editUser.phone || ""} className="rounded-xl" />
+                <Input name="phone" defaultValue={editUser.phone ||""} className="rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Label>Password (Opsional)</Label>
@@ -364,7 +359,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                   Batal
                 </Button>
                 <Button type="submit" className="btn-gradient text-white border-0 rounded-xl" disabled={editLoading}>
-                  {editLoading ? "Menyimpan..." : "Simpan Perubahan"}
+                  {editLoading ?"Menyimpan..." :"Simpan Perubahan"}
                 </Button>
               </div>
             </form>
@@ -410,24 +405,24 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-bold text-xs", config.badge)}>
-                          {u.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
+                          {u.name.split("").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
                         </div>
                         <span className="text-sm font-medium">{u.name}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm">{u.email}</td>
-                    <td className="px-4 py-3 text-sm hidden md:table-cell">{u.phone || "-"}</td>
+                    <td className="px-4 py-3 text-sm hidden md:table-cell">{u.phone ||"-"}</td>
                     <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{formatDate(u.createdAt)}</td>
                     <td className="px-4 py-3">
                       <span className={cn("inline-flex items-center gap-1 text-xs font-medium rounded-full px-2 py-0.5",
-                        u.isActive ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-destructive/10 text-destructive"
+                        u.isActive ?"bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :"bg-destructive/10 text-destructive"
                       )}>
-                        <span className={cn("h-1.5 w-1.5 rounded-full", u.isActive ? "bg-emerald-500" : "bg-destructive")} />
-                        {u.isActive ? "Aktif" : "Nonaktif"}
+                        <span className={cn("h-1.5 w-1.5 rounded-full", u.isActive ?"bg-emerald-500" :"bg-destructive")} />
+                        {u.isActive ?"Aktif" :"Nonaktif"}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {u.role !== "owner" && (
+                      {u.role !=="owner" && (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
@@ -440,7 +435,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                                 <LogIn className="h-4 w-4" /> Login Sebagai
                               </DropdownMenuItem>
                             )}
-                            {u.role === "guru" ? (
+                            {u.role ==="guru" ? (
                               <DropdownMenuItem asChild className="gap-2 rounded-lg cursor-pointer">
                                 <Link href={`/admin/website/gtk/${u.id}/edit`}>
                                   <Pencil className="h-4 w-4" /> Edit

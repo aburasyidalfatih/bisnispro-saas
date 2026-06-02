@@ -1,25 +1,25 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { MessageSquare, Users, Globe } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { toast } from "@/hooks/use-toast"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { MessageSquare, Users, Globe } from"lucide-react"
+import { cn } from"@/lib/utils"
+import { toast } from"@/hooks/use-toast"
 
-import { Message, Submission } from "./_components/types"
-import { InternalMessages } from "./_components/internal-messages"
-import { WebsiteMessages } from "./_components/website-messages"
-import { Announcements } from "./_components/announcements"
+import { Message, Submission } from"./_components/types"
+import { InternalMessages } from"./_components/internal-messages"
+import { WebsiteMessages } from"./_components/website-messages"
+import { Announcements } from"./_components/announcements"
 
 export default function AdminMessagesPage() {
   const { branding } = useTenantBranding()
   const tenantId = branding.id
 
-  const [activeTab, setActiveTab] = useState<"internal" | "website" | "pengumuman">("pengumuman")
+  const [activeTab, setActiveTab] = useState<"internal" |"website" |"pengumuman">("pengumuman")
   
   // Pengumuman Form State
   const [showAddModal, setShowAddModal] = useState(false)
-  const [addForm, setAddForm] = useState({ title: "", content: "", target: "PENGUMUMAN_SEMUA" })
+  const [addForm, setAddForm] = useState({ title:"", content:"", target:"PENGUMUMAN_SEMUA" })
   const [submittingAnnounce, setSubmittingAnnounce] = useState(false)
   
   // Internal Messages State
@@ -38,12 +38,12 @@ export default function AdminMessagesPage() {
 
   // Edit Pengumuman State
   const [showEditModal, setShowEditModal] = useState(false)
-  const [editForm, setEditForm] = useState({ id: "", title: "", content: "", target: "PENGUMUMAN_SEMUA" })
+  const [editForm, setEditForm] = useState({ id:"", title:"", content:"", target:"PENGUMUMAN_SEMUA" })
   const [submittingEdit, setSubmittingEdit] = useState(false)
 
   // Compose Internal Message State
   const [showComposeModal, setShowComposeModal] = useState(false)
-  const [composeForm, setComposeForm] = useState({ receiverId: "", subject: "", body: "" })
+  const [composeForm, setComposeForm] = useState({ receiverId:"", subject:"", body:"" })
   const [submittingCompose, setSubmittingCompose] = useState(false)
   const [tenantUsers, setTenantUsers] = useState<any[]>([])
   const [loadingUsers, setLoadingUsers] = useState(false)
@@ -52,7 +52,7 @@ export default function AdminMessagesPage() {
     if (!tenantId) return
 
     // Fetch Internal
-    if (activeTab === "internal") {
+    if (activeTab ==="internal") {
       setLoadingInternal(true)
       fetch(`/api/tenant/messages?tenantId=${tenantId}&type=inbox`)
         .then(r => r.json())
@@ -64,7 +64,7 @@ export default function AdminMessagesPage() {
     }
 
     // Fetch Website
-    if (activeTab === "website") {
+    if (activeTab ==="website") {
       setLoadingWebsite(true)
       fetch(`/api/tenant/contact-submissions?tenantId=${tenantId}`)
         .then(r => r.json())
@@ -77,7 +77,7 @@ export default function AdminMessagesPage() {
     }
 
     // Fetch Pengumuman
-    if (activeTab === "pengumuman") {
+    if (activeTab ==="pengumuman") {
       setLoadingAnnouncements(true)
       fetch(`/api/tenant/posts?tenantId=${tenantId}&type=INTERNAL_ANNOUNCEMENTS`)
         .then(r => {
@@ -98,7 +98,7 @@ export default function AdminMessagesPage() {
       fetch(`/api/tenant/users?tenantId=${tenantId}`)
         .then(r => r.json())
         .then(d => {
-          const validUsers = (d.data || []).filter((u: any) => ["guru", "admin", "owner"].includes(u.role))
+          const validUsers = (d.data || []).filter((u: any) => ["guru","admin","owner"].includes(u.role))
           setTenantUsers(validUsers)
           setLoadingUsers(false)
         })
@@ -107,52 +107,52 @@ export default function AdminMessagesPage() {
   }, [showComposeModal, tenantId, tenantUsers.length])
 
   const submitComposeMessage = async () => {
-    if (!composeForm.receiverId || !composeForm.body) return toast({ title: "Penerima dan pesan wajib diisi", variant: "destructive" })
+    if (!composeForm.receiverId || !composeForm.body) return toast({ title:"Penerima dan pesan wajib diisi", variant:"destructive" })
     setSubmittingCompose(true)
     try {
       const res = await fetch("/api/tenant/messages", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method:"POST", headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId, receiverId: composeForm.receiverId, subject: composeForm.subject, body: composeForm.body
         })
       })
       if (!res.ok) throw new Error("Gagal mengirim pesan")
-      toast({ title: "Berhasil", description: "Pesan terkirim." })
+      toast({ title:"Berhasil", description:"Pesan terkirim." })
       setShowComposeModal(false)
-      setComposeForm({ receiverId: "", subject: "", body: "" })
+      setComposeForm({ receiverId:"", subject:"", body:"" })
       
       setLoadingInternal(true)
       const d = await fetch(`/api/tenant/messages?tenantId=${tenantId}&type=inbox`).then(r => r.json())
       setMessages(Array.isArray(d) ? d : [])
       setLoadingInternal(false)
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
     } finally {
       setSubmittingCompose(false)
     }
   }
 
   const submitAnnouncement = async () => {
-    if (!addForm.title || !addForm.content) return toast({ title: "Judul dan isi wajib diisi", variant: "destructive" })
+    if (!addForm.title || !addForm.content) return toast({ title:"Judul dan isi wajib diisi", variant:"destructive" })
     setSubmittingAnnounce(true)
     try {
-      const slug = addForm.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") + "-" + Date.now();
+      const slug = addForm.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") +"-" + Date.now();
       const res = await fetch("/api/tenant/posts", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method:"POST", headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId, title: addForm.title, slug, content: addForm.content,
-          type: addForm.target, status: "PUBLISHED"
+          type: addForm.target, status:"PUBLISHED"
         })
       })
       if (!res.ok) throw new Error("Gagal membuat pengumuman")
-      toast({ title: "Berhasil", description: "Pengumuman berhasil diterbitkan." })
+      toast({ title:"Berhasil", description:"Pengumuman berhasil diterbitkan." })
       setShowAddModal(false)
-      setAddForm({ title: "", content: "", target: "PENGUMUMAN_SEMUA" })
+      setAddForm({ title:"", content:"", target:"PENGUMUMAN_SEMUA" })
       setLoadingAnnouncements(true)
       const d = await fetch(`/api/tenant/posts?tenantId=${tenantId}&type=INTERNAL_ANNOUNCEMENTS`).then(r => r.json())
       setAnnouncements(d.data || d || [])
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
     } finally {
       setSubmittingAnnounce(false)
     }
@@ -164,24 +164,24 @@ export default function AdminMessagesPage() {
   }
 
   const submitEditAnnouncement = async () => {
-    if (!editForm.title || !editForm.content) return toast({ title: "Judul dan isi wajib diisi", variant: "destructive" })
+    if (!editForm.title || !editForm.content) return toast({ title:"Judul dan isi wajib diisi", variant:"destructive" })
     setSubmittingEdit(true)
     try {
-      const slug = editForm.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") + "-" + Date.now();
+      const slug = editForm.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") +"-" + Date.now();
       const res = await fetch(`/api/tenant/posts/${editForm.id}`, {
-        method: "PUT", headers: { "Content-Type": "application/json" },
+        method:"PUT", headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId, title: editForm.title, slug, content: editForm.content, type: editForm.target
         })
       })
       if (!res.ok) throw new Error("Gagal memperbarui pengumuman")
-      toast({ title: "Berhasil", description: "Pengumuman diperbarui." })
+      toast({ title:"Berhasil", description:"Pengumuman diperbarui." })
       setShowEditModal(false)
       setLoadingAnnouncements(true)
       const d = await fetch(`/api/tenant/posts?tenantId=${tenantId}&type=INTERNAL_ANNOUNCEMENTS`).then(r => r.json())
       setAnnouncements(d.data || d || [])
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
     } finally {
       setSubmittingEdit(false)
     }
@@ -189,12 +189,12 @@ export default function AdminMessagesPage() {
 
   const deleteAnnouncement = async (id: string) => {
     try {
-      const res = await fetch(`/api/tenant/posts/${id}?tenantId=${tenantId}`, { method: "DELETE" })
+      const res = await fetch(`/api/tenant/posts/${id}?tenantId=${tenantId}`, { method:"DELETE" })
       if (!res.ok) throw new Error("Gagal menghapus pengumuman")
-      toast({ title: "Berhasil", description: "Pengumuman dihapus." })
+      toast({ title:"Berhasil", description:"Pengumuman dihapus." })
       setAnnouncements(p => p.filter(x => x.id !== id))
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
     }
   }
 
@@ -203,14 +203,14 @@ export default function AdminMessagesPage() {
     if (!tenantId) return
     setSubmissions(p => p.map(s => s.id === id ? { ...s, isRead: true } : s))
     setUnread(p => Math.max(0, p - 1))
-    await fetch(`/api/tenant/contact-submissions?id=${id}&tenantId=${tenantId}`, { method: "PUT" })
+    await fetch(`/api/tenant/contact-submissions?id=${id}&tenantId=${tenantId}`, { method:"PUT" })
   }
 
   const markAllRead = async () => {
     if (!tenantId) return
     setSubmissions(p => p.map(s => ({ ...s, isRead: true })))
     setUnread(0)
-    await fetch(`/api/tenant/contact-submissions?tenantId=${tenantId}&action=markAllRead`, { method: "PUT" })
+    await fetch(`/api/tenant/contact-submissions?tenantId=${tenantId}&action=markAllRead`, { method:"PUT" })
   }
 
   const deleteSubmission = async (id: string) => {
@@ -218,8 +218,8 @@ export default function AdminMessagesPage() {
     const s = submissions.find(s => s.id === id)
     setSubmissions(p => p.filter(s => s.id !== id))
     if (s && !s.isRead) setUnread(p => Math.max(0, p - 1))
-    const res = await fetch(`/api/tenant/contact-submissions?id=${id}&tenantId=${tenantId}`, { method: "DELETE" })
-    if (res.ok) toast({ title: "Berhasil", description: "Pesan dihapus." })
+    const res = await fetch(`/api/tenant/contact-submissions?id=${id}&tenantId=${tenantId}`, { method:"DELETE" })
+    if (res.ok) toast({ title:"Berhasil", description:"Pesan dihapus." })
   }
 
   const toggleExpand = (id: string) => {
@@ -230,7 +230,7 @@ export default function AdminMessagesPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
+    <div className="space-y-6  pb-10">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Kotak Masuk & Pengumuman</h1>
@@ -242,31 +242,31 @@ export default function AdminMessagesPage() {
       <div className="flex flex-wrap gap-1 rounded-xl border p-1 w-fit">
         <button onClick={() => setActiveTab("pengumuman")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
-            activeTab === "pengumuman" ? "bg-primary text-white" : "hover:bg-muted")}>
+            activeTab ==="pengumuman" ?"bg-primary text-white" :"hover:bg-muted")}>
           <MessageSquare className="h-4 w-4" />
           Pengumuman
         </button>
         <button onClick={() => setActiveTab("internal")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
-            activeTab === "internal" ? "bg-primary text-white" : "hover:bg-muted")}>
+            activeTab ==="internal" ?"bg-primary text-white" :"hover:bg-muted")}>
           <Users className="h-4 w-4" />
           Pesan Internal (GTK)
         </button>
         <button onClick={() => setActiveTab("website")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
-            activeTab === "website" ? "bg-primary text-white" : "hover:bg-muted")}>
+            activeTab ==="website" ?"bg-primary text-white" :"hover:bg-muted")}>
           <Globe className="h-4 w-4" />
           Pesan Website Publik
           {unread > 0 && (
             <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold",
-              activeTab === "website" ? "bg-white text-primary" : "bg-primary text-white")}>
+              activeTab ==="website" ?"bg-white text-primary" :"bg-primary text-white")}>
               {unread}
             </span>
           )}
         </button>
       </div>
 
-      {activeTab === "internal" && (
+      {activeTab ==="internal" && (
         <InternalMessages
           messages={messages}
           loadingInternal={loadingInternal}
@@ -281,7 +281,7 @@ export default function AdminMessagesPage() {
         />
       )}
 
-      {activeTab === "website" && (
+      {activeTab ==="website" && (
         <WebsiteMessages
           submissions={submissions}
           loadingWebsite={loadingWebsite}
@@ -293,7 +293,7 @@ export default function AdminMessagesPage() {
         />
       )}
 
-      {activeTab === "pengumuman" && (
+      {activeTab ==="pengumuman" && (
         <Announcements
           announcements={announcements}
           loadingAnnouncements={loadingAnnouncements}

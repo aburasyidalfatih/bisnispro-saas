@@ -1,15 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Megaphone, MonitorPlay } from "lucide-react"
-import { Switch } from "@/components/ui/switch"
-import Link from "next/link"
-import { getPopups, deletePopup, togglePopupStatus } from "@/features/popup/actions/popup.action"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, Megaphone, MonitorPlay } from"lucide-react"
+import { Switch } from"@/components/ui/switch"
+import Link from"next/link"
+import { getPopups, deletePopup, togglePopupStatus } from"@/features/popup/actions/popup.action"
 
 interface Popup {
   id: string
@@ -32,7 +32,7 @@ export default function PopupsPage() {
       const d = await getPopups(tenantId)
       setPopups(d)
     } catch (err: any) {
-      toast({ title: "Gagal memuat data", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal memuat data", description: err.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -48,10 +48,10 @@ export default function PopupsPage() {
     if (!tenantId) return
     try {
       await deletePopup(id, tenantId)
-      toast({ title: "Popup dihapus" })
+      toast({ title:"Popup dihapus" })
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
@@ -59,10 +59,10 @@ export default function PopupsPage() {
     if (!tenantId) return
     try {
       await togglePopupStatus(id, tenantId, !currentStatus)
-      toast({ title: !currentStatus ? "Popup diaktifkan" : "Popup dinonaktifkan" })
+      toast({ title: !currentStatus ?"Popup diaktifkan" :"Popup dinonaktifkan" })
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
@@ -113,7 +113,7 @@ export default function PopupsPage() {
                   
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-medium text-muted-foreground">{popup.isActive ? "Aktif" : "Draft"}</span>
+                      <span className="text-[11px] font-medium text-muted-foreground">{popup.isActive ?"Aktif" :"Draft"}</span>
                       <Switch 
                         checked={popup.isActive} 
                         onCheckedChange={() => handleToggle(popup.id, popup.isActive)}

@@ -1,21 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { GraduationCap, Search, Download, BookOpen } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Label } from"@/components/ui/label"
+import { Badge } from"@/components/ui/badge"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { GraduationCap, Search, Download, BookOpen } from"lucide-react"
+import { cn } from"@/lib/utils"
 
-const TYPE_ORDER = ["HARIAN", "PTS", "PAS", "PRAKTEK"]
-const TYPE_LABELS: Record<string, string> = { HARIAN: "Harian", PTS: "PTS", PAS: "PAS", PRAKTEK: "Praktik" }
+const TYPE_ORDER = ["HARIAN","PTS","PAS","PRAKTEK"]
+const TYPE_LABELS: Record<string, string> = { HARIAN:"Harian", PTS:"PTS", PAS:"PAS", PRAKTEK:"Praktik" }
 
 const getScoreColor = (score: number) =>
-  score >= 85 ? "text-emerald-600" : score >= 70 ? "text-blue-600" : score >= 60 ? "text-amber-600" : "text-red-600"
+  score >= 85 ?"text-emerald-600" : score >= 70 ?"text-blue-600" : score >= 60 ?"text-amber-600" :"text-red-600"
 
 export default function AdminGradesPage() {
   const { data: session } = useSession()
@@ -46,7 +46,7 @@ export default function AdminGradesPage() {
     if (!tenant) return
     setLoading(true)
     const params = new URLSearchParams({ tenantId: tenant.id, semester, year })
-    if (selectedClass && selectedClass !== "all") params.set("classroomId", selectedClass)
+    if (selectedClass && selectedClass !=="all") params.set("classroomId", selectedClass)
     const res = await fetch(`/api/grades?${params}`)
     const data = await res.json()
     setGrades(data.grades || [])
@@ -58,14 +58,14 @@ export default function AdminGradesPage() {
   // Group by student
   const byStudent: Record<string, { student: any; grades: any[] }> = {}
   grades.forEach(g => {
-    if (selectedSubject && selectedSubject !== "all" && g.subject.id !== selectedSubject) return
+    if (selectedSubject && selectedSubject !=="all" && g.subject.id !== selectedSubject) return
     const sid = g.student.id
     if (!byStudent[sid]) byStudent[sid] = { student: g.student, grades: [] }
     byStudent[sid].grades.push(g)
   })
 
   const entries = Object.values(byStudent).filter(e =>
-    !search || e.student.name.toLowerCase().includes(search.toLowerCase()) || (e.student.nis || "").includes(search)
+    !search || e.student.name.toLowerCase().includes(search.toLowerCase()) || (e.student.nis ||"").includes(search)
   )
 
   return (
@@ -193,8 +193,8 @@ export default function AdminGradesPage() {
                               {TYPE_ORDER.map(t => {
                                 const g = mapelGrades.find(g => g.type === t)
                                 return (
-                                  <td key={t} className={cn("text-center py-2 px-2 font-mono", g ? getScoreColor(g.score) : "text-muted-foreground/30")}>
-                                    {g ? g.score : "—"}
+                                  <td key={t} className={cn("text-center py-2 px-2 font-mono", g ? getScoreColor(g.score) :"text-muted-foreground/30")}>
+                                    {g ? g.score :"—"}
                                   </td>
                                 )
                               })}

@@ -1,9 +1,9 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, Zap, ShieldCheck, Star, ArrowRight, Users } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { TenantBilling, PlanInfo } from "./types"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Badge } from"@/components/ui/badge"
+import { CheckCircle2, Zap, ShieldCheck, Star, ArrowRight, Users } from"lucide-react"
+import { cn } from"@/lib/utils"
+import { TenantBilling, PlanInfo } from"./types"
 
 interface PlanCardsProps {
   billing: TenantBilling | null
@@ -29,12 +29,11 @@ export function PlanCards({
   return (
     <div className="grid gap-6 md:grid-cols-3">
       {/* ── Card FREE ── */}
-      <Card className={cn(
-        "border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
-        billing?.plan === "free" ? "ring-2 ring-slate-400" : "glass"
+      <Card className={cn("border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
+        billing?.plan ==="free" ?"ring-2 ring-slate-400" :"glass"
       )}>
         <div className="h-1.5 bg-slate-300" />
-        {billing?.plan === "free" && (
+        {billing?.plan ==="free" && (
           <div className="absolute top-4 right-4 z-10">
             <Badge className="bg-slate-600 text-white text-[10px] shadow-md">Paket Anda</Badge>
           </div>
@@ -76,7 +75,7 @@ export function PlanCards({
           </div>
 
           <div className="mt-auto pt-3">
-            {billing?.plan === "free" ? (
+            {billing?.plan ==="free" ? (
               <Button disabled className="w-full h-11 rounded-xl cursor-default" variant="outline">
                 <CheckCircle2 className="h-4 w-4 mr-2" /> Paket Aktif
               </Button>
@@ -90,18 +89,17 @@ export function PlanCards({
       </Card>
 
       {/* ── Card LITE ── */}
-      {litePlan && <Card className={cn(
-        "border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
-        billing?.plan === "lite" ? "ring-2 ring-blue-500" : "glass",
-        litePlan?.isPopular && billing?.plan !== "lite" && "ring-2 ring-primary/30"
+      {litePlan && <Card className={cn("border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
+        billing?.plan ==="lite" ?"ring-2 ring-blue-500" :"glass",
+        litePlan?.isPopular && billing?.plan !=="lite" &&"ring-2 ring-primary/30"
       )}>
         <div className="h-1.5 bg-gradient-to-r from-blue-400 to-indigo-500" />
-        {billing?.plan === "lite" && (
+        {billing?.plan ==="lite" && (
           <div className="absolute top-4 right-4 z-10">
             <Badge className="bg-blue-600 text-white text-[10px] shadow-md">Paket Anda</Badge>
           </div>
         )}
-        {litePlan?.isPopular && billing?.plan !== "lite" && (
+        {litePlan?.isPopular && billing?.plan !=="lite" && (
           <div className="absolute top-4 right-4 z-10">
             <Badge className="bg-primary/10 text-primary text-[10px]">Populer</Badge>
           </div>
@@ -113,7 +111,7 @@ export function PlanCards({
             </div>
             <div>
               <CardTitle className="text-lg">Lite</CardTitle>
-              <CardDescription>{litePlan?.description || "Paket menengah untuk sekolah berkembang"}</CardDescription>
+              <CardDescription>{litePlan?.description ||"Paket menengah untuk sekolah berkembang"}</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -127,7 +125,7 @@ export function PlanCards({
           </div>
 
           {/* Masa aktif jika Lite */}
-          {billing?.plan === "lite" && billing.expiresAt && (
+          {billing?.plan ==="lite" && billing.expiresAt && (
             <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/30 rounded-xl px-3 py-2.5">
               <div className="flex items-center gap-2">
                 <div className="relative flex h-2 w-2">
@@ -137,7 +135,7 @@ export function PlanCards({
                 <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">Aktif</span>
               </div>
               <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                s/d {new Date(billing.expiresAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                s/d {new Date(billing.expiresAt).toLocaleDateString("id-ID", { day:"numeric", month:"short", year:"numeric" })}
               </span>
             </div>
           )}
@@ -160,16 +158,16 @@ export function PlanCards({
           </div>
 
           <div className="mt-auto pt-3">
-            {billing?.plan === "lite" ? (
+            {billing?.plan ==="lite" ? (
               <Button 
                 className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20"
                 disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
                 onClick={() => { setSelectedPlanSlug("lite"); setShowCheckoutModal(true) }}
               >
-                {checkingOut ? "Membuat Invoice..." : "Perpanjang Sekarang"}
+                {checkingOut ?"Membuat Invoice..." :"Perpanjang Sekarang"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
-            ) : billing?.plan === "pro" ? (
+            ) : billing?.plan ==="pro" ? (
               <Button disabled className="w-full h-11 rounded-xl cursor-default" variant="ghost">
                 Sudah di paket PRO
               </Button>
@@ -179,7 +177,7 @@ export function PlanCards({
                 disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
                 onClick={() => { setSelectedPlanSlug("lite"); setShowCheckoutModal(true) }}
               >
-                {checkingOut ? "Membuat Invoice..." : "Upgrade ke Lite"}
+                {checkingOut ?"Membuat Invoice..." :"Upgrade ke Lite"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             )}
@@ -188,12 +186,11 @@ export function PlanCards({
       </Card>}
 
       {/* ── Card PRO ── */}
-      {proPlan && <Card className={cn(
-        "border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
-        billing?.plan === "pro" ? "ring-2 ring-emerald-500" : "glass"
+      {proPlan && <Card className={cn("border-0 shadow-lg overflow-hidden flex flex-col relative transition-all",
+        billing?.plan ==="pro" ?"ring-2 ring-emerald-500" :"glass"
       )}>
         <div className="h-1.5 bg-gradient-to-r from-yellow-400 to-amber-500" />
-        {billing?.plan === "pro" && (
+        {billing?.plan ==="pro" && (
           <div className="absolute top-4 right-4 z-10">
             <Badge className="bg-emerald-600 text-white text-[10px] shadow-md">Paket Anda</Badge>
           </div>
@@ -205,7 +202,7 @@ export function PlanCards({
             </div>
             <div>
               <CardTitle className="text-lg">PRO</CardTitle>
-              <CardDescription>{proPlan?.description || "Fitur lengkap untuk sekolah modern"}</CardDescription>
+              <CardDescription>{proPlan?.description ||"Fitur lengkap untuk sekolah modern"}</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -222,7 +219,7 @@ export function PlanCards({
           </div>
 
           {/* Masa aktif + kapasitas jika Pro */}
-          {billing?.plan === "pro" && (
+          {billing?.plan ==="pro" && (
             <div className="space-y-2">
               <div className="flex items-center justify-between bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/30 rounded-xl px-3 py-2.5">
                 <div className="flex items-center gap-2">
@@ -233,7 +230,7 @@ export function PlanCards({
                   <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Aktif</span>
                 </div>
                 <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                  s/d {billing?.expiresAt ? new Date(billing.expiresAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "Selamanya"}
+                  s/d {billing?.expiresAt ? new Date(billing.expiresAt).toLocaleDateString("id-ID", { day:"numeric", month:"short", year:"numeric" }) :"Selamanya"}
                 </span>
               </div>
               <div className="flex items-center justify-between bg-muted/40 rounded-xl px-3 py-2">
@@ -264,7 +261,7 @@ export function PlanCards({
           </div>
 
           <div className="mt-auto pt-3">
-            {billing?.plan === "pro" ? (
+            {billing?.plan ==="pro" ? (
               <Button 
                 className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20"
                 disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}

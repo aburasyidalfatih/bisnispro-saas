@@ -1,9 +1,9 @@
-import { Metadata } from "next"
-import { StarSenderManager } from "./_components/starsender-manager"
+import { Metadata } from"next"
+import { StarSenderManager } from"./_components/starsender-manager"
 
 export const metadata: Metadata = {
-  title: "WhatsApp Gateway | SchoolPro",
-  description: "Kelola koneksi gateway WhatsApp untuk sekolah Anda",
+  title:"WhatsApp Gateway | SchoolPro",
+  description:"Kelola koneksi gateway WhatsApp untuk sekolah Anda",
 }
 
 export default function WhatsappSettingsPage() {

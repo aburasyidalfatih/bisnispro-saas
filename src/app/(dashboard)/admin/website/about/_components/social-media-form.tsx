@@ -1,9 +1,9 @@
-import React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { MessageCircle } from "lucide-react"
-import { AboutFormState } from "./types"
+import React from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { MessageCircle } from"lucide-react"
+import { AboutFormState } from"./types"
 
 interface SocialMediaFormProps {
   form: AboutFormState

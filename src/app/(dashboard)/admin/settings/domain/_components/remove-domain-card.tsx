@@ -1,8 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { Trash2 } from "lucide-react"
-import { DomainData } from "./types"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { Trash2 } from"lucide-react"
+import { DomainData } from"./types"
 
 interface RemoveDomainCardProps {
   data: DomainData | null
@@ -50,7 +50,7 @@ export function RemoveDomainCard({
                 className="rounded-lg text-xs"
                 disabled={removing}
               >
-                {removing ? "Menghapus..." : "Hapus Domain"}
+                {removing ?"Menghapus..." :"Hapus Domain"}
               </Button>
             }
             title="Hapus custom domain?"

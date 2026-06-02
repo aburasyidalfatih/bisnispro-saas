@@ -1,19 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter, useParams, useSearchParams } from "next/navigation"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { postSchema } from "@/features/post/schemas/post.schema"
-import * as z from "zod"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, Loader2, Search, Sparkles, Wand2 } from "lucide-react"
+import { useEffect, useState } from"react"
+import { useRouter, useParams, useSearchParams } from"next/navigation"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { useForm } from"react-hook-form"
+import { zodResolver } from"@hookform/resolvers/zod"
+import { postSchema } from"@/features/post/schemas/post.schema"
+import * as z from"zod"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, Loader2, Search, Sparkles, Wand2 } from"lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -21,11 +21,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import Link from "next/link"
-import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
-import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
-import { normalizeImageUrl } from "@/lib/utils"
+} from"@/components/ui/dialog"
+import Link from"next/link"
+import { LazyRichTextEditor as RichTextEditor } from"@/components/ui/lazy-rich-text-editor"
+import { ImageUploadDirect } from"@/components/ui/image-upload-direct"
+import { normalizeImageUrl } from"@/lib/utils"
 
 type FormData = z.infer<typeof postSchema>
 
@@ -45,7 +45,7 @@ export default function PostFormPage() {
   const [aiLoading, setAiLoading] = useState(false)
 
   const tenantId = branding.id
-  const isNew = params.id === "new"
+  const isNew = params.id ==="new"
 
   const [categories, setCategories] = useState<{id: string, name: string}[]>([])
 
@@ -59,13 +59,13 @@ export default function PostFormPage() {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      type: (typeQuery && ["BLOG_GURU", "EDITORIAL", "PENGUMUMAN"].includes(typeQuery) ? typeQuery : "BLOG_GURU") as any,
-      status: "PUBLISHED",
-      featuredImage: "",
-      categoryId: "",
-      content: "",
-      seoTitle: "",
-      seoDesc: ""
+      type: (typeQuery && ["BLOG_GURU","EDITORIAL","PENGUMUMAN"].includes(typeQuery) ? typeQuery :"BLOG_GURU") as any,
+      status:"PUBLISHED",
+      featuredImage:"",
+      categoryId:"",
+      content:"",
+      seoTitle:"",
+      seoDesc:""
     }
   })
 
@@ -93,8 +93,8 @@ export default function PostFormPage() {
       .then(r => r.json())
       .then(d => {
         if (d.error) {
-          toast({ title: "Gagal memuat artikel", description: d.error, variant: "destructive" })
-          router.push(typeQuery ? `/admin/website/posts?type=${typeQuery}` : "/admin/website/posts")
+          toast({ title:"Gagal memuat artikel", description: d.error, variant:"destructive" })
+          router.push(typeQuery ? `/admin/website/posts?type=${typeQuery}` :"/admin/website/posts")
           return
         }
         setValue("title", d.title)
@@ -102,14 +102,14 @@ export default function PostFormPage() {
         setValue("content", d.content)
         setValue("type", d.type)
         setValue("status", d.status)
-        setValue("featuredImage", normalizeImageUrl(d.featuredImage) || "")
-        setValue("categoryId", d.categoryId || "")
-        setValue("seoTitle", d.seoTitle || "")
-        setValue("seoDesc", d.seoDesc || "")
+        setValue("featuredImage", normalizeImageUrl(d.featuredImage) ||"")
+        setValue("categoryId", d.categoryId ||"")
+        setValue("seoTitle", d.seoTitle ||"")
+        setValue("seoDesc", d.seoDesc ||"")
         setInitialLoading(false)
       })
       .catch(() => {
-        toast({ title: "Gagal memuat artikel", variant: "destructive" })
+        toast({ title:"Gagal memuat artikel", variant:"destructive" })
         setInitialLoading(false)
       })
   }, [tenantId, isNew, params.id, setValue, router])
@@ -117,35 +117,35 @@ export default function PostFormPage() {
   const onSubmit = async (data: FormData) => {
     if (!tenantId) return
     
-    // Validasi manual konten kosong (karena RichTextEditor mengembalikan "<p></p>" saat kosong)
-    const isEmptyContent = !data.content || data.content === "<p></p>" || data.content.trim() === ""
+    // Validasi manual konten kosong (karena RichTextEditor mengembalikan"<p></p>" saat kosong)
+    const isEmptyContent = !data.content || data.content ==="<p></p>" || data.content.trim() ===""
     if (isEmptyContent) {
-      toast({ title: "Konten kosong", description: "Isi artikel tidak boleh kosong", variant: "destructive" })
+      toast({ title:"Konten kosong", description:"Isi artikel tidak boleh kosong", variant:"destructive" })
       return
     }
 
     setLoading(true)
 
     const url = isNew ? `/api/tenant/posts` : `/api/tenant/posts/${params.id}`
-    const method = isNew ? "POST" : "PUT"
+    const method = isNew ?"POST" :"PUT"
 
     try {
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ ...data, tenantId })
       })
 
       const d = await res.json()
       if (res.ok) {
-        toast({ title: "Berhasil", description: d.message })
-        router.push(typeQuery ? `/admin/website/posts?type=${typeQuery}` : "/admin/website/posts")
+        toast({ title:"Berhasil", description: d.message })
+        router.push(typeQuery ? `/admin/website/posts?type=${typeQuery}` :"/admin/website/posts")
         router.refresh()
       } else {
-        toast({ title: "Gagal menyimpan", description: d.error, variant: "destructive" })
+        toast({ title:"Gagal menyimpan", description: d.error, variant:"destructive" })
       }
     } catch {
-      toast({ title: "Gagal menyimpan artikel", variant: "destructive" })
+      toast({ title:"Gagal menyimpan artikel", variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -153,15 +153,15 @@ export default function PostFormPage() {
 
   const handleGenerateAI = async () => {
     if (!aiTopic.trim()) {
-      toast({ title: "Topik kosong", description: "Silakan masukkan poin-poin cerita terlebih dahulu.", variant: "destructive" })
+      toast({ title:"Topik kosong", description:"Silakan masukkan poin-poin cerita terlebih dahulu.", variant:"destructive" })
       return
     }
 
     setAiLoading(true)
     try {
       const res = await fetch("/api/tenant/ai/generate-post", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId, topic: aiTopic, tone: aiTone })
       })
       const d = await res.json()
@@ -172,12 +172,12 @@ export default function PostFormPage() {
         setValue("seoDesc", d.data.seoDesc, { shouldValidate: true })
         setAiModalOpen(false)
         setAiTopic("")
-        toast({ title: "Artikel Berhasil Dibuat", description: "Silakan review dan edit hasil tulisan AI sebelum menyimpan." })
+        toast({ title:"Artikel Berhasil Dibuat", description:"Silakan review dan edit hasil tulisan AI sebelum menyimpan." })
       } else {
-        toast({ title: "Gagal membuat artikel", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+        toast({ title:"Gagal membuat artikel", description: d.error ||"Terjadi kesalahan", variant:"destructive" })
       }
     } catch (err) {
-      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+      toast({ title:"Error", description:"Gagal menghubungi server AI", variant:"destructive" })
     } finally {
       setAiLoading(false)
     }
@@ -186,19 +186,19 @@ export default function PostFormPage() {
   if (initialLoading) return <div className="skeleton h-[600px] rounded-2xl" />
 
   const contentValue = watch("content")
-  const featuredImageValue = watch("featuredImage") || ""
+  const featuredImageValue = watch("featuredImage") ||""
 
   return (
     <div className="space-y-6 max-w-[1200px] mx-auto pb-10">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <Link href={typeQuery ? `/admin/website/posts?type=${typeQuery}` : "/admin/website/posts"}>
+            <Link href={typeQuery ? `/admin/website/posts?type=${typeQuery}` :"/admin/website/posts"}>
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{isNew ? "Tulis Artikel Baru" : "Edit Artikel"}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{isNew ?"Tulis Artikel Baru" :"Edit Artikel"}</h1>
             <p className="text-muted-foreground mt-1 text-sm">Gunakan editor di bawah untuk membuat konten menarik.</p>
           </div>
         </div>
@@ -258,8 +258,8 @@ export default function PostFormPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="seoTitle" className="text-sm font-medium">Meta Title (Judul SEO)</Label>
-                  <span className={`text-[10px] font-medium ${(watch("seoTitle") ?? "").length > 60 ? "text-red-500" : "text-muted-foreground"}`}>
-                    {(watch("seoTitle") ?? "").length} / 60
+                  <span className={`text-[10px] font-medium ${(watch("seoTitle") ??"").length > 60 ?"text-red-500" :"text-muted-foreground"}`}>
+                    {(watch("seoTitle") ??"").length} / 60
                   </span>
                 </div>
                 <Input 
@@ -275,8 +275,8 @@ export default function PostFormPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="seoDesc" className="text-sm font-medium">Meta Description</Label>
-                  <span className={`text-[10px] font-medium ${(watch("seoDesc") ?? "").length > 160 ? "text-red-500" : "text-muted-foreground"}`}>
-                    {(watch("seoDesc") ?? "").length} / 160
+                  <span className={`text-[10px] font-medium ${(watch("seoDesc") ??"").length > 160 ?"text-red-500" :"text-muted-foreground"}`}>
+                    {(watch("seoDesc") ??"").length} / 160
                   </span>
                 </div>
                 <Textarea 
@@ -320,7 +320,7 @@ export default function PostFormPage() {
                   {...register("type")} 
                   className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
                 >
-                  {(typeQuery === "PENGUMUMAN" || watch("type") === "PENGUMUMAN") ? (
+                  {(typeQuery ==="PENGUMUMAN" || watch("type") ==="PENGUMUMAN") ? (
                     <option value="PENGUMUMAN">Pengumuman Publik (Web)</option>
                   ) : (
                     <>
@@ -374,9 +374,9 @@ export default function PostFormPage() {
             </CardHeader>
             <CardContent>
               <ImageUploadDirect 
-                tenantId={tenantId ?? ""}
+                tenantId={tenantId ??""}
                 value={featuredImageValue}
-                onChange={(url) => setValue("featuredImage", url ?? "", { shouldValidate: true })}
+                onChange={(url) => setValue("featuredImage", url ??"", { shouldValidate: true })}
                 hint="Rekomendasi rasio 16:9 (misal: 1280x720px)"
               />
               <input type="hidden" {...register("featuredImage")} />
@@ -387,10 +387,10 @@ export default function PostFormPage() {
           <div className="flex flex-col gap-3">
             <Button type="submit" disabled={loading} className="w-full gap-2 btn-gradient text-white border-0 rounded-xl py-6 shadow-md hover:shadow-lg transition-all">
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-              <span className="text-base font-semibold">{isNew ? "Simpan & Publikasikan" : "Perbarui Artikel"}</span>
+              <span className="text-base font-semibold">{isNew ?"Simpan & Publikasikan" :"Perbarui Artikel"}</span>
             </Button>
             <Button asChild variant="ghost" className="w-full rounded-xl" disabled={loading}>
-              <Link href={typeQuery ? `/admin/website/posts?type=${typeQuery}` : "/admin/website/posts"}>Batal</Link>
+              <Link href={typeQuery ? `/admin/website/posts?type=${typeQuery}` :"/admin/website/posts"}>Batal</Link>
             </Button>
           </div>
         </div>
@@ -451,7 +451,7 @@ export default function PostFormPage() {
               className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
             >
               {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {aiLoading ? "Menulis Artikel..." : "Mulai Generate"}
+              {aiLoading ?"Menulis Artikel..." :"Mulai Generate"}
             </Button>
           </DialogFooter>
         </DialogContent>

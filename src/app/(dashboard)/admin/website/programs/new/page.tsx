@@ -1,17 +1,17 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, ImageIcon, GraduationCap, Sparkles, Wand2, Loader2 as Loader2Icon } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { createProgram } from "@/features/program/actions/program.action"
+import { useState, useRef } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, ImageIcon, GraduationCap, Sparkles, Wand2, Loader2 as Loader2Icon } from"lucide-react"
+import Link from"next/link"
+import { useRouter } from"next/navigation"
+import { createProgram } from"@/features/program/actions/program.action"
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from"@/components/ui/dialog"
 
 export default function NewProgramPage() {
   const router = useRouter()
@@ -32,10 +32,10 @@ export default function NewProgramPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    focus: "",
-    prospects: ""
+    name:"",
+    description:"",
+    focus:"",
+    prospects:""
   })
 
   // AI State
@@ -49,7 +49,7 @@ export default function NewProgramPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 5 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 5MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 5MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -60,7 +60,7 @@ export default function NewProgramPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!tenantId || !formData.name) {
-      toast({ title: "Nama program harus diisi", variant: "destructive" })
+      toast({ title:"Nama program harus diisi", variant:"destructive" })
       return
     }
 
@@ -74,13 +74,13 @@ export default function NewProgramPage() {
         const fd = new FormData()
         fd.append("file", file)
         fd.append("tenantId", tenantId)
-        fd.append("subDir", "programs")
+        fd.append("subDir","programs")
         
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+        const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
         const uploadData = await uploadRes.json()
         
         if (!uploadRes.ok || !uploadData.url) {
-          throw new Error(uploadData.error || "Gagal mengunggah gambar")
+          throw new Error(uploadData.error ||"Gagal mengunggah gambar")
         }
         
         imageUrl = uploadData.url
@@ -95,10 +95,10 @@ export default function NewProgramPage() {
         prospects: formData.prospects
       })
 
-      toast({ title: "Program berhasil disimpan!" })
+      toast({ title:"Program berhasil disimpan!" })
       router.push("/admin/website/programs")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -106,22 +106,22 @@ export default function NewProgramPage() {
 
   const handleGenerateAI = async () => {
     if (!formData.name) {
-      toast({ title: "Nama Belum Diisi", description: "Silakan isi Nama Program terlebih dahulu.", variant: "destructive" })
+      toast({ title:"Nama Belum Diisi", description:"Silakan isi Nama Program terlebih dahulu.", variant:"destructive" })
       return
     }
     if (!aiInputText.trim()) {
-      toast({ title: "Input kosong", description: "Silakan masukkan fokus/keunggulan program.", variant: "destructive" })
+      toast({ title:"Input kosong", description:"Silakan masukkan fokus/keunggulan program.", variant:"destructive" })
       return
     }
 
     setAiLoading(true)
     try {
       const res = await fetch("/api/tenant/ai/generate-content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ 
           tenantId, 
-          promptType: "program", 
+          promptType:"program", 
           inputs: { text: aiInputText, name: formData.name } 
         })
       })
@@ -130,12 +130,12 @@ export default function NewProgramPage() {
         setFormData(p => ({ ...p, description: d.data.result }))
         setAiModalOpen(false)
         setAiInputText("")
-        toast({ title: "Berhasil", description: "Deskripsi program berhasil di-generate AI." })
+        toast({ title:"Berhasil", description:"Deskripsi program berhasil di-generate AI." })
       } else {
-        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+        toast({ title:"Gagal", description: d.error ||"Terjadi kesalahan", variant:"destructive" })
       }
     } catch (err) {
-      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+      toast({ title:"Error", description:"Gagal menghubungi server AI", variant:"destructive" })
     } finally {
       setAiLoading(false)
     }
@@ -264,7 +264,7 @@ export default function NewProgramPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Program</>
@@ -320,7 +320,7 @@ export default function NewProgramPage() {
               className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
             >
               {aiLoading ? <Loader2Icon className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {aiLoading ? "Memproses..." : "Generate Deskripsi"}
+              {aiLoading ?"Memproses..." :"Generate Deskripsi"}
             </Button>
           </DialogFooter>
         </DialogContent>

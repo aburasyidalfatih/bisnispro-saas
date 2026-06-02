@@ -1,13 +1,13 @@
-import React from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Users, Plus, Loader2, MessageSquare } from "lucide-react"
-import { format } from "date-fns"
-import { id } from "date-fns/locale"
-import { Message } from "./types"
+import React from"react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from"@/components/ui/dialog"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Users, Plus, Loader2, MessageSquare } from"lucide-react"
+import { format } from"date-fns"
+import { id } from"date-fns/locale"
+import { Message } from"./types"
 
 interface InternalMessagesProps {
   messages: Message[]
@@ -88,7 +88,7 @@ export function InternalMessages({
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowComposeModal(false)}>Batal</Button>
               <Button onClick={submitComposeMessage} disabled={submittingCompose}>
-                {submittingCompose ? "Mengirim..." : "Kirim Pesan"}
+                {submittingCompose ?"Mengirim..." :"Kirim Pesan"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -120,7 +120,7 @@ export function InternalMessages({
                         {msg.sender.name}
                       </p>
                       <p className="text-[11px] text-muted-foreground">
-                        {format(new Date(msg.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
+                        {format(new Date(msg.createdAt),"dd MMM yyyy, HH:mm", { locale: id })}
                       </p>
                     </div>
                   </div>

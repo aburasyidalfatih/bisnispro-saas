@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
 import {
   Lock, Smartphone, ShieldCheck, ShieldOff, Copy,
   Monitor, Trash2, Eye, EyeOff, Info, ExternalLink,
-} from "lucide-react"
+} from"lucide-react"
 
 interface SessionRow {
   id: string
@@ -29,8 +29,8 @@ export default function SecurityPage() {
   const [tenantId, setTenantId] = useState<string | null>(null)
 
   // Role check — Google OAuth hanya untuk owner/admin
-  const currentRole = session?.user?.tenants?.[0]?.role || "orangtua"
-  const isAdminOrOwner = currentRole === "owner" || currentRole === "admin" || session?.user?.isSuperAdmin
+  const currentRole = session?.user?.tenants?.[0]?.role ||"orangtua"
+  const isAdminOrOwner = currentRole ==="owner" || currentRole ==="admin" || session?.user?.isSuperAdmin
 
   // Google OAuth state
   const [googleEnabled, setGoogleEnabled] = useState(false)
@@ -75,8 +75,8 @@ export default function SecurityPage() {
       .then(d => {
         if (d.google) {
           setGoogleEnabled(true)
-          setGoogleClientId(d.google.clientId || "")
-          setGoogleClientSecret(d.google.clientSecret || "")
+          setGoogleClientId(d.google.clientId ||"")
+          setGoogleClientSecret(d.google.clientSecret ||"")
         }
       })
   }, [tenantId, isAdminOrOwner])
@@ -93,11 +93,11 @@ export default function SecurityPage() {
   const handleSetup2FA = async () => {
     setSetupLoading(true)
     try {
-      const res = await fetch("/api/auth/two-factor/setup", { method: "POST" })
+      const res = await fetch("/api/auth/two-factor/setup", { method:"POST" })
       const d = await res.json()
       if (res.ok) { setQrCode(d.qrCode); setSecret(d.secret) }
-      else toast({ title: "Gagal", description: d.error, variant: "destructive" })
-    } catch { toast({ title: "Gagal", description: "Tidak dapat terhubung ke server", variant: "destructive" }) }
+      else toast({ title:"Gagal", description: d.error, variant:"destructive" })
+    } catch { toast({ title:"Gagal", description:"Tidak dapat terhubung ke server", variant:"destructive" }) }
     setSetupLoading(false)
   }
 
@@ -105,7 +105,7 @@ export default function SecurityPage() {
     setVerifyLoading(true)
     try {
       const res = await fetch("/api/auth/two-factor/verify", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method:"POST", headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ code: verifyCode }),
       })
       const d = await res.json()
@@ -113,9 +113,9 @@ export default function SecurityPage() {
         setTwoFAEnabled(true); setBackupCodes(d.backupCodes)
         setQrCode(null); setSecret(null); setVerifyCode("")
         await updateSession()
-        toast({ title: "2FA Aktif", description: "Autentikasi dua faktor berhasil diaktifkan." })
-      } else toast({ title: "Gagal", description: d.error, variant: "destructive" })
-    } catch { toast({ title: "Gagal", description: "Tidak dapat terhubung ke server", variant: "destructive" }) }
+        toast({ title:"2FA Aktif", description:"Autentikasi dua faktor berhasil diaktifkan." })
+      } else toast({ title:"Gagal", description: d.error, variant:"destructive" })
+    } catch { toast({ title:"Gagal", description:"Tidak dapat terhubung ke server", variant:"destructive" }) }
     setVerifyLoading(false)
   }
 
@@ -123,27 +123,27 @@ export default function SecurityPage() {
     setDisableLoading(true)
     try {
       const res = await fetch("/api/auth/two-factor/disable", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method:"POST", headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ password: disablePassword }),
       })
       const d = await res.json()
       if (res.ok) {
         setTwoFAEnabled(false); setDisablePassword("")
         await updateSession()
-        toast({ title: "2FA Nonaktif", description: "Autentikasi dua faktor berhasil dinonaktifkan." })
-      } else toast({ title: "Gagal", description: d.error, variant: "destructive" })
-    } catch { toast({ title: "Gagal", description: "Tidak dapat terhubung ke server", variant: "destructive" }) }
+        toast({ title:"2FA Nonaktif", description:"Autentikasi dua faktor berhasil dinonaktifkan." })
+      } else toast({ title:"Gagal", description: d.error, variant:"destructive" })
+    } catch { toast({ title:"Gagal", description:"Tidak dapat terhubung ke server", variant:"destructive" }) }
     setDisableLoading(false)
   }
 
   const handleRevokeSession = async (sessionId: string) => {
     const res = await fetch("/api/auth/sessions", {
-      method: "DELETE", headers: { "Content-Type": "application/json" },
+      method:"DELETE", headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ sessionId }),
     })
     if (res.ok) {
       setSessions(prev => prev.filter(s => s.id !== sessionId))
-      toast({ title: "Session dihapus", description: "Perangkat berhasil dikeluarkan." })
+      toast({ title:"Session dihapus", description:"Perangkat berhasil dikeluarkan." })
     }
   }
 
@@ -151,7 +151,7 @@ export default function SecurityPage() {
     if (!tenantId) return
     setSavingGoogle(true)
     const res = await fetch("/api/tenant/settings", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
+      method:"PUT", headers: {"Content-Type":"application/json" },
       body: JSON.stringify({
         tenantId,
         settings: googleEnabled
@@ -160,14 +160,14 @@ export default function SecurityPage() {
       }),
     })
     setSavingGoogle(false)
-    if (res.ok) toast({ title: "Disimpan", description: "Konfigurasi Google OAuth berhasil disimpan." })
-    else toast({ title: "Gagal", description: "Terjadi kesalahan.", variant: "destructive" })
+    if (res.ok) toast({ title:"Disimpan", description:"Konfigurasi Google OAuth berhasil disimpan." })
+    else toast({ title:"Gagal", description:"Terjadi kesalahan.", variant:"destructive" })
   }
 
   const parseUA = (ua: string | null) => {
-    if (!ua) return "Perangkat tidak dikenal"
-    const browser = ua.match(/(Chrome|Firefox|Safari|Edge|Opera)/i)?.[0] || "Browser"
-    const os = ua.match(/(Windows|Mac|Linux|Android|iOS)/i)?.[0] || "OS"
+    if (!ua) return"Perangkat tidak dikenal"
+    const browser = ua.match(/(Chrome|Firefox|Safari|Edge|Opera)/i)?.[0] ||"Browser"
+    const os = ua.match(/(Windows|Mac|Linux|Android|iOS)/i)?.[0] ||"OS"
     return `${os} · ${browser}`
   }
 
@@ -192,7 +192,7 @@ export default function SecurityPage() {
               <div>
                 <CardTitle className="text-lg">Autentikasi Dua Faktor</CardTitle>
                 <CardDescription>
-                  {twoFAEnabled ? "2FA aktif — akun Anda lebih aman" : "Tambahkan lapisan keamanan ekstra"}
+                  {twoFAEnabled ?"2FA aktif — akun Anda lebih aman" :"Tambahkan lapisan keamanan ekstra"}
                 </CardDescription>
               </div>
             </div>
@@ -208,7 +208,7 @@ export default function SecurityPage() {
                 </div>
                 <Button variant="outline" size="sm" className="rounded-lg w-full gap-2" onClick={() => {
                   navigator.clipboard.writeText(backupCodes.join("\n"))
-                  toast({ title: "Disalin", description: "Backup codes disalin ke clipboard." })
+                  toast({ title:"Disalin", description:"Backup codes disalin ke clipboard." })
                 }}>
                   <Copy className="h-3 w-3" /> Salin Semua
                 </Button>
@@ -230,13 +230,13 @@ export default function SecurityPage() {
                 <div className="space-y-2">
                   <Label>Kode Verifikasi</Label>
                   <Input placeholder="000000" maxLength={6} value={verifyCode}
-                    onChange={e => setVerifyCode(e.target.value.replace(/\D/g, ""))}
+                    onChange={e => setVerifyCode(e.target.value.replace(/\D/g,""))}
                     className="rounded-xl text-center tracking-widest text-lg" />
                 </div>
                 <div className="flex gap-2">
                   <Button className="flex-1 btn-gradient text-white border-0 rounded-xl" onClick={handleVerify2FA}
                     disabled={verifyLoading || verifyCode.length !== 6}>
-                    {verifyLoading ? "Memverifikasi..." : "Aktifkan 2FA"}
+                    {verifyLoading ?"Memverifikasi..." :"Aktifkan 2FA"}
                   </Button>
                   <Button variant="outline" className="rounded-xl" onClick={() => { setQrCode(null); setSecret(null) }}>
                     Batal
@@ -259,12 +259,12 @@ export default function SecurityPage() {
                   </div>
                   <Button variant="destructive" className="rounded-xl w-full" onClick={handleDisable2FA}
                     disabled={disableLoading || !disablePassword}>
-                    {disableLoading ? "Menonaktifkan..." : "Nonaktifkan 2FA"}
+                    {disableLoading ?"Menonaktifkan..." :"Nonaktifkan 2FA"}
                   </Button>
                 </div>
               ) : (
                 <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2" onClick={handleSetup2FA} disabled={setupLoading}>
-                  {setupLoading ? "Memuat..." : <><ShieldCheck className="h-4 w-4" /> Aktifkan 2FA</>}
+                  {setupLoading ?"Memuat..." : <><ShieldCheck className="h-4 w-4" /> Aktifkan 2FA</>}
                 </Button>
               )
             )}
@@ -305,7 +305,7 @@ export default function SecurityPage() {
                       <div>
                         <p className="font-medium text-sm">{s.deviceName || parseUA(s.userAgent)}</p>
                         <p className="text-xs text-muted-foreground">
-                          {s.ipAddress || "IP tidak diketahui"} · {new Date(s.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                          {s.ipAddress ||"IP tidak diketahui"} · {new Date(s.createdAt).toLocaleDateString("id-ID", { day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" })}
                         </p>
                       </div>
                     </div>
@@ -357,9 +357,9 @@ export default function SecurityPage() {
                   </span>
                   <button
                     onClick={() => setGoogleEnabled(!googleEnabled)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${googleEnabled ? "bg-primary" : "bg-muted"}`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${googleEnabled ?"bg-primary" :"bg-muted"}`}
                   >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${googleEnabled ? "translate-x-6" : "translate-x-1"}`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${googleEnabled ?"translate-x-6" :"translate-x-1"}`} />
                   </button>
                 </div>
               </div>
@@ -383,7 +383,7 @@ export default function SecurityPage() {
                   <div className="space-y-2">
                     <Label>Google Client Secret</Label>
                     <div className="relative">
-                      <Input type={showGoogleSecret ? "text" : "password"} value={googleClientSecret}
+                      <Input type={showGoogleSecret ?"text" :"password"} value={googleClientSecret}
                         onChange={e => setGoogleClientSecret(e.target.value)}
                         placeholder="GOCSPX-..." className="rounded-xl pr-10 font-mono text-xs" />
                       <button type="button" onClick={() => setShowGoogleSecret(!showGoogleSecret)}
@@ -395,7 +395,7 @@ export default function SecurityPage() {
                   <div className="sm:col-span-2 rounded-xl border bg-muted/30 p-4 space-y-2">
                     <p className="text-xs font-semibold">Authorized Redirect URI:</p>
                     <code className="text-xs bg-background rounded-lg px-3 py-2 block font-mono select-all">
-                      {typeof window !== "undefined" ? `${window.location.origin}/api/auth/callback/google` : "https://yourdomain.com/api/auth/callback/google"}
+                      {typeof window !=="undefined" ? `${window.location.origin}/api/auth/callback/google` :"https://yourdomain.com/api/auth/callback/google"}
                     </code>
                     <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener"
                       className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
@@ -439,7 +439,7 @@ export default function SecurityPage() {
                 title="Hapus akun Anda?"
                 description="Semua data termasuk lembaga dan file Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
                 confirmText="Ya, hapus akun saya"
-                onConfirm={() => { toast({ title: "Fitur segera hadir", description: "Penghapusan akun akan tersedia di versi berikutnya." }) }}
+                onConfirm={() => { toast({ title:"Fitur segera hadir", description:"Penghapusan akun akan tersedia di versi berikutnya." }) }}
               />
             </div>
           </CardContent>

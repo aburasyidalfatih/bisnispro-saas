@@ -1,20 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Calendar, Clock, Plus, Trash2, Loader2, BookOpen, Users, GraduationCap } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Label } from"@/components/ui/label"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Calendar, Clock, Plus, Trash2, Loader2, BookOpen, Users, GraduationCap } from"lucide-react"
+import { cn } from"@/lib/utils"
 
-const DAYS = ["", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
+const DAYS = ["","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
 const HOURS = Array.from({ length: 14 }, (_, i) => {
   const h = i + 6
-  return { value: `${String(h).padStart(2, "0")}:00`, label: `${String(h).padStart(2, "0")}:00` }
+  return { value: `${String(h).padStart(2,"0")}:00`, label: `${String(h).padStart(2,"0")}:00` }
 })
 
 interface Schedule {
@@ -37,7 +37,7 @@ export default function SchedulesPage() {
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [form, setForm] = useState({ subjectId: "", staffId: "", dayOfWeek: "", startTime: "07:00", endTime: "08:30" })
+  const [form, setForm] = useState({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30" })
 
   useEffect(() => {
     if (!tenant) return
@@ -71,8 +71,8 @@ export default function SchedulesPage() {
     setSaving(true)
     try {
       const res = await fetch("/api/schedules", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId: tenant.id, classroomId: selectedClass,
           subjectId: form.subjectId, staffId: form.staffId,
@@ -81,20 +81,20 @@ export default function SchedulesPage() {
         }),
       })
       if (!res.ok) throw new Error()
-      toast({ title: "Jadwal ditambahkan" })
-      setForm({ subjectId: "", staffId: "", dayOfWeek: "", startTime: "07:00", endTime: "08:30" })
+      toast({ title:"Jadwal ditambahkan" })
+      setForm({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30" })
       setShowForm(false)
       await loadSchedules(selectedClass)
     } catch {
-      toast({ title: "Gagal", description: "Tidak bisa menambahkan jadwal", variant: "destructive" })
+      toast({ title:"Gagal", description:"Tidak bisa menambahkan jadwal", variant:"destructive" })
     }
     setSaving(false)
   }
 
   const handleDelete = async () => {
     if (!deleteId) return
-    await fetch(`/api/schedules/${deleteId}`, { method: "DELETE" })
-    toast({ title: "Jadwal dihapus" })
+    await fetch(`/api/schedules/${deleteId}`, { method:"DELETE" })
+    toast({ title:"Jadwal dihapus" })
     setDeleteId(null)
     if (selectedClass) await loadSchedules(selectedClass)
   }
@@ -132,7 +132,7 @@ export default function SchedulesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {classrooms.map((c: any) => (
-                    <SelectItem key={c.id} value={c.id}>{c.name} {c.level ? `(${c.level})` : ""}</SelectItem>
+                    <SelectItem key={c.id} value={c.id}>{c.name} {c.level ? `(${c.level})` :""}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -143,7 +143,7 @@ export default function SchedulesPage() {
 
       {/* Form Tambah */}
       {showForm && (
-        <Card className="glass border-0 border-l-4 border-l-primary animate-in slide-in-from-top-2">
+        <Card className="glass border-0 border-l-4 border-l-primary">
           <CardHeader className="pb-3"><CardTitle className="text-base">Tambah Slot Jadwal</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -213,7 +213,7 @@ export default function SchedulesPage() {
               <CardHeader className="pb-2 pt-4 px-4">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold",
-                    items.length > 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground")}>
+                    items.length > 0 ?"bg-primary/15 text-primary" :"bg-muted text-muted-foreground")}>
                     {idx}
                   </span>
                   {day}

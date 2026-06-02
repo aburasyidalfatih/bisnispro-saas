@@ -1,19 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Receipt, Plus, Search, Filter, Loader2, AlertCircle, CheckCircle, Clock, XCircle, Download } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import Link from "next/link"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Button } from"@/components/ui/button"
+import { Badge } from"@/components/ui/badge"
+import { Input } from"@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Receipt, Plus, Search, Filter, Loader2, AlertCircle, CheckCircle, Clock, XCircle, Download } from"lucide-react"
+import { useToast } from"@/hooks/use-toast"
+import Link from"next/link"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
 
-import * as XLSX from "xlsx"
+import * as XLSX from"xlsx"
 
 type Invoice = {
   id: string
@@ -29,11 +29,11 @@ type Invoice = {
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
-  UNPAID: { label: "Belum Bayar", color: "bg-red-500/10 text-red-600 border-red-200", icon: AlertCircle },
-  PARTIAL: { label: "Bayar Sebagian", color: "bg-amber-500/10 text-amber-600 border-amber-200", icon: Clock },
-  PAID: { label: "Lunas", color: "bg-emerald-500/10 text-emerald-600 border-emerald-200", icon: CheckCircle },
-  OVERDUE: { label: "Jatuh Tempo", color: "bg-red-600/20 text-red-700 border-red-300", icon: AlertCircle },
-  CANCELLED: { label: "Dibatalkan", color: "bg-slate-500/10 text-slate-500 border-slate-200", icon: XCircle },
+  UNPAID: { label:"Belum Bayar", color:"bg-red-500/10 text-red-600 border-red-200", icon: AlertCircle },
+  PARTIAL: { label:"Bayar Sebagian", color:"bg-amber-500/10 text-amber-600 border-amber-200", icon: Clock },
+  PAID: { label:"Lunas", color:"bg-emerald-500/10 text-emerald-600 border-emerald-200", icon: CheckCircle },
+  OVERDUE: { label:"Jatuh Tempo", color:"bg-red-600/20 text-red-700 border-red-300", icon: AlertCircle },
+  CANCELLED: { label:"Dibatalkan", color:"bg-slate-500/10 text-slate-500 border-slate-200", icon: XCircle },
 }
 
 export function InvoiceList({ tenantId }: { tenantId: string }) {
@@ -52,14 +52,14 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
       const params = new URLSearchParams({
         tenantId,
         page: String(page),
-        ...(statusFilter !== "all" ? { status: statusFilter } : {}),
+        ...(statusFilter !=="all" ? { status: statusFilter } : {}),
       })
       const res = await fetch(`/api/finance/invoices?${params}`)
       const json = await res.json()
       setInvoices(json.data || [])
       setMeta(json.meta || { total: 0, page: 1, totalPages: 1 })
     } catch {
-      toast({ title: "Gagal memuat data tagihan", variant: "destructive" })
+      toast({ title:"Gagal memuat data tagihan", variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -71,35 +71,25 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
       // Fetch all without pagination
       const params = new URLSearchParams({
         tenantId,
-        page: "1",
-        limit: "9999", // assuming limit is supported or we just export the current page if not? Wait, the API usually respects `take` or `limit`. Let's just use `limit=99999`. Wait, the API uses `take` probably. Let's pass `take=9999`.
-        ...(statusFilter !== "all" ? { status: statusFilter } : {}),
+        page:"1",
+        limit:"9999", // assuming limit is supported or we just export the current page if not? Wait, the API usually respects `take` or `limit`. Let's just use `limit=99999`. Wait, the API uses `take` probably. Let's pass `take=9999`.
+        ...(statusFilter !=="all" ? { status: statusFilter } : {}),
       })
       const res = await fetch(`/api/finance/invoices?${params}`)
       const json = await res.json()
       const allInvoices = json.data || []
 
-      const formattedData = allInvoices.map((inv: Invoice) => ({
-        "Kode": inv.code,
-        "Siswa": inv.student.name,
-        "NIS": inv.student.nis || "-",
-        "Kelas": inv.student.classroom?.name || "-",
-        "Judul Tagihan": inv.title,
-        "Total Tagihan (Rp)": inv.amount,
-        "Sudah Dibayar (Rp)": inv.amountPaid,
-        "Sisa Tagihan (Rp)": inv.amountDue,
-        "Jatuh Tempo": format(new Date(inv.dueDate), "dd MMM yyyy", { locale: localeId }),
-        "Status": statusConfig[inv.status]?.label || inv.status,
+      const formattedData = allInvoices.map((inv: Invoice) => ({"Kode": inv.code,"Siswa": inv.student.name,"NIS": inv.student.nis ||"-","Kelas": inv.student.classroom?.name ||"-","Judul Tagihan": inv.title,"Total Tagihan (Rp)": inv.amount,"Sudah Dibayar (Rp)": inv.amountPaid,"Sisa Tagihan (Rp)": inv.amountDue,"Jatuh Tempo": format(new Date(inv.dueDate),"dd MMM yyyy", { locale: localeId }),"Status": statusConfig[inv.status]?.label || inv.status,
       }))
       
       const worksheet = XLSX.utils.json_to_sheet(formattedData)
       const workbook = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Data Tagihan")
+      XLSX.utils.book_append_sheet(workbook, worksheet,"Data Tagihan")
       
       XLSX.writeFile(workbook, `Laporan_Tagihan_${format(new Date(), 'yyyyMMdd')}.xlsx`)
-      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+      toast({ title:"Berhasil", description:"File Excel berhasil diunduh" })
     } catch (e: any) {
-      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal Ekspor", description: e.message, variant:"destructive" })
     } finally {
       setExporting(false)
     }
@@ -115,7 +105,7 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
       )
     : invoices
 
-  const totalUnpaid = invoices.filter(i => i.status === "UNPAID" || i.status === "PARTIAL" || i.status === "OVERDUE")
+  const totalUnpaid = invoices.filter(i => i.status ==="UNPAID" || i.status ==="PARTIAL" || i.status ==="OVERDUE")
     .reduce((acc, i) => acc + i.amountDue, 0)
 
   return (
@@ -123,10 +113,10 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Tagihan", value: meta.total, color: "text-foreground" },
-          { label: "Sisa Tagihan", value: `Rp ${totalUnpaid.toLocaleString("id-ID")}`, color: "text-red-600" },
-          { label: "Belum Lunas", value: invoices.filter(i => ["UNPAID", "OVERDUE", "PARTIAL"].includes(i.status)).length, color: "text-amber-600" },
-          { label: "Lunas", value: invoices.filter(i => i.status === "PAID").length, color: "text-emerald-600" },
+          { label:"Total Tagihan", value: meta.total, color:"text-foreground" },
+          { label:"Sisa Tagihan", value: `Rp ${totalUnpaid.toLocaleString("id-ID")}`, color:"text-red-600" },
+          { label:"Belum Lunas", value: invoices.filter(i => ["UNPAID","OVERDUE","PARTIAL"].includes(i.status)).length, color:"text-amber-600" },
+          { label:"Lunas", value: invoices.filter(i => i.status ==="PAID").length, color:"text-emerald-600" },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
             <CardContent className="p-4">
@@ -186,7 +176,7 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
           <table className="w-full text-sm">
             <thead className="bg-muted/40">
               <tr>
-                {["Kode", "Siswa / Kelas", "Judul Tagihan", "Nominal", "Jatuh Tempo", "Status", ""].map(h => (
+                {["Kode","Siswa / Kelas","Judul Tagihan","Nominal","Jatuh Tempo","Status",""].map(h => (
                   <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -204,7 +194,7 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{inv.code}</td>
                     <td className="px-4 py-3">
                       <p className="font-semibold">{inv.student.name}</p>
-                      <p className="text-xs text-muted-foreground">{inv.student.nis} · {inv.student.classroom?.name || "—"}</p>
+                      <p className="text-xs text-muted-foreground">{inv.student.nis} · {inv.student.classroom?.name ||"—"}</p>
                     </td>
                     <td className="px-4 py-3">
                       <p>{inv.title}</p>
@@ -217,7 +207,7 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
                       )}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm">
-                      {format(new Date(inv.dueDate), "d MMM yyyy", { locale: localeId })}
+                      {format(new Date(inv.dueDate),"d MMM yyyy", { locale: localeId })}
                     </td>
                     <td className="px-4 py-3">
                       <Badge className={`${cfg.color} border text-[10px] gap-1`}>

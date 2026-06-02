@@ -1,19 +1,19 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/hooks/use-toast"
-import { MessageSquare, Save, Eye, EyeOff, Smartphone } from "lucide-react"
+import { useState, useEffect } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { toast } from"@/hooks/use-toast"
+import { MessageSquare, Save, Eye, EyeOff, Smartphone } from"lucide-react"
 
 export function StarSenderManager() {
   const { data: session } = useSession()
   const [tenantId, setTenantId] = useState<string | null>(null)
   
-  const [form, setForm] = useState({ waApiKey: "", waDeviceId: "", waDelayMin: 5, waDelayMax: 15 })
+  const [form, setForm] = useState({ waApiKey:"", waDeviceId:"", waDelayMin: 5, waDelayMax: 15 })
   const [showToken, setShowToken] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -37,8 +37,8 @@ export function StarSenderManager() {
       .then(d => {
         if (d.whatsapp) {
           setForm({
-            waApiKey: d.whatsapp.waApiKey || "",
-            waDeviceId: d.whatsapp.waDeviceId || "",
+            waApiKey: d.whatsapp.waApiKey ||"",
+            waDeviceId: d.whatsapp.waDeviceId ||"",
             waDelayMin: d.whatsapp.waDelayMin || 5,
             waDelayMax: d.whatsapp.waDelayMax || 15,
           })
@@ -52,13 +52,13 @@ export function StarSenderManager() {
     if (!tenantId) return
     setSaving(true)
     const res = await fetch("/api/tenant/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method:"PUT",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({
         tenantId,
         settings: {
           whatsapp: {
-            waApiUrl: "https://api.starsender.online/api",
+            waApiUrl:"https://api.starsender.online/api",
             waApiKey: form.waApiKey,
             waDeviceId: form.waDeviceId,
             waDelayMin: form.waDelayMin,
@@ -69,34 +69,34 @@ export function StarSenderManager() {
     })
     
     if (res.ok) {
-      toast({ title: "Berhasil", description: "Pengaturan StarSender disimpan." })
+      toast({ title:"Berhasil", description:"Pengaturan StarSender disimpan." })
     } else {
-      toast({ title: "Gagal", description: "Terjadi kesalahan sistem", variant: "destructive" })
+      toast({ title:"Gagal", description:"Terjadi kesalahan sistem", variant:"destructive" })
     }
     setSaving(false)
   }
 
   const handleTestWA = async () => {
-    if (!testPhone) { toast({ title: "Isi nomor tujuan", variant: "destructive" }); return }
-    if (!form.waApiKey) { toast({ title: "Isi API Key terlebih dahulu", variant: "destructive" }); return }
+    if (!testPhone) { toast({ title:"Isi nomor tujuan", variant:"destructive" }); return }
+    if (!form.waApiKey) { toast({ title:"Isi API Key terlebih dahulu", variant:"destructive" }); return }
     setTesting(true)
     try {
       const res = await fetch("/api/tenant/settings/test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
-          type: "whatsapp",
-          waApiUrl: "https://api.starsender.online/api",
+          type:"whatsapp",
+          waApiUrl:"https://api.starsender.online/api",
           waApiKey: form.waApiKey,
           waDeviceId: form.waDeviceId || undefined,
           waPhone: testPhone,
         }),
       })
       const data = await res.json()
-      if (res.ok) toast({ title: "✅ Berhasil!", description: data.message })
+      if (res.ok) toast({ title:"✅ Berhasil!", description: data.message })
       else throw new Error(data.error)
     } catch (e: any) {
-      toast({ title: "❌ Gagal", description: e.message, variant: "destructive" })
+      toast({ title:"❌ Gagal", description: e.message, variant:"destructive" })
     } finally {
       setTesting(false)
     }
@@ -120,7 +120,7 @@ export function StarSenderManager() {
             <Label>API Token / Key</Label>
             <div className="relative">
               <Input 
-                type={showToken ? "text" : "password"} 
+                type={showToken ?"text" :"password"} 
                 value={form.waApiKey} 
                 onChange={e => setForm({...form, waApiKey: e.target.value})} 
                 placeholder="Token StarSender" 
@@ -206,7 +206,7 @@ export function StarSenderManager() {
             onClick={handleTestWA} 
             disabled={testing || !form.waApiKey}
           >
-            {testing ? "Mengirim..." : "Kirim Pesan Tes"}
+            {testing ?"Mengirim..." :"Kirim Pesan Tes"}
           </Button>
         </CardContent>
       </Card>

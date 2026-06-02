@@ -1,19 +1,19 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/hooks/use-toast"
-import { Megaphone, Send, Loader2, Info, History } from "lucide-react"
-import { ServerPagination } from "@/components/shared/server-pagination"
+import { useState, useEffect } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from"@/components/ui/table"
+import { Badge } from"@/components/ui/badge"
+import { useToast } from"@/hooks/use-toast"
+import { Megaphone, Send, Loader2, Info, History } from"lucide-react"
+import { ServerPagination } from"@/components/shared/server-pagination"
 
 export default function BroadcastPage() {
   const { data: session } = useSession()
@@ -22,10 +22,10 @@ export default function BroadcastPage() {
   const [activeTab, setActiveTab] = useState("compose")
   
   const [form, setForm] = useState({
-    target: "all_gtk",
-    channel: "whatsapp",
-    subject: "",
-    message: "",
+    target:"all_gtk",
+    channel:"whatsapp",
+    subject:"",
+    message:"",
   })
 
   // History state
@@ -55,7 +55,7 @@ export default function BroadcastPage() {
   }
 
   useEffect(() => {
-    if (activeTab === "history") {
+    if (activeTab ==="history") {
       fetchHistory(page)
     }
   }, [activeTab, page])
@@ -63,31 +63,31 @@ export default function BroadcastPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.message) {
-      toast({ title: "Isi pesan tidak boleh kosong", variant: "destructive" })
+      toast({ title:"Isi pesan tidak boleh kosong", variant:"destructive" })
       return
     }
     
     setLoading(true)
     try {
       const res = await fetch("/api/tenant/broadcast", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify(form)
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Gagal mengirim broadcast")
+      if (!res.ok) throw new Error(data.error ||"Gagal mengirim broadcast")
 
       toast({ 
-        title: "Broadcast Sedang Diproses", 
-        description: data.message || "Pesan sedang dikirim di latar belakang."
+        title:"Broadcast Sedang Diproses", 
+        description: data.message ||"Pesan sedang dikirim di latar belakang."
       })
       
-      setForm({ ...form, subject: "", message: "" }) // Reset pesan
+      setForm({ ...form, subject:"", message:"" }) // Reset pesan
       // Refresh history jika tab aktif
-      if (activeTab === "history") fetchHistory(1)
+      if (activeTab ==="history") fetchHistory(1)
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" })
+      toast({ title:"Error", description: error.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -95,11 +95,11 @@ export default function BroadcastPage() {
 
   // Hanya izinkan admin/owner
   const tenantRole = session?.user?.tenants?.[0]?.role
-  if (tenantRole !== "owner" && tenantRole !== "admin") return null
+  if (tenantRole !=="owner" && tenantRole !=="admin") return null
 
   // Batasi akses hanya untuk pengguna berbayar (Lite/Pro)
-  const tenantPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
-  if (tenantPlan === "free") {
+  const tenantPlan = (session?.user as any)?.tenants?.[0]?.plan ||"free"
+  if (tenantPlan ==="free") {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
         <div className="p-4 bg-primary/10 rounded-full text-primary">
@@ -157,7 +157,7 @@ export default function BroadcastPage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all_gtk">Semua Guru & Staf (GTK)</SelectItem>
-                          {tenantPlan === "pro" && (
+                          {tenantPlan ==="pro" && (
                             <>
                               <SelectItem value="all_parents">Semua Orang Tua Siswa</SelectItem>
                               <SelectItem value="all">Semua GTK & Orang Tua</SelectItem>
@@ -165,7 +165,7 @@ export default function BroadcastPage() {
                           )}
                         </SelectContent>
                       </Select>
-                      {tenantPlan === "lite" && (
+                      {tenantPlan ==="lite" && (
                         <p className="text-[11px] text-amber-600 font-medium">
                           Paket Lite hanya dapat melakukan broadcast ke Guru & Staf. Upgrade ke PRO untuk broadcast ke Orang Tua.
                         </p>
@@ -207,7 +207,7 @@ export default function BroadcastPage() {
                       disabled={loading}
                     >
                       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                      {loading ? "Memproses..." : "Kirim Broadcast Sekarang"}
+                      {loading ?"Memproses..." :"Kirim Broadcast Sekarang"}
                     </Button>
                   </form>
                 </CardContent>
@@ -275,7 +275,7 @@ export default function BroadcastPage() {
                           </p>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={msg.status === "SENT" ? "default" : msg.status === "FAILED" ? "destructive" : "secondary"} className="capitalize">
+                          <Badge variant={msg.status ==="SENT" ?"default" : msg.status ==="FAILED" ?"destructive" :"secondary"} className="capitalize">
                             {msg.status.toLowerCase()}
                           </Badge>
                           {msg.error && (
@@ -286,7 +286,7 @@ export default function BroadcastPage() {
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                           {new Date(msg.createdAt).toLocaleString("id-ID", {
-                            day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+                            day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"
                           })}
                         </TableCell>
                       </TableRow>

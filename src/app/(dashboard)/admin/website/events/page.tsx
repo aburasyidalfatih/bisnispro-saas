@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Edit2, Trash2, Calendar, MapPin, Eye } from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Edit2, Trash2, Calendar, MapPin, Eye } from"lucide-react"
+import Link from"next/link"
+import { format } from"date-fns"
 
 interface Event {
   id: string
@@ -46,16 +46,16 @@ export default function EventsPage() {
   const deleteEvent = async (id: string) => {
     if (!tenantId) return
     try {
-      const res = await fetch(`/api/tenant/events/${id}?tenantId=${tenantId}`, { method: "DELETE" })
+      const res = await fetch(`/api/tenant/events/${id}?tenantId=${tenantId}`, { method:"DELETE" })
       if (res.ok) {
-        toast({ title: "Acara dihapus" })
+        toast({ title:"Acara dihapus" })
         loadEvents()
       } else {
         const d = await res.json()
-        toast({ title: "Gagal", description: d.error, variant: "destructive" })
+        toast({ title:"Gagal", description: d.error, variant:"destructive" })
       }
     } catch {
-      toast({ title: "Gagal menghapus", variant: "destructive" })
+      toast({ title:"Gagal menghapus", variant:"destructive" })
     }
   }
 
@@ -119,7 +119,7 @@ export default function EventsPage() {
                           <div className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" /> {event.location}
                           </div>
-                        ) : "-"}
+                        ) :"-"}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">

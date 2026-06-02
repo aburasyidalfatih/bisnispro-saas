@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react"
-import { Bell, Check, ArrowRight, Info, CheckCircle, AlertTriangle, XCircle } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from"react"
+import { Bell, Check, ArrowRight, Info, CheckCircle, AlertTriangle, XCircle } from"lucide-react"
+import { cn } from"@/lib/utils"
 
 const typeIcons: Record<string, { icon: typeof Info; color: string }> = {
-  info:    { icon: Info,          color: "text-blue-500 bg-blue-500/10" },
-  success: { icon: CheckCircle,   color: "text-emerald-500 bg-emerald-500/10" },
-  warning: { icon: AlertTriangle, color: "text-amber-500 bg-amber-500/10" },
-  error:   { icon: XCircle,       color: "text-destructive bg-destructive/10" },
+  info:    { icon: Info,          color:"text-blue-500 bg-blue-500/10" },
+  success: { icon: CheckCircle,   color:"text-emerald-500 bg-emerald-500/10" },
+  warning: { icon: AlertTriangle, color:"text-amber-500 bg-amber-500/10" },
+  error:   { icon: XCircle,       color:"text-destructive bg-destructive/10" },
 }
 
 export function NotifRecentList() {
@@ -30,7 +30,7 @@ export function NotifRecentList() {
     setNotifs(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n))
     setUnread(prev => Math.max(0, prev - 1))
     await fetch("/api/tenant/notifications", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
+      method:"PUT", headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ id }),
     })
   }
@@ -39,7 +39,7 @@ export function NotifRecentList() {
     setNotifs(prev => prev.map(n => ({ ...n, isRead: true })))
     setUnread(0)
     await fetch("/api/tenant/notifications", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
+      method:"PUT", headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ all: true }),
     })
   }
@@ -87,22 +87,21 @@ export function NotifRecentList() {
             return (
               <div key={n.id}
                 onClick={() => !n.isRead && markRead(n.id)}
-                className={cn(
-                  "flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors",
-                  !n.isRead ? "bg-primary/5 hover:bg-primary/10 cursor-pointer" : "hover:bg-muted/30"
+                className={cn("flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors",
+                  !n.isRead ?"bg-primary/5 hover:bg-primary/10 cursor-pointer" :"hover:bg-muted/30"
                 )}>
                 <div className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg mt-0.5", ti.color)}>
                   <Icon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                     <p className={cn("text-xs truncate", !n.isRead ? "font-semibold" : "")}>{n.title}</p>
+                     <p className={cn("text-xs truncate", !n.isRead ?"font-semibold" :"")}>{n.title}</p>
                     {!n.isRead && <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
                   </div>
                   <p className="text-[11px] text-muted-foreground truncate">{n.message}</p>
                 </div>
                 <p className="text-[10px] text-muted-foreground shrink-0 mt-0.5">
-                  {new Date(n.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  {new Date(n.createdAt).toLocaleDateString("id-ID", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" })}
                 </p>
               </div>
             )

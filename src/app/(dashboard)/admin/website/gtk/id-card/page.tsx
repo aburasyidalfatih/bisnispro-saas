@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import QRCode from "react-qr-code"
-import { Button } from "@/components/ui/button"
-import { Printer, ArrowLeft, Loader2 } from "lucide-react"
-import Link from "next/link"
-import { getRootDomain, normalizeImageUrl } from "@/lib/utils"
-import { getStaff } from "@/features/staff/actions/staff.action"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import QRCode from"react-qr-code"
+import { Button } from"@/components/ui/button"
+import { Printer, ArrowLeft, Loader2 } from"lucide-react"
+import Link from"next/link"
+import { getRootDomain, normalizeImageUrl } from"@/lib/utils"
+import { getStaff } from"@/features/staff/actions/staff.action"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
 
 export default function IDCardPrintPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
@@ -36,7 +36,7 @@ export default function IDCardPrintPage() {
       const rootDomain = getRootDomain()
       let protocol = window.location.protocol
       
-      if (domainData?.customDomain?.status === "verified" && domainData.domain) {
+      if (domainData?.customDomain?.status ==="verified" && domainData.domain) {
         setWebsiteUrl(`https://${domainData.domain}`)
       } else if (slug) {
         setWebsiteUrl(`${protocol}//${slug}.${rootDomain}`)
@@ -93,7 +93,7 @@ export default function IDCardPrintPage() {
                     <img src={normalizeImageUrl(tenant.logo) || tenant.logo} alt="Logo" className="h-10 w-auto relative z-10 object-contain drop-shadow-md mb-2" />
                   )}
                   <p className="text-white relative z-10 font-bold text-sm tracking-wide text-center px-4 leading-tight uppercase">
-                    {tenant?.name || "Nama Sekolah"}
+                    {tenant?.name ||"Nama Sekolah"}
                   </p>
                 </div>
 

@@ -1,19 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
-import { TrendingUp, TrendingDown, Wallet, Plus, Search, Loader2, Download, FileSpreadsheet } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from"@/components/ui/dialog"
+import { Textarea } from"@/components/ui/textarea"
+import { TrendingUp, TrendingDown, Wallet, Plus, Search, Loader2, Download, FileSpreadsheet } from"lucide-react"
+import { useToast } from"@/hooks/use-toast"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
 
-import * as XLSX from "xlsx"
+import * as XLSX from"xlsx"
 
 export default function CashflowPage() {
   const { data: session } = useSession()
@@ -32,11 +32,11 @@ export default function CashflowPage() {
   const [open, setOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [formData, setFormData] = useState({
-    type: "INCOME",
-    category: "",
-    amount: "",
-    description: "",
-    recordedAt: format(new Date(), "yyyy-MM-dd")
+    type:"INCOME",
+    category:"",
+    amount:"",
+    description:"",
+    recordedAt: format(new Date(),"yyyy-MM-dd")
   })
 
   const fetchData = async () => {
@@ -48,7 +48,7 @@ export default function CashflowPage() {
       setData(json.data || [])
       setSummary(json.summary || { income: 0, expense: 0, balance: 0 })
     } catch (e) {
-      toast({ title: "Gagal memuat data", variant: "destructive" })
+      toast({ title:"Gagal memuat data", variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -58,22 +58,17 @@ export default function CashflowPage() {
     if (data.length === 0) return
     setExporting(true)
     try {
-      const formattedData = data.map(item => ({
-        "Tanggal": format(new Date(item.recordedAt), 'dd MMM yyyy', { locale: localeId }),
-        "Tipe": item.type === "INCOME" ? "Pemasukan" : "Pengeluaran",
-        "Kategori": item.category.replace(/_/g, ' '),
-        "Keterangan": item.description,
-        "Nominal (Rp)": item.amount,
+      const formattedData = data.map(item => ({"Tanggal": format(new Date(item.recordedAt), 'dd MMM yyyy', { locale: localeId }),"Tipe": item.type ==="INCOME" ?"Pemasukan" :"Pengeluaran","Kategori": item.category.replace(/_/g, ' '),"Keterangan": item.description,"Nominal (Rp)": item.amount,
       }))
       
       const worksheet = XLSX.utils.json_to_sheet(formattedData)
       const workbook = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Arus Kas")
+      XLSX.utils.book_append_sheet(workbook, worksheet,"Arus Kas")
       
       XLSX.writeFile(workbook, `Laporan_Cashflow_${format(new Date(), 'yyyyMMdd')}.xlsx`)
-      toast({ title: "Berhasil", description: "Laporan berhasil diunduh" })
+      toast({ title:"Berhasil", description:"Laporan berhasil diunduh" })
     } catch (e: any) {
-      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal Ekspor", description: e.message, variant:"destructive" })
     } finally {
       setExporting(false)
     }
@@ -88,26 +83,26 @@ export default function CashflowPage() {
     setSaving(true)
     try {
       const res = await fetch("/api/finance/cashflow", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ ...formData, tenantId })
       })
       if (!res.ok) throw new Error("Gagal menyimpan transaksi")
       
-      toast({ title: "Berhasil", description: "Transaksi berhasil dicatat" })
+      toast({ title:"Berhasil", description:"Transaksi berhasil dicatat" })
       setOpen(false)
-      setFormData({ ...formData, category: "", amount: "", description: "" })
+      setFormData({ ...formData, category:"", amount:"", description:"" })
       fetchData()
     } catch (e: any) {
-      toast({ title: "Gagal", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal", description: e.message, variant:"destructive" })
     } finally {
       setSaving(false)
     }
   }
 
   const chartOfAccounts = {
-    INCOME: ["SPP", "UANG_GEDUNG", "DONASI", "DANA_BOS", "KANTIN", "LAINNYA"],
-    EXPENSE: ["GAJI_GURU", "GAJI_STAFF", "LISTRIK_AIR", "PEMELIHARAAN", "ATK", "KEGIATAN_SISWA", "LAINNYA"]
+    INCOME: ["SPP","UANG_GEDUNG","DONASI","DANA_BOS","KANTIN","LAINNYA"],
+    EXPENSE: ["GAJI_GURU","GAJI_STAFF","LISTRIK_AIR","PEMELIHARAAN","ATK","KEGIATAN_SISWA","LAINNYA"]
   }
 
   return (
@@ -130,12 +125,12 @@ export default function CashflowPage() {
                 <label className="text-sm font-semibold">Jenis Transaksi</label>
                 <div className="grid grid-cols-2 gap-2">
                   <div 
-                    onClick={() => setFormData({...formData, type: "INCOME", category: ""})}
-                    className={`p-3 border rounded-xl text-center cursor-pointer font-bold transition-all ${formData.type === "INCOME" ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "hover:bg-muted"}`}
+                    onClick={() => setFormData({...formData, type:"INCOME", category:""})}
+                    className={`p-3 border rounded-xl text-center cursor-pointer font-bold transition-all ${formData.type ==="INCOME" ?"border-emerald-500 bg-emerald-50 text-emerald-700" :"hover:bg-muted"}`}
                   >Pemasukan</div>
                   <div 
-                    onClick={() => setFormData({...formData, type: "EXPENSE", category: ""})}
-                    className={`p-3 border rounded-xl text-center cursor-pointer font-bold transition-all ${formData.type === "EXPENSE" ? "border-rose-500 bg-rose-50 text-rose-700" : "hover:bg-muted"}`}
+                    onClick={() => setFormData({...formData, type:"EXPENSE", category:""})}
+                    className={`p-3 border rounded-xl text-center cursor-pointer font-bold transition-all ${formData.type ==="EXPENSE" ?"border-rose-500 bg-rose-50 text-rose-700" :"hover:bg-muted"}`}
                   >Pengeluaran</div>
                 </div>
               </div>
@@ -144,7 +139,7 @@ export default function CashflowPage() {
                 <Select value={formData.category} onValueChange={v => setFormData({...formData, category: v})} required>
                   <SelectTrigger><SelectValue placeholder="Pilih Kategori" /></SelectTrigger>
                   <SelectContent>
-                    {(chartOfAccounts[formData.type as "INCOME"|"EXPENSE"]).map(cat => (
+                    {(chartOfAccounts[formData.type as"INCOME"|"EXPENSE"]).map(cat => (
                       <SelectItem key={cat} value={cat}>{cat.replace(/_/g, ' ')}</SelectItem>
                     ))}
                   </SelectContent>
@@ -163,7 +158,7 @@ export default function CashflowPage() {
                 <Input type="date" required value={formData.recordedAt} onChange={e => setFormData({...formData, recordedAt: e.target.value})} />
               </div>
               <Button type="submit" disabled={saving} className="w-full h-12 rounded-xl text-md font-bold mt-2">
-                {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : "Simpan Transaksi"}
+                {saving ? <Loader2 className="h-5 w-5 animate-spin" /> :"Simpan Transaksi"}
               </Button>
             </form>
           </DialogContent>
@@ -270,7 +265,7 @@ export default function CashflowPage() {
               ) : data.length === 0 ? (
                 <tr><td colSpan={4} className="py-10 text-center text-muted-foreground">Belum ada transaksi dicatat.</td></tr>
               ) : data.map(item => {
-                const isIncome = item.type === "INCOME"
+                const isIncome = item.type ==="INCOME"
                 return (
                   <tr key={item.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{format(new Date(item.recordedAt), 'dd MMM yyyy', { locale: localeId })}</td>

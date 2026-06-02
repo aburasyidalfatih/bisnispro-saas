@@ -1,13 +1,13 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Rocket, Sparkles, HelpCircle, Mail } from "lucide-react"
+import { Card, CardContent } from"@/components/ui/card"
+import { Rocket, Sparkles, HelpCircle, Mail } from"lucide-react"
 
 const helpItems = [
-  { title: "Memulai", desc: "Panduan untuk pengguna baru", icon: Rocket },
-  { title: "Fitur Utama", desc: "Pelajari fitur-fitur utama", icon: Sparkles },
-  { title: "FAQ", desc: "Pertanyaan yang sering diajukan", icon: HelpCircle },
-  { title: "Hubungi Kami", desc: "Butuh bantuan lebih lanjut?", icon: Mail },
+  { title:"Memulai", desc:"Panduan untuk pengguna baru", icon: Rocket },
+  { title:"Fitur Utama", desc:"Pelajari fitur-fitur utama", icon: Sparkles },
+  { title:"FAQ", desc:"Pertanyaan yang sering diajukan", icon: HelpCircle },
+  { title:"Hubungi Kami", desc:"Butuh bantuan lebih lanjut?", icon: Mail },
 ]
 
 export default function HelpPage() {

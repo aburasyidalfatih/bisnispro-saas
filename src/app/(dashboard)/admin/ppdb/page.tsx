@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Users, UserCheck, ClipboardList, Wallet, Calendar, ArrowRight, UserPlus, Settings2 } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent } from"@/components/ui/card"
+import { Users, UserCheck, ClipboardList, Wallet, Calendar, ArrowRight, UserPlus, Settings2 } from"lucide-react"
+import Link from"next/link"
+import { Button } from"@/components/ui/button"
 
 export default function PPDBOverviewPage() {
   const { data: session } = useSession()
@@ -26,21 +26,21 @@ export default function PPDBOverviewPage() {
   }, [tenantId])
 
   const statCards = [
-    { label: "Total Pendaftar", value: stats?.totalPendaftar ?? "—", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
-    { label: "Menunggu Verifikasi", value: stats?.menungguVerifikasi ?? "—", icon: ClipboardList, color: "text-amber-500", bg: "bg-amber-500/10" },
-    { label: "Diterima", value: stats?.diterima ?? "—", icon: UserCheck, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { label:"Total Pendaftar", value: stats?.totalPendaftar ??"—", icon: Users, color:"text-blue-500", bg:"bg-blue-500/10" },
+    { label:"Menunggu Verifikasi", value: stats?.menungguVerifikasi ??"—", icon: ClipboardList, color:"text-amber-500", bg:"bg-amber-500/10" },
+    { label:"Diterima", value: stats?.diterima ??"—", icon: UserCheck, color:"text-emerald-500", bg:"bg-emerald-500/10" },
     {
-      label: "Pendapatan Pendaftaran",
-      value: new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(stats?.pendapatanPendaftaran ?? 0),
-      icon: Wallet, color: "text-violet-500", bg: "bg-violet-500/10"
+      label:"Pendapatan Pendaftaran",
+      value: new Intl.NumberFormat("id-ID", { style:"currency", currency:"IDR", maximumFractionDigits: 0 }).format(stats?.pendapatanPendaftaran ?? 0),
+      icon: Wallet, color:"text-violet-500", bg:"bg-violet-500/10"
     },
   ]
 
   const quickLinks = [
-    { title: "Buka Gelombang Pendaftaran", desc: "Buat periode pembukaan pendaftaran dengan kuota & biaya.", href: "/admin/ppdb/periode", icon: Calendar, done: false },
-    { title: "Atur Persyaratan Berkas", desc: "Tentukan dokumen yang wajib diunggah calon siswa.", href: "/admin/ppdb/persyaratan", icon: Settings2, done: false },
-    { title: "Pantau Meja Pendaftar", desc: "Lihat & verifikasi data seluruh calon siswa yang mendaftar.", href: "/admin/ppdb/pendaftar", icon: Users, done: false },
-    { title: "Kelola Tagihan & Bayar", desc: "Verifikasi bukti transfer pembayaran dari pendaftar.", href: "/admin/ppdb/tagihan", icon: Wallet, done: false },
+    { title:"Buka Gelombang Pendaftaran", desc:"Buat periode pembukaan pendaftaran dengan kuota & biaya.", href:"/admin/ppdb/periode", icon: Calendar, done: false },
+    { title:"Atur Persyaratan Berkas", desc:"Tentukan dokumen yang wajib diunggah calon siswa.", href:"/admin/ppdb/persyaratan", icon: Settings2, done: false },
+    { title:"Pantau Meja Pendaftar", desc:"Lihat & verifikasi data seluruh calon siswa yang mendaftar.", href:"/admin/ppdb/pendaftar", icon: Users, done: false },
+    { title:"Kelola Tagihan & Bayar", desc:"Verifikasi bukti transfer pembayaran dari pendaftar.", href:"/admin/ppdb/tagihan", icon: Wallet, done: false },
   ]
 
   return (

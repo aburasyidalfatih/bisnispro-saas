@@ -1,15 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { ChevronLeft, TrendingUp, Loader2, Users, AlertCircle, ArrowRight } from "lucide-react"
-import Link from "next/link"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useRouter } from"next/navigation"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Checkbox } from"@/components/ui/checkbox"
+import { ChevronLeft, TrendingUp, Loader2, Users, AlertCircle, ArrowRight } from"lucide-react"
+import Link from"next/link"
 
 export default function PromotionPage() {
   const { data: session } = useSession()
@@ -53,7 +53,7 @@ export default function PromotionPage() {
         // Default select all
         setSelectedStudents((data.data || []).map((s: any) => s.id))
       } catch (e) {
-        toast({ title: "Gagal memuat siswa", variant: "destructive" })
+        toast({ title:"Gagal memuat siswa", variant:"destructive" })
       } finally {
         setLoadingStudents(false)
       }
@@ -78,28 +78,28 @@ export default function PromotionPage() {
 
   const handleSubmit = async () => {
     if (selectedStudents.length === 0) {
-      toast({ title: "Pilih minimal 1 siswa", variant: "destructive" })
+      toast({ title:"Pilih minimal 1 siswa", variant:"destructive" })
       return
     }
 
-    if (targetStatus === "CLASSROOM" && !targetClassroomId) {
-      toast({ title: "Pilih kelas tujuan", variant: "destructive" })
+    if (targetStatus ==="CLASSROOM" && !targetClassroomId) {
+      toast({ title:"Pilih kelas tujuan", variant:"destructive" })
       return
     }
 
-    if (targetStatus === "CLASSROOM" && targetClassroomId === sourceClassroomId) {
-      toast({ title: "Kelas tujuan tidak boleh sama dengan kelas asal", variant: "destructive" })
+    if (targetStatus ==="CLASSROOM" && targetClassroomId === sourceClassroomId) {
+      toast({ title:"Kelas tujuan tidak boleh sama dengan kelas asal", variant:"destructive" })
       return
     }
 
     setProcessing(true)
     try {
       const res = await fetch("/api/students/promotion", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           studentIds: selectedStudents,
-          targetClassroomId: targetStatus === "CLASSROOM" ? targetClassroomId : null,
+          targetClassroomId: targetStatus ==="CLASSROOM" ? targetClassroomId : null,
           status: targetStatus
         })
       })
@@ -107,7 +107,7 @@ export default function PromotionPage() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
 
-      toast({ title: "Mutasi Berhasil", description: `${json.count} siswa berhasil diproses.` })
+      toast({ title:"Mutasi Berhasil", description: `${json.count} siswa berhasil diproses.` })
       
       // Reset after success
       setSourceClassroomId("")
@@ -115,7 +115,7 @@ export default function PromotionPage() {
       setStudents([])
       setSelectedStudents([])
     } catch (e: any) {
-      toast({ title: "Mutasi Gagal", description: e.message, variant: "destructive" })
+      toast({ title:"Mutasi Gagal", description: e.message, variant:"destructive" })
     } finally {
       setProcessing(false)
     }
@@ -188,8 +188,8 @@ export default function PromotionPage() {
                 </SelectContent>
               </Select>
 
-              {targetStatus === "CLASSROOM" && (
-                <div className="pt-2 animate-in fade-in slide-in-from-top-2">
+              {targetStatus ==="CLASSROOM" && (
+                <div className="pt-2">
                   <label className="text-xs font-semibold mb-1.5 block">Pilih Kelas Tujuan:</label>
                   <Select value={targetClassroomId} onValueChange={setTargetClassroomId}>
                     <SelectTrigger className="w-full bg-background">
@@ -204,7 +204,7 @@ export default function PromotionPage() {
                 </div>
               )}
 
-              {targetStatus === "GRADUATED" && (
+              {targetStatus ==="GRADUATED" && (
                 <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-700 text-xs flex gap-2">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   Siswa yang diluluskan akan dihapus dari daftar kelas aktif dan ditandai sebagai Alumni.
@@ -215,7 +215,7 @@ export default function PromotionPage() {
 
           <Button 
             onClick={handleSubmit} 
-            disabled={processing || selectedStudents.length === 0 || (targetStatus === "CLASSROOM" && !targetClassroomId)}
+            disabled={processing || selectedStudents.length === 0 || (targetStatus ==="CLASSROOM" && !targetClassroomId)}
             className="w-full h-12 rounded-xl text-base font-bold shadow-lg shadow-primary/20"
           >
             {processing ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
@@ -274,7 +274,7 @@ export default function PromotionPage() {
                             <Checkbox checked={selectedStudents.includes(student.id)} />
                           </td>
                           <td className="p-3 font-medium">{student.name}</td>
-                          <td className="p-3 font-mono text-xs text-muted-foreground">{student.nis || "-"}</td>
+                          <td className="p-3 font-mono text-xs text-muted-foreground">{student.nis ||"-"}</td>
                           <td className="p-3">
                             <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 text-[10px] font-bold border border-emerald-200">
                               Aktif

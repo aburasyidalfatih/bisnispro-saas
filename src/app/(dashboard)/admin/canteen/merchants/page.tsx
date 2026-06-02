@@ -1,15 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Store, Plus, Search, Loader2, Trash2 } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
-import { useToast } from "@/hooks/use-toast"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Store, Plus, Search, Loader2, Trash2 } from"lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from"@/components/ui/dialog"
+import { useToast } from"@/hooks/use-toast"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 
 export default function MerchantsPage() {
   const { data: session } = useSession()
@@ -23,7 +23,7 @@ export default function MerchantsPage() {
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formData, setFormData] = useState({ name: "", description: "", userId: "" })
+  const [formData, setFormData] = useState({ name:"", description:"", userId:"" })
 
   const fetchMerchants = async () => {
     if (!tenantId) return
@@ -60,30 +60,30 @@ export default function MerchantsPage() {
 
   const handleAdd = async () => {
     if (!formData.name || !formData.userId) {
-      toast({ title: "Validasi", description: "Nama Kantin dan Penanggung Jawab harus diisi", variant: "destructive" })
+      toast({ title:"Validasi", description:"Nama Kantin dan Penanggung Jawab harus diisi", variant:"destructive" })
       return
     }
 
     setIsSubmitting(true)
     try {
       const res = await fetch("/api/canteen/merchants", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId, ...formData })
       })
 
       const result = await res.json()
 
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Merchant kantin berhasil ditambahkan" })
+        toast({ title:"Berhasil", description:"Merchant kantin berhasil ditambahkan" })
         setShowAddModal(false)
-        setFormData({ name: "", description: "", userId: "" })
+        setFormData({ name:"", description:"", userId:"" })
         fetchMerchants()
       } else {
-        toast({ title: "Gagal", description: result.error || "Gagal menambahkan merchant", variant: "destructive" })
+        toast({ title:"Gagal", description: result.error ||"Gagal menambahkan merchant", variant:"destructive" })
       }
     } catch (e: any) {
-      toast({ title: "Error", description: e.message, variant: "destructive" })
+      toast({ title:"Error", description: e.message, variant:"destructive" })
     } finally {
       setIsSubmitting(false)
     }
@@ -92,17 +92,17 @@ export default function MerchantsPage() {
   const handleDelete = async (id: string) => {
     try {
       const res = await fetch(`/api/canteen/merchants?id=${id}&tenantId=${tenantId}`, {
-        method: "DELETE"
+        method:"DELETE"
       })
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Merchant kantin berhasil dihapus" })
+        toast({ title:"Berhasil", description:"Merchant kantin berhasil dihapus" })
         fetchMerchants()
       } else {
         const result = await res.json()
-        toast({ title: "Gagal", description: result.error || "Gagal menghapus", variant: "destructive" })
+        toast({ title:"Gagal", description: result.error ||"Gagal menghapus", variant:"destructive" })
       }
     } catch (e: any) {
-      toast({ title: "Error", description: e.message, variant: "destructive" })
+      toast({ title:"Error", description: e.message, variant:"destructive" })
     }
   }
 
@@ -220,10 +220,10 @@ export default function MerchantsPage() {
                     <tr key={m.id} className="hover:bg-muted/30 transition-colors">
                       <td className="p-4">
                         <p className="font-bold text-primary">{m.name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{m.description || "Tidak ada deskripsi"}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{m.description ||"Tidak ada deskripsi"}</p>
                       </td>
                       <td className="p-4">
-                        <p className="font-semibold">{m.user?.name || "Tidak diketahui"}</p>
+                        <p className="font-semibold">{m.user?.name ||"Tidak diketahui"}</p>
                         <p className="text-xs text-muted-foreground">{m.user?.email}</p>
                       </td>
                       <td className="p-4 text-right">

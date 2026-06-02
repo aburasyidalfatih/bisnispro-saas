@@ -1,9 +1,9 @@
-import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import { redirect } from "next/navigation"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
-import { Building, ShieldCheck } from "lucide-react"
+import { auth } from"@/lib/auth"
+import { db } from"@/lib/db"
+import { redirect } from"next/navigation"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
+import { Building, ShieldCheck } from"lucide-react"
 
 export default async function PrintInvoicePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -17,14 +17,14 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
     where: { id, tenantId },
     include: {
       student: { include: { classroom: true } },
-      payments: { where: { status: "VERIFIED" } },
+      payments: { where: { status:"VERIFIED" } },
       tenant: true
     }
   })
 
   if (!invoice) return <div className="p-10 text-center">Tagihan tidak ditemukan</div>
 
-  const isPaid = invoice.status === "PAID"
+  const isPaid = invoice.status ==="PAID"
   const lunasDate = invoice.payments?.[invoice.payments.length - 1]?.createdAt
 
   return (
@@ -53,17 +53,17 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
            <div>
               <p className="text-xs text-gray-500 uppercase font-bold mb-1">Diterima Dari:</p>
               <h3 className="font-bold text-lg">{invoice.student?.name}</h3>
-              <p className="text-sm">NIS: {invoice.student?.nis || "-"}</p>
-              <p className="text-sm">Kelas: {invoice.student?.classroom?.name || "-"}</p>
+              <p className="text-sm">NIS: {invoice.student?.nis ||"-"}</p>
+              <p className="text-sm">Kelas: {invoice.student?.classroom?.name ||"-"}</p>
            </div>
            <div className="text-right">
               <p className="text-xs text-gray-500 uppercase font-bold mb-1">Tanggal Transaksi:</p>
-              <p className="font-semibold">{lunasDate ? format(new Date(lunasDate), "d MMMM yyyy, HH:mm", { locale: localeId }) : format(new Date(invoice.createdAt), "d MMMM yyyy", { locale: localeId })}</p>
+              <p className="font-semibold">{lunasDate ? format(new Date(lunasDate),"d MMMM yyyy, HH:mm", { locale: localeId }) : format(new Date(invoice.createdAt),"d MMMM yyyy", { locale: localeId })}</p>
               
               <div className="mt-4 inline-block px-4 py-1.5 border-2 border-gray-800 rounded text-center">
                  <p className="text-[10px] uppercase font-bold text-gray-500">Status Pembayaran</p>
                  <p className={`font-black text-xl uppercase ${isPaid ? 'text-emerald-600' : 'text-rose-600'}`}>
-                    {isPaid ? "LUNAS" : "BELUM LUNAS"}
+                    {isPaid ?"LUNAS" :"BELUM LUNAS"}
                  </p>
               </div>
            </div>
@@ -74,7 +74,7 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
            <p className="text-xs text-gray-500 uppercase font-bold mb-2">Guna Membayar:</p>
            <div className="p-4 bg-gray-50 rounded-lg border">
               <p className="font-semibold text-lg">{invoice.title}</p>
-              <p className="text-sm text-gray-600 mt-1">{invoice.notes || "Sesuai dengan ketentuan sekolah yang berlaku."}</p>
+              <p className="text-sm text-gray-600 mt-1">{invoice.notes ||"Sesuai dengan ketentuan sekolah yang berlaku."}</p>
            </div>
         </div>
 

@@ -1,21 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Plus, Edit, Trash2, Calendar, CheckCircle, XCircle, GripVertical, Receipt } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Button } from"@/components/ui/button"
+import { Plus, Edit, Trash2, Calendar, CheckCircle, XCircle, GripVertical, Receipt } from"lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Badge } from"@/components/ui/badge"
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/hooks/use-toast"
-import { format } from "date-fns"
-import { id } from "date-fns/locale"
+} from"@/components/ui/dialog"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { Separator } from"@/components/ui/separator"
+import { useToast } from"@/hooks/use-toast"
+import { format } from"date-fns"
+import { id } from"date-fns/locale"
 
 interface ItemDaftarUlang {
   id: string
@@ -32,12 +32,12 @@ export default function PpdbPeriodePage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingPeriod, setEditingPeriod] = useState<any>(null)
   const [formData, setFormData] = useState({
-    nama: "", tanggalBuka: "", tanggalTutup: "",
+    nama:"", tanggalBuka:"", tanggalTutup:"",
     isActive: true, biayaPendaftaran: 0, kuota: 0,
   })
   const [itemsDaftarUlang, setItemsDaftarUlang] = useState<ItemDaftarUlang[]>([
-    { id: "1", nama: "Seragam Sekolah", nominal: 500000 },
-    { id: "2", nama: "Uang Pembangunan", nominal: 3000000 },
+    { id:"1", nama:"Seragam Sekolah", nominal: 500000 },
+    { id:"2", nama:"Uang Pembangunan", nominal: 3000000 },
   ])
 
   useEffect(() => {
@@ -59,13 +59,13 @@ export default function PpdbPeriodePage() {
 
   const handleSave = async () => {
     if (!tenantId || !formData.nama || !formData.tanggalBuka || !formData.tanggalTutup) {
-      toast({ title: "Error", description: "Lengkapi semua field yang wajib diisi", variant: "destructive" })
+      toast({ title:"Error", description:"Lengkapi semua field yang wajib diisi", variant:"destructive" })
       return
     }
     try {
       const totalDaftarUlang = itemsDaftarUlang.reduce((sum, i) => sum + i.nominal, 0)
       const res = await fetch("/api/ppdb/periode", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method:"POST", headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId, nama: formData.nama, tanggalBuka: formData.tanggalBuka,
           tanggalTutup: formData.tanggalTutup, isActive: formData.isActive,
@@ -78,22 +78,22 @@ export default function PpdbPeriodePage() {
         }),
       })
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Gelombang pendaftaran berhasil disimpan" })
+        toast({ title:"Berhasil", description:"Gelombang pendaftaran berhasil disimpan" })
         setIsDialogOpen(false)
         fetchPeriods()
-      } else { toast({ title: "Gagal", description: "Terjadi kesalahan", variant: "destructive" }) }
+      } else { toast({ title:"Gagal", description:"Terjadi kesalahan", variant:"destructive" }) }
     } catch { }
   }
 
   const addItem = () => {
-    setItemsDaftarUlang(prev => [...prev, { id: Date.now().toString(), nama: "", nominal: 0 }])
+    setItemsDaftarUlang(prev => [...prev, { id: Date.now().toString(), nama:"", nominal: 0 }])
   }
 
   const removeItem = (id: string) => {
     setItemsDaftarUlang(prev => prev.filter(i => i.id !== id))
   }
 
-  const updateItem = (id: string, field: "nama" | "nominal", value: string | number) => {
+  const updateItem = (id: string, field:"nama" |"nominal", value: string | number) => {
     setItemsDaftarUlang(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i))
   }
 
@@ -101,10 +101,10 @@ export default function PpdbPeriodePage() {
 
   const openCreate = () => {
     setEditingPeriod(null)
-    setFormData({ nama: "", tanggalBuka: "", tanggalTutup: "", isActive: true, biayaPendaftaran: 0, kuota: 0 })
+    setFormData({ nama:"", tanggalBuka:"", tanggalTutup:"", isActive: true, biayaPendaftaran: 0, kuota: 0 })
     setItemsDaftarUlang([
-      { id: "1", nama: "Seragam Sekolah", nominal: 500000 },
-      { id: "2", nama: "Uang Pembangunan", nominal: 3000000 },
+      { id:"1", nama:"Seragam Sekolah", nominal: 500000 },
+      { id:"2", nama:"Uang Pembangunan", nominal: 3000000 },
     ])
     setIsDialogOpen(true)
   }
@@ -118,7 +118,7 @@ export default function PpdbPeriodePage() {
     const existingItems = p.pengaturan?.itemDaftarUlang ?? []
     setItemsDaftarUlang(existingItems.length > 0
       ? existingItems.map((item: any, idx: number) => ({ ...item, id: String(idx + 1) }))
-      : [{ id: "1", nama: "Seragam Sekolah", nominal: 500000 }])
+      : [{ id:"1", nama:"Seragam Sekolah", nominal: 500000 }])
     setIsDialogOpen(true)
   }
 
@@ -138,7 +138,7 @@ export default function PpdbPeriodePage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingPeriod ? "Edit Gelombang" : "Buat Gelombang Baru"}</DialogTitle>
+              <DialogTitle>{editingPeriod ?"Edit Gelombang" :"Buat Gelombang Baru"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-6 py-2">
               {/* Info Dasar */}
@@ -199,7 +199,7 @@ export default function PpdbPeriodePage() {
                         <Input
                           placeholder="Nama item, mis: Seragam"
                           value={item.nama}
-                          onChange={(e) => updateItem(item.id, "nama", e.target.value)}
+                          onChange={(e) => updateItem(item.id,"nama", e.target.value)}
                           className="rounded-lg border-0 bg-white dark:bg-slate-900 h-9 text-sm"
                         />
                         <div className="relative">
@@ -208,7 +208,7 @@ export default function PpdbPeriodePage() {
                             type="number"
                             placeholder="0"
                             value={item.nominal}
-                            onChange={(e) => updateItem(item.id, "nominal", parseInt(e.target.value) || 0)}
+                            onChange={(e) => updateItem(item.id,"nominal", parseInt(e.target.value) || 0)}
                             className="rounded-lg border-0 bg-white dark:bg-slate-900 h-9 pl-9 text-sm"
                           />
                         </div>
@@ -276,14 +276,14 @@ export default function PpdbPeriodePage() {
                     <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
                       <Calendar className="h-5 w-5 text-primary" />
                     </div>
-                    <Badge className={p.isActive ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-zinc-500/10 text-zinc-500 border-zinc-500/20"}>
+                    <Badge className={p.isActive ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :"bg-zinc-500/10 text-zinc-500 border-zinc-500/20"}>
                       {p.isActive ? <><CheckCircle className="mr-1 h-3 w-3 inline" />Aktif</> : <><XCircle className="mr-1 h-3 w-3 inline" />Tutup</>}
                     </Badge>
                   </div>
                   <div>
                     <h3 className="font-bold text-base">{p.nama}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {format(new Date(p.tanggalBuka), "d MMM", { locale: id })} – {format(new Date(p.tanggalTutup), "d MMM yyyy", { locale: id })}
+                      {format(new Date(p.tanggalBuka),"d MMM", { locale: id })} – {format(new Date(p.tanggalTutup),"d MMM yyyy", { locale: id })}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border/50">

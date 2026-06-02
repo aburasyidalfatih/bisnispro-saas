@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/hooks/use-toast"
-import { Mail, Save, Send, Eye, EyeOff, Info, CheckCircle } from "lucide-react"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { toast } from"@/hooks/use-toast"
+import { Mail, Save, Send, Eye, EyeOff, Info, CheckCircle } from"lucide-react"
 
 interface SmtpConfig {
   smtpHost: string
@@ -29,12 +29,12 @@ export default function EmailSettingsPage() {
   const [useCustom, setUseCustom] = useState(false)
   const [tenantPlan, setTenantPlan] = useState<string>("free")
   const [config, setConfig] = useState<SmtpConfig>({
-    smtpHost: "",
-    smtpPort: "587",
-    smtpUser: "",
-    smtpPass: "",
-    smtpFrom: "",
-    smtpFromName: "",
+    smtpHost:"",
+    smtpPort:"587",
+    smtpUser:"",
+    smtpPass:"",
+    smtpFrom:"",
+    smtpFromName:"",
   })
 
   useEffect(() => {
@@ -76,8 +76,8 @@ export default function EmailSettingsPage() {
     if (!tenantId) return
     setSaving(true)
     const res = await fetch("/api/tenant/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method:"PUT",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({
         tenantId,
         settings: useCustom ? { smtp: config } : { smtp: null },
@@ -85,23 +85,23 @@ export default function EmailSettingsPage() {
     })
     setSaving(false)
     if (res.ok) {
-      toast({ title: "Disimpan", description: "Konfigurasi SMTP berhasil disimpan." })
+      toast({ title:"Disimpan", description:"Konfigurasi SMTP berhasil disimpan." })
     } else {
-      toast({ title: "Gagal", description: "Terjadi kesalahan.", variant: "destructive" })
+      toast({ title:"Gagal", description:"Terjadi kesalahan.", variant:"destructive" })
     }
   }
 
   const handleTest = async () => {
     if (!testEmail) {
-      toast({ title: "Isi email tujuan", description: "Masukkan email untuk menerima test.", variant: "destructive" })
+      toast({ title:"Isi email tujuan", description:"Masukkan email untuk menerima test.", variant:"destructive" })
       return
     }
     setTesting(true)
     const res = await fetch("/api/tenant/settings/test", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method:"POST",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({
-        type: "smtp",
+        type:"smtp",
         smtpHost: config.smtpHost,
         smtpPort: Number(config.smtpPort),
         smtpUser: config.smtpUser,
@@ -113,9 +113,9 @@ export default function EmailSettingsPage() {
     const data = await res.json()
     setTesting(false)
     if (res.ok) {
-      toast({ title: "✅ Berhasil!", description: data.message })
+      toast({ title:"✅ Berhasil!", description: data.message })
     } else {
-      toast({ title: "❌ Gagal", description: data.error, variant: "destructive" })
+      toast({ title:"❌ Gagal", description: data.error, variant:"destructive" })
     }
   }
 
@@ -150,7 +150,7 @@ export default function EmailSettingsPage() {
       </Card>
 
       {/* Lock for free plan */}
-      {tenantPlan === "free" || tenantPlan === "basic" ? (
+      {tenantPlan ==="free" || tenantPlan ==="basic" ? (
         <Card className="border border-amber-500/20 bg-amber-500/10">
           <CardContent className="p-6 text-center space-y-3">
             <div className="mx-auto w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center mb-4">
@@ -174,14 +174,14 @@ export default function EmailSettingsPage() {
             <div>
               <p className="font-semibold text-sm">Gunakan SMTP Kustom</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {useCustom ? "Menggunakan konfigurasi SMTP Anda sendiri" : "Menggunakan SMTP default platform (Mailketing)"}
+                {useCustom ?"Menggunakan konfigurasi SMTP Anda sendiri" :"Menggunakan SMTP default platform (Mailketing)"}
               </p>
             </div>
             <button
               onClick={() => setUseCustom(!useCustom)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useCustom ? "bg-primary" : "bg-muted"}`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useCustom ?"bg-primary" :"bg-muted"}`}
             >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ? "translate-x-6" : "translate-x-1"}`} />
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ?"translate-x-6" :"translate-x-1"}`} />
             </button>
           </div>
         </CardContent>
@@ -224,7 +224,7 @@ export default function EmailSettingsPage() {
                 <Label>Password</Label>
                 <div className="relative">
                   <Input
-                    type={showPass ? "text" : "password"}
+                    type={showPass ?"text" :"password"}
                     value={config.smtpPass}
                     onChange={set("smtpPass")}
                     placeholder="••••••••"
@@ -300,7 +300,7 @@ export default function EmailSettingsPage() {
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                  {testing ? "Mengirim..." : "Kirim Email Test"}
+                  {testing ?"Mengirim..." :"Kirim Email Test"}
                 </Button>
               </CardContent>
             </Card>

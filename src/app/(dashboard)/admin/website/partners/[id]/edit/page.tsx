@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, ImageIcon } from "lucide-react"
-import Link from "next/link"
-import { useRouter, useParams } from "next/navigation"
-import { getPartnershipById, updatePartnership } from "@/features/partnership/actions/partnership.action"
-import { normalizeImageUrl } from "@/lib/utils"
+import { useState, useRef, useEffect } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, ImageIcon } from"lucide-react"
+import Link from"next/link"
+import { useRouter, useParams } from"next/navigation"
+import { getPartnershipById, updatePartnership } from"@/features/partnership/actions/partnership.action"
+import { normalizeImageUrl } from"@/lib/utils"
 
 export default function EditPartnershipPage() {
   const router = useRouter()
@@ -29,11 +29,11 @@ export default function EditPartnershipPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    name: "",
-    websiteUrl: "",
+    name:"",
+    websiteUrl:"",
     sortOrder: 0,
     isActive: true,
-    imageUrl: ""
+    imageUrl:""
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -43,12 +43,12 @@ export default function EditPartnershipPage() {
       getPartnershipById(id, tenantId)
         .then(d => {
           if (!d) {
-            toast({ title: "Gagal", description: "Kerjasama tidak ditemukan", variant: "destructive" })
+            toast({ title:"Gagal", description:"Kerjasama tidak ditemukan", variant:"destructive" })
             router.push("/admin/website/partners")
           } else {
             setFormData({
-              name: d.name || "",
-              websiteUrl: d.websiteUrl || "",
+              name: d.name ||"",
+              websiteUrl: d.websiteUrl ||"",
               sortOrder: d.sortOrder,
               isActive: d.isActive,
               imageUrl: d.imageUrl
@@ -58,7 +58,7 @@ export default function EditPartnershipPage() {
           setLoading(false)
         })
         .catch((err: any) => {
-          toast({ title: "Error", description: err.message, variant: "destructive" })
+          toast({ title:"Error", description: err.message, variant:"destructive" })
           setLoading(false)
         })
     }
@@ -68,7 +68,7 @@ export default function EditPartnershipPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 2 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 2MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 2MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -81,7 +81,7 @@ export default function EditPartnershipPage() {
     if (!tenantId) return
 
     if (!formData.name) {
-      toast({ title: "Nama lembaga wajib diisi", variant: "destructive" })
+      toast({ title:"Nama lembaga wajib diisi", variant:"destructive" })
       return
     }
 
@@ -95,13 +95,13 @@ export default function EditPartnershipPage() {
         const fd = new FormData()
         fd.append("file", file)
         fd.append("tenantId", tenantId)
-        fd.append("subDir", "partners")
+        fd.append("subDir","partners")
         
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+        const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
         const uploadData = await uploadRes.json()
         
         if (!uploadRes.ok || !uploadData.url) {
-          throw new Error(uploadData.error || "Gagal mengunggah gambar")
+          throw new Error(uploadData.error ||"Gagal mengunggah gambar")
         }
         
         finalImageUrl = uploadData.url
@@ -114,10 +114,10 @@ export default function EditPartnershipPage() {
         imageUrl: finalImageUrl,
       })
 
-      toast({ title: "Data berhasil diperbarui!" })
+      toast({ title:"Data berhasil diperbarui!" })
       router.push("/admin/website/partners")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -240,7 +240,7 @@ export default function EditPartnershipPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Perbarui Data</>

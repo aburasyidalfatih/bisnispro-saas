@@ -1,20 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter, useParams } from "next/navigation"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { eventSchema } from "@/features/event/schemas/event.schema"
-import * as z from "zod"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, Loader2, Sparkles, Wand2 } from "lucide-react"
-import Link from "next/link"
+import { useEffect, useState } from"react"
+import { useRouter, useParams } from"next/navigation"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { useForm } from"react-hook-form"
+import { zodResolver } from"@hookform/resolvers/zod"
+import { eventSchema } from"@/features/event/schemas/event.schema"
+import * as z from"zod"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, Loader2, Sparkles, Wand2 } from"lucide-react"
+import Link from"next/link"
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from"@/components/ui/dialog"
 
 type FormData = z.infer<typeof eventSchema>
 
@@ -35,7 +35,7 @@ export default function EventFormPage() {
 
   const tenantId = branding.id
 
-  const isNew = params.id === "new"
+  const isNew = params.id ==="new"
 
   const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(eventSchema),
@@ -49,22 +49,22 @@ export default function EventFormPage() {
   const handleGenerateAI = async () => {
     const title = getValues("title")
     if (!title) {
-      toast({ title: "Judul Belum Diisi", description: "Silakan isi Judul Acara terlebih dahulu.", variant: "destructive" })
+      toast({ title:"Judul Belum Diisi", description:"Silakan isi Judul Acara terlebih dahulu.", variant:"destructive" })
       return
     }
     if (!aiInputText.trim()) {
-      toast({ title: "Input kosong", description: "Silakan masukkan detail acara.", variant: "destructive" })
+      toast({ title:"Input kosong", description:"Silakan masukkan detail acara.", variant:"destructive" })
       return
     }
 
     setAiLoading(true)
     try {
       const res = await fetch("/api/tenant/ai/generate-content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ 
           tenantId, 
-          promptType: "event", 
+          promptType:"event", 
           inputs: { text: aiInputText, name: title } 
         })
       })
@@ -73,12 +73,12 @@ export default function EventFormPage() {
         setValue("description", d.data.result, { shouldValidate: true })
         setAiModalOpen(false)
         setAiInputText("")
-        toast({ title: "Berhasil", description: "Deskripsi acara berhasil di-generate AI." })
+        toast({ title:"Berhasil", description:"Deskripsi acara berhasil di-generate AI." })
       } else {
-        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+        toast({ title:"Gagal", description: d.error ||"Terjadi kesalahan", variant:"destructive" })
       }
     } catch (err) {
-      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+      toast({ title:"Error", description:"Gagal menghubungi server AI", variant:"destructive" })
     } finally {
       setAiLoading(false)
     }
@@ -96,18 +96,18 @@ export default function EventFormPage() {
       .then(r => r.json())
       .then(d => {
         if (d.error) {
-          toast({ title: "Gagal memuat acara", description: d.error, variant: "destructive" })
+          toast({ title:"Gagal memuat acara", description: d.error, variant:"destructive" })
           router.push("/admin/website/events")
           return
         }
         setValue("title", d.title)
-        setValue("description", d.description || "")
-        setValue("location", d.location || "")
-        setValue("contactPerson", d.contactPerson || "")
+        setValue("description", d.description ||"")
+        setValue("location", d.location ||"")
+        setValue("contactPerson", d.contactPerson ||"")
         
         // Format dates for datetime-local input (YYYY-MM-DDThh:mm)
         const formatDateTime = (dateStr: string) => {
-          if (!dateStr) return ""
+          if (!dateStr) return""
           const date = new Date(dateStr)
           return date.toISOString().slice(0, 16)
         }
@@ -128,7 +128,7 @@ export default function EventFormPage() {
         setInitialLoading(false)
       })
       .catch(() => {
-        toast({ title: "Gagal memuat acara", variant: "destructive" })
+        toast({ title:"Gagal memuat acara", variant:"destructive" })
         setInitialLoading(false)
       })
   }, [tenantId, isNew, params.id, setValue, router])
@@ -138,25 +138,25 @@ export default function EventFormPage() {
     setLoading(true)
 
     const url = isNew ? `/api/tenant/events` : `/api/tenant/events/${params.id}`
-    const method = isNew ? "POST" : "PUT"
+    const method = isNew ?"POST" :"PUT"
 
     try {
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ ...data, tenantId })
       })
 
       const d = await res.json()
       if (res.ok) {
-        toast({ title: "Berhasil", description: d.message })
+        toast({ title:"Berhasil", description: d.message })
         router.push("/admin/website/events")
         router.refresh()
       } else {
-        toast({ title: "Gagal menyimpan", description: d.error, variant: "destructive" })
+        toast({ title:"Gagal menyimpan", description: d.error, variant:"destructive" })
       }
     } catch {
-      toast({ title: "Gagal menyimpan acara", variant: "destructive" })
+      toast({ title:"Gagal menyimpan acara", variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -174,7 +174,7 @@ export default function EventFormPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{isNew ? "Buat Acara Baru" : "Edit Acara"}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{isNew ?"Buat Acara Baru" :"Edit Acara"}</h1>
             <p className="text-muted-foreground mt-1">Tambahkan informasi acara ke kalender sekolah.</p>
           </div>
         </div>
@@ -242,7 +242,7 @@ export default function EventFormPage() {
           </Button>
           <Button type="submit" disabled={loading} className="gap-2 btn-gradient text-white border-0 rounded-xl px-8">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            {isNew ? "Simpan Acara" : "Update Acara"}
+            {isNew ?"Simpan Acara" :"Update Acara"}
           </Button>
         </div>
       </form>
@@ -290,7 +290,7 @@ export default function EventFormPage() {
               className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
             >
               {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {aiLoading ? "Memproses..." : "Generate Deskripsi"}
+              {aiLoading ?"Memproses..." :"Generate Deskripsi"}
             </Button>
           </DialogFooter>
         </DialogContent>

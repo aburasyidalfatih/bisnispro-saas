@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
-import Link from "next/link"
-import Papa from "papaparse"
+import { useState } from"react"
+import { useSession } from"next-auth/react"
+import { useRouter } from"next/navigation"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ChevronLeft, Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2 } from"lucide-react"
+import Link from"next/link"
+import Papa from"papaparse"
 
 export default function ImportGTKPage() {
   const { data: session } = useSession()
@@ -21,14 +21,14 @@ export default function ImportGTKPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const plan = session?.user?.tenants?.[0]?.plan || "free"
+  const plan = session?.user?.tenants?.[0]?.plan ||"free"
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (plan === "free") {
+    if (plan ==="free") {
       toast({ 
-        title: "Fitur Premium", 
-        description: "Fitur import data massal hanya tersedia untuk paket Pro/Enterprise. Silakan upgrade paket Anda.", 
-        variant: "destructive" 
+        title:"Fitur Premium", 
+        description:"Fitur import data massal hanya tersedia untuk paket Pro/Enterprise. Silakan upgrade paket Anda.", 
+        variant:"destructive" 
       })
       setError("Fitur import data hanya tersedia untuk paket Pro. Silakan upgrade paket Anda untuk menggunakan fitur ini.")
       return
@@ -37,7 +37,7 @@ export default function ImportGTKPage() {
     const file = e.target.files?.[0]
     if (!file) return
     
-    if (file.type !== "text/csv" && !file.name.endsWith('.csv')) {
+    if (file.type !=="text/csv" && !file.name.endsWith('.csv')) {
        setError("Harap unggah file dengan format .csv")
        return
     }
@@ -56,12 +56,12 @@ export default function ImportGTKPage() {
         }
         
         // Validasi kolom
-        const requiredColumns = ["Nama Lengkap", "Email", "No HP (Opsional)", "Role (guru/admin/staff)"]
+        const requiredColumns = ["Nama Lengkap","Email","No HP (Opsional)","Role (guru/admin/staff)"]
         const columns = Object.keys(results.data[0] as any)
         const missing = requiredColumns.filter(c => !columns.includes(c))
         
         if (missing.length > 0) {
-           setError(`Kolom tidak lengkap! Kehilangan kolom: ${missing.join(", ")}`)
+           setError(`Kolom tidak lengkap! Kehilangan kolom: ${missing.join(",")}`)
            return
         }
 
@@ -76,8 +76,8 @@ export default function ImportGTKPage() {
     setLoading(true)
     try {
       const res = await fetch("/api/tenant/users/import", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId, users: parsedData })
       })
       
@@ -85,11 +85,11 @@ export default function ImportGTKPage() {
       
       if (res.ok) {
         setSuccess(true)
-        toast({ title: "Import Berhasil", description: `${result.count} pengguna berhasil ditambahkan.` })
+        toast({ title:"Import Berhasil", description: `${result.count} pengguna berhasil ditambahkan.` })
         setTimeout(() => router.push("/admin/users/guru"), 2000)
       } else {
-        setError(result.error || "Gagal melakukan import")
-        toast({ title: "Import Gagal", description: result.error, variant: "destructive" })
+        setError(result.error ||"Gagal melakukan import")
+        toast({ title:"Import Gagal", description: result.error, variant:"destructive" })
       }
     } catch (e: any) {
       setError(e.message)
@@ -99,12 +99,12 @@ export default function ImportGTKPage() {
   }
 
   const downloadTemplate = () => {
-    const csvContent = "Nama Lengkap,Email,No HP (Opsional),Role (guru/admin/staff)\nBapak Budi,budi.guru@sekolah.com,081234567890,guru\nIbu Siti,siti.admin@sekolah.com,,admin"
+    const csvContent ="Nama Lengkap,Email,No HP (Opsional),Role (guru/admin/staff)\nBapak Budi,budi.guru@sekolah.com,081234567890,guru\nIbu Siti,siti.admin@sekolah.com,,admin"
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement("a")
     const url = URL.createObjectURL(blob)
     link.setAttribute("href", url)
-    link.setAttribute("download", "template_import_gtk_schoolpro.csv")
+    link.setAttribute("download","template_import_gtk_schoolpro.csv")
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
@@ -207,7 +207,7 @@ export default function ImportGTKPage() {
                                     disabled={loading}
                                     className="btn-gradient text-white border-0 rounded-xl shadow-lg"
                                  >
-                                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Mulai Import"}
+                                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :"Mulai Import"}
                                  </Button>
                               </div>
 

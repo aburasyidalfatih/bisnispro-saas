@@ -1,25 +1,25 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { ShieldAlert, Plus, Search, AlertTriangle, Star, Loader2, Calendar } from "lucide-react"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
-import { cn } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Badge } from"@/components/ui/badge"
+import { Textarea } from"@/components/ui/textarea"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { ShieldAlert, Plus, Search, AlertTriangle, Star, Loader2, Calendar } from"lucide-react"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
+import { cn } from"@/lib/utils"
 
-const CATEGORIES = ["KEDISIPLINAN", "AKADEMIK", "ATRIBUT", "PERILAKU"]
+const CATEGORIES = ["KEDISIPLINAN","AKADEMIK","ATRIBUT","PERILAKU"]
 const TYPES = [
-  { value: "PELANGGARAN", label: "Pelanggaran", color: "bg-red-500/10 text-red-700 border-red-300" },
-  { value: "PENGHARGAAN", label: "Penghargaan", color: "bg-emerald-500/10 text-emerald-700 border-emerald-300" },
+  { value:"PELANGGARAN", label:"Pelanggaran", color:"bg-red-500/10 text-red-700 border-red-300" },
+  { value:"PENGHARGAAN", label:"Penghargaan", color:"bg-emerald-500/10 text-emerald-700 border-emerald-300" },
 ]
 
 export default function DisciplinePage() {
@@ -36,8 +36,8 @@ export default function DisciplinePage() {
   const [filterType, setFilterType] = useState("all")
 
   const [form, setForm] = useState({
-    studentId: "", staffId: "", type: "PELANGGARAN",
-    category: "KEDISIPLINAN", description: "", points: "5",
+    studentId:"", staffId:"", type:"PELANGGARAN",
+    category:"KEDISIPLINAN", description:"", points:"5",
     date: new Date().toISOString().split("T")[0],
   })
 
@@ -62,30 +62,30 @@ export default function DisciplinePage() {
     setSaving(true)
     try {
       const res = await fetch("/api/discipline", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId: tenant.id, ...form, points: Number(form.points) }),
       })
       if (!res.ok) throw new Error()
-      toast({ title: "Catatan berhasil disimpan" })
+      toast({ title:"Catatan berhasil disimpan" })
       setShowForm(false)
-      setForm({ studentId: "", staffId: "", type: "PELANGGARAN", category: "KEDISIPLINAN", description: "", points: "5", date: new Date().toISOString().split("T")[0] })
+      setForm({ studentId:"", staffId:"", type:"PELANGGARAN", category:"KEDISIPLINAN", description:"", points:"5", date: new Date().toISOString().split("T")[0] })
       await load()
     } catch {
-      toast({ title: "Gagal menyimpan catatan", variant: "destructive" })
+      toast({ title:"Gagal menyimpan catatan", variant:"destructive" })
     }
     setSaving(false)
   }
 
   const filtered = records.filter(r => {
     const matchSearch = !search || r.student.name.toLowerCase().includes(search.toLowerCase())
-    const matchType = !filterType || filterType === "all" || r.type === filterType
+    const matchType = !filterType || filterType ==="all" || r.type === filterType
     return matchSearch && matchType
   })
 
   // Point tally per student
   const pointsByStudent: Record<string, number> = {}
-  records.filter(r => r.type === "PELANGGARAN").forEach(r => {
+  records.filter(r => r.type ==="PELANGGARAN").forEach(r => {
     pointsByStudent[r.studentId] = (pointsByStudent[r.studentId] || 0) + r.points
   })
 
@@ -103,7 +103,7 @@ export default function DisciplinePage() {
 
       {/* Form */}
       {showForm && (
-        <Card className="glass border-0 border-l-4 border-l-primary animate-in slide-in-from-top-2">
+        <Card className="glass border-0 border-l-4 border-l-primary">
           <CardHeader className="pb-3"><CardTitle className="text-base">Catatan Baru</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -142,7 +142,7 @@ export default function DisciplinePage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Poin ({form.type === "PELANGGARAN" ? "Penalti" : "Reward"})</Label>
+                <Label>Poin ({form.type ==="PELANGGARAN" ?"Penalti" :"Reward"})</Label>
                 <Input type="number" min={0} max={100} value={form.points} onChange={e => setForm(f => ({ ...f, points: e.target.value }))} />
               </div>
               <div className="space-y-2">
@@ -192,13 +192,13 @@ export default function DisciplinePage() {
       ) : (
         <div className="space-y-2">
           {filtered.map((r: any) => {
-            const isViolation = r.type === "PELANGGARAN"
+            const isViolation = r.type ==="PELANGGARAN"
             const totalPoints = pointsByStudent[r.studentId] || 0
             return (
               <div key={r.id} className={cn("flex items-start gap-3 rounded-xl border px-4 py-3",
-                isViolation ? "border-red-200 bg-red-500/5" : "border-emerald-200 bg-emerald-500/5")}>
+                isViolation ?"border-red-200 bg-red-500/5" :"border-emerald-200 bg-emerald-500/5")}>
                 <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg mt-0.5",
-                  isViolation ? "bg-red-500/10" : "bg-emerald-500/10")}>
+                  isViolation ?"bg-red-500/10" :"bg-emerald-500/10")}>
                   {isViolation ? <AlertTriangle className="h-4 w-4 text-red-600" /> : <Star className="h-4 w-4 text-emerald-600" />}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -214,11 +214,11 @@ export default function DisciplinePage() {
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">{r.description}</p>
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    {format(new Date(r.date), "d MMM yyyy", { locale: localeId })} · oleh {r.staff.name}
+                    {format(new Date(r.date),"d MMM yyyy", { locale: localeId })} · oleh {r.staff.name}
                   </p>
                 </div>
-                <div className={cn("text-sm font-bold shrink-0", isViolation ? "text-red-600" : "text-emerald-600")}>
-                  {isViolation ? "-" : "+"}{r.points}
+                <div className={cn("text-sm font-bold shrink-0", isViolation ?"text-red-600" :"text-emerald-600")}>
+                  {isViolation ?"-" :"+"}{r.points}
                 </div>
               </div>
             )

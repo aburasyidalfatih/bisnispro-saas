@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Users, Image as ImageIcon, GripVertical, Eye } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import { cn, normalizeImageUrl } from "@/lib/utils"
-import { getStaff, deleteStaff, updateStaffOrder } from "@/features/staff/actions/staff.action"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, Users, Image as ImageIcon, GripVertical, Eye } from"lucide-react"
+import Link from"next/link"
+import Image from"next/image"
+import { cn, normalizeImageUrl } from"@/lib/utils"
+import { getStaff, deleteStaff, updateStaffOrder } from"@/features/staff/actions/staff.action"
 
 interface Staff {
   id: string
@@ -38,7 +38,7 @@ export default function StaffPage() {
       const d = await getStaff(tenantId)
       setStaffList(Array.isArray(d) ? d : [])
     } catch (err: any) {
-      toast({ title: "Gagal memuat data", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal memuat data", description: err.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -54,22 +54,22 @@ export default function StaffPage() {
     if (!tenantId) return
     try {
       await deleteStaff(id, tenantId)
-      toast({ title: "Data GTK dihapus" })
+      toast({ title:"Data GTK dihapus" })
       loadStaff()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDragIndex(index)
-    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.effectAllowed ="move"
   }
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     setDragOver(index)
-    e.dataTransfer.dropEffect = "move"
+    e.dataTransfer.dropEffect ="move"
   }
 
   const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
@@ -87,9 +87,9 @@ export default function StaffPage() {
     if (tenantId) {
       try {
         await updateStaffOrder(tenantId, newArr.map(a => a.id))
-        toast({ title: "Urutan berhasil disimpan" })
+        toast({ title:"Urutan berhasil disimpan" })
       } catch (err: any) {
-        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+        toast({ title:"Gagal menyimpan urutan", description: err.message, variant:"destructive" })
       }
     }
   }
@@ -145,10 +145,9 @@ export default function StaffPage() {
                   onDragOver={e => handleDragOver(e, i)}
                   onDrop={e => handleDrop(e, i)}
                   onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
-                  className={cn(
-                    "overflow-hidden border group relative transition-all",
-                    dragOver === i && "ring-2 ring-primary scale-[1.02]",
-                    dragIndex === i && "opacity-50"
+                  className={cn("overflow-hidden border group relative transition-all",
+                    dragOver === i &&"ring-2 ring-primary scale-[1.02]",
+                    dragIndex === i &&"opacity-50"
                   )}>
                   <div className="aspect-[3/4] relative bg-muted flex items-center justify-center cursor-grab active:cursor-grabbing">
                     {person.imageUrl ? (

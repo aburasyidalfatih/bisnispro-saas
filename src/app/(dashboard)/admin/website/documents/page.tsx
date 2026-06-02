@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, FileText, Download, ExternalLink } from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, FileText, Download, ExternalLink } from"lucide-react"
+import Link from"next/link"
+import { format } from"date-fns"
 
 interface Document {
   id: string
@@ -49,30 +49,30 @@ export default function DocumentsPage() {
   const deleteDocument = async (id: string) => {
     if (!tenantId) return
     try {
-      const res = await fetch(`/api/tenant/documents/${id}?tenantId=${tenantId}`, { method: "DELETE" })
+      const res = await fetch(`/api/tenant/documents/${id}?tenantId=${tenantId}`, { method:"DELETE" })
       if (res.ok) {
-        toast({ title: "Dokumen dihapus" })
+        toast({ title:"Dokumen dihapus" })
         loadDocuments()
       } else {
         const d = await res.json()
-        toast({ title: "Gagal", description: d.error, variant: "destructive" })
+        toast({ title:"Gagal", description: d.error, variant:"destructive" })
       }
     } catch {
-      toast({ title: "Gagal menghapus", variant: "destructive" })
+      toast({ title:"Gagal menghapus", variant:"destructive" })
     }
   }
 
   const formatBytes = (bytes: number) => {
-    if (bytes === 0) return "0 B"
+    if (bytes === 0) return"0 B"
     const k = 1024
-    const sizes = ["B", "KB", "MB", "GB"]
+    const sizes = ["B","KB","MB","GB"]
     const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) +"" + sizes[i]
   }
 
   const getTypeLabel = (type: string) => {
-    if (type === "MATERI_TUGAS") return "Materi / Tugas"
-    if (type === "UNDUHAN_UMUM") return "Unduhan Umum"
+    if (type ==="MATERI_TUGAS") return"Materi / Tugas"
+    if (type ==="UNDUHAN_UMUM") return"Unduhan Umum"
     return type
   }
 

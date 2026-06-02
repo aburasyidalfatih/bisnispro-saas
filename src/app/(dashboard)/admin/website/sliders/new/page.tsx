@@ -1,17 +1,17 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, ImageIcon } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { createSlider } from "@/features/slider/actions/slider.action"
+import { useState, useRef } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, ImageIcon } from"lucide-react"
+import Link from"next/link"
+import { useRouter } from"next/navigation"
+import { createSlider } from"@/features/slider/actions/slider.action"
 
 export default function NewSliderPage() {
   const router = useRouter()
@@ -24,10 +24,10 @@ export default function NewSliderPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    title: "",
-    subtitle: "",
-    buttonText: "",
-    buttonLink: "",
+    title:"",
+    subtitle:"",
+    buttonText:"",
+    buttonLink:"",
     sortOrder: 0,
     isActive: true,
   })
@@ -38,7 +38,7 @@ export default function NewSliderPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 5 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 5MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 5MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -67,13 +67,12 @@ export default function NewSliderPage() {
         canvas.toBlob(
           (blob) => {
             if (!blob) return resolve(file)
-            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
-              type: "image/webp",
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/,"") +".webp", {
+              type:"image/webp",
               lastModified: Date.now(),
             })
             resolve(compressedFile)
-          },
-          "image/webp",
+          },"image/webp",
           0.8 // 80% quality
         )
       }
@@ -84,7 +83,7 @@ export default function NewSliderPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!tenantId || !file) {
-      toast({ title: "Gambar wajib diunggah", variant: "destructive" })
+      toast({ title:"Gambar wajib diunggah", variant:"destructive" })
       return
     }
 
@@ -99,13 +98,13 @@ export default function NewSliderPage() {
       const fd = new FormData()
       fd.append("file", compressedFile)
       fd.append("tenantId", tenantId)
-      fd.append("subDir", "sliders")
+      fd.append("subDir","sliders")
       
-      const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+      const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
       const uploadData = await uploadRes.json()
       
       if (!uploadRes.ok || !uploadData.url) {
-        throw new Error(uploadData.error || "Gagal mengunggah gambar")
+        throw new Error(uploadData.error ||"Gagal mengunggah gambar")
       }
       
       const imageUrl = uploadData.url
@@ -117,10 +116,10 @@ export default function NewSliderPage() {
         imageUrl: imageUrl,
       })
 
-      toast({ title: "Slide berhasil dibuat!" })
+      toast({ title:"Slide berhasil dibuat!" })
       router.push("/admin/website/sliders")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -261,7 +260,7 @@ export default function NewSliderPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah & Mengoptimalkan..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah & Mengoptimalkan..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Slide</>

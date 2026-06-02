@@ -1,6 +1,6 @@
 export default function AuditLoading() {
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="space-y-6">
       <div className="space-y-2">
         <div className="skeleton h-8 w-32" />
         <div className="skeleton h-4 w-72" />

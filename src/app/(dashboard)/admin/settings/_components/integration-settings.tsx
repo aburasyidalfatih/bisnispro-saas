@@ -1,9 +1,9 @@
-import React from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { KeyRound, Globe, Save } from "lucide-react"
+import React from"react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { KeyRound, Globe, Save } from"lucide-react"
 
 interface IntegrationSettingsProps {
   session: any
@@ -39,7 +39,7 @@ export function IntegrationSettings({
             <Globe className="h-4 w-4 text-red-500" />
             <Label className="font-semibold text-red-600">Google Login (OAuth 2.0)</Label>
           </div>
-          <p className="text-[11px] text-muted-foreground mb-3">Isi kredensial ini jika ingin mengaktifkan "Login dengan Google" khusus untuk sekolah Anda. Authorized redirect URI: <code className="bg-white/50 px-1 rounded">https://{session?.user?.tenants?.[0]?.slug || "sub"}.schoolpro.id/api/auth/callback/google</code></p>
+          <p className="text-[11px] text-muted-foreground mb-3">Isi kredensial ini jika ingin mengaktifkan"Login dengan Google" khusus untuk sekolah Anda. Authorized redirect URI: <code className="bg-white/50 px-1 rounded">https://{session?.user?.tenants?.[0]?.slug ||"sub"}.schoolpro.id/api/auth/callback/google</code></p>
           
           <div className="space-y-1.5">
             <Label className="text-xs">Client ID</Label>
@@ -60,11 +60,11 @@ export function IntegrationSettings({
           
           <div className="space-y-1.5">
             <Label className="text-xs">Client Email</Label>
-            <Input value={rawSettings.googleIndexingEmail || ""} onChange={e => setRawSettings((p:any) => ({ ...p, googleIndexingEmail: e.target.value }))} placeholder="nama-akun@project-id.iam.gserviceaccount.com" className="rounded-xl h-9 text-xs font-mono" />
+            <Input value={rawSettings.googleIndexingEmail ||""} onChange={e => setRawSettings((p:any) => ({ ...p, googleIndexingEmail: e.target.value }))} placeholder="nama-akun@project-id.iam.gserviceaccount.com" className="rounded-xl h-9 text-xs font-mono" />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Private Key (JSON)</Label>
-            <Input type="password" value={rawSettings.googleIndexingKey || ""} onChange={e => setRawSettings((p:any) => ({ ...p, googleIndexingKey: e.target.value }))} placeholder="-----BEGIN PRIVATE KEY-----\n..." className="rounded-xl h-9 text-xs font-mono" />
+            <Input type="password" value={rawSettings.googleIndexingKey ||""} onChange={e => setRawSettings((p:any) => ({ ...p, googleIndexingKey: e.target.value }))} placeholder="-----BEGIN PRIVATE KEY-----\n..." className="rounded-xl h-9 text-xs font-mono" />
           </div>
         </div>
 

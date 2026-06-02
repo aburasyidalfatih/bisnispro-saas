@@ -1,10 +1,10 @@
-import React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Phone, MapPin, Mail, MessageCircle } from "lucide-react"
-import { RegionSelector } from "@/components/ui/region-selector"
-import { AboutFormState } from "./types"
+import React from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Phone, MapPin, Mail, MessageCircle } from"lucide-react"
+import { RegionSelector } from"@/components/ui/region-selector"
+import { AboutFormState } from"./types"
 
 interface ContactFormProps {
   form: AboutFormState
@@ -28,9 +28,9 @@ export function ContactForm({ form, setForm }: ContactFormProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <RegionSelector
-            province={form.settings?.province || ""}
-            regency={form.settings?.regency || ""}
-            onProvinceChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, province: v, regency: "" } }))}
+            province={form.settings?.province ||""}
+            regency={form.settings?.regency ||""}
+            onProvinceChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, province: v, regency:"" } }))}
             onRegencyChange={(v) => setForm(p => ({ ...p, settings: { ...p.settings, regency: v } }))}
           />
           <div className="space-y-2">

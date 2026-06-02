@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Download, Loader2, TrendingUp, TrendingDown, Users, GraduationCap, Receipt, AlertCircle } from "lucide-react"
-import { toast } from "@/hooks/use-toast"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Download, Loader2, TrendingUp, TrendingDown, Users, GraduationCap, Receipt, AlertCircle } from"lucide-react"
+import { toast } from"@/hooks/use-toast"
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Legend,
-} from "recharts"
+} from"recharts"
 
 export default function ReportsPage() {
   const { data: session } = useSession()
@@ -37,9 +37,9 @@ export default function ReportsPage() {
   const chartData = stats?.chartData || []
 
   const pieData = [
-    { name: "Lunas", value: financeSummary?.paidCount || 0, color: "#10b981" },
-    { name: "Belum Bayar", value: financeSummary?.unpaidCount || 0, color: "#f59e0b" },
-    { name: "Jatuh Tempo", value: financeSummary?.overdueCount || 0, color: "#ef4444" },
+    { name:"Lunas", value: financeSummary?.paidCount || 0, color:"#10b981" },
+    { name:"Belum Bayar", value: financeSummary?.unpaidCount || 0, color:"#f59e0b" },
+    { name:"Jatuh Tempo", value: financeSummary?.overdueCount || 0, color:"#ef4444" },
   ].filter(d => d.value > 0)
 
   const handleExport = async () => {
@@ -47,24 +47,24 @@ export default function ReportsPage() {
     setExporting(true)
     try {
       const res = await fetch("/api/export", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           filename: `laporan-${new Date().toISOString().slice(0, 10)}`,
           columns: [
-            { header: "Metrik", key: "metric" },
-            { header: "Nilai", key: "value" },
+            { header:"Metrik", key:"metric" },
+            { header:"Nilai", key:"value" },
           ],
           data: [
-            { metric: "Total Siswa Aktif", value: stats?.studentCount ?? 0 },
-            { metric: "Total Pengguna", value: stats?.userCount ?? 0 },
-            { metric: "Total Pendapatan (Rp)", value: financeSummary?.totalRevenue ?? 0 },
-            { metric: "Total Tunggakan (Rp)", value: financeSummary?.totalDue ?? 0 },
-            { metric: "Tagihan Lunas", value: financeSummary?.paidCount ?? 0 },
-            { metric: "Tagihan Belum Bayar", value: financeSummary?.unpaidCount ?? 0 },
-            { metric: "Tagihan Jatuh Tempo", value: financeSummary?.overdueCount ?? 0 },
-            { metric: "Notifikasi Belum Dibaca", value: stats?.notifCount ?? 0 },
-            { metric: "Total Aktivitas", value: stats?.auditCount ?? 0 },
+            { metric:"Total Siswa Aktif", value: stats?.studentCount ?? 0 },
+            { metric:"Total Pengguna", value: stats?.userCount ?? 0 },
+            { metric:"Total Pendapatan (Rp)", value: financeSummary?.totalRevenue ?? 0 },
+            { metric:"Total Tunggakan (Rp)", value: financeSummary?.totalDue ?? 0 },
+            { metric:"Tagihan Lunas", value: financeSummary?.paidCount ?? 0 },
+            { metric:"Tagihan Belum Bayar", value: financeSummary?.unpaidCount ?? 0 },
+            { metric:"Tagihan Jatuh Tempo", value: financeSummary?.overdueCount ?? 0 },
+            { metric:"Notifikasi Belum Dibaca", value: stats?.notifCount ?? 0 },
+            { metric:"Total Aktivitas", value: stats?.auditCount ?? 0 },
           ],
         }),
       })
@@ -76,9 +76,9 @@ export default function ReportsPage() {
       a.download = `laporan-${new Date().toISOString().slice(0, 10)}.xlsx`
       a.click()
       URL.revokeObjectURL(url)
-      toast({ title: "Export berhasil", description: "File Excel berhasil diunduh." })
+      toast({ title:"Export berhasil", description:"File Excel berhasil diunduh." })
     } catch {
-      toast({ title: "Gagal export", description: "Terjadi kesalahan saat mengekspor data.", variant: "destructive" })
+      toast({ title:"Gagal export", description:"Terjadi kesalahan saat mengekspor data.", variant:"destructive" })
     }
     setExporting(false)
   }
@@ -100,17 +100,17 @@ export default function ReportsPage() {
         </div>
         <Button variant="outline" className="gap-2 rounded-xl" onClick={handleExport} disabled={exporting}>
           {exporting ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" /> : <Download className="h-4 w-4" />}
-          {exporting ? "Mengekspor..." : "Export Excel"}
+          {exporting ?"Mengekspor..." :"Export Excel"}
         </Button>
       </div>
 
       {/* Stats summary */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Pendapatan", value: `Rp ${(financeSummary?.totalRevenue ?? 0).toLocaleString("id-ID")}`, icon: TrendingUp, color: "text-emerald-600 bg-emerald-500/10" },
-          { label: "Total Tunggakan", value: `Rp ${(financeSummary?.totalDue ?? 0).toLocaleString("id-ID")}`, icon: AlertCircle, color: "text-red-600 bg-red-500/10" },
-          { label: "Total Siswa", value: stats?.studentCount ?? "—", icon: GraduationCap, color: "text-blue-600 bg-blue-500/10" },
-          { label: "Total Pengguna", value: stats?.userCount ?? "—", icon: Users, color: "text-violet-600 bg-violet-500/10" },
+          { label:"Total Pendapatan", value: `Rp ${(financeSummary?.totalRevenue ?? 0).toLocaleString("id-ID")}`, icon: TrendingUp, color:"text-emerald-600 bg-emerald-500/10" },
+          { label:"Total Tunggakan", value: `Rp ${(financeSummary?.totalDue ?? 0).toLocaleString("id-ID")}`, icon: AlertCircle, color:"text-red-600 bg-red-500/10" },
+          { label:"Total Siswa", value: stats?.studentCount ??"—", icon: GraduationCap, color:"text-blue-600 bg-blue-500/10" },
+          { label:"Total Pengguna", value: stats?.userCount ??"—", icon: Users, color:"text-violet-600 bg-violet-500/10" },
         ].map((s) => (
           <Card key={s.label} className="glass border-0">
             <CardContent className="p-5">
@@ -142,8 +142,8 @@ export default function ReportsPage() {
                   <XAxis dataKey="bulan" className="text-xs" axisLine={false} tickLine={false} />
                   <YAxis className="text-xs" axisLine={false} tickLine={false} tickFormatter={formatCurrency} />
                   <Tooltip
-                    contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 8px 32px rgba(0,0,0,0.1)" }}
-                    formatter={(value: number) => [`Rp ${value.toLocaleString("id-ID")}`, "Pendapatan"]}
+                    contentStyle={{ borderRadius:"12px", border:"none", boxShadow:"0 8px 32px rgba(0,0,0,0.1)" }}
+                    formatter={(value: number) => [`Rp ${value.toLocaleString("id-ID")}`,"Pendapatan"]}
                   />
                   <Bar dataKey="pendapatan" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
                 </BarChart>
@@ -165,7 +165,7 @@ export default function ReportsPage() {
                   <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
                     {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ borderRadius: "12px", border: "none" }} />
+                  <Tooltip contentStyle={{ borderRadius:"12px", border:"none" }} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>

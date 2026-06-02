@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, ImageIcon } from "lucide-react"
-import Link from "next/link"
-import { useRouter, useParams } from "next/navigation"
-import { getSliderById, updateSlider } from "@/features/slider/actions/slider.action"
-import { normalizeImageUrl } from "@/lib/utils"
+import { useState, useRef, useEffect } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, ImageIcon } from"lucide-react"
+import Link from"next/link"
+import { useRouter, useParams } from"next/navigation"
+import { getSliderById, updateSlider } from"@/features/slider/actions/slider.action"
+import { normalizeImageUrl } from"@/lib/utils"
 
 export default function EditSliderPage() {
   const router = useRouter()
@@ -29,13 +29,13 @@ export default function EditSliderPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    title: "",
-    subtitle: "",
-    buttonText: "",
-    buttonLink: "",
+    title:"",
+    subtitle:"",
+    buttonText:"",
+    buttonLink:"",
     sortOrder: 0,
     isActive: true,
-    imageUrl: ""
+    imageUrl:""
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -45,14 +45,14 @@ export default function EditSliderPage() {
       getSliderById(id, tenantId)
         .then(d => {
           if (!d) {
-            toast({ title: "Gagal", description: "Slide tidak ditemukan", variant: "destructive" })
+            toast({ title:"Gagal", description:"Slide tidak ditemukan", variant:"destructive" })
             router.push("/admin/website/sliders")
           } else {
             setFormData({
-              title: d.title || "",
-              subtitle: d.subtitle || "",
-              buttonText: d.buttonText || "",
-              buttonLink: d.buttonLink || "",
+              title: d.title ||"",
+              subtitle: d.subtitle ||"",
+              buttonText: d.buttonText ||"",
+              buttonLink: d.buttonLink ||"",
               sortOrder: d.sortOrder,
               isActive: d.isActive,
               imageUrl: d.imageUrl
@@ -62,7 +62,7 @@ export default function EditSliderPage() {
           setLoading(false)
         })
         .catch((err: any) => {
-          toast({ title: "Error", description: err.message, variant: "destructive" })
+          toast({ title:"Error", description: err.message, variant:"destructive" })
           setLoading(false)
         })
     }
@@ -72,7 +72,7 @@ export default function EditSliderPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 5 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 5MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 5MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -94,13 +94,13 @@ export default function EditSliderPage() {
         const fd = new FormData()
         fd.append("file", file)
         fd.append("tenantId", tenantId)
-        fd.append("subDir", "sliders")
+        fd.append("subDir","sliders")
         
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+        const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
         const uploadData = await uploadRes.json()
         
         if (!uploadRes.ok || !uploadData.url) {
-          throw new Error(uploadData.error || "Gagal mengunggah gambar")
+          throw new Error(uploadData.error ||"Gagal mengunggah gambar")
         }
         
         finalImageUrl = uploadData.url
@@ -113,10 +113,10 @@ export default function EditSliderPage() {
         imageUrl: finalImageUrl,
       })
 
-      toast({ title: "Slide berhasil diperbarui!" })
+      toast({ title:"Slide berhasil diperbarui!" })
       router.push("/admin/website/sliders")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -262,7 +262,7 @@ export default function EditSliderPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Perbarui Slide</>

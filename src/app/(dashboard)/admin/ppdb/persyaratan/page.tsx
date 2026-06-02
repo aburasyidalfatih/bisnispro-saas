@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Plus, Trash2, FileText, Info } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { useToast } from "@/hooks/use-toast"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Button } from"@/components/ui/button"
+import { Plus, Trash2, FileText, Info } from"lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Badge } from"@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { useToast } from"@/hooks/use-toast"
 
 export default function PpdbPersyaratanPage() {
   const { data: session } = useSession()
@@ -20,7 +20,7 @@ export default function PpdbPersyaratanPage() {
   const [requirements, setRequirements] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [tenantId, setTenantId] = useState<string | null>(null)
-  const [newReq, setNewReq] = useState({ nama: "", isWajib: true, tipeFile: "image/*,application/pdf" })
+  const [newReq, setNewReq] = useState({ nama:"", isWajib: true, tipeFile:"image/*,application/pdf" })
 
   useEffect(() => {
     const tid = session?.user?.tenants?.[0]?.id
@@ -53,12 +53,12 @@ export default function PpdbPersyaratanPage() {
     if (!selectedPeriode || !newReq.nama) return
     try {
       const res = await fetch("/api/ppdb/persyaratan", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method:"POST", headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ periodeId: selectedPeriode, ...newReq }),
       })
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Persyaratan ditambahkan" })
-        setNewReq({ nama: "", isWajib: true, tipeFile: "image/*,application/pdf" })
+        toast({ title:"Berhasil", description:"Persyaratan ditambahkan" })
+        setNewReq({ nama:"", isWajib: true, tipeFile:"image/*,application/pdf" })
         fetchReqs()
       }
     } catch { }
@@ -66,9 +66,9 @@ export default function PpdbPersyaratanPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/ppdb/persyaratan?id=${id}`, { method: "DELETE" })
+      const res = await fetch(`/api/ppdb/persyaratan?id=${id}`, { method:"DELETE" })
       if (res.ok) {
-        toast({ title: "Dihapus" })
+        toast({ title:"Dihapus" })
         fetchReqs()
       }
     } catch { }

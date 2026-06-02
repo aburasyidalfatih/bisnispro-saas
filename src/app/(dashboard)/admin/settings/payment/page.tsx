@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/hooks/use-toast"
-import { CreditCard, Save, Eye, EyeOff, Info, CheckCircle, ExternalLink, RefreshCw, Landmark, Plus, Trash2 } from "lucide-react"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { toast } from"@/hooks/use-toast"
+import { CreditCard, Save, Eye, EyeOff, Info, CheckCircle, ExternalLink, RefreshCw, Landmark, Plus, Trash2 } from"lucide-react"
 
 interface TripayConfig {
   tripayApiKey: string
@@ -28,10 +28,10 @@ export default function PaymentSettingsPage() {
   const [useSandbox, setUseSandbox] = useState(true)
   const [channels, setChannels] = useState<any[]>([])
   const [config, setConfig] = useState<TripayConfig>({
-    tripayApiKey: "",
-    tripayPrivateKey: "",
-    tripayMerchantCode: "",
-    tripayApiUrl: "https://tripay.co.id/api-sandbox",
+    tripayApiKey:"",
+    tripayPrivateKey:"",
+    tripayMerchantCode:"",
+    tripayApiUrl:"https://tripay.co.id/api-sandbox",
   })
   
   // Manual Bank Accounts State
@@ -84,8 +84,8 @@ export default function PaymentSettingsPage() {
     setConfig((prev) => ({
       ...prev,
       tripayApiUrl: sandbox
-        ? "https://tripay.co.id/api-sandbox"
-        : "https://tripay.co.id/api",
+        ?"https://tripay.co.id/api-sandbox"
+        :"https://tripay.co.id/api",
     }))
   }
 
@@ -93,8 +93,8 @@ export default function PaymentSettingsPage() {
     if (!tenantId) return
     setSaving(true)
     const res = await fetch("/api/tenant/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method:"PUT",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({
         tenantId,
         settings: { 
@@ -105,15 +105,15 @@ export default function PaymentSettingsPage() {
     })
     setSaving(false)
     if (res.ok) {
-      toast({ title: "Disimpan", description: "Konfigurasi Tripay berhasil disimpan." })
+      toast({ title:"Disimpan", description:"Konfigurasi Tripay berhasil disimpan." })
     } else {
-      toast({ title: "Gagal", description: "Terjadi kesalahan.", variant: "destructive" })
+      toast({ title:"Gagal", description:"Terjadi kesalahan.", variant:"destructive" })
     }
   }
 
   const handleTestChannels = async () => {
     if (!config.tripayApiKey) {
-      toast({ title: "API Key kosong", description: "Isi API Key terlebih dahulu.", variant: "destructive" })
+      toast({ title:"API Key kosong", description:"Isi API Key terlebih dahulu.", variant:"destructive" })
       return
     }
     setTesting(true)
@@ -124,18 +124,18 @@ export default function PaymentSettingsPage() {
       const data = await res.json()
       if (data.success && data.data?.length) {
         setChannels(data.data)
-        toast({ title: "✅ Koneksi berhasil!", description: `${data.data.length} channel pembayaran tersedia.` })
+        toast({ title:"✅ Koneksi berhasil!", description: `${data.data.length} channel pembayaran tersedia.` })
       } else {
-        toast({ title: "❌ Gagal", description: data.message || "API Key tidak valid.", variant: "destructive" })
+        toast({ title:"❌ Gagal", description: data.message ||"API Key tidak valid.", variant:"destructive" })
       }
     } catch (err: any) {
-      toast({ title: "❌ Error", description: err.message, variant: "destructive" })
+      toast({ title:"❌ Error", description: err.message, variant:"destructive" })
     }
     setTesting(false)
   }
 
   const addManualBank = () => {
-    setManualBanks([...manualBanks, { bank: "", account: "", name: "" }])
+    setManualBanks([...manualBanks, { bank:"", account:"", name:"" }])
   }
 
   const updateManualBank = (index: number, field: string, value: string) => {
@@ -184,14 +184,14 @@ export default function PaymentSettingsPage() {
             <div>
               <p className="font-semibold text-sm">Gunakan Akun Tripay Sendiri</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {useCustom ? "Menggunakan akun Tripay Anda sendiri" : "Menggunakan akun Tripay default platform"}
+                {useCustom ?"Menggunakan akun Tripay Anda sendiri" :"Menggunakan akun Tripay default platform"}
               </p>
             </div>
             <button
               onClick={() => setUseCustom(!useCustom)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useCustom ? "bg-primary" : "bg-muted"}`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useCustom ?"bg-primary" :"bg-muted"}`}
             >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ? "translate-x-6" : "translate-x-1"}`} />
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ?"translate-x-6" :"translate-x-1"}`} />
             </button>
           </div>
         </CardContent>
@@ -230,7 +230,7 @@ export default function PaymentSettingsPage() {
                     <Input 
                       placeholder="BCA / Mandiri / Dana" 
                       value={bank.bank} 
-                      onChange={(e) => updateManualBank(index, "bank", e.target.value)}
+                      onChange={(e) => updateManualBank(index,"bank", e.target.value)}
                       className="rounded-lg h-9 text-sm bg-background"
                     />
                   </div>
@@ -239,7 +239,7 @@ export default function PaymentSettingsPage() {
                     <Input 
                       placeholder="1234567890" 
                       value={bank.account} 
-                      onChange={(e) => updateManualBank(index, "account", e.target.value)}
+                      onChange={(e) => updateManualBank(index,"account", e.target.value)}
                       className="rounded-lg h-9 text-sm bg-background"
                     />
                   </div>
@@ -248,7 +248,7 @@ export default function PaymentSettingsPage() {
                     <Input 
                       placeholder="Yayasan Sekolah / Budi" 
                       value={bank.name} 
-                      onChange={(e) => updateManualBank(index, "name", e.target.value)}
+                      onChange={(e) => updateManualBank(index,"name", e.target.value)}
                       className="rounded-lg h-9 text-sm bg-background"
                     />
                   </div>
@@ -291,19 +291,19 @@ export default function PaymentSettingsPage() {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => toggleSandbox(true)}
-                    className={`flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-semibold transition-all ${useSandbox ? "border-amber-500 bg-amber-500/10 text-amber-600" : "border-transparent bg-muted/50 text-muted-foreground hover:bg-muted"}`}
+                    className={`flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-semibold transition-all ${useSandbox ?"border-amber-500 bg-amber-500/10 text-amber-600" :"border-transparent bg-muted/50 text-muted-foreground hover:bg-muted"}`}
                   >
                     🧪 Sandbox
                   </button>
                   <button
                     onClick={() => toggleSandbox(false)}
-                    className={`flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-semibold transition-all ${!useSandbox ? "border-emerald-500 bg-emerald-500/10 text-emerald-600" : "border-transparent bg-muted/50 text-muted-foreground hover:bg-muted"}`}
+                    className={`flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-semibold transition-all ${!useSandbox ?"border-emerald-500 bg-emerald-500/10 text-emerald-600" :"border-transparent bg-muted/50 text-muted-foreground hover:bg-muted"}`}
                   >
                     🚀 Production
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {useSandbox ? "Sandbox: untuk testing, tidak ada transaksi nyata." : "Production: transaksi nyata, gunakan kredensial production."}
+                  {useSandbox ?"Sandbox: untuk testing, tidak ada transaksi nyata." :"Production: transaksi nyata, gunakan kredensial production."}
                 </p>
               </div>
 
@@ -318,7 +318,7 @@ export default function PaymentSettingsPage() {
                 <Label>API Key</Label>
                 <div className="relative">
                   <Input
-                    type={showApiKey ? "text" : "password"}
+                    type={showApiKey ?"text" :"password"}
                     value={config.tripayApiKey}
                     onChange={set("tripayApiKey")}
                     placeholder="API Key dari dashboard Tripay"
@@ -335,7 +335,7 @@ export default function PaymentSettingsPage() {
                 <Label>Private Key</Label>
                 <div className="relative">
                   <Input
-                    type={showPrivateKey ? "text" : "password"}
+                    type={showPrivateKey ?"text" :"password"}
                     value={config.tripayPrivateKey}
                     onChange={set("tripayPrivateKey")}
                     placeholder="Private Key dari dashboard Tripay"
@@ -385,7 +385,7 @@ export default function PaymentSettingsPage() {
                   ) : (
                     <RefreshCw className="h-4 w-4" />
                   )}
-                  {testing ? "Mengambil data..." : "Cek Channel Pembayaran"}
+                  {testing ?"Mengambil data..." :"Cek Channel Pembayaran"}
                 </Button>
 
                 {channels.length > 0 && (
@@ -416,18 +416,18 @@ export default function PaymentSettingsPage() {
               <CardContent className="p-5 space-y-3">
                 <p className="text-sm font-semibold">Status Konfigurasi</p>
                 {[
-                  { label: "Merchant Code", ok: !!config.tripayMerchantCode },
-                  { label: "API Key", ok: !!config.tripayApiKey },
-                  { label: "Private Key", ok: !!config.tripayPrivateKey },
-                  { label: "Mode", ok: true, value: useSandbox ? "🧪 Sandbox" : "🚀 Production" },
+                  { label:"Merchant Code", ok: !!config.tripayMerchantCode },
+                  { label:"API Key", ok: !!config.tripayApiKey },
+                  { label:"Private Key", ok: !!config.tripayPrivateKey },
+                  { label:"Mode", ok: true, value: useSandbox ?"🧪 Sandbox" :"🚀 Production" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{item.label}</span>
                     {item.value ? (
                       <span className="font-medium text-xs">{item.value}</span>
                     ) : (
-                      <span className={`text-xs font-semibold ${item.ok ? "text-emerald-600" : "text-destructive"}`}>
-                        {item.ok ? "✓ Terisi" : "✗ Kosong"}
+                      <span className={`text-xs font-semibold ${item.ok ?"text-emerald-600" :"text-destructive"}`}>
+                        {item.ok ?"✓ Terisi" :"✗ Kosong"}
                       </span>
                     )}
                   </div>
@@ -450,7 +450,7 @@ export default function PaymentSettingsPage() {
                 <p>2. Masuk ke menu <strong>Merchant → Integrasi</strong></p>
                 <p>3. Salin <strong>Kode Merchant</strong>, <strong>API Key</strong>, dan <strong>Private Key</strong></p>
                 <p>4. Gunakan mode <strong>Sandbox</strong> untuk testing, <strong>Production</strong> untuk live</p>
-                <p>5. Klik "Cek Channel Pembayaran" untuk verifikasi koneksi</p>
+                <p>5. Klik"Cek Channel Pembayaran" untuk verifikasi koneksi</p>
                 <p className="mt-2 flex items-center gap-1">
                   <ExternalLink className="h-3 w-3" />
                   <a href="https://tripay.co.id/developer" target="_blank" rel="noopener" className="text-primary hover:underline">

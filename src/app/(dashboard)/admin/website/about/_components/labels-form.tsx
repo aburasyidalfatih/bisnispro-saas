@@ -1,10 +1,10 @@
-import React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Type } from "lucide-react"
-import { AboutFormState } from "./types"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import React from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Type } from"lucide-react"
+import { AboutFormState } from"./types"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
 
 interface LabelsFormProps {
   form: AboutFormState
@@ -62,22 +62,22 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <div className="space-y-1.5">
                  <Label>Tombol Aksi Utama (CTA 1)</Label>
                  <Input 
-                   value={labels?.hero?.cta1 || ""} 
-                   onChange={e => updateLabel("hero", "cta1", e.target.value)}
+                   value={labels?.hero?.cta1 ||""} 
+                   onChange={e => updateLabel("hero","cta1", e.target.value)}
                    placeholder="Hubungi Kami" 
                    className="rounded-xl h-9" 
                  />
-                 <p className="text-[10px] text-muted-foreground">Default: "Hubungi Kami"</p>
+                 <p className="text-[10px] text-muted-foreground">Default:"Hubungi Kami"</p>
                </div>
                <div className="space-y-1.5">
                  <Label>Tombol Aksi Kedua (CTA 2)</Label>
                  <Input 
-                   value={labels?.hero?.cta2 || ""} 
-                   onChange={e => updateLabel("hero", "cta2", e.target.value)}
+                   value={labels?.hero?.cta2 ||""} 
+                   onChange={e => updateLabel("hero","cta2", e.target.value)}
                    placeholder="Tentang Kami" 
                    className="rounded-xl h-9" 
                  />
-                 <p className="text-[10px] text-muted-foreground">Default: "Tentang Kami"</p>
+                 <p className="text-[10px] text-muted-foreground">Default:"Tentang Kami"</p>
                </div>
             </div>
           </TabsContent>
@@ -87,8 +87,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <div className="space-y-1.5">
                  <Label>Judul Bagian</Label>
                  <Input 
-                   value={labels?.programs?.sectionTitle || ""} 
-                   onChange={e => updateLabel("programs", "sectionTitle", e.target.value)}
+                   value={labels?.programs?.sectionTitle ||""} 
+                   onChange={e => updateLabel("programs","sectionTitle", e.target.value)}
                    placeholder="Program Keahlian Kami" 
                    className="rounded-xl h-9" 
                  />
@@ -96,8 +96,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <div className="space-y-1.5">
                  <Label>Teks Tombol Aksi</Label>
                  <Input 
-                   value={labels?.programs?.buttonText || ""} 
-                   onChange={e => updateLabel("programs", "buttonText", e.target.value)}
+                   value={labels?.programs?.buttonText ||""} 
+                   onChange={e => updateLabel("programs","buttonText", e.target.value)}
                    placeholder="Lihat Semua" 
                    className="rounded-xl h-9" 
                  />
@@ -106,8 +106,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
              <div className="space-y-1.5">
                <Label>Deskripsi Singkat</Label>
                <Input 
-                 value={labels?.programs?.sectionSubtitle || ""} 
-                 onChange={e => updateLabel("programs", "sectionSubtitle", e.target.value)}
+                 value={labels?.programs?.sectionSubtitle ||""} 
+                 onChange={e => updateLabel("programs","sectionSubtitle", e.target.value)}
                  placeholder="Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja." 
                  className="rounded-xl h-9" 
                />
@@ -119,8 +119,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <div className="space-y-1.5">
                  <Label>Judul Bagian</Label>
                  <Input 
-                   value={labels?.staff?.sectionTitle || ""} 
-                   onChange={e => updateLabel("staff", "sectionTitle", e.target.value)}
+                   value={labels?.staff?.sectionTitle ||""} 
+                   onChange={e => updateLabel("staff","sectionTitle", e.target.value)}
                    placeholder="Guru & Tenaga Kependidikan" 
                    className="rounded-xl h-9" 
                  />
@@ -128,8 +128,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <div className="space-y-1.5">
                  <Label>Teks Tombol Aksi</Label>
                  <Input 
-                   value={labels?.staff?.buttonText || ""} 
-                   onChange={e => updateLabel("staff", "buttonText", e.target.value)}
+                   value={labels?.staff?.buttonText ||""} 
+                   onChange={e => updateLabel("staff","buttonText", e.target.value)}
                    placeholder="Lihat Semua" 
                    className="rounded-xl h-9" 
                  />
@@ -138,8 +138,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
              <div className="space-y-1.5">
                <Label>Deskripsi Singkat</Label>
                <Input 
-                 value={labels?.staff?.sectionSubtitle || ""} 
-                 onChange={e => updateLabel("staff", "sectionSubtitle", e.target.value)}
+                 value={labels?.staff?.sectionSubtitle ||""} 
+                 onChange={e => updateLabel("staff","sectionSubtitle", e.target.value)}
                  placeholder="Tim pengajar profesional dan berdedikasi yang siap membimbing siswa menuju kesuksesan." 
                  className="rounded-xl h-9" 
                />
@@ -151,8 +151,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <div className="space-y-1.5">
                  <Label>Judul Bagian</Label>
                  <Input 
-                   value={labels?.gallery?.sectionTitle || ""} 
-                   onChange={e => updateLabel("gallery", "sectionTitle", e.target.value)}
+                   value={labels?.gallery?.sectionTitle ||""} 
+                   onChange={e => updateLabel("gallery","sectionTitle", e.target.value)}
                    placeholder="Dokumentasi Kami" 
                    className="rounded-xl h-9" 
                  />
@@ -160,8 +160,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <div className="space-y-1.5">
                  <Label>Teks Tombol Aksi</Label>
                  <Input 
-                   value={labels?.gallery?.buttonText || ""} 
-                   onChange={e => updateLabel("gallery", "buttonText", e.target.value)}
+                   value={labels?.gallery?.buttonText ||""} 
+                   onChange={e => updateLabel("gallery","buttonText", e.target.value)}
                    placeholder="Lihat Semua" 
                    className="rounded-xl h-9" 
                  />
@@ -170,8 +170,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
              <div className="space-y-1.5">
                <Label>Deskripsi Singkat</Label>
                <Input 
-                 value={labels?.gallery?.sectionSubtitle || ""} 
-                 onChange={e => updateLabel("gallery", "sectionSubtitle", e.target.value)}
+                 value={labels?.gallery?.sectionSubtitle ||""} 
+                 onChange={e => updateLabel("gallery","sectionSubtitle", e.target.value)}
                  placeholder="Kumpulan momen dan kegiatan berharga yang telah kami abadikan." 
                  className="rounded-xl h-9" 
                />
@@ -185,8 +185,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Judul Bagian Kontak</Label>
                    <Input 
-                     value={labels?.contact?.sectionTitle || ""} 
-                     onChange={e => updateLabel("contact", "sectionTitle", e.target.value)}
+                     value={labels?.contact?.sectionTitle ||""} 
+                     onChange={e => updateLabel("contact","sectionTitle", e.target.value)}
                      placeholder="Hubungi Kami" 
                      className="rounded-xl h-9" 
                    />
@@ -194,8 +194,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Deskripsi Kontak</Label>
                    <Input 
-                     value={labels?.contact?.sectionSubtitle || ""} 
-                     onChange={e => updateLabel("contact", "sectionSubtitle", e.target.value)}
+                     value={labels?.contact?.sectionSubtitle ||""} 
+                     onChange={e => updateLabel("contact","sectionSubtitle", e.target.value)}
                      placeholder="Kami siap membantu Anda. Jangan ragu untuk menghubungi kami." 
                      className="rounded-xl h-9" 
                    />
@@ -203,8 +203,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Tombol WhatsApp</Label>
                    <Input 
-                     value={labels?.contact?.btnWa || ""} 
-                     onChange={e => updateLabel("contact", "btnWa", e.target.value)}
+                     value={labels?.contact?.btnWa ||""} 
+                     onChange={e => updateLabel("contact","btnWa", e.target.value)}
                      placeholder="Chat via WhatsApp" 
                      className="rounded-xl h-9" 
                    />
@@ -212,8 +212,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Tombol Kirim Pesan</Label>
                    <Input 
-                     value={labels?.contact?.btnEmail || ""} 
-                     onChange={e => updateLabel("contact", "btnEmail", e.target.value)}
+                     value={labels?.contact?.btnEmail ||""} 
+                     onChange={e => updateLabel("contact","btnEmail", e.target.value)}
                      placeholder="Kirim Email" 
                      className="rounded-xl h-9" 
                    />
@@ -227,8 +227,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Fasilitas</Label>
                    <Input 
-                     value={labels?.widget?.facilities || ""} 
-                     onChange={e => updateLabel("widget", "facilities", e.target.value)}
+                     value={labels?.widget?.facilities ||""} 
+                     onChange={e => updateLabel("widget","facilities", e.target.value)}
                      placeholder="Fasilitas Sekolah" 
                      className="rounded-xl h-9" 
                    />
@@ -236,8 +236,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Ekstrakurikuler</Label>
                    <Input 
-                     value={labels?.widget?.extracurriculars || ""} 
-                     onChange={e => updateLabel("widget", "extracurriculars", e.target.value)}
+                     value={labels?.widget?.extracurriculars ||""} 
+                     onChange={e => updateLabel("widget","extracurriculars", e.target.value)}
                      placeholder="Kegiatan Ekstrakurikuler" 
                      className="rounded-xl h-9" 
                    />
@@ -245,8 +245,8 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Prestasi</Label>
                    <Input 
-                     value={labels?.widget?.achievements || ""} 
-                     onChange={e => updateLabel("widget", "achievements", e.target.value)}
+                     value={labels?.widget?.achievements ||""} 
+                     onChange={e => updateLabel("widget","achievements", e.target.value)}
                      placeholder="Prestasi Membanggakan" 
                      className="rounded-xl h-9" 
                    />
@@ -259,7 +259,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Judul Ajakan</Label>
                    <Input 
-                     value={form.settings?.profilCtaTitle || ""} 
+                     value={form.settings?.profilCtaTitle ||""} 
                      onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, profilCtaTitle: e.target.value } }))} 
                      placeholder="Jadilah Bagian dari Kami" 
                      className="rounded-xl h-9" 
@@ -268,7 +268,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <div className="space-y-1.5">
                    <Label>Deskripsi Ajakan</Label>
                    <textarea 
-                     value={form.settings?.profilCtaDescription || ""} 
+                     value={form.settings?.profilCtaDescription ||""} 
                      onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, profilCtaDescription: e.target.value } }))}
                      placeholder="Pintu kami selalu terbuka untuk Anda yang ingin berkonsultasi..." 
                      rows={3}

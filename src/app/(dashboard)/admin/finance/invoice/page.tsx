@@ -1,14 +1,14 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { InvoiceList } from "./_components/invoice-list"
-import { FileText } from "lucide-react"
+import { auth } from"@/lib/auth"
+import { redirect } from"next/navigation"
+import { InvoiceList } from"./_components/invoice-list"
+import { FileText } from"lucide-react"
 
 export default async function InvoicePage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
 
   const tenant = session.user.tenants?.[0]
-  if (!tenant || tenant.plan === "free") redirect("/admin")
+  if (!tenant || tenant.plan ==="free") redirect("/admin")
 
   return (
     <div className="space-y-6">

@@ -1,8 +1,8 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { FolderOpen, Upload } from "lucide-react"
+import { Card, CardContent } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { FolderOpen, Upload } from"lucide-react"
 
 export default function MyDocumentsPage() {
   return (

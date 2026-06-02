@@ -96,13 +96,22 @@ export const STARTER_README = `# SchoolPro Theme Starter Kit
 | \`post.createdAt\` | string |
 | \`post.category.name\` | string |
 
-## Custom Handlebars Helpers
-| Helper | Penggunaan | Keterangan |
-|--------|------------|------------|
-| \`{{truncate text 100}}\` | Potong teks hingga N karakter |
-| \`{{dateFormat date "dd MMM yyyy"}}\` | Format tanggal |
-| \`{{ifEqual a b}}\` | Cek kesamaan dua value |
-| \`{{json data}}\` | Dump data ke JSON (debugging) |
+## Custom Handlebars Helpers (Shopify Liquid Style)
+| Kategori | Helper | Contoh Penggunaan |
+|----------|--------|-------------------|
+| **Teks** | \`uppercase\` | \`{{uppercase title}}\` |
+| | \`lowercase\` | \`{{lowercase title}}\` |
+| | \`slugify\` | \`{{slugify title}}\` |
+| | \`truncate\` | \`{{truncate description 100}}\` |
+| | \`default\` | \`{{default bio "Belum ada bio"}}\` |
+| **Logika** | \`eq\`, \`neq\` | \`{{#if (eq status "active")}}\` |
+| | \`gt\`, \`lt\` | \`{{#if (gt price 1000)}}\` |
+| | \`and\`, \`or\` | \`{{#if (and isAdmin isActive)}}\` |
+| **Array** | \`length\` | \`Total: {{length users}}\` |
+| | \`limit\` | \`{{#each (limit posts 3)}}\` |
+| | \`join\` | \`{{join tags ", "}}\` |
+| **Format**| \`dateFormat\`| \`{{dateFormat createdAt}}\` |
+| | \`currencyFormat\`| \`{{currencyFormat price}}\` |
 
 ## Tips
 1. Gunakan \`{{{body}}}\` di main.hbs untuk menyisipkan konten halaman
@@ -393,15 +402,16 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
 {{/if}}
 
 <!-- ═══════════════ BERITA TERBARU ═══════════════ -->
-{{#if tenant.posts}}
+{{#if (gt (length tenant.posts) 0)}}
 <section class="py-20 bg-gray-50">
   <div class="max-w-7xl mx-auto px-8">
     <div class="text-center mb-12">
-      <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Informasi</span>
+      <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">{{uppercase "Informasi"}}</span>
       <h3 class="text-3xl font-bold mt-2">Berita & Pengumuman Terbaru</h3>
+      <p class="text-sm text-gray-400 mt-2">Menampilkan 3 dari total {{length tenant.posts}} artikel</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {{#each tenant.posts}}
+      {{#each (limit tenant.posts 3)}}
       <a href="{{../base}}/berita/{{this.slug}}" class="bg-white rounded-2xl overflow-hidden shadow-sm border hover:shadow-lg transition-all group">
         {{#if this.coverImage}}
         <div class="h-48 overflow-hidden">
@@ -440,8 +450,8 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
       <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-6 border border-yellow-100 hover:shadow-md transition-shadow">
         <div class="text-3xl mb-3">🏆</div>
         <h4 class="font-bold text-gray-800">{{this.title}}</h4>
-        <p class="text-sm text-gray-500 mt-1">{{this.description}}</p>
-        {{#if this.level}}<span class="inline-block mt-2 text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-semibold">{{this.level}}</span>{{/if}}
+        <p class="text-sm text-gray-500 mt-1">{{default this.description "Tanpa Deskripsi"}}</p>
+        {{#if this.level}}<span class="inline-block mt-2 text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-semibold">{{uppercase this.level}}</span>{{/if}}
       </div>
       {{/each}}
     </div>
@@ -480,7 +490,7 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
       <h3 class="text-3xl font-bold mt-2">Apa Kata Alumni Kami</h3>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {{#each tenant.alumni}}
+      {{#each (limit tenant.alumni 3)}}
       <div class="bg-white rounded-2xl p-6 shadow-sm border text-center">
         {{#if this.imageUrl}}
         <img src="{{this.imageUrl}}" alt="{{this.name}}" class="w-20 h-20 rounded-full object-cover mx-auto mb-4">

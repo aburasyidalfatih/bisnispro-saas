@@ -1,27 +1,27 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useTheme } from "next-themes"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useColorTheme } from "@/components/providers/color-theme-provider"
-import { themes } from "@/lib/themes"
-import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate, Lock, Loader2, Type } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { toast } from "@/hooks/use-toast"
+import { useState, useEffect } from"react"
+import { useTheme } from"next-themes"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { useColorTheme } from"@/components/providers/color-theme-provider"
+import { themes } from"@/lib/themes"
+import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate, Lock, Loader2, Type, Crown } from"lucide-react"
+import { cn } from"@/lib/utils"
+import { toast } from"@/hooks/use-toast"
 
 const themeGradients: Record<string, string> = {
-  corporate: "from-blue-700 to-blue-900",
-  ocean:     "from-cyan-500 to-teal-600",
-  emerald:   "from-emerald-500 to-green-600",
-  sunset:    "from-orange-500 to-rose-500",
-  aurora:    "from-violet-500 to-purple-600",
-  cyberpunk: "from-cyan-400 to-fuchsia-500",
-  midnight:  "from-blue-600 to-indigo-800",
-  hologram:  "from-cyan-400 to-pink-500",
+  corporate:"from-blue-700 to-blue-900",
+  ocean:"from-cyan-500 to-teal-600",
+  emerald:"from-emerald-500 to-green-600",
+  sunset:"from-orange-500 to-rose-500",
+  aurora:"from-violet-500 to-purple-600",
+  cyberpunk:"from-cyan-400 to-fuchsia-500",
+  midnight:"from-blue-600 to-indigo-800",
+  hologram:"from-cyan-400 to-pink-500",
 }
 
 export default function AppearancePage() {
@@ -37,12 +37,12 @@ export default function AppearancePage() {
   const [availableCustomThemes, setAvailableCustomThemes] = useState<any[]>([])
   
   // Dynamic Theme Settings
-  const [dynamicSettings, setDynamicSettings] = useState({ primaryColor: "", secondaryColor: "", fontFamily: "" })
-  const [dbDynamicSettings, setDbDynamicSettings] = useState({ primaryColor: "", secondaryColor: "", fontFamily: "" })
+  const [dynamicSettings, setDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"" })
+  const [dbDynamicSettings, setDbDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"" })
 
-  const isImpersonating = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
+  const isImpersonating = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
   const canChangeTheme = isImpersonating || session?.user?.tenants?.some((t: any) => 
-    t.id === activeTenantId && (t.role === "owner" || t.role === "admin")
+    t.id === activeTenantId && (t.role ==="owner" || t.role ==="admin")
   ) || false
   const isSuperAdminOnly = session?.user?.isSuperAdmin && !isImpersonating
   const hasTemplateChanged = selectedTemplate !== dbTemplate
@@ -68,9 +68,9 @@ export default function AppearancePage() {
         }
         if (data.settings) {
           const s = {
-            primaryColor: data.settings.primaryColor || "",
-            secondaryColor: data.settings.secondaryColor || "",
-            fontFamily: data.settings.fontFamily || "inter",
+            primaryColor: data.settings.primaryColor ||"",
+            secondaryColor: data.settings.secondaryColor ||"",
+            fontFamily: data.settings.fontFamily ||"inter",
           }
           setDynamicSettings(s)
           setDbDynamicSettings(s)
@@ -104,369 +104,350 @@ export default function AppearancePage() {
     }
     if (!tenantId) {
       setSaving(false)
-      toast({ title: "Gagal menyimpan", description: "Tenant tidak ditemukan.", variant: "destructive" })
+      toast({ title:"Gagal menyimpan", description:"Tenant tidak ditemukan.", variant:"destructive" })
       return
     }
     try {
       const res = await fetch("/api/tenant/theme", {
-        method: "PUT", headers: { "Content-Type": "application/json" },
+        method:"PUT", headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId, theme: previewTheme, template: selectedTemplate, settings: dynamicSettings }),
       })
       if (res.ok) {
         const result = await res.json()
-        // Update state lokal langsung tanpa reload
         setDbTemplate(result.template || selectedTemplate)
-        setDbPlan(dbPlan) // plan tidak berubah
+        setDbPlan(dbPlan) 
         setDbDynamicSettings(dynamicSettings)
-        toast({ title: "Tema disimpan ✅", description: `Template: ${selectedTemplate === "modern" ? "Modern Corporate" : "Classic Default"} | Warna: ${themes.find(t => t.id === previewTheme)?.name || previewTheme}` })
-        // Reload untuk refresh session dan semua provider
+        toast({ title:"Pengaturan Tersimpan ✨", description: `Tema website berhasil diperbarui ke preferensi terbaru Anda.` })
         window.location.reload()
       } else {
         const d = await res.json().catch(() => ({}))
-        toast({ title: "Gagal menyimpan", description: d.error || "Terjadi kesalahan.", variant: "destructive" })
+        toast({ title:"Gagal menyimpan", description: d.error ||"Terjadi kesalahan.", variant:"destructive" })
       }
     } catch {
-      toast({ title: "Gagal menyimpan", description: "Tidak dapat terhubung ke server.", variant: "destructive" })
+      toast({ title:"Gagal menyimpan", description:"Tidak dapat terhubung ke server.", variant:"destructive" })
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Tampilan & Tema</h1>
-        <p className="text-muted-foreground mt-1">Sesuaikan tampilan aplikasi sesuai selera Anda.</p>
+    <div className="space-y-6 pb-20">
+      {/* Header Section */}
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-black tracking-tight text-foreground">Penampilan (Appearance)</h1>
+        <p className="text-muted-foreground text-lg max-w-2xl">Personalisasi identitas visual institusi Anda untuk memberikan pengalaman pengguna kelas dunia.</p>
       </div>
 
       {/* Info banner */}
-      <Card className="glass border-0">
-        <CardContent className="flex items-start gap-3 p-4">
-          <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-          <p className="text-sm text-muted-foreground">
+      <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl p-4 border border-blue-500/20 flex items-start gap-3 shadow-sm">
+        <div className="bg-blue-500/20 p-2 rounded-full">
+          <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
+        </div>
+        <div>
+          <h4 className="font-semibold text-blue-900 dark:text-blue-300">Hak Akses Tema</h4>
+          <p className="text-sm text-blue-800/80 dark:text-blue-200/70 mt-1">
             {isSuperAdminOnly
-              ? "Login sebagai Super Admin. Gunakan fitur \"Login Sebagai\" untuk mengubah tema tenant."
+              ?"Anda login sebagai Super Admin. Gunakan fitur 'Login Sebagai' untuk mengubah tema pada tenant spesifik."
               : canChangeTheme
-              ? "Pilih tema lalu klik Simpan untuk menerapkan ke semua pengguna di lembaga ini."
-              : "Hanya Owner dan Admin yang dapat mengubah tema lembaga."}
+              ?"Eksplorasi ragam warna dan tata letak. Klik Simpan untuk memperbarui tampilan website publik."
+              :"Hanya Pemilik (Owner) dan Admin Utama yang memiliki izin untuk melakukan perombakan tema."}
           </p>
-        </CardContent>
-      </Card>
-
-      {/* Preview Tema — satu baris */}
-      <div className="grid gap-4">
-
-        {/* Preview Tema */}
-        <Card className="glass border-0">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                <Palette className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-base">Preview Tema</CardTitle>
-                <CardDescription className="text-xs">
-                  {hasUnsavedChanges
-                    ? <span className="text-amber-600 font-medium">Preview aktif — belum disimpan</span>
-                    : <>Aktif: <span className="font-semibold text-primary">{themes.find(t => t.id === colorTheme)?.name || colorTheme}</span></>
-                  }
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-xl border overflow-hidden">
-              <div className="h-2 btn-gradient" />
-              <div className="p-3 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-lg btn-gradient" />
-                  <div className="flex-1 space-y-1">
-                    <div className="h-2 w-2/3 rounded bg-foreground/10" />
-                    <div className="h-1.5 w-1/2 rounded bg-muted-foreground/10" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  <div className="h-10 rounded-lg bg-primary/10" />
-                  <div className="h-10 rounded-lg bg-accent" />
-                  <div className="h-10 rounded-lg bg-muted" />
-                </div>
-                <div className="flex gap-1.5">
-                  <div className="h-6 flex-1 rounded-lg btn-gradient" />
-                  <div className="h-6 flex-1 rounded-lg border bg-background" />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        </div>
       </div>
 
-      {/* Pilihan Layout Template */}
-      <Card className="glass border-0">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10">
-              <LayoutTemplate className="h-4 w-4 text-blue-600" />
+      {/* Preview Tema Interaktif */}
+      <Card className="border-border/40 shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-4 border-b bg-muted/20">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl btn-gradient text-white shadow-md">
+              <Monitor className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-base">Pilih Layout Template</CardTitle>
-              <CardDescription className="text-xs">Ubah struktur dan desain utama website sekolah Anda.</CardDescription>
+              <CardTitle className="text-lg">Live Wireframe Preview</CardTitle>
+              <CardDescription className="text-xs mt-0.5">
+                {hasUnsavedChanges
+                  ? <span className="text-amber-600 font-medium">Preview aktif — perubahan belum disimpan</span>
+                  : <>Tema Dasar: <span className="font-bold text-primary">{themes.find(t => t.id === colorTheme)?.name || colorTheme}</span></>
+                }
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <CardContent className="p-6 bg-gradient-to-br from-muted/30 to-muted/10">
+          <div className="max-w-2xl mx-auto rounded-xl border border-border/50 overflow-hidden bg-background shadow-2xl ring-1 ring-black/5 transition-all duration-500 hover:shadow-primary/10">
+            <div className="h-1.5 btn-gradient w-full" />
+            <div className="p-4 space-y-4">
+              {/* Navbar Wireframe */}
+              <div className="flex items-center justify-between border-b pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-6 w-6 rounded-md btn-gradient shadow-sm" />
+                  <div className="h-2.5 w-24 rounded-full bg-foreground/80" />
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-2 w-8 rounded-full bg-muted-foreground/30" />
+                  <div className="h-2 w-8 rounded-full bg-muted-foreground/30" />
+                  <div className="h-2 w-8 rounded-full bg-primary/40 hidden sm:block" />
+                </div>
+              </div>
+              {/* Hero Section Wireframe */}
+              <div className="h-28 rounded-xl bg-primary/10 flex flex-col items-center justify-center gap-2.5 relative overflow-hidden group">
+                <div className="absolute inset-0 opacity-10 btn-gradient transition-opacity duration-700 group-hover:opacity-20" />
+                <div className="h-3 w-1/2 rounded-full bg-primary/80 z-10" />
+                <div className="h-2 w-2/3 rounded-full bg-muted-foreground/50 z-10" />
+                <div className="h-6 w-20 rounded-full mt-2 btn-gradient z-10 shadow-sm text-[8px] flex items-center justify-center text-white/90 font-bold tracking-wider">CTA BUTTON</div>
+              </div>
+              {/* Content Grid Wireframe */}
+              <div className="grid grid-cols-3 gap-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="space-y-2 border border-border/50 rounded-lg p-2.5 bg-card shadow-sm hover:border-primary/30 transition-colors">
+                    <div className="h-12 rounded-md bg-muted flex items-center justify-center"><Palette className="h-4 w-4 text-muted-foreground/30" /></div>
+                    <div className="h-2 w-3/4 rounded-full bg-foreground/40" />
+                    <div className="h-1.5 w-full rounded-full bg-muted-foreground/20" />
+                    <div className="h-1.5 w-4/5 rounded-full bg-muted-foreground/20" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Pilihan Tema Palet Warna (Color Swatches) */}
+      <Card className="border-border/40 shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Palette className="h-5 w-5 text-primary" /> Palet Warna Dasar
+          </CardTitle>
+          <CardDescription>Pilih skema warna yang paling merepresentasikan energi dan identitas institusi Anda.</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <div className="flex flex-wrap gap-x-6 gap-y-6 items-start">
+            {themes.map(t => {
+              const isSelected = previewTheme === t.id
+              const isSaved = colorTheme === t.id
+              const gradient = themeGradients[t.id]
+              return (
+                <button 
+                  key={t.id} 
+                  onClick={() => {
+                    if (!canChangeTheme) return toast({ title:"Akses Ditolak", description:"Hanya Admin yang dapat mengubah tema.", variant:"destructive" })
+                    previewColorTheme(t.id)
+                  }}
+                  className="group flex flex-col items-center gap-2.5 focus:outline-none"
+                >
+                  <div className={cn("relative flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full transition-all duration-300",
+                    gradient,
+                    isSelected ?"ring-4 ring-primary ring-offset-4 ring-offset-background scale-110 shadow-xl" :"hover:scale-110 hover:shadow-lg ring-1 ring-black/10 dark:ring-white/10 shadow-sm"
+                  )}>
+                    {isSelected ? <Check className="h-6 w-6 text-white animate-in zoom-in duration-300 drop-shadow-md" /> : null}
+                    {isSaved && !isSelected && (
+                      <div className="absolute -bottom-1 -right-1 h-6 w-6 bg-background rounded-full flex items-center justify-center shadow-md border">
+                        <div className="h-3.5 w-3.5 rounded-full bg-primary" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <span className={cn("text-xs font-bold block transition-colors", isSelected ?"text-primary" :"text-muted-foreground group-hover:text-foreground")}>
+                      {t.name}
+                    </span>
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-widest font-semibold block mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                       {t.category}
+                    </span>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Pilihan Layout Template */}
+      <Card className="border-border/40 shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <LayoutTemplate className="h-5 w-5 text-blue-500" /> Tata Letak (Layout)
+          </CardTitle>
+          <CardDescription>Pilih struktur desain utama yang akan digunakan oleh pengunjung website.</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           {loadingConfig ? (
-            <div className="col-span-2 flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <div className="col-span-2 flex items-center justify-center py-12 bg-muted/20 rounded-xl border border-dashed">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/50" />
             </div>
           ) : (
           [{
-            id: "default", name: "Classic Default", 
-            desc: "Desain standar yang lengkap dengan slider lebar.", 
+            id:"default", name:"Classic Default", 
+            desc:"Desain standar elegan yang lengkap dengan slider lebar purna-layar.", 
             isPremium: false 
           },
           ...availableCustomThemes.map(ct => ({
             id: ct.id,
             name: ct.name,
-            desc: `Tema Kustom by ${ct.author || 'Super Admin'}`,
-            isPremium: false // Asumsikan Custom Theme bisa dipakai semua plan, atau atur sesuai kebutuhan
+            desc: `Tema eksklusif didesain oleh ${ct.author || 'Tim Kreatif'}.`,
+            isPremium: false 
           }))
           ].map(tpl => {
-            const isLocked = tpl.isPremium && dbPlan === "free"
+            const isLocked = tpl.isPremium && dbPlan ==="free"
             const isActive = dbTemplate === tpl.id
             const isSelected = selectedTemplate === tpl.id
 
             return (
             <div key={tpl.id} onClick={() => {
-              if (!canChangeTheme) {
-                toast({ title: "Tidak punya izin", description: "Hanya Owner/Admin yang dapat mengubah template.", variant: "destructive" })
-                return
-              }
-              if (isLocked) {
-                toast({ title: "Fitur Premium", description: "Silakan upgrade ke paket Pro/Enterprise untuk menggunakan template ini.", variant: "destructive" })
-                return
-              }
+              if (!canChangeTheme) return toast({ title:"Akses Ditolak", variant:"destructive" })
+              if (isLocked) return toast({ title:"Fitur Terkunci", description:"Tingkatkan ke paket Premium untuk desain ini.", variant:"destructive" })
               setSelectedTemplate(tpl.id)
             }}
-              className={cn(
-                "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all duration-150 relative overflow-hidden cursor-pointer",
+              className={cn("group flex flex-col rounded-2xl border-2 text-left transition-all duration-300 relative overflow-hidden cursor-pointer",
                 isSelected
-                  ? "border-blue-500 bg-blue-50/50 dark:bg-blue-500/10"
-                  : "border-transparent bg-muted/30 hover:bg-muted/60 hover:border-border",
-                isLocked && "opacity-75 bg-muted/50 grayscale-[0.5]"
+                  ?"border-primary bg-primary/5 ring-1 ring-primary/20 shadow-lg scale-[1.01]"
+                  :"border-border/60 bg-card hover:border-primary/40 hover:shadow-md",
               )}>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={cn("text-sm font-bold", isSelected ? "text-blue-700 dark:text-blue-400" : "text-foreground")}>
-                    {tpl.name}
-                  </span>
-                  {isLocked && (
-                    <span className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                      <Lock className="h-3 w-3" /> Premium
+              
+              {/* Premium Blur Overlay */}
+              {isLocked && (
+                <div className="absolute inset-0 z-20 backdrop-blur-[3px] bg-background/50 flex flex-col items-center justify-center opacity-100 group-hover:backdrop-blur-md transition-all duration-500">
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-full p-3 mb-3 shadow-xl transform group-hover:scale-110 transition-transform">
+                    <Crown className="h-7 w-7 text-amber-500" />
+                  </div>
+                  <span className="text-sm font-black text-amber-600 bg-background/90 px-4 py-1.5 rounded-full shadow-sm tracking-wide uppercase">Paket Premium</span>
+                </div>
+              )}
+
+              <div className={cn("p-6 flex flex-col h-full relative z-10", isLocked &&"opacity-60 grayscale-[0.4]")}>
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className={cn("text-base font-black tracking-tight", isSelected ?"text-primary" :"text-foreground")}>
+                      {tpl.name}
+                    </span>
+                    {isActive && (
+                      <span className="flex items-center bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider">
+                        <Check className="h-3 w-3 mr-1" /> Aktif
+                      </span>
+                    )}
+                  </div>
+                  {isSelected && !isActive && (
+                    <span className="bg-amber-500/10 text-amber-600 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">
+                      Pending
                     </span>
                   )}
-                  {isActive && (
-                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">Aktif</span>
-                  )}
-                  {isSelected && !isActive && (
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Belum Disimpan</span>
-                  )}
                 </div>
-                <p className="text-xs text-muted-foreground">{tpl.desc}</p>
-                {isLocked && (
-                  <p className="text-xs font-semibold text-amber-600 mt-2">⭐ Upgrade ke Pro untuk membuka desain ini.</p>
-                )}
-                {tpl.id !== "default" && (
-                  <div className="mt-3">
-                    <a 
-                      href={`/theme/${tpl.id}`} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 z-10 relative bg-blue-50 px-2 py-1 rounded-md"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Lihat Demo (Preview)
+                
+                <p className="text-sm text-muted-foreground flex-1 leading-relaxed">{tpl.desc}</p>
+                
+                {tpl.id !=="default" && !isLocked && (
+                  <div className="mt-4 pt-4 border-t border-border/50">
+                    <a href={`/theme/${tpl.id}`} target="_blank" rel="noreferrer"
+                      className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 w-max"
+                      onClick={(e) => e.stopPropagation()}>
+                      <Monitor className="h-3 w-3" /> Live Demo
                     </a>
                   </div>
                 )}
               </div>
-              {isSelected && (
-                <div className="absolute top-4 right-4 text-blue-600"><Check className="h-5 w-5" /></div>
-              )}
+              
+              {isSelected && <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-bl-[100%] z-0" />}
             </div >
           )})
           )}
         </CardContent>
       </Card>
 
-      {/* Pilihan Tema — satu card memanjang */}
-      <Card className="glass border-0">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-              <Palette className="h-4 w-4 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-base">Pilih Tema Warna</CardTitle>
-              <CardDescription className="text-xs">Klik tema untuk preview, lalu simpan untuk menerapkan</CardDescription>
-            </div>
-          </div>
+      {/* Advanced Typografi & Warna Kustom */}
+      <Card className="border-border/40 shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/10 border-b">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Type className="h-5 w-5 text-indigo-500" /> Kustomisasi Lanjutan (Advanced)
+          </CardTitle>
+          <CardDescription>Timpa pengaturan bawaan dengan *Brand Kit* kustom sekolah Anda.</CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {themes.map(t => {
-            const isSelected = previewTheme === t.id
-            const isSaved = colorTheme === t.id
-            const gradient = themeGradients[t.id]
-            return (
-              <button key={t.id} onClick={() => {
-                if (!canChangeTheme) {
-                  toast({ title: "Tidak punya izin", description: "Hanya Owner/Admin yang dapat mengubah tema.", variant: "destructive" })
-                  return
-                }
-                previewColorTheme(t.id)
-              }}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl border-2 px-3 py-2.5 text-left transition-all duration-150",
-                  isSelected
-                    ? "border-primary bg-primary/5"
-                    : "border-transparent bg-muted/30 hover:bg-muted/60 hover:border-border"
-                )}>
-                {/* Swatch */}
-                <div className={cn(
-                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-base",
-                  gradient
-                )}>
-                  {isSelected ? <Check className="h-4 w-4 text-white" /> : t.preview}
-                </div>
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className={cn("text-sm font-semibold", isSelected ? "text-primary" : "text-foreground")}>
-                      {t.name}
-                    </span>
-                    {isSaved && (
-                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">Aktif</span>
-                    )}
-                    {isSelected && !isSaved && (
-                      <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-600">Preview</span>
-                    )}
+        <CardContent className="p-6">
+          <div className="grid gap-8 md:grid-cols-2">
+            
+            {/* Color Override */}
+            <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/50">
+              <h4 className="text-sm font-bold flex items-center gap-2 text-foreground"><Palette className="h-4 w-4 text-muted-foreground" /> Override Warna Primer & Sekunder</h4>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 bg-background rounded-xl border shadow-sm">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Warna Primer</Label>
+                    <p className="text-[10px] text-muted-foreground">Tombol utama & tautan</p>
                   </div>
-                  <p className="text-xs text-muted-foreground truncate">{t.description}</p>
+                  <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg">
+                    <input type="color" value={dynamicSettings.primaryColor ||"#4f46e5"} onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))} className="h-8 w-10 cursor-pointer rounded bg-transparent border-0 p-0" />
+                    <Input value={dynamicSettings.primaryColor ||""} placeholder="Default" onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))} className="w-24 h-8 text-xs font-mono uppercase bg-transparent border-0 focus-visible:ring-0 shadow-none px-2" />
+                  </div>
                 </div>
-                {/* Category badge */}
-                <span className="text-[10px] text-muted-foreground shrink-0 hidden sm:block">
-                  {t.category === "formal" ? "🏢" : t.category === "modern" ? "✨" : t.category === "creative" ? "🎨" : "⚡"}
-                </span>
-              </button>
-            )
-          })}
-        </CardContent>
-      </Card>
 
-      {/* Dynamic Theme Engine */}
-      <Card className="glass border-0">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-500/10">
-              <Palette className="h-4 w-4 text-pink-600" />
-            </div>
-            <div>
-              <CardTitle className="text-base">Custom Theme (Khusus Website Publik)</CardTitle>
-              <CardDescription className="text-xs">Ubah warna dan font khusus untuk halaman depan pengunjung</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-6 sm:grid-cols-2 rounded-xl p-4 bg-muted/20 border-2 border-transparent hover:border-border transition-colors">
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-sm font-semibold"><Palette className="h-4 w-4 text-muted-foreground" /> Warna Tema Custom</Label>
-              <div className="flex flex-col gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">Warna Utama</Label>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      type="color" 
-                      value={dynamicSettings.primaryColor || "#4f46e5"} 
-                      onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))}
-                      className="h-9 w-12 rounded cursor-pointer border p-0 bg-transparent"
-                    />
-                    <Input 
-                      value={dynamicSettings.primaryColor || "#4f46e5"} 
-                      onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))}
-                      className="w-24 h-9 text-xs font-mono rounded-lg"
-                    />
+                <div className="flex items-center justify-between p-3 bg-background rounded-xl border shadow-sm">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Warna Sekunder</Label>
+                    <p className="text-[10px] text-muted-foreground">Aksen & sorotan</p>
                   </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">Warna Sekunder</Label>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      type="color" 
-                      value={dynamicSettings.secondaryColor || "#ec4899"} 
-                      onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))}
-                      className="h-9 w-12 rounded cursor-pointer border p-0 bg-transparent"
-                    />
-                    <Input 
-                      value={dynamicSettings.secondaryColor || "#ec4899"} 
-                      onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))}
-                      className="w-24 h-9 text-xs font-mono rounded-lg"
-                    />
+                  <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg">
+                    <input type="color" value={dynamicSettings.secondaryColor ||"#ec4899"} onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))} className="h-8 w-10 cursor-pointer rounded bg-transparent border-0 p-0" />
+                    <Input value={dynamicSettings.secondaryColor ||""} placeholder="Default" onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))} className="w-24 h-8 text-xs font-mono uppercase bg-transparent border-0 focus-visible:ring-0 shadow-none px-2" />
                   </div>
                 </div>
               </div>
-              <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
-                *Warna ini akan menimpa skema warna dasar (Base Theme) di halaman Website Publik. Kosongkan untuk menggunakan warna Base Theme.
-              </p>
             </div>
 
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-sm font-semibold"><Type className="h-4 w-4 text-muted-foreground" /> Tipografi (Gaya Font)</Label>
+            {/* Typography Preview */}
+            <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/50 flex flex-col">
+              <h4 className="text-sm font-bold flex items-center gap-2 text-foreground"><Type className="h-4 w-4 text-muted-foreground" /> Tipografi (Font Family)</h4>
+              
               <select
-                value={dynamicSettings.fontFamily || "inter"}
+                value={dynamicSettings.fontFamily ||"inter"}
                 onChange={(e) => setDynamicSettings(p => ({ ...p, fontFamily: e.target.value }))}
-                className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                className="w-full h-11 rounded-xl border-border bg-background px-4 text-sm font-medium shadow-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
               >
                 <option value="inter">Modern Minimalist (Inter)</option>
                 <option value="plus-jakarta">Professional (Plus Jakarta Sans)</option>
                 <option value="playfair">Klasik & Elegan (Playfair Display)</option>
                 <option value="outfit">Ceria & Kreatif (Outfit)</option>
               </select>
-              <div className="p-4 border rounded-xl bg-background mt-3 flex items-center justify-center min-h-[80px]">
-                <p className={cn(
-                  "text-lg",
-                  dynamicSettings.fontFamily === "playfair" ? "font-serif" :
-                  dynamicSettings.fontFamily === "outfit" ? "font-sans font-bold tracking-tight" :
-                  "font-sans"
-                )}>
-                  Aura Sekolah Anda.
-                </p>
+              
+              <div className="mt-auto pt-4 flex-1">
+                <div className="bg-background rounded-xl border p-4 shadow-sm h-full flex flex-col justify-center">
+                  <div className={cn("space-y-2",
+                    dynamicSettings.fontFamily ==="playfair" ?"font-serif" :
+                    dynamicSettings.fontFamily ==="outfit" ?"font-sans font-bold tracking-tight" :"font-sans"
+                  )}>
+                    <h5 className="text-xl font-black text-foreground">Sekolah Masa Depan</h5>
+                    <p className="text-xs text-muted-foreground leading-relaxed">Pendidikan adalah senjata paling ampuh yang dapat Anda gunakan untuk mengubah dunia.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* ── Sticky Save Bar (selalu terlihat saat ada perubahan) ── */}
+      {/* ── Floating Action Bar (Sticky Save) ── */}
       {canChangeTheme && (hasUnsavedChanges || hasTemplateChanged || hasSettingsChanged) && (
-        <div className="sticky bottom-0 z-50 -mx-4 sm:-mx-6 lg:-mx-8">
-          <div className="bg-card/95 backdrop-blur-lg border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] px-4 sm:px-6 py-3">
-            <div className="flex items-center justify-between max-w-3xl mx-auto">
-              <p className="text-sm text-muted-foreground hidden sm:block">
-                <span className="inline-block h-2 w-2 rounded-full bg-amber-500 mr-2 animate-pulse" />
-                Ada perubahan yang belum disimpan
+        <div className="fixed bottom-6 left-0 right-0 z-50 pointer-events-none flex justify-center px-4">
+          <div className="pointer-events-auto bg-card/95 backdrop-blur-xl border border-primary/20 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] rounded-2xl px-5 py-4 max-w-lg w-full flex items-center justify-between animate-in slide-in-from-bottom-5">
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-3 w-3">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-20"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+              </span>
+              <p className="text-sm font-bold text-foreground">
+                Perubahan tertunda
               </p>
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => {
-                  resetPreview()
-                  setSelectedTemplate(dbTemplate)
-                }}>
-                  <RotateCcw className="h-3.5 w-3.5" /> Batal
-                </Button>
-                <Button size="sm" className="rounded-xl gap-2 btn-gradient text-white border-0" onClick={handleSave} disabled={saving}>
-                  {saving ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
-                  Simpan Perubahan
-                </Button>
-              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="rounded-xl hover:bg-muted" onClick={() => {
+                resetPreview()
+                setSelectedTemplate(dbTemplate)
+                setDynamicSettings(dbDynamicSettings)
+              }}>
+                Batal
+              </Button>
+              <Button size="sm" className="rounded-xl btn-gradient text-white border-0 shadow-lg shadow-primary/25" onClick={handleSave} disabled={saving}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                Terapkan Tema
+              </Button>
             </div>
           </div>
         </div>

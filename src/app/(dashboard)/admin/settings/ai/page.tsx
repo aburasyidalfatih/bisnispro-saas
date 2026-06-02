@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "@/hooks/use-toast"
-import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins, History, User, Zap, CheckCircle2, ArrowRight } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useRouter } from"next/navigation"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { toast } from"@/hooks/use-toast"
+import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins, History, User, Zap, CheckCircle2, ArrowRight } from"lucide-react"
+import { cn } from"@/lib/utils"
 
 // Removed hardcoded AI_PACKAGES
 
@@ -45,8 +45,8 @@ export default function AiSettingsPage() {
   }, [session?.user?.tenants])
 
   const currentTenant = session?.user?.tenants?.find((t: any) => t.id === tenantId) || session?.user?.tenants?.[0]
-  const tenantPlan = currentTenant?.plan || "free"
-  const isFreePlan = tenantPlan === "free"
+  const tenantPlan = currentTenant?.plan ||"free"
+  const isFreePlan = tenantPlan ==="free"
 
   useEffect(() => {
     if (!tenantId) return
@@ -59,7 +59,7 @@ export default function AiSettingsPage() {
         setLoading(false)
       })
       .catch(() => {
-        toast({ title: "Error", description: "Gagal memuat pengaturan AI", variant: "destructive" })
+        toast({ title:"Error", description:"Gagal memuat pengaturan AI", variant:"destructive" })
         setLoading(false)
       })
       
@@ -88,17 +88,17 @@ export default function AiSettingsPage() {
     setCheckingOutAi(true)
     try {
       const res = await fetch("/api/tenant/billing/topup-ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ packageId: selectedAiPkg }),
       })
       const result = await res.json()
-      if (!res.ok) throw new Error(result.error || "Gagal membuat invoice AI")
+      if (!res.ok) throw new Error(result.error ||"Gagal membuat invoice AI")
       
-      toast({ title: "Berhasil", description: "Invoice Top Up Token AI berhasil dibuat. Silakan selesaikan pembayaran." })
+      toast({ title:"Berhasil", description:"Invoice Top Up Token AI berhasil dibuat. Silakan selesaikan pembayaran." })
       router.push("/admin/billing/history")
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" })
+      toast({ title:"Error", description: err.message, variant:"destructive" })
     } finally {
       setCheckingOutAi(false)
     }
@@ -149,11 +149,10 @@ export default function AiSettingsPage() {
                 <div 
                   key={pkg.id}
                   onClick={() => setSelectedAiPkg(pkg.id)}
-                  className={cn(
-                    "cursor-pointer rounded-2xl border-2 p-5 transition-all relative overflow-hidden group flex flex-col",
+                  className={cn("cursor-pointer rounded-2xl border-2 p-5 transition-all relative overflow-hidden group flex flex-col",
                     selectedAiPkg === pkg.id 
-                      ? "border-blue-500 bg-blue-500/5 shadow-md shadow-blue-500/10" 
-                      : "border-border/40 hover:border-blue-500/50 hover:bg-muted/50"
+                      ?"border-blue-500 bg-blue-500/5 shadow-md shadow-blue-500/10" 
+                      :"border-border/40 hover:border-blue-500/50 hover:bg-muted/50"
                   )}
                 >
                   {selectedAiPkg === pkg.id && (
@@ -186,7 +185,7 @@ export default function AiSettingsPage() {
                 disabled={checkingOutAi || !selectedAiPkg}
                 onClick={handleCheckoutAi}
               >
-                {checkingOutAi ? "Memproses..." : "Beli Token AI"}
+                {checkingOutAi ?"Memproses..." :"Beli Token AI"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -235,7 +234,7 @@ export default function AiSettingsPage() {
                             <User className="h-3 w-3 text-primary" />
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-medium">{log.user?.name || "Unknown"}</span>
+                            <span className="font-medium">{log.user?.name ||"Unknown"}</span>
                             <span className="text-[10px] text-muted-foreground">{log.user?.email}</span>
                           </div>
                         </div>

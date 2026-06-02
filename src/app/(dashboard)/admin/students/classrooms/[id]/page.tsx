@@ -1,18 +1,18 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { use, useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Badge } from"@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import {
   ArrowLeft, Users, Search, Wallet, UserCheck,
   Loader2, Receipt, ChevronRight, BookOpen
-} from "lucide-react"
-import Link from "next/link"
+} from"lucide-react"
+import Link from"next/link"
 
 export default function ClassroomDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -57,8 +57,8 @@ export default function ClassroomDetailPage({ params }: { params: Promise<{ id: 
             <div>
               <h1 className="text-2xl font-bold">{classroom.name}</h1>
               <p className="text-sm text-muted-foreground">
-                {classroom.level ? `Tingkat ${classroom.level} · ` : ""}{classroom._count?.students || 0} siswa aktif
-                {classroom.waliKelas ? ` · Wali: ${classroom.waliKelas.name}` : ""}
+                {classroom.level ? `Tingkat ${classroom.level} · ` :""}{classroom._count?.students || 0} siswa aktif
+                {classroom.waliKelas ? ` · Wali: ${classroom.waliKelas.name}` :""}
               </p>
             </div>
           </div>
@@ -73,10 +73,10 @@ export default function ClassroomDetailPage({ params }: { params: Promise<{ id: 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Siswa", value: classroom._count?.students || 0, icon: Users, color: "text-primary bg-primary/10" },
-          { label: "Kapasitas", value: `${fillPct}% penuh`, icon: Users, color: "text-amber-600 bg-amber-500/10" },
-          { label: "Total Saldo Wallet", value: `Rp ${totalBalance.toLocaleString("id-ID")}`, icon: Wallet, color: "text-indigo-600 bg-indigo-500/10" },
-          { label: "Punya Wallet", value: classroom.students?.filter((s: any) => s.walletAccount).length || 0, icon: Wallet, color: "text-emerald-600 bg-emerald-500/10" },
+          { label:"Total Siswa", value: classroom._count?.students || 0, icon: Users, color:"text-primary bg-primary/10" },
+          { label:"Kapasitas", value: `${fillPct}% penuh`, icon: Users, color:"text-amber-600 bg-amber-500/10" },
+          { label:"Total Saldo Wallet", value: `Rp ${totalBalance.toLocaleString("id-ID")}`, icon: Wallet, color:"text-indigo-600 bg-indigo-500/10" },
+          { label:"Punya Wallet", value: classroom.students?.filter((s: any) => s.walletAccount).length || 0, icon: Wallet, color:"text-emerald-600 bg-emerald-500/10" },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
             <CardContent className="p-4 flex items-center gap-3">
@@ -100,7 +100,7 @@ export default function ClassroomDetailPage({ params }: { params: Promise<{ id: 
         </div>
         <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-700 ${fillPct >= 90 ? "bg-red-500" : fillPct >= 70 ? "bg-amber-500" : "bg-emerald-500"}`}
+            className={`h-full rounded-full transition-all duration-700 ${fillPct >= 90 ?"bg-red-500" : fillPct >= 70 ?"bg-amber-500" :"bg-emerald-500"}`}
             style={{ width: `${Math.min(fillPct, 100)}%` }}
           />
         </div>
@@ -132,7 +132,7 @@ export default function ClassroomDetailPage({ params }: { params: Promise<{ id: 
             <table className="w-full text-sm">
               <thead className="bg-muted/40">
                 <tr>
-                  {["#", "Nama Siswa", "NIS", "Wallet", "Ortu", ""].map(h => (
+                  {["#","Nama Siswa","NIS","Wallet","Ortu",""].map(h => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
                   ))}
                 </tr>
@@ -149,7 +149,7 @@ export default function ClassroomDetailPage({ params }: { params: Promise<{ id: 
                         <p className="font-semibold">{s.name}</p>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{s.nis || "—"}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{s.nis ||"—"}</td>
                     <td className="px-4 py-3">
                       {s.walletAccount
                         ? <span className="text-emerald-600 font-semibold text-xs">Rp {s.walletAccount.balance.toLocaleString("id-ID")}</span>

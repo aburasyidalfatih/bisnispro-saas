@@ -1,23 +1,23 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { toast } from "@/hooks/use-toast"
-import { Save, ExternalLink } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getStaff } from "@/features/staff/actions/staff.action"
+import { useEffect, useState, useRef } from"react"
+import { useSession } from"next-auth/react"
+import { Button } from"@/components/ui/button"
+import { toast } from"@/hooks/use-toast"
+import { Save, ExternalLink } from"lucide-react"
+import { useRouter } from"next/navigation"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
+import { getStaff } from"@/features/staff/actions/staff.action"
 
-import { AboutFormState, AiPromptType } from "./_components/types"
-import { IdentityForm } from "./_components/identity-form"
-import { ContactForm } from "./_components/contact-form"
-import { SocialMediaForm } from "./_components/social-media-form"
-import { AboutDetailsForm } from "./_components/about-details-form"
-import { PrincipalSpeechForm } from "./_components/principal-speech-form"
-import { SeoForm } from "./_components/seo-form"
-import { LabelsForm } from "./_components/labels-form"
-import { AiContentModal } from "./_components/ai-content-modal"
+import { AboutFormState, AiPromptType } from"./_components/types"
+import { IdentityForm } from"./_components/identity-form"
+import { ContactForm } from"./_components/contact-form"
+import { SocialMediaForm } from"./_components/social-media-form"
+import { AboutDetailsForm } from"./_components/about-details-form"
+import { PrincipalSpeechForm } from"./_components/principal-speech-form"
+import { SeoForm } from"./_components/seo-form"
+import { LabelsForm } from"./_components/labels-form"
+import { AiContentModal } from"./_components/ai-content-modal"
 
 export default function WebsiteAboutPage() {
   const { data: session } = useSession()
@@ -32,10 +32,10 @@ export default function WebsiteAboutPage() {
   const [staffList, setStaffList] = useState<any[]>([])
 
   const [form, setForm] = useState<AboutFormState>({
-    name: "", logo: "", tagline: "", description: "", about: "",
-    seoTitle: "", seoDesc: "",
-    address: "", phone: "", email: "", website: "",
-    whatsapp: "", instagram: "", facebook: "", youtube: "", tiktok: "",
+    name:"", logo:"", tagline:"", description:"", about:"",
+    seoTitle:"", seoDesc:"",
+    address:"", phone:"", email:"", website:"",
+    whatsapp:"", instagram:"", facebook:"", youtube:"", tiktok:"",
     settings: {} as any,
   })
 
@@ -67,17 +67,17 @@ export default function WebsiteAboutPage() {
       .then(r => r.json())
       .then(d => {
         setForm({
-          name: d.name || "", logo: d.logo || "", tagline: d.tagline || "",
-          description: d.description || "", about: d.about || "",
-          seoTitle: d.seoTitle || (d.name ? `Website Resmi ${d.name}` : ""), 
-          seoDesc: d.seoDesc || d.description || (d.name ? `Selamat datang di website resmi ${d.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` : ""),
-          address: d.address || "", phone: d.phone || "", email: d.email || "",
-          website: d.website || "", whatsapp: d.whatsapp || "",
-          instagram: d.instagram || "", facebook: d.facebook || "",
-          youtube: d.youtube || "", tiktok: d.tiktok || "",
+          name: d.name ||"", logo: d.logo ||"", tagline: d.tagline ||"",
+          description: d.description ||"", about: d.about ||"",
+          seoTitle: d.seoTitle || (d.name ? `Website Resmi ${d.name}` :""), 
+          seoDesc: d.seoDesc || d.description || (d.name ? `Selamat datang di website resmi ${d.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` :""),
+          address: d.address ||"", phone: d.phone ||"", email: d.email ||"",
+          website: d.website ||"", whatsapp: d.whatsapp ||"",
+          instagram: d.instagram ||"", facebook: d.facebook ||"",
+          youtube: d.youtube ||"", tiktok: d.tiktok ||"",
           settings: d.settings || {},
         })
-        setLogoPreview(d.logo || "")
+        setLogoPreview(d.logo ||"")
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -114,9 +114,9 @@ export default function WebsiteAboutPage() {
 
     if (missingFields.length > 0) {
       toast({ 
-        title: "Data Belum Lengkap", 
+        title:"Data Belum Lengkap", 
         description: `Mohon lengkapi: ${missingFields.join(', ')}`, 
-        variant: "destructive" 
+        variant:"destructive" 
       })
       return
     }
@@ -124,19 +124,19 @@ export default function WebsiteAboutPage() {
     setSaving(true)
     const payload: any = { tenantId, ...form }
     Object.keys(payload).forEach(k => {
-      if (payload[k] === "") payload[k] = null
+      if (payload[k] ==="") payload[k] = null
     })
     const res = await fetch("/api/tenant/website", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method:"PUT",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify(payload),
     })
     setSaving(false)
     if (res.ok) {
-      toast({ title: "Disimpan", description: "Profil lembaga berhasil diperbarui." })
+      toast({ title:"Disimpan", description:"Profil lembaga berhasil diperbarui." })
     } else {
       const d = await res.json().catch(() => ({}))
-      toast({ title: "Gagal", description: d.error || "Terjadi kesalahan.", variant: "destructive" })
+      toast({ title:"Gagal", description: d.error ||"Terjadi kesalahan.", variant:"destructive" })
     }
   }
 
@@ -148,19 +148,19 @@ export default function WebsiteAboutPage() {
       const fd = new FormData()
       fd.append("file", file)
       fd.append("tenantId", tenantId)
-      fd.append("subDir", "brand")
-      const res = await fetch("/api/upload", { method: "POST", body: fd })
+      fd.append("subDir","brand")
+      const res = await fetch("/api/upload", { method:"POST", body: fd })
       const d = await res.json()
       if (res.ok && d.url) {
         setForm(p => ({ ...p, logo: d.url }))
         setLogoPreview(d.url)
-        toast({ title: "Logo diunggah", description: "Klik Simpan untuk menyimpan perubahan." })
+        toast({ title:"Logo diunggah", description:"Klik Simpan untuk menyimpan perubahan." })
       } else {
-        toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
+        toast({ title:"Gagal upload", description: d.error, variant:"destructive" })
       }
     } finally {
       setUploadingLogo(false)
-      e.target.value = ""
+      e.target.value =""
     }
   }
 
@@ -171,31 +171,31 @@ export default function WebsiteAboutPage() {
       const fd = new FormData()
       fd.append("file", file)
       fd.append("tenantId", tenantId)
-      fd.append("subDir", "principal")
-      const res = await fetch("/api/upload", { method: "POST", body: fd })
+      fd.append("subDir","principal")
+      const res = await fetch("/api/upload", { method:"POST", body: fd })
       const d = await res.json()
       if (res.ok && d.url) {
         setForm(p => ({ ...p, settings: { ...(p.settings || {}), principalImage: d.url } }))
-        toast({ title: "Foto diunggah", description: "Klik Simpan untuk menyimpan perubahan." })
+        toast({ title:"Foto diunggah", description:"Klik Simpan untuk menyimpan perubahan." })
       } else {
-        toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
+        toast({ title:"Gagal upload", description: d.error, variant:"destructive" })
       }
     } finally {
-      e.target.value = ""
+      e.target.value =""
     }
   }
 
   const handleGenerateAI = async () => {
     if (!aiInputText.trim()) {
-      toast({ title: "Input kosong", description: "Silakan masukkan poin/fakta terlebih dahulu.", variant: "destructive" })
+      toast({ title:"Input kosong", description:"Silakan masukkan poin/fakta terlebih dahulu.", variant:"destructive" })
       return
     }
 
     setAiLoading(true)
     try {
       const res = await fetch("/api/tenant/ai/generate-content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ 
           tenantId, 
           promptType: aiPromptType, 
@@ -204,21 +204,21 @@ export default function WebsiteAboutPage() {
       })
       const d = await res.json()
       if (res.ok && d.success && d.data?.result) {
-        if (aiPromptType === "vision-mission") {
+        if (aiPromptType ==="vision-mission") {
           setForm(p => ({ ...p, settings: { ...p.settings, visi: d.data.result } }))
-        } else if (aiPromptType === "about") {
+        } else if (aiPromptType ==="about") {
           setForm(p => ({ ...p, about: d.data.result }))
-        } else if (aiPromptType === "principal-speech") {
+        } else if (aiPromptType ==="principal-speech") {
           setForm(p => ({ ...p, settings: { ...p.settings, principalMessage: d.data.result } }))
         }
         setAiModalOpen(false)
         setAiInputText("")
-        toast({ title: "Berhasil", description: "Konten berhasil di-generate AI." })
+        toast({ title:"Berhasil", description:"Konten berhasil di-generate AI." })
       } else {
-        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+        toast({ title:"Gagal", description: d.error ||"Terjadi kesalahan", variant:"destructive" })
       }
     } catch (err) {
-      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+      toast({ title:"Error", description:"Gagal menghubungi server AI", variant:"destructive" })
     } finally {
       setAiLoading(false)
     }
@@ -227,18 +227,18 @@ export default function WebsiteAboutPage() {
   const openAiModal = (type: AiPromptType) => {
     setAiPromptType(type)
     setAiInputText("")
-    setAiInputName(type === "principal-speech" ? form.settings?.principalName || "" : "")
+    setAiInputName(type ==="principal-speech" ? form.settings?.principalName ||"" :"")
     setAiModalOpen(true)
   }
 
   if (loading) return (
-    <div className="space-y-4 animate-in fade-in duration-300">
+    <div className="space-y-4">
       {[1,2,3].map(i => <div key={i} className="skeleton h-40 rounded-2xl" />)}
     </div>
   )
 
   const getPublicUrl = (path: string) => {
-    if (typeof window !== "undefined" && window.location.pathname.startsWith('/site/')) {
+    if (typeof window !=="undefined" && window.location.pathname.startsWith('/site/')) {
       return `/site/${slug}${path}`
     }
     return path

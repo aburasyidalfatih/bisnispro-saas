@@ -1,21 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Badge } from"@/components/ui/badge"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
 import {
   Heart, HeartHandshake, Plus, Loader2, Target, Users,
   TrendingUp, CalendarClock, Edit2, Trash2, ChevronRight
-} from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
-import { normalizeImageUrl } from "@/lib/utils"
+} from"lucide-react"
+import Link from"next/link"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
+import { normalizeImageUrl } from"@/lib/utils"
 
 
 export default function DonationCampaignsPage() {
@@ -37,19 +37,19 @@ export default function DonationCampaignsPage() {
   const handleToggle = async (id: string, isActive: boolean) => {
     if (!tenant) return
     await fetch(`/api/donation/campaigns/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method:"PATCH",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ tenantId: tenant.id, isActive: !isActive }),
     })
     fetchCampaigns()
-    toast({ title: `Kampanye ${!isActive ? "diaktifkan" : "dinonaktifkan"}` })
+    toast({ title: `Kampanye ${!isActive ?"diaktifkan" :"dinonaktifkan"}` })
   }
 
   const handleDelete = async (id: string) => {
     if (!confirm("Hapus kampanye ini?")) return
-    await fetch(`/api/donation/campaigns/${id}`, { method: "DELETE" })
+    await fetch(`/api/donation/campaigns/${id}`, { method:"DELETE" })
     fetchCampaigns()
-    toast({ title: "Kampanye dihapus" })
+    toast({ title:"Kampanye dihapus" })
   }
 
   const totalCollected = campaigns.reduce((a, c) => a + (c.collectedAmount || 0), 0)
@@ -70,10 +70,10 @@ export default function DonationCampaignsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Kampanye", value: campaigns.length, icon: HeartHandshake, color: "text-rose-600 bg-rose-500/10" },
-          { label: "Aktif", value: campaigns.filter(c => c.isActive).length, icon: TrendingUp, color: "text-emerald-600 bg-emerald-500/10" },
-          { label: "Dana Terkumpul", value: `Rp ${totalCollected.toLocaleString("id-ID")}`, icon: Target, color: "text-primary bg-primary/10" },
-          { label: "Total Target", value: `Rp ${totalTarget.toLocaleString("id-ID")}`, icon: Target, color: "text-indigo-600 bg-indigo-500/10" },
+          { label:"Total Kampanye", value: campaigns.length, icon: HeartHandshake, color:"text-rose-600 bg-rose-500/10" },
+          { label:"Aktif", value: campaigns.filter(c => c.isActive).length, icon: TrendingUp, color:"text-emerald-600 bg-emerald-500/10" },
+          { label:"Dana Terkumpul", value: `Rp ${totalCollected.toLocaleString("id-ID")}`, icon: Target, color:"text-primary bg-primary/10" },
+          { label:"Total Target", value: `Rp ${totalTarget.toLocaleString("id-ID")}`, icon: Target, color:"text-indigo-600 bg-indigo-500/10" },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
             <CardContent className="p-4 flex items-center gap-3">
@@ -115,9 +115,9 @@ export default function DonationCampaignsPage() {
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-bold text-base leading-snug flex-1 pr-2">{campaign.title}</h3>
                     <Badge className={campaign.isActive
-                      ? "bg-emerald-500/10 text-emerald-600 border-emerald-200 border shrink-0"
-                      : "bg-slate-500/10 text-slate-500 border border-slate-200 shrink-0"}>
-                      {campaign.isActive ? "Aktif" : "Nonaktif"}
+                      ?"bg-emerald-500/10 text-emerald-600 border-emerald-200 border shrink-0"
+                      :"bg-slate-500/10 text-slate-500 border border-slate-200 shrink-0"}>
+                      {campaign.isActive ?"Aktif" :"Nonaktif"}
                     </Badge>
                   </div>
 
@@ -139,7 +139,7 @@ export default function DonationCampaignsPage() {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span><Users className="inline h-3 w-3 mr-1" />{campaign._count?.donations || 0} donatur</span>
                       {campaign.endDate && (
-                        <span><CalendarClock className="inline h-3 w-3 mr-1" />{format(new Date(campaign.endDate), "d MMM yyyy", { locale: localeId })}</span>
+                        <span><CalendarClock className="inline h-3 w-3 mr-1" />{format(new Date(campaign.endDate),"d MMM yyyy", { locale: localeId })}</span>
                       )}
                     </div>
                     <div className="flex gap-1">

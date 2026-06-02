@@ -1,26 +1,26 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ServerPagination } from "@/components/shared/server-pagination"
-import { Megaphone, Search, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useEffect, useState, useCallback } from"react"
+import { Card } from"@/components/ui/card"
+import { Input } from"@/components/ui/input"
+import { ServerPagination } from"@/components/shared/server-pagination"
+import { Megaphone, Search, Clock, CheckCircle2, AlertCircle, Loader2 } from"lucide-react"
+import { cn } from"@/lib/utils"
 
 interface WaQueueLog {
   id: string
   targetNumber: string
   message: string
-  status: "PENDING" | "SENT" | "FAILED"
+  status:"PENDING" |"SENT" |"FAILED"
   error: string | null
   sentAt: string | null
   createdAt: string
 }
 
 const statusColors: Record<string, string> = {
-  PENDING: "bg-amber-500/10 text-amber-600 border-amber-200",
-  SENT: "bg-emerald-500/10 text-emerald-600 border-emerald-200",
-  FAILED: "bg-destructive/10 text-destructive border-destructive/20",
+  PENDING:"bg-amber-500/10 text-amber-600 border-amber-200",
+  SENT:"bg-emerald-500/10 text-emerald-600 border-emerald-200",
+  FAILED:"bg-destructive/10 text-destructive border-destructive/20",
 }
 
 const statusIcons: Record<string, any> = {
@@ -54,7 +54,7 @@ export default function TenantWaLogsPage() {
     fetchLogs()
     
     let interval: NodeJS.Timeout
-    if (logs.some(l => l.status === "PENDING")) {
+    if (logs.some(l => l.status ==="PENDING")) {
       interval = setInterval(() => fetchLogs(), 5000)
     }
     return () => clearInterval(interval)
@@ -102,9 +102,8 @@ export default function TenantWaLogsPage() {
                     <span className="font-bold text-sm bg-muted/50 px-2 py-1 rounded-md border text-foreground">
                       {log.targetNumber}
                     </span>
-                    <span className={cn(
-                      "flex items-center gap-1.5 text-[11px] font-bold uppercase rounded-full px-2.5 py-1 border shadow-sm", 
-                      statusColors[log.status] || "bg-muted text-muted-foreground"
+                    <span className={cn("flex items-center gap-1.5 text-[11px] font-bold uppercase rounded-full px-2.5 py-1 border shadow-sm", 
+                      statusColors[log.status] ||"bg-muted text-muted-foreground"
                     )}>
                       {statusIcons[log.status]}
                       {log.status}
@@ -124,12 +123,12 @@ export default function TenantWaLogsPage() {
                   <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground font-medium flex-wrap">
                     <span className="flex items-center gap-1.5" title="Waktu Masuk Antrean">
                       <Clock className="h-3.5 w-3.5" />
-                      Queued: {new Date(log.createdAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                      Queued: {new Date(log.createdAt).toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit", second:"2-digit" })}
                     </span>
                     {log.sentAt && (
                       <span className="flex items-center gap-1.5 text-primary" title="Waktu Dieksekusi">
                         <CheckCircle2 className="h-3.5 w-3.5" />
-                        Executed: {new Date(log.sentAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                        Executed: {new Date(log.sentAt).toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit", second:"2-digit" })}
                       </span>
                     )}
                   </div>

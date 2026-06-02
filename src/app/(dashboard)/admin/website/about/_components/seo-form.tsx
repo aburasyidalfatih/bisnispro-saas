@@ -1,9 +1,9 @@
-import React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Globe } from "lucide-react"
-import { AboutFormState } from "./types"
+import React from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Globe } from"lucide-react"
+import { AboutFormState } from"./types"
 
 interface SeoFormProps {
   form: AboutFormState
@@ -31,7 +31,7 @@ export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label>Meta Title</Label>
-              <button type="button" onClick={() => setForm(p => ({ ...p, seoTitle: p.name ? `Website Resmi ${p.name}` : "" }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</button>
+              <button type="button" onClick={() => setForm(p => ({ ...p, seoTitle: p.name ? `Website Resmi ${p.name}` :"" }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</button>
             </div>
             <Input value={form.seoTitle} onChange={e => setForm(p => ({ ...p, seoTitle: e.target.value }))}
               placeholder="Judul halaman untuk Google (maks. 70 karakter)" className="rounded-xl" maxLength={70} />
@@ -40,7 +40,7 @@ export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label>Meta Description</Label>
-              <button type="button" onClick={() => setForm(p => ({ ...p, seoDesc: p.description || (p.name ? `Selamat datang di website resmi ${p.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` : "") }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</button>
+              <button type="button" onClick={() => setForm(p => ({ ...p, seoDesc: p.description || (p.name ? `Selamat datang di website resmi ${p.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` :"") }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</button>
             </div>
             <textarea value={form.seoDesc} onChange={e => setForm(p => ({ ...p, seoDesc: e.target.value }))}
               placeholder="Deskripsi singkat untuk hasil pencarian Google (maks. 160 karakter)"
@@ -54,15 +54,15 @@ export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
           <div className="rounded-xl border bg-muted/20 p-4">
             <p className="text-xs text-muted-foreground mb-2 font-medium">Preview di Google:</p>
             <p className="text-blue-600 text-base font-medium leading-tight">
-              {form.seoTitle || form.name || "Nama Website"}
+              {form.seoTitle || form.name ||"Nama Website"}
             </p>
             <p className="text-green-700 text-xs mt-0.5">
               {domainStatus?.domain 
                 ? `https://${domainStatus.domain}` 
-                : `https://${slug || "tenant"}.${typeof window !== "undefined" && window.location.hostname.includes(".") ? window.location.hostname.split(".").slice(-2).join(".") : "schoolpro.id"}`}
+                : `https://${slug ||"tenant"}.${typeof window !=="undefined" && window.location.hostname.includes(".") ? window.location.hostname.split(".").slice(-2).join(".") :"schoolpro.id"}`}
             </p>
             <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-              {form.seoDesc || form.description || "Deskripsi website Anda akan muncul di sini..."}
+              {form.seoDesc || form.description ||"Deskripsi website Anda akan muncul di sini..."}
             </p>
           </div>
         )}

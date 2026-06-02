@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect, useState, use } from "react"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, CheckCircle, XCircle, FileText, Wallet, User, Phone, Mail, ExternalLink } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/hooks/use-toast"
-import Link from "next/link"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
-import confetti from "canvas-confetti"
+import { useEffect, useState, use } from"react"
+import { useSession } from"next-auth/react"
+import { Button } from"@/components/ui/button"
+import { ArrowLeft, CheckCircle, XCircle, FileText, Wallet, User, Phone, Mail, ExternalLink } from"lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Badge } from"@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
+import { useToast } from"@/hooks/use-toast"
+import Link from"next/link"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
+import confetti from"canvas-confetti"
 
 export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -41,14 +41,14 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
   const handleUpdateStatus = async (newStatus: string) => {
     try {
       const res = await fetch(`/api/ppdb/pendaftar/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        method:"PATCH",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ status: newStatus }),
       })
 
       if (res.ok) {
-        toast({ title: "Berhasil", description: `Status diupdate menjadi ${newStatus}` })
-        if (newStatus === "DITERIMA") {
+        toast({ title:"Berhasil", description: `Status diupdate menjadi ${newStatus}` })
+        if (newStatus ==="DITERIMA") {
            confetti({
              particleCount: 150,
              spread: 70,
@@ -64,16 +64,16 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
 
   const handleSync = async () => {
     try {
-      const res = await fetch(`/api/ppdb/pendaftar/${id}/sync`, { method: "POST" })
+      const res = await fetch(`/api/ppdb/pendaftar/${id}/sync`, { method:"POST" })
       const data = await res.json()
       if (res.ok) {
-        toast({ title: "Berhasil", description: data.message || "Data berhasil disinkronisasi." })
+        toast({ title:"Berhasil", description: data.message ||"Data berhasil disinkronisasi." })
         fetchDetail()
       } else {
-        toast({ title: "Gagal", description: data.error || "Gagal sinkronisasi", variant: "destructive" })
+        toast({ title:"Gagal", description: data.error ||"Gagal sinkronisasi", variant:"destructive" })
       }
     } catch (error) {
-      toast({ title: "Error", description: "Terjadi kesalahan sistem", variant: "destructive" })
+      toast({ title:"Error", description:"Terjadi kesalahan sistem", variant:"destructive" })
     }
   }
 
@@ -93,29 +93,28 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
             <div className="flex items-center gap-3">
                <h1 className="text-2xl font-bold tracking-tight">{applicant.namaLengkap}</h1>
                <Badge className={
-                 applicant.status === "DITERIMA" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]" :
-                 applicant.status === "DITOLAK" ? "bg-red-500/10 text-red-600 border-red-500/20" :
-                 "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)] animate-pulse"
+                 applicant.status ==="DITERIMA" ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]" :
+                 applicant.status ==="DITOLAK" ?"bg-red-500/10 text-red-600 border-red-500/20" :"bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)] animate-pulse"
                }>
                  {applicant.status}
                </Badge>
             </div>
-            <p className="text-muted-foreground text-sm">No. Pendaftaran: <span className="font-mono">{applicant.noPendaftaran}</span> • Terdaftar pada {format(new Date(applicant.createdAt), "d MMMM yyyy", { locale: localeId })}</p>
+            <p className="text-muted-foreground text-sm">No. Pendaftaran: <span className="font-mono">{applicant.noPendaftaran}</span> • Terdaftar pada {format(new Date(applicant.createdAt),"d MMMM yyyy", { locale: localeId })}</p>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
-           {applicant.status === "DITERIMA" && (
+           {applicant.status ==="DITERIMA" && (
              <Button className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0" onClick={handleSync}>
                <CheckCircle className="mr-2 h-4 w-4" /> Sinkronisasi ke Siswa
              </Button>
            )}
-           {applicant.status !== "DITERIMA" && applicant.status !== "SINKRONISASI" && (
+           {applicant.status !=="DITERIMA" && applicant.status !=="SINKRONISASI" && (
              <Button className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white border-0" onClick={() => handleUpdateStatus("DITERIMA")}>
                <CheckCircle className="mr-2 h-4 w-4" /> Terima Siswa
              </Button>
            )}
-           {applicant.status !== "DITOLAK" && applicant.status !== "SINKRONISASI" && (
+           {applicant.status !=="DITOLAK" && applicant.status !=="SINKRONISASI" && (
              <Button variant="outline" className="rounded-xl text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleUpdateStatus("DITOLAK")}>
                <XCircle className="mr-2 h-4 w-4" /> Tolak
              </Button>
@@ -221,18 +220,18 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
             <TabsContent value="pembayaran">
                <div className="space-y-4">
                   {applicant.tagihan?.length > 0 ? applicant.tagihan.map((t: any) => {
-                    const isDaftarUlang = t.jenis === "DAFTAR_ULANG"
+                    const isDaftarUlang = t.jenis ==="DAFTAR_ULANG"
                     const items: { nama: string; nominal: number }[] = t.items ?? []
                     return (
                       <Card key={t.id} className="glass border-0 shadow-sm overflow-hidden">
                          <CardHeader className="flex flex-row items-center justify-between pb-2 bg-muted/30">
                             <div className="flex items-center gap-2">
-                               <Wallet className={`h-4 w-4 ${isDaftarUlang ? "text-emerald-500" : "text-primary"}`} />
+                               <Wallet className={`h-4 w-4 ${isDaftarUlang ?"text-emerald-500" :"text-primary"}`} />
                                <CardTitle className="text-sm font-bold uppercase tracking-wider">
-                                 {isDaftarUlang ? "Daftar Ulang" : "Biaya Pendaftaran"}
+                                 {isDaftarUlang ?"Daftar Ulang" :"Biaya Pendaftaran"}
                                </CardTitle>
                             </div>
-                            <Badge className={t.status === "LUNAS" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-red-500/10 text-red-600 border-red-500/20"}>
+                            <Badge className={t.status ==="LUNAS" ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :"bg-red-500/10 text-red-600 border-red-500/20"}>
                                {t.status}
                             </Badge>
                          </CardHeader>
@@ -272,12 +271,12 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
                                          <Wallet className="h-4 w-4 text-primary shrink-0" />
                                          <div>
                                             <p className="font-semibold">Rp {p.nominal.toLocaleString()}</p>
-                                            <p className="text-[10px] text-muted-foreground">{format(new Date(p.createdAt), "d MMM yyyy HH:mm")}</p>
+                                            <p className="text-[10px] text-muted-foreground">{format(new Date(p.createdAt),"d MMM yyyy HH:mm")}</p>
                                          </div>
                                       </div>
                                       <Badge variant="outline" className={cn("text-[10px]",
-                                        p.status === "SUCCESS" ? "text-emerald-600 border-emerald-500/30" :
-                                        p.status === "PENDING" ? "text-amber-600 border-amber-500/30" : ""
+                                        p.status ==="SUCCESS" ?"text-emerald-600 border-emerald-500/30" :
+                                        p.status ==="PENDING" ?"text-amber-600 border-amber-500/30" :""
                                       )}>{p.status}</Badge>
                                    </div>
                                  ))
@@ -306,7 +305,7 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
               </CardHeader>
               <CardContent className="space-y-4">
                  <ContactItem icon={Mail} value={applicant.user?.email} label="Email" />
-                 <ContactItem icon={Phone} value={applicant.user?.phone || "-"} label="Telepon" />
+                 <ContactItem icon={Phone} value={applicant.user?.phone ||"-"} label="Telepon" />
                  <ContactItem icon={User} value={applicant.namaLengkap} label="Nama Akun" />
               </CardContent>
            </Card>
@@ -330,7 +329,7 @@ function DataRow({ label, value }: { label: string, value: string }) {
   return (
     <div className="space-y-1">
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{label}</p>
-      <p className="text-sm font-medium">{value || "-"}</p>
+      <p className="text-sm font-medium">{value ||"-"}</p>
     </div>
   )
 }
@@ -350,5 +349,5 @@ function ContactItem({ icon: Icon, label, value }: { icon: any, label: string, v
 }
 
 function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(" ")
+  return classes.filter(Boolean).join("")
 }

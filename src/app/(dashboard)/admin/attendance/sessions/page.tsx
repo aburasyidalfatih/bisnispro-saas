@@ -1,19 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Badge } from"@/components/ui/badge"
 import {
   CalendarCheck, Plus, Users, CheckCircle, XCircle, Loader2,
   Clock, AlertTriangle, BookOpen, ChevronRight
-} from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
+} from"lucide-react"
+import Link from"next/link"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
 
 export default function AttendanceSessionsPage() {
   const { data: session } = useSession()
@@ -38,12 +38,12 @@ export default function AttendanceSessionsPage() {
   }, [tenant])
 
   const handleCreate = async () => {
-    if (!tenant || !selectedClass) return toast({ title: "Pilih kelas terlebih dahulu", variant: "destructive" })
+    if (!tenant || !selectedClass) return toast({ title:"Pilih kelas terlebih dahulu", variant:"destructive" })
     setCreating(true)
     try {
       const res = await fetch("/api/attendance/sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId: tenant.id,
           classroomId: selectedClass,
@@ -54,14 +54,14 @@ export default function AttendanceSessionsPage() {
       const data = await res.json()
       if (!res.ok && res.status !== 409) throw new Error(data.error)
       if (res.status === 409) {
-        toast({ title: "Sesi sudah ada hari ini", description: "Langsung buka sesi tersebut." })
+        toast({ title:"Sesi sudah ada hari ini", description:"Langsung buka sesi tersebut." })
       } else {
-        toast({ title: "Sesi absensi dibuat!" })
+        toast({ title:"Sesi absensi dibuat!" })
       }
       const sessionId = data.session?.id || data.id
       window.location.href = `/admin/attendance/sessions/${sessionId}`
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     } finally {
       setCreating(false)
     }
@@ -88,7 +88,7 @@ export default function AttendanceSessionsPage() {
         <CardContent className="p-5">
           <p className="font-bold mb-3 flex items-center gap-2">
             <Plus className="h-4 w-4" /> Buka Sesi Absensi Hari Ini
-            <span className="text-muted-foreground font-normal text-sm ml-1">({format(new Date(), "EEEE, d MMMM yyyy", { locale: localeId })})</span>
+            <span className="text-muted-foreground font-normal text-sm ml-1">({format(new Date(),"EEEE, d MMMM yyyy", { locale: localeId })})</span>
           </p>
           <div className="flex gap-3">
             <Select value={selectedClass} onValueChange={setSelectedClass}>
@@ -122,9 +122,9 @@ export default function AttendanceSessionsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
-          { label: "Total Sesi", value: statusCounts.total || 0, icon: CalendarCheck, color: "text-primary bg-primary/10" },
-          { label: "Total Siswa Dicatat", value: statusCounts.students || 0, icon: Users, color: "text-emerald-600 bg-emerald-500/10" },
-          { label: "Pengajuan Izin", value: "—", icon: Clock, color: "text-amber-600 bg-amber-500/10" },
+          { label:"Total Sesi", value: statusCounts.total || 0, icon: CalendarCheck, color:"text-primary bg-primary/10" },
+          { label:"Total Siswa Dicatat", value: statusCounts.students || 0, icon: Users, color:"text-emerald-600 bg-emerald-500/10" },
+          { label:"Pengajuan Izin", value:"—", icon: Clock, color:"text-amber-600 bg-amber-500/10" },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
             <CardContent className="p-4 flex items-center gap-3">
@@ -155,7 +155,7 @@ export default function AttendanceSessionsPage() {
             <table className="w-full text-sm">
               <thead className="bg-muted/40">
                 <tr>
-                  {["Tanggal", "Kelas", "Jenis", "Siswa", "Aksi"].map(h => (
+                  {["Tanggal","Kelas","Jenis","Siswa","Aksi"].map(h => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
                   ))}
                 </tr>
@@ -164,7 +164,7 @@ export default function AttendanceSessionsPage() {
                 {sessions.map((s: any) => (
                   <tr key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
                     <td className="px-4 py-3 font-semibold">
-                      {format(new Date(s.date), "d MMM yyyy", { locale: localeId })}
+                      {format(new Date(s.date),"d MMM yyyy", { locale: localeId })}
                     </td>
                     <td className="px-4 py-3">{s.classroom?.name || <span className="text-muted-foreground">Semua</span>}</td>
                     <td className="px-4 py-3">

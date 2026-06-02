@@ -1,12 +1,12 @@
-import React, { useRef } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Globe, Building2, Upload, ArrowRight, ShieldCheck, ShieldOff } from "lucide-react"
-import Image from "next/image"
-import { normalizeImageUrl, cn } from "@/lib/utils"
-import { AboutFormState } from "./types"
+import React, { useRef } from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Globe, Building2, Upload, ArrowRight, ShieldCheck, ShieldOff } from"lucide-react"
+import Image from"next/image"
+import { normalizeImageUrl, cn } from"@/lib/utils"
+import { AboutFormState } from"./types"
 
 interface IdentityFormProps {
   form: AboutFormState
@@ -57,7 +57,7 @@ export function IdentityForm({
                   <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml" className="hidden" onChange={handleLogoUpload} />
                   <Button type="button" variant="outline" size="sm" className="rounded-xl gap-2 h-9" onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo}>
                     {uploadingLogo ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary border-t-transparent" /> : <Upload className="h-3.5 w-3.5" />}
-                    {uploadingLogo ? "Mengunggah..." : "Upload Logo"}
+                    {uploadingLogo ?"Mengunggah..." :"Upload Logo"}
                   </Button>
                   <p className="text-[11px] text-muted-foreground">PNG, JPG, WebP, SVG. Maks 5MB.</p>
                   <p className="text-[11px] text-primary font-semibold mt-1 bg-primary/10 inline-block px-1.5 py-0.5 rounded">Rekomendasi rasio 1:1</p>
@@ -76,11 +76,11 @@ export function IdentityForm({
                       <>
                         <p className="text-sm font-mono font-medium">{domainStatus.domain}</p>
                         <div className="flex items-center gap-1 mt-0.5">
-                          {domainStatus.status === "verified"
+                          {domainStatus.status ==="verified"
                             ? <ShieldCheck className="h-3 w-3 text-emerald-500" />
                             : <ShieldOff className="h-3 w-3 text-amber-500" />}
-                          <span className={cn("text-xs", domainStatus.status === "verified" ? "text-emerald-600" : "text-amber-600")}>
-                            {domainStatus.status === "verified" ? "Terverifikasi" : "Belum diverifikasi"}
+                          <span className={cn("text-xs", domainStatus.status ==="verified" ?"text-emerald-600" :"text-amber-600")}>
+                            {domainStatus.status ==="verified" ?"Terverifikasi" :"Belum diverifikasi"}
                           </span>
                         </div>
                       </>
@@ -89,7 +89,7 @@ export function IdentityForm({
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
               </button>
-              <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{slug || "—"}</span></p>
+              <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{slug ||"—"}</span></p>
             </div>
           </div>
 
@@ -123,7 +123,7 @@ export function IdentityForm({
         <div className="grid gap-4 sm:grid-cols-2 mt-2">
           <div className="space-y-2">
             <Label>Status Sekolah</Label>
-            <select value={form.settings?.schoolStatus || "SWASTA"}
+            <select value={form.settings?.schoolStatus ||"SWASTA"}
               onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, schoolStatus: e.target.value } }))}
               className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
               <option value="SWASTA">SWASTA</option>
@@ -132,7 +132,7 @@ export function IdentityForm({
           </div>
           <div className="space-y-2">
             <Label>Estimasi Jumlah Siswa Saat Ini</Label>
-            <Input type="number" value={form.settings?.studentCount || ""} 
+            <Input type="number" value={form.settings?.studentCount ||""} 
               onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, studentCount: parseInt(e.target.value) || 0 } }))}
               placeholder="Misal: 500" className="rounded-xl" />
           </div>

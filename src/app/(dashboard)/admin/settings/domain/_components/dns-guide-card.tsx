@@ -1,8 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ShieldCheck, Copy, AlertCircle, RefreshCw } from "lucide-react"
-import { DomainData } from "./types"
-import { StatusBadge } from "./status-badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ShieldCheck, Copy, AlertCircle, RefreshCw } from"lucide-react"
+import { DomainData } from"./types"
+import { StatusBadge } from"./status-badge"
 
 interface DnsGuideCardProps {
   data: DomainData | null
@@ -73,7 +73,7 @@ export function DnsGuideCard({
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">@</code>
                       <button
-                        onClick={() => copyToClipboard("@", "Name")}
+                        onClick={() => copyToClipboard("@","Name")}
                         className="text-muted-foreground hover:text-primary"
                       >
                         <Copy className="h-3 w-3" />
@@ -83,13 +83,12 @@ export function DnsGuideCard({
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">
-                        {rootDomain || "schoolpro.id"}
+                        {rootDomain ||"schoolpro.id"}
                       </code>
                       <button
                         onClick={() =>
                           copyToClipboard(
-                            rootDomain || "schoolpro.id",
-                            "CNAME value"
+                            rootDomain ||"schoolpro.id","CNAME value"
                           )
                         }
                         className="text-muted-foreground hover:text-primary"
@@ -104,7 +103,7 @@ export function DnsGuideCard({
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
-            Jika domain root tidak mendukung CNAME, gunakan{" "}
+            Jika domain root tidak mendukung CNAME, gunakan{""}
             <strong>ALIAS</strong> atau <strong>ANAME</strong> record (tergantung provider DNS Anda).
           </p>
         </div>
@@ -136,7 +135,7 @@ export function DnsGuideCard({
                       <code className="text-xs font-mono">_smp-verify</code>
                       <button
                         onClick={() =>
-                          copyToClipboard("_smp-verify", "TXT Name")
+                          copyToClipboard("_smp-verify","TXT Name")
                         }
                         className="text-muted-foreground hover:text-primary"
                       >
@@ -148,7 +147,7 @@ export function DnsGuideCard({
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono break-all">{customDomain.verifyToken}</code>
                       <button
-                        onClick={() => copyToClipboard(customDomain.verifyToken, "TXT Value")}
+                        onClick={() => copyToClipboard(customDomain.verifyToken,"TXT Value")}
                         className="text-muted-foreground hover:text-primary shrink-0"
                       >
                         <Copy className="h-3 w-3" />
@@ -162,7 +161,7 @@ export function DnsGuideCard({
         </div>
 
         {/* Pesan error jika gagal */}
-        {customDomain.status === "failed" && customDomain.failReason && (
+        {customDomain.status ==="failed" && customDomain.failReason && (
           <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
             <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
             <div className="space-y-1">
@@ -183,13 +182,13 @@ export function DnsGuideCard({
                 Domain terverifikasi
               </p>
               <p className="text-xs text-muted-foreground">
-                Diverifikasi pada{" "}
+                Diverifikasi pada{""}
                 {new Date(customDomain.verifiedAt).toLocaleDateString("id-ID", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
+                  day:"numeric",
+                  month:"long",
+                  year:"numeric",
+                  hour:"2-digit",
+                  minute:"2-digit",
                 })}
               </p>
             </div>
@@ -219,7 +218,7 @@ export function DnsGuideCard({
               ) : (
                 <RefreshCw className="h-4 w-4" />
               )}
-              {verifying ? "Memeriksa DNS..." : "Verifikasi Sekarang"}
+              {verifying ?"Memeriksa DNS..." :"Verifikasi Sekarang"}
             </Button>
           </div>
         )}

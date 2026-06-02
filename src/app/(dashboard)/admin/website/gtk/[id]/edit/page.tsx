@@ -1,17 +1,17 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, Users, Sparkles, Wand2, Loader2 as Loader2Icon } from "lucide-react"
-import Link from "next/link"
-import { useRouter, useParams } from "next/navigation"
-import { getStaffById, updateStaff } from "@/features/staff/actions/staff.action"
+import { useState, useRef, useEffect } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, Users, Sparkles, Wand2, Loader2 as Loader2Icon } from"lucide-react"
+import Link from"next/link"
+import { useRouter, useParams } from"next/navigation"
+import { getStaffById, updateStaff } from"@/features/staff/actions/staff.action"
 import {
   Dialog,
   DialogContent,
@@ -19,8 +19,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { normalizeImageUrl } from "@/lib/utils"
+} from"@/components/ui/dialog"
+import { normalizeImageUrl } from"@/lib/utils"
 
 
 export default function EditStaffPage() {
@@ -38,16 +38,16 @@ export default function EditStaffPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    name: "",
-    role: "",
-    bio: "",
+    name:"",
+    role:"",
+    bio:"",
     sortOrder: 0,
-    imageUrl: "",
-    email: "",
-    phone: "",
-    subject: "",
-    education: "",
-    password: ""
+    imageUrl:"",
+    email:"",
+    phone:"",
+    subject:"",
+    education:"",
+    password:""
   })
 
   // AI State
@@ -62,27 +62,27 @@ export default function EditStaffPage() {
       getStaffById(id, tenantId)
         .then(d => {
           if (!d) {
-            toast({ title: "Gagal", description: "Data GTK tidak ditemukan", variant: "destructive" })
+            toast({ title:"Gagal", description:"Data GTK tidak ditemukan", variant:"destructive" })
             router.push("/admin/website/gtk")
           } else {
             setFormData({
-              name: d.name || "",
-              role: d.role || "",
-              bio: d.bio || "",
+              name: d.name ||"",
+              role: d.role ||"",
+              bio: d.bio ||"",
               sortOrder: d.sortOrder || 0,
-              imageUrl: d.imageUrl || "",
-              email: (d as any).email || "",
-              phone: (d as any).phone || "",
-              subject: (d as any).subject || "",
-              education: (d as any).education || "",
-              password: ""
+              imageUrl: d.imageUrl ||"",
+              email: (d as any).email ||"",
+              phone: (d as any).phone ||"",
+              subject: (d as any).subject ||"",
+              education: (d as any).education ||"",
+              password:""
             })
             if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl) || null)
           }
           setLoading(false)
         })
         .catch((err: any) => {
-          toast({ title: "Error", description: err.message, variant: "destructive" })
+          toast({ title:"Error", description: err.message, variant:"destructive" })
           setLoading(false)
         })
     }
@@ -92,7 +92,7 @@ export default function EditStaffPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 2 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 2MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 2MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -103,7 +103,7 @@ export default function EditStaffPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!tenantId || !formData.name || !formData.role) {
-      toast({ title: "Lengkapi nama dan jabatan", variant: "destructive" })
+      toast({ title:"Lengkapi nama dan jabatan", variant:"destructive" })
       return
     }
 
@@ -117,13 +117,13 @@ export default function EditStaffPage() {
         const fd = new FormData()
         fd.append("file", file)
         fd.append("tenantId", tenantId)
-        fd.append("subDir", "staff")
+        fd.append("subDir","staff")
         
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+        const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
         const uploadData = await uploadRes.json()
         
         if (!uploadRes.ok || !uploadData.url) {
-          throw new Error(uploadData.error || "Gagal mengunggah foto")
+          throw new Error(uploadData.error ||"Gagal mengunggah foto")
         }
         
         finalImageUrl = uploadData.url
@@ -147,10 +147,10 @@ export default function EditStaffPage() {
         throw new Error(result.error)
       }
 
-      toast({ title: "Data GTK berhasil diperbarui!" })
+      toast({ title:"Data GTK berhasil diperbarui!" })
       router.push("/admin/website/gtk")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -158,22 +158,22 @@ export default function EditStaffPage() {
 
   const handleGenerateAI = async () => {
     if (!formData.name || !formData.role) {
-      toast({ title: "Data Belum Lengkap", description: "Silakan isi Nama Lengkap dan Jabatan/Pelajaran terlebih dahulu.", variant: "destructive" })
+      toast({ title:"Data Belum Lengkap", description:"Silakan isi Nama Lengkap dan Jabatan/Pelajaran terlebih dahulu.", variant:"destructive" })
       return
     }
     if (!aiInputText.trim()) {
-      toast({ title: "Input kosong", description: "Silakan masukkan informasi tambahan tentang guru ini.", variant: "destructive" })
+      toast({ title:"Input kosong", description:"Silakan masukkan informasi tambahan tentang guru ini.", variant:"destructive" })
       return
     }
 
     setAiLoading(true)
     try {
       const res = await fetch("/api/tenant/ai/generate-content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ 
           tenantId, 
-          promptType: "teacher-bio", 
+          promptType:"teacher-bio", 
           inputs: { text: aiInputText, name: formData.name, role: formData.role } 
         })
       })
@@ -182,12 +182,12 @@ export default function EditStaffPage() {
         setFormData(p => ({ ...p, bio: d.data.result }))
         setAiModalOpen(false)
         setAiInputText("")
-        toast({ title: "Berhasil", description: "Bio berhasil di-generate AI." })
+        toast({ title:"Berhasil", description:"Bio berhasil di-generate AI." })
       } else {
-        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+        toast({ title:"Gagal", description: d.error ||"Terjadi kesalahan", variant:"destructive" })
       }
     } catch (err) {
-      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+      toast({ title:"Error", description:"Gagal menghubungi server AI", variant:"destructive" })
     } finally {
       setAiLoading(false)
     }
@@ -381,7 +381,7 @@ export default function EditStaffPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Perubahan</>
@@ -437,7 +437,7 @@ export default function EditStaffPage() {
               className="rounded-xl gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white border-0"
             >
               {aiLoading ? <Loader2Icon className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {aiLoading ? "Memproses..." : "Generate Bio"}
+              {aiLoading ?"Memproses..." :"Generate Bio"}
             </Button>
           </DialogFooter>
         </DialogContent>

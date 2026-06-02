@@ -1,15 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { toast } from "@/hooks/use-toast"
-import { FileText, AlertCircle, ExternalLink, ShieldCheck } from "lucide-react"
-import Link from "next/link"
+import { useEffect, useState } from"react"
+import { Button } from"@/components/ui/button"
+import { toast } from"@/hooks/use-toast"
+import { FileText, AlertCircle, ExternalLink, ShieldCheck } from"lucide-react"
+import Link from"next/link"
 
-import { TenantBilling, PlanInfo, InvoiceData } from "./_components/types"
-import { PlanCards } from "./_components/plan-cards"
-import { CheckoutDialog } from "./_components/checkout-dialog"
-import { InvoiceDialog } from "./_components/invoice-dialog"
+import { TenantBilling, PlanInfo, InvoiceData } from"./_components/types"
+import { PlanCards } from"./_components/plan-cards"
+import { CheckoutDialog } from"./_components/checkout-dialog"
+import { InvoiceDialog } from"./_components/invoice-dialog"
 
 export default function BillingPage() {
   const [loading, setLoading] = useState(true)
@@ -45,11 +45,11 @@ export default function BillingPage() {
           const hours = Math.floor(diff / (1000 * 60 * 60))
           const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
           const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-          let timeString = ""
+          let timeString =""
           if (hours > 0) timeString += `${hours} jam `
           if (minutes > 0 || hours > 0) timeString += `${minutes} menit `
           timeString += `${seconds} detik`
-          setDiscountTimeLeft(timeString + " Lagi")
+          setDiscountTimeLeft(timeString +" Lagi")
         }
       }
       updateTimer()
@@ -64,24 +64,24 @@ export default function BillingPage() {
     const fetchAll = async () => {
       try {
         const [billingRes, plansRes] = await Promise.all([
-          fetch("/api/tenant/billing", { cache: "no-store" }),
-          fetch("/api/plans", { cache: "no-store" }),
+          fetch("/api/tenant/billing", { cache:"no-store" }),
+          fetch("/api/plans", { cache:"no-store" }),
         ])
         const billingData = await billingRes.json()
         const plansData: PlanInfo[] = await plansRes.json()
         setBilling(billingData)
         setStudentCount(billingData?.pricing?.MIN_STUDENTS || 50)
-        const proData = plansData.find((p) => p.slug === "pro") || null
-        const liteData = plansData.find((p) => p.slug === "lite") || null
+        const proData = plansData.find((p) => p.slug ==="pro") || null
+        const liteData = plansData.find((p) => p.slug ==="lite") || null
         setProPlan(proData)
         setLitePlan(liteData)
-        setFreePlan(plansData.find((p) => p.slug === "free") || null)
+        setFreePlan(plansData.find((p) => p.slug ==="free") || null)
         
         // Ensure default selected plan is valid
-        if (billingData?.plan === "lite") {
+        if (billingData?.plan ==="lite") {
           // Lite tenant: default perpanjang Lite
           setSelectedPlanSlug("lite")
-        } else if (billingData?.plan !== "pro") {
+        } else if (billingData?.plan !=="pro") {
           // Free tenant: default ke Pro, fallback ke Lite
           if (proData) {
             setSelectedPlanSlug("pro")
@@ -92,7 +92,7 @@ export default function BillingPage() {
           }
         }
       } catch {
-        toast({ title: "Error", description: "Gagal memuat data.", variant: "destructive" })
+        toast({ title:"Error", description:"Gagal memuat data.", variant:"destructive" })
       } finally {
         setLoading(false)
       }
@@ -101,8 +101,8 @@ export default function BillingPage() {
   }, [])
 
   const pricing = billing?.pricing || { PRICE_PER_STUDENT: 30000, MIN_STUDENTS: 50 }
-  const isPro = billing?.plan === "pro"
-  const isLite = billing?.plan === "lite"
+  const isPro = billing?.plan ==="pro"
+  const isLite = billing?.plan ==="lite"
   const minStudents = isPro ? 1 : pricing.MIN_STUDENTS
 
   // Harga efektif: PRO aktif → harga kontrak (locked), lainnya → harga terbaru
@@ -121,8 +121,8 @@ export default function BillingPage() {
     proratedRatio = Math.min(daysRemaining / 365, 1)
   }
 
-  const selectedPlanInfo = selectedPlanSlug === "pro" ? proPlan : selectedPlanSlug === "lite" ? litePlan : null
-  const baseSubTotal = selectedPlanSlug === "pro" ? studentCount * effectivePricePerStudent : (litePlan?.price || 0)
+  const selectedPlanInfo = selectedPlanSlug ==="pro" ? proPlan : selectedPlanSlug ==="lite" ? litePlan : null
+  const baseSubTotal = selectedPlanSlug ==="pro" ? studentCount * effectivePricePerStudent : (litePlan?.price || 0)
   const subTotal = baseSubTotal * proratedRatio
   const discountAmount = appliedDiscount ? subTotal * (appliedDiscount.percentage / 100) : 0
   const totalCost = subTotal - discountAmount
@@ -132,20 +132,20 @@ export default function BillingPage() {
     setValidatingDiscount(true)
     try {
       const res = await fetch("/api/tenant/billing/validate-discount", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ code: discountCodeInput }),
       })
       const result = await res.json()
-      if (!res.ok) throw new Error(result.error || "Kode tidak valid")
+      if (!res.ok) throw new Error(result.error ||"Kode tidak valid")
       setAppliedDiscount({ code: result.code, percentage: result.percentage, expiresAt: result.expiresAt, bonusMonths: result.bonusMonths })
       if (!isAuto) {
-        toast({ title: "Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
+        toast({ title:"Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
       }
     } catch (err: any) {
       setAppliedDiscount(null)
       if (!isAuto) {
-        toast({ title: "Gagal", description: err.message, variant: "destructive" })
+        toast({ title:"Gagal", description: err.message, variant:"destructive" })
       }
     } finally {
       setValidatingDiscount(false)
@@ -170,24 +170,24 @@ export default function BillingPage() {
   }
 
   const handleCheckout = async () => {
-    if (selectedPlanSlug === "pro" && studentCount < minStudents) {
-      toast({ title: "Gagal", description: `Minimal ${minStudents} siswa`, variant: "destructive" })
+    if (selectedPlanSlug ==="pro" && studentCount < minStudents) {
+      toast({ title:"Gagal", description: `Minimal ${minStudents} siswa`, variant:"destructive" })
       return
     }
     setCheckingOut(true)
-    const endpoint = isPro ? "/api/tenant/billing/addon" : "/api/tenant/billing/checkout"
+    const endpoint = isPro ?"/api/tenant/billing/addon" :"/api/tenant/billing/checkout"
     try {
       const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentCount: selectedPlanSlug === "pro" ? studentCount : 0, planSlug: selectedPlanSlug, discountCode: appliedDiscount?.code }),
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
+        body: JSON.stringify({ studentCount: selectedPlanSlug ==="pro" ? studentCount : 0, planSlug: selectedPlanSlug, discountCode: appliedDiscount?.code }),
       })
       const result = await res.json()
-      if (!res.ok) throw new Error(result.error || "Gagal membuat invoice")
+      if (!res.ok) throw new Error(result.error ||"Gagal membuat invoice")
       setInvoice(result)
       setShowInvoice(true)
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" })
+      toast({ title:"Error", description: err.message, variant:"destructive" })
     } finally {
       setCheckingOut(false)
     }

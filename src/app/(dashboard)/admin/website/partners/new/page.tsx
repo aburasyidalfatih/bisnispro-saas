@@ -1,17 +1,17 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, ImageIcon } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { createPartnership } from "@/features/partnership/actions/partnership.action"
+import { useState, useRef } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, ImageIcon } from"lucide-react"
+import Link from"next/link"
+import { useRouter } from"next/navigation"
+import { createPartnership } from"@/features/partnership/actions/partnership.action"
 
 export default function NewPartnershipPage() {
   const router = useRouter()
@@ -24,8 +24,8 @@ export default function NewPartnershipPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    name: "",
-    websiteUrl: "",
+    name:"",
+    websiteUrl:"",
     sortOrder: 0,
     isActive: true,
   })
@@ -36,7 +36,7 @@ export default function NewPartnershipPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 2 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 2MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 2MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -47,12 +47,12 @@ export default function NewPartnershipPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!tenantId || !file) {
-      toast({ title: "Logo wajib diunggah", variant: "destructive" })
+      toast({ title:"Logo wajib diunggah", variant:"destructive" })
       return
     }
 
     if (!formData.name) {
-      toast({ title: "Nama lembaga wajib diisi", variant: "destructive" })
+      toast({ title:"Nama lembaga wajib diisi", variant:"destructive" })
       return
     }
 
@@ -64,13 +64,13 @@ export default function NewPartnershipPage() {
       const fd = new FormData()
       fd.append("file", file)
       fd.append("tenantId", tenantId)
-      fd.append("subDir", "partners")
+      fd.append("subDir","partners")
       
-      const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+      const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
       const uploadData = await uploadRes.json()
       
       if (!uploadRes.ok || !uploadData.url) {
-        throw new Error(uploadData.error || "Gagal mengunggah logo")
+        throw new Error(uploadData.error ||"Gagal mengunggah logo")
       }
       
       const imageUrl = uploadData.url
@@ -82,10 +82,10 @@ export default function NewPartnershipPage() {
         imageUrl: imageUrl,
       })
 
-      toast({ title: "Kerjasama berhasil ditambahkan!" })
+      toast({ title:"Kerjasama berhasil ditambahkan!" })
       router.push("/admin/website/partners")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -203,7 +203,7 @@ export default function NewPartnershipPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Data</>

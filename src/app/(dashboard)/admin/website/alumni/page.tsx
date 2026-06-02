@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, GraduationCap, Quote, User, GripVertical, Eye } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import { getAlumni, deleteAlumni, updateAlumniOrder } from "@/features/alumni/actions/alumni.action"
-import { cn, normalizeImageUrl } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, GraduationCap, Quote, User, GripVertical, Eye } from"lucide-react"
+import Link from"next/link"
+import Image from"next/image"
+import { getAlumni, deleteAlumni, updateAlumniOrder } from"@/features/alumni/actions/alumni.action"
+import { cn, normalizeImageUrl } from"@/lib/utils"
 
 interface Alumni {
   id: string
@@ -38,7 +38,7 @@ export default function AlumniPage() {
       const d = await getAlumni(tenantId)
       setAlumniList(Array.isArray(d) ? d : [])
     } catch (err: any) {
-      toast({ title: "Gagal memuat data", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal memuat data", description: err.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -54,22 +54,22 @@ export default function AlumniPage() {
     if (!tenantId) return
     try {
       await deleteAlumni(id, tenantId)
-      toast({ title: "Data alumni dihapus" })
+      toast({ title:"Data alumni dihapus" })
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDragIndex(index)
-    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.effectAllowed ="move"
   }
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     setDragOver(index)
-    e.dataTransfer.dropEffect = "move"
+    e.dataTransfer.dropEffect ="move"
   }
 
   const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
@@ -87,19 +87,19 @@ export default function AlumniPage() {
     if (tenantId) {
       try {
         await updateAlumniOrder(tenantId, newArr.map(a => a.id))
-        toast({ title: "Urutan berhasil disimpan" })
+        toast({ title:"Urutan berhasil disimpan" })
       } catch (err: any) {
-        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+        toast({ title:"Gagal menyimpan urutan", description: err.message, variant:"destructive" })
       }
     }
   }
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "KULIAH": return "Kuliah"
-      case "KERJA": return "Bekerja"
-      case "WIRAUSAHA": return "Wirausaha"
-      case "MENCARI_KERJA": return "Mencari Kerja"
+      case"KULIAH": return"Kuliah"
+      case"KERJA": return"Bekerja"
+      case"WIRAUSAHA": return"Wirausaha"
+      case"MENCARI_KERJA": return"Mencari Kerja"
       default: return status
     }
   }
@@ -148,10 +148,9 @@ export default function AlumniPage() {
                   onDragOver={e => handleDragOver(e, i)}
                   onDrop={e => handleDrop(e, i)}
                   onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
-                  className={cn(
-                    "overflow-hidden border group relative hover:shadow-md transition-all cursor-grab active:cursor-grabbing",
-                    dragOver === i && "ring-2 ring-primary scale-[1.02]",
-                    dragIndex === i && "opacity-50"
+                  className={cn("overflow-hidden border group relative hover:shadow-md transition-all cursor-grab active:cursor-grabbing",
+                    dragOver === i &&"ring-2 ring-primary scale-[1.02]",
+                    dragIndex === i &&"opacity-50"
                   )}>
                   <div className="p-4 flex gap-4">
                     <div className="flex items-center mr-1 opacity-0 group-hover:opacity-100 transition-opacity">

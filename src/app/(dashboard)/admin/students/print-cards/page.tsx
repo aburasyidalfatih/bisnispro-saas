@@ -1,11 +1,11 @@
-import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import { redirect } from "next/navigation"
-import Link from "next/link"
-import { Building, Filter, Printer, ArrowLeft, ShieldCheck, Wallet } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import QRCodeClient from "@/components/ui/qr-code"
-import { PrintButton } from "./_components/print-button"
+import { auth } from"@/lib/auth"
+import { db } from"@/lib/db"
+import { redirect } from"next/navigation"
+import Link from"next/link"
+import { Building, Filter, Printer, ArrowLeft, ShieldCheck, Wallet } from"lucide-react"
+import { Button } from"@/components/ui/button"
+import QRCodeClient from"@/components/ui/qr-code"
+import { PrintButton } from"./_components/print-button"
 
 export default async function PrintCardsPage({
   searchParams,
@@ -24,15 +24,15 @@ export default async function PrintCardsPage({
 
   const classrooms = await db.classroom.findMany({
     where: { tenantId },
-    orderBy: { name: "asc" }
+    orderBy: { name:"asc" }
   })
 
   let students: any[] = []
   if (classroomId) {
     students = await db.student.findMany({
-      where: { tenantId, classroomId: classroomId === "all" ? undefined : classroomId },
+      where: { tenantId, classroomId: classroomId ==="all" ? undefined : classroomId },
       include: { classroom: true, walletAccount: true },
-      orderBy: { name: "asc" }
+      orderBy: { name:"asc" }
     })
   }
 
@@ -54,7 +54,7 @@ export default async function PrintCardsPage({
            <form className="flex gap-3 w-full sm:w-auto">
              <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-muted-foreground" />
-                <select name="classroomId" defaultValue={classroomId || ""} className="h-10 px-3 rounded-lg border text-sm focus:outline-none focus:ring-1 focus:ring-primary w-full sm:w-48 bg-background">
+                <select name="classroomId" defaultValue={classroomId ||""} className="h-10 px-3 rounded-lg border text-sm focus:outline-none focus:ring-1 focus:ring-primary w-full sm:w-48 bg-background">
                    <option value="" disabled>-- Pilih Kelas --</option>
                    <option value="all">Semua Siswa</option>
                    {classrooms.map(c => (
@@ -98,12 +98,12 @@ export default async function PrintCardsPage({
                       <div className="flex-1 min-w-0">
                          <p className="text-sm font-black uppercase leading-none mb-1 line-clamp-2">{student.name}</p>
                          <div className="space-y-0.5 mt-2">
-                            <p className="text-[9px] font-mono text-gray-500">NIS: <span className="font-bold text-black">{student.nis || "-"}</span></p>
-                            <p className="text-[9px] font-mono text-gray-500">Kelas: <span className="font-bold text-black">{student.classroom?.name || "-"}</span></p>
+                            <p className="text-[9px] font-mono text-gray-500">NIS: <span className="font-bold text-black">{student.nis ||"-"}</span></p>
+                            <p className="text-[9px] font-mono text-gray-500">Kelas: <span className="font-bold text-black">{student.classroom?.name ||"-"}</span></p>
                             <p className="text-[9px] font-mono text-gray-500 flex items-center gap-1 mt-1">
                                <Wallet className="h-2.5 w-2.5 text-emerald-600" />
-                               <span className={student.walletAccount ? "text-emerald-700 font-medium" : "text-gray-400"}>
-                                 {student.walletAccount ? "Wallet Aktif" : "Non-Wallet"}
+                               <span className={student.walletAccount ?"text-emerald-700 font-medium" :"text-gray-400"}>
+                                 {student.walletAccount ?"Wallet Aktif" :"Non-Wallet"}
                                </span>
                             </p>
                          </div>

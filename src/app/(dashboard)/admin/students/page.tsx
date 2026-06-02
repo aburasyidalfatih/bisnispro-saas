@@ -1,25 +1,25 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Badge } from"@/components/ui/badge"
+import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import {
   GraduationCap, Search, Filter, Plus, Loader2,
   Wallet, BookOpen, MoreHorizontal, UserCheck, ChevronRight, Printer, Download, Trash2
-} from "lucide-react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
+} from"lucide-react"
+import Link from"next/link"
+import { cn } from"@/lib/utils"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 
-import * as XLSX from "xlsx"
+import * as XLSX from"xlsx"
 
 export default function StudentsPage() {
   const { data: session } = useSession()
@@ -44,28 +44,28 @@ export default function StudentsPage() {
     const fd = new FormData(e.currentTarget)
     try {
       const res = await fetch("/api/students", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId: tenant.id,
           name: fd.get("name"),
           email: fd.get("email"),
           password: fd.get("password"),
           nis: fd.get("nis"),
-          gender: fd.get("gender") || "L",
-          classroomId: fd.get("classroomId") !== "none" ? fd.get("classroomId") : undefined
+          gender: fd.get("gender") ||"L",
+          classroomId: fd.get("classroomId") !=="none" ? fd.get("classroomId") : undefined
         }),
       })
       const data = await res.json()
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Siswa berhasil ditambahkan." })
+        toast({ title:"Berhasil", description:"Siswa berhasil ditambahkan." })
         setShowAdd(false)
         fetchStudents()
       } else {
-        toast({ title: "Gagal", description: data.error || "Terjadi kesalahan", variant: "destructive" })
+        toast({ title:"Gagal", description: data.error ||"Terjadi kesalahan", variant:"destructive" })
       }
     } catch {
-      toast({ title: "Gagal", description: "Tidak dapat menghubungi server", variant: "destructive" })
+      toast({ title:"Gagal", description:"Tidak dapat menghubungi server", variant:"destructive" })
     } finally {
       setAddLoading(false)
     }
@@ -77,10 +77,10 @@ export default function StudentsPage() {
     try {
       const params = new URLSearchParams({
         tenantId: tenant.id,
-        take: "20",
+        take:"20",
         page: String(page),
         ...(search ? { search } : {}),
-        ...(classFilter !== "all" ? { classroomId: classFilter } : {}),
+        ...(classFilter !=="all" ? { classroomId: classFilter } : {}),
       })
       const res = await fetch(`/api/students?${params}`)
       const data = await res.json()
@@ -110,16 +110,16 @@ export default function StudentsPage() {
     
     try {
       const res = await fetch(`/api/students/${studentId}?tenantId=${tenant.id}`, {
-        method: "DELETE",
+        method:"DELETE",
       })
       if (!res.ok) {
         const errorData = await res.json()
-        throw new Error(errorData.error || "Gagal menghapus siswa")
+        throw new Error(errorData.error ||"Gagal menghapus siswa")
       }
-      toast({ title: "Berhasil", description: `Data siswa ${studentName} telah dihapus permanen.` })
+      toast({ title:"Berhasil", description: `Data siswa ${studentName} telah dihapus permanen.` })
       fetchStudents()
     } catch (err: any) {
-      toast({ title: "Gagal Menghapus", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal Menghapus", description: err.message, variant:"destructive" })
     }
   }
 
@@ -130,32 +130,25 @@ export default function StudentsPage() {
       // Fetch ALL students for export without pagination
       const params = new URLSearchParams({
         tenantId: tenant.id,
-        take: "99999", // get all
+        take:"99999", // get all
         ...(search ? { search } : {}),
-        ...(classFilter !== "all" ? { classroomId: classFilter } : {}),
+        ...(classFilter !=="all" ? { classroomId: classFilter } : {}),
       })
       const res = await fetch(`/api/students?${params}`)
       const json = await res.json()
       const allData = json.data || []
       
-      const formattedData = allData.map((s: any) => ({
-        "NIS": s.nis || "",
-        "NISN": s.nisn || "",
-        "Nama Lengkap": s.name,
-        "Gender": s.gender === "L" ? "Laki-laki" : s.gender === "P" ? "Perempuan" : "-",
-        "Kelas": s.classroom?.name || "-",
-        "Status": s.isActive ? "Aktif" : "Nonaktif",
-        "Saldo Tabungan (Rp)": s.walletAccount?.balance || 0,
+      const formattedData = allData.map((s: any) => ({"NIS": s.nis ||"","NISN": s.nisn ||"","Nama Lengkap": s.name,"Gender": s.gender ==="L" ?"Laki-laki" : s.gender ==="P" ?"Perempuan" :"-","Kelas": s.classroom?.name ||"-","Status": s.isActive ?"Aktif" :"Nonaktif","Saldo Tabungan (Rp)": s.walletAccount?.balance || 0,
       }))
       
       const worksheet = XLSX.utils.json_to_sheet(formattedData)
       const workbook = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Data Siswa")
+      XLSX.utils.book_append_sheet(workbook, worksheet,"Data Siswa")
       
       XLSX.writeFile(workbook, `Data_Siswa_${tenant.name.replace(/\s+/g, '_')}_${format(new Date(), 'yyyyMMdd')}.xlsx`)
-      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+      toast({ title:"Berhasil", description:"File Excel berhasil diunduh" })
     } catch (e: any) {
-      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal Ekspor", description: e.message, variant:"destructive" })
     } finally {
       setExporting(false)
     }
@@ -199,10 +192,10 @@ export default function StudentsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Siswa", value: meta.total || totalStudents, icon: GraduationCap, color: "text-primary bg-primary/10" },
-          { label: "Punya Wallet", value: withWallet, icon: Wallet, color: "text-indigo-600 bg-indigo-500/10" },
-          { label: "Total Saldo", value: `Rp ${totalBalance.toLocaleString("id-ID")}`, icon: Wallet, color: "text-emerald-600 bg-emerald-500/10" },
-          { label: "Jumlah Kelas", value: classrooms.length, icon: BookOpen, color: "text-amber-600 bg-amber-500/10" },
+          { label:"Total Siswa", value: meta.total || totalStudents, icon: GraduationCap, color:"text-primary bg-primary/10" },
+          { label:"Punya Wallet", value: withWallet, icon: Wallet, color:"text-indigo-600 bg-indigo-500/10" },
+          { label:"Total Saldo", value: `Rp ${totalBalance.toLocaleString("id-ID")}`, icon: Wallet, color:"text-emerald-600 bg-emerald-500/10" },
+          { label:"Jumlah Kelas", value: classrooms.length, icon: BookOpen, color:"text-amber-600 bg-amber-500/10" },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
             <CardContent className="p-4 flex items-center gap-3">
@@ -268,7 +261,7 @@ export default function StudentsPage() {
             </div>
             <div className="flex items-end gap-2 lg:col-span-3">
               <Button type="submit" className="btn-gradient text-white border-0 rounded-xl px-8" disabled={addLoading}>
-                {addLoading ? "Menyimpan..." : "Simpan Cepat"}
+                {addLoading ?"Menyimpan..." :"Simpan Cepat"}
               </Button>
               <Button type="button" variant="outline" className="rounded-xl" onClick={() => setShowAdd(false)}>
                 Batal
@@ -319,7 +312,7 @@ export default function StudentsPage() {
             <table className="w-full text-sm">
               <thead className="bg-muted/40">
                 <tr>
-                  {["Siswa", "NIS / NISN", "Kelas", "Orang Tua", "Wallet", "Status", ""].map(h => (
+                  {["Siswa","NIS / NISN","Kelas","Orang Tua","Wallet","Status",""].map(h => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
@@ -334,13 +327,13 @@ export default function StudentsPage() {
                         </div>
                         <div>
                           <p className="font-semibold">{student.name}</p>
-                          <p className="text-xs text-muted-foreground">{student.gender === "L" ? "Laki-laki" : student.gender === "P" ? "Perempuan" : "—"}</p>
+                          <p className="text-xs text-muted-foreground">{student.gender ==="L" ?"Laki-laki" : student.gender ==="P" ?"Perempuan" :"—"}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-mono text-xs">{student.nis || "—"}</p>
-                      <p className="font-mono text-xs text-muted-foreground">{student.nisn || "—"}</p>
+                      <p className="font-mono text-xs">{student.nis ||"—"}</p>
+                      <p className="font-mono text-xs text-muted-foreground">{student.nisn ||"—"}</p>
                     </td>
                     <td className="px-4 py-3">
                       {student.classroom
@@ -361,8 +354,8 @@ export default function StudentsPage() {
                       }
                     </td>
                     <td className="px-4 py-3">
-                      <Badge className={student.isActive ? "bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-[10px]" : "bg-slate-500/10 text-slate-500 border text-[10px]"}>
-                        {student.isActive ? "Aktif" : "Nonaktif"}
+                      <Badge className={student.isActive ?"bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-[10px]" :"bg-slate-500/10 text-slate-500 border text-[10px]"}>
+                        {student.isActive ?"Aktif" :"Nonaktif"}
                       </Badge>
                     </td>
                     <td className="px-4 py-3">
@@ -379,7 +372,7 @@ export default function StudentsPage() {
                             </Button>
                           }
                           title={`Hapus ${student.name}?`}
-                          description={`Anda yakin ingin menghapus data siswa "${student.name}"? Data hanya dapat dihapus jika siswa belum memiliki riwayat absensi, ujian, atau tagihan. Tindakan ini tidak dapat dibatalkan.`}
+                          description={`Anda yakin ingin menghapus data siswa"${student.name}"? Data hanya dapat dihapus jika siswa belum memiliki riwayat absensi, ujian, atau tagihan. Tindakan ini tidak dapat dibatalkan.`}
                           confirmText="Ya, Hapus"
                           onConfirm={() => handleDelete(student.id, student.name)}
                         />

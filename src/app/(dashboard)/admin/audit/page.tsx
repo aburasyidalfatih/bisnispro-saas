@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
-import { useSession } from "next-auth/react"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ServerPagination } from "@/components/shared/server-pagination"
-import { FileText, Search, User, Clock } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useEffect, useState, useCallback } from"react"
+import { useSession } from"next-auth/react"
+import { Card } from"@/components/ui/card"
+import { Input } from"@/components/ui/input"
+import { ServerPagination } from"@/components/shared/server-pagination"
+import { FileText, Search, User, Clock } from"lucide-react"
+import { cn } from"@/lib/utils"
 
 interface AuditRow {
   id: string
@@ -19,10 +19,10 @@ interface AuditRow {
 }
 
 const actionColors: Record<string, string> = {
-  create: "bg-emerald-500/10 text-emerald-600",
-  update: "bg-blue-500/10 text-blue-600",
-  delete: "bg-destructive/10 text-destructive",
-  login: "bg-amber-500/10 text-amber-600",
+  create:"bg-emerald-500/10 text-emerald-600",
+  update:"bg-blue-500/10 text-blue-600",
+  delete:"bg-destructive/10 text-destructive",
+  login:"bg-amber-500/10 text-amber-600",
 }
 
 export default function AuditPage() {
@@ -97,7 +97,7 @@ export default function AuditPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={cn("text-[11px] font-semibold uppercase rounded-full px-2 py-0.5", actionColors[log.action] || "bg-muted text-muted-foreground")}>
+                    <span className={cn("text-[11px] font-semibold uppercase rounded-full px-2 py-0.5", actionColors[log.action] ||"bg-muted text-muted-foreground")}>
                       {log.action}
                     </span>
                     <span className="text-sm font-medium">{log.entity}</span>
@@ -109,7 +109,7 @@ export default function AuditPage() {
                     )}
                     <span className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      {new Date(log.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      {new Date(log.createdAt).toLocaleDateString("id-ID", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" })}
                     </span>
                     {log.ipAddress && <span>{log.ipAddress}</span>}
                   </div>

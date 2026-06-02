@@ -1,16 +1,16 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/hooks/use-toast"
-import { Upload, ArrowLeft, Save, FileType } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useState, useRef } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { toast } from"@/hooks/use-toast"
+import { Upload, ArrowLeft, Save, FileType } from"lucide-react"
+import Link from"next/link"
+import { useRouter } from"next/navigation"
 
 export default function NewDocumentPage() {
   const router = useRouter()
@@ -22,9 +22,9 @@ export default function NewDocumentPage() {
   const [file, setFile] = useState<File | null>(null)
   
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    type: "UNDUHAN_UMUM"
+    title:"",
+    description:"",
+    type:"UNDUHAN_UMUM"
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -33,7 +33,7 @@ export default function NewDocumentPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 10 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 10MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 10MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -46,7 +46,7 @@ export default function NewDocumentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!tenantId || !file) {
-      toast({ title: "Pilih file terlebih dahulu", variant: "destructive" })
+      toast({ title:"Pilih file terlebih dahulu", variant:"destructive" })
       return
     }
 
@@ -58,41 +58,41 @@ export default function NewDocumentPage() {
       const fd = new FormData()
       fd.append("file", file)
       fd.append("tenantId", tenantId)
-      fd.append("subDir", "documents")
+      fd.append("subDir","documents")
       
-      const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+      const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
       const uploadData = await uploadRes.json()
       
       if (!uploadRes.ok || !uploadData.url) {
-        throw new Error(uploadData.error || "Gagal mengunggah file")
+        throw new Error(uploadData.error ||"Gagal mengunggah file")
       }
       
       setUploading(false)
       
       // 2. Save Document Record
       const docRes = await fetch("/api/tenant/documents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId,
           title: formData.title,
           description: formData.description,
           type: formData.type,
           fileUrl: uploadData.url,
-          mimeType: file.type || "application/octet-stream",
+          mimeType: file.type ||"application/octet-stream",
           size: file.size
         })
       })
 
       if (docRes.ok) {
-        toast({ title: "Dokumen berhasil disimpan!" })
+        toast({ title:"Dokumen berhasil disimpan!" })
         router.push("/admin/website/documents")
       } else {
         const d = await docRes.json()
-        throw new Error(d.error || "Gagal menyimpan dokumen")
+        throw new Error(d.error ||"Gagal menyimpan dokumen")
       }
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -202,7 +202,7 @@ export default function NewDocumentPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah File..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah File..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Dokumen</>

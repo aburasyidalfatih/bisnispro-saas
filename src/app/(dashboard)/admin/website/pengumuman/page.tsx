@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Edit2, Trash2, FileText, Globe, Clock, XCircle, ImageIcon, Eye } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import { format } from "date-fns"
-import { normalizeImageUrl } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Edit2, Trash2, FileText, Globe, Clock, XCircle, ImageIcon, Eye } from"lucide-react"
+import Link from"next/link"
+import Image from"next/image"
+import { format } from"date-fns"
+import { normalizeImageUrl } from"@/lib/utils"
 
 interface Post {
   id: string
@@ -26,7 +26,7 @@ interface Post {
 
 export default function PengumumanPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
-  const typeFilter = "PENGUMUMAN"
+  const typeFilter ="PENGUMUMAN"
   
   const [loading, setLoading] = useState(true)
   const [posts, setPosts] = useState<Post[]>([])
@@ -36,7 +36,7 @@ export default function PengumumanPage() {
   const loadPosts = () => {
     if (!tenantId) return
     setLoading(true)
-    const url = `/api/tenant/posts?tenantId=${tenantId}${typeFilter ? `&type=${typeFilter}` : ""}`
+    const url = `/api/tenant/posts?tenantId=${tenantId}${typeFilter ? `&type=${typeFilter}` :""}`
     fetch(url)
       .then(r => r.json())
       .then(d => {
@@ -55,16 +55,16 @@ export default function PengumumanPage() {
   const deletePost = async (id: string) => {
     if (!tenantId) return
     try {
-      const res = await fetch(`/api/tenant/posts/${id}?tenantId=${tenantId}`, { method: "DELETE" })
+      const res = await fetch(`/api/tenant/posts/${id}?tenantId=${tenantId}`, { method:"DELETE" })
       if (res.ok) {
-        toast({ title: "Artikel dihapus" })
+        toast({ title:"Artikel dihapus" })
         loadPosts()
       } else {
         const d = await res.json()
-        toast({ title: "Gagal", description: d.error, variant: "destructive" })
+        toast({ title:"Gagal", description: d.error, variant:"destructive" })
       }
     } catch {
-      toast({ title: "Gagal menghapus", variant: "destructive" })
+      toast({ title:"Gagal menghapus", variant:"destructive" })
     }
   }
 
@@ -75,8 +75,8 @@ export default function PengumumanPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{typeFilter === "PENGUMUMAN" ? "Pengumuman" : "Artikel & Pos"}</h1>
-          <p className="text-muted-foreground mt-1">{typeFilter === "PENGUMUMAN" ? "Kelola papan pengumuman sekolah untuk siswa dan publik." : "Kelola pos editorial, blog guru, dan pengumuman."}</p>
+          <h1 className="text-2xl font-bold tracking-tight">{typeFilter ==="PENGUMUMAN" ?"Pengumuman" :"Artikel & Pos"}</h1>
+          <p className="text-muted-foreground mt-1">{typeFilter ==="PENGUMUMAN" ?"Kelola papan pengumuman sekolah untuk siswa dan publik." :"Kelola pos editorial, blog guru, dan pengumuman."}</p>
         </div>
         <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
           <Link href={`/admin/website/pengumuman/new`}>
@@ -87,8 +87,8 @@ export default function PengumumanPage() {
 
       <Card className="glass border-0">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Daftar {typeFilter === "PENGUMUMAN" ? "Pengumuman" : "Artikel"}</CardTitle>
-          <CardDescription className="text-xs">Daftar semua {typeFilter === "PENGUMUMAN" ? "pengumuman" : "tulisan"} yang ada di website sekolah.</CardDescription>
+          <CardTitle className="text-base">Daftar {typeFilter ==="PENGUMUMAN" ?"Pengumuman" :"Artikel"}</CardTitle>
+          <CardDescription className="text-xs">Daftar semua {typeFilter ==="PENGUMUMAN" ?"pengumuman" :"tulisan"} yang ada di website sekolah.</CardDescription>
         </CardHeader>
         <CardContent>
           {posts.length === 0 ? (
@@ -158,22 +158,22 @@ export default function PengumumanPage() {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        {post.status === "PUBLISHED" && (
+                        {post.status ==="PUBLISHED" && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-500/10 px-2 rounded-full py-0.5">
                             <Globe className="h-3 w-3" /> Publik
                           </span>
                         )}
-                        {post.status === "PENDING" && (
+                        {post.status ==="PENDING" && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 bg-blue-500/10 px-2 rounded-full py-0.5">
                             <Clock className="h-3 w-3" /> Perlu Review
                           </span>
                         )}
-                        {post.status === "REJECTED" && (
+                        {post.status ==="REJECTED" && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 bg-rose-500/10 px-2 rounded-full py-0.5">
                             <XCircle className="h-3 w-3" /> Ditolak
                           </span>
                         )}
-                        {post.status === "DRAFT" && (
+                        {post.status ==="DRAFT" && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 bg-amber-500/10 px-2 rounded-full py-0.5">
                             <FileText className="h-3 w-3" /> Draft
                           </span>
@@ -183,7 +183,7 @@ export default function PengumumanPage() {
                       <td className="px-4 py-3 text-muted-foreground">{format(new Date(post.createdAt), 'dd MMM yyyy')}</td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          {post.status === "PUBLISHED" && (
+                          {post.status ==="PUBLISHED" && (
                             <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-blue-500/10 hover:text-blue-600" title="Lihat di website">
                               <a href={`/pengumuman/${post.slug}`} target="_blank" rel="noopener noreferrer">
                                 <Eye className="h-4 w-4" />

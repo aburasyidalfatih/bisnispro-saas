@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, Megaphone, ImageIcon } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { createPopup } from "@/features/popup/actions/popup.action"
+import { useState, useRef } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { Switch } from"@/components/ui/switch"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, Megaphone, ImageIcon } from"lucide-react"
+import Link from"next/link"
+import { useRouter } from"next/navigation"
+import { createPopup } from"@/features/popup/actions/popup.action"
 
 export default function NewPopupPage() {
   const router = useRouter()
@@ -25,11 +25,11 @@ export default function NewPopupPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    videoUrl: "",
-    buttonText: "",
-    buttonLink: "",
+    title:"",
+    content:"",
+    videoUrl:"",
+    buttonText:"",
+    buttonLink:"",
     isActive: false,
     displayOnce: true,
   })
@@ -40,7 +40,7 @@ export default function NewPopupPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 5 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 5MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 5MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -51,7 +51,7 @@ export default function NewPopupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!tenantId || !formData.title) {
-      toast({ title: "Judul harus diisi", variant: "destructive" })
+      toast({ title:"Judul harus diisi", variant:"destructive" })
       return
     }
 
@@ -65,13 +65,13 @@ export default function NewPopupPage() {
         const fd = new FormData()
         fd.append("file", file)
         fd.append("tenantId", tenantId)
-        fd.append("subDir", "popups")
+        fd.append("subDir","popups")
         
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+        const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
         const uploadData = await uploadRes.json()
         
         if (!uploadRes.ok || !uploadData.url) {
-          throw new Error(uploadData.error || "Gagal mengunggah gambar")
+          throw new Error(uploadData.error ||"Gagal mengunggah gambar")
         }
         
         imageUrl = uploadData.url
@@ -83,10 +83,10 @@ export default function NewPopupPage() {
         imageUrl: imageUrl,
       })
 
-      toast({ title: "Popup berhasil dibuat!" })
+      toast({ title:"Popup berhasil dibuat!" })
       router.push("/admin/website/popups")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -239,7 +239,7 @@ export default function NewPopupPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Popup</>

@@ -1,15 +1,15 @@
 "use client"
 
-import { useEffect, useState, useRef, useCallback } from "react"
-import { useSession } from "next-auth/react"
-import { Trophy, Medal, Star, TrendingUp, Search, Users, FileText, ArrowLeft, Info } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import Link from "next/link"
-import Image from "next/image"
-import { normalizeImageUrl } from "@/lib/utils"
+import { useEffect, useState, useRef, useCallback } from"react"
+import { useSession } from"next-auth/react"
+import { Trophy, Medal, Star, TrendingUp, Search, Users, FileText, ArrowLeft, Info } from"lucide-react"
+import { Card, CardContent } from"@/components/ui/card"
+import { Input } from"@/components/ui/input"
+import { Button } from"@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from"@/components/ui/dialog"
+import Link from"next/link"
+import Image from"next/image"
+import { normalizeImageUrl } from"@/lib/utils"
 
 interface LeaderboardEntry {
   id: string
@@ -61,7 +61,7 @@ export default function LeaderboardPage() {
         if (entries[0].isIntersecting) {
           setVisibleCount(prev => prev + 20)
         }
-      }, { rootMargin: "200px" })
+      }, { rootMargin:"200px" })
       observer.current.observe(node)
     }
   }, [])
@@ -190,14 +190,13 @@ export default function LeaderboardPage() {
             
             return (
               <div key={entry.id} className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${
-                isMe ? "bg-indigo-50 border-2 border-indigo-200 shadow-sm" : "bg-card border hover:shadow-md"
+                isMe ?"bg-indigo-50 border-2 border-indigo-200 shadow-sm" :"bg-card border hover:shadow-md"
               }`}>
                 {/* Rank Badge */}
                 <div className={`w-12 h-12 flex items-center justify-center rounded-xl font-black text-lg ${
-                  entry.rank === 1 ? "bg-yellow-100 text-yellow-700" :
-                  entry.rank === 2 ? "bg-slate-100 text-slate-700" :
-                  entry.rank === 3 ? "bg-orange-100 text-orange-700" :
-                  "bg-muted text-muted-foreground"
+                  entry.rank === 1 ?"bg-yellow-100 text-yellow-700" :
+                  entry.rank === 2 ?"bg-slate-100 text-slate-700" :
+                  entry.rank === 3 ?"bg-orange-100 text-orange-700" :"bg-muted text-muted-foreground"
                 }`}>
                   {entry.rank === 1 ? <Trophy className="h-6 w-6" /> :
                    entry.rank === 2 ? <Medal className="h-6 w-6" /> :
@@ -233,7 +232,7 @@ export default function LeaderboardPage() {
 
                 {/* School Name */}
                 <div className="flex-1 min-w-0">
-                  <h3 className={`font-bold truncate ${isMe ? "text-indigo-900" : ""}`}>
+                  <h3 className={`font-bold truncate ${isMe ?"text-indigo-900" :""}`}>
                     {entry.tenant.name}
                     {isMe && <span className="ml-2 text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full align-middle">ANDA</span>}
                   </h3>
@@ -245,7 +244,7 @@ export default function LeaderboardPage() {
                 {/* Score */}
                 <div className="text-right flex flex-col items-end gap-1">
                   <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg">
-                    <Star className={`h-4 w-4 ${isTop3 ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground"}`} />
+                    <Star className={`h-4 w-4 ${isTop3 ?"text-yellow-500 fill-yellow-500" :"text-muted-foreground"}`} />
                     <span className="font-black text-lg">{entry.totalScore.toLocaleString("id-ID")}</span>
                   </div>
                 </div>

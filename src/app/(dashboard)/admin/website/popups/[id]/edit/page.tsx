@@ -1,19 +1,19 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, ImageIcon } from "lucide-react"
-import Link from "next/link"
-import { useRouter, useParams } from "next/navigation"
-import { getPopupById, updatePopup } from "@/features/popup/actions/popup.action"
-import { normalizeImageUrl } from "@/lib/utils"
+import { useState, useRef, useEffect } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Textarea } from"@/components/ui/textarea"
+import { Switch } from"@/components/ui/switch"
+import { toast } from"@/hooks/use-toast"
+import { ArrowLeft, Save, ImageIcon } from"lucide-react"
+import Link from"next/link"
+import { useRouter, useParams } from"next/navigation"
+import { getPopupById, updatePopup } from"@/features/popup/actions/popup.action"
+import { normalizeImageUrl } from"@/lib/utils"
 
 export default function EditPopupPage() {
   const router = useRouter()
@@ -30,14 +30,14 @@ export default function EditPopupPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   
   const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    videoUrl: "",
-    buttonText: "",
-    buttonLink: "",
+    title:"",
+    content:"",
+    videoUrl:"",
+    buttonText:"",
+    buttonLink:"",
     isActive: false,
     displayOnce: true,
-    imageUrl: ""
+    imageUrl:""
   })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -47,25 +47,25 @@ export default function EditPopupPage() {
       getPopupById(id, tenantId)
         .then(d => {
           if (!d) {
-            toast({ title: "Gagal", description: "Popup tidak ditemukan", variant: "destructive" })
+            toast({ title:"Gagal", description:"Popup tidak ditemukan", variant:"destructive" })
             router.push("/admin/website/popups")
           } else {
             setFormData({
-              title: d.title || "",
-              content: d.content || "",
-              videoUrl: d.videoUrl || "",
-              buttonText: d.buttonText || "",
-              buttonLink: d.buttonLink || "",
+              title: d.title ||"",
+              content: d.content ||"",
+              videoUrl: d.videoUrl ||"",
+              buttonText: d.buttonText ||"",
+              buttonLink: d.buttonLink ||"",
               isActive: d.isActive,
               displayOnce: d.displayOnce,
-              imageUrl: d.imageUrl || ""
+              imageUrl: d.imageUrl ||""
             })
             if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl) || null)
           }
           setLoading(false)
         })
         .catch((err: any) => {
-          toast({ title: "Error", description: err.message, variant: "destructive" })
+          toast({ title:"Error", description: err.message, variant:"destructive" })
           setLoading(false)
         })
     }
@@ -75,7 +75,7 @@ export default function EditPopupPage() {
     if (e.target.files && e.target.files.length > 0) {
       const selected = e.target.files[0]
       if (selected.size > 5 * 1024 * 1024) {
-        toast({ title: "File terlalu besar", description: "Maksimal 5MB", variant: "destructive" })
+        toast({ title:"File terlalu besar", description:"Maksimal 5MB", variant:"destructive" })
         return
       }
       setFile(selected)
@@ -86,7 +86,7 @@ export default function EditPopupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!tenantId || !formData.title) {
-      toast({ title: "Judul harus diisi", variant: "destructive" })
+      toast({ title:"Judul harus diisi", variant:"destructive" })
       return
     }
 
@@ -100,13 +100,13 @@ export default function EditPopupPage() {
         const fd = new FormData()
         fd.append("file", file)
         fd.append("tenantId", tenantId)
-        fd.append("subDir", "popups")
+        fd.append("subDir","popups")
         
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
+        const uploadRes = await fetch("/api/upload", { method:"POST", body: fd })
         const uploadData = await uploadRes.json()
         
         if (!uploadRes.ok || !uploadData.url) {
-          throw new Error(uploadData.error || "Gagal mengunggah gambar")
+          throw new Error(uploadData.error ||"Gagal mengunggah gambar")
         }
         
         finalImageUrl = uploadData.url
@@ -124,10 +124,10 @@ export default function EditPopupPage() {
         imageUrl: finalImageUrl,
       })
 
-      toast({ title: "Popup berhasil diperbarui!" })
+      toast({ title:"Popup berhasil diperbarui!" })
       router.push("/admin/website/popups")
     } catch (error: any) {
-      toast({ title: "Gagal", description: error.message, variant: "destructive" })
+      toast({ title:"Gagal", description: error.message, variant:"destructive" })
       setUploading(false)
       setSaving(false)
     }
@@ -282,7 +282,7 @@ export default function EditPopupPage() {
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {uploading ? "Mengunggah..." : "Menyimpan..."}
+                    {uploading ?"Mengunggah..." :"Menyimpan..."}
                   </>
                 ) : (
                   <><Save className="h-4 w-4" /> Perbarui Popup</>

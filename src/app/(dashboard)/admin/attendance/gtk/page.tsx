@@ -1,27 +1,27 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Badge } from"@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import {
   Users, CalendarCheck, CheckCircle, XCircle, Clock,
   Minus, Loader2, MapPin, LogIn, LogOut, Search, Edit2,
   Download, TrendingUp, Filter
-} from "lucide-react"
-import { format, startOfMonth, endOfMonth, subMonths } from "date-fns"
-import { id as localeId } from "date-fns/locale"
-import { cn, normalizeImageUrl } from "@/lib/utils"
+} from"lucide-react"
+import { format, startOfMonth, endOfMonth, subMonths } from"date-fns"
+import { id as localeId } from"date-fns/locale"
+import { cn, normalizeImageUrl } from"@/lib/utils"
 
 const STATUS_CFG: Record<string, { label: string; color: string; badgeCls: string }> = {
-  HADIR: { label: "Hadir", color: "text-emerald-600", badgeCls: "bg-emerald-500/10 text-emerald-600 border-emerald-300" },
-  IZIN: { label: "Izin", color: "text-blue-600", badgeCls: "bg-blue-500/10 text-blue-600 border-blue-300" },
-  SAKIT: { label: "Sakit", color: "text-amber-600", badgeCls: "bg-amber-500/10 text-amber-600 border-amber-300" },
-  ALPHA: { label: "Alpha", color: "text-red-600", badgeCls: "bg-red-500/10 text-red-600 border-red-300" },
+  HADIR: { label:"Hadir", color:"text-emerald-600", badgeCls:"bg-emerald-500/10 text-emerald-600 border-emerald-300" },
+  IZIN: { label:"Izin", color:"text-blue-600", badgeCls:"bg-blue-500/10 text-blue-600 border-blue-300" },
+  SAKIT: { label:"Sakit", color:"text-amber-600", badgeCls:"bg-amber-500/10 text-amber-600 border-amber-300" },
+  ALPHA: { label:"Alpha", color:"text-red-600", badgeCls:"bg-red-500/10 text-red-600 border-red-300" },
 }
 
 type StaffRecord = {
@@ -44,19 +44,19 @@ export default function AdminGTKAttendancePage() {
   const [meta, setMeta] = useState({ total: 0, totalPages: 1 })
   const [page, setPage] = useState(1)
   const [showManual, setShowManual] = useState(false)
-  const [manualForm, setManualForm] = useState({ staffId: "", date: format(new Date(), "yyyy-MM-dd"), status: "HADIR", notes: "" })
+  const [manualForm, setManualForm] = useState({ staffId:"", date: format(new Date(),"yyyy-MM-dd"), status:"HADIR", notes:"" })
   const [saving, setSaving] = useState(false)
 
   const targetMonth = subMonths(new Date(), monthOffset)
-  const fromDate = format(startOfMonth(targetMonth), "yyyy-MM-dd")
-  const toDate = format(endOfMonth(targetMonth), "yyyy-MM-dd")
+  const fromDate = format(startOfMonth(targetMonth),"yyyy-MM-dd")
+  const toDate = format(endOfMonth(targetMonth),"yyyy-MM-dd")
 
   const fetchRecords = async () => {
     if (!tenant) return
     setLoading(true)
     const params = new URLSearchParams({
-      tenantId: tenant.id, from: fromDate, to: toDate, take: "100", page: String(page),
-      ...(staffFilter !== "all" ? { staffId: staffFilter } : {}),
+      tenantId: tenant.id, from: fromDate, to: toDate, take:"100", page: String(page),
+      ...(staffFilter !=="all" ? { staffId: staffFilter } : {}),
     })
     const res = await fetch(`/api/gtk/attendance?${params}`)
     const data = await res.json()
@@ -80,61 +80,61 @@ export default function AdminGTKAttendancePage() {
     const staffRecs = records.filter(r => r.staff?.id === s.id)
     return {
       ...s,
-      hadir: staffRecs.filter(r => r.status === "HADIR").length,
-      izin: staffRecs.filter(r => r.status === "IZIN").length,
-      sakit: staffRecs.filter(r => r.status === "SAKIT").length,
-      alpha: staffRecs.filter(r => r.status === "ALPHA").length,
+      hadir: staffRecs.filter(r => r.status ==="HADIR").length,
+      izin: staffRecs.filter(r => r.status ==="IZIN").length,
+      sakit: staffRecs.filter(r => r.status ==="SAKIT").length,
+      alpha: staffRecs.filter(r => r.status ==="ALPHA").length,
       total: staffRecs.length,
       lastRecord: staffRecs[0],
     }
   })
 
   const globalSummary = {
-    HADIR: records.filter(r => r.status === "HADIR").length,
-    IZIN: records.filter(r => r.status === "IZIN").length,
-    SAKIT: records.filter(r => r.status === "SAKIT").length,
-    ALPHA: records.filter(r => r.status === "ALPHA").length,
+    HADIR: records.filter(r => r.status ==="HADIR").length,
+    IZIN: records.filter(r => r.status ==="IZIN").length,
+    SAKIT: records.filter(r => r.status ==="SAKIT").length,
+    ALPHA: records.filter(r => r.status ==="ALPHA").length,
   }
 
   const handleManualSave = async () => {
-    if (!tenant || !manualForm.staffId) return toast({ title: "Pilih guru terlebih dahulu", variant: "destructive" })
+    if (!tenant || !manualForm.staffId) return toast({ title:"Pilih guru terlebih dahulu", variant:"destructive" })
     setSaving(true)
     try {
       const res = await fetch("/api/gtk/attendance/manual", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId: tenant.id, ...manualForm }),
       })
       if (!res.ok) throw new Error((await res.json()).error)
-      toast({ title: "Absensi berhasil disimpan!" })
+      toast({ title:"Absensi berhasil disimpan!" })
       setShowManual(false)
       fetchRecords()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     } finally {
       setSaving(false)
     }
   }
 
   const handleExportCSV = () => {
-    const headers = ["Nama Guru/Staf", "Jabatan", "Hadir", "Izin", "Sakit", "Alpha", "Total", "Kehadiran %"]
+    const headers = ["Nama Guru/Staf","Jabatan","Hadir","Izin","Sakit","Alpha","Total","Kehadiran %"]
     const rows = staffSummary.map(s => {
       const percentage = s.total > 0 ? Math.round((s.hadir / s.total) * 100) : 0;
       return [
         `"${s.name}"`, 
-        `"${s.role || "-"}"`, 
+        `"${s.role ||"-"}"`, 
         s.hadir, s.izin, s.sakit, s.alpha, s.total, `${percentage}%`
       ]
     })
     
-    let csvContent = "data:text/csv;charset=utf-8," 
-      + headers.join(",") + "\n"
+    let csvContent ="data:text/csv;charset=utf-8," 
+      + headers.join(",") +"\n"
       + rows.map(e => e.join(",")).join("\n")
       
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement("a")
     link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `Laporan_Kehadiran_GTK_${format(targetMonth, "MMM_yyyy", { locale: localeId })}.csv`)
+    link.setAttribute("download", `Laporan_Kehadiran_GTK_${format(targetMonth,"MMM_yyyy", { locale: localeId })}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -161,7 +161,7 @@ export default function AdminGTKAttendancePage() {
       {/* Filter Bulan */}
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setMonthOffset(m => m + 1)}>←</Button>
-        <span className="font-bold text-sm px-3">{format(targetMonth, "MMMM yyyy", { locale: localeId })}</span>
+        <span className="font-bold text-sm px-3">{format(targetMonth,"MMMM yyyy", { locale: localeId })}</span>
         <Button variant="outline" size="sm" className="rounded-xl" disabled={monthOffset === 0} onClick={() => setMonthOffset(m => m - 1)}>→</Button>
         {monthOffset > 0 && <Button size="sm" variant="ghost" className="rounded-xl text-xs" onClick={() => setMonthOffset(0)}>Bulan Ini</Button>}
       </div>
@@ -169,10 +169,10 @@ export default function AdminGTKAttendancePage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { key: "HADIR", icon: CheckCircle },
-          { key: "IZIN", icon: Clock },
-          { key: "SAKIT", icon: Minus },
-          { key: "ALPHA", icon: XCircle },
+          { key:"HADIR", icon: CheckCircle },
+          { key:"IZIN", icon: Clock },
+          { key:"SAKIT", icon: Minus },
+          { key:"ALPHA", icon: XCircle },
         ].map(({ key, icon: Icon }) => (
           <Card key={key} className="glass border-0 shadow-sm">
             <CardContent className="p-4 flex items-center gap-3">
@@ -211,7 +211,7 @@ export default function AdminGTKAttendancePage() {
             <div className="flex gap-2">
               <Input value={manualForm.notes} onChange={e => setManualForm(f => ({ ...f, notes: e.target.value }))} placeholder="Catatan..." className="rounded-xl flex-1" />
               <Button onClick={handleManualSave} disabled={saving} className="rounded-xl shrink-0">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Simpan"}
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> :"Simpan"}
               </Button>
             </div>
           </CardContent>
@@ -234,16 +234,16 @@ export default function AdminGTKAttendancePage() {
       </div>
 
       {/* Rekap Per Guru */}
-      {staffFilter === "all" && (
+      {staffFilter ==="all" && (
         <Card className="glass border-0">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Rekap Per Guru — {format(targetMonth, "MMMM yyyy", { locale: localeId })}</CardTitle>
+            <CardTitle className="text-base">Rekap Per Guru — {format(targetMonth,"MMMM yyyy", { locale: localeId })}</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/40">
                 <tr>
-                  {["Nama", "Jabatan", "Hadir", "Izin", "Sakit", "Alpha", "% Hadir", "Terakhir"].map(h => (
+                  {["Nama","Jabatan","Hadir","Izin","Sakit","Alpha","% Hadir","Terakhir"].map(h => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
@@ -271,13 +271,13 @@ export default function AdminGTKAttendancePage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="flex-1 bg-muted rounded-full h-1.5 min-w-[40px]">
-                            <div className={cn("h-full rounded-full", pct >= 80 ? "bg-emerald-500" : pct >= 60 ? "bg-amber-500" : "bg-red-500")} style={{ width: `${pct}%` }} />
+                            <div className={cn("h-full rounded-full", pct >= 80 ?"bg-emerald-500" : pct >= 60 ?"bg-amber-500" :"bg-red-500")} style={{ width: `${pct}%` }} />
                           </div>
                           <span className="text-xs font-bold w-8 text-right">{pct}%</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-xs text-muted-foreground">
-                        {s.lastRecord ? format(new Date(s.lastRecord.date), "d MMM", { locale: localeId }) : "—"}
+                        {s.lastRecord ? format(new Date(s.lastRecord.date),"d MMM", { locale: localeId }) :"—"}
                       </td>
                     </tr>
                   )
@@ -292,7 +292,7 @@ export default function AdminGTKAttendancePage() {
       )}
 
       {/* Detail Records */}
-      {staffFilter !== "all" && (
+      {staffFilter !=="all" && (
         <Card className="glass border-0">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Detail Rekord Absensi</CardTitle>
@@ -306,7 +306,7 @@ export default function AdminGTKAttendancePage() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/40">
                   <tr>
-                    {["Tanggal", "Guru", "Check-In", "Check-Out", "GPS", "Status", "Catatan"].map(h => (
+                    {["Tanggal","Guru","Check-In","Check-Out","GPS","Status","Catatan"].map(h => (
                       <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
                     ))}
                   </tr>
@@ -317,11 +317,11 @@ export default function AdminGTKAttendancePage() {
                     return (
                       <tr key={r.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
                         <td className="px-4 py-3 font-semibold text-sm">
-                          {format(new Date(r.date), "d MMM yyyy", { locale: localeId })}
+                          {format(new Date(r.date),"d MMM yyyy", { locale: localeId })}
                         </td>
                         <td className="px-4 py-3 text-sm">{r.staff?.name}</td>
-                        <td className="px-4 py-3 font-mono text-xs">{r.checkInAt ? format(new Date(r.checkInAt), "HH:mm") : "—"}</td>
-                        <td className="px-4 py-3 font-mono text-xs">{r.checkOutAt ? format(new Date(r.checkOutAt), "HH:mm") : "—"}</td>
+                        <td className="px-4 py-3 font-mono text-xs">{r.checkInAt ? format(new Date(r.checkInAt),"HH:mm") :"—"}</td>
+                        <td className="px-4 py-3 font-mono text-xs">{r.checkOutAt ? format(new Date(r.checkOutAt),"HH:mm") :"—"}</td>
                         <td className="px-4 py-3">
                           {r.checkInLat && r.checkInLng ? (
                             <a href={`https://maps.google.com/?q=${r.checkInLat},${r.checkInLng}`} target="_blank" rel="noopener noreferrer">
@@ -332,9 +332,9 @@ export default function AdminGTKAttendancePage() {
                           ) : <span className="text-muted-foreground text-xs">—</span>}
                         </td>
                         <td className="px-4 py-3">
-                          <Badge className={cn(cfg.badgeCls, "border text-[10px]")}>{cfg.label}</Badge>
+                          <Badge className={cn(cfg.badgeCls,"border text-[10px]")}>{cfg.label}</Badge>
                         </td>
-                        <td className="px-4 py-3 text-xs text-muted-foreground max-w-[120px] truncate">{r.notes || "—"}</td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground max-w-[120px] truncate">{r.notes ||"—"}</td>
                       </tr>
                     )
                   })}

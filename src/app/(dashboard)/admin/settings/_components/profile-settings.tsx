@@ -1,10 +1,10 @@
-import React from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { User, Camera, Save, Info, KeyRound, Eye, EyeOff } from "lucide-react"
-import { cn } from "@/lib/utils"
+import React from"react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { User, Camera, Save, Info, KeyRound, Eye, EyeOff } from"lucide-react"
+import { cn } from"@/lib/utils"
 
 interface ProfileSettingsProps {
   session: any
@@ -27,9 +27,9 @@ interface ProfileSettingsProps {
 }
 
 const pwFields = [
-  { key: "current", label: "Password Saat Ini", placeholder: "••••••••" },
-  { key: "newPass", label: "Password Baru", placeholder: "Minimal 8 karakter" },
-  { key: "confirm", label: "Konfirmasi", placeholder: "Ulangi password baru" },
+  { key:"current", label:"Password Saat Ini", placeholder:"••••••••" },
+  { key:"newPass", label:"Password Baru", placeholder:"Minimal 8 karakter" },
+  { key:"confirm", label:"Konfirmasi", placeholder:"Ulangi password baru" },
 ] as const
 
 export function ProfileSettings({
@@ -58,7 +58,7 @@ export function ProfileSettings({
               {avatarPreview
                 ? <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" />
                 : <div className="flex h-full w-full items-center justify-center bg-primary/10">
-                    <span className="text-lg font-bold text-primary">{profileForm.name?.charAt(0)?.toUpperCase() || "?"}</span>
+                    <span className="text-lg font-bold text-primary">{profileForm.name?.charAt(0)?.toUpperCase() ||"?"}</span>
                   </div>
               }
             </div>
@@ -69,7 +69,7 @@ export function ProfileSettings({
             <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarUpload} />
           </div>
           <div>
-            <p className="text-sm font-medium">{profileForm.name || "—"}</p>
+            <p className="text-sm font-medium">{profileForm.name ||"—"}</p>
             <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
             {avatarPreview && <button onClick={() => { setAvatarPreview(""); setAvatarUrl("") }} className="text-xs text-destructive hover:underline">Hapus foto</button>}
           </div>
@@ -115,7 +115,7 @@ export function ProfileSettings({
               <Label className="text-xs">{label}</Label>
               <div className="relative">
                 <Input
-                  type={showPw[key] ? "text" : "password"}
+                  type={showPw[key] ?"text" :"password"}
                   value={passwordForm[key as keyof typeof passwordForm]}
                   onChange={e => setPasswordForm(p => ({ ...p, [key]: e.target.value }))}
                   placeholder={placeholder}
@@ -133,8 +133,8 @@ export function ProfileSettings({
               {[1,2,3,4].map(i => (
                 <div key={i} className={cn("h-1 flex-1 rounded-full transition-colors",
                   passwordForm.newPass.length >= i * 3
-                    ? i <= 1 ? "bg-destructive" : i <= 2 ? "bg-amber-500" : i <= 3 ? "bg-yellow-500" : "bg-emerald-500"
-                    : "bg-muted"
+                    ? i <= 1 ?"bg-destructive" : i <= 2 ?"bg-amber-500" : i <= 3 ?"bg-yellow-500" :"bg-emerald-500"
+                    :"bg-muted"
                 )} />
               ))}
             </div>

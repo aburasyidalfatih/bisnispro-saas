@@ -1,18 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
 import {
   Globe, ExternalLink, Users, FileText, Image, Phone,
   Briefcase, Info, LayoutTemplate, ArrowRight, Eye, Trophy,
   CheckCircle, AlertCircle, ShieldCheck, ShieldOff, Download,
   Building2, Award, GraduationCap, Activity, Megaphone, BookOpen,
   BarChart3, MessageSquare, SlidersHorizontal, Handshake, CalendarDays, Sparkles
-} from "lucide-react"
-import { cn, getRootDomain } from "@/lib/utils"
-import Link from "next/link"
+} from"lucide-react"
+import { cn, getRootDomain } from"@/lib/utils"
+import Link from"next/link"
 
 interface WebsiteData {
   name: string
@@ -53,7 +53,7 @@ interface StatItem {
   label: string
   value: string | number
   icon: React.ReactNode
-  status?: "ok" | "warn" | "empty"
+  status?:"ok" |"warn" |"empty"
   href: string
 }
 
@@ -70,7 +70,7 @@ export default function WebsiteOverviewPage() {
   const [score, setScore] = useState<number>(0)
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !=="undefined") {
       let host = window.location.host
       let protocol = window.location.protocol
       setAppUrl(`${protocol}//${host}`)
@@ -118,7 +118,7 @@ export default function WebsiteOverviewPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-in fade-in duration-300">
+      <div className="space-y-6">
         <div className="skeleton h-8 w-48" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[1,2,3,4].map(i => <div key={i} className="skeleton h-28 rounded-2xl" />)}
@@ -128,142 +128,142 @@ export default function WebsiteOverviewPage() {
     )
   }
 
-  const base = "/admin/website"
+  const base ="/admin/website"
 
   // Priority: custom domain (verified) → subdomain → fallback /site/[slug]
-  const customDomainUrl = data?.customDomain?.status === "verified" && data.domain
+  const customDomainUrl = data?.customDomain?.status ==="verified" && data.domain
     ? `https://${data.domain}` : null
   const subdomainUrl = slug ? `http://${slug}.${rootDomain}` : null
   const fallbackUrl = slug ? `${appUrl}/site/${slug}` : null
   const websiteUrl = customDomainUrl || subdomainUrl || fallbackUrl
 
-  const getColStatus = (count?: number | null): "ok" | "warn" | "empty" => {
-    if (!count || count === 0) return "empty"
-    if (count >= 5) return "ok"
-    return "warn"
+  const getColStatus = (count?: number | null):"ok" |"warn" |"empty" => {
+    if (!count || count === 0) return"empty"
+    if (count >= 5) return"ok"
+    return"warn"
   }
 
   // Hitung kelengkapan konten
   const sections: StatItem[] = [
     {
-      label: "Profil Lembaga",
-      value: data?.about ? "Lengkap" : "Belum diisi",
+      label:"Profil Lembaga",
+      value: data?.about ?"Lengkap" :"Belum diisi",
       icon: <Info className="h-5 w-5" />,
-      status: data?.about ? "ok" : "empty",
+      status: data?.about ?"ok" :"empty",
       href: `${base}/about`,
     },
     {
-      label: "Artikel & Pos",
-      value: data?._count?.posts ? `${data._count.posts} postingan` : "Belum ada",
+      label:"Artikel & Pos",
+      value: data?._count?.posts ? `${data._count.posts} postingan` :"Belum ada",
       icon: <FileText className="h-5 w-5" />,
       status: getColStatus(data?._count?.posts),
       href: `${base}/posts`,
     },
 
     {
-      label: "Galeri",
-      value: Array.isArray(data?.gallery) && data.gallery.length > 0 ? `${data.gallery.length} foto` : "Belum ada",
+      label:"Galeri",
+      value: Array.isArray(data?.gallery) && data.gallery.length > 0 ? `${data.gallery.length} foto` :"Belum ada",
       icon: <Image className="h-5 w-5" />,
       status: getColStatus(data?.gallery?.length),
       href: `${base}/gallery`,
     },
     {
-      label: "Pusat Unduhan",
-      value: data?._count?.documents ? `${data._count.documents} dokumen` : "Belum ada",
+      label:"Pusat Unduhan",
+      value: data?._count?.documents ? `${data._count.documents} dokumen` :"Belum ada",
       icon: <Download className="h-5 w-5" />,
       status: getColStatus(data?._count?.documents),
       href: `${base}/documents`,
     },
     {
-      label: "Fasilitas",
-      value: data?._count?.facilities ? `${data._count.facilities} fasilitas` : "Belum ada",
+      label:"Fasilitas",
+      value: data?._count?.facilities ? `${data._count.facilities} fasilitas` :"Belum ada",
       icon: <Building2 className="h-5 w-5" />,
       status: getColStatus(data?._count?.facilities),
       href: `${base}/facilities`,
     },
     {
-      label: "Guru & Staf (GTK)",
-      value: data?._count?.staff ? `${data._count.staff} profil` : "Belum ada",
+      label:"Guru & Staf (GTK)",
+      value: data?._count?.staff ? `${data._count.staff} profil` :"Belum ada",
       icon: <Users className="h-5 w-5" />,
       status: getColStatus(data?._count?.staff),
       href: `${base}/gtk`,
     },
     {
-      label: "Prestasi Siswa",
-      value: data?._count?.achievements ? `${data._count.achievements} prestasi` : "Belum ada",
+      label:"Prestasi Siswa",
+      value: data?._count?.achievements ? `${data._count.achievements} prestasi` :"Belum ada",
       icon: <Award className="h-5 w-5" />,
       status: getColStatus(data?._count?.achievements),
       href: `${base}/achievements`,
     },
     {
-      label: "Alumni Success",
-      value: data?._count?.alumni ? `${data._count.alumni} alumni` : "Belum ada",
+      label:"Alumni Success",
+      value: data?._count?.alumni ? `${data._count.alumni} alumni` :"Belum ada",
       icon: <GraduationCap className="h-5 w-5" />,
       status: getColStatus(data?._count?.alumni),
       href: `${base}/alumni`,
     },
     {
-      label: "Ekstrakurikuler",
-      value: data?._count?.extracurriculars ? `${data._count.extracurriculars} kegiatan` : "Belum ada",
+      label:"Ekstrakurikuler",
+      value: data?._count?.extracurriculars ? `${data._count.extracurriculars} kegiatan` :"Belum ada",
       icon: <Activity className="h-5 w-5" />,
       status: getColStatus(data?._count?.extracurriculars),
       href: `${base}/extracurriculars`,
     },
     {
-      label: "Program Unggulan",
-      value: data?._count?.programs ? `${data._count.programs} program` : "Belum ada",
+      label:"Program Unggulan",
+      value: data?._count?.programs ? `${data._count.programs} program` :"Belum ada",
       icon: <BookOpen className="h-5 w-5" />,
       status: getColStatus(data?._count?.programs),
       href: `${base}/programs`,
     },
     {
-      label: "Popup Pengumuman",
-      value: data?._count?.popups ? `${data._count.popups} banner` : "Belum ada",
+      label:"Popup Pengumuman",
+      value: data?._count?.popups ? `${data._count.popups} banner` :"Belum ada",
       icon: <Megaphone className="h-5 w-5" />,
-      status: data?._count?.popups && data._count.popups > 0 ? "ok" : "empty",
+      status: data?._count?.popups && data._count.popups > 0 ?"ok" :"empty",
       href: `${base}/popups`,
     },
     {
-      label: "Hero Slider",
-      value: data?._count?.sliders ? `${data._count.sliders} slide` : "Belum ada",
+      label:"Hero Slider",
+      value: data?._count?.sliders ? `${data._count.sliders} slide` :"Belum ada",
       icon: <SlidersHorizontal className="h-5 w-5" />,
       status: getColStatus(data?._count?.sliders),
       href: `${base}/sliders`,
     },
     {
-      label: "Mitra Kerjasama",
-      value: data?._count?.partnerships ? `${data._count.partnerships} mitra` : "Belum ada",
+      label:"Mitra Kerjasama",
+      value: data?._count?.partnerships ? `${data._count.partnerships} mitra` :"Belum ada",
       icon: <Handshake className="h-5 w-5" />,
       status: getColStatus(data?._count?.partnerships),
       href: `${base}/partners`,
     },
     {
-      label: "Agenda Kegiatan",
-      value: data?._count?.events ? `${data._count.events} agenda` : "Belum ada",
+      label:"Agenda Kegiatan",
+      value: data?._count?.events ? `${data._count.events} agenda` :"Belum ada",
       icon: <CalendarDays className="h-5 w-5" />,
       status: getColStatus(data?._count?.events),
       href: `${base}/events`,
     },
   ]
 
-  const filledCount = sections.filter(s => s.status !== "empty").length
+  const filledCount = sections.filter(s => s.status !=="empty").length
   const completionPct = Math.round((filledCount / sections.length) * 100)
 
   const groupedSections = [
     {
-      title: "Utama & Esensial",
-      description: "Fondasi informasi lembaga Anda",
-      items: sections.filter(s => ["Profil Lembaga", "Guru & Staf (GTK)", "Fasilitas", "Program Unggulan"].includes(s.label))
+      title:"Utama & Esensial",
+      description:"Fondasi informasi lembaga Anda",
+      items: sections.filter(s => ["Profil Lembaga","Guru & Staf (GTK)","Fasilitas","Program Unggulan"].includes(s.label))
     },
     {
-      title: "Berita & Informasi",
-      description: "Update kegiatan dan publikasi",
-      items: sections.filter(s => ["Hero Slider", "Popup Pengumuman", "Artikel & Pos", "Agenda Kegiatan", "Pusat Unduhan"].includes(s.label))
+      title:"Berita & Informasi",
+      description:"Update kegiatan dan publikasi",
+      items: sections.filter(s => ["Hero Slider","Popup Pengumuman","Artikel & Pos","Agenda Kegiatan","Pusat Unduhan"].includes(s.label))
     },
     {
-      title: "Media & Portofolio",
-      description: "Dokumentasi dan pencapaian",
-      items: sections.filter(s => ["Galeri", "Ekstrakurikuler", "Prestasi Siswa", "Alumni Success", "Mitra Kerjasama"].includes(s.label))
+      title:"Media & Portofolio",
+      description:"Dokumentasi dan pencapaian",
+      items: sections.filter(s => ["Galeri","Ekstrakurikuler","Prestasi Siswa","Alumni Success","Mitra Kerjasama"].includes(s.label))
     }
   ]
 
@@ -300,17 +300,17 @@ export default function WebsiteOverviewPage() {
                   <p className="text-sm font-semibold font-mono truncate max-w-[160px]">
                     {customDomainUrl
                       ? data?.domain
-                      : slug ? `${slug}.${rootDomain}` : "—"}
+                      : slug ? `${slug}.${rootDomain}` :"—"}
                   </p>
                 </div>
               </div>
               {data?.customDomain ? (
-                data.customDomain.status === "verified"
+                data.customDomain.status ==="verified"
                   ? <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
                   : <ShieldOff className="h-4 w-4 text-amber-500 shrink-0" />
               ) : null}
             </div>
-            {data?.domain && data.customDomain?.status !== "verified" && (
+            {data?.domain && data.customDomain?.status !=="verified" && (
               <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" /> Domain belum diverifikasi
               </p>
@@ -343,7 +343,7 @@ export default function WebsiteOverviewPage() {
             {/* Progress bar */}
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
               <div
-                className={cn("h-full rounded-full transition-all", completionPct === 100 ? "bg-emerald-500" : "btn-gradient")}
+                className={cn("h-full rounded-full transition-all", completionPct === 100 ?"bg-emerald-500" :"btn-gradient")}
                 style={{ width: `${completionPct}%` }}
               />
             </div>
@@ -360,10 +360,10 @@ export default function WebsiteOverviewPage() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Pratinjau Website</p>
-                <p className="text-sm font-semibold truncate w-32">{data?.name || "—"}</p>
+                <p className="text-sm font-semibold truncate w-32">{data?.name ||"—"}</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground line-clamp-2">{data?.tagline || "Belum ada tagline"}</p>
+            <p className="text-xs text-muted-foreground line-clamp-2">{data?.tagline ||"Belum ada tagline"}</p>
             {websiteUrl && (
               <a href={websiteUrl} target="_blank" rel="noopener"
                 className="mt-3 flex items-center gap-1 text-xs text-primary hover:underline">
@@ -389,7 +389,7 @@ export default function WebsiteOverviewPage() {
                     <div>
                       <p className="text-xs text-muted-foreground">Peringkat Nasional</p>
                       <p className="text-sm font-semibold">
-                        {rank ? `Ranking #${rank}` : "Belum masuk"}
+                        {rank ? `Ranking #${rank}` :"Belum masuk"}
                       </p>
                     </div>
                   </div>
@@ -472,30 +472,26 @@ export default function WebsiteOverviewPage() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {group.items.map(s => (
               <Link key={s.href} href={s.href}
-                className={cn(
-                  "flex items-center justify-between rounded-xl border bg-card px-4 py-3.5 transition-all hover:shadow-md hover:-translate-y-0.5",
-                  s.status === "ok" ? "hover:border-emerald-500/40" :
-                  s.status === "warn" ? "hover:border-amber-500/60" :
-                  "hover:border-rose-500/40"
+                className={cn("flex items-center justify-between rounded-xl border bg-card px-4 py-3.5 transition-all hover:shadow-md hover:-translate-y-0.5",
+                  s.status ==="ok" ?"hover:border-emerald-500/40" :
+                  s.status ==="warn" ?"hover:border-amber-500/60" :"hover:border-rose-500/40"
                 )}>
                 <div className="flex items-center gap-3">
                   <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-                    s.status === "ok" ? "bg-emerald-500/10 text-emerald-600" :
-                    s.status === "warn" ? "bg-amber-500/10 text-amber-600" :
-                    "bg-rose-500/10 text-rose-600")}>
+                    s.status ==="ok" ?"bg-emerald-500/10 text-emerald-600" :
+                    s.status ==="warn" ?"bg-amber-500/10 text-amber-600" :"bg-rose-500/10 text-rose-600")}>
                     {s.icon}
                   </div>
                   <div>
                     <p className="text-sm font-semibold">{s.label}</p>
                     <p className={cn("text-xs font-medium mt-0.5", 
-                      s.status === "ok" ? "text-emerald-600" :
-                      s.status === "warn" ? "text-amber-600" :
-                      "text-rose-600")}>{s.value}</p>
+                      s.status ==="ok" ?"text-emerald-600" :
+                      s.status ==="warn" ?"text-amber-600" :"text-rose-600")}>{s.value}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {s.status === "ok" ? <CheckCircle className="h-4 w-4 text-emerald-500" /> :
-                   s.status === "warn" ? <AlertCircle className="h-4 w-4 text-amber-500" /> :
+                  {s.status ==="ok" ? <CheckCircle className="h-4 w-4 text-emerald-500" /> :
+                   s.status ==="warn" ? <AlertCircle className="h-4 w-4 text-amber-500" /> :
                    <AlertCircle className="h-4 w-4 text-rose-500" />}
                 </div>
               </Link>
@@ -525,20 +521,19 @@ export default function WebsiteOverviewPage() {
         <CardContent>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { label: "Telepon", value: data?.phone },
-              { label: "Email", value: data?.email },
-              { label: "WhatsApp", value: data?.whatsapp },
-              { label: "Instagram", value: data?.instagram ? `@${data.instagram}` : null },
-              { label: "Facebook", value: data?.facebook },
-              { label: "Alamat", value: data?.address },
+              { label:"Telepon", value: data?.phone },
+              { label:"Email", value: data?.email },
+              { label:"WhatsApp", value: data?.whatsapp },
+              { label:"Instagram", value: data?.instagram ? `@${data.instagram}` : null },
+              { label:"Facebook", value: data?.facebook },
+              { label:"Alamat", value: data?.address },
             ].map(item => (
-              <div key={item.label} className={cn(
-                "rounded-xl px-3 py-2.5 text-sm",
-                item.value ? "bg-muted/40" : "bg-muted/20"
+              <div key={item.label} className={cn("rounded-xl px-3 py-2.5 text-sm",
+                item.value ?"bg-muted/40" :"bg-muted/20"
               )}>
                 <p className="text-[11px] text-muted-foreground">{item.label}</p>
-                <p className={cn("font-medium truncate", item.value ? "text-foreground" : "text-muted-foreground/50 italic text-xs")}>
-                  {item.value || "Belum diisi"}
+                <p className={cn("font-medium truncate", item.value ?"text-foreground" :"text-muted-foreground/50 italic text-xs")}>
+                  {item.value ||"Belum diisi"}
                 </p>
               </div>
             ))}

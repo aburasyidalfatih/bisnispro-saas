@@ -1,11 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { Globe, AlertCircle, Save, ExternalLink, ShieldCheck, ShieldOff } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { DomainData } from "./types"
-import { StatusBadge } from "./status-badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { Globe, AlertCircle, Save, ExternalLink, ShieldCheck, ShieldOff } from"lucide-react"
+import { cn } from"@/lib/utils"
+import { DomainData } from"./types"
+import { StatusBadge } from"./status-badge"
 
 interface ActiveUrlCardProps {
   data: DomainData | null
@@ -55,7 +55,7 @@ export function ActiveUrlCard({
             <div>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-tight">Domain Utama</p>
               <div className="flex items-center gap-1.5 text-sm font-semibold text-primary">
-                <span>{subdomain || "—"}</span>
+                <span>{subdomain ||"—"}</span>
               </div>
             </div>
           </div>
@@ -137,16 +137,14 @@ export function ActiveUrlCard({
         {/* Custom domain (jika ada) */}
         {hasCustomDomain && customDomain && (
           <div
-            className={cn(
-              "flex items-center justify-between rounded-xl border px-4 py-3",
-              isVerified ? "border-emerald-500/30 bg-emerald-500/5 shadow-inner" : "border-amber-500/30 bg-amber-500/5"
+            className={cn("flex items-center justify-between rounded-xl border px-4 py-3",
+              isVerified ?"border-emerald-500/30 bg-emerald-500/5 shadow-inner" :"border-amber-500/30 bg-amber-500/5"
             )}
           >
             <div className="flex items-center gap-3">
               <div
-                className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm",
-                  isVerified ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
+                className={cn("flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm",
+                  isVerified ?"bg-emerald-500/10 text-emerald-600" :"bg-amber-500/10 text-amber-600"
                 )}
               >
                 {isVerified ? (

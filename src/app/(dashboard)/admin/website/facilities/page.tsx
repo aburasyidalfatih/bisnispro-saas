@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Building2, Image as ImageIcon, GripVertical, Eye } from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
-import Image from "next/image"
-import { getFacilities, deleteFacility as deleteFacilityAction, updateFacilitiesOrder } from "@/features/facility/actions/facility.action"
-import { cn, normalizeImageUrl } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, Building2, Image as ImageIcon, GripVertical, Eye } from"lucide-react"
+import Link from"next/link"
+import { format } from"date-fns"
+import Image from"next/image"
+import { getFacilities, deleteFacility as deleteFacilityAction, updateFacilitiesOrder } from"@/features/facility/actions/facility.action"
+import { cn, normalizeImageUrl } from"@/lib/utils"
 
 interface Facility {
   id: string
@@ -54,22 +54,22 @@ export default function FacilitiesPage() {
     if (!tenantId) return
     try {
       await deleteFacilityAction(id, tenantId)
-      toast({ title: "Fasilitas dihapus" })
+      toast({ title:"Fasilitas dihapus" })
       loadFacilities()
     } catch (err: any) {
-      toast({ title: "Gagal menghapus", description: err.message || "", variant: "destructive" })
+      toast({ title:"Gagal menghapus", description: err.message ||"", variant:"destructive" })
     }
   }
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDragIndex(index)
-    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.effectAllowed ="move"
   }
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     setDragOver(index)
-    e.dataTransfer.dropEffect = "move"
+    e.dataTransfer.dropEffect ="move"
   }
 
   const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
@@ -87,9 +87,9 @@ export default function FacilitiesPage() {
     if (tenantId) {
       try {
         await updateFacilitiesOrder(tenantId, newArr.map(a => a.id))
-        toast({ title: "Urutan berhasil disimpan" })
+        toast({ title:"Urutan berhasil disimpan" })
       } catch (err: any) {
-        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+        toast({ title:"Gagal menyimpan urutan", description: err.message, variant:"destructive" })
       }
     }
   }
@@ -141,10 +141,9 @@ export default function FacilitiesPage() {
                     onDragOver={e => handleDragOver(e, i)}
                     onDrop={e => handleDrop(e, i)}
                     onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
-                    className={cn(
-                      "overflow-hidden border group relative transition-all",
-                      dragOver === i && "ring-2 ring-primary scale-[1.02]",
-                      dragIndex === i && "opacity-50"
+                    className={cn("overflow-hidden border group relative transition-all",
+                      dragOver === i &&"ring-2 ring-primary scale-[1.02]",
+                      dragIndex === i &&"opacity-50"
                     )}>
                     <div className="aspect-video relative bg-muted flex items-center justify-center cursor-grab active:cursor-grabbing">
                       {displayImage ? (
@@ -185,7 +184,7 @@ export default function FacilitiesPage() {
                   <CardContent className="p-4">
                     <h3 className="font-semibold truncate">{facility.name}</h3>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                      {facility.description || "Tidak ada deskripsi"}
+                      {facility.description ||"Tidak ada deskripsi"}
                     </p>
                     <p className="text-[10px] text-muted-foreground mt-3">
                       Ditambahkan pada {format(new Date(facility.createdAt), 'dd MMM yyyy')}

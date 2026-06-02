@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { useToast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Loader2, ArrowUp, ArrowDown, ChevronRight } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { useState, useEffect } from"react"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
+import { useToast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, Loader2, ArrowUp, ArrowDown, ChevronRight } from"lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from"@/components/ui/dialog"
 
 interface MenuItem {
   id: string
@@ -30,10 +30,10 @@ export function MenuBuilder() {
   const [editingMenu, setEditingMenu] = useState<MenuItem | null>(null)
   
   const [formData, setFormData] = useState({
-    label: "",
-    url: "",
+    label:"",
+    url:"",
     isActive: true,
-    parentId: "root"
+    parentId:"root"
   })
 
   useEffect(() => {
@@ -61,15 +61,15 @@ export function MenuBuilder() {
         label: menu.label,
         url: menu.url,
         isActive: menu.isActive,
-        parentId: menu.parentId || "root"
+        parentId: menu.parentId ||"root"
       })
     } else {
       setEditingMenu(null)
       setFormData({
-        label: "",
-        url: "/",
+        label:"",
+        url:"/",
         isActive: true,
-        parentId: parentId || "root"
+        parentId: parentId ||"root"
       })
     }
     setIsModalOpen(true)
@@ -77,7 +77,7 @@ export function MenuBuilder() {
 
   const handleSubmit = async () => {
     if (!formData.label || !formData.url) {
-      toast({ title: "Validasi Gagal", description: "Label dan URL wajib diisi.", variant: "destructive" })
+      toast({ title:"Validasi Gagal", description:"Label dan URL wajib diisi.", variant:"destructive" })
       return
     }
 
@@ -85,28 +85,28 @@ export function MenuBuilder() {
     try {
       const payload = {
         ...formData,
-        parentId: formData.parentId === "root" ? null : formData.parentId
+        parentId: formData.parentId ==="root" ? null : formData.parentId
       }
       
-      const method = editingMenu ? "PATCH" : "POST"
-      const url = editingMenu ? `/api/admin/website/menu/${editingMenu.id}` : "/api/admin/website/menu"
+      const method = editingMenu ?"PATCH" :"POST"
+      const url = editingMenu ? `/api/admin/website/menu/${editingMenu.id}` :"/api/admin/website/menu"
       
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify(payload)
       })
 
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Menu berhasil disimpan." })
+        toast({ title:"Berhasil", description:"Menu berhasil disimpan." })
         setIsModalOpen(false)
         fetchMenus()
       } else {
         const err = await res.json()
-        toast({ title: "Gagal", description: err.error || "Gagal menyimpan menu.", variant: "destructive" })
+        toast({ title:"Gagal", description: err.error ||"Gagal menyimpan menu.", variant:"destructive" })
       }
     } catch (e) {
-      toast({ title: "Gagal", description: "Terjadi kesalahan koneksi.", variant: "destructive" })
+      toast({ title:"Gagal", description:"Terjadi kesalahan koneksi.", variant:"destructive" })
     } finally {
       setIsSaving(false)
     }
@@ -114,15 +114,15 @@ export function MenuBuilder() {
 
   const handleDelete = async (id: string, isSystem: boolean) => {
     if (isSystem) {
-      toast({ title: "Ditolak", description: "Menu sistem tidak bisa dihapus.", variant: "destructive" })
+      toast({ title:"Ditolak", description:"Menu sistem tidak bisa dihapus.", variant:"destructive" })
       return
     }
     
     if (confirm("Yakin ingin menghapus menu ini beserta sub-menunya?")) {
       try {
-        const res = await fetch(`/api/admin/website/menu/${id}`, { method: "DELETE" })
+        const res = await fetch(`/api/admin/website/menu/${id}`, { method:"DELETE" })
         if (res.ok) {
-          toast({ title: "Terhapus", description: "Menu berhasil dihapus." })
+          toast({ title:"Terhapus", description:"Menu berhasil dihapus." })
           fetchMenus()
         }
       } catch (e) {
@@ -131,12 +131,12 @@ export function MenuBuilder() {
     }
   }
 
-  const handleMove = async (item: MenuItem, direction: "up" | "down", list: MenuItem[]) => {
+  const handleMove = async (item: MenuItem, direction:"up" |"down", list: MenuItem[]) => {
     const currentIndex = list.findIndex(m => m.id === item.id)
-    if (direction === "up" && currentIndex === 0) return
-    if (direction === "down" && currentIndex === list.length - 1) return
+    if (direction ==="up" && currentIndex === 0) return
+    if (direction ==="down" && currentIndex === list.length - 1) return
 
-    const newIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1
+    const newIndex = direction ==="up" ? currentIndex - 1 : currentIndex + 1
     const newList = [...list]
     
     // Swap order property
@@ -176,8 +176,8 @@ export function MenuBuilder() {
     }))
     
     fetch("/api/admin/website/menu/reorder", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method:"POST",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ items: updates })
     })
   }
@@ -193,14 +193,14 @@ export function MenuBuilder() {
             {level === 0 && (
               <div className="flex flex-col gap-0.5 mr-2">
                 <button 
-                  onClick={() => handleMove(menu, "up", items)}
+                  onClick={() => handleMove(menu,"up", items)}
                   disabled={index === 0}
                   className="text-muted-foreground hover:text-primary disabled:opacity-30 p-1"
                 >
                   <ArrowUp className="h-3 w-3" />
                 </button>
                 <button 
-                  onClick={() => handleMove(menu, "down", items)}
+                  onClick={() => handleMove(menu,"down", items)}
                   disabled={index === items.length - 1}
                   className="text-muted-foreground hover:text-primary disabled:opacity-30 p-1"
                 >
@@ -269,7 +269,7 @@ export function MenuBuilder() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingMenu ? "Edit Menu" : "Tambah Menu"}</DialogTitle>
+            <DialogTitle>{editingMenu ?"Edit Menu" :"Tambah Menu"}</DialogTitle>
             <DialogDescription>
               Atur label dan tautan yang dituju saat menu ini diklik.
             </DialogDescription>
@@ -290,9 +290,9 @@ export function MenuBuilder() {
                 placeholder="Contoh: /profil atau https://google.com" 
                 value={formData.url}
                 onChange={e => setFormData({...formData, url: e.target.value})}
-                disabled={editingMenu?.isSystem && editingMenu?.url === "/"}
+                disabled={editingMenu?.isSystem && editingMenu?.url ==="/"}
               />
-              <p className="text-xs text-muted-foreground">Gunakan "/" untuk beranda, atau awali dengan "/" untuk halaman internal (contoh: /fasilitas).</p>
+              <p className="text-xs text-muted-foreground">Gunakan"/" untuk beranda, atau awali dengan"/" untuk halaman internal (contoh: /fasilitas).</p>
             </div>
 
             <div className="space-y-2">

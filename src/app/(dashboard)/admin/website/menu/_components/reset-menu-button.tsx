@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { RotateCcw, Loader2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
+import { useState } from"react"
+import { Button } from"@/components/ui/button"
+import { RotateCcw, Loader2 } from"lucide-react"
+import { useToast } from"@/hooks/use-toast"
+import { useRouter } from"next/navigation"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from"@/components/ui/alert-dialog"
 
 export function ResetMenuButton() {
   const [loading, setLoading] = useState(false)
@@ -25,27 +25,27 @@ export function ResetMenuButton() {
   const handleReset = async () => {
     setLoading(true)
     try {
-      const res = await fetch("/api/admin/website/menu/reset", { method: "POST" })
+      const res = await fetch("/api/admin/website/menu/reset", { method:"POST" })
       const data = await res.json()
 
       if (res.ok) {
         toast({
-          title: "✅ Menu Berhasil Direset",
-          description: "Semua menu telah dikembalikan ke susunan bawaan.",
+          title:"✅ Menu Berhasil Direset",
+          description:"Semua menu telah dikembalikan ke susunan bawaan.",
         })
         router.refresh()
       } else {
         toast({
-          title: "Gagal",
-          description: data.error || "Terjadi kesalahan saat mereset menu.",
-          variant: "destructive",
+          title:"Gagal",
+          description: data.error ||"Terjadi kesalahan saat mereset menu.",
+          variant:"destructive",
         })
       }
     } catch (e) {
       toast({
-        title: "Gagal",
-        description: "Tidak dapat terhubung ke server.",
-        variant: "destructive",
+        title:"Gagal",
+        description:"Tidak dapat terhubung ke server.",
+        variant:"destructive",
       })
     } finally {
       setLoading(false)

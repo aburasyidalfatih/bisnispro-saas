@@ -1,18 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BookOpen, Plus, Users, Edit2, Trash2, Loader2, ChevronRight, GraduationCap } from "lucide-react"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Badge } from"@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { BookOpen, Plus, Users, Edit2, Trash2, Loader2, ChevronRight, GraduationCap } from"lucide-react"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import Link from"next/link"
+import { useRouter } from"next/navigation"
 
 export default function ClassroomsPage() {
   const { data: session } = useSession()
@@ -22,7 +22,7 @@ export default function ClassroomsPage() {
   const [staffList, setStaffList] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ name: "", level: "", capacity: 30, waliKelasId: "none" })
+  const [form, setForm] = useState({ name:"", level:"", capacity: 30, waliKelasId:"none" })
   const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -43,43 +43,43 @@ export default function ClassroomsPage() {
   useEffect(() => { fetchClassrooms() }, [tenant])
 
   const handleSave = async () => {
-    if (!tenant || !form.name) return toast({ title: "Nama kelas wajib diisi", variant: "destructive" })
+    if (!tenant || !form.name) return toast({ title:"Nama kelas wajib diisi", variant:"destructive" })
     setSaving(true)
     try {
       const payload = { 
         tenantId: tenant.id, 
         ...form, 
         capacity: Number(form.capacity),
-        waliKelasId: form.waliKelasId === "none" ? null : form.waliKelasId 
+        waliKelasId: form.waliKelasId ==="none" ? null : form.waliKelasId 
       }
       
       let res;
       if (editId) {
         res = await fetch(`/api/classrooms/${editId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          method:"PATCH",
+          headers: {"Content-Type":"application/json" },
           body: JSON.stringify(payload),
         })
       } else {
         res = await fetch("/api/classrooms/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method:"POST",
+          headers: {"Content-Type":"application/json" },
           body: JSON.stringify(payload),
         })
       }
 
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data.error || "Gagal menyimpan kelas")
+        throw new Error(data.error ||"Gagal menyimpan kelas")
       }
 
-      toast({ title: editId ? "Kelas diperbarui!" : "Kelas ditambahkan!" })
+      toast({ title: editId ?"Kelas diperbarui!" :"Kelas ditambahkan!" })
       setShowForm(false)
       setEditId(null)
-      setForm({ name: "", level: "", capacity: 30, waliKelasId: "none" })
+      setForm({ name:"", level:"", capacity: 30, waliKelasId:"none" })
       fetchClassrooms()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     } finally {
       setSaving(false)
     }
@@ -87,14 +87,14 @@ export default function ClassroomsPage() {
 
   const handleEdit = (c: any) => {
     setEditId(c.id)
-    setForm({ name: c.name, level: c.level || "", capacity: c.capacity, waliKelasId: c.waliKelasId || "none" })
+    setForm({ name: c.name, level: c.level ||"", capacity: c.capacity, waliKelasId: c.waliKelasId ||"none" })
     setShowForm(true)
   }
 
   const handleDeleteConfirm = async () => {
     if (!deleteId || !tenant) return
-    await fetch(`/api/classrooms/${deleteId}?tenantId=${tenant.id}`, { method: "DELETE" })
-    toast({ title: "Kelas dihapus" })
+    await fetch(`/api/classrooms/${deleteId}?tenantId=${tenant.id}`, { method:"DELETE" })
+    toast({ title:"Kelas dihapus" })
     setDeleteId(null)
     fetchClassrooms()
   }
@@ -110,7 +110,7 @@ export default function ClassroomsPage() {
         </div>
         <div className="flex gap-2">
           <Link href="/admin/students"><Button variant="outline" className="rounded-xl gap-2"><GraduationCap className="h-4 w-4" /> Data Siswa</Button></Link>
-          <Button className="rounded-xl gap-2" onClick={() => { setShowForm(!showForm); setEditId(null); setForm({ name: "", level: "", capacity: 30, waliKelasId: "none" }) }}>
+          <Button className="rounded-xl gap-2" onClick={() => { setShowForm(!showForm); setEditId(null); setForm({ name:"", level:"", capacity: 30, waliKelasId:"none" }) }}>
             <Plus className="h-4 w-4" /> Tambah Kelas
           </Button>
         </div>
@@ -119,9 +119,9 @@ export default function ClassroomsPage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Total Kelas", value: classrooms.length, icon: BookOpen },
-          { label: "Total Siswa", value: totalStudents, icon: Users },
-          { label: "Rata-rata/Kelas", value: classrooms.length ? Math.round(totalStudents / classrooms.length) : 0, icon: GraduationCap },
+          { label:"Total Kelas", value: classrooms.length, icon: BookOpen },
+          { label:"Total Siswa", value: totalStudents, icon: Users },
+          { label:"Rata-rata/Kelas", value: classrooms.length ? Math.round(totalStudents / classrooms.length) : 0, icon: GraduationCap },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
             <CardContent className="p-4 flex items-center gap-3">
@@ -141,7 +141,7 @@ export default function ClassroomsPage() {
       {showForm && (
         <Card className="glass border-0 border-primary/20">
           <CardContent className="p-5 space-y-4">
-            <p className="font-bold text-sm">{editId ? "Edit Kelas" : "Tambah Kelas Baru"}</p>
+            <p className="font-bold text-sm">{editId ?"Edit Kelas" :"Tambah Kelas Baru"}</p>
             <div className="grid grid-cols-3 gap-4">
               <div className="col-span-2 md:col-span-1 space-y-2">
                 <Label>Nama Kelas *</Label>
@@ -172,7 +172,7 @@ export default function ClassroomsPage() {
             </div>
             <div className="flex gap-2">
               <Button onClick={handleSave} disabled={saving} className="rounded-xl">
-                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Simpan"}
+                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :"Simpan"}
               </Button>
               <Button variant="outline" className="rounded-xl" onClick={() => { setShowForm(false); setEditId(null) }}>Batal</Button>
             </div>
@@ -223,7 +223,7 @@ export default function ClassroomsPage() {
 
                   <div className="w-full bg-muted rounded-full h-2 overflow-hidden mb-4">
                     <div
-                      className={`h-full rounded-full transition-all ${fillPct >= 90 ? "bg-red-500" : fillPct >= 70 ? "bg-amber-500" : "bg-emerald-500"}`}
+                      className={`h-full rounded-full transition-all ${fillPct >= 90 ?"bg-red-500" : fillPct >= 70 ?"bg-amber-500" :"bg-emerald-500"}`}
                       style={{ width: `${Math.min(fillPct, 100)}%` }}
                     />
                   </div>

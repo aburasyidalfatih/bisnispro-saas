@@ -1,6 +1,6 @@
 export default function DashboardLoading() {
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="space-y-6">
       {/* Title skeleton */}
       <div className="space-y-2">
         <div className="skeleton h-8 w-64" />
@@ -16,8 +16,8 @@ export default function DashboardLoading() {
 
       {/* Charts */}
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="skeleton h-[360px] rounded-2xl" style={{ animationDelay: "300ms" }} />
-        <div className="skeleton h-[360px] rounded-2xl" style={{ animationDelay: "375ms" }} />
+        <div className="skeleton h-[360px] rounded-2xl" style={{ animationDelay:"300ms" }} />
+        <div className="skeleton h-[360px] rounded-2xl" style={{ animationDelay:"375ms" }} />
       </div>
     </div>
   )

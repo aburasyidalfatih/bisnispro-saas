@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Award, Image as ImageIcon, GripVertical, Eye } from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
-import Image from "next/image"
-import { getAchievements, deleteAchievement, updateAchievementsOrder } from "@/features/achievement/actions/achievement.action"
-import { cn, normalizeImageUrl } from "@/lib/utils"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, Award, Image as ImageIcon, GripVertical, Eye } from"lucide-react"
+import Link from"next/link"
+import { format } from"date-fns"
+import Image from"next/image"
+import { getAchievements, deleteAchievement, updateAchievementsOrder } from"@/features/achievement/actions/achievement.action"
+import { cn, normalizeImageUrl } from"@/lib/utils"
 
 interface Achievement {
   id: string
@@ -39,7 +39,7 @@ export default function AchievementsPage() {
       const d = await getAchievements(tenantId)
       setAchievements(Array.isArray(d) ? d : [])
     } catch (err: any) {
-      toast({ title: "Gagal memuat data", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal memuat data", description: err.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -55,33 +55,33 @@ export default function AchievementsPage() {
     if (!tenantId) return
     try {
       await deleteAchievement(id, tenantId)
-      toast({ title: "Prestasi dihapus" })
+      toast({ title:"Prestasi dihapus" })
       loadAchievements()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
   const getLevelLabel = (level: string) => {
     switch (level) {
-      case "LOKAL": return "Tingkat Lokal / Sekolah"
-      case "KABUPATEN": return "Tingkat Kabupaten/Kota"
-      case "PROVINSI": return "Tingkat Provinsi"
-      case "NASIONAL": return "Tingkat Nasional"
-      case "INTERNASIONAL": return "Tingkat Internasional"
+      case"LOKAL": return"Tingkat Lokal / Sekolah"
+      case"KABUPATEN": return"Tingkat Kabupaten/Kota"
+      case"PROVINSI": return"Tingkat Provinsi"
+      case"NASIONAL": return"Tingkat Nasional"
+      case"INTERNASIONAL": return"Tingkat Internasional"
       default: return level
     }
   }
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDragIndex(index)
-    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.effectAllowed ="move"
   }
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     setDragOver(index)
-    e.dataTransfer.dropEffect = "move"
+    e.dataTransfer.dropEffect ="move"
   }
 
   const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
@@ -99,9 +99,9 @@ export default function AchievementsPage() {
     if (tenantId) {
       try {
         await updateAchievementsOrder(tenantId, newArr.map(a => a.id))
-        toast({ title: "Urutan berhasil disimpan" })
+        toast({ title:"Urutan berhasil disimpan" })
       } catch (err: any) {
-        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+        toast({ title:"Gagal menyimpan urutan", description: err.message, variant:"destructive" })
       }
     }
   }
@@ -150,10 +150,9 @@ export default function AchievementsPage() {
                   onDragOver={e => handleDragOver(e, i)}
                   onDrop={e => handleDrop(e, i)}
                   onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
-                  className={cn(
-                    "overflow-hidden border group relative transition-all",
-                    dragOver === i && "ring-2 ring-primary scale-[1.02]",
-                    dragIndex === i && "opacity-50"
+                  className={cn("overflow-hidden border group relative transition-all",
+                    dragOver === i &&"ring-2 ring-primary scale-[1.02]",
+                    dragIndex === i &&"opacity-50"
                   )}>
                   <div className="aspect-video relative bg-muted flex items-center justify-center cursor-grab active:cursor-grabbing">
                     {achievement.imageUrl ? (
@@ -200,7 +199,7 @@ export default function AchievementsPage() {
                     </div>
                     <h3 className="font-semibold truncate">{achievement.title}</h3>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                      {achievement.description || "Tidak ada deskripsi"}
+                      {achievement.description ||"Tidak ada deskripsi"}
                     </p>
                     <p className="text-[10px] text-muted-foreground mt-3 font-medium">
                       Diraih pada: {format(new Date(achievement.date), 'dd MMM yyyy')}

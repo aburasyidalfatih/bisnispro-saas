@@ -1,18 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Badge } from"@/components/ui/badge"
 import {
   CalendarCheck, Users, CheckCircle, XCircle, Clock,
   Minus, Loader2, TrendingUp, FileCheck, ArrowRight, GraduationCap
-} from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
-import { id as localeId } from "date-fns/locale"
+} from"lucide-react"
+import Link from"next/link"
+import { format } from"date-fns"
+import { id as localeId } from"date-fns/locale"
 
 export default function AttendanceDashboardPage() {
   const { data: session } = useSession()
@@ -36,15 +36,15 @@ export default function AttendanceDashboardPage() {
     }).catch(console.error).finally(() => setLoading(false))
   }, [tenant])
 
-  const today = format(new Date(), "yyyy-MM-dd")
+  const today = format(new Date(),"yyyy-MM-dd")
   const todaySessions = sessions.filter(s => s.date?.startsWith(today))
   const totalSessions = sessions.length
   const totalRecords = sessions.reduce((a, s) => a + (s._count?.records || 0), 0)
 
   const navItems = [
-    { label: "Absensi Siswa", href: "/admin/attendance/sessions", icon: CalendarCheck, color: "from-blue-500 to-indigo-500", desc: `${todaySessions.length} sesi dibuka hari ini` },
-    { label: "Pengajuan Izin", href: "/admin/attendance/permits", icon: FileCheck, color: "from-amber-500 to-orange-500", desc: `${pendingPermits} menunggu persetujuan`, badge: pendingPermits },
-    { label: "Rekap Per Kelas", href: "/admin/attendance/sessions", icon: Users, color: "from-emerald-500 to-teal-500", desc: `${classrooms.length} kelas terdaftar` },
+    { label:"Absensi Siswa", href:"/admin/attendance/sessions", icon: CalendarCheck, color:"from-blue-500 to-indigo-500", desc: `${todaySessions.length} sesi dibuka hari ini` },
+    { label:"Pengajuan Izin", href:"/admin/attendance/permits", icon: FileCheck, color:"from-amber-500 to-orange-500", desc: `${pendingPermits} menunggu persetujuan`, badge: pendingPermits },
+    { label:"Rekap Per Kelas", href:"/admin/attendance/sessions", icon: Users, color:"from-emerald-500 to-teal-500", desc: `${classrooms.length} kelas terdaftar` },
   ]
 
   return (
@@ -57,10 +57,10 @@ export default function AttendanceDashboardPage() {
       {/* Hero Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Sesi Hari Ini", value: todaySessions.length, icon: CalendarCheck, color: "text-primary bg-primary/10" },
-          { label: "Total Sesi", value: totalSessions, icon: TrendingUp, color: "text-indigo-600 bg-indigo-500/10" },
-          { label: "Siswa Dicatat", value: totalRecords, icon: Users, color: "text-emerald-600 bg-emerald-500/10" },
-          { label: "Izin Menunggu", value: pendingPermits, icon: Clock, color: pendingPermits > 0 ? "text-amber-600 bg-amber-500/10" : "text-slate-400 bg-slate-100" },
+          { label:"Sesi Hari Ini", value: todaySessions.length, icon: CalendarCheck, color:"text-primary bg-primary/10" },
+          { label:"Total Sesi", value: totalSessions, icon: TrendingUp, color:"text-indigo-600 bg-indigo-500/10" },
+          { label:"Siswa Dicatat", value: totalRecords, icon: Users, color:"text-emerald-600 bg-emerald-500/10" },
+          { label:"Izin Menunggu", value: pendingPermits, icon: Clock, color: pendingPermits > 0 ?"text-amber-600 bg-amber-500/10" :"text-slate-400 bg-slate-100" },
         ].map((s, i) => (
           <Card key={i} className="glass border-0 shadow-sm">
             <CardContent className="p-4 flex items-center gap-3">
@@ -130,7 +130,7 @@ export default function AttendanceDashboardPage() {
             <table className="w-full text-sm">
               <thead className="bg-muted/40">
                 <tr>
-                  {["Tanggal", "Kelas", "Guru / Pencatat", "Mata Pelajaran", "Siswa Dicatat", "Aksi"].map(h => (
+                  {["Tanggal","Kelas","Guru / Pencatat","Mata Pelajaran","Siswa Dicatat","Aksi"].map(h => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
                   ))}
                 </tr>
@@ -139,14 +139,14 @@ export default function AttendanceDashboardPage() {
                 {sessions.slice(0, 8).map((s: any) => (
                   <tr key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
                     <td className="px-4 py-3 font-semibold text-sm whitespace-nowrap">
-                      {format(new Date(s.date), "d MMM yyyy", { locale: localeId })}
+                      {format(new Date(s.date),"d MMM yyyy", { locale: localeId })}
                     </td>
                     <td className="px-4 py-3 text-sm">{s.classroom?.name || <span className="text-muted-foreground">—</span>}</td>
                     <td className="px-4 py-3 text-sm">
-                      <span className="font-medium">{s.creatorName || "Sistem"}</span>
+                      <span className="font-medium">{s.creatorName ||"Sistem"}</span>
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      <Badge variant="outline" className="text-xs font-normal bg-muted/50">{s.subjectName || "Harian"}</Badge>
+                      <Badge variant="outline" className="text-xs font-normal bg-muted/50">{s.subjectName ||"Harian"}</Badge>
                     </td>
                     <td className="px-4 py-3">
                       <span className="flex items-center gap-1.5 text-sm">

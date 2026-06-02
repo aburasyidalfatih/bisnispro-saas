@@ -1,10 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { FileText, CheckCheck, Copy, Clock, AlertCircle, MessageCircle, ExternalLink } from "lucide-react"
-import Link from "next/link"
-import { toast } from "@/hooks/use-toast"
-import { TenantBilling, InvoiceData } from "./types"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from"@/components/ui/dialog"
+import { Button } from"@/components/ui/button"
+import { Separator } from"@/components/ui/separator"
+import { FileText, CheckCheck, Copy, Clock, AlertCircle, MessageCircle, ExternalLink } from"lucide-react"
+import Link from"next/link"
+import { toast } from"@/hooks/use-toast"
+import { TenantBilling, InvoiceData } from"./types"
 
 interface InvoiceDialogProps {
   showInvoice: boolean
@@ -96,9 +96,9 @@ export function InvoiceDialog({
               <span className="text-muted-foreground flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> Berlaku hingga</span>
               <span className="font-medium text-amber-600">
                 {invoice?.expiredAt ? new Date(invoice.expiredAt).toLocaleString("id-ID", {
-                  day: "numeric", month: "short", year: "numeric",
-                  hour: "2-digit", minute: "2-digit"
-                }) : "-"}
+                  day:"numeric", month:"short", year:"numeric",
+                  hour:"2-digit", minute:"2-digit"
+                }) :"-"}
               </span>
             </div>
           </div>
@@ -108,14 +108,14 @@ export function InvoiceDialog({
             
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-bold text-sm">{billing?.manualPayment?.bank || "Bank Pembayaran"}</p>
-                <p className="text-muted-foreground text-[11px]">a.n {billing?.manualPayment?.name || "Nama Pemilik"}</p>
+                <p className="font-bold text-sm">{billing?.manualPayment?.bank ||"Bank Pembayaran"}</p>
+                <p className="text-muted-foreground text-[11px]">a.n {billing?.manualPayment?.name ||"Nama Pemilik"}</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-mono font-bold text-sm">{billing?.manualPayment?.number || "-"}</span>
+                <span className="font-mono font-bold text-sm">{billing?.manualPayment?.number ||"-"}</span>
                 <button onClick={() => {
-                  navigator.clipboard.writeText(billing?.manualPayment?.number || "")
-                  toast({ description: "Nomor rekening disalin" })
+                  navigator.clipboard.writeText(billing?.manualPayment?.number ||"")
+                  toast({ description:"Nomor rekening disalin" })
                 }} className="text-muted-foreground hover:text-primary transition"><Copy className="h-4 w-4" /></button>
               </div>
             </div>
@@ -127,7 +127,7 @@ export function InvoiceDialog({
               <span>Invoice ini akan dikonfirmasi secara manual oleh admin. Hubungi kami via WhatsApp setelah melakukan pembayaran.</span>
             </div>
             <Button size="sm" className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 h-8 rounded-lg" asChild>
-              <a href={`https://wa.me/${billing?.manualPayment?.waNumber || "6281234567890"}?text=Halo%20Admin%2C%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20invoice%20${invoice?.reference}`} target="_blank" rel="noopener noreferrer">
+              <a href={`https://wa.me/${billing?.manualPayment?.waNumber ||"6281234567890"}?text=Halo%20Admin%2C%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20invoice%20${invoice?.reference}`} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-3.5 w-3.5" /> Konfirmasi WA
               </a>
             </Button>

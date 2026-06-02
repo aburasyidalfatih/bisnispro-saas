@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Image as ImageIcon, GripVertical } from "lucide-react"
-import { Switch } from "@/components/ui/switch"
-import Link from "next/link"
-import Image from "next/image"
-import { cn, normalizeImageUrl } from "@/lib/utils"
-import { getSliders, deleteSlider, toggleSliderStatus, updateSlidersOrder } from "@/features/slider/actions/slider.action"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, Image as ImageIcon, GripVertical } from"lucide-react"
+import { Switch } from"@/components/ui/switch"
+import Link from"next/link"
+import Image from"next/image"
+import { cn, normalizeImageUrl } from"@/lib/utils"
+import { getSliders, deleteSlider, toggleSliderStatus, updateSlidersOrder } from"@/features/slider/actions/slider.action"
 
 interface Slider {
   id: string
@@ -37,7 +37,7 @@ export default function SlidersPage() {
       const d = await getSliders(tenantId)
       setSliders(d)
     } catch (err: any) {
-      toast({ title: "Gagal memuat data", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal memuat data", description: err.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -53,10 +53,10 @@ export default function SlidersPage() {
     if (!tenantId) return
     try {
       await deleteSlider(id, tenantId)
-      toast({ title: "Slide dihapus" })
+      toast({ title:"Slide dihapus" })
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
@@ -64,22 +64,22 @@ export default function SlidersPage() {
     if (!tenantId) return
     try {
       await toggleSliderStatus(id, tenantId, !currentStatus)
-      toast({ title: !currentStatus ? "Slide diaktifkan" : "Slide dinonaktifkan" })
+      toast({ title: !currentStatus ?"Slide diaktifkan" :"Slide dinonaktifkan" })
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDragIndex(index)
-    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.effectAllowed ="move"
   }
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     setDragOver(index)
-    e.dataTransfer.dropEffect = "move"
+    e.dataTransfer.dropEffect ="move"
   }
 
   const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
@@ -97,9 +97,9 @@ export default function SlidersPage() {
     if (tenantId) {
       try {
         await updateSlidersOrder(tenantId, newArr.map(a => a.id))
-        toast({ title: "Urutan berhasil disimpan" })
+        toast({ title:"Urutan berhasil disimpan" })
       } catch (err: any) {
-        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+        toast({ title:"Gagal menyimpan urutan", description: err.message, variant:"destructive" })
       }
     }
   }
@@ -148,13 +148,12 @@ export default function SlidersPage() {
                   onDragOver={e => handleDragOver(e, i)}
                   onDrop={e => handleDrop(e, i)}
                   onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
-                  className={cn(
-                    "overflow-hidden border group relative transition-all",
-                    dragOver === i && "ring-2 ring-primary scale-[1.02]",
-                    dragIndex === i && "opacity-50"
+                  className={cn("overflow-hidden border group relative transition-all",
+                    dragOver === i &&"ring-2 ring-primary scale-[1.02]",
+                    dragIndex === i &&"opacity-50"
                   )}>
                   <div className="aspect-video relative bg-muted flex items-center justify-center cursor-grab active:cursor-grabbing">
-                    <Image src={normalizeImageUrl(slide.imageUrl)!} alt={slide.title || "Slider"} fill className="object-cover" />
+                    <Image src={normalizeImageUrl(slide.imageUrl)!} alt={slide.title ||"Slider"} fill className="object-cover" />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                     <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black/60 shadow-sm">
@@ -187,9 +186,9 @@ export default function SlidersPage() {
                   </div>
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between gap-2">
-                      <h3 className="text-sm font-bold truncate flex-1">{slide.title || "Tanpa Judul"}</h3>
+                      <h3 className="text-sm font-bold truncate flex-1">{slide.title ||"Tanpa Judul"}</h3>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[10px] font-medium text-muted-foreground">{slide.isActive ? "Aktif" : "Draft"}</span>
+                        <span className="text-[10px] font-medium text-muted-foreground">{slide.isActive ?"Aktif" :"Draft"}</span>
                         <Switch 
                           checked={slide.isActive} 
                           onCheckedChange={() => handleToggle(slide.id, slide.isActive)}

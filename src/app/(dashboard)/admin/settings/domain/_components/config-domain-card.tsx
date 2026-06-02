@@ -1,8 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Globe, AlertCircle, Save, Info } from "lucide-react"
-import { DomainData } from "./types"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Globe, AlertCircle, Save, Info } from"lucide-react"
+import { DomainData } from"./types"
 
 interface ConfigDomainCardProps {
   data: DomainData | null
@@ -39,7 +39,7 @@ export function ConfigDomainCard({
             <div className="space-y-1">
               <p className="text-sm font-medium text-amber-700">Fitur Terkunci</p>
               <p className="text-xs text-muted-foreground">
-                {data.lockedMessage || "Fitur Custom Domain saat ini dinonaktifkan."}
+                {data.lockedMessage ||"Fitur Custom Domain saat ini dinonaktifkan."}
               </p>
             </div>
           </div>
@@ -68,7 +68,7 @@ export function ConfigDomainCard({
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Masukkan domain tanpa <code className="bg-muted px-1 rounded">https://</code> atau{" "}
+            Masukkan domain tanpa <code className="bg-muted px-1 rounded">https://</code> atau{""}
             <code className="bg-muted px-1 rounded">www.</code>
           </p>
         </div>

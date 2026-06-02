@@ -1,12 +1,12 @@
-import React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Info, Sparkles, Upload, X } from "lucide-react"
-import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
-import { normalizeImageUrl } from "@/lib/utils"
-import { AboutFormState, AiPromptType } from "./types"
+import React from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Info, Sparkles, Upload, X } from"lucide-react"
+import { LazyRichTextEditor as RichTextEditor } from"@/components/ui/lazy-rich-text-editor"
+import { normalizeImageUrl } from"@/lib/utils"
+import { AboutFormState, AiPromptType } from"./types"
 
 interface PrincipalSpeechFormProps {
   form: AboutFormState
@@ -43,7 +43,7 @@ export function PrincipalSpeechForm({
               <div className="space-y-2">
                 <Label>Pilih dari Data GTK</Label>
                 <select
-                  value={staffList.find(s => s.name === form.settings?.principalName)?.id || ""}
+                  value={staffList.find(s => s.name === form.settings?.principalName)?.id ||""}
                   onChange={(e) => {
                     const selectedId = e.target.value
                     if (selectedId) {
@@ -54,7 +54,7 @@ export function PrincipalSpeechForm({
                           settings: {
                             ...p.settings,
                             principalName: selected.name,
-                            principalTitle: selected.role || "Kepala Sekolah",
+                            principalTitle: selected.role ||"Kepala Sekolah",
                             principalImage: selected.imageUrl || p.settings?.principalImage
                           }
                         }))
@@ -74,19 +74,19 @@ export function PrincipalSpeechForm({
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Nama Pemberi Sambutan</Label>
-                  <Input value={form.settings?.principalName || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalName: e.target.value } }))}
+                  <Input value={form.settings?.principalName ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalName: e.target.value } }))}
                     placeholder="Contoh: Ir. Sherly Puspita, M.Pd" className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
                   <Label>Jabatan (Opsional)</Label>
-                  <Input value={form.settings?.principalTitle || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalTitle: e.target.value } }))}
+                  <Input value={form.settings?.principalTitle ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalTitle: e.target.value } }))}
                     placeholder="Contoh: Kepala Sekolah" className="rounded-xl" />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label>Tahun Berdedikasi (Badge Foto)</Label>
-                <Input value={form.settings?.principalBadgeYear || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalBadgeYear: e.target.value } }))}
+                <Input value={form.settings?.principalBadgeYear ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalBadgeYear: e.target.value } }))}
                   placeholder="Contoh: 2015" className="rounded-xl" />
                 <p className="text-[11px] text-muted-foreground">Tampil di badge foto halaman depan</p>
               </div>
@@ -95,7 +95,7 @@ export function PrincipalSpeechForm({
             <div className="space-y-2">
               <Label>Foto Profil Utama</Label>
               <div className="flex gap-2">
-                <Input value={form.settings?.principalImage || ""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalImage: e.target.value } }))}
+                <Input value={form.settings?.principalImage ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalImage: e.target.value } }))}
                   placeholder="https://... atau upload file" className="rounded-xl flex-1" />
                 <Label className="cursor-pointer">
                   <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePrincipalImageUpload} />
@@ -105,7 +105,7 @@ export function PrincipalSpeechForm({
                 </Label>
                 {form.settings?.principalImage && (
                   <Button type="button" variant="outline" size="icon" className="rounded-xl shrink-0 text-destructive"
-                    onClick={() => setForm(p => ({ ...p, settings: { ...p.settings, principalImage: "" } }))}>
+                    onClick={() => setForm(p => ({ ...p, settings: { ...p.settings, principalImage:"" } }))}>
                     <X className="h-4 w-4" />
                   </Button>
                 )}
@@ -122,7 +122,7 @@ export function PrincipalSpeechForm({
           <div className="space-y-2">
             <Label>Pesan Sambutan</Label>
             <RichTextEditor 
-              value={form.settings?.principalMessage || ""}
+              value={form.settings?.principalMessage ||""}
               onChange={val => setForm(p => ({ ...p, settings: { ...p.settings, principalMessage: val } }))}
               placeholder="Puji syukur ke hadirat Tuhan YME..."
             />

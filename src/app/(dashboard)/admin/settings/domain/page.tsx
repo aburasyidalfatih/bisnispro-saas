@@ -1,15 +1,15 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
-import { useSession } from "next-auth/react"
-import { toast } from "@/hooks/use-toast"
-import { getRootDomain } from "@/lib/utils"
+import { useEffect, useState, useCallback } from"react"
+import { useSession } from"next-auth/react"
+import { toast } from"@/hooks/use-toast"
+import { getRootDomain } from"@/lib/utils"
 
-import { DomainData } from "./_components/types"
-import { ActiveUrlCard } from "./_components/active-url-card"
-import { ConfigDomainCard } from "./_components/config-domain-card"
-import { DnsGuideCard } from "./_components/dns-guide-card"
-import { RemoveDomainCard } from "./_components/remove-domain-card"
+import { DomainData } from"./_components/types"
+import { ActiveUrlCard } from"./_components/active-url-card"
+import { ConfigDomainCard } from"./_components/config-domain-card"
+import { DnsGuideCard } from"./_components/dns-guide-card"
+import { RemoveDomainCard } from"./_components/remove-domain-card"
 
 export default function DomainSettingsPage() {
   const { data: session } = useSession()
@@ -29,7 +29,7 @@ export default function DomainSettingsPage() {
   const [savingSubdomain, setSavingSubdomain] = useState(false)
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !=="undefined") {
       setRootDomain(getRootDomain())
     }
     const id = session?.user?.tenants?.[0]?.id
@@ -48,14 +48,14 @@ export default function DomainSettingsPage() {
     setLoading(true)
     try {
       const res = await fetch(`/api/tenant/domain?tenantId=${tenantId}`, {
-        cache: "no-store",
+        cache:"no-store",
       })
       const json = await res.json()
       setData(json)
       if (json.domain) setDomainInput(json.domain)
       if (json.slug) setSubdomainInput(json.slug)
     } catch {
-      toast({ title: "Gagal memuat data", variant: "destructive" })
+      toast({ title:"Gagal memuat data", variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -68,17 +68,17 @@ export default function DomainSettingsPage() {
     setSavingSubdomain(true)
     try {
       const res = await fetch("/api/tenant/subdomain", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        method:"PUT",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId, newSlug: subdomainInput.trim().toLowerCase() }),
       })
       const json = await res.json()
       if (res.ok) {
-        toast({ title: "Subdomain berhasil diubah!", description: "Sistem telah menyimpan subdomain baru Anda." })
+        toast({ title:"Subdomain berhasil diubah!", description:"Sistem telah menyimpan subdomain baru Anda." })
         await loadData()
         window.location.href = `/admin/settings/domain`
       } else {
-        toast({ title: "Gagal mengganti subdomain", description: json.error, variant: "destructive" })
+        toast({ title:"Gagal mengganti subdomain", description: json.error, variant:"destructive" })
       }
     } finally {
       setSavingSubdomain(false)
@@ -90,16 +90,16 @@ export default function DomainSettingsPage() {
     setSaving(true)
     try {
       const res = await fetch("/api/tenant/domain", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        method:"PUT",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId, domain: domainInput.trim() }),
       })
       const json = await res.json()
       if (res.ok) {
-        toast({ title: "Domain disimpan", description: json.message })
+        toast({ title:"Domain disimpan", description: json.message })
         await loadData()
       } else {
-        toast({ title: "Gagal", description: json.error, variant: "destructive" })
+        toast({ title:"Gagal", description: json.error, variant:"destructive" })
       }
     } finally {
       setSaving(false)
@@ -111,18 +111,18 @@ export default function DomainSettingsPage() {
     setVerifying(true)
     try {
       const res = await fetch("/api/tenant/domain/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId }),
       })
       const json = await res.json()
       if (res.ok && json.success) {
-        toast({ title: "✅ Domain terverifikasi!", description: json.message })
+        toast({ title:"✅ Domain terverifikasi!", description: json.message })
       } else {
         toast({
-          title: json.success === false ? "Verifikasi gagal" : "Gagal",
+          title: json.success === false ?"Verifikasi gagal" :"Gagal",
           description: json.message || json.error,
-          variant: "destructive",
+          variant:"destructive",
         })
       }
       await loadData()
@@ -136,17 +136,17 @@ export default function DomainSettingsPage() {
     setRemoving(true)
     try {
       const res = await fetch("/api/tenant/domain", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        method:"DELETE",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId }),
       })
       const json = await res.json()
       if (res.ok) {
-        toast({ title: "Domain dihapus", description: json.message })
+        toast({ title:"Domain dihapus", description: json.message })
         setDomainInput("")
         await loadData()
       } else {
-        toast({ title: "Gagal", description: json.error, variant: "destructive" })
+        toast({ title:"Gagal", description: json.error, variant:"destructive" })
       }
     } finally {
       setRemoving(false)
@@ -155,12 +155,12 @@ export default function DomainSettingsPage() {
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
-    toast({ title: "Disalin", description: `${label} disalin ke clipboard.` })
+    toast({ title:"Disalin", description: `${label} disalin ke clipboard.` })
   }
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-in fade-in duration-300">
+      <div className="space-y-6">
         <div className="space-y-2">
           <div className="skeleton h-8 w-48" />
           <div className="skeleton h-4 w-72" />
@@ -172,7 +172,7 @@ export default function DomainSettingsPage() {
   }
 
   const customDomain = data?.customDomain
-  const isVerified = customDomain?.status === "verified"
+  const isVerified = customDomain?.status ==="verified"
   const hasCustomDomain = !!data?.domain
   const subdomain = data?.slug && rootDomain
     ? `${data.slug}.${rootDomain}`

@@ -1,19 +1,19 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Wallet, Users, AlertCircle, ArrowUpRight, ArrowDownRight, Clock, CheckCircle, XCircle, Search, ExternalLink } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
-import { format } from "date-fns"
-import { id } from "date-fns/locale"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { verifyManualTopup, rejectManualTopup } from "@/features/finance/actions/wallet-admin.action"
-import { toast } from "@/hooks/use-toast"
+import { useState } from"react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Wallet, Users, AlertCircle, ArrowUpRight, ArrowDownRight, Clock, CheckCircle, XCircle, Search, ExternalLink } from"lucide-react"
+import { Input } from"@/components/ui/input"
+import { cn } from"@/lib/utils"
+import { format } from"date-fns"
+import { id } from"date-fns/locale"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { verifyManualTopup, rejectManualTopup } from"@/features/finance/actions/wallet-admin.action"
+import { toast } from"@/hooks/use-toast"
 
 export function WalletManager({ tenantId, wallets, pendingTopups, transactions, stats }: any) {
-  const [activeTab, setActiveTab] = useState<"overview" | "pending" | "history">("overview")
+  const [activeTab, setActiveTab] = useState<"overview" |"pending" |"history">("overview")
   const [search, setSearch] = useState("")
   const [verifyingId, setVerifyingId] = useState<string | null>(null)
 
@@ -27,20 +27,20 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
     const res = await verifyManualTopup(paymentId, tenantId)
     setVerifyingId(null)
     if (res.success) {
-       toast({ title: "Berhasil", description: "Top up manual telah disetujui. Saldo siswa bertambah." })
+       toast({ title:"Berhasil", description:"Top up manual telah disetujui. Saldo siswa bertambah." })
     } else {
-       toast({ title: "Gagal", description: (res as any).error, variant: "destructive" })
+       toast({ title:"Gagal", description: (res as any).error, variant:"destructive" })
     }
   }
 
   const handleReject = async (paymentId: string) => {
     setVerifyingId(paymentId)
-    const res = await rejectManualTopup(paymentId, "Bukti transfer tidak valid atau dana belum masuk.", tenantId)
+    const res = await rejectManualTopup(paymentId,"Bukti transfer tidak valid atau dana belum masuk.", tenantId)
     setVerifyingId(null)
     if (res.success) {
-       toast({ title: "Ditolak", description: "Top up manual telah ditolak." })
+       toast({ title:"Ditolak", description:"Top up manual telah ditolak." })
     } else {
-       toast({ title: "Gagal", description: (res as any).error, variant: "destructive" })
+       toast({ title:"Gagal", description: (res as any).error, variant:"destructive" })
     }
   }
 
@@ -74,10 +74,10 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
             </div>
           </CardContent>
         </Card>
-        <Card className={cn("border-0 shadow-md transition-colors cursor-pointer", stats.pendingCount > 0 ? "bg-amber-50 border-amber-200" : "")} onClick={() => setActiveTab("pending")}>
+        <Card className={cn("border-0 shadow-md transition-colors cursor-pointer", stats.pendingCount > 0 ?"bg-amber-50 border-amber-200" :"")} onClick={() => setActiveTab("pending")}>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className={cn("h-12 w-12 rounded-xl flex items-center justify-center", stats.pendingCount > 0 ? "bg-amber-500/20 text-amber-600" : "bg-muted text-muted-foreground")}>
+              <div className={cn("h-12 w-12 rounded-xl flex items-center justify-center", stats.pendingCount > 0 ?"bg-amber-500/20 text-amber-600" :"bg-muted text-muted-foreground")}>
                 <AlertCircle className="h-6 w-6" />
               </div>
               <div>
@@ -93,13 +93,13 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
       <div className="flex gap-2 border-b">
          <button 
            onClick={() => setActiveTab("overview")}
-           className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors", activeTab === "overview" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}
+           className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors", activeTab ==="overview" ?"border-primary text-primary" :"border-transparent text-muted-foreground hover:text-foreground")}
          >
             Daftar Tabungan
          </button>
          <button 
            onClick={() => setActiveTab("pending")}
-           className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2", activeTab === "pending" ? "border-amber-500 text-amber-600" : "border-transparent text-muted-foreground hover:text-foreground")}
+           className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2", activeTab ==="pending" ?"border-amber-500 text-amber-600" :"border-transparent text-muted-foreground hover:text-foreground")}
          >
             Menunggu Verifikasi
             {stats.pendingCount > 0 && (
@@ -108,14 +108,14 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
          </button>
          <button 
            onClick={() => setActiveTab("history")}
-           className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors", activeTab === "history" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}
+           className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors", activeTab ==="history" ?"border-primary text-primary" :"border-transparent text-muted-foreground hover:text-foreground")}
          >
             Riwayat Transaksi Global
          </button>
       </div>
 
       {/* Tab Content: Overview */}
-      {activeTab === "overview" && (
+      {activeTab ==="overview" && (
          <Card className="border-0 shadow-md">
             <div className="p-4 border-b flex items-center justify-between">
                <div className="relative w-72">
@@ -150,13 +150,13 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
                            <tr key={w.id} className="hover:bg-muted/30 transition-colors">
                               <td className="px-6 py-4">
                                  <p className="font-semibold text-foreground">{w.student.name}</p>
-                                 <p className="text-xs text-muted-foreground">NISN: {w.student.nisn || "-"}</p>
+                                 <p className="text-xs text-muted-foreground">NISN: {w.student.nisn ||"-"}</p>
                               </td>
                               <td className="px-6 py-4">
                                  {w.student.parents?.[0]?.user ? (
                                     <>
                                        <p className="font-medium">{w.student.parents[0].user.name}</p>
-                                       <p className="text-xs text-muted-foreground">{w.student.parents[0].user.phone || "-"}</p>
+                                       <p className="text-xs text-muted-foreground">{w.student.parents[0].user.phone ||"-"}</p>
                                     </>
                                  ) : (
                                     <span className="text-xs text-muted-foreground italic">Belum terhubung ortu</span>
@@ -180,7 +180,7 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
       )}
 
       {/* Tab Content: Pending */}
-      {activeTab === "pending" && (
+      {activeTab ==="pending" && (
          <Card className="border-0 shadow-md">
             <CardHeader className="border-b bg-amber-50/50 pb-4">
                <CardTitle className="text-amber-800 flex items-center gap-2">
@@ -211,7 +211,7 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
                               <p className="text-xs text-muted-foreground">Ke rekening: <strong>{meta.bankName}</strong> ({meta.accountNumber})</p>
                               <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                                  <Clock className="h-3 w-3" />
-                                 Diunggah pada {format(new Date(p.updatedAt), "dd MMM yyyy HH:mm", { locale: id })}
+                                 Diunggah pada {format(new Date(p.updatedAt),"dd MMM yyyy HH:mm", { locale: id })}
                               </p>
                            </div>
                            
@@ -244,7 +244,7 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
                                  <ConfirmDialog 
                                     trigger={
                                        <Button className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl" disabled={verifyingId === p.id}>
-                                          {verifyingId === p.id ? "Memproses..." : "Setujui & Tambah Saldo"}
+                                          {verifyingId === p.id ?"Memproses..." :"Setujui & Tambah Saldo"}
                                        </Button>
                                     }
                                     title="Setujui Pembayaran?"
@@ -263,7 +263,7 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
       )}
 
       {/* Tab Content: History */}
-      {activeTab === "history" && (
+      {activeTab ==="history" && (
          <Card className="border-0 shadow-md">
             <div className="overflow-x-auto">
                <table className="w-full text-sm text-left">
@@ -288,17 +288,17 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
                         transactions.map((t: any) => (
                            <tr key={t.id} className="hover:bg-muted/30 transition-colors">
                               <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
-                                 {format(new Date(t.createdAt), "dd MMM yyyy HH:mm", { locale: id })}
+                                 {format(new Date(t.createdAt),"dd MMM yyyy HH:mm", { locale: id })}
                               </td>
                               <td className="px-6 py-4 font-medium">
                                  {t.wallet.student.name}
                               </td>
                               <td className="px-6 py-4">
-                                 {t.type === "DEPOSIT" ? (
+                                 {t.type ==="DEPOSIT" ? (
                                     <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
                                        <ArrowDownRight className="h-3 w-3" /> Masuk (Top Up)
                                     </span>
-                                 ) : t.type === "WITHDRAWAL" ? (
+                                 ) : t.type ==="WITHDRAWAL" ? (
                                     <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">
                                        <ArrowUpRight className="h-3 w-3" /> Tarik Tunai
                                     </span>
@@ -313,8 +313,8 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
                                  {t.referenceId && <span className="block text-[10px] text-muted-foreground mt-0.5">{t.referenceId}</span>}
                               </td>
                               <td className="px-6 py-4 text-right font-mono font-bold">
-                                 <span className={t.type === "DEPOSIT" ? "text-emerald-600" : "text-destructive"}>
-                                    {t.type === "DEPOSIT" ? "+" : "-"}Rp {t.amount.toLocaleString("id-ID")}
+                                 <span className={t.type ==="DEPOSIT" ?"text-emerald-600" :"text-destructive"}>
+                                    {t.type ==="DEPOSIT" ?"+" :"-"}Rp {t.amount.toLocaleString("id-ID")}
                                  </span>
                               </td>
                               <td className="px-6 py-4 text-right font-mono">

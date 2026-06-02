@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
-import { Plus, Trash2, Edit, Image as ImageIcon, GripVertical } from "lucide-react"
-import { Switch } from "@/components/ui/switch"
-import Link from "next/link"
-import Image from "next/image"
-import { cn, normalizeImageUrl } from "@/lib/utils"
-import { getPartnerships, deletePartnership, togglePartnershipStatus, updatePartnershipsOrder } from "@/features/partnership/actions/partnership.action"
+import { useEffect, useState } from"react"
+import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
+import { Plus, Trash2, Edit, Image as ImageIcon, GripVertical } from"lucide-react"
+import { Switch } from"@/components/ui/switch"
+import Link from"next/link"
+import Image from"next/image"
+import { cn, normalizeImageUrl } from"@/lib/utils"
+import { getPartnerships, deletePartnership, togglePartnershipStatus, updatePartnershipsOrder } from"@/features/partnership/actions/partnership.action"
 
 interface Partnership {
   id: string
@@ -38,7 +38,7 @@ export default function PartnershipsPage() {
       const d = await getPartnerships(tenantId)
       setPartnerships(d)
     } catch (err: any) {
-      toast({ title: "Gagal memuat data", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal memuat data", description: err.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -54,10 +54,10 @@ export default function PartnershipsPage() {
     if (!tenantId) return
     try {
       await deletePartnership(id, tenantId)
-      toast({ title: "Kerjasama dihapus" })
+      toast({ title:"Kerjasama dihapus" })
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
@@ -65,22 +65,22 @@ export default function PartnershipsPage() {
     if (!tenantId) return
     try {
       await togglePartnershipStatus(id, tenantId, !currentStatus)
-      toast({ title: !currentStatus ? "Kerjasama diaktifkan" : "Kerjasama dinonaktifkan" })
+      toast({ title: !currentStatus ?"Kerjasama diaktifkan" :"Kerjasama dinonaktifkan" })
       loadData()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     }
   }
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDragIndex(index)
-    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.effectAllowed ="move"
   }
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     setDragOver(index)
-    e.dataTransfer.dropEffect = "move"
+    e.dataTransfer.dropEffect ="move"
   }
 
   const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
@@ -98,9 +98,9 @@ export default function PartnershipsPage() {
     if (tenantId) {
       try {
         await updatePartnershipsOrder(tenantId, newArr.map(a => a.id))
-        toast({ title: "Urutan berhasil disimpan" })
+        toast({ title:"Urutan berhasil disimpan" })
       } catch (err: any) {
-        toast({ title: "Gagal menyimpan urutan", description: err.message, variant: "destructive" })
+        toast({ title:"Gagal menyimpan urutan", description: err.message, variant:"destructive" })
       }
     }
   }
@@ -149,10 +149,9 @@ export default function PartnershipsPage() {
                   onDragOver={e => handleDragOver(e, i)}
                   onDrop={e => handleDrop(e, i)}
                   onDragEnd={() => { setDragIndex(null); setDragOver(null) }}
-                  className={cn(
-                    "overflow-hidden border group relative transition-all",
-                    dragOver === i && "ring-2 ring-primary scale-[1.02]",
-                    dragIndex === i && "opacity-50"
+                  className={cn("overflow-hidden border group relative transition-all",
+                    dragOver === i &&"ring-2 ring-primary scale-[1.02]",
+                    dragIndex === i &&"opacity-50"
                   )}>
                   <div className="aspect-video relative bg-white flex items-center justify-center p-4 cursor-grab active:cursor-grabbing">
                     <Image src={normalizeImageUrl(partner.imageUrl)!} alt={partner.name} fill className="object-contain p-4" />
@@ -185,7 +184,7 @@ export default function PartnershipsPage() {
                     <div className="flex flex-col gap-2">
                       <h3 className="text-sm font-bold truncate">{partner.name}</h3>
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-medium text-muted-foreground">{partner.isActive ? "Aktif" : "Draft"}</span>
+                        <span className="text-[10px] font-medium text-muted-foreground">{partner.isActive ?"Aktif" :"Draft"}</span>
                         <Switch 
                           checked={partner.isActive} 
                           onCheckedChange={() => handleToggle(partner.id, partner.isActive)}

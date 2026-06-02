@@ -1,24 +1,24 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { useToast } from"@/hooks/use-toast"
+import { useRouter } from"next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { Switch } from"@/components/ui/switch"
+import { Badge } from"@/components/ui/badge"
 import {
   BadgeDollarSign, Plus, Edit2, Trash2, Loader2,
   ToggleLeft, Repeat, MoreVertical, ChevronDown
-} from "lucide-react"
+} from"lucide-react"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
+} from"@/components/ui/dropdown-menu"
 
 type BillingType = {
   id: string; name: string; category: string; description?: string
@@ -27,16 +27,16 @@ type BillingType = {
 }
 
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  SPP: { label: "SPP Bulanan", color: "bg-blue-500/10 text-blue-600 border-blue-200" },
-  UANG_GEDUNG: { label: "Uang Gedung", color: "bg-purple-500/10 text-purple-600 border-purple-200" },
-  EKSKUL: { label: "Ekstrakulikuler", color: "bg-pink-500/10 text-pink-600 border-pink-200" },
-  SERAGAM: { label: "Seragam", color: "bg-amber-500/10 text-amber-600 border-amber-200" },
-  BUKU: { label: "Buku / LKS", color: "bg-emerald-500/10 text-emerald-600 border-emerald-200" },
-  LAINNYA: { label: "Lainnya", color: "bg-slate-500/10 text-slate-500 border-slate-200" },
+  SPP: { label:"SPP Bulanan", color:"bg-blue-500/10 text-blue-600 border-blue-200" },
+  UANG_GEDUNG: { label:"Uang Gedung", color:"bg-purple-500/10 text-purple-600 border-purple-200" },
+  EKSKUL: { label:"Ekstrakulikuler", color:"bg-pink-500/10 text-pink-600 border-pink-200" },
+  SERAGAM: { label:"Seragam", color:"bg-amber-500/10 text-amber-600 border-amber-200" },
+  BUKU: { label:"Buku / LKS", color:"bg-emerald-500/10 text-emerald-600 border-emerald-200" },
+  LAINNYA: { label:"Lainnya", color:"bg-slate-500/10 text-slate-500 border-slate-200" },
 }
 
 const EMPTY_FORM = {
-  name: "", category: "SPP", description: "", amount: 0,
+  name:"", category:"SPP", description:"", amount: 0,
   isRecurring: true, isActive: true,
 }
 
@@ -70,7 +70,7 @@ export default function BillingTypesPage() {
   const openEdit = (bt: BillingType) => {
     setEditId(bt.id)
     setForm({
-      name: bt.name, category: bt.category, description: bt.description || "",
+      name: bt.name, category: bt.category, description: bt.description ||"",
       amount: bt.amount, isRecurring: bt.isRecurring, isActive: bt.isActive,
     })
     setShowForm(true)
@@ -78,23 +78,23 @@ export default function BillingTypesPage() {
 
   const handleSave = async () => {
     if (!tenant) return
-    if (!form.name || !form.amount) return toast({ title: "Nama dan nominal wajib diisi", variant: "destructive" })
+    if (!form.name || !form.amount) return toast({ title:"Nama dan nominal wajib diisi", variant:"destructive" })
     setSaving(true)
     try {
-      const url = editId ? `/api/finance/billing-types/${editId}` : "/api/finance/billing-types"
-      const method = editId ? "PATCH" : "POST"
+      const url = editId ? `/api/finance/billing-types/${editId}` :"/api/finance/billing-types"
+      const method = editId ?"PATCH" :"POST"
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId: tenant.id, ...form, amount: Number(form.amount) }),
       })
       if (!res.ok) throw new Error((await res.json()).error)
-      toast({ title: editId ? "Jenis tagihan diperbarui!" : "Jenis tagihan ditambahkan!" })
+      toast({ title: editId ?"Jenis tagihan diperbarui!" :"Jenis tagihan ditambahkan!" })
       setShowForm(false)
       setEditId(null)
       fetchTypes()
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, variant: "destructive" })
+      toast({ title:"Gagal", description: err.message, variant:"destructive" })
     } finally {
       setSaving(false)
     }
@@ -103,22 +103,22 @@ export default function BillingTypesPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Hapus jenis tagihan ini?")) return
     if (!tenant) return
-    await fetch(`/api/finance/billing-types/${id}?tenantId=${tenant.id}`, { method: "DELETE" })
-    toast({ title: "Jenis tagihan dihapus" })
+    await fetch(`/api/finance/billing-types/${id}?tenantId=${tenant.id}`, { method:"DELETE" })
+    toast({ title:"Jenis tagihan dihapus" })
     fetchTypes()
   }
 
   const handleToggle = async (id: string, isActive: boolean) => {
     if (!tenant) return
     await fetch(`/api/finance/billing-types/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method:"PATCH",
+      headers: {"Content-Type":"application/json" },
       body: JSON.stringify({ tenantId: tenant.id, isActive: !isActive }),
     })
     fetchTypes()
   }
 
-  const totalSPP = types.filter(t => t.category === "SPP" && t.isActive).reduce((a, t) => a + t.amount, 0)
+  const totalSPP = types.filter(t => t.category ==="SPP" && t.isActive).reduce((a, t) => a + t.amount, 0)
 
   return (
     <div className="space-y-6">
@@ -138,7 +138,7 @@ export default function BillingTypesPage() {
           <BadgeDollarSign className="h-8 w-8 text-blue-600 shrink-0" />
           <div>
             <p className="font-bold text-blue-800">Total SPP Aktif: Rp {totalSPP.toLocaleString("id-ID")}/bulan</p>
-            <p className="text-sm text-blue-600">{types.filter(t => t.category === "SPP" && t.isActive).length} tipe SPP aktif terdaftar.</p>
+            <p className="text-sm text-blue-600">{types.filter(t => t.category ==="SPP" && t.isActive).length} tipe SPP aktif terdaftar.</p>
           </div>
         </div>
       )}
@@ -149,7 +149,7 @@ export default function BillingTypesPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-bold flex items-center gap-2">
               <BadgeDollarSign className="h-4 w-4 text-primary" />
-              {editId ? "Edit Jenis Tagihan" : "Tambah Jenis Tagihan Baru"}
+              {editId ?"Edit Jenis Tagihan" :"Tambah Jenis Tagihan Baru"}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -171,7 +171,7 @@ export default function BillingTypesPage() {
               </div>
               <div className="space-y-2">
                 <Label>Nominal (Rp) *</Label>
-                <Input type="number" value={form.amount || ""} onChange={e => setForm(f => ({ ...f, amount: Number(e.target.value) }))} placeholder="500000" className="rounded-xl" />
+                <Input type="number" value={form.amount ||""} onChange={e => setForm(f => ({ ...f, amount: Number(e.target.value) }))} placeholder="500000" className="rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Label>Deskripsi</Label>
@@ -196,7 +196,7 @@ export default function BillingTypesPage() {
             </div>
             <div className="flex gap-2">
               <Button onClick={handleSave} disabled={saving} className="rounded-xl">
-                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Simpan"}
+                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :"Simpan"}
               </Button>
               <Button variant="outline" onClick={() => setShowForm(false)} className="rounded-xl">Batal</Button>
             </div>
@@ -221,7 +221,7 @@ export default function BillingTypesPage() {
           {types.map(bt => {
             const catCfg = CATEGORY_CONFIG[bt.category] || CATEGORY_CONFIG.LAINNYA
             return (
-              <Card key={bt.id} className={`glass border-0 shadow-sm transition-all ${!bt.isActive ? "opacity-60" : ""}`}>
+              <Card key={bt.id} className={`glass border-0 shadow-sm transition-all ${!bt.isActive ?"opacity-60" :""}`}>
                 <CardContent className="p-5">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
@@ -240,7 +240,7 @@ export default function BillingTypesPage() {
                           <Edit2 className="mr-2 h-4 w-4" /> Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleToggle(bt.id, bt.isActive)}>
-                          <ToggleLeft className="mr-2 h-4 w-4" /> {bt.isActive ? "Nonaktifkan" : "Aktifkan"}
+                          <ToggleLeft className="mr-2 h-4 w-4" /> {bt.isActive ?"Nonaktifkan" :"Aktifkan"}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDelete(bt.id)} className="text-red-600">
                           <Trash2 className="mr-2 h-4 w-4" /> Hapus
@@ -252,12 +252,12 @@ export default function BillingTypesPage() {
                   <div className="flex items-end justify-between mt-4">
                     <div>
                       <p className="text-2xl font-black text-primary">Rp {bt.amount.toLocaleString("id-ID")}</p>
-                      <p className="text-xs text-muted-foreground">{bt.isRecurring ? "/ bulan" : "sekali bayar"}</p>
+                      <p className="text-xs text-muted-foreground">{bt.isRecurring ?"/ bulan" :"sekali bayar"}</p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       {bt.isRecurring && <Repeat className="h-4 w-4 text-muted-foreground" />}
-                      <Badge className={bt.isActive ? "bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-[10px]" : "bg-slate-500/10 text-slate-500 border text-[10px]"}>
-                        {bt.isActive ? "Aktif" : "Nonaktif"}
+                      <Badge className={bt.isActive ?"bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-[10px]" :"bg-slate-500/10 text-slate-500 border text-[10px]"}>
+                        {bt.isActive ?"Aktif" :"Nonaktif"}
                       </Badge>
                       {bt._count && <p className="text-[10px] text-muted-foreground">{bt._count.invoices} invoice</p>}
                     </div>

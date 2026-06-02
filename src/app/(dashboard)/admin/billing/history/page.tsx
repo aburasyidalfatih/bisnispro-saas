@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
+import { useEffect, useState } from"react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
+import { Badge } from"@/components/ui/badge"
+import { Button } from"@/components/ui/button"
+import { Separator } from"@/components/ui/separator"
 import {
   FileText, ArrowLeft, Clock, CheckCircle2,
   XCircle, AlertCircle, Copy, CheckCheck, MessageCircle, Download
-} from "lucide-react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
+} from"lucide-react"
+import Link from"next/link"
+import { cn } from"@/lib/utils"
 
 interface Payment {
   id: string
@@ -31,11 +31,11 @@ interface Payment {
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
-  pending: { label: "Menunggu Pembayaran", color: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400", icon: Clock },
-  paid:    { label: "Lunas", color: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400", icon: CheckCircle2 },
-  failed:  { label: "Gagal", color: "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400", icon: XCircle },
-  expired: { label: "Kadaluarsa", color: "bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-800 dark:text-gray-400", icon: XCircle },
-  cancelled: { label: "Dibatalkan", color: "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400", icon: XCircle },
+  pending: { label:"Menunggu Pembayaran", color:"bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400", icon: Clock },
+  paid:    { label:"Lunas", color:"bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400", icon: CheckCircle2 },
+  failed:  { label:"Gagal", color:"bg-red-100 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400", icon: XCircle },
+  expired: { label:"Kadaluarsa", color:"bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-800 dark:text-gray-400", icon: XCircle },
+  cancelled: { label:"Dibatalkan", color:"bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400", icon: XCircle },
 }
 
 export default function BillingHistoryPage() {
@@ -46,7 +46,7 @@ export default function BillingHistoryPage() {
   const [manualPayment, setManualPayment] = useState<{ bank: string; number: string; name: string; waNumber: string } | null>(null)
 
   const fetchHistory = () => {
-    fetch("/api/tenant/billing/history", { cache: "no-store" })
+    fetch("/api/tenant/billing/history", { cache:"no-store" })
       .then((r) => r.json())
       .then((data) => {
         setPayments(Array.isArray(data) ? data : [])
@@ -58,7 +58,7 @@ export default function BillingHistoryPage() {
   useEffect(() => {
     fetchHistory()
     // Fetch rekening pembayaran dari platform settings
-    fetch("/api/tenant/billing", { cache: "no-store" })
+    fetch("/api/tenant/billing", { cache:"no-store" })
       .then(r => r.json())
       .then(data => {
         if (data.manualPayment) setManualPayment(data.manualPayment)
@@ -66,10 +66,10 @@ export default function BillingHistoryPage() {
       .catch(() => {})
   }, [])
 
-  const bank = manualPayment?.bank || "Bank Pembayaran"
-  const accNumber = manualPayment?.number || "-"
-  const accName = manualPayment?.name || "Nama Pemilik"
-  const waNumber = manualPayment?.waNumber || "6281234567890"
+  const bank = manualPayment?.bank ||"Bank Pembayaran"
+  const accNumber = manualPayment?.number ||"-"
+  const accName = manualPayment?.name ||"Nama Pemilik"
+  const waNumber = manualPayment?.waNumber ||"6281234567890"
 
   const copyRef = (ref: string, id: string) => {
     navigator.clipboard.writeText(ref)
@@ -82,8 +82,8 @@ export default function BillingHistoryPage() {
     setCancellingId(paymentId)
     try {
       const res = await fetch("/api/tenant/billing/cancel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ paymentId })
       })
       if (res.ok) fetchHistory()
@@ -136,10 +136,9 @@ export default function BillingHistoryPage() {
 
             return (
               <Card key={payment.id} className="glass border-0 shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                <div className={cn(
-                  "h-1 w-full",
-                  payment.status === "paid" ? "bg-emerald-500" :
-                  payment.status === "pending" ? "bg-amber-400" : "bg-gray-300"
+                <div className={cn("h-1 w-full",
+                  payment.status ==="paid" ?"bg-emerald-500" :
+                  payment.status ==="pending" ?"bg-amber-400" :"bg-gray-300"
                 )} />
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-4">
@@ -160,15 +159,15 @@ export default function BillingHistoryPage() {
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {new Date(payment.createdAt).toLocaleDateString("id-ID", {
-                            day: "numeric", month: "long", year: "numeric",
-                            hour: "2-digit", minute: "2-digit"
+                            day:"numeric", month:"long", year:"numeric",
+                            hour:"2-digit", minute:"2-digit"
                           })}
                         </p>
                         {meta.studentCount ? (
                           <p className="text-xs text-muted-foreground mt-0.5">
                             {meta.studentCount} siswa × Rp {Number(meta.pricePerStudent || 0).toLocaleString("id-ID")}
                           </p>
-                        ) : meta.type === "AI_QUOTA" ? (
+                        ) : meta.type ==="AI_QUOTA" ? (
                           <p className="text-xs text-muted-foreground mt-0.5 font-medium text-blue-600">
                             + {Number(meta.aiTokens || 0).toLocaleString("id-ID")} Token AI
                           </p>
@@ -184,15 +183,15 @@ export default function BillingHistoryPage() {
                       <Badge className={cn("text-[10px] border mt-1", st.color)} variant="outline">
                         {st.label}
                       </Badge>
-                      {payment.status === "pending" && payment.expiredAt && (
+                      {payment.status ==="pending" && payment.expiredAt && (
                         <p className="text-[10px] text-amber-600 mt-1 flex items-center justify-end gap-1">
                           <Clock className="h-3 w-3" />
                           Exp: {new Date(payment.expiredAt).toLocaleString("id-ID", {
-                            day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
+                            day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"
                           })}
                         </p>
                       )}
-                      {payment.status === "paid" && payment.paidAt && (
+                      {payment.status ==="paid" && payment.paidAt && (
                         <p className="text-[10px] text-emerald-600 mt-1">
                           Dibayar: {new Date(payment.paidAt).toLocaleDateString("id-ID")}
                         </p>
@@ -208,7 +207,7 @@ export default function BillingHistoryPage() {
                     </Button>
                   </div>
 
-                  {payment.status === "pending" && (
+                  {payment.status ==="pending" && (
                     <>
                       <Separator className="my-4" />
                       
@@ -222,8 +221,8 @@ export default function BillingHistoryPage() {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-bold text-sm">{accNumber}</span>
-                            <button onClick={() => copyRef(accNumber.replace(/\s/g, ""), "acc-" + payment.id)} className="text-muted-foreground hover:text-primary transition">
-                              {copiedId === "acc-" + payment.id ? <CheckCheck className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                            <button onClick={() => copyRef(accNumber.replace(/\s/g,""),"acc-" + payment.id)} className="text-muted-foreground hover:text-primary transition">
+                              {copiedId ==="acc-" + payment.id ? <CheckCheck className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                             </button>
                           </div>
                         </div>
@@ -242,7 +241,7 @@ export default function BillingHistoryPage() {
                             onClick={() => handleCancel(payment.id)}
                             disabled={cancellingId === payment.id}
                           >
-                            {cancellingId === payment.id ? "Membatalkan..." : "Batalkan"}
+                            {cancellingId === payment.id ?"Membatalkan..." :"Batalkan"}
                           </Button>
                           <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 h-8 rounded-lg" asChild>
                             <a href={`https://wa.me/${waNumber}?text=Halo%20Admin%2C%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20invoice%20${payment.reference}`} target="_blank" rel="noopener noreferrer">

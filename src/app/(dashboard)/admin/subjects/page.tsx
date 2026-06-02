@@ -1,21 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { ConfirmDialog } from "@/components/shared/confirm-dialog"
-import { toast } from "@/hooks/use-toast"
+import { useEffect, useState } from"react"
+import { useSession } from"next-auth/react"
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
+import { Badge } from"@/components/ui/badge"
+import { ConfirmDialog } from"@/components/shared/confirm-dialog"
+import { toast } from"@/hooks/use-toast"
 import {
   BookOpen, Plus, Edit2, Trash2, Loader2, Search, CheckCircle, XCircle, Download
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import * as XLSX from "xlsx"
+} from"lucide-react"
+import { cn } from"@/lib/utils"
+import * as XLSX from"xlsx"
 
-import { createSubject, updateSubject, deleteSubject } from "@/features/academic/actions/academic.action"
+import { createSubject, updateSubject, deleteSubject } from"@/features/academic/actions/academic.action"
 
 interface Subject {
   id: string; name: string; code: string | null; description: string | null; isActive: boolean
@@ -27,7 +27,7 @@ export default function SubjectsPage() {
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
-  const [form, setForm] = useState({ name: "", code: "", description: "" })
+  const [form, setForm] = useState({ name:"", code:"", description:"" })
   const [editing, setEditing] = useState<Subject | null>(null)
   const [saving, setSaving] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -41,11 +41,11 @@ export default function SubjectsPage() {
       const res = await fetch(`/api/subjects?tenantId=${tenant.id}`)
       const data = await res.json()
       if (!res.ok) {
-        toast({ title: "Error memuat data", description: data.error, variant: "destructive" })
+        toast({ title:"Error memuat data", description: data.error, variant:"destructive" })
       }
       setSubjects(data.subjects || [])
     } catch (e: any) {
-      toast({ title: "Error jaringan", description: e.message, variant: "destructive" })
+      toast({ title:"Error jaringan", description: e.message, variant:"destructive" })
     } finally {
       setLoading(false)
     }
@@ -54,7 +54,7 @@ export default function SubjectsPage() {
   useEffect(() => { load() }, [tenant?.id])
 
   const resetForm = () => {
-    setForm({ name: "", code: "", description: "" })
+    setForm({ name:"", code:"", description:"" })
     setEditing(null)
     setShowForm(false)
   }
@@ -71,16 +71,16 @@ export default function SubjectsPage() {
       }
 
       if ((result as any)?.error) {
-        toast({ title: "Gagal", description: (result as any).error, variant: "destructive" })
+        toast({ title:"Gagal", description: (result as any).error, variant:"destructive" })
         setSaving(false)
         return
       }
 
-      toast({ title: editing ? "Berhasil diperbarui" : "Mata pelajaran ditambahkan" })
+      toast({ title: editing ?"Berhasil diperbarui" :"Mata pelajaran ditambahkan" })
       await load()
       resetForm()
     } catch (e: any) {
-      toast({ title: "Gagal", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal", description: e.message, variant:"destructive" })
     }
     setSaving(false)
   }
@@ -89,31 +89,27 @@ export default function SubjectsPage() {
     if (!deleteId || !tenant) return
     try {
       await deleteSubject(deleteId, tenant.id)
-      toast({ title: "Mata pelajaran dihapus" })
+      toast({ title:"Mata pelajaran dihapus" })
       setDeleteId(null)
       await load()
     } catch(e: any) {
-      toast({ title: "Gagal menghapus", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal menghapus", description: e.message, variant:"destructive" })
     }
   }
 
   const handleExport = () => {
-    if (!subjects.length) return toast({ title: "Tidak ada data untuk diekspor", variant: "destructive" })
+    if (!subjects.length) return toast({ title:"Tidak ada data untuk diekspor", variant:"destructive" })
     setExporting(true)
     try {
-      const formattedData = subjects.map((s: any) => ({
-        "Nama Mata Pelajaran": s.name,
-        "Kode": s.code || "-",
-        "Deskripsi": s.description || "-",
-        "Status": s.isActive ? "Aktif" : "Nonaktif",
+      const formattedData = subjects.map((s: any) => ({"Nama Mata Pelajaran": s.name,"Kode": s.code ||"-","Deskripsi": s.description ||"-","Status": s.isActive ?"Aktif" :"Nonaktif",
       }))
       const worksheet = XLSX.utils.json_to_sheet(formattedData)
       const workbook = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Data Mapel")
+      XLSX.utils.book_append_sheet(workbook, worksheet,"Data Mapel")
       XLSX.writeFile(workbook, `Data_Mapel_${tenant?.name?.replace(/\s+/g, '_') || 'Tenant'}.xlsx`)
-      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+      toast({ title:"Berhasil", description:"File Excel berhasil diunduh" })
     } catch (e: any) {
-      toast({ title: "Gagal Ekspor", description: e.message, variant: "destructive" })
+      toast({ title:"Gagal Ekspor", description: e.message, variant:"destructive" })
     } finally {
       setExporting(false)
     }
@@ -121,7 +117,7 @@ export default function SubjectsPage() {
 
   const filtered = subjects.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()) ||
-    (s.code || "").toLowerCase().includes(search.toLowerCase())
+    (s.code ||"").toLowerCase().includes(search.toLowerCase())
   )
 
   return (
@@ -143,9 +139,9 @@ export default function SubjectsPage() {
 
       {/* Form */}
       {showForm && (
-        <Card className="glass border-0 border-l-4 border-l-primary animate-in slide-in-from-top-2">
+        <Card className="glass border-0 border-l-4 border-l-primary">
           <CardHeader className="pb-4">
-            <CardTitle className="text-base">{editing ? "Edit Mata Pelajaran" : "Tambah Mata Pelajaran Baru"}</CardTitle>
+            <CardTitle className="text-base">{editing ?"Edit Mata Pelajaran" :"Tambah Mata Pelajaran Baru"}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -165,7 +161,7 @@ export default function SubjectsPage() {
             <div className="flex gap-2">
               <Button onClick={handleSave} disabled={saving || !form.name.trim()} className="btn-gradient">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                {editing ? "Simpan Perubahan" : "Tambahkan"}
+                {editing ?"Simpan Perubahan" :"Tambahkan"}
               </Button>
               <Button variant="outline" onClick={resetForm}>Batal</Button>
             </div>
@@ -189,7 +185,7 @@ export default function SubjectsPage() {
           <CardContent className="p-12 text-center">
             <BookOpen className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
             <p className="text-muted-foreground">
-              {search ? "Tidak ada hasil pencarian" : "Belum ada mata pelajaran. Tambahkan yang pertama!"}
+              {search ?"Tidak ada hasil pencarian" :"Belum ada mata pelajaran. Tambahkan yang pertama!"}
             </p>
           </CardContent>
         </Card>
@@ -214,7 +210,7 @@ export default function SubjectsPage() {
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                   <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg"
-                    onClick={() => { setEditing(subject); setForm({ name: subject.name, code: subject.code || "", description: subject.description || "" }); setShowForm(true) }}>
+                    onClick={() => { setEditing(subject); setForm({ name: subject.name, code: subject.code ||"", description: subject.description ||"" }); setShowForm(true) }}>
                     <Edit2 className="h-3.5 w-3.5" />
                   </Button>
                   <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg text-destructive hover:text-destructive"

@@ -1,21 +1,21 @@
 "use client"
 
-import { useState } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
-import Link from "next/link"
-import Papa from "papaparse"
+import { useState } from"react"
+import { useSession } from"next-auth/react"
+import { useRouter } from"next/navigation"
+import { useToast } from"@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { ChevronLeft, Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2 } from"lucide-react"
+import Link from"next/link"
+import Papa from"papaparse"
 
-import { Crown } from "lucide-react"
+import { Crown } from"lucide-react"
 
 export default function ImportStudentsPage() {
   const { data: session } = useSession()
   const tenantId = session?.user?.tenants?.[0]?.id
-  const plan = (session?.user as any)?.tenants?.[0]?.plan || "free"
+  const plan = (session?.user as any)?.tenants?.[0]?.plan ||"free"
   const router = useRouter()
   const { toast } = useToast()
   
@@ -29,7 +29,7 @@ export default function ImportStudentsPage() {
     const file = e.target.files?.[0]
     if (!file) return
     
-    if (file.type !== "text/csv" && !file.name.endsWith('.csv')) {
+    if (file.type !=="text/csv" && !file.name.endsWith('.csv')) {
        setError("Harap unggah file dengan format .csv")
        return
     }
@@ -49,12 +49,12 @@ export default function ImportStudentsPage() {
         }
         
         // Validasi kolom
-        const requiredColumns = ["Nama Lengkap", "NIS", "NISN", "Email (Opsional)", "Gender (L/P)"]
+        const requiredColumns = ["Nama Lengkap","NIS","NISN","Email (Opsional)","Gender (L/P)"]
         const columns = Object.keys(results.data[0] as any)
         const missing = requiredColumns.filter(c => !columns.includes(c))
         
         if (missing.length > 0) {
-           setError(`Kolom tidak lengkap! Kehilangan kolom: ${missing.join(", ")}`)
+           setError(`Kolom tidak lengkap! Kehilangan kolom: ${missing.join(",")}`)
            return
         }
 
@@ -69,8 +69,8 @@ export default function ImportStudentsPage() {
     setLoading(true)
     try {
       const res = await fetch("/api/students/import", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ tenantId, students: parsedData })
       })
       
@@ -78,11 +78,11 @@ export default function ImportStudentsPage() {
       
       if (res.ok) {
         setSuccess(true)
-        toast({ title: "Import Berhasil", description: `${result.count} siswa berhasil ditambahkan.` })
+        toast({ title:"Import Berhasil", description: `${result.count} siswa berhasil ditambahkan.` })
         setTimeout(() => router.push("/admin/students"), 2000)
       } else {
-        setError(result.error || "Gagal melakukan import")
-        toast({ title: "Import Gagal", description: result.error, variant: "destructive" })
+        setError(result.error ||"Gagal melakukan import")
+        toast({ title:"Import Gagal", description: result.error, variant:"destructive" })
       }
     } catch (e: any) {
       setError(e.message)
@@ -92,19 +92,19 @@ export default function ImportStudentsPage() {
   }
 
   const downloadTemplate = () => {
-    const csvContent = "Nama Lengkap,NIS,NISN,Email (Opsional),Gender (L/P),Nama Wali (Opsional)\nBudi Santoso,1001,0012345678,budi@email.com,L,Bapak Santoso\nSiti Aminah,1002,0012345679,,P,Ibu Aminah"
+    const csvContent ="Nama Lengkap,NIS,NISN,Email (Opsional),Gender (L/P),Nama Wali (Opsional)\nBudi Santoso,1001,0012345678,budi@email.com,L,Bapak Santoso\nSiti Aminah,1002,0012345679,,P,Ibu Aminah"
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement("a")
     const url = URL.createObjectURL(blob)
     link.setAttribute("href", url)
-    link.setAttribute("download", "template_import_siswa_schoolpro.csv")
+    link.setAttribute("download","template_import_siswa_schoolpro.csv")
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
   }
 
-  if (plan === "free") {
+  if (plan ==="free") {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center border-0 shadow-xl rounded-3xl glass min-h-[60vh] max-w-3xl mx-auto">
         <div className="h-24 w-24 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
@@ -219,7 +219,7 @@ export default function ImportStudentsPage() {
                                     disabled={loading}
                                     className="btn-gradient text-white border-0 rounded-xl shadow-lg"
                                  >
-                                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Mulai Import"}
+                                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :"Mulai Import"}
                                  </Button>
                               </div>
 

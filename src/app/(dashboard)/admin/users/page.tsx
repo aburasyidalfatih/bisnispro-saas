@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect } from"react"
+import { useRouter } from"next/navigation"
 
 // Redirect /admin/users to /admin/users/admin
 export default function UsersIndexPage() {

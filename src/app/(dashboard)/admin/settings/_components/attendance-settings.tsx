@@ -1,8 +1,8 @@
-import React from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Camera, Save } from "lucide-react"
-import { cn } from "@/lib/utils"
+import React from"react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Button } from"@/components/ui/button"
+import { Camera, Save } from"lucide-react"
+import { cn } from"@/lib/utils"
 
 interface AttendanceSettingsProps {
   rawSettings: any
@@ -41,10 +41,10 @@ export function AttendanceSettings({
           </div>
           <button onClick={() => setRawSettings((p:any) => ({ ...p, attendanceRequireSelfie: !p.attendanceRequireSelfie }))}
             className={cn("relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ml-2",
-              rawSettings.attendanceRequireSelfie ? "bg-primary" : "bg-muted-foreground/30")}
+              rawSettings.attendanceRequireSelfie ?"bg-primary" :"bg-muted-foreground/30")}
             role="switch" aria-checked={rawSettings.attendanceRequireSelfie}>
             <span className={cn("inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform",
-              rawSettings.attendanceRequireSelfie ? "translate-x-4" : "translate-x-0.5")} />
+              rawSettings.attendanceRequireSelfie ?"translate-x-4" :"translate-x-0.5")} />
           </button>
         </div>
         

@@ -1,9 +1,9 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Calendar } from "lucide-react"
+import { Card, CardContent } from"@/components/ui/card"
+import { Calendar } from"lucide-react"
 
-const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"]
+const days = ["Sen","Sel","Rab","Kam","Jum","Sab","Min"]
 
 export default function MySchedulePage() {
   return (
