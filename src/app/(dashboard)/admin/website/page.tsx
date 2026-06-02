@@ -249,6 +249,24 @@ export default function WebsiteOverviewPage() {
   const filledCount = sections.filter(s => s.status !== "empty").length
   const completionPct = Math.round((filledCount / sections.length) * 100)
 
+  const groupedSections = [
+    {
+      title: "Utama & Esensial",
+      description: "Fondasi informasi lembaga Anda",
+      items: sections.filter(s => ["Profil Lembaga", "Guru & Staf (GTK)", "Fasilitas", "Program Unggulan"].includes(s.label))
+    },
+    {
+      title: "Berita & Informasi",
+      description: "Update kegiatan dan publikasi",
+      items: sections.filter(s => ["Hero Slider", "Popup Pengumuman", "Artikel & Pos", "Agenda Kegiatan", "Pusat Unduhan"].includes(s.label))
+    },
+    {
+      title: "Media & Portofolio",
+      description: "Dokumentasi dan pencapaian",
+      items: sections.filter(s => ["Galeri", "Ekstrakurikuler", "Prestasi Siswa", "Alumni Success", "Mitra Kerjasama"].includes(s.label))
+    }
+  ]
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -394,41 +412,82 @@ export default function WebsiteOverviewPage() {
         </Link>
       </div>
 
-
-
-      {/* Section status cards */}
-      <Card className="glass border-0">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-              <LayoutTemplate className="h-4 w-4 text-primary" />
+      {/* Quick Start Banner (Only shows if completion < 50%) */}
+      {completionPct < 50 && (
+        <Card className="border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent relative overflow-hidden shadow-sm">
+          <div className="absolute right-0 top-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+          <CardContent className="p-6 md:p-8 relative z-10">
+            <div className="max-w-3xl">
+              <h2 className="text-xl md:text-2xl font-bold mb-2 flex items-center gap-2">
+                <Sparkles className="h-6 w-6 text-primary" />
+                Mari Mulai Membangun Website Anda!
+              </h2>
+              <p className="text-muted-foreground text-sm md:text-base mb-6">
+                Website Anda saat ini masih banyak yang kosong. Ikuti 3 langkah dasar ini untuk melengkapi informasi inti sekolah Anda agar siap dilihat oleh publik.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <Link href={`${base}/about`} className="group flex flex-col gap-3 rounded-2xl bg-background/60 p-4 border hover:border-primary/50 hover:shadow-md transition-all backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold">1</div>
+                    <h3 className="font-semibold text-sm">Profil & Kontak</h3>
+                  </div>
+                  <p className="text-xs text-muted-foreground flex-1">Isi logo, alamat, dan nomor telepon sekolah.</p>
+                  <div className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    Isi Sekarang <ArrowRight className="h-3 w-3" />
+                  </div>
+                </Link>
+                <Link href={`${base}/about?tab=principal`} className="group flex flex-col gap-3 rounded-2xl bg-background/60 p-4 border hover:border-primary/50 hover:shadow-md transition-all backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold">2</div>
+                    <h3 className="font-semibold text-sm">Sambutan</h3>
+                  </div>
+                  <p className="text-xs text-muted-foreground flex-1">Tambahkan kata sambutan dari Kepala Sekolah.</p>
+                  <div className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    Isi Sekarang <ArrowRight className="h-3 w-3" />
+                  </div>
+                </Link>
+                <Link href={`${base}/sliders`} className="group flex flex-col gap-3 rounded-2xl bg-background/60 p-4 border hover:border-primary/50 hover:shadow-md transition-all backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold">3</div>
+                    <h3 className="font-semibold text-sm">Slider Banner</h3>
+                  </div>
+                  <p className="text-xs text-muted-foreground flex-1">Unggah foto terbaik untuk banner utama website.</p>
+                  <div className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    Isi Sekarang <ArrowRight className="h-3 w-3" />
+                  </div>
+                </Link>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-base">Status Konten</CardTitle>
-              <CardDescription className="text-xs">Klik bagian untuk mengedit</CardDescription>
-            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Grouped Section status cards */}
+      {groupedSections.map((group, groupIdx) => (
+        <div key={groupIdx} className="space-y-3">
+          <div>
+            <h3 className="font-bold text-lg">{group.title}</h3>
+            <p className="text-sm text-muted-foreground">{group.description}</p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {sections.map(s => (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {group.items.map(s => (
               <Link key={s.href} href={s.href}
                 className={cn(
-                  "flex items-center justify-between rounded-xl border-2 px-4 py-3 transition-all hover:shadow-sm",
-                  s.status === "ok" ? "border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40" :
-                  s.status === "warn" ? "border-amber-500/40 bg-amber-500/5 hover:border-amber-500/60" :
-                  "border-rose-500/20 bg-rose-500/5 hover:border-rose-500/40"
+                  "flex items-center justify-between rounded-xl border bg-card px-4 py-3.5 transition-all hover:shadow-md hover:-translate-y-0.5",
+                  s.status === "ok" ? "hover:border-emerald-500/40" :
+                  s.status === "warn" ? "hover:border-amber-500/60" :
+                  "hover:border-rose-500/40"
                 )}>
                 <div className="flex items-center gap-3">
-                  <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg",
+                  <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
                     s.status === "ok" ? "bg-emerald-500/10 text-emerald-600" :
                     s.status === "warn" ? "bg-amber-500/10 text-amber-600" :
                     "bg-rose-500/10 text-rose-600")}>
                     {s.icon}
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{s.label}</p>
-                    <p className={cn("text-xs", 
+                    <p className="text-sm font-semibold">{s.label}</p>
+                    <p className={cn("text-xs font-medium mt-0.5", 
                       s.status === "ok" ? "text-emerald-600" :
                       s.status === "warn" ? "text-amber-600" :
                       "text-rose-600")}>{s.value}</p>
@@ -438,13 +497,12 @@ export default function WebsiteOverviewPage() {
                   {s.status === "ok" ? <CheckCircle className="h-4 w-4 text-emerald-500" /> :
                    s.status === "warn" ? <AlertCircle className="h-4 w-4 text-amber-500" /> :
                    <AlertCircle className="h-4 w-4 text-rose-500" />}
-                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
                 </div>
               </Link>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      ))}
 
       {/* Info kontak ringkas */}
       <Card className="glass border-0">
