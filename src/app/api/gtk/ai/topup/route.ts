@@ -37,6 +37,41 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User tidak terkait dengan institusi apapun" }, { status: 400 })
     }
 
+    if (method === "MANUAL_TRANSFER") {
+      // Ambil detail manual bank dari platformSetting
+      const platformSettings = await db.platformSetting.findMany({
+        where: { key: { in: ["MANUAL_PAYMENT_BANK", "MANUAL_PAYMENT_NUMBER", "MANUAL_PAYMENT_NAME", "MANUAL_PAYMENT_WA"] } },
+        select: { key: true, value: true }
+      })
+      const manualBankName = platformSettings.find(s => s.key === "MANUAL_PAYMENT_BANK")?.value || "Bank BCA"
+      const manualAccountNumber = platformSettings.find(s => s.key === "MANUAL_PAYMENT_NUMBER")?.value || "1234 5678 90"
+      const manualAccountName = platformSettings.find(s => s.key === "MANUAL_PAYMENT_NAME")?.value || "PT SchoolPro Indonesia"
+
+      const payment = await db.payment.create({
+        data: {
+          tenantId: user.tenantId,
+          reference: `MANUAL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          amount,
+          method: "MANUAL_TRANSFER",
+          status: "UNPAID",
+          plan: "AI_TOKEN_USER",
+          metadata: {
+            userId: session.user.id,
+            aiTokens,
+            isManual: true,
+            bankName: manualBankName,
+            accountNumber: manualAccountNumber,
+            accountName: manualAccountName
+          }
+        }
+      })
+
+      return NextResponse.json({
+        message: "Transaksi manual berhasil dibuat",
+        checkoutUrl: `/panel-gtk/ai/topup/manual/${payment.id}`
+      })
+    }
+
     // Buat transaksi via Tripay (force platform tripay via payment.service.ts)
     const tripayResult = await createTransaction({
       tenantId: user.tenantId,

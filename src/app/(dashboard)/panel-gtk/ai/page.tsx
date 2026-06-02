@@ -45,6 +45,19 @@ export default async function AiAssistantPage() {
     take: 10
   })
 
+  // Fetch Manual Payment Platform Settings
+  const platformSettings = await db.platformSetting.findMany({
+    where: { key: { in: ["MANUAL_PAYMENT_BANK", "MANUAL_PAYMENT_NUMBER", "MANUAL_PAYMENT_NAME", "MANUAL_PAYMENT_WA"] } },
+    select: { key: true, value: true }
+  })
+  
+  const manualPayment = {
+    bank: platformSettings.find(s => s.key === "MANUAL_PAYMENT_BANK")?.value || "Bank BCA",
+    number: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NUMBER")?.value || "1234 5678 90",
+    name: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NAME")?.value || "PT SchoolPro Indonesia",
+    waNumber: platformSettings.find(s => s.key === "MANUAL_PAYMENT_WA")?.value || "6281234567890",
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -59,6 +72,7 @@ export default async function AiAssistantPage() {
         tenantTokens={(user.tenant?.aiTokens || 0) + (user.tenant?.aiAddonTokens || 0)}
         paymentChannels={paymentChannels}
         aiPackages={aiPackages}
+        manualPayment={manualPayment}
         chatSessions={chatSessions.map(s => ({
           ...s,
           messages: typeof s.messages === "string" ? JSON.parse(s.messages) : s.messages

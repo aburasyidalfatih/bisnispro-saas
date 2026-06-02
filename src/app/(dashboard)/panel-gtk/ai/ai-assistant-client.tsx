@@ -16,12 +16,14 @@ export default function AiAssistantClient({
   tenantTokens, 
   paymentChannels,
   aiPackages,
+  manualPayment,
   chatSessions
 }: { 
   userTokens: number, 
   tenantTokens: number,
   paymentChannels: any[],
   aiPackages: any[],
+  manualPayment: any,
   chatSessions: any[]
 }) {
   const [activeTab, setActiveTab] = useState("chat")
@@ -330,9 +332,27 @@ export default function AiAssistantClient({
                                </label>
                             ))}
                             {paymentChannels?.length === 0 && (
-                               <div className="text-center p-4 text-sm text-muted-foreground border rounded-xl">
-                                  Belum ada metode pembayaran yang dikonfigurasi.
-                               </div>
+                               <label 
+                                 className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-colors ${selectedMethod === 'MANUAL_TRANSFER' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/50'}`}
+                               >
+                                  <div className="flex items-center gap-3">
+                                     <input 
+                                       type="radio" 
+                                       name="payment_method" 
+                                       value="MANUAL_TRANSFER" 
+                                       checked={selectedMethod === 'MANUAL_TRANSFER'}
+                                       onChange={(e) => setSelectedMethod(e.target.value)}
+                                       className="h-4 w-4 text-primary focus:ring-primary"
+                                     />
+                                     <div>
+                                        <div className="font-semibold text-sm">Transfer Manual</div>
+                                        <div className="text-xs text-muted-foreground">{manualPayment?.bank}</div>
+                                     </div>
+                                  </div>
+                                  <div className="h-8 w-12 bg-muted/50 rounded flex items-center justify-center p-1 border text-[10px] font-bold text-muted-foreground">
+                                     MANUAL
+                                  </div>
+                               </label>
                             )}
                          </div>
                       </ScrollArea>
