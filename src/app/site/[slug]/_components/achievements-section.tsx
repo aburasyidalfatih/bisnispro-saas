@@ -34,12 +34,13 @@ function getLevelConfig(level: string) {
   return LEVEL_CONFIG[level.toUpperCase()] || LEVEL_CONFIG.LOKAL
 }
 
-export function AchievementsSection({ achievements }: AchievementsSectionProps) {
+export function AchievementsSection({ achievements, labels }: AchievementsSectionProps & { labels?: any }) {
   const { resolveHref } = useRouting()
 
   if (!achievements || achievements.length === 0) return null
 
   const displayed = achievements.slice(0, 6)
+  const l = labels?.widget || {}
 
   return (
     <section className="py-16 md:py-20 bg-primary/5 relative overflow-hidden">
@@ -50,10 +51,10 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold tracking-wider uppercase mb-4">
               <Trophy className="h-3.5 w-3.5" />
-              Prestasi
+              {l.achievements || "Prestasi"}
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
-              Prestasi Membanggakan
+              {l.achievements ? `${l.achievements} Membanggakan` : "Prestasi Membanggakan"}
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
               Deretan pencapaian siswa dan sekolah kami di berbagai kompetisi dan ajang bergengsi.

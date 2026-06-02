@@ -49,6 +49,8 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
     websiteUrl: p.websiteUrl,
   }))
 
+  const labels = (tenant.settings as any)?.labels || {}
+
   return (
     <main>
       {/* ── 1. Hero Slider ── */}
@@ -71,8 +73,8 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
                   subtitle: tenant.name,
                   title: tenant.tagline || `Selamat Datang di\n${tenant.name}`,
                   description: tenant.description || "Kami berkomitmen memberikan layanan terbaik untuk Anda.",
-                  cta: { href: `/contact`, label: "Hubungi Kami" },
-                  ctaSecondary: { href: `/profil`, label: "Tentang Kami" },
+                  cta: { href: `/contact`, label: labels?.hero?.cta1 || "Hubungi Kami" },
+                  ctaSecondary: { href: `/profil`, label: labels?.hero?.cta2 || "Tentang Kami" },
                 },
               ]
         }
@@ -91,28 +93,28 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 6. Program Keahlian ── */}
       <ScrollReveal>
-        <ProgramsSection programs={tenant.programs || []} />
+        <ProgramsSection programs={tenant.programs || []} labels={labels} />
       </ScrollReveal>
 
 
       {/* ── 7. Prestasi ── */}
       <ScrollReveal delay={0.1}>
-        <AchievementsSection achievements={achievements} />
+        <AchievementsSection achievements={achievements} labels={labels} />
       </ScrollReveal>
 
       {/* ── 8. Fasilitas Sekolah ── */}
       <ScrollReveal delay={0.1}>
-        <FacilitiesSection facilities={tenant.facilities || []} />
+        <FacilitiesSection facilities={tenant.facilities || []} labels={labels} />
       </ScrollReveal>
 
       {/* ── 9. Ekstrakurikuler ── */}
       <ScrollReveal delay={0.2}>
-        <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
+        <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} labels={labels} />
       </ScrollReveal>
 
       {/* ── 10. Guru & Staff Highlight ── */}
       <ScrollReveal delay={0.1}>
-        <StaffHighlight staff={staff} />
+        <StaffHighlight staff={staff} labels={labels} />
       </ScrollReveal>
 
       {/* ── 11. Galeri ── */}
@@ -124,15 +126,17 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
               <div>
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-muted text-muted-foreground text-xs font-bold tracking-wider uppercase mb-4">
                   <ImageIcon className="h-3.5 w-3.5" />
-                  Galeri
+                  {labels?.gallery?.sectionTitle || "Galeri"}
                 </div>
-                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">Dokumentasi Kami</h2>
+                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
+                  {labels?.gallery?.sectionTitle || "Dokumentasi Kami"}
+                </h2>
                 <p className="text-muted-foreground text-sm md:text-base max-w-xl">
-                  Kumpulan momen dan kegiatan berharga yang telah kami abadikan.
+                  {labels?.gallery?.sectionSubtitle || "Kumpulan momen dan kegiatan berharga yang telah kami abadikan."}
                 </p>
               </div>
               <Link href={`${base}/gallery`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
-                Lihat Semua <ArrowRight className="h-4 w-4" />
+                {labels?.gallery?.buttonText || "Lihat Semua"} <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -176,8 +180,8 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
                 style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">Hubungi Kami</h2>
-                  <p className="text-white/80 text-sm mb-6">Kami siap membantu Anda. Jangan ragu untuk menghubungi kami.</p>
+                  <h2 className="text-2xl font-bold mb-2">{labels?.contact?.sectionTitle || "Hubungi Kami"}</h2>
+                  <p className="text-white/80 text-sm mb-6">{labels?.contact?.sectionSubtitle || "Kami siap membantu Anda. Jangan ragu untuk menghubungi kami."}</p>
                   <div className="space-y-3">
                     {tenant.phone && (
                       <div className="flex items-center gap-3">
@@ -204,12 +208,12 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
                     <a href={`https://wa.me/${tenant.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener"
                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-[#20bd5a] transition-all hover:scale-105 active:scale-95">
                       <MessageCircle className="h-5 w-5" />
-                      Chat WhatsApp
+                      {labels?.contact?.btnWa || "Chat WhatsApp"}
                     </a>
                   )}
                   <Link href={`${base}/contact`}
                     className="inline-flex items-center justify-center rounded-xl bg-white text-primary px-6 py-3 text-sm font-bold shadow-lg hover:bg-slate-50 transition-all hover:scale-105 active:scale-95">
-                    Kirim Pesan
+                    {labels?.contact?.btnEmail || "Kirim Pesan"}
                   </Link>
                 </div>
               </div>

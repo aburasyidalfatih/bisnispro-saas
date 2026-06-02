@@ -261,9 +261,11 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
       <section className="py-20 bg-white">
          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="rounded-[40px] bg-primary/5 p-12 md:p-20 text-center border border-primary/10">
-               <h2 className="text-3xl md:text-4xl font-black mb-6 text-foreground">Jadilah Bagian dari Kami</h2>
+               <h2 className="text-3xl md:text-4xl font-black mb-6 text-foreground">
+                 {settings.profilCtaTitle || "Jadilah Bagian dari Kami"}
+               </h2>
                <p className="text-muted-foreground max-w-2xl mx-auto mb-10 text-lg leading-relaxed">
-                  Pintu kami selalu terbuka untuk Anda yang ingin berkonsultasi mengenai masa depan putra-putri Anda. Hubungi kami sekarang.
+                  {settings.profilCtaDescription || "Pintu kami selalu terbuka untuk Anda yang ingin berkonsultasi mengenai masa depan putra-putri Anda. Hubungi kami sekarang."}
                </p>
                <div className="flex flex-wrap justify-center gap-6">
                   {tenant.phone && (

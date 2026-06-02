@@ -21,12 +21,13 @@ interface ExtracurricularsSectionProps {
 
 const EMOJI_FALLBACKS = ["⚽", "🎨", "🎵", "🏸", "📚", "🤖", "🎭", "🏊", "🎯", "🌿", "💻", "📷"]
 
-export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSectionProps) {
+export function ExtracurricularsSection({ extracurriculars, labels }: ExtracurricularsSectionProps & { labels?: any }) {
   const { resolveHref } = useRouting()
 
   if (!extracurriculars || extracurriculars.length === 0) return null
 
   const displayed = extracurriculars.slice(0, 8)
+  const l = labels?.widget || {}
 
   return (
     <section className="py-16 md:py-20 bg-background relative overflow-hidden">
@@ -37,9 +38,11 @@ export function ExtracurricularsSection({ extracurriculars }: ExtracurricularsSe
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 text-purple-600 text-xs font-bold tracking-wider uppercase mb-4">
               <Palette className="h-3.5 w-3.5" />
-              Ekstrakurikuler
+              {l.extracurriculars || "Ekstrakurikuler"}
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">Kegiatan Ekstrakurikuler</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
+              {l.extracurriculars ? `Kegiatan ${l.extracurriculars}` : "Kegiatan Ekstrakurikuler"}
+            </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
               Wadah pengembangan minat, bakat, dan kreativitas siswa di luar kegiatan akademik.
             </p>

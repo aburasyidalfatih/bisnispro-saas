@@ -18,13 +18,14 @@ interface StaffHighlightProps {
   staff: StaffMember[]
 }
 
-export function StaffHighlight({ staff }: StaffHighlightProps) {
+export function StaffHighlight({ staff, labels }: StaffHighlightProps & { labels?: any }) {
   const { resolveHref } = useRouting()
 
   if (!staff || staff.length === 0) return null
 
   // Duplicate the array to guarantee seamless infinite scrolling
   const displayStaff = Array.from({ length: Math.max(4, Math.ceil(12 / staff.length)) }).flatMap(() => staff)
+  const l = labels?.staff || {}
 
   return (
     <section className="py-16 md:py-20 bg-muted/30 relative overflow-hidden">
@@ -33,15 +34,17 @@ export function StaffHighlight({ staff }: StaffHighlightProps) {
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/10 text-sky-600 text-xs font-bold tracking-wider uppercase mb-4">
               <Users className="h-3.5 w-3.5" />
-              Tenaga Pendidik
+              {l.sectionTitle || "Tenaga Pendidik"}
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">Guru & Tenaga Kependidikan</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
+              {l.sectionTitle || "Guru & Tenaga Kependidikan"}
+            </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
-              Tim pengajar profesional dan berdedikasi yang siap membimbing siswa menuju kesuksesan.
+              {l.sectionSubtitle || "Tim pengajar profesional dan berdedikasi yang siap membimbing siswa menuju kesuksesan."}
             </p>
           </div>
           <Link href={resolveHref("/gtk")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
-            Lihat Semua <ArrowRight className="h-4 w-4" />
+            {l.buttonText || "Lihat Semua"} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 

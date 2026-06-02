@@ -16,6 +16,7 @@ import { SocialMediaForm } from "./_components/social-media-form"
 import { AboutDetailsForm } from "./_components/about-details-form"
 import { PrincipalSpeechForm } from "./_components/principal-speech-form"
 import { SeoForm } from "./_components/seo-form"
+import { LabelsForm } from "./_components/labels-form"
 import { AiContentModal } from "./_components/ai-content-modal"
 
 export default function WebsiteAboutPage() {
@@ -272,6 +273,7 @@ export default function WebsiteAboutPage() {
             <TabsTrigger value="social" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Media Sosial</TabsTrigger>
             <TabsTrigger value="about" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Detail Profil & Visi Misi</TabsTrigger>
             <TabsTrigger value="principal" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Sambutan Utama</TabsTrigger>
+            <TabsTrigger value="labels" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Teks & Label</TabsTrigger>
             <TabsTrigger value="seo" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">SEO & Meta</TabsTrigger>
           </TabsList>
         </div>
@@ -304,6 +306,10 @@ export default function WebsiteAboutPage() {
             form={form} setForm={setForm} staffList={staffList}
             handlePrincipalImageUpload={handlePrincipalImageUpload} openAiModal={openAiModal}
           />
+        </TabsContent>
+
+        <TabsContent value="labels" className="outline-none">
+          <LabelsForm form={form} setForm={setForm} />
         </TabsContent>
 
         <TabsContent value="seo" className="outline-none">

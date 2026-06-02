@@ -27,12 +27,13 @@ const ACCENT_COLORS = [
   { bg: "from-cyan-500/10 to-sky-500/10", border: "hover:border-cyan-300", icon: "text-cyan-600", badge: "bg-cyan-100 text-cyan-700" },
 ]
 
-export function ProgramsSection({ programs }: ProgramsSectionProps) {
+export function ProgramsSection({ programs, labels }: ProgramsSectionProps & { labels?: any }) {
   const { resolveHref } = useRouting()
 
   if (!programs || programs.length === 0) return null
 
   const displayed = programs.slice(0, 6)
+  const l = labels?.programs || {}
 
   return (
     <section className="py-16 md:py-20 bg-background relative overflow-hidden">
@@ -46,17 +47,17 @@ export function ProgramsSection({ programs }: ProgramsSectionProps) {
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-4">
               <GraduationCap className="h-3.5 w-3.5" />
-              Program Keahlian
+              {l.sectionTitle || "Program Keahlian"}
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
-              Program Keahlian Kami
+              {l.sectionTitle || "Program Keahlian Kami"}
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
-              Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja.
+              {l.sectionSubtitle || "Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja."}
             </p>
           </div>
           <Link href={resolveHref("/program")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
-            Lihat Semua <ArrowRight className="h-4 w-4" />
+            {l.buttonText || "Lihat Semua"} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 

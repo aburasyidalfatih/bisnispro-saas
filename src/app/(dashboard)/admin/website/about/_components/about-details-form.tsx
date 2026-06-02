@@ -96,6 +96,28 @@ export function AboutDetailsForm({
               />
             </div>
           </div>
+
+          <div className="grid grid-cols-1 gap-4 mt-4 pt-4 border-t">
+             <div className="space-y-1.5">
+               <Label>Judul Ajakan (Call to Action)</Label>
+               <Input 
+                 value={form.settings?.profilCtaTitle || ""} 
+                 onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, profilCtaTitle: e.target.value } }))} 
+                 placeholder="Contoh: Jadilah Bagian dari Kami" 
+                 className="rounded-xl h-9" 
+               />
+             </div>
+             <div className="space-y-1.5">
+               <Label>Deskripsi Ajakan</Label>
+               <textarea 
+                 value={form.settings?.profilCtaDescription || ""} 
+                 onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, profilCtaDescription: e.target.value } }))}
+                 placeholder="Contoh: Pintu kami selalu terbuka untuk Anda yang ingin berkonsultasi..." 
+                 rows={3}
+                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[80px]" 
+               />
+             </div>
+          </div>
         </CardContent>
       </Card>
     </>

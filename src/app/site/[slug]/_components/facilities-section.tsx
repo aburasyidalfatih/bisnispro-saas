@@ -18,12 +18,13 @@ interface FacilitiesSectionProps {
   facilities: Facility[]
 }
 
-export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
+export function FacilitiesSection({ facilities, labels }: FacilitiesSectionProps & { labels?: any }) {
   const { resolveHref } = useRouting()
 
   if (!facilities || facilities.length === 0) return null
 
   const displayed = facilities.slice(0, 6)
+  const l = labels?.widget || {}
 
   return (
     <section className="py-16 md:py-20 bg-secondary/10 relative overflow-hidden">
@@ -32,9 +33,11 @@ export function FacilitiesSection({ facilities }: FacilitiesSectionProps) {
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 text-xs font-bold tracking-wider uppercase mb-4">
               <Building2 className="h-3.5 w-3.5" />
-              Fasilitas
+              {l.facilities || "Fasilitas"}
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">Fasilitas Sekolah</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
+              {l.facilities || "Fasilitas Sekolah"}
+            </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
               Fasilitas modern dan lengkap untuk mendukung proses belajar mengajar yang optimal.
             </p>
