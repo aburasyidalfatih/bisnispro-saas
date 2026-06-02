@@ -155,119 +155,121 @@ export default function AppearancePage() {
         </div>
       </div>
 
-      {/* Preview Tema Interaktif */}
-      <Card className="border-border/40 shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
-        <CardHeader className="pb-4 border-b bg-muted/20">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl btn-gradient text-white shadow-md">
-              <Monitor className="h-5 w-5" />
+      {/* 2-Column Layout for Colors and Preview */}
+      <div className="grid xl:grid-cols-2 gap-6 items-start">
+        {/* Pilihan Tema Palet Warna (Color Swatches) */}
+        <Card className="border-border/40 shadow-sm flex flex-col h-full">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Palette className="h-5 w-5 text-primary" /> Palet Warna Dasar
+            </CardTitle>
+            <CardDescription>Pilih skema warna yang paling merepresentasikan energi dan identitas institusi Anda.</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 flex-1">
+            <div className="flex flex-wrap gap-x-6 gap-y-6 items-start">
+              {themes.map(t => {
+                const isSelected = previewTheme === t.id
+                const isSaved = colorTheme === t.id
+                const gradient = themeGradients[t.id]
+                return (
+                  <button 
+                    key={t.id} 
+                    onClick={() => {
+                      if (!canChangeTheme) return toast({ title:"Akses Ditolak", description:"Hanya Admin yang dapat mengubah tema.", variant:"destructive" })
+                      previewColorTheme(t.id)
+                    }}
+                    className="group flex flex-col items-center gap-2.5 focus:outline-none"
+                  >
+                    <div className={cn("relative flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full transition-all duration-300 bg-gradient-to-br",
+                      gradient,
+                      isSelected ?"ring-4 ring-primary ring-offset-4 ring-offset-background scale-110 shadow-xl" :"hover:scale-110 hover:shadow-lg ring-1 ring-black/10 dark:ring-white/10 shadow-sm"
+                    )}>
+                      {isSelected ? <Check className="h-6 w-6 text-white animate-in zoom-in duration-300 drop-shadow-md" /> : null}
+                      {isSaved && !isSelected && (
+                        <div className="absolute -bottom-1 -right-1 h-6 w-6 bg-background rounded-full flex items-center justify-center shadow-md border">
+                          <div className="h-3.5 w-3.5 rounded-full bg-primary" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-center">
+                      <span className={cn("text-xs font-bold block transition-colors", isSelected ?"text-primary" :"text-muted-foreground group-hover:text-foreground")}>
+                        {t.name}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground uppercase tracking-widest font-semibold block mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                         {t.category}
+                      </span>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
-            <div>
-              <CardTitle className="text-lg">Live Wireframe Preview</CardTitle>
-              <CardDescription className="text-xs mt-0.5">
-                {hasUnsavedChanges
-                  ? <span className="text-amber-600 font-medium">Preview aktif — perubahan belum disimpan</span>
-                  : <>Tema Dasar: <span className="font-bold text-primary">{themes.find(t => t.id === colorTheme)?.name || colorTheme}</span></>
-                }
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6 bg-gradient-to-br from-muted/30 to-muted/10">
-          <div className="max-w-2xl mx-auto rounded-xl border border-border/50 overflow-hidden bg-background shadow-2xl ring-1 ring-black/5 transition-all duration-500 hover:shadow-primary/10">
-            <div className="h-1.5 btn-gradient w-full" />
-            <div className="p-4 space-y-4">
-              {/* Navbar Wireframe */}
-              <div className="flex items-center justify-between border-b pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-6 w-6 rounded-md btn-gradient shadow-sm" />
-                  <div className="h-2.5 w-24 rounded-full bg-foreground/80" />
-                </div>
-                <div className="flex gap-2">
-                  <div className="h-2 w-8 rounded-full bg-muted-foreground/30" />
-                  <div className="h-2 w-8 rounded-full bg-muted-foreground/30" />
-                  <div className="h-2 w-8 rounded-full bg-primary/40 hidden sm:block" />
-                </div>
-              </div>
-              {/* Hero Section Wireframe */}
-              <div className="h-28 rounded-xl bg-primary/10 flex flex-col items-center justify-center gap-2.5 relative overflow-hidden group">
-                <div className="absolute inset-0 opacity-10 btn-gradient transition-opacity duration-700 group-hover:opacity-20" />
-                <div className="h-3 w-1/2 rounded-full bg-primary/80 z-10" />
-                <div className="h-2 w-2/3 rounded-full bg-muted-foreground/50 z-10" />
-                <div className="h-6 w-20 rounded-full mt-2 btn-gradient z-10 shadow-sm text-[8px] flex items-center justify-center text-white/90 font-bold tracking-wider">CTA BUTTON</div>
-              </div>
-              {/* Content Grid Wireframe */}
-              <div className="grid grid-cols-3 gap-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="space-y-2 border border-border/50 rounded-lg p-2.5 bg-card shadow-sm hover:border-primary/30 transition-colors">
-                    <div className="h-12 rounded-md bg-muted flex items-center justify-center"><Palette className="h-4 w-4 text-muted-foreground/30" /></div>
-                    <div className="h-2 w-3/4 rounded-full bg-foreground/40" />
-                    <div className="h-1.5 w-full rounded-full bg-muted-foreground/20" />
-                    <div className="h-1.5 w-4/5 rounded-full bg-muted-foreground/20" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Pilihan Tema Palet Warna (Color Swatches) */}
-      <Card className="border-border/40 shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Palette className="h-5 w-5 text-primary" /> Palet Warna Dasar
-          </CardTitle>
-          <CardDescription>Pilih skema warna yang paling merepresentasikan energi dan identitas institusi Anda.</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="flex flex-wrap gap-x-6 gap-y-6 items-start">
-            {themes.map(t => {
-              const isSelected = previewTheme === t.id
-              const isSaved = colorTheme === t.id
-              const gradient = themeGradients[t.id]
-              return (
-                <button 
-                  key={t.id} 
-                  onClick={() => {
-                    if (!canChangeTheme) return toast({ title:"Akses Ditolak", description:"Hanya Admin yang dapat mengubah tema.", variant:"destructive" })
-                    previewColorTheme(t.id)
-                  }}
-                  className="group flex flex-col items-center gap-2.5 focus:outline-none"
-                >
-                  <div className={cn("relative flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full transition-all duration-300",
-                    gradient,
-                    isSelected ?"ring-4 ring-primary ring-offset-4 ring-offset-background scale-110 shadow-xl" :"hover:scale-110 hover:shadow-lg ring-1 ring-black/10 dark:ring-white/10 shadow-sm"
-                  )}>
-                    {isSelected ? <Check className="h-6 w-6 text-white animate-in zoom-in duration-300 drop-shadow-md" /> : null}
-                    {isSaved && !isSelected && (
-                      <div className="absolute -bottom-1 -right-1 h-6 w-6 bg-background rounded-full flex items-center justify-center shadow-md border">
-                        <div className="h-3.5 w-3.5 rounded-full bg-primary" />
-                      </div>
-                    )}
+        {/* Preview Tema Interaktif */}
+        <Card className="border-border/40 shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm flex flex-col h-full">
+          <CardHeader className="pb-4 border-b bg-muted/20">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl btn-gradient text-white shadow-md">
+                <Monitor className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Live Wireframe Preview</CardTitle>
+                <CardDescription className="text-xs mt-0.5">
+                  {hasUnsavedChanges
+                    ? <span className="text-amber-600 font-medium">Preview aktif — perubahan belum disimpan</span>
+                    : <>Tema Dasar: <span className="font-bold text-primary">{themes.find(t => t.id === colorTheme)?.name || colorTheme}</span></>
+                  }
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6 bg-gradient-to-br from-muted/30 to-muted/10 flex-1 flex items-center justify-center">
+            <div className="w-full mx-auto rounded-xl border border-border/50 overflow-hidden bg-background shadow-2xl ring-1 ring-black/5 transition-all duration-500 hover:shadow-primary/10">
+              <div className="h-1.5 btn-gradient w-full" />
+              <div className="p-4 space-y-4">
+                {/* Navbar Wireframe */}
+                <div className="flex items-center justify-between border-b pb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-6 w-6 rounded-md btn-gradient shadow-sm" />
+                    <div className="h-2.5 w-24 rounded-full bg-foreground/80" />
                   </div>
-                  <div className="text-center">
-                    <span className={cn("text-xs font-bold block transition-colors", isSelected ?"text-primary" :"text-muted-foreground group-hover:text-foreground")}>
-                      {t.name}
-                    </span>
-                    <span className="text-[9px] text-muted-foreground uppercase tracking-widest font-semibold block mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                       {t.category}
-                    </span>
+                  <div className="flex gap-2">
+                    <div className="h-2 w-8 rounded-full bg-muted-foreground/30" />
+                    <div className="h-2 w-8 rounded-full bg-muted-foreground/30" />
+                    <div className="h-2 w-8 rounded-full bg-primary/40 hidden sm:block" />
                   </div>
-                </button>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                </div>
+                {/* Hero Section Wireframe */}
+                <div className="h-28 rounded-xl bg-primary/10 flex flex-col items-center justify-center gap-2.5 relative overflow-hidden group">
+                  <div className="absolute inset-0 opacity-10 btn-gradient transition-opacity duration-700 group-hover:opacity-20" />
+                  <div className="h-3 w-1/2 rounded-full bg-primary/80 z-10" />
+                  <div className="h-2 w-2/3 rounded-full bg-muted-foreground/50 z-10" />
+                  <div className="h-6 w-20 rounded-full mt-2 btn-gradient z-10 shadow-sm text-[8px] flex items-center justify-center text-white/90 font-bold tracking-wider">CTA BUTTON</div>
+                </div>
+                {/* Content Grid Wireframe */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="space-y-2 border border-border/50 rounded-lg p-2.5 bg-card shadow-sm hover:border-primary/30 transition-colors">
+                      <div className="h-12 rounded-md bg-muted flex items-center justify-center"><Palette className="h-4 w-4 text-muted-foreground/30" /></div>
+                      <div className="h-2 w-3/4 rounded-full bg-foreground/40" />
+                      <div className="h-1.5 w-full rounded-full bg-muted-foreground/20" />
+                      <div className="h-1.5 w-4/5 rounded-full bg-muted-foreground/20" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Pilihan Layout Template */}
       <Card className="border-border/40 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg flex items-center gap-2">
-            <LayoutTemplate className="h-5 w-5 text-blue-500" /> Tata Letak (Layout)
+            <LayoutTemplate className="h-5 w-5 text-blue-500" /> Pilih Template Website
           </CardTitle>
-          <CardDescription>Pilih struktur desain utama yang akan digunakan oleh pengunjung website.</CardDescription>
         </CardHeader>
         <CardContent className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           {loadingConfig ? (
@@ -299,7 +301,7 @@ export default function AppearancePage() {
             }}
               className={cn("group flex flex-col rounded-2xl border-2 text-left transition-all duration-300 relative overflow-hidden cursor-pointer",
                 isSelected
-                  ?"border-primary bg-primary/5 ring-1 ring-primary/20 shadow-lg scale-[1.01]"
+                  ?"border-primary bg-primary/5 ring-1 ring-primary/20 shadow-lg"
                   :"border-border/60 bg-card hover:border-primary/40 hover:shadow-md",
               )}>
               
