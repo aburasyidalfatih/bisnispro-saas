@@ -51,6 +51,7 @@ interface WebsiteData {
 
 interface StatItem {
   label: string
+  desc: string
   value: string | number
   icon: React.ReactNode
   status?:"ok" |"warn" |"empty"
@@ -147,35 +148,47 @@ export default function WebsiteOverviewPage() {
   const sections: StatItem[] = [
     {
       label:"Profil Lembaga",
+      desc:"Isi logo, alamat, dan nomor telepon sekolah.",
       value: data?.about ?"Lengkap" :"Belum diisi",
       icon: <Info className="h-5 w-5" />,
       status: data?.about ?"ok" :"empty",
       href: `${base}/about`,
     },
     {
+      label:"Sambutan",
+      desc:"Tambahkan kata sambutan dari Kepala Sekolah.",
+      value: data?.about ?"Lengkap" :"Belum diisi", // Assuming sambutan is part of about
+      icon: <Users className="h-5 w-5" />,
+      status: data?.about ?"ok" :"empty",
+      href: `${base}/about?tab=principal`,
+    },
+    {
+      label:"Slider Banner",
+      desc:"Unggah foto terbaik untuk banner utama website.",
+      value: data?._count?.sliders ? `${data._count.sliders} slide` :"Belum ada",
+      icon: <SlidersHorizontal className="h-5 w-5" />,
+      status: getColStatus(data?._count?.sliders),
+      href: `${base}/sliders`,
+    },
+    {
       label:"Artikel & Pos",
+      desc:"Berita, artikel, atau publikasi kegiatan terbaru.",
       value: data?._count?.posts ? `${data._count.posts} postingan` :"Belum ada",
       icon: <FileText className="h-5 w-5" />,
       status: getColStatus(data?._count?.posts),
       href: `${base}/posts`,
     },
-
     {
-      label:"Galeri",
+      label:"Galeri Foto",
+      desc:"Dokumentasi visual lingkungan & acara sekolah.",
       value: Array.isArray(data?.gallery) && data.gallery.length > 0 ? `${data.gallery.length} foto` :"Belum ada",
       icon: <Image className="h-5 w-5" />,
       status: getColStatus(data?.gallery?.length),
       href: `${base}/gallery`,
     },
     {
-      label:"Pusat Unduhan",
-      value: data?._count?.documents ? `${data._count.documents} dokumen` :"Belum ada",
-      icon: <Download className="h-5 w-5" />,
-      status: getColStatus(data?._count?.documents),
-      href: `${base}/documents`,
-    },
-    {
-      label:"Fasilitas",
+      label:"Fasilitas Sekolah",
+      desc:"Daftar sarana & prasarana pendukung pembelajaran.",
       value: data?._count?.facilities ? `${data._count.facilities} fasilitas` :"Belum ada",
       icon: <Building2 className="h-5 w-5" />,
       status: getColStatus(data?._count?.facilities),
@@ -183,6 +196,7 @@ export default function WebsiteOverviewPage() {
     },
     {
       label:"Guru & Staf (GTK)",
+      desc:"Profil pendidik dan tenaga kependidikan.",
       value: data?._count?.staff ? `${data._count.staff} profil` :"Belum ada",
       icon: <Users className="h-5 w-5" />,
       status: getColStatus(data?._count?.staff),
@@ -190,6 +204,7 @@ export default function WebsiteOverviewPage() {
     },
     {
       label:"Prestasi Siswa",
+      desc:"Penghargaan dan piala yang diraih oleh siswa.",
       value: data?._count?.achievements ? `${data._count.achievements} prestasi` :"Belum ada",
       icon: <Award className="h-5 w-5" />,
       status: getColStatus(data?._count?.achievements),
@@ -197,6 +212,7 @@ export default function WebsiteOverviewPage() {
     },
     {
       label:"Alumni Success",
+      desc:"Testimoni dan rekam jejak kelulusan siswa.",
       value: data?._count?.alumni ? `${data._count.alumni} alumni` :"Belum ada",
       icon: <GraduationCap className="h-5 w-5" />,
       status: getColStatus(data?._count?.alumni),
@@ -204,6 +220,7 @@ export default function WebsiteOverviewPage() {
     },
     {
       label:"Ekstrakurikuler",
+      desc:"Kegiatan pengembangan bakat dan minat siswa.",
       value: data?._count?.extracurriculars ? `${data._count.extracurriculars} kegiatan` :"Belum ada",
       icon: <Activity className="h-5 w-5" />,
       status: getColStatus(data?._count?.extracurriculars),
@@ -211,6 +228,7 @@ export default function WebsiteOverviewPage() {
     },
     {
       label:"Program Unggulan",
+      desc:"Kurikulum khusus atau program andalan sekolah.",
       value: data?._count?.programs ? `${data._count.programs} program` :"Belum ada",
       icon: <BookOpen className="h-5 w-5" />,
       status: getColStatus(data?._count?.programs),
@@ -218,20 +236,15 @@ export default function WebsiteOverviewPage() {
     },
     {
       label:"Popup Pengumuman",
+      desc:"Banner informasi penting yang muncul di depan.",
       value: data?._count?.popups ? `${data._count.popups} banner` :"Belum ada",
       icon: <Megaphone className="h-5 w-5" />,
       status: data?._count?.popups && data._count.popups > 0 ?"ok" :"empty",
       href: `${base}/popups`,
     },
     {
-      label:"Hero Slider",
-      value: data?._count?.sliders ? `${data._count.sliders} slide` :"Belum ada",
-      icon: <SlidersHorizontal className="h-5 w-5" />,
-      status: getColStatus(data?._count?.sliders),
-      href: `${base}/sliders`,
-    },
-    {
       label:"Mitra Kerjasama",
+      desc:"Logo partner, institusi, atau perusahaan afiliasi.",
       value: data?._count?.partnerships ? `${data._count.partnerships} mitra` :"Belum ada",
       icon: <Handshake className="h-5 w-5" />,
       status: getColStatus(data?._count?.partnerships),
@@ -239,33 +252,24 @@ export default function WebsiteOverviewPage() {
     },
     {
       label:"Agenda Kegiatan",
+      desc:"Jadwal acara, event, atau kalender kegiatan mendatang.",
       value: data?._count?.events ? `${data._count.events} agenda` :"Belum ada",
       icon: <CalendarDays className="h-5 w-5" />,
       status: getColStatus(data?._count?.events),
       href: `${base}/events`,
     },
+    {
+      label:"Pusat Unduhan",
+      desc:"Brosur, formulir, kalender akademik untuk diunduh.",
+      value: data?._count?.documents ? `${data._count.documents} dokumen` :"Belum ada",
+      icon: <Download className="h-5 w-5" />,
+      status: getColStatus(data?._count?.documents),
+      href: `${base}/documents`,
+    },
   ]
 
   const filledCount = sections.filter(s => s.status !=="empty").length
   const completionPct = Math.round((filledCount / sections.length) * 100)
-
-  const groupedSections = [
-    {
-      title:"Utama & Esensial",
-      description:"Fondasi informasi lembaga Anda",
-      items: sections.filter(s => ["Profil Lembaga","Guru & Staf (GTK)","Fasilitas","Program Unggulan"].includes(s.label))
-    },
-    {
-      title:"Berita & Informasi",
-      description:"Update kegiatan dan publikasi",
-      items: sections.filter(s => ["Hero Slider","Popup Pengumuman","Artikel & Pos","Agenda Kegiatan","Pusat Unduhan"].includes(s.label))
-    },
-    {
-      title:"Media & Portofolio",
-      description:"Dokumentasi dan pencapaian",
-      items: sections.filter(s => ["Galeri","Ekstrakurikuler","Prestasi Siswa","Alumni Success","Mitra Kerjasama"].includes(s.label))
-    }
-  ]
 
   return (
     <div className="space-y-6">
@@ -412,93 +416,69 @@ export default function WebsiteOverviewPage() {
         </Link>
       </div>
 
-      {/* Quick Start Banner (Only shows if completion < 50%) */}
-      {completionPct < 50 && (
-        <Card className="border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent relative overflow-hidden shadow-sm">
-          <div className="absolute right-0 top-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-          <CardContent className="p-6 md:p-8 relative z-10">
-            <div className="max-w-3xl">
-              <h2 className="text-xl md:text-2xl font-bold mb-2 flex items-center gap-2">
-                <Sparkles className="h-6 w-6 text-primary" />
-                Mari Mulai Membangun Website Anda!
-              </h2>
-              <p className="text-muted-foreground text-sm md:text-base mb-6">
-                Website Anda saat ini masih banyak yang kosong. Ikuti 3 langkah dasar ini untuk melengkapi informasi inti sekolah Anda agar siap dilihat oleh publik.
-              </p>
-              <div className="grid gap-4 sm:grid-cols-3">
-                <Link href={`${base}/about`} className="group flex flex-col gap-3 rounded-2xl bg-background/60 p-4 border hover:border-primary/50 hover:shadow-md transition-all backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold">1</div>
-                    <h3 className="font-semibold text-sm">Profil & Kontak</h3>
-                  </div>
-                  <p className="text-xs text-muted-foreground flex-1">Isi logo, alamat, dan nomor telepon sekolah.</p>
-                  <div className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                    Isi Sekarang <ArrowRight className="h-3 w-3" />
-                  </div>
-                </Link>
-                <Link href={`${base}/about?tab=principal`} className="group flex flex-col gap-3 rounded-2xl bg-background/60 p-4 border hover:border-primary/50 hover:shadow-md transition-all backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold">2</div>
-                    <h3 className="font-semibold text-sm">Sambutan</h3>
-                  </div>
-                  <p className="text-xs text-muted-foreground flex-1">Tambahkan kata sambutan dari Kepala Sekolah.</p>
-                  <div className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                    Isi Sekarang <ArrowRight className="h-3 w-3" />
-                  </div>
-                </Link>
-                <Link href={`${base}/sliders`} className="group flex flex-col gap-3 rounded-2xl bg-background/60 p-4 border hover:border-primary/50 hover:shadow-md transition-all backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold">3</div>
-                    <h3 className="font-semibold text-sm">Slider Banner</h3>
-                  </div>
-                  <p className="text-xs text-muted-foreground flex-1">Unggah foto terbaik untuk banner utama website.</p>
-                  <div className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                    Isi Sekarang <ArrowRight className="h-3 w-3" />
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Onboarding Steps Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles className="h-6 w-6 text-primary" />
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight">Lengkapi Konten Website</h2>
+        </div>
+        <p className="text-muted-foreground text-sm md:text-base max-w-3xl">
+          Selesaikan seluruh langkah di bawah ini secara berurutan agar website sekolah Anda tampil sempurna dan informatif di mata publik.
+        </p>
 
-      {/* Grouped Section status cards */}
-      {groupedSections.map((group, groupIdx) => (
-        <div key={groupIdx} className="space-y-3">
-          <div>
-            <h3 className="font-bold text-lg">{group.title}</h3>
-            <p className="text-sm text-muted-foreground">{group.description}</p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {group.items.map(s => (
-              <Link key={s.href} href={s.href}
-                className={cn("flex items-center justify-between rounded-xl border bg-card px-4 py-3.5 transition-all hover:shadow-md hover:-translate-y-0.5",
-                  s.status ==="ok" ?"hover:border-emerald-500/40" :
-                  s.status ==="warn" ?"hover:border-amber-500/60" :"hover:border-rose-500/40"
-                )}>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 pt-2">
+          {sections.map((s, idx) => {
+            const isComplete = s.status !== "empty"
+            return (
+              <Link key={s.href} href={s.href} className={cn(
+                "group flex flex-col gap-3 rounded-2xl bg-card p-4 border hover:shadow-md transition-all",
+                isComplete ? "border-emerald-500/20 hover:border-emerald-500/40" : "border-border hover:border-primary/50"
+              )}>
                 <div className="flex items-center gap-3">
-                  <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-                    s.status ==="ok" ?"bg-emerald-500/10 text-emerald-600" :
-                    s.status ==="warn" ?"bg-amber-500/10 text-amber-600" :"bg-rose-500/10 text-rose-600")}>
-                    {s.icon}
+                  <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold text-lg transition-transform group-hover:scale-105",
+                    isComplete ? "bg-emerald-500/10 text-emerald-600" : "bg-primary/10 text-primary"
+                  )}>
+                    {idx + 1}
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold">{s.label}</p>
-                    <p className={cn("text-xs font-medium mt-0.5", 
-                      s.status ==="ok" ?"text-emerald-600" :
-                      s.status ==="warn" ?"text-amber-600" :"text-rose-600")}>{s.value}</p>
-                  </div>
+                  <h3 className="font-semibold text-sm leading-tight">{s.label}</h3>
                 </div>
-                <div className="flex items-center gap-2">
-                  {s.status ==="ok" ? <CheckCircle className="h-4 w-4 text-emerald-500" /> :
-                   s.status ==="warn" ? <AlertCircle className="h-4 w-4 text-amber-500" /> :
-                   <AlertCircle className="h-4 w-4 text-rose-500" />}
+                
+                <p className="text-xs text-muted-foreground flex-1 line-clamp-2 leading-relaxed">
+                  {s.desc}
+                </p>
+                
+                <div className={cn("mt-2 pt-3 border-t flex items-center justify-between",
+                  isComplete ? "border-emerald-500/10" : "border-border/50"
+                )}>
+                  <div className="flex items-center gap-1.5">
+                    {isComplete ? (
+                      <CheckCircle className="h-4 w-4 text-emerald-500" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 text-amber-500" />
+                    )}
+                    <span className={cn("text-[11px] font-bold uppercase tracking-wider",
+                      isComplete ? "text-emerald-600" : "text-amber-600"
+                    )}>
+                      {isComplete ? "Sudah Lengkap" : "Belum Lengkap"}
+                    </span>
+                  </div>
+                  
+                  {!isComplete && (
+                    <div className="text-xs font-semibold text-primary flex items-center gap-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all">
+                      Isi Sekarang <ArrowRight className="h-3 w-3" />
+                    </div>
+                  )}
+                  {isComplete && (
+                    <div className="text-xs font-medium text-muted-foreground">
+                      {s.value}
+                    </div>
+                  )}
                 </div>
               </Link>
-            ))}
-          </div>
+            )
+          })}
         </div>
-      ))}
+      </div>
 
       {/* Info kontak ringkas */}
       <Card className="glass border-0">
