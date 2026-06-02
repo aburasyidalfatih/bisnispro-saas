@@ -96,7 +96,9 @@ export async function getPaymentChannels(tenantId?: string): Promise<any[]> {
 
 export async function createTransaction(params: CreateTransactionParamsDTO): Promise<TransactionResultDTO> {
   try {
-    const cfg = await getTripayConfig(params.tenantId)
+    // Force platform tripay for User AI Tokens to ensure platform revenue
+    const forcePlatform = params.plan === "AI_TOKEN_USER"
+    const cfg = forcePlatform ? await getTripayConfig("NOT_FOUND") : await getTripayConfig(params.tenantId)
     const merchantRef = `INV-${Date.now()}`
 
     const signature = crypto
@@ -194,7 +196,8 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
     }
 
     // Step 2: Verify callback signature
-    const cfg = await getTripayConfig(payment.tenantId)
+    const forcePlatform = payment.plan === "AI_TOKEN_USER"
+    const cfg = forcePlatform ? await getTripayConfig("NOT_FOUND") : await getTripayConfig(payment.tenantId)
     if (!verifyCallbackSignature(rawBody, cfg.privateKey, callbackSignature)) {
       logger.warn("[payment] Invalid callback signature", {
         merchantRef: body.merchant_ref,
@@ -292,6 +295,31 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
              })
           },
           "pay-invoice"
+        )
+      } else if (payment.plan === "AI_TOKEN_USER") {
+        await retryAsync(
+          async () => {
+             const metadata = payment.metadata as any
+             if (!metadata?.userId || !metadata?.aiTokens) throw new Error("Missing metadata for AI_TOKEN_USER")
+             
+             // Tambahkan token ke User
+             await db.user.update({
+               where: { id: metadata.userId },
+               data: { 
+                 aiTokens: { increment: Number(metadata.aiTokens) } 
+               }
+             })
+
+             // Notify User (using system notification)
+             const { createNotification } = await import("@/features/notification/services/notification.service");
+             await createNotification({
+               userId: metadata.userId,
+               title: "Top-Up Token AI Berhasil 🤖",
+               message: `Selamat! Anda berhasil melakukan Top-Up sebanyak ${metadata.aiTokens} Token AI pribadi.`,
+               type: "success"
+             })
+          },
+          "topup-ai-tokens-user"
         )
       } else if (payment.plan === "ai_addon" || (payment.metadata as any)?.type === "AI_QUOTA") {
         await retryAsync(

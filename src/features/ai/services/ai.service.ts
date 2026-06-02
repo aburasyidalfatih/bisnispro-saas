@@ -80,6 +80,7 @@ export async function getAiModel(tenantId: string): Promise<AiModelResult> {
 export async function deductAiToken(tenantId: string, tokensUsed: number, userId: string, feature: string) {
   try {
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
+    const user = await db.user.findUnique({ where: { id: userId } })
     if (!tenant) return { success: false, error: "Tenant not found" }
 
     // Log usage
@@ -92,7 +93,16 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
       }
     })
 
-    // Deduct tokens
+    // 1. Prioritize deducting from User's personal AI tokens if they have any
+    if (user && user.aiTokens >= tokensUsed) {
+      await db.user.update({
+        where: { id: userId },
+        data: { aiTokens: { decrement: tokensUsed } }
+      })
+      return { success: true, source: "user" }
+    }
+
+    // 2. Fallback to deducting from Tenant's tokens
     if (tenant.aiTokens >= tokensUsed) {
       await db.tenant.update({
         where: { id: tenantId },
@@ -108,20 +118,28 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
         }
       })
     }
-    return { success: true }
+    return { success: true, source: "tenant" }
   } catch (error) {
     return { success: false, error: "Failed to deduct AI token" }
   }
 }
 
-export async function checkAiTokenBalance(tenantId: string) {
+export async function checkAiTokenBalance(tenantId: string, userId?: string) {
   try {
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
     if (!tenant) return { success: false, hasBalance: false, balance: 0, error: "Tenant not found" }
     
+    // Check user balance first if userId is provided
+    if (userId) {
+      const user = await db.user.findUnique({ where: { id: userId } })
+      if (user && user.aiTokens >= 50) {
+        return { success: true, hasBalance: true, balance: user.aiTokens, source: "user" }
+      }
+    }
+
     const totalTokens = tenant.aiTokens + tenant.aiAddonTokens
     // Require at least 50 tokens buffer to start a request
-    return { success: true, hasBalance: totalTokens >= 50, balance: totalTokens }
+    return { success: true, hasBalance: totalTokens >= 50, balance: totalTokens, source: "tenant" }
   } catch (error) {
     return { success: false, hasBalance: false, balance: 0, error: "Failed to check balance" }
   }

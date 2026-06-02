@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Home, Calendar, CalendarCheck, Wallet, User, FileText, MessageSquare, ClipboardList, CreditCard, Heart } from "lucide-react"
+import { Home, Calendar, CalendarCheck, Wallet, User, FileText, MessageSquare, ClipboardList, CreditCard, Heart, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function MobileBottomNav({ className }: { className?: string }) {
@@ -21,7 +21,7 @@ export function MobileBottomNav({ className }: { className?: string }) {
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
     { label: "Absensi", icon: CalendarCheck, href: "/panel-gtk/absensi" },
     { label: "Jadwal", icon: Calendar, href: "/panel-gtk/jadwal" },
-    { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
+    { label: "AI", icon: Sparkles, href: "/panel-gtk/ai" },
     { label: "Profil", icon: User, href: "/panel-gtk/profil" },
   ] : [
     { label: "Beranda", icon: Home, href: "/ortu" },

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, CalendarCheck, FileText, User, Calendar, LogOut, Award, ShieldAlert, MessageSquare } from "lucide-react"
+import { Home, CalendarCheck, FileText, User, Calendar, LogOut, Award, ShieldAlert, MessageSquare, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MobileBottomNav } from "./mobile-bottom-nav"
 import { Button } from "@/components/ui/button"
@@ -37,7 +37,8 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
     { label: "Artikel", icon: FileText, href: "/panel-gtk/posts" },
     { label: "Bank Soal", icon: FileText, href: "/panel-gtk/cbt/bank-soal" },
     { label: "Jadwal CBT", icon: CalendarCheck, href: "/panel-gtk/cbt/jadwal" },
-    { label: "Pesan", icon: MessageSquare, href: "/panel-gtk/messages" } // Adding Pesan just in case they meant they want it here too
+    { label: "Pesan", icon: MessageSquare, href: "/panel-gtk/messages" },
+    { label: "AI Assistant", icon: Sparkles, href: "/panel-gtk/ai" }
   ]
 
   const currentTenant = session?.user?.tenants?.[0]
