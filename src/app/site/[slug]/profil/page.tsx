@@ -19,7 +19,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tenant) return {}
   
   const title = `Profil & Sejarah`
-  const description = tenant.about?.replace(/<[^>]*>/g, "").substring(0, 160) || `Informasi lengkap mengenai profil, sejarah, visi, dan misi ${tenant.name}`
+  const profileData = await getTenantProfileData(slug)
+  const description = profileData?.about?.replace(/<[^>]*>/g, "").substring(0, 160) || `Informasi lengkap mengenai profil, sejarah, visi, dan misi ${tenant.name}`
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
   
   return {
@@ -92,7 +93,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
             <div className="flex items-center gap-2">
                <Building2 className="h-4 w-4 text-primary" />
                <span className="text-muted-foreground">Tahun Berdiri:</span>
-               <span className="font-bold text-foreground">{String(settings.establishedYear || new Date(tenant.createdAt || Date.now()).getFullYear())}</span>
+               <span className="font-bold text-foreground">{String(settings.establishedYear || new Date(profileData?.createdAt || Date.now()).getFullYear())}</span>
             </div>
             {settings.npsn && (
               <div className="flex items-center gap-2">
@@ -157,7 +158,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
               <h2 className="text-3xl md:text-4xl font-extrabold text-foreground">Tentang {tenant.name}</h2>
               <div 
                  className="prose prose-slate leading-relaxed text-muted-foreground max-w-none" 
-                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tenant.about || tenant.description || "Belum ada informasi profil sejarah sekolah.") }} 
+                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(profileData?.about || tenant.description || "Belum ada informasi profil sejarah sekolah.") }} 
               />
            </div>
            
