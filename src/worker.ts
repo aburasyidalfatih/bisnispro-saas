@@ -439,8 +439,7 @@ setInterval(async () => {
         isActive: true,
         retentionStatus: "ACTIVE",
         lastActiveAt: {
-          lte: thirtyDaysAgo,
-          gt: thirtyOneDaysAgo // Prevent spamming, only trigger on the 30th-31st day window
+          lte: thirtyDaysAgo
         }
       }
     })
@@ -554,4 +553,4 @@ setInterval(async () => {
   } catch (error) {
     console.error("[cron] Failed Tenant Lifecycle check", error)
   }
-}, 24 * 60 * 60 * 1000) // Runs once every 24 hours
+}, 6 * 60 * 60 * 1000) // Runs once every 6 hours
