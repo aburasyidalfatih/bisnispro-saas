@@ -99,6 +99,19 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
     }
   }, [])
 
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileOpen])
+
   return (
     <>
       {/* ── TOP BAR (INFO) - Static (Scrolls away) ── */}
@@ -296,7 +309,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                 />
 
                 {/* Side Drawer */}
-                <div className="fixed top-0 right-0 h-screen w-[85vw] max-w-[360px] bg-white z-[101] shadow-2xl flex flex-col xl:hidden animate-in slide-in-from-right duration-300 ease-out">
+                <div className="fixed top-0 right-0 h-[100dvh] w-[85vw] max-w-[360px] bg-white z-[101] shadow-2xl flex flex-col xl:hidden animate-in slide-in-from-right duration-300 ease-out">
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between px-5 py-4 border-b border-border/50 bg-gray-50/50">
                     <span className="font-extrabold text-lg tracking-tight text-gray-900 truncate pr-4">

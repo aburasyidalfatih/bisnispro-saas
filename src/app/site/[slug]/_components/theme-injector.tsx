@@ -4,6 +4,20 @@ import { useEffect } from "react"
 import { hexToTailwindHsl } from "@/lib/color-utils"
 
 export function ThemeInjector({ theme, settings }: { theme: string; settings?: any }) {
+  const primaryHsl = settings?.primaryColor ? hexToTailwindHsl(settings.primaryColor) : null
+  const secondaryHsl = settings?.secondaryColor ? hexToTailwindHsl(settings.secondaryColor) : null
+  const fontFamily = settings?.fontFamily || null
+
+  // Script ini dieksekusi oleh browser saat parsing HTML (sebelum React hydrate),
+  // sehingga tidak ada delay warna dan menghindari efek "FOUC".
+  const injectScript = `
+    try {
+      var root = document.documentElement;
+      root.setAttribute("data-theme", "${theme}");
+      ${fontFamily ? `root.setAttribute("data-font", "${fontFamily}");` : ''}
+    } catch(e) {}
+  `;
+
   useEffect(() => {
     const root = document.documentElement
     
@@ -11,40 +25,22 @@ export function ThemeInjector({ theme, settings }: { theme: string; settings?: a
     root.setAttribute("data-theme", theme)
     
     // Inject custom colors if provided
-    if (settings?.primaryColor) {
-      try {
-        root.style.setProperty("--primary", hexToTailwindHsl(settings.primaryColor))
-      } catch (e) {
-        console.error("Invalid primary color", e)
-      }
+    if (primaryHsl) {
+      root.style.setProperty("--primary", primaryHsl)
     } else {
       root.style.removeProperty("--primary")
     }
 
-    if (settings?.secondaryColor) {
-      try {
-        root.style.setProperty("--secondary", hexToTailwindHsl(settings.secondaryColor))
-        root.style.setProperty("--accent", hexToTailwindHsl(settings.secondaryColor))
-      } catch (e) {
-        console.error("Invalid secondary color", e)
-      }
+    if (secondaryHsl) {
+      root.style.setProperty("--secondary", secondaryHsl)
+      root.style.setProperty("--accent", secondaryHsl)
     } else {
       root.style.removeProperty("--secondary")
       root.style.removeProperty("--accent")
     }
 
-    // Set font family classes
-    const fontClassMap: Record<string, string> = {
-      "inter": "font-sans",
-      "plus-jakarta": "font-sans", 
-      "playfair": "font-serif",
-      "outfit": "font-sans tracking-tight"
-    }
-
-    // Default cleanup old font classes (if any, though Next.js handles body classes in layout usually)
-    // To make this work best, we should return a style tag or just inject class to body
-    if (settings?.fontFamily) {
-      root.setAttribute("data-font", settings.fontFamily)
+    if (fontFamily) {
+      root.setAttribute("data-font", fontFamily)
     }
 
     return () => {
@@ -52,14 +48,27 @@ export function ThemeInjector({ theme, settings }: { theme: string; settings?: a
       const match = document.cookie.match(/color-theme=([^;]+)/)
       if (match) {
         root.setAttribute("data-theme", match[1])
+      } else {
+        root.removeAttribute("data-theme")
       }
       root.style.removeProperty("--primary")
       root.style.removeProperty("--secondary")
       root.style.removeProperty("--accent")
       root.removeAttribute("data-font")
     }
-  }, [theme, settings])
+  }, [theme, settings, primaryHsl, secondaryHsl, fontFamily])
 
-  // Also inject a <style> tag so there's no layout shift if possible, or font variables
-  return null
+  return (
+    <>
+      <script dangerouslySetInnerHTML={{ __html: injectScript }} />
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          :root {
+            ${primaryHsl ? `--primary: ${primaryHsl};` : ''}
+            ${secondaryHsl ? `--secondary: ${secondaryHsl};\n            --accent: ${secondaryHsl};` : ''}
+          }
+        `
+      }} />
+    </>
+  )
 }
