@@ -11,6 +11,7 @@ import { FinanceTab } from "./_components/finance-tab"
 import { EngagementTab } from "./_components/engagement-tab"
 import { AiInfraTab } from "./_components/ai-infra-tab"
 import { EcosystemTab } from "./_components/ecosystem-tab"
+import { TenantsTab } from "./_components/tenants-tab"
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null)
