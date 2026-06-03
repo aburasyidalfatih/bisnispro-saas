@@ -85,7 +85,34 @@ export default async function WebsiteLayout({
 
   const tenant = await getTenantLayoutData(slug)
 
-  if (!tenant || !tenant.isActive) notFound()
+  if (!tenant) notFound()
+
+  if (!tenant.isActive) {
+    if (tenant.retentionStatus?.startsWith("SUSPENDED")) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-6">
+          <div className="bg-white p-8 rounded-3xl shadow-xl max-w-lg border border-red-100">
+            <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Website Ditangguhkan</h1>
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              Website sekolah ini sedang dalam keadaan ditangguhkan (Suspend) karena tidak ada aktivitas masuk (login) oleh pengelola selama lebih dari 60 hari.
+            </p>
+            <p className="text-sm text-gray-500 mb-8 p-4 bg-gray-50 rounded-xl">
+              Jika Anda adalah pengelola website ini, segera masuk (login) ke Dasbor Admin SchoolPro untuk mengaktifkannya kembali sebelum data dihapus secara permanen.
+            </p>
+            <a href="https://schoolpro.id/login" className="inline-block bg-primary text-white font-medium py-3 px-8 rounded-xl hover:opacity-90 transition-opacity">
+              Login ke Dasbor
+            </a>
+          </div>
+        </div>
+      )
+    }
+    notFound()
+  }
 
   // Get active popup
   const activePopup = await getActivePopup(tenant.id)

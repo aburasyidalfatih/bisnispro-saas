@@ -64,6 +64,7 @@ export const getTenantLayoutData = cache(async (slug: string) => {
         youtube: true,
         tiktok: true,
         isActive: true,
+        retentionStatus: true,
         tagline: true,
         description: true,
         seoTitle: true,

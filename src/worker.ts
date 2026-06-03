@@ -507,46 +507,42 @@ setInterval(async () => {
       }
     }
 
-    // 2. Fase 2: Penonaktifan 90 Hari (Suspension)
-    const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+    // 2. Fase 2: Penonaktifan 60 Hari (Suspension)
+    const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
     const suspendTenants = await db.tenant.findMany({
       where: {
         isActive: true,
         retentionStatus: "WARN_30",
-        lastActiveAt: { lte: ninetyDaysAgo }
+        lastActiveAt: { lte: sixtyDaysAgo }
       }
     })
 
     for (const tenant of suspendTenants) {
-      console.log(`[retention] Suspending 90-day inactive tenant: ${tenant.slug}`)
+      console.log(`[retention] Suspending 60-day inactive tenant: ${tenant.slug}`)
       await db.tenant.update({
         where: { id: tenant.id },
         data: { 
           isActive: false, 
-          retentionStatus: "SUSPENDED_90" 
+          retentionStatus: "SUSPENDED_60" 
         }
       })
     }
 
-    // 3. Fase 3: Penghapusan 180 Hari (Soft Delete)
-    const oneEightyDaysAgo = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000)
+    // 3. Fase 3: Penghapusan 90 Hari (Hard Delete)
+    const ninetyDaysAgoDelete = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
     const deleteTenants = await db.tenant.findMany({
       where: {
         isActive: false,
-        retentionStatus: "SUSPENDED_90",
-        lastActiveAt: { lte: oneEightyDaysAgo },
+        retentionStatus: "SUSPENDED_60",
+        lastActiveAt: { lte: ninetyDaysAgoDelete },
         deletedAt: null
       }
     })
 
     for (const tenant of deleteTenants) {
-      console.log(`[retention] Soft-deleting 180-day inactive tenant: ${tenant.slug}`)
-      await db.tenant.update({
-        where: { id: tenant.id },
-        data: { 
-          retentionStatus: "DELETED_180",
-          deletedAt: now
-        }
+      console.log(`[retention] Hard-deleting 90-day inactive tenant: ${tenant.slug}`)
+      await db.tenant.delete({
+        where: { id: tenant.id }
       })
     }
 
