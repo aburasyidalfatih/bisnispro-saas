@@ -105,7 +105,7 @@ export function TenantLeaderboard() {
                     <div className="flex flex-wrap gap-1 mt-1">
                       <span className="text-[9px] font-medium text-blue-600 bg-blue-500/10 px-1.5 py-0.5 rounded">Konten: {tenant.content_score || 0}</span>
                       <span className="text-[9px] font-medium text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded">Aktivitas: {tenant.activity_points || 0}</span>
-                      <span className="text-[9px] font-medium text-purple-600 bg-purple-500/10 px-1.5 py-0.5 rounded">Trafik: {tenant.traffic_score || 0}</span>
+                      <span className="text-[9px] font-medium text-purple-600 bg-purple-500/10 px-1.5 py-0.5 rounded">Trafik: {(tenant as any).traffic_score || 0}</span>
                     </div>
                   </div>
 

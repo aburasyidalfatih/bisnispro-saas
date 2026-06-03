@@ -811,7 +811,7 @@ export async function GET() {
       // Section 15: Ecosystem Transaksi
       ecosystemStats: {
         totalGmv,
-        canteenGmv: canteenGmvAgg._sum.totalAmount || 0,
+        canteenGmv: canteenGmvAgg._sum.total || 0,
         savingDeposits: savingDepositAgg._sum.amount || 0,
         savingWithdrawals: savingWithdrawalAgg._sum.amount || 0,
         ppdbPayments: ppdbPaymentAgg._sum.nominal || 0,

@@ -18,21 +18,21 @@ export async function POST(req: Request) {
     // Determine tenantId
     const user = await db.user.findUnique({
       where: { id: session.user.id },
-      select: { tenantId: true }
+      select: { tenants: { select: { tenantId: true }, take: 1 } }
     })
 
-    if (!user || !user.tenantId) {
+    if (!user || !user.tenants[0]?.tenantId) {
       return NextResponse.json({ error: "User tidak terkait dengan institusi apapun" }, { status: 400 })
     }
 
     // Check token balance
-    const balanceCheck = await checkAiTokenBalance(user.tenantId, session.user.id)
+    const balanceCheck = await checkAiTokenBalance(user.tenants[0].tenantId, session.user.id)
     if (!balanceCheck.success || !balanceCheck.hasBalance) {
       return NextResponse.json({ error: "Token AI tidak mencukupi. Silakan lakukan Top-Up." }, { status: 402 })
     }
 
     // Get AI Model
-    const modelResult = await getAiModel(user.tenantId)
+    const modelResult = await getAiModel(user.tenants[0].tenantId)
     if (!modelResult.success || !modelResult.model) {
       return NextResponse.json({ error: "Gagal memuat model AI" }, { status: 500 })
     }
@@ -49,9 +49,9 @@ export async function POST(req: Request) {
       ],
       async onFinish({ usage, text }) {
         // 1. Deduct tokens
-        const tokensUsed = usage.totalTokens
+        const tokensUsed = usage?.totalTokens || 0
         if (tokensUsed > 0) {
-          await deductAiToken(user.tenantId!, tokensUsed, session.user.id, "AI_CHAT_GTK")
+          await deductAiToken(user.tenants[0].tenantId!, tokensUsed, session.user.id, "AI_CHAT_GTK")
         }
 
         // 2. Save Chat Session (if we want to persist it)
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       }
     })
 
-    return result.toDataStreamResponse()
+    return result.toTextStreamResponse()
   } catch (error: any) {
     console.error("AI Chat Error:", error)
     return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 })

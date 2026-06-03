@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { alumniSchema } from "@/features/alumni/schemas/alumni.schema"
 import { revalidatePath } from "next/cache"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 
 
@@ -40,7 +41,8 @@ export async function createAlumni(tenantId: string, data: any) {
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -61,7 +63,8 @@ export async function updateAlumni(id: string, tenantId: string, data: any) {
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -78,7 +81,8 @@ export async function deleteAlumni(id: string, tenantId: string) {
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -98,7 +102,8 @@ export async function updateAlumniOrder(tenantId: string, orderedIds: string[]) 
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
   
   revalidatePath("/(dashboard)/admin/website/alumni", "page")

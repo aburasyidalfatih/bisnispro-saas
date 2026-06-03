@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { partnershipSchema } from "@/features/partnership/schemas/partnership.schema"
 import { revalidatePath } from "next/cache"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 export async function getPartnerships(tenantId: string) {
   await requireTenantAccess(tenantId)
@@ -46,7 +47,7 @@ export async function createPartnership(tenantId: string, data: any) {
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
   return partnership
 }
@@ -65,7 +66,7 @@ export async function updatePartnership(id: string, tenantId: string, data: any)
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
 }
 
@@ -80,7 +81,7 @@ export async function deletePartnership(id: string, tenantId: string) {
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
 }
 
@@ -96,7 +97,7 @@ export async function togglePartnershipStatus(id: string, tenantId: string, isAc
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
 }
 
@@ -112,7 +113,7 @@ export async function updatePartnershipsOrder(tenantId: string, orderedIds: stri
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
   
   revalidatePath("/admin/website/partners", "page")

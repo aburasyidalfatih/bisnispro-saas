@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = (postData?.posts || []).find((p: any) => p.id === id || p.slug === staffSlugDecoded)
   if (!post) return {}
   const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
-  let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.featuredImage) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
   
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
   if (imageUrl.startsWith("/")) {
@@ -108,7 +108,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
             "@context": "https://schema.org",
             "@type": "Article",
             "headline": post.title,
-            "image": normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image) || "https://schoolpro.id/logo-schoolpro.png",
+            "image": normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.featuredImage) || "https://schoolpro.id/logo-schoolpro.png",
             "datePublished": post.createdAt,
             "dateModified": post.updatedAt || post.createdAt,
             "author": {
@@ -160,10 +160,10 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
       </div>
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
-        {(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image)) && (
+        {(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.featuredImage)) && (
           <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image
-              src={(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.image))!}
+              src={(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.featuredImage))!}
               alt={post.title}
               fill
               priority

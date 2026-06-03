@@ -125,12 +125,12 @@ export default async function WebsiteLayout({
         <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme */}
-        {!tenant.customThemeId && <WebsiteNavbar tenant={tenant} />}
+        {!tenant.customThemeId && <WebsiteNavbar tenant={tenant as any} />}
         
         <main className="flex-1">{children}</main>
         
         {/* Render Footer hanya jika tidak menggunakan Custom Theme */}
-        {!tenant.customThemeId && <WebsiteFooter tenant={tenant} />}
+        {!tenant.customThemeId && <WebsiteFooter tenant={tenant as any} />}
         
         {activePopup && <PopupRenderer popup={activePopup} />}
         

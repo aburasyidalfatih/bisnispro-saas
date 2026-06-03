@@ -5,6 +5,18 @@ import { logger } from "@/lib/logger"
 
 const CACHE_TTL_SECONDS = 60 * 60 // 1 hour
 
+export async function clearTenantCache(slug: string) {
+  try {
+    const redis = await getRedisClient()
+    const suffixes = ['layout', 'home', 'alumni', 'staff', 'programs', 'facilities', 'extracurriculars', 'achievements', 'gallery', 'posts', 'profile']
+    for (const suffix of suffixes) {
+      await redis.del(`smp:tenant:${suffix}:${slug}`)
+    }
+  } catch (error) {
+    logger.error(`Redis clear error in clearTenantCache`, { error: String(error) })
+  }
+}
+
 async function getCachedTenantData<T>(slug: string, keySuffix: string, fetcher: () => Promise<T>): Promise<T | null> {
   const cacheKey = `smp:tenant:${keySuffix}:${slug}`;
   try {
@@ -211,6 +223,10 @@ export const getTenantProfileData = cache(async (slug: string) => {
       where: { slug },
       select: {
         id: true,
+        slug: true,
+        name: true,
+        about: true,
+        createdAt: true,
         _count: {
           select: { staff: true, alumni: true, programs: true, extracurriculars: true }
         }

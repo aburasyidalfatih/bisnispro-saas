@@ -110,6 +110,6 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   switch (tenant.template) {
     case "default":
     default:
-      return <DefaultTheme {...themeProps} />
+      return <DefaultTheme {...(themeProps as any)} />
   }
 }

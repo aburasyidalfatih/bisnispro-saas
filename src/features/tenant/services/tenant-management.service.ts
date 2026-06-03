@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { invalidatePublicTenantCache } from "./tenant-public.service"
 import { getRedis } from "@/lib/redis"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 const DASHBOARD_CACHE_PREFIX = "dashboard:website:"
 const DASHBOARD_CACHE_TTL = 900 // 15 minutes
@@ -120,7 +121,8 @@ export async function updateWebsiteData(tenantId: string, data: Record<string, a
   await invalidateDashboardCache(tenantId)
   try {
     const { revalidatePath } = await import("next/cache")
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (updated?.slug) await clearTenantCache(updated.slug);
   } catch (e) {
     console.error("Failed to revalidate path", e)
   }
@@ -178,7 +180,8 @@ export async function updateTenantSettings(tenantId: string, settings: Record<st
   await invalidatePublicTenantCache(updated.slug)
   try {
     const { revalidatePath } = await import("next/cache")
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (updated?.slug) await clearTenantCache(updated.slug);
   } catch (e) {
     console.error("Failed to revalidate path", e)
   }
@@ -242,7 +245,9 @@ export async function changeSubdomain(tenantId: string, newSlug: string, userId:
   await invalidatePublicTenantCache(newSlug)
   try {
     const { revalidatePath } = await import("next/cache")
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);
+    await clearTenantCache(newSlug);
   } catch (e) {
     console.error("Failed to revalidate path", e)
   }

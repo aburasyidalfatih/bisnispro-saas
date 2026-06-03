@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache"
 import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
 import { subjectSchema } from "@/features/academic/schemas/academic.schema"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 // Helper
 async function checkAccess(tenantId: string) {

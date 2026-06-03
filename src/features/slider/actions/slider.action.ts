@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { sliderSchema } from "@/features/slider/schemas/slider.schema"
 import { revalidatePath } from "next/cache"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 
 
@@ -49,7 +50,7 @@ export async function createSlider(tenantId: string, data: any) {
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
   return slider
 }
@@ -68,7 +69,7 @@ export async function updateSlider(id: string, tenantId: string, data: any) {
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
 }
 
@@ -83,7 +84,7 @@ export async function deleteSlider(id: string, tenantId: string) {
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
 }
 
@@ -99,7 +100,7 @@ export async function toggleSliderStatus(id: string, tenantId: string, isActive:
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
 }
 
@@ -115,7 +116,7 @@ export async function updateSlidersOrder(tenantId: string, orderedIds: string[])
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
   }
   
   revalidatePath("/(dashboard)/admin/website/sliders", "page")

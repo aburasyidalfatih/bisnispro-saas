@@ -5,6 +5,7 @@ import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { revalidatePath } from "next/cache"
 import { facilitySchema } from "@/features/facility/schemas/facility.schema"
 import { generateUniqueSlug } from "@/lib/utils/slug"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 export async function getFacilities(tenantId: string) {
   await requireTenantAccess(tenantId)
@@ -41,7 +42,8 @@ export async function createFacility(tenantId: string, data: any) {
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -62,7 +64,8 @@ export async function updateFacility(id: string, tenantId: string, data: any) {
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -80,7 +83,8 @@ export async function deleteFacility(id: string, tenantId: string) {
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -100,7 +104,8 @@ export async function updateFacilitiesOrder(tenantId: string, orderedIds: string
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
   
   revalidatePath("/(dashboard)/admin/website/facilities", "page")

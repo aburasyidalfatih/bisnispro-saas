@@ -20,7 +20,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
   if (!tenant) notFound()
 
   const services: { title: string; description: string; icon: string }[] =
-    Array.isArray(tenant.services) ? tenant.services : defaultServices
+    Array.isArray((tenant as any).services) ? (tenant as any).services : defaultServices
   const base = await getPublicBasePath(slug)
 
   return (

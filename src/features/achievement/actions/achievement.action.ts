@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { achievementSchema } from "@/features/achievement/schemas/achievement.schema"
 import { revalidatePath } from "next/cache"
 import { generateUniqueSlug } from "@/lib/utils/slug"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 export async function getAchievements(tenantId: string) {
   await requireTenantAccess(tenantId)
@@ -45,7 +46,8 @@ export async function createAchievement(tenantId: string, data: any) {
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -66,7 +68,8 @@ export async function updateAchievement(id: string, tenantId: string, data: any)
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -83,7 +86,8 @@ export async function deleteAchievement(id: string, tenantId: string) {
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
 
   
@@ -103,7 +107,8 @@ export async function updateAchievementsOrder(tenantId: string, orderedIds: stri
   if (tenant) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
   }
   
   revalidatePath("/(dashboard)/admin/website/achievements", "page")

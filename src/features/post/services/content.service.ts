@@ -1,6 +1,7 @@
 import { db, withTenant } from "@/lib/db"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 import { generateUniqueSlug } from "@/lib/utils/slug"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 // ==========================================
 // Query: List Posts
@@ -86,7 +87,8 @@ export async function createPost(params: {
     await invalidatePublicTenantCache(tenant.slug)
     try {
       const { revalidatePath } = await import("next/cache")
-      revalidatePath("/", "layout")
+      revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
     } catch (e) {
       console.error("Failed to revalidate path", e)
     }
@@ -179,7 +181,8 @@ export async function createEvent(params: {
     await invalidatePublicTenantCache(tenant.slug)
     try {
       const { revalidatePath } = await import("next/cache")
-      revalidatePath("/", "layout")
+      revalidatePath("/", "layout");
+    if (tenant?.slug) await clearTenantCache(tenant.slug);;
     } catch (e) {
       console.error("Failed to revalidate path", e)
     }

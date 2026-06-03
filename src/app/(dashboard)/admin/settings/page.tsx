@@ -17,7 +17,7 @@ export default function SettingsGeneralPage() {
   const router = useRouter()
   const { updateBranding } = useTenantBranding()
 
-  const [tenantId, setTenantId] = useState<string | null>(null)
+  const [tenantId, setTenantId] = useState<string |useRef<HTMLInputElement>(null)
 
   // Role check — card Lembaga hanya untuk owner/admin
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug

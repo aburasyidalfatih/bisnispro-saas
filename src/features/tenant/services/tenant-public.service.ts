@@ -29,7 +29,9 @@ export async function invalidatePublicTenantCache(slug: string) {
       `smp:tenant:facilities:${slug}`,
       `smp:tenant:ekskul:${slug}`,
     ]
-    await redis.del(...keysToDelete)
+    for (const key of keysToDelete) {
+      await redis.del(key)
+    }
   } catch (error) {
     logger.error("Redis del error in invalidatePublicTenantCache", { error: String(error) })
   }

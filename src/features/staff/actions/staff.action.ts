@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { staffSchema } from "@/features/staff/schemas/staff.schema"
 import { revalidatePath } from "next/cache"
 import crypto from "crypto"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 
 
@@ -114,9 +115,9 @@ export async function createStaff(tenantId: string, data: any) {
       const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
       await invalidatePublicTenantCache(tenant.slug)
       revalidatePath(`/site/${tenant.slug}/gtk`, "page")
-      revalidatePath(`/site/${tenant.slug}`, "page")
+      revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
       revalidatePath("/gtk", "page")
-      revalidatePath("/", "layout")
+      revalidatePath("/", "layout");
     }
     
     revalidatePath("/(dashboard)/admin/website/gtk", "page")
@@ -193,9 +194,9 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
       const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
       await invalidatePublicTenantCache(tenant.slug)
       revalidatePath(`/site/${tenant.slug}/gtk`, "page")
-      revalidatePath(`/site/${tenant.slug}`, "page")
+      revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
       revalidatePath("/gtk", "page")
-      revalidatePath("/", "layout")
+      revalidatePath("/", "layout");
     }
     
     revalidatePath("/(dashboard)/admin/website/gtk", "page")
@@ -223,9 +224,9 @@ export async function deleteStaff(id: string, tenantId: string) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}/gtk`, "page")
-    revalidatePath(`/site/${tenant.slug}`, "page")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
     revalidatePath("/gtk", "page")
-    revalidatePath("/", "layout")
+    revalidatePath("/", "layout");
   }
   
   revalidatePath("/(dashboard)/admin/website/gtk", "page")
@@ -245,8 +246,8 @@ export async function updateStaffOrder(tenantId: string, orderedIds: string[]) {
     const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
     await invalidatePublicTenantCache(tenant.slug)
     revalidatePath(`/site/${tenant.slug}/gtk`, "page")
-    revalidatePath(`/site/${tenant.slug}`, "page")
-    revalidatePath("/", "layout")
+    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
+    revalidatePath("/", "layout");
   }
   
   revalidatePath("/(dashboard)/admin/website/gtk", "page")

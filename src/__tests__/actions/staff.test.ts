@@ -39,7 +39,7 @@ describe('Server Actions: Staff', () => {
       }),
     })
     expect(result.success).toBe(true)
-    expect(result.data.id).toBe('staff-1')
+    expect(result.data?.id).toBe('staff-1')
     // Pastikan TIDAK membuat user karena email kosong
     expect(db.user.findUnique).not.toHaveBeenCalled()
   })
@@ -95,6 +95,6 @@ describe('Server Actions: Staff', () => {
 
     expect(db.user.findUnique).toHaveBeenCalledWith({ where: { email: 'sari@school.com' } })
     expect(result.success).toBe(true)
-    expect(result.data.id).toBe('staff-2')
+    expect(result.data?.id).toBe('staff-2')
   })
 })
