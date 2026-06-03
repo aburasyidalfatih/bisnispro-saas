@@ -192,7 +192,7 @@ export async function GET() {
         _count: {
           select: {
             students: { where: { isActive: true, deletedAt: null } },
-            staff: { where: { deletedAt: null } },
+            staffProfiles: { where: { deletedAt: null } },
             posts: { where: { deletedAt: null } },
           }
         }
@@ -218,7 +218,7 @@ export async function GET() {
       name: t.name,
       plan: t.plan,
       studentCount: t._count.students,
-      staffCount: t._count.staff,
+      staffCount: t._count.staffProfiles,
       postCount: t._count.posts,
       loginCount: tenantLoginMap.get(t.id) || 0,
       lastActiveAt: t.lastActiveAt,
