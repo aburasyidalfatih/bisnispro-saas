@@ -124,6 +124,12 @@ export type SettingsForm = {
   RETENTION_30_EMAIL_SUBJECT: string;
   RETENTION_30_EMAIL_BODY: string;
   RETENTION_30_WA: string;
+  RETENTION_60_EMAIL_SUBJECT: string;
+  RETENTION_60_EMAIL_BODY: string;
+  RETENTION_60_WA: string;
+  RETENTION_90_EMAIL_SUBJECT: string;
+  RETENTION_90_EMAIL_BODY: string;
+  RETENTION_90_WA: string;
 
   // Kendali Akses Free Plan
   FREE_PLAN_ACCESS: string;
@@ -267,6 +273,12 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   RETENTION_30_EMAIL_SUBJECT: "Apakah ada kendala dengan website sekolah Anda?",
   RETENTION_30_EMAIL_BODY: "<p>Halo Admin {nama_sekolah},</p><p>Kami perhatikan Anda belum login ke dasbor SchoolPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur sekolah Anda?</p><p>Yuk, mulai bangun kehadiran digital sekolah Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p>",
   RETENTION_30_WA: "Halo Admin {nama_sekolah}, kami perhatikan Anda belum login dasbor selama 30 hari. Apakah ada kendala? Yuk, bangun kehadiran digital sekolah Anda sekarang. Balas pesan ini jika butuh bantuan!",
+  RETENTION_60_EMAIL_SUBJECT: "PEMBERITAHUAN: Website Sekolah Anda Ditangguhkan (Suspend)",
+  RETENTION_60_EMAIL_BODY: "<p>Halo Admin {nama_sekolah},</p><p>Kami ingin memberitahukan bahwa website sekolah Anda saat ini telah <strong>ditangguhkan (suspend)</strong> karena tidak ada aktivitas login selama 60 hari terakhir.</p><p>Untuk mengaktifkan kembali website Anda, silakan segera menghubungi tim Admin SchoolPro. Jika tidak ada konfirmasi lebih lanjut, data website Anda akan dihapus secara permanen pada hari ke-90.</p>",
+  RETENTION_60_WA: "Halo Admin {nama_sekolah}, website sekolah Anda saat ini berstatus SUSPEND (ditangguhkan) karena tidak ada aktivitas login selama 60 hari. Silakan hubungi admin SchoolPro jika ingin mengaktifkan kembali website Anda sebelum dihapus permanen.",
+  RETENTION_90_EMAIL_SUBJECT: "PEMBERITAHUAN: Website Sekolah Anda Telah Dihapus Permanen",
+  RETENTION_90_EMAIL_BODY: "<p>Halo Admin {nama_sekolah},</p><p>Karena tidak ada aktivitas login selama 90 hari dan masa penangguhan telah berakhir, dengan berat hati kami menginformasikan bahwa data website sekolah Anda telah <strong>dihapus secara total</strong> dari sistem kami untuk menjaga performa server.</p><p>Jika di kemudian hari Anda ingin memiliki website kembali, silakan melakukan pengajuan pendaftaran ulang. Terima kasih atas ketertarikan Anda pada SchoolPro.</p>",
+  RETENTION_90_WA: "Halo Admin {nama_sekolah}, website sekolah Anda telah DIHAPUS TOTAL dari sistem karena tidak ada aktivitas selama 90 hari. Jika di kemudian hari Anda membutuhkan website kembali, silakan ajukan pendaftaran ulang. Terima kasih.",
 
   // Kendali Akses Free Plan
   FREE_PLAN_ACCESS: JSON.stringify({

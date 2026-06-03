@@ -430,9 +430,23 @@ setInterval(async () => {
   try {
     const now = new Date()
     
+    // Fetch all retention settings once
+    const retentionKeys = [
+      'RETENTION_30_EMAIL_SUBJECT', 'RETENTION_30_EMAIL_BODY', 'RETENTION_30_WA',
+      'RETENTION_60_EMAIL_SUBJECT', 'RETENTION_60_EMAIL_BODY', 'RETENTION_60_WA',
+      'RETENTION_90_EMAIL_SUBJECT', 'RETENTION_90_EMAIL_BODY', 'RETENTION_90_WA'
+    ]
+    const platformSettings = await db.platformSetting.findMany({
+      where: { key: { in: retentionKeys } }
+    })
+    const settingsMap = platformSettings.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as any)
+    
+    const Queue = require("bullmq").Queue
+    const emailQueue = new Queue("email-queue", { connection })
+    const waQueue = new Queue("wa-queue", { connection })
+
     // 1. Fase 1: Peringatan 30 Hari (Re-engagement)
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-    const thirtyOneDaysAgo = new Date(now.getTime() - 31 * 24 * 60 * 60 * 1000)
     
     const warnTenants = await db.tenant.findMany({
       where: {
@@ -453,29 +467,15 @@ setInterval(async () => {
         data: { retentionStatus: "WARN_30" }
       })
 
-      // Ambil konfigurasi template dari PlatformSetting
-      const platformSettings = await db.platformSetting.findMany({
-        where: { key: { in: ['RETENTION_30_WA', 'RETENTION_30_EMAIL_SUBJECT', 'RETENTION_30_EMAIL_BODY'] } }
-      })
-      const settingsMap = platformSettings.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as any)
-      
       const emailSubject = settingsMap['RETENTION_30_EMAIL_SUBJECT'] || "Apakah ada kendala dengan website sekolah Anda?"
-      const emailBodyRaw = settingsMap['RETENTION_30_EMAIL_BODY'] || `
-        <p>Halo Admin {nama_sekolah},</p>
-        <p>Kami perhatikan Anda belum login ke dasbor SchoolPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur sekolah Anda?</p>
-        <p>Yuk, mulai bangun kehadiran digital sekolah Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p>
-        <p>Salam hangat,<br/>Tim SchoolPro</p>
-      `
+      const emailBodyRaw = settingsMap['RETENTION_30_EMAIL_BODY'] || `<p>Halo Admin {nama_sekolah},</p><p>Kami perhatikan Anda belum login ke dasbor SchoolPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur sekolah Anda?</p><p>Yuk, mulai bangun kehadiran digital sekolah Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p>`
       const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name)
       
       const waMsgRaw = settingsMap['RETENTION_30_WA'] || "Halo Admin {nama_sekolah}, kami perhatikan Anda belum login dasbor selama 30 hari. Apakah ada kendala? Yuk, bangun kehadiran digital sekolah Anda sekarang. Balas pesan ini jika butuh bantuan!"
       const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name)
 
-      const Queue = require("bullmq").Queue
-
       // Kirim Email
       if (tenant.email) {
-        const emailQueue = new Queue("email-queue", { connection })
         await emailQueue.add("retention-warning", {
           tenantId: tenant.id,
           to: tenant.email,
@@ -487,7 +487,6 @@ setInterval(async () => {
       // Kirim WA
       if (tenant.whatsapp || tenant.phone) {
         const phone = tenant.whatsapp || tenant.phone || ""
-        // Log ke database agar tampil di dasbor /super-admin/wa-logs
         const waLog = await db.waQueueLog.create({
           data: {
             tenantId: tenant.id, 
@@ -496,8 +495,6 @@ setInterval(async () => {
             status: "PENDING"
           }
         })
-
-        const waQueue = new Queue("wa-queue", { connection })
         await waQueue.add("retention-warning-wa", {
           tenantId: tenant.id,
           number: phone,
@@ -526,6 +523,29 @@ setInterval(async () => {
           retentionStatus: "SUSPENDED_60" 
         }
       })
+
+      const emailSubject = settingsMap['RETENTION_60_EMAIL_SUBJECT'] || "PEMBERITAHUAN: Website Sekolah Anda Ditangguhkan (Suspend)"
+      const emailBodyRaw = settingsMap['RETENTION_60_EMAIL_BODY'] || `<p>Halo Admin {nama_sekolah},</p><p>Kami ingin memberitahukan bahwa website sekolah Anda saat ini telah <strong>ditangguhkan (suspend)</strong> karena tidak ada aktivitas login selama 60 hari terakhir.</p><p>Untuk mengaktifkan kembali website Anda, silakan segera menghubungi tim Admin SchoolPro. Jika tidak ada konfirmasi lebih lanjut, data website Anda akan dihapus secara permanen pada hari ke-90.</p>`
+      const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name)
+      
+      const waMsgRaw = settingsMap['RETENTION_60_WA'] || "Halo Admin {nama_sekolah}, website sekolah Anda saat ini berstatus SUSPEND (ditangguhkan) karena tidak ada aktivitas login selama 60 hari. Silakan hubungi admin SchoolPro jika ingin mengaktifkan kembali website Anda sebelum dihapus permanen."
+      const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name)
+
+      if (tenant.email) {
+        await emailQueue.add("retention-suspend", {
+          tenantId: tenant.id, to: tenant.email, subject: emailSubject, htmlContent: emailBody
+        })
+      }
+
+      if (tenant.whatsapp || tenant.phone) {
+        const phone = tenant.whatsapp || tenant.phone || ""
+        const waLog = await db.waQueueLog.create({
+          data: { tenantId: tenant.id, targetNumber: phone, message: waMsg, status: "PENDING" }
+        })
+        await waQueue.add("retention-suspend-wa", {
+          tenantId: tenant.id, number: phone, message: waMsg, waQueueLogId: waLog.id
+        })
+      }
     }
 
     // 3. Fase 3: Penghapusan 90 Hari (Hard Delete)
@@ -541,6 +561,30 @@ setInterval(async () => {
 
     for (const tenant of deleteTenants) {
       console.log(`[retention] Hard-deleting 90-day inactive tenant: ${tenant.slug}`)
+      
+      const emailSubject = settingsMap['RETENTION_90_EMAIL_SUBJECT'] || "PEMBERITAHUAN: Website Sekolah Anda Telah Dihapus Permanen"
+      const emailBodyRaw = settingsMap['RETENTION_90_EMAIL_BODY'] || `<p>Halo Admin {nama_sekolah},</p><p>Karena tidak ada aktivitas login selama 90 hari dan masa penangguhan telah berakhir, dengan berat hati kami menginformasikan bahwa data website sekolah Anda telah <strong>dihapus secara total</strong> dari sistem kami untuk menjaga performa server.</p><p>Jika di kemudian hari Anda ingin memiliki website kembali, silakan melakukan pengajuan pendaftaran ulang. Terima kasih atas ketertarikan Anda pada SchoolPro.</p>`
+      const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name)
+      
+      const waMsgRaw = settingsMap['RETENTION_90_WA'] || "Halo Admin {nama_sekolah}, website sekolah Anda telah DIHAPUS TOTAL dari sistem karena tidak ada aktivitas selama 90 hari. Jika di kemudian hari Anda membutuhkan website kembali, silakan ajukan pendaftaran ulang. Terima kasih."
+      const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name)
+
+      if (tenant.email) {
+        await emailQueue.add("retention-delete", {
+          tenantId: tenant.id, to: tenant.email, subject: emailSubject, htmlContent: emailBody
+        })
+      }
+
+      if (tenant.whatsapp || tenant.phone) {
+        const phone = tenant.whatsapp || tenant.phone || ""
+        const waLog = await db.waQueueLog.create({
+          data: { tenantId: tenant.id, targetNumber: phone, message: waMsg, status: "PENDING" }
+        })
+        await waQueue.add("retention-delete-wa", {
+          tenantId: tenant.id, number: phone, message: waMsg, waQueueLogId: waLog.id
+        })
+      }
+
       await db.tenant.delete({
         where: { id: tenant.id }
       })
