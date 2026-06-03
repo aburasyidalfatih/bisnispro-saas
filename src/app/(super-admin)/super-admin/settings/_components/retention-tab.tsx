@@ -108,6 +108,89 @@ export function RetentionTab({ form, setForm, handleSaveBatch, saving }: Retenti
           Simpan Semua Pesan Retensi
         </Button>
       </div>
+
+      <Card className="glass border-0 shadow-sm overflow-hidden col-span-full mt-6">
+        <CardHeader className="border-b bg-white/50">
+          <CardTitle className="flex items-center gap-2">
+            Riwayat Tenant (Status Retensi)
+          </CardTitle>
+          <CardDescription>
+            Daftar tenant yang saat ini berada dalam status peringatan (30 Hari) dan ditangguhkan (60 Hari).
+            Catatan: Tenant yang sudah 90 hari akan terhapus permanen dari sistem sehingga tidak muncul di tabel ini.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          <RetentionHistoryTable />
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+import { useEffect, useState } from "react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+
+function RetentionHistoryTable() {
+  const [data, setData] = useState<{warn30: any[], suspend60: any[]}>({ warn30: [], suspend60: [] })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/super-admin/retention-history")
+      .then(r => r.json())
+      .then(d => {
+        setData(d)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
+
+  if (loading) return <div className="p-6 text-center text-sm text-gray-500">Memuat data...</div>
+
+  const allTenants = [
+    ...data.warn30.map(t => ({ ...t, phase: "30 Hari (Peringatan)" })),
+    ...data.suspend60.map(t => ({ ...t, phase: "60 Hari (Suspend)" }))
+  ]
+
+  if (allTenants.length === 0) {
+    return <div className="p-6 text-center text-sm text-gray-500">Tidak ada tenant dalam masa retensi saat ini.</div>
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader className="bg-gray-50/50">
+          <TableRow>
+            <TableHead>Nama Sekolah</TableHead>
+            <TableHead>Domain/Slug</TableHead>
+            <TableHead>Kontak</TableHead>
+            <TableHead>Aktivitas Terakhir</TableHead>
+            <TableHead>Status Fase</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {allTenants.map((t, i) => (
+            <TableRow key={i}>
+              <TableCell className="font-medium">{t.name}</TableCell>
+              <TableCell className="text-muted-foreground text-sm">{t.slug}</TableCell>
+              <TableCell>
+                <div className="flex flex-col text-xs text-gray-500">
+                  <span>{t.whatsapp || t.phone || '-'}</span>
+                  <span>{t.email || '-'}</span>
+                </div>
+              </TableCell>
+              <TableCell className="text-sm">
+                {t.lastActiveAt ? new Date(t.lastActiveAt).toLocaleDateString('id-ID') : '-'}
+              </TableCell>
+              <TableCell>
+                <Badge variant={t.phase.includes('30') ? 'outline' : 'destructive'} className={t.phase.includes('30') ? 'text-amber-600 border-amber-600' : ''}>
+                  {t.phase}
+                </Badge>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   )
 }
