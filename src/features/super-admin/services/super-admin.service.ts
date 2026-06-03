@@ -76,6 +76,7 @@ export async function getTenantsForSuperAdmin(params: {
       return {
         id: t.id, name: t.name, slug: t.slug, domain: t.domain,
         plan: t.plan, theme: t.theme, isActive: t.isActive, createdAt: t.createdAt,
+        retentionStatus: t.retentionStatus,
         studentQuota: t.studentQuota, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
         userCount: t._count.users, owner: t.users[0]?.user || null,
         storageUsed: storageMap.get(t.id) || 0
@@ -114,6 +115,7 @@ export async function getTenantsForSuperAdmin(params: {
   const result = data.map((t) => ({
     id: t.id, name: t.name, slug: t.slug, domain: t.domain,
     plan: t.plan, theme: t.theme, isActive: t.isActive, createdAt: t.createdAt,
+    retentionStatus: t.retentionStatus,
     studentQuota: t.studentQuota, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
     userCount: t._count.users, owner: t.users[0]?.user || null,
     storageUsed: storageMap.get(t.id) || 0

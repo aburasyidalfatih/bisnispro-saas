@@ -31,6 +31,7 @@ interface TenantRow {
   theme: string
   isActive: boolean
   createdAt: string
+  retentionStatus?: string
   studentQuota: number
   aiTokens: number
   userCount: number
@@ -256,7 +257,15 @@ export default function TenantsPage() {
                     <ArrowUpDown className="h-3 w-3" />
                   </div>
                 </th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">Status</th>
+                <th 
+                  className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleSort("createdAt")}
+                >
+                  <div className="flex flex-col items-center justify-center gap-1">
+                    <span className="flex items-center gap-1">Status <ArrowUpDown className="h-3 w-3" /></span>
+                    <span className="text-[10px] font-normal">&amp; Tgl Disetujui</span>
+                  </div>
+                </th>
                 <th className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Aksi</th>
               </tr>
             </thead>
@@ -340,12 +349,16 @@ export default function TenantsPage() {
                         {formatBytes(t.storageUsed || 0)}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-4 py-4 text-center flex flex-col items-center justify-center gap-1.5">
                       <span className={cn(
                         "inline-flex items-center gap-1.5 text-[10px] font-bold uppercase rounded-full px-2.5 py-1",
+                        t.retentionStatus === "SUSPENDED_60" ? "bg-amber-500/10 text-amber-600" :
                         t.isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"
                       )}>
-                        {t.isActive ? "Aktif" : "Mati"}
+                        {t.retentionStatus === "SUSPENDED_60" ? "SUSPEND" : t.isActive ? "Aktif" : "Mati"}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        {t.createdAt ? formatDate(t.createdAt) : '-'}
                       </span>
                     </td>
                     <td className="px-4 py-4 text-right">
@@ -468,14 +481,18 @@ export default function TenantsPage() {
                     </span>
                     <span className={cn(
                       "inline-flex items-center text-[10px] font-bold uppercase rounded-full px-2 py-0.5",
+                      t.retentionStatus === "SUSPENDED_60" ? "bg-amber-500/10 text-amber-600" :
                       t.isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"
                     )}>
-                      {t.isActive ? "Aktif" : "Mati"}
+                      {t.retentionStatus === "SUSPENDED_60" ? "SUSPEND" : t.isActive ? "Aktif" : "Mati"}
                     </span>
                     <span className="text-[10px] font-bold text-purple-600 bg-purple-500/10 px-2 py-0.5 rounded-lg">
                       🤖 {((t.aiTokens || 0) + ((t as any).aiAddonTokens || 0)).toLocaleString("id-ID")}
                     </span>
                     <span className="text-[10px] text-muted-foreground">{formatBytes(t.storageUsed || 0)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap pl-[52px] text-[10px] text-muted-foreground">
+                    <span>Terdaftar: {t.createdAt ? formatDate(t.createdAt) : '-'}</span>
                   </div>
                 </div>
               ))}
