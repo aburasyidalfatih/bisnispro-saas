@@ -26,7 +26,7 @@ export default function SettingsGeneralPage() {
   
   const isImpersonatingUser = typeof document !=="undefined" && document.cookie.includes("impersonate-user=")
   const isImpersonatingTenant = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
-  const isAdminRole = !isImpersonatingUser && (currentRole ==="owner" || currentRole ==="admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))
+  const isAdminRole = !isImpersonatingUser && (currentRole ==="owner" || currentRole ==="admin" || !!(session?.user?.isSuperAdmin && isImpersonatingTenant))
 
   useEffect(() => {
     if (!isAdminRole && status !=="loading") {
@@ -135,10 +135,10 @@ export default function SettingsGeneralPage() {
 
   const handleChangePassword = async () => {
     if (!passwordForm.current || !passwordForm.newPass || !passwordForm.confirm) {
-      return toast({ title:"Lengkapi semua field password", variant:"destructive" })
+      toast({ title:"Lengkapi semua field password", variant:"destructive" }); return;
     }
-    if (passwordForm.newPass.length < 8) return toast({ title:"Password minimal 8 karakter", variant:"destructive" })
-    if (passwordForm.newPass !== passwordForm.confirm) return toast({ title:"Password tidak cocok", variant:"destructive" })
+    if (passwordForm.newPass.length < 8) { toast({ title:"Password minimal 8 karakter", variant:"destructive" }); return; }
+    if (passwordForm.newPass !== passwordForm.confirm) { toast({ title:"Password tidak cocok", variant:"destructive" }); return; }
     setSavingPassword(true)
     const res = await fetch("/api/user/change-password", {
       method:"POST", headers: {"Content-Type":"application/json" },

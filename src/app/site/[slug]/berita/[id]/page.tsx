@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const staffSlugDecoded = decodeURIComponent(id)
   const post = (postData?.posts || []).find((p: any) => p.id === id || p.slug === staffSlugDecoded)
   if (!post) return {}
-  const description = post.excerpt || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)
+  const description = post.content?.replace(/<[^>]*>/g, "").substring(0, 160) || "Berita Terbaru"
   let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.featuredImage) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
   
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`

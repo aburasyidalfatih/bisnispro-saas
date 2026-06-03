@@ -262,7 +262,7 @@ Gunakan bahasa Indonesia yang profesional. Berikan angka konkret. Ad copy harus 
     const { text } = await generateText({
       model: aiResult.model,
       prompt,
-      maxTokens: 6000,
+
     })
 
     // 6. Save report

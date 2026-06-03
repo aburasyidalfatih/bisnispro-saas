@@ -15,7 +15,7 @@ interface ProfileSettingsProps {
   setAvatarPreview: (val: string) => void
   setAvatarUrl: (val: string) => void
   uploadingAvatar: boolean
-  avatarInputRef: React.RefObject<HTMLInputElement>
+  avatarInputRef: React.RefObject<HTMLInputElement | null>
   handleAvatarUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>
   handleSaveProfile: () => Promise<void>
   passwordForm: { current: string; newPass: string; confirm: string }

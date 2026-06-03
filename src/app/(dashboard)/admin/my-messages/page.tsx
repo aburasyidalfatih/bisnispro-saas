@@ -107,7 +107,7 @@ export default function AdminMessagesPage() {
   }, [showComposeModal, tenantId, tenantUsers.length])
 
   const submitComposeMessage = async () => {
-    if (!composeForm.receiverId || !composeForm.body) return toast({ title:"Penerima dan pesan wajib diisi", variant:"destructive" })
+    if (!composeForm.receiverId || !composeForm.body) { toast({ title:"Penerima dan pesan wajib diisi", variant:"destructive" }); return; }
     setSubmittingCompose(true)
     try {
       const res = await fetch("/api/tenant/messages", {
@@ -133,7 +133,7 @@ export default function AdminMessagesPage() {
   }
 
   const submitAnnouncement = async () => {
-    if (!addForm.title || !addForm.content) return toast({ title:"Judul dan isi wajib diisi", variant:"destructive" })
+    if (!addForm.title || !addForm.content) { toast({ title:"Judul dan isi wajib diisi", variant:"destructive" }); return; }
     setSubmittingAnnounce(true)
     try {
       const slug = addForm.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") +"-" + Date.now();
@@ -164,7 +164,7 @@ export default function AdminMessagesPage() {
   }
 
   const submitEditAnnouncement = async () => {
-    if (!editForm.title || !editForm.content) return toast({ title:"Judul dan isi wajib diisi", variant:"destructive" })
+    if (!editForm.title || !editForm.content) { toast({ title:"Judul dan isi wajib diisi", variant:"destructive" }); return; }
     setSubmittingEdit(true)
     try {
       const slug = editForm.title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") +"-" + Date.now();

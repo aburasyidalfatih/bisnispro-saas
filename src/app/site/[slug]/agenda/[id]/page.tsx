@@ -101,7 +101,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                 <Clock className="h-4 w-4" />
-                {event.time || format(new Date(event.startDate), "HH:mm")} WIB
+                {format(new Date(event.startDate), "HH:mm")} WIB
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                 <MapPin className="h-4 w-4" />
