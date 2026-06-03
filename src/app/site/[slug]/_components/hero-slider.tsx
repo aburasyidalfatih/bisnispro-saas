@@ -114,7 +114,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
   return (
     <section 
-      className="relative w-full overflow-hidden min-h-[55vh] sm:min-h-[80vh]"
+      className="relative w-full overflow-hidden min-h-[70dvh] md:min-h-[85dvh] lg:min-h-[90vh]"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEndHandler}
@@ -145,8 +145,8 @@ export function HeroSlider({ slides }: HeroSliderProps) {
       </div>
 
       {/* ── Text + CTA content ── */}
-      <div className="relative z-30 flex items-center min-h-[55vh] sm:min-h-[80vh] pb-12 sm:pb-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-20">
+      <div className="relative z-30 flex items-center min-h-[70dvh] md:min-h-[85dvh] lg:min-h-[90vh] pb-24 md:pb-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-20 md:py-24">
           {/* key forces remount → re-trigger CSS animations */}
           <div key={textKey}>
 
@@ -227,14 +227,14 @@ export function HeroSlider({ slides }: HeroSliderProps) {
         <>
           <button
             onClick={() => goTo((current - 1 + slides.length) % slides.length, "prev")}
-            className="hidden md:flex absolute left-16 top-1/2 -translate-y-1/2 z-40 h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/30 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-110 shadow-lg"
+            className="hidden lg:flex absolute left-8 xl:left-12 top-1/2 -translate-y-1/2 z-40 h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/30 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-110 shadow-lg"
             aria-label="Previous slide"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             onClick={() => goTo((current + 1) % slides.length, "next")}
-            className="hidden md:flex absolute right-16 top-1/2 -translate-y-1/2 z-40 h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/30 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-110 shadow-lg"
+            className="hidden lg:flex absolute right-8 xl:right-12 top-1/2 -translate-y-1/2 z-40 h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/30 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-110 shadow-lg"
             aria-label="Next slide"
           >
             <ChevronRight className="h-5 w-5" />
@@ -244,7 +244,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
       {/* ── Dot Indicators ── */}
       {!isSingle && (
-        <div className="absolute bottom-36 md:bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2.5">
+        <div className="absolute bottom-28 md:bottom-32 lg:bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2.5">
           {slides.map((_, i) => (
             <button
               key={i}

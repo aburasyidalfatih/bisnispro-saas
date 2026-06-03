@@ -94,8 +94,16 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
     })
 
     // Strict separation: If user is TEACHER, they MUST use their own tokens.
-    if (user?.role === "TEACHER") {
-      if (user.aiTokens >= tokensUsed) {
+    let isTeacher = false
+    if (userId) {
+      const tenantUser = await db.tenantUser.findUnique({
+        where: { tenantId_userId: { tenantId, userId } }
+      })
+      isTeacher = tenantUser?.role.toLowerCase() === "guru" || tenantUser?.role.toLowerCase() === "teacher"
+    }
+
+    if (isTeacher) {
+      if (user && user.aiTokens >= tokensUsed) {
         await db.user.update({
           where: { id: userId },
           data: { aiTokens: { decrement: tokensUsed } }
@@ -135,15 +143,20 @@ export async function checkAiTokenBalance(tenantId: string, userId?: string) {
     
     // Strict separation for Teachers
     if (userId) {
-      const user = await db.user.findUnique({ where: { id: userId } })
-      if (user?.role === "TEACHER") {
+      const tenantUser = await db.tenantUser.findUnique({
+        where: { tenantId_userId: { tenantId, userId } }
+      })
+      const isTeacher = tenantUser?.role.toLowerCase() === "guru" || tenantUser?.role.toLowerCase() === "teacher"
+      
+      if (isTeacher) {
+        const user = await db.user.findUnique({ where: { id: userId } })
         // Teacher must have personal tokens (e.g. >= 50)
         return { 
           success: true, 
-          hasBalance: user.aiTokens >= 50, 
-          balance: user.aiTokens, 
+          hasBalance: user && user.aiTokens >= 50, 
+          balance: user?.aiTokens || 0, 
           source: "user",
-          error: user.aiTokens < 50 ? "Token AI tidak mencukupi" : undefined
+          error: (!user || user.aiTokens < 50) ? "Token AI tidak mencukupi" : undefined
         }
       }
     }

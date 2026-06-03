@@ -47,26 +47,20 @@ export function FacilitiesSection({ facilities, labels }: FacilitiesSectionProps
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6">
           {displayed.map((facility, idx) => {
-            // Asymmetric spans that sum to exactly 6 per row:
-            // Item 0: span 4
-            // Item 1: span 2
-            // Row 1 = 4 + 2 = 6 (Full)
-            // Item 2: span 2
-            // Item 3: span 2
-            // Item 4: span 2
-            // Row 2 = 2 + 2 + 2 = 6 (Full)
-            // Item 5: span 6 (Full width footer banner card)
-            // Row 3 = 6 (Full)
+            // Asymmetric spans for Desktop (lg: 6 cols):
+            // Item 0: span 4, Item 1: span 2, Item 2-4: span 2, Item 5: span 6
+            // For Tablet (sm/md: 2 cols):
+            // Item 0: span 2, Item 1-4: span 1, Item 5: span 2
             
             const spanClass = idx === 0
-              ? "md:col-span-4 aspect-[16/10]"
+              ? "sm:col-span-2 lg:col-span-4 aspect-[16/10]"
               : idx === 1
-                ? "md:col-span-2 aspect-[16/20] md:row-span-1"
+                ? "sm:col-span-1 lg:col-span-2 aspect-square lg:aspect-[16/20]"
                 : idx === 5
-                  ? "md:col-span-6 aspect-[21/6]"
-                  : "md:col-span-2 aspect-square"
+                  ? "sm:col-span-2 lg:col-span-6 aspect-[21/6]"
+                  : "sm:col-span-1 lg:col-span-2 aspect-square"
 
             return (
               <Link

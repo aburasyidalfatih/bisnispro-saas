@@ -28,13 +28,18 @@ export async function POST(req: Request) {
     const aiTokens = Math.round(Number(aiPackage.tokens))
 
     // Determine tenantId to link the transaction
+    const tenantId = session.user.tenants?.[0]?.id
+    if (!tenantId) {
+      return NextResponse.json({ error: "User tidak terkait dengan institusi apapun" }, { status: 400 })
+    }
+
     const user = await db.user.findUnique({
       where: { id: session.user.id },
-      select: { tenantId: true, name: true, email: true }
+      select: { name: true, email: true }
     })
 
-    if (!user || !user.tenantId) {
-      return NextResponse.json({ error: "User tidak terkait dengan institusi apapun" }, { status: 400 })
+    if (!user) {
+      return NextResponse.json({ error: "User tidak ditemukan" }, { status: 400 })
     }
 
     if (method === "MANUAL_TRANSFER") {
@@ -49,7 +54,7 @@ export async function POST(req: Request) {
 
       const payment = await db.payment.create({
         data: {
-          tenantId: user.tenantId,
+          tenantId,
           reference: `MANUAL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
           amount,
           method: "MANUAL_TRANSFER",
@@ -74,7 +79,7 @@ export async function POST(req: Request) {
 
     // Buat transaksi via Tripay (force platform tripay via payment.service.ts)
     const tripayResult = await createTransaction({
-      tenantId: user.tenantId,
+      tenantId,
       plan: "AI_TOKEN_USER",
       amount,
       method,
