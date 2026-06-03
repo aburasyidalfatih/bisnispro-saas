@@ -14,14 +14,14 @@ import { cn } from"@/lib/utils"
 import { toast } from"@/hooks/use-toast"
 
 const themeGradients: Record<string, string> = {
-  corporate:"from-blue-700 to-blue-900",
-  ocean:"from-cyan-500 to-teal-600",
-  emerald:"from-emerald-500 to-green-600",
-  sunset:"from-orange-500 to-rose-500",
-  aurora:"from-violet-500 to-purple-600",
-  cyberpunk:"from-cyan-400 to-fuchsia-500",
-  midnight:"from-blue-600 to-indigo-800",
-  hologram:"from-cyan-400 to-pink-500",
+  corporate: "linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%)", // Blue-500 to Blue-900
+  ocean: "linear-gradient(135deg, #06b6d4 0%, #0f766e 100%)", // Cyan-500 to Teal-700
+  emerald: "linear-gradient(135deg, #10b981 0%, #047857 100%)", // Emerald-500 to Emerald-700
+  sunset: "linear-gradient(135deg, #f59e0b 0%, #be123c 100%)", // Amber-500 to Rose-700
+  aurora: "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)", // Violet-500 to Violet-700
+  cyberpunk: "linear-gradient(135deg, #2dd4bf 0%, #c026d3 100%)", // Teal-400 to Fuchsia-600
+  midnight: "linear-gradient(135deg, #1e293b 0%, #312e81 100%)", // Slate-800 to Indigo-900
+  hologram: "linear-gradient(135deg, #38bdf8 0%, #e879f9 100%)", // Light Blue-400 to Fuchsia-400
 }
 
 export default function AppearancePage() {
@@ -138,22 +138,7 @@ export default function AppearancePage() {
         <p className="text-muted-foreground text-lg max-w-2xl">Personalisasi identitas visual institusi Anda untuk memberikan pengalaman pengguna kelas dunia.</p>
       </div>
 
-      {/* Info banner */}
-      <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl p-4 border border-blue-500/20 flex items-start gap-3 shadow-sm">
-        <div className="bg-blue-500/20 p-2 rounded-full">
-          <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
-        </div>
-        <div>
-          <h4 className="font-semibold text-blue-900 dark:text-blue-300">Hak Akses Tema</h4>
-          <p className="text-sm text-blue-800/80 dark:text-blue-200/70 mt-1">
-            {isSuperAdminOnly
-              ?"Anda login sebagai Super Admin. Gunakan fitur 'Login Sebagai' untuk mengubah tema pada tenant spesifik."
-              : canChangeTheme
-              ?"Eksplorasi ragam warna dan tata letak. Klik Simpan untuk memperbarui tampilan website publik."
-              :"Hanya Pemilik (Owner) dan Admin Utama yang memiliki izin untuk melakukan perombakan tema."}
-          </p>
-        </div>
-      </div>
+
 
       {/* 2-Column Layout for Colors and Preview */}
       <div className="grid xl:grid-cols-2 gap-6 items-start">
@@ -180,10 +165,12 @@ export default function AppearancePage() {
                     }}
                     className="group flex flex-col items-center gap-2.5 focus:outline-none"
                   >
-                    <div className={cn("relative flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full transition-all duration-300 bg-gradient-to-br",
-                      gradient,
-                      isSelected ?"ring-4 ring-primary ring-offset-4 ring-offset-background scale-110 shadow-xl" :"hover:scale-110 hover:shadow-lg ring-1 ring-black/10 dark:ring-white/10 shadow-sm"
-                    )}>
+                    <div 
+                      className={cn("relative flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full transition-all duration-300",
+                        isSelected ?"ring-4 ring-primary ring-offset-4 ring-offset-background scale-110 shadow-xl" :"hover:scale-110 hover:shadow-lg ring-1 ring-black/10 dark:ring-white/10 shadow-sm"
+                      )}
+                      style={{ backgroundImage: gradient }}
+                    >
                       {isSelected ? <Check className="h-6 w-6 text-white animate-in zoom-in duration-300 drop-shadow-md" /> : null}
                       {isSaved && !isSelected && (
                         <div className="absolute -bottom-1 -right-1 h-6 w-6 bg-background rounded-full flex items-center justify-center shadow-md border">
