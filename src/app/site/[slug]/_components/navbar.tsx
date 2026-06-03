@@ -119,7 +119,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
         {/* Background base */}
         <div className="absolute inset-0 bg-primary"></div>
         {/* Dark overlay for richer/pekat character */}
-        <div className="absolute inset-0 bg-black/80 mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-black/50 mix-blend-multiply"></div>
         
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between">
           {/* KIRI: Kontak (Phone & Email) */}
