@@ -91,12 +91,8 @@ export async function saveFile(
       const maxStorage = tenant?.subscriptionPlan?.maxStorage || (tenant?.plan === "free" ? 100 : 1024)
 
       if (maxStorage > 0) {
-        const usageResult = await db.fileUpload.aggregate({
-          where: { tenantId },
-          _sum: { size: true }
-        })
-        
-        const currentUsageBytes = usageResult._sum.size || 0
+        // fileUpload removed from Prisma schema
+        const currentUsageBytes = 0
         const maxStorageBytes = maxStorage * 1024 * 1024
         
         if (currentUsageBytes + file.size > maxStorageBytes) {
@@ -244,15 +240,8 @@ export async function saveFile(
       publicUrl = `/api/files/${relativeToUpload}`
     }
 
-    await db.fileUpload.create({
-      data: {
-        tenantId,
-        name: file.name,
-        path: finalFilePath,
-        mimeType: mimeType,
-        size: buffer.length,
-      },
-    })
+    // db.fileUpload removed from Prisma schema
+    // await db.fileUpload.create({ ... })
 
     return {
       success: true,

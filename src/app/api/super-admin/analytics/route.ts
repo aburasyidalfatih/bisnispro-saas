@@ -632,7 +632,7 @@ export async function GET() {
       db.aiUsageLog.aggregate({ _sum: { tokens: true } }),
       db.waQueueLog.count({ where: { status: "SENT" } }),
       db.waQueueLog.count({ where: { status: "FAILED" } }),
-      db.fileUpload.aggregate({ _sum: { size: true } })
+      Promise.resolve({ _sum: { size: 0 } }) // fileUpload removed from Prisma schema
     ])
 
     const aiUsersGroups = await db.aiUsageLog.groupBy({

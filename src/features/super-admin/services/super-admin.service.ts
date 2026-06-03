@@ -34,11 +34,7 @@ export async function getTenantsForSuperAdmin(params: {
     const total = tenantIds.length
 
     // Get storage usage for these tenants
-    const storageGroups = await db.fileUpload.groupBy({
-      by: ['tenantId'],
-      where: { tenantId: { in: tenantIds } },
-      _sum: { size: true }
-    })
+    const storageGroups: any[] = []
     
     const storageMap = new Map()
     tenantIds.forEach(id => storageMap.set(id, 0)) // Init with 0
@@ -109,11 +105,7 @@ export async function getTenantsForSuperAdmin(params: {
   ])
 
   const tenantIds = data.map(t => t.id)
-  const storageGroups = await db.fileUpload.groupBy({
-    by: ['tenantId'],
-    where: { tenantId: { in: tenantIds } },
-    _sum: { size: true }
-  })
+  const storageGroups: any[] = []
   const storageMap = new Map()
   storageGroups.forEach(g => {
     if (g.tenantId) storageMap.set(g.tenantId, g._sum.size || 0)
