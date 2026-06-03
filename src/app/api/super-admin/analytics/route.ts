@@ -618,12 +618,12 @@ export async function GET() {
     // SECTION 15: Ecosystem Transaksi (GMV)
     // ============================================
     const [canteenGmvAgg, savingDepositAgg, savingWithdrawalAgg, ppdbPaymentAgg] = await Promise.all([
-      db.canteenOrder.aggregate({ where: { status: "COMPLETED" }, _sum: { totalAmount: true } }),
+      db.canteenOrder.aggregate({ where: { status: "COMPLETED" }, _sum: { total: true } }),
       db.walletTransaction.aggregate({ where: { type: "DEPOSIT", status: "SUCCESS" }, _sum: { amount: true } }),
       db.walletTransaction.aggregate({ where: { type: "WITHDRAWAL", status: "SUCCESS" }, _sum: { amount: true } }),
       db.pembayaranPpdb.aggregate({ where: { status: "LUNAS" }, _sum: { nominal: true } })
     ])
-    const totalGmv = (canteenGmvAgg._sum.totalAmount || 0) + (savingDepositAgg._sum.amount || 0) + (ppdbPaymentAgg._sum.nominal || 0)
+    const totalGmv = (canteenGmvAgg._sum.total || 0) + (savingDepositAgg._sum.amount || 0) + (ppdbPaymentAgg._sum.nominal || 0)
 
     // ============================================
     // SECTION 16: AI & Infrastructure
