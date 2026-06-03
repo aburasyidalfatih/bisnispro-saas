@@ -125,6 +125,11 @@ export default function RegisterSchoolPage() {
       return
     }
 
+    if (!form.adminEmail.toLowerCase().endsWith("@gmail.com")) {
+      toast({ title: "Email Tidak Valid", description: "Mohon gunakan email @gmail.com aktif untuk memastikan Anda menerima informasi penting dari kami.", variant: "destructive" })
+      return
+    }
+
     if (isAvailable === false) {
       toast({ title: "Gagal", description: "Subdomain sudah digunakan", variant: "destructive" })
       return
@@ -452,10 +457,17 @@ export default function RegisterSchoolPage() {
                       value={form.adminEmail} 
                       onChange={(e) => setForm({...form, adminEmail: e.target.value})}
                       placeholder="emailanda@gmail.com" 
-                      className="rounded-xl h-11 pl-10"
+                      className={cn(
+                        "rounded-xl h-11 pl-10",
+                        form.adminEmail && !form.adminEmail.toLowerCase().endsWith("@gmail.com") && "border-rose-500 focus-visible:ring-rose-500"
+                      )}
                     />
                   </div>
-                  <p className="text-[10px] text-primary/80 mt-1 font-medium">Pastikan memasukkan email utama Anda, karena persetujuan akan dikirim ke email ini.</p>
+                  {form.adminEmail && !form.adminEmail.toLowerCase().endsWith("@gmail.com") ? (
+                    <p className="text-[10px] text-rose-500 mt-1 font-medium">Harus menggunakan email @gmail.com yang aktif.</p>
+                  ) : (
+                    <p className="text-[10px] text-primary/80 mt-1 font-medium">Wajib menggunakan @gmail.com aktif, karena informasi penting akan dikirim ke email ini.</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Nomor WhatsApp (Aktif)</Label>

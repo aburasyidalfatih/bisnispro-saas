@@ -18,7 +18,7 @@ const registerSchoolSchema = z.object({
   province: z.string().min(2, "Provinsi wajib diisi"),
   regency: z.string().min(2, "Kabupaten/Kota wajib diisi"),
   adminName: z.string().min(2, "Nama admin minimal 2 karakter").max(100),
-  adminEmail: z.string().email("Email tidak valid"),
+  adminEmail: z.string().email("Email tidak valid").refine((val) => val.toLowerCase().endsWith("@gmail.com"), "Wajib menggunakan layanan @gmail.com"),
   adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
   adminPosition: z.string().min(2, "Jabatan penanggung jawab wajib diisi"),
   address: z.string().min(5, "Alamat wajib diisi"),
