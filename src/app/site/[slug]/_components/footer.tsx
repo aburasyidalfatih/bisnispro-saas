@@ -56,7 +56,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
         {/* Base theme color */}
         <div className="absolute inset-0 bg-primary"></div>
         {/* Dark overlay for rich dark tint */}
-        <div className="absolute inset-0 bg-black/70 mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-black/85 mix-blend-multiply"></div>
         
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid gap-8 md:grid-cols-4">
@@ -224,7 +224,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
         {/* Base theme color */}
         <div className="absolute inset-0 bg-primary"></div>
         {/* Even darker overlay for contrast */}
-        <div className="absolute inset-0 bg-black/80 mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-black/95 mix-blend-multiply"></div>
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">

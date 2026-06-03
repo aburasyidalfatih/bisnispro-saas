@@ -42,6 +42,15 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION || (() => {
+      try {
+        return require("child_process").execSync("git rev-parse --short HEAD").toString().trim()
+      } catch (e) {
+        return ""
+      }
+    })(),
+  },
   output: "standalone",
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
