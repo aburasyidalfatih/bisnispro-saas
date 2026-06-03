@@ -42,6 +42,8 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
 
   const base = await getPublicBasePath(slug)
 
+  const profileData = await getTenantProfileData(slug)
+
   // Custom Theme rendering
   if (tenant.customThemeId && tenant.customTheme?.aboutHtml) {
     const rendered = renderCustomTheme({
@@ -49,7 +51,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
       layoutHtml: tenant.customTheme.layoutHtml,
       customCss: tenant.customTheme.customCss,
       customJs: tenant.customTheme.customJs,
-      context: { tenant, base, settings: tenant.settings || {} },
+      context: { tenant: { ...tenant, about: profileData?.about }, base, settings: tenant.settings || {} },
     })
     if (rendered) return rendered
   }
@@ -69,7 +71,6 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
     }
   }
   
-  const profileData = await getTenantProfileData(slug)
   const totalStaff = profileData?._count?.staff || 0
   const totalAlumni = profileData?._count?.alumni || 0
   const totalEkskul = profileData?._count?.extracurriculars || 0
