@@ -110,6 +110,11 @@ export default function DiscountsPage() {
   }
 
   const handleSave = async () => {
+    if (!editingDiscount.id && editingDiscount.type === "CASHBACK" && editingDiscount.affiliateId !== null) {
+      toast({ title: "Pemberitahuan", description: "Kupon cashback untuk mitra spesifik dibuat OTOMATIS oleh sistem saat mereka mendaftar. Silakan edit kupon yang sudah ada.", variant: "destructive" })
+      return
+    }
+
     if (!editingDiscount?.code?.trim()) {
       toast({ title: "Validasi", description: "Kode diskon wajib diisi.", variant: "destructive" })
       return
@@ -236,26 +241,6 @@ export default function DiscountsPage() {
           {editingDiscount && (
             <div className="px-6 py-5 space-y-4">
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Kode Diskon</Label>
-                <Input
-                  value={editingDiscount.code || ""}
-                  onChange={e => setEditingDiscount({ ...editingDiscount, code: e.target.value })}
-                  placeholder="Contoh: MERDEKA20"
-                  className="rounded-xl uppercase font-mono tracking-widest"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Deskripsi</Label>
-                <Input
-                  value={editingDiscount.description || ""}
-                  onChange={e => setEditingDiscount({ ...editingDiscount, description: e.target.value })}
-                  placeholder="Keterangan singkat"
-                  className="rounded-xl"
-                />
-              </div>
-
-              <div className="space-y-1.5">
                 <Label className="text-xs font-semibold">Tipe Kupon</Label>
                 <select
                   value={editingDiscount.type || "DISCOUNT"}
@@ -265,6 +250,28 @@ export default function DiscountsPage() {
                   <option value="DISCOUNT">Diskon Normal (Potong Harga)</option>
                   <option value="CASHBACK">Cashback Afiliasi (Komisi Saldo)</option>
                 </select>
+              </div>
+
+              {!(editingDiscount.type === "CASHBACK" && editingDiscount.affiliateId !== null) && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold">Kode Diskon</Label>
+                  <Input
+                    value={editingDiscount.code || ""}
+                    onChange={e => setEditingDiscount({ ...editingDiscount, code: e.target.value })}
+                    placeholder="Contoh: MERDEKA20"
+                    className="rounded-xl uppercase font-mono tracking-widest"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Deskripsi</Label>
+                <Input
+                  value={editingDiscount.description || ""}
+                  onChange={e => setEditingDiscount({ ...editingDiscount, description: e.target.value })}
+                  placeholder="Keterangan singkat"
+                  className="rounded-xl"
+                />
               </div>
 
               {editingDiscount.type === "CASHBACK" && (
