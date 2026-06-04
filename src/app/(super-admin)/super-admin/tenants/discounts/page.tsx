@@ -68,8 +68,7 @@ export default function DiscountsPage() {
       code: "",
       description: "",
       type: "DISCOUNT",
-      percentage: 10,
-      cashbackAmount: 0,
+      percentage: 0,
       affiliateEmail: "",
       linkedTenantId: "",
       isActive: true,
@@ -129,9 +128,13 @@ export default function DiscountsPage() {
       const url = isEdit ? `/api/super-admin/discounts/${editingDiscount.id}` : "/api/super-admin/discounts"
       const method = isEdit ? "PUT" : "POST"
 
-      const payload = {
+      let payload = {
         ...editingDiscount,
         code: editingDiscount.code ? editingDiscount.code.toUpperCase().replace(/\s+/g, '') : ""
+      }
+
+      if (payload.type === "CASHBACK") {
+        payload.cashbackAmount = 0; // Force to 0 so it uses percentage
       }
 
       const res = await fetch(url, {
@@ -194,9 +197,9 @@ export default function DiscountsPage() {
                       + {discount.bonusMonths} Bulan
                     </Badge>
                   )}
-                  <Badge variant={discount.isActive ? "default" : "secondary"} className={cn(discount.isActive && "bg-emerald-500 hover:bg-emerald-600")}>
-                    {discount.type === "CASHBACK" && discount.cashbackAmount > 0 
-                      ? `CB Rp ${discount.cashbackAmount.toLocaleString()}`
+                  <Badge variant="secondary" className="bg-primary/10 text-primary border-0 rounded-md">
+                    {discount.type === "CASHBACK" 
+                      ? `CB ${discount.percentage}%` 
                       : `${discount.percentage}% OFF`}
                   </Badge>
                 </div>
@@ -278,7 +281,12 @@ export default function DiscountsPage() {
               </div>
 
               {editingDiscount.type === "CASHBACK" && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  {(editingDiscount as any).cashbackAmount > 0 && (
+                    <div className="bg-amber-50 border border-amber-200 text-amber-700 p-3 rounded-xl text-xs">
+                      <strong>Info Transisi:</strong> Kupon ini sebelumnya menggunakan potongan Rp {(editingDiscount as any).cashbackAmount.toLocaleString()}. Karena sistem kini 100% menggunakan persentase, menyimpan form ini akan mengubah tipe potongannya menjadi <strong>Persentase (%)</strong>. Pastikan Anda telah mengisi Persentase Potongan dengan benar.
+                    </div>
+                  )}
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold">Email Mitra Afiliasi</Label>
                     <Input
@@ -287,17 +295,7 @@ export default function DiscountsPage() {
                       placeholder="email.mitra@contoh.com"
                       className="rounded-xl"
                     />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Nominal Cashback (Rp)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      value={editingDiscount.cashbackAmount || 0}
-                      onChange={e => setEditingDiscount({ ...editingDiscount, cashbackAmount: Number(e.target.value) })}
-                      placeholder="Atau gunakan persentase di bawah"
-                      className="rounded-xl"
-                    />
+                    <p className="text-[10px] text-muted-foreground mt-1">Sistem otomatis menjadikan kode referral mitra ini sebagai kode diskon (kupon cashback).</p>
                   </div>
                 </div>
               )}
