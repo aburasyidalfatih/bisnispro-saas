@@ -283,7 +283,16 @@ export async function getBillingDashboardData(tenantId: string) {
     const code = await db.discountCode.findFirst({
       where: { affiliateId: tenant.affiliateId, type: "CASHBACK", isActive: true }
     })
-    if (code) autoCashbackCode = code.code
+    if (code) {
+      autoCashbackCode = code.code
+    } else {
+      const affiliate = await db.affiliateProfile.findUnique({
+        where: { id: tenant.affiliateId }
+      })
+      if (affiliate && affiliate.isActive) {
+        autoCashbackCode = affiliate.referralCode
+      }
+    }
   }
 
   return {
@@ -365,9 +374,30 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
 // Mutation: Validasi Kode Diskon
 // ==========================================
 export async function validateDiscountCode(code: string, tenantId?: string) {
-  const discount = await db.discountCode.findUnique({
+  let discount = await db.discountCode.findUnique({
     where: { code: code.toUpperCase() },
   })
+
+  // Auto-generate DiscountCode jika code yang dimasukkan adalah referralCode milik Affiliate
+  if (!discount) {
+    const affiliate = await db.affiliateProfile.findFirst({
+      where: { referralCode: { equals: code, mode: "insensitive" } }
+    })
+
+    if (affiliate && affiliate.isActive) {
+      discount = await db.discountCode.create({
+        data: {
+          code: affiliate.referralCode.toUpperCase(),
+          type: "CASHBACK",
+          percentage: 0,
+          cashbackAmount: 100000, // Default cashback 100k
+          description: `Kupon Spesial Mitra ${affiliate.referralCode.toUpperCase()}`,
+          isActive: true,
+          affiliateId: affiliate.id
+        }
+      })
+    }
+  }
 
   if (!discount) throw new Error("Kode diskon tidak ditemukan")
   if (!discount.isActive) throw new Error("Kode diskon sudah tidak aktif")
