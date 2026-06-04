@@ -44,6 +44,9 @@ export default async function AffiliateDashboardPage() {
   const displayCode = affiliate.referralCode.replace(/^ref-/i, '').toLowerCase()
   const referralLink = `${process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"}/${displayCode}`
 
+  const cashbackCoupon = affiliate.discountCodes?.find(c => c.type === "CASHBACK" && c.isActive)
+  const cashbackValueText = cashbackCoupon ? (cashbackCoupon.cashbackAmount > 0 ? `Rp ${cashbackCoupon.cashbackAmount.toLocaleString()}` : `${cashbackCoupon.percentage}%`) : 'menarik'
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -52,12 +55,14 @@ export default async function AffiliateDashboardPage() {
           <p className="text-muted-foreground mt-1">Pantau performa referral dan komisi Anda.</p>
         </div>
         
-        <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-500/10 dark:to-amber-500/10 px-4 py-2.5 rounded-xl border border-orange-200 dark:border-orange-500/20 shadow-sm w-fit">
-          <div className="space-y-0.5">
+        <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-500/10 dark:to-amber-500/10 px-4 py-3 rounded-xl border border-orange-200 dark:border-orange-500/20 shadow-sm w-full md:w-fit max-w-xl">
+          <div className="space-y-1">
             <p className="text-xs font-semibold text-orange-800 dark:text-orange-400">Kupon Cashback Anda</p>
-            <p className="text-[10px] text-orange-600/80 dark:text-orange-400/80 max-w-[200px] leading-tight">Berlaku 1x untuk perpanjangan lisensi sekolah Anda sendiri</p>
+            <p className="text-[11px] text-orange-700/90 dark:text-orange-400/90 leading-tight">
+              Kupon cashback ini bisa digunakan 1 kali untuk *upgrade* langganan sekolah Anda dan berlaku selamanya. Besaran cashback <strong>{cashbackValueText}</strong> akan langsung masuk ke saldo komisi afiliasi Anda!
+            </p>
           </div>
-          <code className="font-mono font-bold text-lg text-orange-700 dark:text-orange-300 bg-white dark:bg-black/50 px-3 py-1 rounded-lg border border-orange-100 dark:border-orange-500/20">{displayCode}</code>
+          <code className="font-mono font-bold text-lg text-orange-700 dark:text-orange-300 bg-white dark:bg-black/50 px-3 py-1 rounded-lg border border-orange-100 dark:border-orange-500/20 shrink-0">{displayCode}</code>
         </div>
       </div>
 
