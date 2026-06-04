@@ -49,7 +49,11 @@ export default function DiscountsPage() {
     try {
       const res = await fetch("/api/super-admin/discounts")
       const data = await res.json()
-      setDiscounts(data)
+      if (res.ok && Array.isArray(data)) {
+        setDiscounts(data)
+      } else {
+        throw new Error(data.error || "Format respons tidak valid")
+      }
     } catch {
       toast({ title: "Error", description: "Gagal memuat data diskon.", variant: "destructive" })
     } finally {
