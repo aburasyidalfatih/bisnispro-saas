@@ -74,6 +74,7 @@ export async function registerAffiliate(formData: FormData) {
           cashbackAmount: 0,
           percentage: defaultCashbackPct,
           affiliateId: newAffiliate.id,
+          maxUses: 1,
           isActive: true,
         }
       })

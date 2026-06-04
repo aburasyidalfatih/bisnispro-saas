@@ -252,6 +252,7 @@ export const authOptions: NextAuthConfig = {
                 cashbackAmount: 0,
                 percentage: defaultCashbackPct,
                 affiliateId: newAffiliate.id,
+                maxUses: 1,
                 isActive: true
               }
             })

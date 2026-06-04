@@ -59,7 +59,7 @@ export default async function AffiliateDashboardPage() {
           <div className="space-y-1">
             <p className="text-xs font-semibold text-orange-800 dark:text-orange-400">Kupon Cashback Anda</p>
             <p className="text-[11px] text-orange-700/90 dark:text-orange-400/90 leading-tight">
-              Kupon cashback ini bisa digunakan kapan saja untuk *upgrade* langganan sekolah Anda sendiri dan <strong>berlaku selamanya tanpa batas</strong>. Besaran cashback <strong>{cashbackValueText}</strong> akan langsung masuk ke saldo komisi afiliasi Anda!
+              Kupon cashback ini sengaja <strong>dibatasi 1 kali penggunaan</strong> khusus untuk <em>upgrade</em> sekolah Anda sendiri. Besaran cashback <strong>{cashbackValueText}</strong> akan masuk ke saldo komisi Anda. Jika Anda butuh kupon tambahan, silakan <em>request</em> ke Super Admin.
             </p>
           </div>
           <code className="font-mono font-bold text-lg text-orange-700 dark:text-orange-300 bg-white dark:bg-black/50 px-3 py-1 rounded-lg border border-orange-100 dark:border-orange-500/20 shrink-0">{displayCode}</code>
