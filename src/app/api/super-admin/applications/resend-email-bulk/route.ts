@@ -33,18 +33,28 @@ export async function POST(req: Request) {
       const user = await db.user.findUnique({ where: { email: app.adminEmail.toLowerCase() } });
       if (!user) continue;
 
-      const tempPassword = crypto.randomBytes(8).toString("base64url");
-      const hashedPassword = await bcrypt.hash(tempPassword, 12);
+      let tempPassword = "";
 
-      await db.user.update({
-        where: { id: user.id },
-        data: { password: hashedPassword }
-      });
+      if (app.hashedPassword) {
+        tempPassword = "(Password yang Anda buat saat mendaftar)";
+        await db.tenantApplication.update({
+          where: { id: app.id },
+          data: { adminMessage: `temp_pwd:${tempPassword}` }
+        });
+      } else {
+        tempPassword = crypto.randomBytes(8).toString("base64url");
+        const hashedPassword = await bcrypt.hash(tempPassword, 12);
 
-      await db.tenantApplication.update({
-        where: { id: app.id },
-        data: { adminMessage: `temp_pwd:${tempPassword}` }
-      });
+        await db.user.update({
+          where: { id: user.id },
+          data: { password: hashedPassword }
+        });
+
+        await db.tenantApplication.update({
+          where: { id: app.id },
+          data: { adminMessage: `temp_pwd:${tempPassword}` }
+        });
+      }
 
       // Send in background
       sendApplicationNotification(app.id).then(async () => {

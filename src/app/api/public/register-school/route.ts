@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger"
 import { sendApplicationNotification, sendNewApplicationAlerts } from "@/features/tenant/services/application.service"
 import { checkWhatsAppNumber } from "@/features/notification/services/notification.service"
 import { parseBody } from "@/lib/api-utils"
+import bcrypt from "bcryptjs"
 
 const registerSchoolSchema = z.object({
   schoolName: z.string().min(3, "Nama sekolah minimal 3 karakter").max(200),
@@ -21,6 +22,7 @@ const registerSchoolSchema = z.object({
   adminEmail: z.string().email("Email tidak valid").refine((val) => val.toLowerCase().endsWith("@gmail.com"), "Wajib menggunakan layanan @gmail.com"),
   adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
   adminPosition: z.string().min(2, "Jabatan penanggung jawab wajib diisi"),
+  password: z.string().min(8, "Password minimal 8 karakter"),
   address: z.string().min(5, "Alamat wajib diisi"),
   logo: z.string().min(1, "Logo wajib diunggah"),
   studentCount: z.coerce.number().min(1, "Jumlah siswa harus lebih dari 0"),
@@ -39,7 +41,7 @@ export async function POST(req: Request) {
 
     const {
       schoolName, schoolSlug, npsn, schoolStatus,
-      province, regency, adminName, adminEmail, adminPhone, adminPosition, address, logo, studentCount, referralCode,
+      province, regency, adminName, adminEmail, adminPhone, adminPosition, password, address, logo, studentCount, referralCode,
       utmSource, utmMedium, utmCampaign, utmContent, utmTerm
     } = parsed.data
 
@@ -102,6 +104,8 @@ export async function POST(req: Request) {
       }
     }
 
+    const hashedPassword = await bcrypt.hash(password, 12)
+
     const application = await db.tenantApplication.create({
       data: {
         schoolName,
@@ -114,6 +118,7 @@ export async function POST(req: Request) {
         adminEmail,
         adminPhone: waCheck.formatted || adminPhone,
         adminPosition,
+        hashedPassword,
         address,
         logo,
         studentCount,

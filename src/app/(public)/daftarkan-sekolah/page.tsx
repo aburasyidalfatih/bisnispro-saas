@@ -42,6 +42,8 @@ export default function RegisterSchoolPage() {
     adminPosition: "",
     adminEmail: "",
     adminPhone: "",
+    password: "",
+    confirmPassword: "",
     address: "",
     referralCode: "",
     studentCount: 0,
@@ -122,6 +124,16 @@ export default function RegisterSchoolPage() {
     const correctAnswer = captchaParams.a + captchaParams.b
     if (parseInt(captchaAnswer) !== correctAnswer) {
       toast({ title: "Verifikasi Gagal", description: "Hasil perhitungan matematika tidak tepat.", variant: "destructive" })
+      return
+    }
+
+    if (form.password.length < 8) {
+      toast({ title: "Password Terlalu Pendek", description: "Password minimal harus 8 karakter.", variant: "destructive" })
+      return
+    }
+
+    if (form.password !== form.confirmPassword) {
+      toast({ title: "Password Tidak Cocok", description: "Konfirmasi password tidak sama dengan password.", variant: "destructive" })
       return
     }
 
@@ -481,6 +493,37 @@ export default function RegisterSchoolPage() {
                       className="rounded-xl h-11 pl-10"
                     />
                   </div>
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Password Akses</Label>
+                  <Input 
+                    required 
+                    type="password"
+                    value={form.password} 
+                    onChange={(e) => setForm({...form, password: e.target.value})}
+                    placeholder="Minimal 8 karakter" 
+                    className="rounded-xl h-11"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1 font-medium">Buat password untuk login sebagai admin sekolah.</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Konfirmasi Password</Label>
+                  <Input 
+                    required 
+                    type="password"
+                    value={form.confirmPassword} 
+                    onChange={(e) => setForm({...form, confirmPassword: e.target.value})}
+                    placeholder="Ulangi password Anda" 
+                    className={cn(
+                      "rounded-xl h-11",
+                      form.confirmPassword && form.password !== form.confirmPassword && "border-rose-500 focus-visible:ring-rose-500"
+                    )}
+                  />
+                  {form.confirmPassword && form.password !== form.confirmPassword && (
+                    <p className="text-[10px] text-rose-500 mt-1 font-medium">Password tidak cocok.</p>
+                  )}
                 </div>
               </div>
             </CardContent>

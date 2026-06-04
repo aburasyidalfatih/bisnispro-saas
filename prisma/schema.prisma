@@ -415,6 +415,7 @@ model TenantApplication {
   address       String?
   status        String            @default("PENDING")
   adminMessage  String?
+  hashedPassword String?
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   npsn          String?

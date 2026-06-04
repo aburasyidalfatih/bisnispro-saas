@@ -64,7 +64,7 @@ export async function sendApplicationNotification(applicationId: string) {
       subject = settings.WA_SUBJECT_APPROVED || `Selamat! Pendaftaran ${app.schoolName} Disetujui`
       const tpl =
         settings.WA_TEMPLATE_APPROVED ||
-        `Halo {{adminName}},\n\nPendaftaran sekolah {{schoolName}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan kredensial berikut:\n\nURL Login: {{loginUrl}}\nEmail: {{adminEmail}}\nPassword Sementara: {{tempPwd}}\n\n⚠️ PENTING: Harap segera mengganti password Anda setelah berhasil login pertama kali demi keamanan akun Anda.\n\nTerima kasih.`
+        `Halo {{adminName}},\n\nPendaftaran sekolah {{schoolName}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan kredensial berikut:\n\nURL Login: {{loginUrl}}\nEmail: {{adminEmail}}\nPassword: {{tempPwd}}\n\n⚠️ PENTING: Jika menggunakan password sementara, harap segera mengganti password Anda setelah berhasil login pertama kali demi keamanan akun Anda.\n\nTerima kasih.`
       message = tpl
         .replace(/{{adminName}}/g, app.adminName)
         .replace(/{{schoolName}}/g, app.schoolName)
@@ -361,16 +361,28 @@ export async function approveApplication(id: string) {
   let tempPassword = ""
 
   if (!user) {
-    tempPassword = crypto.randomBytes(8).toString("base64url")
-    const hashedPassword = await bcrypt.hash(tempPassword, 12)
-    user = await db.user.create({
-      data: {
-        name: app.adminName,
-        email: adminEmail,
-        password: hashedPassword,
-        phone: app.adminPhone,
-      },
-    })
+    if (app.hashedPassword) {
+      tempPassword = "(Password yang Anda buat saat mendaftar)"
+      user = await db.user.create({
+        data: {
+          name: app.adminName,
+          email: adminEmail,
+          password: app.hashedPassword,
+          phone: app.adminPhone,
+        },
+      })
+    } else {
+      tempPassword = crypto.randomBytes(8).toString("base64url")
+      const hashedPassword = await bcrypt.hash(tempPassword, 12)
+      user = await db.user.create({
+        data: {
+          name: app.adminName,
+          email: adminEmail,
+          password: hashedPassword,
+          phone: app.adminPhone,
+        },
+      })
+    }
   } else {
     tempPassword = "(Gunakan password akun Anda sebelumnya)"
   }

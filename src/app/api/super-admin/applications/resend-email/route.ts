@@ -21,21 +21,32 @@ export async function POST(req: Request) {
     const user = await db.user.findUnique({ where: { email: app.adminEmail.toLowerCase() } });
     if (!user) return NextResponse.json({ error: "User admin belum dibuat" }, { status: 404 });
 
-    // Generate new temporary password
-    const tempPassword = crypto.randomBytes(8).toString("base64url");
-    const hashedPassword = await bcrypt.hash(tempPassword, 12);
+    let tempPassword = "";
 
-    // Update user password
-    await db.user.update({
-      where: { id: user.id },
-      data: { password: hashedPassword }
-    });
+    if (app.hashedPassword) {
+      // Jika password diset secara manual, jangan reset
+      tempPassword = "(Password yang Anda buat saat mendaftar)";
+      await db.tenantApplication.update({
+        where: { id },
+        data: { adminMessage: `temp_pwd:${tempPassword}` }
+      });
+    } else {
+      // Generate new temporary password jika tidak ada password manual
+      tempPassword = crypto.randomBytes(8).toString("base64url");
+      const hashedPassword = await bcrypt.hash(tempPassword, 12);
 
-    // Temporarily save temp password in adminMessage so notification service can use it
-    await db.tenantApplication.update({
-      where: { id },
-      data: { adminMessage: `temp_pwd:${tempPassword}` }
-    });
+      // Update user password
+      await db.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword }
+      });
+
+      // Temporarily save temp password in adminMessage so notification service can use it
+      await db.tenantApplication.update({
+        where: { id },
+        data: { adminMessage: `temp_pwd:${tempPassword}` }
+      });
+    }
 
     // Send notification in background
     sendApplicationNotification(id).then(async () => {
