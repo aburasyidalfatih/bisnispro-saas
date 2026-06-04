@@ -145,6 +145,9 @@ export type SettingsForm = {
   
   // WA Support Landing Page
   SUPPORT_WA_NUMBERS: string;
+
+  // Afiliasi
+  AFFILIATE_DEFAULT_CASHBACK: string;
 };
 
 export const DEFAULT_SETTINGS_FORM: SettingsForm = {
@@ -301,4 +304,7 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   
   // WA Support Landing Page
   SUPPORT_WA_NUMBERS: "[]",
+
+  // Afiliasi
+  AFFILIATE_DEFAULT_CASHBACK: "400000",
 };

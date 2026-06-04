@@ -240,13 +240,16 @@ export const authOptions: NextAuthConfig = {
               data: { userId: newUser.id, referralCode },
             })
             
+            const settingsDoc = await tx.platformSetting.findUnique({ where: { key: "AFFILIATE_DEFAULT_CASHBACK" } })
+            const defaultCashbackAmount = settingsDoc ? parseInt(settingsDoc.value) : 400000;
+            
             // Auto-generate Cashback Coupon
             await tx.discountCode.create({
               data: {
                 code: referralCode,
                 description: `Kupon Cashback Otomatis untuk ${newUser.name}`,
                 type: "CASHBACK",
-                cashbackAmount: 400000,
+                cashbackAmount: defaultCashbackAmount,
                 percentage: 0,
                 affiliateId: newAffiliate.id,
                 isActive: true

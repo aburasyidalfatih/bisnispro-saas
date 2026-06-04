@@ -62,13 +62,16 @@ export async function registerAffiliate(formData: FormData) {
         }
       })
 
+      const settings = await tx.platformSetting.findUnique({ where: { key: "AFFILIATE_DEFAULT_CASHBACK" } })
+      const defaultCashbackAmount = settings ? parseInt(settings.value) : 400000;
+
       // Auto-generate Cashback Coupon matching the referral code
       await tx.discountCode.create({
         data: {
           code: referralCode,
           description: `Kupon Cashback Otomatis untuk Mitra ${parsed.name}`,
           type: "CASHBACK",
-          cashbackAmount: 400000,
+          cashbackAmount: defaultCashbackAmount,
           percentage: 0,
           affiliateId: newAffiliate.id,
           isActive: true,
