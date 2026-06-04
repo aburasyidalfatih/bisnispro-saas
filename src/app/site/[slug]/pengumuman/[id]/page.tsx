@@ -42,7 +42,10 @@ import Image from "next/image"
 import { ReadingProgress } from "@/app/site/[slug]/berita/[id]/_components/reading-progress"
 import { ShareButtons } from "@/app/site/[slug]/berita/[id]/_components/share-buttons"
 
-export const dynamicParams = true
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params

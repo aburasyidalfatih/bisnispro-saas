@@ -15,7 +15,10 @@ import { PostViewCounter } from "./_components/view-counter"
 import { getPostViews } from "@/features/post/services/views.service"
 import { getShareCount } from "@/features/post/services/share.service"
 
-export const dynamicParams = true
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params

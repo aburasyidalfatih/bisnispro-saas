@@ -22,8 +22,11 @@ import { EventViewCounter } from "./_components/view-counter"
 import { getEventViews } from "@/features/post/services/views.service"
 import DOMPurify from "isomorphic-dompurify"
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export const dynamicParams = true
+
+
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params

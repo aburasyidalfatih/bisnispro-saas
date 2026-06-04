@@ -7,11 +7,14 @@ import Image from "next/image"
 import Link from "next/link"
 import { Calendar, User, ArrowRight, BookOpen } from "lucide-react"
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+
+
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { cn, normalizeImageUrl } from "@/lib/utils"
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function SmartPlaceholder({ title, type }: { title: string, type: string }) {
   const hash = title.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)

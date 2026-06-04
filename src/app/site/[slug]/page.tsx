@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation"
 
 
-export const dynamicParams = true
-export const revalidate = 60
+
+
 import Link from "next/link"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
 import parse from "html-react-parser"
@@ -23,6 +23,9 @@ import { AlumniTestimonials } from "./_components/alumni-testimonials"
 import { PartnershipsSection } from "./_components/partnerships-section"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { DefaultTheme } from "./_themes/default"
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

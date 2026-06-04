@@ -18,20 +18,18 @@ export const getPublicTenantBySlug = async (slug: string) => {
  */
 export async function invalidatePublicTenantCache(slug: string) {
   try {
+    const { clearTenantCache } = await import("./tenant-modular.service")
+    await clearTenantCache(slug)
+
     const redis = await getRedisClient()
-    const keysToDelete = [
-      `${TENANT_PUBLIC_CACHE_PREFIX}${slug}`, // Legacy monolith key
-      `smp:tenant:layout:${slug}`,
-      `smp:tenant:home:${slug}`,
-      `smp:tenant:posts:${slug}`,
-      `smp:tenant:achievements:${slug}`,
-      `smp:tenant:programs:${slug}`,
-      `smp:tenant:facilities:${slug}`,
-      `smp:tenant:ekskul:${slug}`,
-    ]
-    for (const key of keysToDelete) {
-      await redis.del(key)
-    }
+    await redis.del(`${TENANT_PUBLIC_CACHE_PREFIX}${slug}`)
+
+    try {
+      const { revalidatePath, revalidateTag } = await import("next/cache")
+      revalidatePath("/", "layout")
+      revalidateTag(`tenant-${slug}`)
+      revalidateTag(`tenant-public`)
+    } catch (e) {}
   } catch (error) {
     logger.error("Redis del error in invalidatePublicTenantCache", { error: String(error) })
   }

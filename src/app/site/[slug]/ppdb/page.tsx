@@ -9,6 +9,9 @@ import { id as localeId } from "date-fns/locale"
 import Link from "next/link"
 import { useRouting } from "@/components/providers/routing-provider"
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default function PublicPpdbPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
   const [data, setData] = useState<any>(null)

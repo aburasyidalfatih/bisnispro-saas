@@ -5,11 +5,14 @@ import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.s
 import { db } from "@/lib/db"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+
+
 import { Calendar, MapPin, Clock, ArrowRight, Search } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
