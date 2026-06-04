@@ -27,10 +27,10 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { code, description, percentage, isActive, maxUses, expiresAt, bonusMonths } = body
+    const { code, description, type, percentage, cashbackAmount, affiliateId, isActive, maxUses, expiresAt, bonusMonths } = body
 
-    if (!code || percentage === undefined) {
-      return NextResponse.json({ error: "Code dan percentage wajib diisi." }, { status: 400 })
+    if (!code) {
+      return NextResponse.json({ error: "Code wajib diisi." }, { status: 400 })
     }
 
     const exists = await db.discountCode.findUnique({ where: { code } })
@@ -42,7 +42,10 @@ export async function POST(req: Request) {
       data: {
         code,
         description,
-        percentage: Number(percentage),
+        type: type || "DISCOUNT",
+        percentage: percentage ? Number(percentage) : 0,
+        cashbackAmount: cashbackAmount ? Number(cashbackAmount) : 0,
+        affiliateId: affiliateId || null,
         isActive: Boolean(isActive),
         bonusMonths: bonusMonths ? Number(bonusMonths) : 0,
         maxUses: maxUses ? Number(maxUses) : null,

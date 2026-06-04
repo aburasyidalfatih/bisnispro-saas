@@ -354,7 +354,7 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
 // ==========================================
 // Mutation: Validasi Kode Diskon
 // ==========================================
-export async function validateDiscountCode(code: string) {
+export async function validateDiscountCode(code: string, tenantId?: string) {
   const discount = await db.discountCode.findUnique({
     where: { code: code.toUpperCase() },
   })
@@ -367,11 +367,19 @@ export async function validateDiscountCode(code: string) {
   if (discount.expiresAt && new Date(discount.expiresAt) < new Date()) {
     throw new Error("Kode diskon sudah kedaluwarsa")
   }
+  
+  if (discount.type === "CASHBACK" && tenantId) {
+    if (discount.linkedTenantId && discount.linkedTenantId !== tenantId) {
+      throw new Error("Kode kupon ini sudah terikat ke sekolah lain")
+    }
+  }
 
   return {
     id: discount.id,
     code: discount.code,
+    type: discount.type,
     percentage: discount.percentage,
+    cashbackAmount: discount.cashbackAmount,
     description: discount.description,
     expiresAt: discount.expiresAt,
     bonusMonths: discount.bonusMonths,

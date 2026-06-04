@@ -429,7 +429,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
       } // end else
       
       // =============================================
-      // AFFILIATE COMMISSION: 20% recurring forever
+      // AFFILIATE COMMISSION & CASHBACK
       // Berlaku untuk semua pembayaran platform (upgrade, addon, renewal)
       // KECUALI wallet topup dan invoice (bukan pendapatan platform)
       // =============================================
@@ -440,13 +440,40 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
             select: { affiliateId: true, name: true },
           })
 
-          if (tenant?.affiliateId) {
-            const commissionAmount = Math.round(payment.amount * 0.20)
+          let commissionAffiliateId = tenant?.affiliateId;
+          let commissionAmount = Math.round(payment.amount * 0.20); // Default 20%
 
+          // Cek apakah ada kupon cashback
+          if (payment.discountCodeId) {
+            const discountCode = await db.discountCode.findUnique({
+              where: { id: payment.discountCodeId }
+            });
+            
+            if (discountCode && discountCode.type === "CASHBACK" && discountCode.affiliateId) {
+              commissionAffiliateId = discountCode.affiliateId;
+              
+              if (!discountCode.linkedTenantId) {
+                await db.discountCode.update({
+                  where: { id: discountCode.id },
+                  data: { linkedTenantId: payment.tenantId }
+                });
+              }
+              
+              if (discountCode.cashbackAmount > 0) {
+                commissionAmount = discountCode.cashbackAmount;
+              } else if (discountCode.percentage > 0) {
+                commissionAmount = Math.round(payment.amount * (discountCode.percentage / 100));
+              } else {
+                commissionAmount = 0;
+              }
+            }
+          }
+
+          if (commissionAffiliateId && commissionAmount > 0) {
             // Guard duplikasi: paymentId unique constraint di AffiliateCommission
             await db.affiliateCommission.create({
               data: {
-                affiliateId: tenant.affiliateId,
+                affiliateId: commissionAffiliateId,
                 tenantId: payment.tenantId,
                 paymentId: payment.id,
                 amount: commissionAmount,
@@ -455,7 +482,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
             })
 
             await db.affiliateProfile.update({
-              where: { id: tenant.affiliateId },
+              where: { id: commissionAffiliateId },
               data: {
                 balance: { increment: commissionAmount },
                 totalEarnings: { increment: commissionAmount },
@@ -465,19 +492,18 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
             // Notify affiliate via WA (async, non-blocking)
             import("@/features/finance/services/billing-notification.service")
               .then(({ notifyAffiliateCommission }) => {
-                notifyAffiliateCommission(tenant.affiliateId!, commissionAmount, tenant.name).catch(() => {})
+                notifyAffiliateCommission(commissionAffiliateId!, commissionAmount, tenant?.name || "").catch(() => {})
               })
               .catch(() => {})
 
             logger.info("[payment] Affiliate commission created", {
-              affiliateId: tenant.affiliateId,
+              affiliateId: commissionAffiliateId,
               paymentId: payment.id,
               amount: commissionAmount,
               plan: payment.plan,
             })
           }
         } catch (commError: any) {
-          // Unique constraint violation = komisi sudah pernah dibuat untuk payment ini
           if (commError?.code === "P2002") {
             logger.info("[payment] Affiliate commission already exists, skipping duplicate", {
               paymentId: payment.id,

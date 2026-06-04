@@ -28,7 +28,7 @@ export default function BillingPage() {
   // Discount states
   const [discountCodeInput, setDiscountCodeInput] = useState("")
   const [validatingDiscount, setValidatingDiscount] = useState(false)
-  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, percentage: number, expiresAt?: string | null, bonusMonths?: number } | null>(null)
+  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, type?: string, cashbackAmount?: number, percentage: number, expiresAt?: string | null, bonusMonths?: number } | null>(null)
   const [discountTimeLeft, setDiscountTimeLeft] = useState<string | null>(null)
 
   useEffect(() => {
@@ -124,7 +124,16 @@ export default function BillingPage() {
   const selectedPlanInfo = selectedPlanSlug ==="pro" ? proPlan : selectedPlanSlug ==="lite" ? litePlan : null
   const baseSubTotal = selectedPlanSlug ==="pro" ? studentCount * effectivePricePerStudent : (litePlan?.price || 0)
   const subTotal = baseSubTotal * proratedRatio
-  const discountAmount = appliedDiscount ? subTotal * (appliedDiscount.percentage / 100) : 0
+  
+  let discountAmount = 0
+  if (appliedDiscount) {
+    if (appliedDiscount.type === "CASHBACK") {
+      discountAmount = 0 // Cashback doesn't reduce total cost
+    } else {
+      discountAmount = subTotal * (appliedDiscount.percentage / 100)
+    }
+  }
+  
   const totalCost = subTotal - discountAmount
 
   const handleValidateDiscount = async (isAuto = false) => {
@@ -138,9 +147,20 @@ export default function BillingPage() {
       })
       const result = await res.json()
       if (!res.ok) throw new Error(result.error ||"Kode tidak valid")
-      setAppliedDiscount({ code: result.code, percentage: result.percentage, expiresAt: result.expiresAt, bonusMonths: result.bonusMonths })
+      setAppliedDiscount({ 
+        code: result.code, 
+        type: result.type,
+        cashbackAmount: result.cashbackAmount,
+        percentage: result.percentage, 
+        expiresAt: result.expiresAt, 
+        bonusMonths: result.bonusMonths 
+      })
       if (!isAuto) {
-        toast({ title:"Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
+        if (result.type === "CASHBACK") {
+          toast({ title:"Berhasil", description: `Kupon Cashback berhasil diterapkan!` })
+        } else {
+          toast({ title:"Berhasil", description: `Diskon ${result.percentage}% diterapkan!` })
+        }
       }
     } catch (err: any) {
       setAppliedDiscount(null)

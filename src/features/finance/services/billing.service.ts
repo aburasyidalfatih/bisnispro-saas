@@ -98,8 +98,17 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
         (!discount.maxUses || discount.usedCount < discount.maxUses) &&
         (!discount.expiresAt || new Date(discount.expiresAt) > new Date())
       ) {
-        discountPercentage = discount.percentage
-        discountAmount = Math.round(subTotal * (discountPercentage / 100))
+        if (discount.type === "CASHBACK" && discount.linkedTenantId && discount.linkedTenantId !== tenantId) {
+          throw new Error("Kode kupon ini sudah terikat ke sekolah lain")
+        }
+        
+        if (discount.type === "CASHBACK") {
+          discountPercentage = 0
+          discountAmount = 0
+        } else {
+          discountPercentage = discount.percentage
+          discountAmount = Math.round(subTotal * (discountPercentage / 100))
+        }
         amount = subTotal - discountAmount
         validDiscountId = discount.id
       }
@@ -236,8 +245,17 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
         (!discount.maxUses || discount.usedCount < discount.maxUses) &&
         (!discount.expiresAt || new Date(discount.expiresAt) > now)
       ) {
-        discountPercentage = discount.percentage
-        discountAmount = Math.round(subTotal * (discountPercentage / 100))
+        if (discount.type === "CASHBACK" && discount.linkedTenantId && discount.linkedTenantId !== tenantId) {
+          throw new Error("Kode kupon ini sudah terikat ke sekolah lain")
+        }
+
+        if (discount.type === "CASHBACK") {
+          discountPercentage = 0
+          discountAmount = 0
+        } else {
+          discountPercentage = discount.percentage
+          discountAmount = Math.round(subTotal * (discountPercentage / 100))
+        }
         amount = subTotal - discountAmount
         validDiscountId = discount.id
       }

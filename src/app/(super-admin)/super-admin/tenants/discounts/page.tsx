@@ -23,7 +23,11 @@ interface DiscountCode {
   id: string
   code: string
   description: string | null
+  type: string
   percentage: number
+  cashbackAmount: number
+  affiliateId: string | null
+  linkedTenantId: string | null
   isActive: boolean
   bonusMonths: number
   maxUses: number | null
@@ -59,7 +63,11 @@ export default function DiscountsPage() {
     setEditingDiscount({
       code: "",
       description: "",
+      type: "DISCOUNT",
       percentage: 10,
+      cashbackAmount: 0,
+      affiliateId: "",
+      linkedTenantId: "",
       isActive: true,
       bonusMonths: 0,
       maxUses: null,
@@ -98,8 +106,8 @@ export default function DiscountsPage() {
   }
 
   const handleSave = async () => {
-    if (!editingDiscount?.code?.trim() || editingDiscount.percentage === undefined) {
-      toast({ title: "Validasi", description: "Kode dan persentase wajib diisi.", variant: "destructive" })
+    if (!editingDiscount?.code?.trim()) {
+      toast({ title: "Validasi", description: "Kode diskon wajib diisi.", variant: "destructive" })
       return
     }
 
@@ -164,13 +172,20 @@ export default function DiscountsPage() {
                   <CardDescription className="mt-1">{discount.description || "Tanpa deskripsi"}</CardDescription>
                 </div>
                 <div className="flex gap-2">
+                  {discount.type === "CASHBACK" && (
+                    <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100">
+                      CASHBACK
+                    </Badge>
+                  )}
                   {discount.bonusMonths > 0 && (
                     <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
                       + {discount.bonusMonths} Bulan
                     </Badge>
                   )}
                   <Badge variant={discount.isActive ? "default" : "secondary"} className={cn(discount.isActive && "bg-emerald-500 hover:bg-emerald-600")}>
-                    {discount.percentage}% OFF
+                    {discount.type === "CASHBACK" && discount.cashbackAmount > 0 
+                      ? `CB Rp ${discount.cashbackAmount.toLocaleString()}`
+                      : `${discount.percentage}% OFF`}
                   </Badge>
                 </div>
               </div>
@@ -235,6 +250,43 @@ export default function DiscountsPage() {
                   className="rounded-xl"
                 />
               </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Tipe Kupon</Label>
+                <select
+                  value={editingDiscount.type || "DISCOUNT"}
+                  onChange={e => setEditingDiscount({ ...editingDiscount, type: e.target.value })}
+                  className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="DISCOUNT">Diskon Normal (Potong Harga)</option>
+                  <option value="CASHBACK">Cashback Afiliasi (Komisi Saldo)</option>
+                </select>
+              </div>
+
+              {editingDiscount.type === "CASHBACK" && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold">ID Afiliasi Penerima</Label>
+                    <Input
+                      value={editingDiscount.affiliateId || ""}
+                      onChange={e => setEditingDiscount({ ...editingDiscount, affiliateId: e.target.value })}
+                      placeholder="ID Profile Affiliate"
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold">Nominal Cashback (Rp)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={editingDiscount.cashbackAmount || 0}
+                      onChange={e => setEditingDiscount({ ...editingDiscount, cashbackAmount: Number(e.target.value) })}
+                      placeholder="Atau gunakan persentase di bawah"
+                      className="rounded-xl"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">

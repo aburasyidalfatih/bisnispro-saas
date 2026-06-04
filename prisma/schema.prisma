@@ -116,6 +116,8 @@ model Tenant {
   @@index([plan])
   @@index([planId])
   @@index([createdAt])
+  
+  discountCodes        DiscountCode[]
   @@map("tenants")
 }
 
@@ -319,20 +321,29 @@ model Payment {
 }
 
 model DiscountCode {
-  id          String    @id @default(cuid())
-  code        String    @unique
-  description String?
-  percentage  Float     @default(0)
-  isActive    Boolean   @default(true)
-  maxUses     Int?
-  usedCount   Int       @default(0)
-  expiresAt   DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  bonusMonths Int       @default(0)
-  payments    Payment[]
+  id             String            @id @default(cuid())
+  code           String            @unique
+  description    String?
+  type           String            @default("DISCOUNT") // "DISCOUNT" atau "CASHBACK"
+  percentage     Float             @default(0)
+  cashbackAmount Int               @default(0)
+  isActive       Boolean           @default(true)
+  maxUses        Int?
+  usedCount      Int               @default(0)
+  expiresAt      DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  bonusMonths    Int               @default(0)
+  affiliateId    String?
+  linkedTenantId String?
+  
+  payments       Payment[]
+  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id])
+  linkedTenant   Tenant?           @relation(fields: [linkedTenantId], references: [id])
 
   @@index([createdAt])
+  @@index([affiliateId])
+  @@index([linkedTenantId])
   @@map("discount_codes")
 }
 
@@ -1005,6 +1016,7 @@ model AffiliateProfile {
   user               User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   withdrawals        AffiliateWithdrawal[]
   tenantApplications TenantApplication[]
+  discountCodes      DiscountCode[]
 
   @@index([createdAt])
   @@map("affiliate_profiles")

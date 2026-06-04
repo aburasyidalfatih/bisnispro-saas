@@ -236,8 +236,21 @@ export const authOptions: NextAuthConfig = {
             })
 
             const referralCode = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-            await tx.affiliateProfile.create({
+            const newAffiliate = await tx.affiliateProfile.create({
               data: { userId: newUser.id, referralCode },
+            })
+            
+            // Auto-generate Cashback Coupon
+            await tx.discountCode.create({
+              data: {
+                code: `CB-${referralCode.replace('REF-', '')}`,
+                description: `Kupon Cashback Otomatis untuk ${newUser.name}`,
+                type: "CASHBACK",
+                cashbackAmount: 400000,
+                percentage: 0,
+                affiliateId: newAffiliate.id,
+                isActive: true
+              }
             })
 
             await tx.notificationSetting.createMany({
@@ -277,8 +290,21 @@ export const authOptions: NextAuthConfig = {
             // Main domain: ensure Affiliate profile exists (non-super-admin only)
             if (!existing.affiliateProfile) {
               const referralCode = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-              await db.affiliateProfile.create({
+              const newAffiliate = await db.affiliateProfile.create({
                 data: { userId: existing.id, referralCode },
+              })
+              
+              // Auto-generate Cashback Coupon
+              await db.discountCode.create({
+                data: {
+                  code: `CB-${referralCode.replace('REF-', '')}`,
+                  description: `Kupon Cashback Otomatis untuk ${existing.name || 'User'}`,
+                  type: "CASHBACK",
+                  cashbackAmount: 400000,
+                  percentage: 0,
+                  affiliateId: newAffiliate.id,
+                  isActive: true
+                }
               })
             }
           }

@@ -17,7 +17,7 @@ interface CheckoutDialogProps {
   setStudentCount: (count: number) => void
   baseSubTotal: number
   subTotal: number
-  appliedDiscount: { code: string, percentage: number, bonusMonths?: number } | null
+  appliedDiscount: { code: string, type?: string, cashbackAmount?: number, percentage: number, bonusMonths?: number } | null
   totalCost: number
   effectivePricePerStudent: number
   isUsingLockedPrice: boolean
@@ -99,7 +99,7 @@ export function CheckoutDialog({
               </div>
             )}
             
-            {appliedDiscount && (
+            {appliedDiscount && appliedDiscount.type !== "CASHBACK" && (
               <div className="flex items-center justify-between text-xs mb-1">
                 <span className="text-muted-foreground line-through">Rp {subTotal.toLocaleString("id-ID")}</span>
                 <span className="text-emerald-600 font-bold bg-emerald-100 px-1.5 py-0.5 rounded text-[10px]">-{appliedDiscount.percentage}%</span>
@@ -149,6 +149,11 @@ export function CheckoutDialog({
                 <p className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
                   <CheckCircle2 className="h-3 w-3" /> Kode {appliedDiscount.code} berhasil diterapkan!
                 </p>
+                {appliedDiscount.type === "CASHBACK" && (
+                  <div className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-1.5 rounded-md border border-emerald-100 font-medium ml-4 mt-0.5">
+                    💰 Cashback senilai {appliedDiscount.cashbackAmount ? `Rp ${appliedDiscount.cashbackAmount.toLocaleString('id-ID')}` : `${appliedDiscount.percentage}%`} akan masuk ke saldo komisi.
+                  </div>
+                )}
                 {(appliedDiscount.bonusMonths ?? 0) > 0 && (
                   <p className="text-[11px] text-blue-600 font-medium ml-4 mt-0.5">
                     + Gratis Perpanjangan {appliedDiscount.bonusMonths} Bulan
