@@ -62,8 +62,8 @@ export async function registerAffiliate(formData: FormData) {
         }
       })
 
-      const settings = await tx.platformSetting.findUnique({ where: { key: "AFFILIATE_DEFAULT_CASHBACK" } })
-      const defaultCashbackAmount = settings ? parseInt(settings.value) : 400000;
+      const settings = await tx.platformSetting.findUnique({ where: { key: "AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE" } })
+      const defaultCashbackPct = settings ? parseInt(settings.value) : 20;
 
       // Auto-generate Cashback Coupon matching the referral code
       await tx.discountCode.create({
@@ -71,8 +71,8 @@ export async function registerAffiliate(formData: FormData) {
           code: referralCode,
           description: `Kupon Cashback Otomatis untuk Mitra ${parsed.name}`,
           type: "CASHBACK",
-          cashbackAmount: defaultCashbackAmount,
-          percentage: 0,
+          cashbackAmount: 0,
+          percentage: defaultCashbackPct,
           affiliateId: newAffiliate.id,
           isActive: true,
         }

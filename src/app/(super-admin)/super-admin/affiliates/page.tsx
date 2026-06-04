@@ -41,7 +41,7 @@ export default function SuperAdminAffiliatesPage() {
 
   // Affiliate Settings State
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [settingsForm, setSettingsForm] = useState({ AFFILIATE_COMMISSION_PERCENTAGE: "20", AFFILIATE_DEFAULT_CASHBACK: "400000" })
+  const [settingsForm, setSettingsForm] = useState({ AFFILIATE_COMMISSION_PERCENTAGE: "20", AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE: "20" })
   const [savingSettings, setSavingSettings] = useState(false)
 
   const fetchSettings = useCallback(async () => {
@@ -50,7 +50,7 @@ export default function SuperAdminAffiliatesPage() {
       const result = await res.json()
       setSettingsForm({
         AFFILIATE_COMMISSION_PERCENTAGE: result.AFFILIATE_COMMISSION_PERCENTAGE || "20",
-        AFFILIATE_DEFAULT_CASHBACK: result.AFFILIATE_DEFAULT_CASHBACK || "400000"
+        AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE: result.AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE || "20"
       })
     } catch (e) {
       console.error(e)
@@ -347,14 +347,14 @@ export default function SuperAdminAffiliatesPage() {
               <p className="text-xs text-muted-foreground">Persentase dari total pembayaran sekolah yang akan masuk ke saldo Mitra (Misal: 20).</p>
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Nominal Cashback Default (Rp)</label>
+              <label className="text-sm font-medium">Persentase Cashback Default (%)</label>
               <Input 
                 type="number" 
-                value={settingsForm.AFFILIATE_DEFAULT_CASHBACK} 
-                onChange={e => setSettingsForm({...settingsForm, AFFILIATE_DEFAULT_CASHBACK: e.target.value})} 
+                value={settingsForm.AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE} 
+                onChange={e => setSettingsForm({...settingsForm, AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE: e.target.value})} 
                 className="rounded-xl"
               />
-              <p className="text-xs text-muted-foreground">Cashback (potongan harga) otomatis yang dibuat untuk sekolah saat menggunakan kode referral mitra baru.</p>
+              <p className="text-xs text-muted-foreground">Cashback (potongan harga) berupa persentase otomatis yang dibuat untuk sekolah saat menggunakan kode referral mitra baru.</p>
             </div>
           </div>
           <DialogFooter>
