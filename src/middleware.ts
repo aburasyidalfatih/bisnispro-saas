@@ -102,7 +102,8 @@ function addSecurityHeaders(response: NextResponse, routeType: "public" | "prote
   if (routeType === "public") {
     response.headers.set("X-Robots-Tag", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1")
     // Enable CDN Edge Caching: Cache at edge for 60 seconds, serve stale while revalidating for up to 5 minutes
-    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300")
+    // Removed aggressive caching to allow instant updates. Redis handles performance.
+    response.headers.set("Cache-Control", "public, max-age=0, must-revalidate")
   } else if (routeType === "protected" || routeType === "static") {
     response.headers.set("X-Robots-Tag", "noindex, nofollow")
     response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
