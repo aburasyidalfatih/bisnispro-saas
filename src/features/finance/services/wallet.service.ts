@@ -284,13 +284,13 @@ export async function getBillingDashboardData(tenantId: string) {
       where: { affiliateId: tenant.affiliateId, type: "CASHBACK", isActive: true }
     })
     if (code) {
-      autoCashbackCode = code.code
+      autoCashbackCode = code.code.replace(/^ref-/i, '')
     } else {
       const affiliate = await db.affiliateProfile.findUnique({
         where: { id: tenant.affiliateId }
       })
       if (affiliate && affiliate.isActive) {
-        autoCashbackCode = affiliate.referralCode
+        autoCashbackCode = affiliate.referralCode.replace(/^ref-/i, '')
       }
     }
   }
@@ -374,14 +374,24 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
 // Mutation: Validasi Kode Diskon
 // ==========================================
 export async function validateDiscountCode(code: string, tenantId?: string) {
-  let discount = await db.discountCode.findUnique({
-    where: { code: code.toUpperCase() },
+  let discount = await db.discountCode.findFirst({
+    where: {
+      OR: [
+        { code: code.toUpperCase() },
+        { code: `REF-${code.toUpperCase()}` }
+      ]
+    },
   })
 
   // Auto-generate DiscountCode jika code yang dimasukkan adalah referralCode milik Affiliate
   if (!discount) {
     const affiliate = await db.affiliateProfile.findFirst({
-      where: { referralCode: { equals: code, mode: "insensitive" } }
+      where: {
+        OR: [
+          { referralCode: { equals: code, mode: "insensitive" } },
+          { referralCode: { equals: `ref-${code}`, mode: "insensitive" } }
+        ]
+      }
     })
 
     if (affiliate && affiliate.isActive) {
@@ -390,7 +400,7 @@ export async function validateDiscountCode(code: string, tenantId?: string) {
 
       discount = await db.discountCode.create({
         data: {
-          code: affiliate.referralCode.toUpperCase(),
+          code: affiliate.referralCode.toUpperCase().replace(/^REF-/i, ''), // Simpan tanpa awalan REF- untuk memudahkan user
           description: `Kupon Cashback Otomatis untuk Mitra ${affiliate.referralCode.toUpperCase()}`,
           type: "CASHBACK",
           cashbackAmount: 0,
