@@ -110,14 +110,16 @@ export default function DiscountsPage() {
   }
 
   const handleSave = async () => {
-    if (!editingDiscount.id && editingDiscount.type === "CASHBACK" && editingDiscount.affiliateId !== null) {
-      toast({ title: "Pemberitahuan", description: "Kupon cashback untuk mitra spesifik dibuat OTOMATIS oleh sistem saat mereka mendaftar. Silakan edit kupon yang sudah ada.", variant: "destructive" })
-      return
-    }
-
-    if (!editingDiscount?.code?.trim()) {
-      toast({ title: "Validasi", description: "Kode diskon wajib diisi.", variant: "destructive" })
-      return
+    if (editingDiscount.type === "CASHBACK") {
+      if (!editingDiscount?.affiliateId?.trim()) {
+        toast({ title: "Validasi", description: "ID Afiliasi Penerima wajib diisi untuk kupon Cashback.", variant: "destructive" })
+        return
+      }
+    } else {
+      if (!editingDiscount?.code?.trim()) {
+        toast({ title: "Validasi", description: "Kode diskon wajib diisi.", variant: "destructive" })
+        return
+      }
     }
 
     setSaving(true)
@@ -252,7 +254,7 @@ export default function DiscountsPage() {
                 </select>
               </div>
 
-              {!(editingDiscount.type === "CASHBACK" && editingDiscount.affiliateId !== null) && (
+              {editingDiscount.type !== "CASHBACK" && (
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold">Kode Diskon</Label>
                   <Input
@@ -277,30 +279,12 @@ export default function DiscountsPage() {
               {editingDiscount.type === "CASHBACK" && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-xs font-semibold">ID Afiliasi Penerima</Label>
-                      <label className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground cursor-pointer bg-slate-50 px-2 py-0.5 rounded-md border">
-                        <input 
-                          type="checkbox" 
-                          className="rounded-sm w-3 h-3 accent-primary"
-                          checked={editingDiscount.affiliateId === null}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setEditingDiscount({ ...editingDiscount, affiliateId: null })
-                            } else {
-                              setEditingDiscount({ ...editingDiscount, affiliateId: "" })
-                            }
-                          }}
-                        />
-                        Semua Mitra
-                      </label>
-                    </div>
+                    <Label className="text-xs font-semibold">ID Afiliasi Penerima</Label>
                     <Input
                       value={editingDiscount.affiliateId || ""}
                       onChange={e => setEditingDiscount({ ...editingDiscount, affiliateId: e.target.value })}
                       placeholder="ID Profile Affiliate"
-                      disabled={editingDiscount.affiliateId === null}
-                      className={cn("rounded-xl", editingDiscount.affiliateId === null && "bg-slate-50 text-muted-foreground")}
+                      className="rounded-xl"
                     />
                   </div>
                   <div className="space-y-1.5">

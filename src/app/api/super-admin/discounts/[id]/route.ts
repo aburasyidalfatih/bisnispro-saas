@@ -13,12 +13,25 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const body = await req.json()
     const { code, description, type, percentage, cashbackAmount, affiliateId, isActive, maxUses, expiresAt, bonusMonths } = body
 
-    if (!code) {
+    let finalCode = code;
+
+    if (type === "CASHBACK") {
+      if (!affiliateId) {
+        return NextResponse.json({ error: "ID Afiliasi Penerima wajib diisi untuk kupon Cashback." }, { status: 400 })
+      }
+      const affiliate = await db.affiliateProfile.findUnique({ where: { id: affiliateId } })
+      if (!affiliate) {
+        return NextResponse.json({ error: "Mitra Afiliasi tidak ditemukan." }, { status: 400 })
+      }
+      finalCode = affiliate.referralCode;
+    }
+
+    if (!finalCode) {
       return NextResponse.json({ error: "Code wajib diisi." }, { status: 400 })
     }
 
     const existing = await db.discountCode.findFirst({
-      where: { code, id: { not: id } },
+      where: { code: finalCode, id: { not: id } },
     })
 
     if (existing) {
@@ -28,7 +41,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const discount = await db.discountCode.update({
       where: { id },
       data: {
-        code,
+        code: finalCode,
         description,
         type: type || "DISCOUNT",
         percentage: percentage ? Number(percentage) : 0,

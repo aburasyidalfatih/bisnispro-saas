@@ -29,18 +29,31 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { code, description, type, percentage, cashbackAmount, affiliateId, isActive, maxUses, expiresAt, bonusMonths } = body
 
-    if (!code) {
+    let finalCode = code;
+
+    if (type === "CASHBACK") {
+      if (!affiliateId) {
+        return NextResponse.json({ error: "ID Afiliasi Penerima wajib diisi untuk kupon Cashback." }, { status: 400 })
+      }
+      const affiliate = await db.affiliateProfile.findUnique({ where: { id: affiliateId } })
+      if (!affiliate) {
+        return NextResponse.json({ error: "Mitra Afiliasi tidak ditemukan." }, { status: 400 })
+      }
+      finalCode = affiliate.referralCode;
+    }
+
+    if (!finalCode) {
       return NextResponse.json({ error: "Code wajib diisi." }, { status: 400 })
     }
 
-    const exists = await db.discountCode.findUnique({ where: { code } })
+    const exists = await db.discountCode.findUnique({ where: { code: finalCode } })
     if (exists) {
       return NextResponse.json({ error: "Kode diskon sudah digunakan." }, { status: 400 })
     }
 
     const discount = await db.discountCode.create({
       data: {
-        code,
+        code: finalCode,
         description,
         type: type || "DISCOUNT",
         percentage: percentage ? Number(percentage) : 0,
