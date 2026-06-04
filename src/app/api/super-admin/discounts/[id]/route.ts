@@ -11,19 +11,23 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
   try {
     const body = await req.json()
-    const { code, description, type, percentage, cashbackAmount, affiliateId, isActive, maxUses, expiresAt, bonusMonths } = body
+    const { code, description, type, percentage, cashbackAmount, affiliateEmail, affiliateId, isActive, maxUses, expiresAt, bonusMonths } = body
 
     let finalCode = code;
+    let finalAffiliateId = affiliateId || null;
 
     if (type === "CASHBACK") {
-      if (!affiliateId) {
-        return NextResponse.json({ error: "ID Afiliasi Penerima wajib diisi untuk kupon Cashback." }, { status: 400 })
+      if (!affiliateEmail) {
+        return NextResponse.json({ error: "Email Mitra Afiliasi wajib diisi untuk kupon Cashback." }, { status: 400 })
       }
-      const affiliate = await db.affiliateProfile.findUnique({ where: { id: affiliateId } })
+      const affiliate = await db.affiliateProfile.findFirst({ 
+        where: { user: { email: affiliateEmail } } 
+      })
       if (!affiliate) {
-        return NextResponse.json({ error: "Mitra Afiliasi tidak ditemukan." }, { status: 400 })
+        return NextResponse.json({ error: `Mitra dengan email ${affiliateEmail} tidak ditemukan.` }, { status: 400 })
       }
-      finalCode = affiliate.referralCode;
+      finalAffiliateId = affiliate.id;
+      // Keep existing code for PUT
     }
 
     if (!finalCode) {
@@ -46,7 +50,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         type: type || "DISCOUNT",
         percentage: percentage ? Number(percentage) : 0,
         cashbackAmount: cashbackAmount ? Number(cashbackAmount) : 0,
-        affiliateId: affiliateId || null,
+        affiliateId: finalAffiliateId,
         isActive: Boolean(isActive),
         bonusMonths: bonusMonths ? Number(bonusMonths) : 0,
         maxUses: maxUses ? Number(maxUses) : null,

@@ -70,7 +70,7 @@ export default function DiscountsPage() {
       type: "DISCOUNT",
       percentage: 10,
       cashbackAmount: 0,
-      affiliateId: "",
+      affiliateEmail: "",
       linkedTenantId: "",
       isActive: true,
       bonusMonths: 0,
@@ -89,6 +89,7 @@ export default function DiscountsPage() {
     }
     setEditingDiscount({
       ...discount,
+      affiliateEmail: (discount as any).affiliate?.user?.email || "",
       expiresAt: localDatetime
     })
     setIsDialogOpen(true)
@@ -111,8 +112,8 @@ export default function DiscountsPage() {
 
   const handleSave = async () => {
     if (editingDiscount.type === "CASHBACK") {
-      if (!editingDiscount?.affiliateId?.trim()) {
-        toast({ title: "Validasi", description: "ID Afiliasi Penerima wajib diisi untuk kupon Cashback.", variant: "destructive" })
+      if (!editingDiscount?.affiliateEmail?.trim()) {
+        toast({ title: "Validasi", description: "Email Mitra Afiliasi wajib diisi untuk kupon Cashback.", variant: "destructive" })
         return
       }
     } else {
@@ -130,7 +131,7 @@ export default function DiscountsPage() {
 
       const payload = {
         ...editingDiscount,
-        code: editingDiscount.code.toUpperCase().replace(/\s+/g, '')
+        code: editingDiscount.code ? editingDiscount.code.toUpperCase().replace(/\s+/g, '') : ""
       }
 
       const res = await fetch(url, {
@@ -279,11 +280,11 @@ export default function DiscountsPage() {
               {editingDiscount.type === "CASHBACK" && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">ID Afiliasi Penerima</Label>
+                    <Label className="text-xs font-semibold">Email Mitra Afiliasi</Label>
                     <Input
-                      value={editingDiscount.affiliateId || ""}
-                      onChange={e => setEditingDiscount({ ...editingDiscount, affiliateId: e.target.value })}
-                      placeholder="ID Profile Affiliate"
+                      value={editingDiscount.affiliateEmail || ""}
+                      onChange={e => setEditingDiscount({ ...editingDiscount, affiliateEmail: e.target.value })}
+                      placeholder="email.mitra@contoh.com"
                       className="rounded-xl"
                     />
                   </div>

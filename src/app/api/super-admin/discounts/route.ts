@@ -11,6 +11,13 @@ export async function GET() {
   try {
     const discounts = await db.discountCode.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        affiliate: {
+          include: {
+            user: { select: { email: true } }
+          }
+        }
+      }
     })
     return NextResponse.json(discounts)
   } catch (error) {
@@ -27,19 +34,32 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { code, description, type, percentage, cashbackAmount, affiliateId, isActive, maxUses, expiresAt, bonusMonths } = body
+    const { code, description, type, percentage, cashbackAmount, affiliateEmail, affiliateId, isActive, maxUses, expiresAt, bonusMonths } = body
 
     let finalCode = code;
+    let finalAffiliateId = affiliateId || null;
 
     if (type === "CASHBACK") {
-      if (!affiliateId) {
-        return NextResponse.json({ error: "ID Afiliasi Penerima wajib diisi untuk kupon Cashback." }, { status: 400 })
+      if (!affiliateEmail) {
+        return NextResponse.json({ error: "Email Mitra Afiliasi wajib diisi untuk kupon Cashback." }, { status: 400 })
       }
-      const affiliate = await db.affiliateProfile.findUnique({ where: { id: affiliateId } })
+      const affiliate = await db.affiliateProfile.findFirst({ 
+        where: { user: { email: affiliateEmail } } 
+      })
       if (!affiliate) {
-        return NextResponse.json({ error: "Mitra Afiliasi tidak ditemukan." }, { status: 400 })
+        return NextResponse.json({ error: `Mitra dengan email ${affiliateEmail} tidak ditemukan.` }, { status: 400 })
       }
+      finalAffiliateId = affiliate.id;
       finalCode = affiliate.referralCode;
+
+      // Auto-increment code if it already exists (for additional schools)
+      let counter = 2;
+      let exists = await db.discountCode.findUnique({ where: { code: finalCode } })
+      while (exists) {
+        finalCode = `${affiliate.referralCode}-${counter}`;
+        exists = await db.discountCode.findUnique({ where: { code: finalCode } })
+        counter++;
+      }
     }
 
     if (!finalCode) {
@@ -58,7 +78,7 @@ export async function POST(req: Request) {
         type: type || "DISCOUNT",
         percentage: percentage ? Number(percentage) : 0,
         cashbackAmount: cashbackAmount ? Number(cashbackAmount) : 0,
-        affiliateId: affiliateId || null,
+        affiliateId: finalAffiliateId,
         isActive: Boolean(isActive),
         bonusMonths: bonusMonths ? Number(bonusMonths) : 0,
         maxUses: maxUses ? Number(maxUses) : null,
