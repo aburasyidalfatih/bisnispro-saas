@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 
 interface Stat { value: string; label: string; icon: string }
 
-function AnimatedCounter({ value }: { value: string }) {
+function AnimatedCounter({ value, label }: { value: string; label?: string }) {
   const ref = useRef<HTMLSpanElement>(null)
   
   // Extract number and suffix (e.g. "100+" -> num: 100, suffix: "+")
@@ -12,6 +12,9 @@ function AnimatedCounter({ value }: { value: string }) {
   const numValue = numericMatch ? parseInt(numericMatch[0], 10) : 0
   const suffix = value.replace(/\d/g, "")
   
+  const isYear = label?.toLowerCase().includes("tahun")
+  const formatNum = (n: number) => Intl.NumberFormat("id-ID", { useGrouping: !isYear }).format(n)
+
   const [displayValue, setDisplayValue] = useState(numValue === 0 ? value : `0${suffix}`)
 
   useEffect(() => {
@@ -35,12 +38,12 @@ function AnimatedCounter({ value }: { value: string }) {
             const easeOutProgress = 1 - Math.pow(1 - progress, 3)
             const currentCount = Math.floor(easeOutProgress * numValue)
             
-            setDisplayValue(`${Intl.NumberFormat("id-ID").format(currentCount)}${suffix}`)
+            setDisplayValue(`${formatNum(currentCount)}${suffix}`)
 
             if (progress < 1) {
               window.requestAnimationFrame(step)
             } else {
-              setDisplayValue(`${Intl.NumberFormat("id-ID").format(numValue)}${suffix}`)
+              setDisplayValue(`${formatNum(numValue)}${suffix}`)
             }
           }
 
@@ -84,7 +87,7 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
              
              <p className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-md relative z-10 flex items-center justify-center">
-               <AnimatedCounter value={stat.value} />
+               <AnimatedCounter value={stat.value} label={stat.label} />
              </p>
              <p className="text-[10px] sm:text-xs md:text-sm font-bold text-white/80 uppercase tracking-widest relative z-10">
                {stat.label}
