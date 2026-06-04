@@ -17,6 +17,7 @@ export default function SuperAdminApplicationsPage() {
   const [apps, setApps] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
   const [isWaDisabled, setIsWaDisabled] = useState(false)
+  const [isAutoApprove24h, setIsAutoApprove24h] = useState(false)
   
   // Modal states
   const [selectedApp, setSelectedApp] = useState<Application | null>(null)
@@ -68,7 +69,10 @@ export default function SuperAdminApplicationsPage() {
   const fetchSettings = () => {
     fetch("/api/super-admin/settings")
       .then(r => r.json())
-      .then(data => setIsWaDisabled(data.DISABLE_WA_NOTIFICATION === "true"))
+      .then(data => {
+        setIsWaDisabled(data.DISABLE_WA_NOTIFICATION === "true")
+        setIsAutoApprove24h(data.AUTO_APPROVE_APPLICATIONS_24H === "true")
+      })
       .catch(console.error)
   }
 
@@ -94,6 +98,26 @@ export default function SuperAdminApplicationsPage() {
       }
     } catch {
       setIsWaDisabled(!newValue)
+    }
+  }
+
+  const toggleAutoApprove = async () => {
+    const newValue = !isAutoApprove24h
+    setIsAutoApprove24h(newValue) // optimistic update
+    try {
+      const res = await fetch("/api/super-admin/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ AUTO_APPROVE_APPLICATIONS_24H: newValue ? "true" : "false" })
+      })
+      if (!res.ok) {
+        setIsAutoApprove24h(!newValue)
+        toast({ title: "Gagal", description: "Gagal menyimpan pengaturan Auto Approve", variant: "destructive" })
+      } else {
+        toast({ title: "Berhasil", description: newValue ? "Fitur Auto Approve 24 Jam diaktifkan." : "Fitur Auto Approve 24 Jam dinonaktifkan." })
+      }
+    } catch {
+      setIsAutoApprove24h(!newValue)
     }
   }
 
@@ -259,12 +283,22 @@ export default function SuperAdminApplicationsPage() {
             <Button 
               variant={isWaDisabled ? "destructive" : "outline"} 
               size="sm" 
-              className={cn("h-7 rounded-full text-[10px] px-3 gap-1.5 transition-all", !isWaDisabled && "border-emerald-200 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 bg-emerald-50/50")}
+              className={cn("h-7 rounded-full text-[10px] px-3 gap-1.5 transition-all ml-2", !isWaDisabled && "border-emerald-200 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 bg-emerald-50/50")}
               onClick={toggleWa}
               title="Klik untuk mengubah pengaturan WA"
             >
               {isWaDisabled ? <MessageSquareOff className="h-3 w-3" /> : <MessageSquare className="h-3 w-3" />}
               {isWaDisabled ? "WA Off (Fast Mode)" : "WA On"}
+            </Button>
+            <Button 
+              variant={isAutoApprove24h ? "outline" : "secondary"} 
+              size="sm" 
+              className={cn("h-7 rounded-full text-[10px] px-3 gap-1.5 transition-all", isAutoApprove24h && "border-blue-200 text-blue-600 hover:text-blue-700 hover:bg-blue-50 bg-blue-50/50")}
+              onClick={toggleAutoApprove}
+              title="Setujui otomatis setelah 24 jam"
+            >
+              <CheckCircle className="h-3 w-3" />
+              {isAutoApprove24h ? "Auto Approve (24h) On" : "Auto Approve (24h) Off"}
             </Button>
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">Validasi dan tinjau pendaftaran tenant dari sekolah.</p>

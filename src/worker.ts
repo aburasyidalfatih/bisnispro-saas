@@ -409,6 +409,47 @@ setInterval(async () => {
 }, 10 * 60 * 1000) // 10 minutes
 
 // ============================================================
+// AUTO APPROVE APPLICATIONS (24H)
+// ============================================================
+setInterval(async () => {
+  try {
+    const setting = await db.platformSetting.findUnique({
+      where: { key: 'AUTO_APPROVE_APPLICATIONS_24H' }
+    })
+    
+    if (setting?.value === "true") {
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+      
+      const pendingApps = await db.tenantApplication.findMany({
+        where: {
+          status: "PENDING",
+          createdAt: {
+            lte: twentyFourHoursAgo
+          }
+        },
+        take: 10 // process in small batches to avoid overload
+      })
+      
+      if (pendingApps.length > 0) {
+        console.log(`[cron] Auto-approving ${pendingApps.length} pending applications (older than 24h)...`)
+        const { approveApplication } = await import("./features/tenant/services/application.service")
+        
+        for (const app of pendingApps) {
+          try {
+            await approveApplication(app.id)
+            console.log(`[cron] Successfully auto-approved application ${app.id}`)
+          } catch (err) {
+            console.error(`[cron] Failed to auto-approve application ${app.id}:`, err)
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error("[cron] Failed Auto-Approve Application check", error)
+  }
+}, 30 * 60 * 1000) // Runs every 30 minutes
+
+// ============================================================
 // LEADERBOARD RECALCULATION & SYNC
 // ============================================================
 setInterval(async () => {
