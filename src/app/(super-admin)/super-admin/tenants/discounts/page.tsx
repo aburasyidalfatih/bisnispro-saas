@@ -270,12 +270,30 @@ export default function DiscountsPage() {
               {editingDiscount.type === "CASHBACK" && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">ID Afiliasi Penerima</Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-semibold">ID Afiliasi Penerima</Label>
+                      <label className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground cursor-pointer bg-slate-50 px-2 py-0.5 rounded-md border">
+                        <input 
+                          type="checkbox" 
+                          className="rounded-sm w-3 h-3 accent-primary"
+                          checked={editingDiscount.affiliateId === null}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setEditingDiscount({ ...editingDiscount, affiliateId: null })
+                            } else {
+                              setEditingDiscount({ ...editingDiscount, affiliateId: "" })
+                            }
+                          }}
+                        />
+                        Semua Mitra
+                      </label>
+                    </div>
                     <Input
                       value={editingDiscount.affiliateId || ""}
                       onChange={e => setEditingDiscount({ ...editingDiscount, affiliateId: e.target.value })}
                       placeholder="ID Profile Affiliate"
-                      className="rounded-xl"
+                      disabled={editingDiscount.affiliateId === null}
+                      className={cn("rounded-xl", editingDiscount.affiliateId === null && "bg-slate-50 text-muted-foreground")}
                     />
                   </div>
                   <div className="space-y-1.5">

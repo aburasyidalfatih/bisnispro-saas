@@ -452,20 +452,22 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
               where: { id: payment.discountCodeId }
             });
             
-            if (discountCode && discountCode.type === "CASHBACK" && discountCode.affiliateId) {
-              cashbackAffiliateId = discountCode.affiliateId;
+            if (discountCode && discountCode.type === "CASHBACK") {
+              cashbackAffiliateId = discountCode.affiliateId || originalAffiliateId;
               
-              if (!discountCode.linkedTenantId) {
-                await db.discountCode.update({
-                  where: { id: discountCode.id },
-                  data: { linkedTenantId: payment.tenantId }
-                });
-              }
-              
-              if (discountCode.cashbackAmount > 0) {
-                cashbackAmount = discountCode.cashbackAmount;
-              } else if (discountCode.percentage > 0) {
-                cashbackAmount = Math.round(payment.amount * (discountCode.percentage / 100));
+              if (cashbackAffiliateId) {
+                if (!discountCode.linkedTenantId) {
+                  await db.discountCode.update({
+                    where: { id: discountCode.id },
+                    data: { linkedTenantId: payment.tenantId }
+                  });
+                }
+                
+                if (discountCode.cashbackAmount > 0) {
+                  cashbackAmount = discountCode.cashbackAmount;
+                } else if (discountCode.percentage > 0) {
+                  cashbackAmount = Math.round(payment.amount * (discountCode.percentage / 100));
+                }
               }
             }
           }
