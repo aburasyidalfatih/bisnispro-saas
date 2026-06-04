@@ -9,6 +9,7 @@ import { FinanceService } from "@/features/finance/services/finance.service"
 import { syncPostViewsToDatabase, syncEventViewsToDatabase } from "@/features/post/services/views.service"
 import { syncShareCountsToDatabase } from "@/features/post/services/share.service"
 import { processLeaderboardSync } from "@/features/gamification/services/leaderboard.service"
+import { approveApplication } from "@/features/tenant/services/application.service"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -432,7 +433,6 @@ setInterval(async () => {
       
       if (pendingApps.length > 0) {
         console.log(`[cron] Auto-approving ${pendingApps.length} pending applications (older than 24h)...`)
-        const { approveApplication } = await import("./features/tenant/services/application.service")
         
         for (const app of pendingApps) {
           try {
