@@ -46,9 +46,19 @@ export default async function AffiliateDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard Kemitraan</h1>
-        <p className="text-muted-foreground mt-1">Pantau performa referral dan komisi Anda.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard Kemitraan</h1>
+          <p className="text-muted-foreground mt-1">Pantau performa referral dan komisi Anda.</p>
+        </div>
+        
+        <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-500/10 dark:to-amber-500/10 px-4 py-2.5 rounded-xl border border-orange-200 dark:border-orange-500/20 shadow-sm w-fit">
+          <div className="space-y-0.5">
+            <p className="text-xs font-semibold text-orange-800 dark:text-orange-400">Kupon Cashback Anda</p>
+            <p className="text-[10px] text-orange-600/80 dark:text-orange-400/80 max-w-[200px] leading-tight">Berlaku 1x untuk perpanjangan lisensi sekolah Anda sendiri</p>
+          </div>
+          <code className="font-mono font-bold text-lg text-orange-700 dark:text-orange-300 bg-white dark:bg-black/50 px-3 py-1 rounded-lg border border-orange-100 dark:border-orange-500/20">{displayCode}</code>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4">
