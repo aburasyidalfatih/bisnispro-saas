@@ -57,20 +57,18 @@ export async function sendApplicationNotification(applicationId: string) {
     case "APPROVED": {
       waEnabled = settings.WA_ENABLE_APPROVED !== "false";
       emailEnabled = settings.EMAIL_ENABLE_APPROVED !== "false";
-      const tempPwd = app.adminMessage?.startsWith("temp_pwd:")
-        ? app.adminMessage.replace("temp_pwd:", "")
-        : "Hubungi admin untuk mendapatkan password"
+
       const loginUrl = `https://${app.schoolSlug}.${rootDomain}/login`
       subject = settings.WA_SUBJECT_APPROVED || `Selamat! Pendaftaran ${app.schoolName} Disetujui`
       const tpl =
         settings.WA_TEMPLATE_APPROVED ||
-        `Halo {{adminName}},\n\nPendaftaran sekolah {{schoolName}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan kredensial berikut:\n\nURL Login: {{loginUrl}}\nEmail: {{adminEmail}}\nPassword: {{tempPwd}}\n\n⚠️ PENTING: Jika menggunakan password sementara, harap segera mengganti password Anda setelah berhasil login pertama kali demi keamanan akun Anda.\n\nTerima kasih.`
+        `Halo {{adminName}},\n\nPendaftaran sekolah {{schoolName}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan informasi berikut:\n\nURL Login: {{loginUrl}}\nEmail: {{adminEmail}}\nWA Penanggung Jawab: {{adminPhone}}\n\nSilakan gunakan password yang Anda buat pada saat mendaftar.\n\nTerima kasih.`
       message = tpl
         .replace(/{{adminName}}/g, app.adminName)
         .replace(/{{schoolName}}/g, app.schoolName)
         .replace(/{{loginUrl}}/g, loginUrl)
         .replace(/{{adminEmail}}/g, app.adminEmail)
-        .replace(/{{tempPwd}}/g, tempPwd)
+        .replace(/{{adminPhone}}/g, app.adminPhone)
         
       wavioTemplateName = settings.WAVIO_TEMPLATE_APPROVED || "school_registration_approved"
       wavioVariables = {
@@ -78,7 +76,7 @@ export async function sendApplicationNotification(applicationId: string) {
         "2": app.schoolName,
         "3": loginUrl,
         "4": app.adminEmail,
-        "5": tempPwd
+        "5": app.adminPhone
       }
       break
     }
@@ -398,21 +396,13 @@ export async function approveApplication(id: string) {
     })
   }
 
-  // 4. Update status + simpan temp password untuk notifikasi sementara
   await db.tenantApplication.update({
     where: { id },
-    data: { status: "APPROVED", adminMessage: `temp_pwd:${tempPassword}` },
+    data: { status: "APPROVED" },
   })
 
   // 5. Kirim notifikasi langsung (bypass Inngest yang tidak aktif di Docker)
   sendApplicationNotification(id)
-    .then(async () => {
-      // Bersihkan password sementara setelah notif terkirim
-      await db.tenantApplication.update({
-        where: { id },
-        data: { adminMessage: null },
-      }).catch(e => logger.error("Failed to clear temp password", e))
-    })
     .catch(err => logger.error("Application notification failed", err))
 
   // Invalidate public tenant cache

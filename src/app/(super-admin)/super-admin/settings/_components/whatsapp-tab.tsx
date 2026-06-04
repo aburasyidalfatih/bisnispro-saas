@@ -372,7 +372,7 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10"><Settings2 className="h-4 w-4 text-blue-500" /></div>
             <CardTitle className="text-lg">Template Pesan WhatsApp</CardTitle>
           </div>
-          <CardDescription>Gunakan variabel dinamis seperti {'{{adminName}}, {{schoolName}}, {{adminEmail}}, {{tempPwd}}, {{schoolSlug}}, {{adminMessage}}, {{adminPhone}}, {{affiliateName}}, {{referralCode}}'}</CardDescription>
+          <CardDescription>Gunakan variabel dinamis seperti {'{{adminName}}, {{schoolName}}, {{adminEmail}}, {{schoolSlug}}, {{adminMessage}}, {{adminPhone}}, {{affiliateName}}, {{referralCode}}'}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <Tabs defaultValue="starsender" className="w-full">
@@ -560,7 +560,7 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
                 <div className="space-y-2">
                   <Label className="text-blue-600 font-bold">2. Pendaftaran Disetujui (APPROVED)</Label>
                   <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_APPROVED} onChange={e => setForm({...form, WAVIO_TEMPLATE_APPROVED: e.target.value})} placeholder="school_registration_approved" className="rounded-xl" />
-                  <WavioTemplateHelper text={`Halo {{1}},\n\nPendaftaran sekolah {{2}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan kredensial berikut:\n\nURL Login: {{3}}\nEmail: {{4}}\nPassword Sementara: {{5}}\n\n⚠️ PENTING: Harap segera mengganti password Anda setelah berhasil login pertama kali demi keamanan akun Anda.\n\nTerima kasih.`} />
+                  <WavioTemplateHelper text={`Halo {{1}},\n\nPendaftaran sekolah {{2}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan informasi berikut:\n\nURL Login: {{3}}\nEmail: {{4}}\nWA Penanggung Jawab: {{5}}\n\nSilakan gunakan password yang Anda buat pada saat mendaftar.\n\nTerima kasih.`} />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-amber-600 font-bold">3. Revisi Data (REVISION)</Label>

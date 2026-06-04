@@ -33,36 +33,18 @@ export async function POST(req: Request) {
       const user = await db.user.findUnique({ where: { email: app.adminEmail.toLowerCase() } });
       if (!user) continue;
 
-      let tempPassword = "";
-
-      if (app.hashedPassword) {
-        tempPassword = "(Password yang Anda buat saat mendaftar)";
-        await db.tenantApplication.update({
-          where: { id: app.id },
-          data: { adminMessage: `temp_pwd:${tempPassword}` }
-        });
-      } else {
-        tempPassword = crypto.randomBytes(8).toString("base64url");
+      if (!app.hashedPassword) {
+        const tempPassword = crypto.randomBytes(8).toString("base64url");
         const hashedPassword = await bcrypt.hash(tempPassword, 12);
 
         await db.user.update({
           where: { id: user.id },
           data: { password: hashedPassword }
         });
-
-        await db.tenantApplication.update({
-          where: { id: app.id },
-          data: { adminMessage: `temp_pwd:${tempPassword}` }
-        });
       }
 
       // Send in background
-      sendApplicationNotification(app.id).then(async () => {
-        await db.tenantApplication.update({
-          where: { id: app.id },
-          data: { adminMessage: null }
-        }).catch(e => logger.error("Failed to clear temp password after bulk resend", e));
-      }).catch(e => logger.error("Async bulk notification resend failed", e));
+      sendApplicationNotification(app.id).catch(e => logger.error("Async bulk notification resend failed", e));
       
       successCount++;
     }
