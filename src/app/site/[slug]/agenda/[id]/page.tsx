@@ -1,16 +1,12 @@
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
-import { db } from "@/lib/db"
+import { getPublicEvents } from "@/features/tenant/services/tenant-public-queries.service"
 import { cache } from "react"
 
 const getEvent = cache(async (tenantId: string, slugOrId: string) => {
-  return db.event.findFirst({
-    where: {
-      tenantId,
-      OR: [{ id: slugOrId }, { slug: slugOrId }]
-    }
-  })
+  const events = await getPublicEvents(tenantId)
+  return events.find((e: any) => e.id === slugOrId || e.slug === slugOrId) || null
 })
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"

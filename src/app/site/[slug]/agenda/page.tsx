@@ -2,7 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
-import { db } from "@/lib/db"
+import { getPublicEvents } from "@/features/tenant/services/tenant-public-queries.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 
 
@@ -40,10 +40,7 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
-  const events = await db.event.findMany({
-    where: { tenantId: tenant.id },
-    orderBy: { startDate: "desc" }
-  })
+  const events = await getPublicEvents(tenant.id)
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering

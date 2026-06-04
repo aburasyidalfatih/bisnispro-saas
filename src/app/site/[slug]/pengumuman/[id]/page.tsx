@@ -1,34 +1,23 @@
 import { notFound } from "next/navigation"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { db } from "@/lib/db"
+import { getPublicPosts } from "@/features/tenant/services/tenant-public-queries.service"
 import { cache } from "react"
 
 const getPengumuman = cache(async (tenantId: string, slugOrId: string) => {
-  return db.post.findFirst({
-    where: {
-      tenantId,
-      status: "PUBLISHED",
-      OR: [{ id: slugOrId }, { slug: slugOrId }],
-      type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
-    },
-    include: {
-      author: { select: { name: true, avatar: true } },
-      category: true
-    }
+  const posts = await getPublicPosts(tenantId, 1, 1, {
+    status: "PUBLISHED",
+    OR: [{ id: slugOrId }, { slug: slugOrId }],
+    type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
   })
+  return posts[0] || null
 })
 
 const getRelatedPengumuman = cache(async (tenantId: string, currentId: string) => {
-  return db.post.findMany({
-    where: {
-      tenantId,
-      status: "PUBLISHED",
-      id: { not: currentId },
-      type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
-    },
-    orderBy: { createdAt: "desc" },
-    take: 3,
-    include: { category: true }
+  return getPublicPosts(tenantId, 1, 3, {
+    status: "PUBLISHED",
+    id: { not: currentId },
+    type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] }
   })
 })
 import { getPublicBasePath } from "@/lib/utils/public-path"
@@ -48,10 +37,10 @@ export const revalidate = 0;
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
-  const { slug, id } = await params
+  const { slug, id: postId } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
-  const slugDecoded = decodeURIComponent(id)
+  const slugDecoded = decodeURIComponent(postId)
   const post = await getPengumuman(tenant.id, slugDecoded)
   if (!post) return {}
   const description = post.seoDesc || post.content?.replace(/<[^>]*>/g, "").substring(0, 160)

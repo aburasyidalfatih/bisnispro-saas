@@ -6,7 +6,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Megaphone, ArrowRight, Search, Calendar } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { db } from "@/lib/db"
+import { getPublicPosts, countPublicPosts } from "@/features/tenant/services/tenant-public-queries.service"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 export const dynamic = 'force-dynamic';
@@ -53,34 +53,15 @@ export default async function PengumumanPage({
 
   const base = await getPublicBasePath(slug)
 
-  // Fetch paginated pengumuman directly from DB
-  const posts = await db.post.findMany({
-    where: { 
-      tenantId: tenant.id, 
-      status: 'PUBLISHED',
-      type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] }
-    },
-    orderBy: { createdAt: 'desc' },
-    skip: (page - 1) * perPage,
-    take: perPage,
-    include: {
-      category: true,
-      author: {
-        select: {
-          name: true,
-          avatar: true
-        }
-      }
-    }
-  })
-
-  const totalPosts = await db.post.count({
-    where: { 
-      tenantId: tenant.id, 
-      status: 'PUBLISHED',
-      type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] }
-    }
-  })
+  // Fetch paginated pengumuman from DAL (with unstable_cache)
+  const whereClause = { 
+    tenantId: tenant.id, 
+    status: 'PUBLISHED',
+    type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] }
+  }
+  
+  const posts = await getPublicPosts(tenant.id, page, perPage, whereClause)
+  const totalPosts = await countPublicPosts(tenant.id, whereClause)
   const totalPages = Math.ceil(totalPosts / perPage)
 
   // Custom Theme rendering

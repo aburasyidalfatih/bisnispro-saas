@@ -2,7 +2,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
-import { db } from "@/lib/db"
+import { getPublicPosts, countPublicPosts, getPublicActiveCategories } from "@/features/tenant/services/tenant-public-queries.service"
 import Image from "next/image"
 import Link from "next/link"
 import { Calendar, User, ArrowRight, BookOpen } from "lucide-react"
@@ -74,20 +74,8 @@ export default async function BeritaPage({
 
   const excludedTypes = ["PENGUMUMAN_SEMUA", "PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA", "PENGUMUMAN"]
 
-  // Ambil kategori yang sudah memiliki artikel terpublikasi
-  const activeCategories = await db.category.findMany({
-    where: {
-      tenantId: tenant.id,
-      posts: {
-        some: {
-          status: 'PUBLISHED',
-          type: { notIn: excludedTypes }
-        }
-      }
-    },
-    select: { id: true, name: true, slug: true },
-    orderBy: { name: 'asc' }
-  })
+  // Ambil kategori yang sudah memiliki artikel terpublikasi via DAL
+  const activeCategories = await getPublicActiveCategories(tenant.id, excludedTypes)
 
   const whereClause: any = { 
     tenantId: tenant.id, 
@@ -99,26 +87,10 @@ export default async function BeritaPage({
     whereClause.category = { slug: categoryFilter }
   }
 
-  // Fetch paginated posts directly from DB
-  const posts = await db.post.findMany({
-    where: whereClause,
-    orderBy: { createdAt: 'desc' },
-    skip: (page - 1) * perPage,
-    take: perPage,
-    include: {
-      category: true,
-      author: {
-        select: {
-          name: true,
-          avatar: true
-        }
-      }
-    }
-  })
+  // Fetch paginated posts from DAL (with unstable_cache)
+  const posts = await getPublicPosts(tenant.id, page, perPage, whereClause)
 
-  const totalPosts = await db.post.count({
-    where: whereClause
-  })
+  const totalPosts = await countPublicPosts(tenant.id, whereClause)
   const totalPages = Math.ceil(totalPosts / perPage)
   
   // Custom Theme rendering

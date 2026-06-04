@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next"
 import { db } from "@/lib/db"
+import { getPublicSitemapData } from "@/features/tenant/services/tenant-public-queries.service"
 import { headers } from "next/headers"
 
 export const revalidate = 3600 // Edge Caching ISR (1 jam)
@@ -104,13 +105,10 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
     },
   ]
 
-  // Dynamic routes: Berita & Pengumuman
-  const posts = await db.post.findMany({
-    where: { tenantId: tenant.id, status: "PUBLISHED" },
-    select: { id: true, slug: true, type: true, updatedAt: true, createdAt: true }
-  })
+  const { posts, achievements, programs, facilities, extracurriculars, events } = await getPublicSitemapData(tenant.id);
+
   if (posts.length > 0) {
-    posts.forEach((post) => {
+    posts.forEach((post: any) => {
       const typePath = post.type?.includes("PENGUMUMAN") ? "pengumuman" : "berita";
       routes.push({
         url: `${baseUrl}/${typePath}/${post.slug || post.id}`,
@@ -122,12 +120,8 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Prestasi
-  const achievements = await db.achievement.findMany({
-    where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
-  })
   if (achievements.length > 0) {
-    achievements.forEach((achievement) => {
+    achievements.forEach((achievement: any) => {
       routes.push({
         url: `${baseUrl}/prestasi/${achievement.slug || achievement.id}`,
         lastModified: achievement.updatedAt || achievement.createdAt,
@@ -138,12 +132,8 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Program
-  const programs = await db.program.findMany({
-    where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
-  })
   if (programs.length > 0) {
-    programs.forEach((program) => {
+    programs.forEach((program: any) => {
       routes.push({
         url: `${baseUrl}/program/${program.slug || program.id}`,
         lastModified: program.updatedAt || program.createdAt,
@@ -154,12 +144,8 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Fasilitas
-  const facilities = await db.facility.findMany({
-    where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
-  })
   if (facilities.length > 0) {
-    facilities.forEach((facility) => {
+    facilities.forEach((facility: any) => {
       routes.push({
         url: `${baseUrl}/fasilitas/${facility.slug || facility.id}`,
         lastModified: facility.updatedAt || facility.createdAt,
@@ -170,12 +156,8 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Ekstrakurikuler
-  const extracurriculars = await db.extracurricular.findMany({
-    where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
-  })
   if (extracurriculars.length > 0) {
-    extracurriculars.forEach((extra) => {
+    extracurriculars.forEach((extra: any) => {
       routes.push({
         url: `${baseUrl}/ekstrakurikuler/${extra.slug || extra.id}`,
         lastModified: extra.updatedAt || extra.createdAt,
@@ -186,12 +168,8 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   }
 
   // Dynamic routes: Agenda
-  const events = await db.event.findMany({
-    where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
-  })
   if (events.length > 0) {
-    events.forEach((event) => {
+    events.forEach((event: any) => {
       routes.push({
         url: `${baseUrl}/agenda/${event.slug || event.id}`,
         lastModified: event.updatedAt || event.createdAt,
