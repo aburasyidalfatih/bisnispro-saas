@@ -27,6 +27,11 @@ export async function invalidatePublicTenantCache(slug: string) {
     try {
       const { revalidatePath, revalidateTag } = await import("next/cache")
       revalidatePath("/", "layout")
+      revalidatePath(`/site/${slug}`, "layout")
+      revalidatePath(`/site/${slug}/pengumuman`, "page")
+      revalidatePath(`/site/${slug}/berita`, "page")
+      revalidatePath(`/site/${slug}/agenda`, "page")
+      revalidatePath(`/site/${slug}/gallery`, "page")
       revalidateTag(`tenant-${slug}`)
       revalidateTag(`tenant-public`)
     } catch (e) {}
