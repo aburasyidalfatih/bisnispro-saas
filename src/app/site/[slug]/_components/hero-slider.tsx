@@ -152,7 +152,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
             {/* Subtitle */}
             {slide.subtitle && (
-              <div className="flex items-center gap-3 mb-3" style={{ animation: prev === null ? "textFadeUp 0.5s 0s ease both" : "textFadeUp 0.5s 0.1s ease both" }}>
+              <div className="flex items-center gap-3 mb-3" style={{ animation: prev === null ? "none" : "textFadeUp 0.5s 0.1s ease both" }}>
                 <div className="h-[2px] w-8 bg-amber-400 shrink-0" />
                 <p className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.2em] sm:tracking-[0.25em] text-amber-400 drop-shadow-md break-words">
                   {slide.subtitle}
@@ -166,7 +166,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                 className="font-black leading-[1.2] text-white mb-3 sm:mb-4 drop-shadow-lg tracking-tight break-words"
                 style={{
                   fontSize: "clamp(1.4rem, 5vw, 3.5rem)",
-                  animation: prev === null ? "textFadeUp 0.55s 0s ease both" : "textFadeUp 0.55s 0.2s ease both",
+                  animation: prev === null ? "none" : "textFadeUp 0.55s 0.2s ease both",
                 }}
               >
                 {slide.title.split("\\n").map((line, i, arr) =>
@@ -185,7 +185,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             {slide.description && (
               <p
                 className="text-[11px] sm:text-base text-white/80 leading-relaxed mb-6 sm:mb-8 max-w-lg font-medium drop-shadow"
-                style={{ animation: prev === null ? "textFadeUp 0.6s 0s ease both" : "textFadeUp 0.6s 0.3s ease both" }}
+                style={{ animation: prev === null ? "none" : "textFadeUp 0.6s 0.3s ease both" }}
               >
                 {slide.description}
               </p>
@@ -193,7 +193,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
             {/* CTAs */}
             {(slide.cta || slide.ctaSecondary) && (
-              <div className="flex flex-wrap gap-4" style={{ animation: prev === null ? "textFadeUp 0.65s 0s ease both" : "textFadeUp 0.65s 0.4s ease both" }}>
+              <div className="flex flex-wrap gap-4" style={{ animation: prev === null ? "none" : "textFadeUp 0.65s 0.4s ease both" }}>
                 {slide.cta && (
                   <Link
                     href={slide.cta.href.startsWith("http") ? slide.cta.href : resolveHref(slide.cta.href)}
@@ -314,8 +314,8 @@ function SlideBackground({ slide, isPriority }: { slide: Slide, isPriority?: boo
           quality={75}
           className="object-cover object-center"
           style={{ 
-            animation: "kenburns 20s ease-in-out infinite alternate",
-            willChange: "transform",
+            animation: isPriority ? "none" : "kenburns 20s ease-in-out infinite alternate",
+            willChange: isPriority ? "auto" : "transform",
             backfaceVisibility: "hidden"
           }}
         />
