@@ -25,6 +25,9 @@ export async function invalidatePublicTenantCache(slug: string) {
     await redis.del(`${TENANT_PUBLIC_CACHE_PREFIX}${slug}`)
 
     try {
+      const { db } = await import("@/lib/db")
+      const tenant = await db.tenant.findUnique({ where: { slug }, select: { id: true } })
+
       const { revalidatePath, revalidateTag } = await import("next/cache")
       revalidatePath("/", "layout")
       revalidatePath(`/site/${slug}`, "layout")
@@ -33,6 +36,9 @@ export async function invalidatePublicTenantCache(slug: string) {
       revalidatePath(`/site/${slug}/agenda`, "page")
       revalidatePath(`/site/${slug}/gallery`, "page")
       revalidateTag(`tenant-${slug}`)
+      if (tenant) {
+        revalidateTag(`tenant-${tenant.id}`)
+      }
       revalidateTag(`tenant-public`)
     } catch (e) {}
   } catch (error) {
