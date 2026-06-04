@@ -5,7 +5,10 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import { db } from "@/lib/db"
 import Image from "next/image"
 import Link from "next/link"
-import { Calendar, User, ArrowRight } from "lucide-react"
+import { Calendar, User, ArrowRight, BookOpen } from "lucide-react"
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { cn, normalizeImageUrl } from "@/lib/utils"

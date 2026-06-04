@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 
 
 export const dynamicParams = true
+export const revalidate = 60
 import Link from "next/link"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
 import parse from "html-react-parser"
