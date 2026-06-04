@@ -385,15 +385,19 @@ export async function validateDiscountCode(code: string, tenantId?: string) {
     })
 
     if (affiliate && affiliate.isActive) {
+      const settings = await db.platformSetting.findUnique({ where: { key: "AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE" } })
+      const defaultCashbackPct = settings ? parseInt(settings.value) : 20;
+
       discount = await db.discountCode.create({
         data: {
           code: affiliate.referralCode.toUpperCase(),
+          description: `Kupon Cashback Otomatis untuk Mitra ${affiliate.referralCode.toUpperCase()}`,
           type: "CASHBACK",
-          percentage: 0,
-          cashbackAmount: 100000, // Default cashback 100k
-          description: `Kupon Spesial Mitra ${affiliate.referralCode.toUpperCase()}`,
+          cashbackAmount: 0,
+          percentage: defaultCashbackPct,
+          affiliateId: affiliate.id,
+          maxUses: 1,
           isActive: true,
-          affiliateId: affiliate.id
         }
       })
     }
