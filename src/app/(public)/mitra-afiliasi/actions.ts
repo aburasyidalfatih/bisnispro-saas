@@ -43,20 +43,37 @@ export async function registerAffiliate(formData: FormData) {
 
     const hashedPassword = await hash(parsed.password, 12)
 
-    // Buat User dan AffiliateProfile sekaligus menggunakan Prisma Transaction
-    const user = await db.user.create({
-      data: {
-        name: parsed.name,
-        email: parsed.email,
-        password: hashedPassword,
-        phone: parsed.phone,
-        isActive: true,
-        affiliateProfile: {
-          create: {
-            referralCode: referralCode,
-          }
+    // Buat User, AffiliateProfile, dan Kupon Cashback sekaligus menggunakan Prisma Transaction
+    await db.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name: parsed.name,
+          email: parsed.email,
+          password: hashedPassword,
+          phone: parsed.phone,
+          isActive: true,
+        },
+      })
+
+      const newAffiliate = await tx.affiliateProfile.create({
+        data: {
+          userId: user.id,
+          referralCode: referralCode,
         }
-      },
+      })
+
+      // Auto-generate Cashback Coupon matching the referral code
+      await tx.discountCode.create({
+        data: {
+          code: referralCode,
+          description: `Kupon Cashback Otomatis untuk Mitra ${parsed.name}`,
+          type: "CASHBACK",
+          cashbackAmount: 400000,
+          percentage: 0,
+          affiliateId: newAffiliate.id,
+          isActive: true,
+        }
+      })
     })
 
     return { success: true, message: "Pendaftaran berhasil. Silakan login untuk masuk ke Dashboard." }
