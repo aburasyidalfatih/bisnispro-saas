@@ -440,8 +440,11 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
             select: { affiliateId: true, name: true },
           })
 
-          let commissionAffiliateId = tenant?.affiliateId;
-          let commissionAmount = Math.round(payment.amount * 0.20); // Default 20%
+          const originalAffiliateId = tenant?.affiliateId;
+          const originalCommissionAmount = Math.round(payment.amount * 0.20); // Default 20%
+          
+          let cashbackAffiliateId: string | null = null;
+          let cashbackAmount = 0;
 
           // Cek apakah ada kupon cashback
           if (payment.discountCodeId) {
@@ -450,7 +453,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
             });
             
             if (discountCode && discountCode.type === "CASHBACK" && discountCode.affiliateId) {
-              commissionAffiliateId = discountCode.affiliateId;
+              cashbackAffiliateId = discountCode.affiliateId;
               
               if (!discountCode.linkedTenantId) {
                 await db.discountCode.update({
@@ -460,47 +463,56 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
               }
               
               if (discountCode.cashbackAmount > 0) {
-                commissionAmount = discountCode.cashbackAmount;
+                cashbackAmount = discountCode.cashbackAmount;
               } else if (discountCode.percentage > 0) {
-                commissionAmount = Math.round(payment.amount * (discountCode.percentage / 100));
-              } else {
-                commissionAmount = 0;
+                cashbackAmount = Math.round(payment.amount * (discountCode.percentage / 100));
               }
             }
           }
 
-          if (commissionAffiliateId && commissionAmount > 0) {
-            // Guard duplikasi: paymentId unique constraint di AffiliateCommission
+          // Array to store commissions to process
+          const commissionsToProcess: { affiliateId: string, amount: number, type: string }[] = [];
+
+          if (originalAffiliateId && originalCommissionAmount > 0) {
+            commissionsToProcess.push({ affiliateId: originalAffiliateId, amount: originalCommissionAmount, type: "REFERRAL" });
+          }
+
+          if (cashbackAffiliateId && cashbackAmount > 0) {
+            commissionsToProcess.push({ affiliateId: cashbackAffiliateId, amount: cashbackAmount, type: "CASHBACK" });
+          }
+
+          for (const comm of commissionsToProcess) {
             await db.affiliateCommission.create({
               data: {
-                affiliateId: commissionAffiliateId,
+                affiliateId: comm.affiliateId,
                 tenantId: payment.tenantId,
                 paymentId: payment.id,
-                amount: commissionAmount,
+                amount: comm.amount,
                 status: "PAID",
               },
             })
 
             await db.affiliateProfile.update({
-              where: { id: commissionAffiliateId },
+              where: { id: comm.affiliateId },
               data: {
-                balance: { increment: commissionAmount },
-                totalEarnings: { increment: commissionAmount },
+                balance: { increment: comm.amount },
+                totalEarnings: { increment: comm.amount },
               },
             })
 
             // Notify affiliate via WA (async, non-blocking)
             import("@/features/finance/services/billing-notification.service")
               .then(({ notifyAffiliateCommission }) => {
-                notifyAffiliateCommission(commissionAffiliateId!, commissionAmount, tenant?.name || "").catch(() => {})
+                notifyAffiliateCommission(comm.affiliateId, comm.amount, tenant?.name || "").catch(() => {})
               })
               .catch(() => {})
 
-            logger.info("[payment] Affiliate commission created", {
-              affiliateId: commissionAffiliateId,
+            logger.info(`[payment] Affiliate commission created (${comm.type})`, {
+              affiliateId: comm.affiliateId,
+              amount: comm.amount,
+              tenantId: payment.tenantId,
               paymentId: payment.id,
-              amount: commissionAmount,
-              plan: payment.plan,
+              type: comm.type
             })
           }
         } catch (commError: any) {

@@ -306,7 +306,7 @@ model Payment {
   planId              String?
   discountCodeId      String?
   deletedAt           DateTime?
-  affiliateCommission AffiliateCommission?
+  affiliateCommissions AffiliateCommission[]
   discountCode        DiscountCode?        @relation(fields: [discountCodeId], references: [id])
   tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   subscription        Subscription?
@@ -1026,7 +1026,7 @@ model AffiliateCommission {
   id          String           @id @default(cuid())
   affiliateId String
   tenantId    String
-  paymentId   String           @unique
+  paymentId   String
   amount      Int
   status      String           @default("PENDING")
   createdAt   DateTime         @default(now())
