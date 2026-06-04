@@ -55,6 +55,20 @@ export async function PUT(req: Request) {
       }
     }
 
+    // Jika AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE diubah, update kupon cashback affiliate
+    if (body.AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE !== undefined) {
+      const newPct = Math.max(0, Number(body.AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE) || 0)
+      await db.discountCode.updateMany({
+        where: { 
+          type: "CASHBACK",
+          affiliateId: { not: null }
+        },
+        data: {
+          percentage: newPct
+        }
+      })
+    }
+
     return NextResponse.json({ 
       message: "Pengaturan batch berhasil disimpan",
       affectedInvoices
