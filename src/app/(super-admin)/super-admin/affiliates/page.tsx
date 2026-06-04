@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Users, CreditCard, Wallet, Search, Ban, CheckCircle2, ChevronRight, Trophy } from "lucide-react"
+import { Users, CreditCard, Wallet, Search, Ban, CheckCircle2, ChevronRight, Trophy, Settings, Save } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -38,6 +38,49 @@ export default function SuperAdminAffiliatesPage() {
   const [page, setPage] = useState(1)
   const [toggleTarget, setToggleTarget] = useState<Affiliate | null>(null)
   const [toggling, setToggling] = useState(false)
+
+  // Affiliate Settings State
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [settingsForm, setSettingsForm] = useState({ AFFILIATE_COMMISSION_PERCENTAGE: "20", AFFILIATE_DEFAULT_CASHBACK: "400000" })
+  const [savingSettings, setSavingSettings] = useState(false)
+
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await fetch("/api/super-admin/settings")
+      const result = await res.json()
+      setSettingsForm({
+        AFFILIATE_COMMISSION_PERCENTAGE: result.AFFILIATE_COMMISSION_PERCENTAGE || "20",
+        AFFILIATE_DEFAULT_CASHBACK: result.AFFILIATE_DEFAULT_CASHBACK || "400000"
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchSettings()
+  }, [fetchSettings])
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true)
+    try {
+      const res = await fetch("/api/super-admin/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settingsForm),
+      })
+      if (res.ok) {
+        toast({ title: "Berhasil", description: "Pengaturan komisi afiliasi disimpan." })
+        setIsSettingsOpen(false)
+      } else {
+        throw new Error("Gagal menyimpan")
+      }
+    } catch (e: any) {
+      toast({ title: "Error", description: e.message, variant: "destructive" })
+    } finally {
+      setSavingSettings(false)
+    }
+  }
 
   const fetchAffiliates = useCallback(async () => {
     try {
@@ -94,6 +137,10 @@ export default function SuperAdminAffiliatesPage() {
           <p className="text-muted-foreground mt-1">Kelola mitra afiliasi, komisi, dan permintaan penarikan dana.</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setIsSettingsOpen(true)} className="rounded-xl gap-2 shadow-sm border-orange-200 bg-orange-50/50 hover:bg-orange-100 text-orange-700">
+            <Settings className="h-4 w-4" />
+            Pengaturan Komisi
+          </Button>
           <Link href="/super-admin/affiliates/leaderboard">
             <Button variant="outline" className="rounded-xl gap-2 border-amber-200 bg-amber-50/50 hover:bg-amber-100 text-amber-700 shadow-sm">
               <Trophy className="h-4 w-4" />
@@ -275,6 +322,46 @@ export default function SuperAdminAffiliatesPage() {
               className={cn("rounded-xl border-0", toggleTarget?.isActive ? "bg-rose-600 hover:bg-rose-700 text-white" : "bg-emerald-600 hover:bg-emerald-700 text-white")}
             >
               {toggling ? "Memproses..." : toggleTarget?.isActive ? "Ya, Blokir" : "Ya, Aktifkan"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent className="rounded-3xl max-w-md">
+          <DialogHeader>
+            <DialogTitle>Pengaturan Komisi & Cashback Afiliasi</DialogTitle>
+            <DialogDescription>
+              Atur persentase komisi dan nominal default cashback untuk program afiliasi.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Persentase Komisi (%)</label>
+              <Input 
+                type="number" 
+                value={settingsForm.AFFILIATE_COMMISSION_PERCENTAGE} 
+                onChange={e => setSettingsForm({...settingsForm, AFFILIATE_COMMISSION_PERCENTAGE: e.target.value})} 
+                className="rounded-xl"
+              />
+              <p className="text-xs text-muted-foreground">Persentase dari total pembayaran sekolah yang akan masuk ke saldo Mitra (Misal: 20).</p>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Nominal Cashback Default (Rp)</label>
+              <Input 
+                type="number" 
+                value={settingsForm.AFFILIATE_DEFAULT_CASHBACK} 
+                onChange={e => setSettingsForm({...settingsForm, AFFILIATE_DEFAULT_CASHBACK: e.target.value})} 
+                className="rounded-xl"
+              />
+              <p className="text-xs text-muted-foreground">Cashback (potongan harga) otomatis yang dibuat untuk sekolah saat menggunakan kode referral mitra baru.</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setIsSettingsOpen(false)} disabled={savingSettings} className="rounded-xl">Batal</Button>
+            <Button onClick={handleSaveSettings} disabled={savingSettings} className="rounded-xl gap-2 border-0 btn-gradient text-white">
+              {savingSettings ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
+              Simpan Pengaturan
             </Button>
           </DialogFooter>
         </DialogContent>

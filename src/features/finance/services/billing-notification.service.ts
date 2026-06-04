@@ -458,7 +458,7 @@ Halo ${affiliate.user.name},
 Selamat! Anda mendapat komisi dari referral:
 
 🏫 Sekolah: ${tenantName}
-💰 Komisi: Rp ${formatCurrency(commissionAmount)} (20%)
+💰 Komisi: Rp ${formatCurrency(commissionAmount)}
 💳 Saldo Saat Ini: Rp ${formatCurrency(affiliate.balance)}
 📊 Total Pendapatan: Rp ${formatCurrency(affiliate.totalEarnings)}
 

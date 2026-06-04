@@ -148,6 +148,7 @@ export type SettingsForm = {
 
   // Afiliasi
   AFFILIATE_DEFAULT_CASHBACK: string;
+  AFFILIATE_COMMISSION_PERCENTAGE: string;
 };
 
 export const DEFAULT_SETTINGS_FORM: SettingsForm = {
@@ -227,7 +228,7 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   WA_TEMPLATE_PAYMENT_CONFIRMED: `*Pembayaran Dikonfirmasi ✅ - SchoolPro*\n\nHalo,\n\nPembayaran untuk {{tenantName}} telah dikonfirmasi!\n\n📋 No. Invoice: {{reference}}\n💰 Jumlah: Rp {{amount}}\n📦 Tipe: {{invoiceType}}\n👥 Kuota Siswa: {{studentQuota}}\n📅 Aktif Hingga: {{expiresAt}}\n\nSelamat menggunakan fitur premium! 🎉`,
   WA_ENABLE_PAYMENT_CONFIRMED: "true",
   EMAIL_ENABLE_PAYMENT_CONFIRMED: "true",
-  WA_TEMPLATE_AFFILIATE_COMMISSION: `*Komisi Masuk! 💰 - SchoolPro*\n\nHalo {{affiliateName}},\n\nSelamat! Anda mendapat komisi dari referral:\n\n🏫 Sekolah: {{tenantName}}\n💰 Komisi: Rp {{commissionAmount}} (20%)\n💳 Saldo Saat Ini: Rp {{currentBalance}}\n\nTerima kasih sudah menjadi mitra SchoolPro! 🤝`,
+  WA_TEMPLATE_AFFILIATE_COMMISSION: `*Komisi Masuk! 💰 - SchoolPro*\n\nHalo {{affiliateName}},\n\nSelamat! Anda mendapat komisi dari referral:\n\n🏫 Sekolah: {{tenantName}}\n💰 Komisi: Rp {{commissionAmount}}\n💳 Saldo Saat Ini: Rp {{currentBalance}}\n\nTerima kasih sudah menjadi mitra SchoolPro! 🤝`,
   WA_ENABLE_AFFILIATE_COMMISSION: "true",
   EMAIL_ENABLE_AFFILIATE_COMMISSION: "true",
   WA_TEMPLATE_SUBSCRIPTION_REMINDER: `*{{urgency}} Pengingat Langganan - SchoolPro*\n\nHalo,\n\nLangganan PRO untuk {{tenantName}} akan berakhir dalam *{{daysRemaining}} hari* ({{expiresAt}}).\n\nSegera perpanjang langganan agar tidak kehilangan akses fitur premium.\n\nKunjungi: Menu Langganan di Dashboard Admin.`,
@@ -307,4 +308,5 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
 
   // Afiliasi
   AFFILIATE_DEFAULT_CASHBACK: "400000",
+  AFFILIATE_COMMISSION_PERCENTAGE: "20",
 };

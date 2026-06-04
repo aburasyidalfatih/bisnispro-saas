@@ -441,7 +441,9 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
           })
 
           const originalAffiliateId = tenant?.affiliateId;
-          const originalCommissionAmount = Math.round(payment.amount * 0.20); // Default 20%
+          const settingsDoc = await tx.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
+          const commissionPct = settingsDoc ? parseInt(settingsDoc.value) / 100 : 0.20;
+          const originalCommissionAmount = Math.round(payment.amount * commissionPct);
           
           let cashbackAffiliateId: string | null = null;
           let cashbackAmount = 0;

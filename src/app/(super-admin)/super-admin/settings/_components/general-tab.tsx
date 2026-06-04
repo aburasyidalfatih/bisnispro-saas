@@ -157,36 +157,6 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
             </Button>
           </CardContent>
         </Card>
-
-        <Card className="glass border-0">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10"><Users className="h-4 w-4 text-orange-500" /></div>
-              <CardTitle className="text-lg">Pengaturan Kemitraan (Afiliasi)</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Nominal Cashback Default (Rp)</Label>
-              <Input 
-                type="number"
-                value={form.AFFILIATE_DEFAULT_CASHBACK || ""} 
-                onChange={e => setForm({...form, AFFILIATE_DEFAULT_CASHBACK: e.target.value})} 
-                placeholder="400000" 
-                className="rounded-xl" 
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">Besaran komisi default yang otomatis diberikan ketika mitra baru mendaftar.</p>
-            </div>
-            <Button 
-              className="w-full gap-2 btn-gradient text-white border-0 rounded-xl"
-              onClick={() => handleSaveBatch(['AFFILIATE_DEFAULT_CASHBACK'])}
-              disabled={saving}
-            >
-              {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
-              Simpan Nominal Cashback
-            </Button>
-          </CardContent>
-        </Card>
       </div>
 
       <div className="space-y-6">
