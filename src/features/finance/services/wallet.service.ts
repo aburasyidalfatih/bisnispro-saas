@@ -238,7 +238,8 @@ export async function getBillingDashboardData(tenantId: string) {
         plan: true,
         studentQuota: true,
         isActive: true,
-        expiresAt: true
+        expiresAt: true,
+        affiliateId: true
       }
     }),
     getPricingConfig(),
@@ -277,6 +278,14 @@ export async function getBillingDashboardData(tenantId: string) {
     waNumber: platformSettings.find(s => s.key === "MANUAL_PAYMENT_WA")?.value || "6281234567890",
   }
 
+  let autoCashbackCode: string | null = null
+  if (tenant?.affiliateId) {
+    const code = await db.discountCode.findFirst({
+      where: { affiliateId: tenant.affiliateId, type: "CASHBACK", isActive: true }
+    })
+    if (code) autoCashbackCode = code.code
+  }
+
   return {
     ...tenant,
     pricing,
@@ -284,7 +293,8 @@ export async function getBillingDashboardData(tenantId: string) {
     hasPendingInvoice: !!pendingPayment,
     upgradeEnabled: true,
     manualPayment,
-    lockedPricePerStudent
+    lockedPricePerStudent,
+    autoCashbackCode
   }
 }
 

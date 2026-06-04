@@ -91,6 +91,11 @@ export default function BillingPage() {
             setSelectedPlanSlug("")
           }
         }
+        
+        // Auto-fill cashback code if available
+        if (billingData?.autoCashbackCode) {
+          setDiscountCodeInput(billingData.autoCashbackCode)
+        }
       } catch {
         toast({ title:"Error", description:"Gagal memuat data.", variant:"destructive" })
       } finally {
@@ -136,7 +141,8 @@ export default function BillingPage() {
   
   const totalCost = subTotal - discountAmount
 
-  const handleValidateDiscount = async (isAuto = false) => {
+  const handleValidateDiscount = async (eOrIsAuto: any = false) => {
+    const isAuto = typeof eOrIsAuto === "boolean" ? eOrIsAuto : false
     if (!discountCodeInput) return
     setValidatingDiscount(true)
     try {
