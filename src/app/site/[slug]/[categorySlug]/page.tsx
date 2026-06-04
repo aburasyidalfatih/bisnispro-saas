@@ -1,0 +1,64 @@
+import { notFound } from "next/navigation"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
+import { db } from "@/lib/db"
+import BeritaPage from "../berita/page"
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string, categorySlug: string }> }) {
+  const { slug, categorySlug } = await params
+  const tenant = await getTenantLayoutData(slug)
+  if (!tenant) return {}
+  
+  const category = await db.category.findFirst({
+    where: { slug: categorySlug, tenantId: tenant.id }
+  })
+  if (!category) return {}
+
+  const title = `Kategori: ${category.name}`
+  const description = `Berita dan artikel dengan kategori ${category.name} dari ${tenant.name}`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${category.slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `${domainUrl}/${category.slug}`,
+    }
+  }
+}
+
+export default async function CategoryProxyPage({ 
+  params,
+  searchParams 
+}: { 
+  params: Promise<{ slug: string, categorySlug: string }>,
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const { slug, categorySlug } = await params
+  const tenant = await getTenantLayoutData(slug)
+  if (!tenant) notFound()
+
+  // Verifikasi apakah categorySlug ini valid
+  const category = await db.category.findFirst({
+    where: { slug: categorySlug, tenantId: tenant.id }
+  })
+
+  if (!category) {
+    notFound()
+  }
+
+  // Inject categorySlug ke dalam searchParams agar komponen BeritaPage menanganinya
+  const resolvedSearchParams = await searchParams
+  const injectedSearchParams = Promise.resolve({
+    ...resolvedSearchParams,
+    category: categorySlug
+  })
+
+  // Re-use BeritaPage as a function call because it is an async Server Component
+  return BeritaPage({ params: Promise.resolve({ slug }), searchParams: injectedSearchParams })
+}
