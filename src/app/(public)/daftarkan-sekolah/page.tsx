@@ -166,9 +166,17 @@ export default function RegisterSchoolPage() {
           body: formData,
         })
         
+        let errData: any = null
+        try {
+          if (!uploadRes.ok) {
+            errData = await uploadRes.json()
+          }
+        } catch (e) {
+          errData = { error: "Terjadi kesalahan pada server saat mengunggah (kemungkinan file terlalu besar)." }
+        }
+
         if (!uploadRes.ok) {
-          const errData = await uploadRes.json()
-          throw new Error(errData.error || "Gagal upload logo")
+          throw new Error(errData?.error || "Gagal upload logo")
         }
         
         const uploadData = await uploadRes.json()
@@ -182,22 +190,33 @@ export default function RegisterSchoolPage() {
 
     const payload = { ...form, logo: uploadedLogoUrl || null }
 
-    const res = await fetch("/api/public/register-school", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
+    let data: any = null
+    try {
+      const res = await fetch("/api/public/register-school", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+      
+      try {
+        data = await res.json()
+      } catch (e) {
+        data = { error: "Server mengalami gangguan (502/503). Silakan coba beberapa saat lagi." }
+      }
 
-    const data = await res.json()
-    setLoading(false)
+      setLoading(false)
 
-    if (res.ok) {
-      if (data.csPhone) setCsPhone(data.csPhone)
-      setSubmitted(true)
-      trackMetaEvent('Lead')
-      toast({ title: "Berhasil!", description: "Pengajuan sekolah telah kami terima." })
-    } else {
-      toast({ title: "Gagal", description: data.error, variant: "destructive" })
+      if (res.ok) {
+        if (data.csPhone) setCsPhone(data.csPhone)
+        setSubmitted(true)
+        trackMetaEvent('Lead')
+        toast({ title: "Berhasil!", description: "Pengajuan sekolah telah kami terima." })
+      } else {
+        toast({ title: "Gagal", description: data.error || "Terjadi kesalahan server", variant: "destructive" })
+      }
+    } catch (error: any) {
+      setLoading(false)
+      toast({ title: "Koneksi Gagal", description: "Tidak dapat terhubung ke server", variant: "destructive" })
     }
   }
 
