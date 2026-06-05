@@ -4,8 +4,10 @@ import { unstable_cache } from "next/cache"
 export const getPublicPosts = async (tenantId: string, page: number, perPage: number, whereClause: any) => {
   return unstable_cache(
     async () => {
+      // FORCE tenantId injection to prevent cross-tenant leakage
+      const safeWhere = { ...whereClause, tenantId }
       return db.post.findMany({
-        where: whereClause,
+        where: safeWhere,
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * perPage,
         take: perPage,
@@ -23,7 +25,9 @@ export const getPublicPosts = async (tenantId: string, page: number, perPage: nu
 export const countPublicPosts = async (tenantId: string, whereClause: any) => {
   return unstable_cache(
     async () => {
-      return db.post.count({ where: whereClause })
+      // FORCE tenantId injection
+      const safeWhere = { ...whereClause, tenantId }
+      return db.post.count({ where: safeWhere })
     },
     ['public-posts-count', tenantId, JSON.stringify(whereClause)],
     { tags: [`tenant-${tenantId}`] }
