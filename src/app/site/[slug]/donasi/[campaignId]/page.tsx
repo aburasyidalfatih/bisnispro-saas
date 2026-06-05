@@ -3,8 +3,8 @@ import { notFound } from "next/navigation"
 import { DonationPublicClient } from "./_components/donation-public-client"
 import { headers } from "next/headers"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 interface Props {
   params: Promise<{ slug: string; campaignId: string }>

@@ -103,34 +103,35 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
     }
 
     if (isTeacher) {
-      if (user && user.aiTokens >= tokensUsed) {
-        await db.user.update({
-          where: { id: userId },
-          data: { aiTokens: { decrement: tokensUsed } }
-        })
-        return { success: true, source: "user" }
-      } else {
-        return { success: false, error: "Token AI pribadi tidak mencukupi" }
-      }
+      const result = await db.user.updateMany({
+        where: { id: userId, aiTokens: { gte: tokensUsed } },
+        data: { aiTokens: { decrement: tokensUsed } }
+      })
+      if (result.count > 0) return { success: true, source: "user" }
+      return { success: false, error: "Token AI pribadi tidak mencukupi" }
     }
 
     // For other roles (ADMIN, SUPERADMIN, etc), use Tenant's tokens
-    if (tenant.aiTokens >= tokensUsed) {
-      await db.tenant.update({
-        where: { id: tenantId },
-        data: { aiTokens: { decrement: tokensUsed } }
-      })
-    } else {
-      const remainingToDeduct = tokensUsed - tenant.aiTokens
-      await db.tenant.update({
-        where: { id: tenantId },
-        data: { 
-          aiTokens: 0,
-          aiAddonTokens: { decrement: remainingToDeduct }
-        }
-      })
-    }
-    return { success: true, source: "tenant" }
+    const success = await db.$transaction(async (tx) => {
+      const t = await tx.tenant.findUnique({ where: { id: tenantId } })
+      if (!t) return false
+      
+      if (t.aiTokens >= tokensUsed) {
+        await tx.tenant.update({ where: { id: tenantId }, data: { aiTokens: { decrement: tokensUsed } } })
+        return true
+      } else if (t.aiTokens + t.aiAddonTokens >= tokensUsed) {
+        const remainingToDeduct = tokensUsed - t.aiTokens
+        await tx.tenant.update({ 
+          where: { id: tenantId }, 
+          data: { aiTokens: 0, aiAddonTokens: { decrement: remainingToDeduct } } 
+        })
+        return true
+      }
+      return false
+    }, { isolationLevel: "Serializable" })
+
+    if (success) return { success: true, source: "tenant" }
+    return { success: false, error: "Token AI tidak mencukupi" }
   } catch (error) {
     return { success: false, error: "Failed to deduct AI token" }
   }

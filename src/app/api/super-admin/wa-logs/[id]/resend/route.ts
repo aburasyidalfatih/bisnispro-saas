@@ -38,7 +38,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
         data: {
           status: "SENT",
           sentAt: new Date(),
-          errorMessage: null
+          error: null
         }
       })
       return NextResponse.json({ message: "Pesan berhasil dikirim ulang!" })
@@ -47,7 +47,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
         where: { id: waLog.id },
         data: {
           status: "FAILED",
-          errorMessage: result.error || "Gagal mengirim pesan"
+          error: result.error || "Gagal mengirim pesan"
         }
       })
       return NextResponse.json({ error: result.error || "Gagal mengirim pesan" }, { status: 500 })

@@ -63,6 +63,8 @@ export async function GET(
     headers: {
       "Content-Type": mimeType,
       "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable",
+      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+      "X-Content-Type-Options": "nosniff"
     },
   })
 }

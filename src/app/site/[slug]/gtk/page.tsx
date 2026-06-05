@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

@@ -441,7 +441,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
           })
 
           const originalAffiliateId = tenant?.affiliateId;
-          const settingsDoc = await tx.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
+          const settingsDoc = await db.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
           const commissionPct = settingsDoc ? parseInt(settingsDoc.value) / 100 : 0.20;
           const originalCommissionAmount = Math.round(payment.amount * commissionPct);
           
@@ -455,7 +455,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
             });
             
             if (discountCode && discountCode.type === "CASHBACK") {
-              cashbackAffiliateId = discountCode.affiliateId || originalAffiliateId;
+              cashbackAffiliateId = discountCode.affiliateId || originalAffiliateId || null;
               
               if (cashbackAffiliateId) {
                 if (!discountCode.linkedTenantId) {

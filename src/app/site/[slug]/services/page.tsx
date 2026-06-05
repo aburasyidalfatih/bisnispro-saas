@@ -5,8 +5,8 @@ import { ArrowRight } from "lucide-react"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 const defaultServices = [
   { title: "Konsultasi", description: "Konsultasi profesional untuk membantu Anda menemukan solusi terbaik sesuai kebutuhan.", icon: "💡" },

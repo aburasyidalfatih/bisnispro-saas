@@ -19,6 +19,13 @@ interface PM2Process {
   uptime: number
 }
 
+interface ServiceStatus {
+  name: string
+  type: string
+  status: "online" | "offline"
+  meta: string
+}
+
 interface SystemMetrics {
   ram: {
     total: number
@@ -44,6 +51,7 @@ interface SystemMetrics {
     uptime: number
   }
   pm2: PM2Process[]
+  services: ServiceStatus[]
   timestamp: number
 }
 
@@ -302,6 +310,41 @@ export function SystemHealth() {
                 proc.status === "online" ? "border-emerald-500/30 text-emerald-600 bg-emerald-500/5" : "border-red-500/30 text-red-600 bg-red-500/5"
               )}>
                 {proc.status.toUpperCase()}
+              </Badge>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Services Dependencies */}
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-4">
+        {metrics.services?.map((svc) => (
+          <Card key={svc.name} className="glass border-0 overflow-hidden">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-xl",
+                  svc.status === "online" ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
+                )}>
+                  {svc.type === "database" ? <HardDrive className="h-5 w-5" /> : 
+                   svc.type === "cache" ? <Server className="h-5 w-5" /> : 
+                   <Activity className="h-5 w-5" />}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-sm">{svc.name}</h3>
+                  </div>
+                  <div className="mt-0.5 text-xs text-muted-foreground flex items-center gap-1">
+                    {svc.status === "online" ? <CheckCircle2 className="h-3 w-3 text-emerald-500" /> : <AlertCircle className="h-3 w-3 text-red-500" />}
+                    <span>{svc.meta}</span>
+                  </div>
+                </div>
+              </div>
+              <Badge variant="outline" className={cn(
+                "rounded-lg text-[10px] px-2 py-0.5",
+                svc.status === "online" ? "border-emerald-500/30 text-emerald-600 bg-emerald-500/5" : "border-red-500/30 text-red-600 bg-red-500/5"
+              )}>
+                {svc.status.toUpperCase()}
               </Badge>
             </CardContent>
           </Card>

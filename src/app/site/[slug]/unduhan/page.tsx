@@ -9,8 +9,8 @@ import { Download, FileText, ExternalLink, Search } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 export default async function UnduhanPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

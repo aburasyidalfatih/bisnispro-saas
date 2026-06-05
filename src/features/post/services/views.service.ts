@@ -8,11 +8,18 @@ const EVENT_VIEWS_PREFIX = "event:views:"
 // Redis Functions
 // ============================================================
 
-export async function incrementPostView(postId: string): Promise<number> {
+export async function incrementPostView(postId: string, ip: string = "unknown"): Promise<number> {
   const redis = getRedis()
   if (!redis) return 0
   
   try {
+    if (ip !== "unknown") {
+      const dedupKey = `rate:view_post:${postId}:${ip}`
+      const isSpam = await redis.setnx(dedupKey, "1")
+      if (isSpam === 0) return await getPostViews(postId)
+      await redis.expire(dedupKey, 86400)
+    }
+
     const key = `${VIEWS_PREFIX}${postId}`
     const views = await redis.incr(key)
     return views
@@ -35,11 +42,18 @@ export async function getPostViews(postId: string): Promise<number> {
   }
 }
 
-export async function incrementEventView(eventId: string): Promise<number> {
+export async function incrementEventView(eventId: string, ip: string = "unknown"): Promise<number> {
   const redis = getRedis()
   if (!redis) return 0
   
   try {
+    if (ip !== "unknown") {
+      const dedupKey = `rate:view_event:${eventId}:${ip}`
+      const isSpam = await redis.setnx(dedupKey, "1")
+      if (isSpam === 0) return await getEventViews(eventId)
+      await redis.expire(dedupKey, 86400)
+    }
+
     const key = `${EVENT_VIEWS_PREFIX}${eventId}`
     const views = await redis.incr(key)
     return views

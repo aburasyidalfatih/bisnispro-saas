@@ -131,11 +131,65 @@ export default async function middleware(request: NextRequest) {
   // Hapus port jika ada untuk memastikan deteksi domain akurat di mode development
   hostname = hostname.split(':')[0]
 
-  // ENTERPRISE RATE LIMITING (DDoS Protection)
-  const ip = (request as any).ip ?? request.headers.get("x-forwarded-for") ?? "127.0.0.1"
+  const ip = request.headers.get("x-forwarded-for") || (request as any).ip || "127.0.0.1"
+
+  // ==========================================
+  // PERSISTENT IP BAN CHECK
+  // ==========================================
+  if (redis) {
+    try {
+      const isBanned = await redis.get(`banned_ip:${ip}`)
+      if (isBanned) {
+        return new NextResponse("Your IP has been permanently banned for violating our security policies.", { status: 403 })
+      }
+    } catch (e) {
+      // Ignore redis errors to prevent taking down the site if redis fails
+    }
+  }
+
+  // ==========================================
+  // DDoS PROTECTION (EDGE RATE LIMIT)
+  // ==========================================
   const { success } = await edgeRateLimit.limit(ip)
   if (!success) {
     return new NextResponse("Too Many Requests. Enterprise DDoS Protection active.", { status: 429 })
+  }
+
+  // ==========================================
+  // WEB APPLICATION FIREWALL (WAF) & IDS
+  // ==========================================
+  const urlParams = request.nextUrl.searchParams.toString().toLowerCase()
+  const decodedPath = decodeURIComponent(pathname).toLowerCase()
+  const payloadString = `${decodedPath}?${urlParams}`
+
+  const sqliPattern = /(\b(union|select|insert|update|delete|drop|alter|truncate)\b)|(--\s)|(\b(or|and)\b\s+\d+=\d+)|(%27)|(\bexec\b)/i
+  const xssPattern = /(<script>)|(javascript:)|(onerror=)|(onload=)|(<iframe)/i
+  const lfiPattern = /(\.\.\/)|(\.\.\\)/i
+
+  let attackType = null
+  if (sqliPattern.test(payloadString)) attackType = "SQLi"
+  else if (xssPattern.test(payloadString)) attackType = "XSS"
+  else if (lfiPattern.test(payloadString)) attackType = "LFI/Path Traversal"
+
+  if (attackType) {
+    const port = process.env.PORT || "3000"
+    const userAgent = request.headers.get("user-agent") || ""
+    fetch(`http://127.0.0.1:${port}/api/internal/security-alert`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-internal-secret": INTERNAL_SECRET,
+      },
+      body: JSON.stringify({
+        ipAddress: ip,
+        path: request.nextUrl.pathname,
+        payload: payloadString,
+        attackType,
+        userAgent,
+      })
+    }).catch(() => {})
+
+    return new NextResponse(`WAF Blocked: Malicious payload detected (${attackType})`, { status: 403 })
   }
   
   let rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"

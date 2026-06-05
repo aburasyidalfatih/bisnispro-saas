@@ -14,6 +14,9 @@ import { toast } from "@/hooks/use-toast"
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 } from "@/components/ui/dialog"
+import { ConfirmPaymentModal } from "./_components/confirm-payment-modal"
+import { CancelPaymentModal } from "./_components/cancel-payment-modal"
+import { RefundPaymentModal } from "./_components/refund-payment-modal"
 
 interface Payment {
   id: string
@@ -39,11 +42,8 @@ export default function PaymentsPage() {
   const [filter, setFilter] = useState<string>("all")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [confirming, setConfirming] = useState<string | null>(null)
   const [confirmTarget, setConfirmTarget] = useState<Payment | null>(null)
-  const [canceling, setCanceling] = useState<string | null>(null)
   const [cancelTarget, setCancelTarget] = useState<Payment | null>(null)
-  const [refunding, setRefunding] = useState<string | null>(null)
   const [refundTarget, setRefundTarget] = useState<Payment | null>(null)
 
   const fetchPayments = useCallback(async () => {
@@ -76,71 +76,7 @@ export default function PaymentsPage() {
 
   const filteredPayments = data.payments || []
 
-  const handleConfirm = async () => {
-    if (!confirmTarget) return
-    setConfirming(confirmTarget.id)
-    try {
-      const res = await fetch("/api/super-admin/payments/confirm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentId: confirmTarget.id }),
-      })
-      const result = await res.json()
-      if (res.ok) {
-        toast({ title: "✅ Berhasil!", description: result.message })
-        setConfirmTarget(null)
-        fetchPayments()
-      } else {
-        toast({ title: "Gagal", description: result.error, variant: "destructive" })
-      }
-    } finally {
-      setConfirming(null)
-    }
-  }
 
-  const handleCancel = async () => {
-    if (!cancelTarget) return
-    setCanceling(cancelTarget.id)
-    try {
-      const res = await fetch("/api/super-admin/payments/cancel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentId: cancelTarget.id }),
-      })
-      const result = await res.json()
-      if (res.ok) {
-        toast({ title: "Dibatalkan", description: result.message })
-        setCancelTarget(null)
-        fetchPayments()
-      } else {
-        toast({ title: "Gagal", description: result.error, variant: "destructive" })
-      }
-    } finally {
-      setCanceling(null)
-    }
-  }
-
-  const handleRefund = async () => {
-    if (!refundTarget) return
-    setRefunding(refundTarget.id)
-    try {
-      const res = await fetch("/api/super-admin/payments/refund", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentId: refundTarget.id }),
-      })
-      const result = await res.json()
-      if (res.ok) {
-        toast({ title: "Refund Berhasil", description: result.message })
-        setRefundTarget(null)
-        fetchPayments()
-      } else {
-        toast({ title: "Gagal", description: result.error, variant: "destructive" })
-      }
-    } finally {
-      setRefunding(null)
-    }
-  }
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
@@ -467,121 +403,27 @@ export default function PaymentsPage() {
         </div>
       )}
 
-      {/* Confirm Dialog */}
-      <Dialog open={!!confirmTarget} onOpenChange={(o) => !o && setConfirmTarget(null)}>
-        <DialogContent className="rounded-3xl max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10">
-                <ShieldCheck className="h-5 w-5 text-emerald-600" />
-              </div>
-              Konfirmasi Pembayaran
-            </DialogTitle>
-            <DialogDescription>
-              Tindakan ini akan mengaktifkan paket berlangganan untuk tenant berikut secara permanen.
-            </DialogDescription>
-          </DialogHeader>
-          {confirmTarget && (
-            <div className="py-2 space-y-3">
-              <div className="rounded-2xl bg-muted/50 border p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tenant</span>
-                  <span className="font-bold">{confirmTarget.tenant.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Nominal</span>
-                  <span className="font-bold text-primary">Rp {confirmTarget.amount.toLocaleString("id-ID")}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Jumlah Siswa</span>
-                  <span className="font-bold">{(confirmTarget.metadata as any)?.studentCount || "—"} siswa</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Masa Aktif</span>
-                  <span className="font-bold">1 Tahun</span>
-                </div>
-              </div>
-              <p className="text-xs text-amber-600 bg-amber-50 rounded-xl p-3 border border-amber-200">
-                ⚠️ Pastikan Anda sudah menerima pembayaran dari tenant sebelum mengkonfirmasi.
-              </p>
-            </div>
-          )}
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setConfirmTarget(null)} disabled={!!confirming} className="rounded-xl">
-              Batal
-            </Button>
-            <Button
-              onClick={handleConfirm}
-              disabled={!!confirming}
-              className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white border-0 gap-2"
-            >
-              {confirming ? (
-                <><div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Memproses...</>
-              ) : (
-                <><ShieldCheck className="h-4 w-4" /> Ya, Konfirmasi & Aktifkan Paket</>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Cancel Dialog */}
-      <Dialog open={!!cancelTarget} onOpenChange={(o) => !o && setCancelTarget(null)}>
-        <DialogContent className="rounded-3xl max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-rose-600">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10">
-                <XCircle className="h-5 w-5" />
-              </div>
-              Tolak Pembayaran
-            </DialogTitle>
-            <DialogDescription>
-              Anda yakin ingin membatalkan transaksi dari <strong>{cancelTarget?.tenant.name}</strong> ini?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-4">
-            <Button variant="ghost" onClick={() => setCancelTarget(null)} disabled={!!canceling} className="rounded-xl">
-              Tutup
-            </Button>
-            <Button
-              onClick={handleCancel}
-              disabled={!!canceling}
-              className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white border-0 gap-2"
-            >
-              {canceling ? "Memproses..." : "Ya, Tolak Transaksi"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Refund Dialog */}
-      <Dialog open={!!refundTarget} onOpenChange={(o) => !o && setRefundTarget(null)}>
-        <DialogContent className="rounded-3xl max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-orange-600">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
-                <AlertCircle className="h-5 w-5" />
-              </div>
-              Refund & Batalkan Langganan
-            </DialogTitle>
-            <DialogDescription>
-              Tindakan ini akan mengembalikan status transaksi menjadi <strong>Refunded</strong>, mengurangi angka omset, dan langsung menurunkan paket <strong>{refundTarget?.tenant.name}</strong> menjadi FREE.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-4">
-            <Button variant="ghost" onClick={() => setRefundTarget(null)} disabled={!!refunding} className="rounded-xl">
-              Batal
-            </Button>
-            <Button
-              onClick={handleRefund}
-              disabled={!!refunding}
-              className="rounded-xl bg-orange-600 hover:bg-orange-700 text-white border-0 gap-2"
-            >
-              {refunding ? "Memproses..." : "Ya, Refund Sekarang"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Modals */}
+      <ConfirmPaymentModal 
+        open={!!confirmTarget} 
+        onOpenChange={(o) => !o && setConfirmTarget(null)} 
+        payment={confirmTarget} 
+        onSuccess={fetchPayments} 
+      />
+      
+      <CancelPaymentModal 
+        open={!!cancelTarget} 
+        onOpenChange={(o) => !o && setCancelTarget(null)} 
+        payment={cancelTarget} 
+        onSuccess={fetchPayments} 
+      />
+      
+      <RefundPaymentModal 
+        open={!!refundTarget} 
+        onOpenChange={(o) => !o && setRefundTarget(null)} 
+        payment={refundTarget} 
+        onSuccess={fetchPayments} 
+      />
     </div>
   )
 }

@@ -57,6 +57,43 @@ export async function GET() {
       logger.error("Disk fetch failed", e)
     }
 
+    // Service Dependencies Check
+    const services: any[] = [
+      { name: "PostgreSQL Database", type: "database", status: "offline", meta: "" },
+      { name: "Edge Cache (Redis)", type: "cache", status: "offline", meta: "" },
+      { name: "WA Queue Worker", type: "worker", status: "offline", meta: "" }
+    ]
+
+    // 1. Check DB
+    try {
+      await import("@/lib/db").then(m => m.db.$queryRaw`SELECT 1`)
+      services[0].status = "online"
+      services[0].meta = "Koneksi stabil"
+    } catch {
+      services[0].status = "offline"
+      services[0].meta = "Koneksi terputus"
+    }
+
+    // 2. Check Redis
+    try {
+      const redisClient = await getRedisClient()
+      await redisClient.get("health_check")
+      services[1].status = "online"
+      services[1].meta = "Latensi rendah"
+    } catch {
+      services[1].status = "offline"
+      services[1].meta = "Tidak merespon"
+    }
+
+    // 3. Check WA Worker
+    try {
+      const pendingCount = await import("@/lib/db").then(m => m.db.waQueueLog.count({ where: { status: "PENDING" }}))
+      services[2].status = "online"
+      services[2].meta = `${pendingCount} antrean tertunda`
+    } catch {
+      services[2].status = "offline"
+    }
+
     return NextResponse.json({
       ram: {
         total: totalMem,
@@ -77,6 +114,7 @@ export async function GET() {
         uptime: os.uptime(),
       },
       pm2: pm2Stats,
+      services,
       timestamp: Date.now(),
     })
   } catch (error) {

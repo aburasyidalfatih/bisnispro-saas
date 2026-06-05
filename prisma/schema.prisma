@@ -2037,3 +2037,30 @@ model AdBudget {
   @@index([year])
   @@map("ad_budgets")
 }
+
+model SecurityLog {
+  id          String   @id @default(cuid())
+  ipAddress   String
+  path        String
+  payload     String?  @db.Text
+  attackType  String   // "SQLi", "XSS", "LFI", dll
+  severity    String   @default("HIGH") // "HIGH", "CRITICAL"
+  userAgent   String?  @db.Text
+  tenantId    String?
+  createdAt   DateTime @default(now())
+
+  @@index([ipAddress])
+  @@index([attackType])
+  @@index([createdAt])
+  @@map("security_logs")
+}
+
+model BannedIp {
+  id          String   @id @default(cuid())
+  ipAddress   String   @unique
+  reason      String
+  createdAt   DateTime @default(now())
+
+  @@index([ipAddress])
+  @@map("banned_ips")
+}

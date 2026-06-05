@@ -31,8 +31,8 @@ import Image from "next/image"
 import { ReadingProgress } from "@/app/site/[slug]/berita/[id]/_components/reading-progress"
 import { ShareButtons } from "@/app/site/[slug]/berita/[id]/_components/share-buttons"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 
 

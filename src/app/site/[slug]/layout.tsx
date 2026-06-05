@@ -15,7 +15,7 @@ import { FloatingWhatsApp } from "./_components/floating-whatsapp"
 import Script from "next/script"
 import { Suspense } from "react"
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

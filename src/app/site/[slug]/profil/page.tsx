@@ -13,8 +13,8 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 import DOMPurify from "isomorphic-dompurify"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

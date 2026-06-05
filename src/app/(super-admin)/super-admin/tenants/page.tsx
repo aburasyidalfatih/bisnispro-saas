@@ -21,6 +21,8 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { ServerPagination } from "@/components/shared/server-pagination"
 import { cn, getRootDomain } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
+import { EditTenantModal } from "./_components/edit-tenant-modal"
+import { ResetPasswordModal } from "./_components/reset-password-modal"
 
 interface TenantRow {
   id: string
@@ -58,21 +60,10 @@ export default function TenantsPage() {
   // Edit Modal State
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [editingTenant, setEditingApp] = useState<TenantRow | null>(null)
-  const [editForm, setEditForm] = useState({
-    name: "",
-    slug: "",
-    domain: "",
-    plan: "free",
-    studentQuota: 0,
-    aiTokens: 0,
-    isActive: true
-  })
 
   // Reset Password State
   const [resetModalOpen, setResetModalOpen] = useState(false)
   const [resetTenant, setResetTenant] = useState<TenantRow | null>(null)
-  const [newPassword, setNewPassword] = useState("")
-  const [reseting, setReseting] = useState(false)
 
   const [rootDomain, setRootDomain] = useState("")
 
@@ -120,51 +111,7 @@ export default function TenantsPage() {
 
   const handleEdit = (tenant: TenantRow) => {
     setEditingApp(tenant)
-    setEditForm({
-      name: tenant.name,
-      slug: tenant.slug,
-      domain: tenant.domain || "",
-      plan: tenant.plan,
-      studentQuota: tenant.studentQuota || 0,
-      aiTokens: tenant.aiTokens || 0,
-      isActive: tenant.isActive
-    })
     setEditModalOpen(true)
-  }
-
-  const handleUpdate = async () => {
-    if (!editingTenant) return
-    const res = await fetch("/api/super-admin/tenants", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: editingTenant.id, ...editForm }),
-    })
-    if (res.ok) {
-      toast({ title: "Berhasil", description: "Data tenant berhasil diperbarui." })
-      setEditModalOpen(false)
-      fetchTenants()
-    } else {
-      const data = await res.json()
-      toast({ title: "Gagal", description: data.error || "Gagal mengupdate tenant", variant: "destructive" })
-    }
-  }
-
-  const handleResetPassword = async () => {
-    if (!resetTenant || !newPassword) return
-    setReseting(true)
-    const res = await fetch("/api/super-admin/tenants/reset-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tenantId: resetTenant.id, newPassword }),
-    })
-    setReseting(false)
-    if (res.ok) {
-      toast({ title: "Berhasil", description: "Password owner tenant telah direset." })
-      setResetModalOpen(false)
-      setNewPassword("")
-    } else {
-      toast({ title: "Gagal", description: "Gagal mereset password.", variant: "destructive" })
-    }
   }
 
   const handleDelete = async (id: string, name: string) => {
@@ -508,105 +455,20 @@ export default function TenantsPage() {
         )}
       </Card>
 
-      {/* Edit Tenant Modal */}
-      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent className="rounded-3xl max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit Data Tenant</DialogTitle>
-            <DialogDescription>Perbarui informasi institusi dan lisensi.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Nama Sekolah</Label>
-              <Input value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} className="rounded-xl" />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label>Subdomain (Slug)</Label>
-                <Input value={editForm.slug} onChange={(e) => setEditForm({...editForm, slug: e.target.value})} className="rounded-xl font-mono text-xs" />
-              </div>
-              <div className="space-y-2">
-                <Label>Custom Domain</Label>
-                <Input value={editForm.domain} onChange={(e) => setEditForm({...editForm, domain: e.target.value})} placeholder="myschool.sch.id" className="rounded-xl font-mono text-xs" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label>Paket (Plan)</Label>
-                <select 
-                  value={editForm.plan} 
-                  onChange={(e) => setEditForm({...editForm, plan: e.target.value})}
-                  className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm"
-                >
-                  <option value="free">FREE</option>
-                  <option value="lite">LITE</option>
-                  <option value="pro">PRO</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label>Kuota Siswa</Label>
-                <Input type="number" value={editForm.studentQuota} onChange={(e) => setEditForm({...editForm, studentQuota: Number(e.target.value)})} className="rounded-xl" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Kuota Token AI</Label>
-              <Input type="number" value={editForm.aiTokens} onChange={(e) => setEditForm({...editForm, aiTokens: Number(e.target.value)})} className="rounded-xl" />
-              <p className="text-[10px] text-muted-foreground">Isi manual untuk memberikan kuota token AI gratis/bonus (misal: 1000).</p>
-            </div>
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border">
-              <div className="space-y-0.5">
-                <Label>Status Aktif</Label>
-                <p className="text-[10px] text-muted-foreground">Matikan jika tenant menunggak atau suspend.</p>
-              </div>
-              <button 
-                onClick={() => setEditForm({...editForm, isActive: !editForm.isActive})}
-                className={cn(
-                  "w-12 h-6 rounded-full transition-all relative",
-                  editForm.isActive ? "bg-primary" : "bg-muted"
-                )}
-              >
-                <div className={cn("absolute top-1 w-4 h-4 bg-white rounded-full transition-all", editForm.isActive ? "right-1" : "left-1")} />
-              </button>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setEditModalOpen(false)} className="rounded-xl">Batal</Button>
-            <Button onClick={handleUpdate} className="rounded-xl btn-gradient text-white border-0 px-8">Simpan Perubahan</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Reset Password Modal */}
-      <Dialog open={resetModalOpen} onOpenChange={setResetModalOpen}>
-        <DialogContent className="rounded-3xl max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Reset Password Owner</DialogTitle>
-            <DialogDescription>Reset password untuk {resetTenant?.owner?.email}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Password Baru</Label>
-              <Input 
-                type="password" 
-                value={newPassword} 
-                onChange={(e) => setNewPassword(e.target.value)} 
-                placeholder="Minimal 8 karakter"
-                className="rounded-xl" 
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setResetModalOpen(false)} className="rounded-xl" disabled={reseting}>Batal</Button>
-            <Button 
-              onClick={handleResetPassword} 
-              className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-0"
-              disabled={reseting || !newPassword}
-            >
-              {reseting ? "Memproses..." : "Reset Sekarang"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Modals */}
+      <EditTenantModal 
+        open={editModalOpen} 
+        onOpenChange={setEditModalOpen} 
+        tenant={editingTenant} 
+        onSuccess={fetchTenants} 
+      />
+      
+      <ResetPasswordModal 
+        open={resetModalOpen} 
+        onOpenChange={setResetModalOpen} 
+        tenant={resetTenant} 
+        onSuccess={fetchTenants} 
+      />
     </div>
   )
 }

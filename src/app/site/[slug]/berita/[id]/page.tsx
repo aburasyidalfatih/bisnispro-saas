@@ -15,8 +15,8 @@ import { PostViewCounter } from "./_components/view-counter"
 import { getPostViews } from "@/features/post/services/views.service"
 import { getShareCount } from "@/features/post/services/share.service"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 
 

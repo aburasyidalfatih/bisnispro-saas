@@ -17,7 +17,7 @@ const SHARE_POINTS: Record<string, number> = {
 // ============================================================
 // Track share ke Redis (INCR total + ZINCRBY leaderboard)
 // ============================================================
-export async function trackShare(postId: string, tenantId: string, platform: string): Promise<{ success: boolean, totalShares: number }> {
+export async function trackShare(postId: string, tenantId: string, platform: string, ip: string = "unknown"): Promise<{ success: boolean, totalShares: number }> {
   const redis = getRedis()
   const points = SHARE_POINTS[platform] || 2
 
@@ -25,6 +25,26 @@ export async function trackShare(postId: string, tenantId: string, platform: str
     let totalShares = 0
 
     if (redis) {
+      if (ip !== "unknown") {
+        const dedupKey = `rate:share:${postId}:${ip}`
+        const isSpam = await redis.setnx(dedupKey, "1")
+        if (isSpam === 0) {
+          const count = await redis.get(`${SHARE_PREFIX}${postId}`)
+          return { success: false, totalShares: count ? parseInt(count, 10) : 0 }
+        }
+        await redis.expire(dedupKey, 86400)
+
+        const tenantKey = `rate:share_tenant:${tenantId}`
+        const currentPoints = await redis.incrby(tenantKey, points)
+        if (currentPoints === points) await redis.expire(tenantKey, 86400)
+        
+        if (currentPoints > 100) {
+           totalShares = await redis.incr(`${SHARE_PREFIX}${postId}`)
+           await redis.hincrby(`${SHARE_DETAIL_PREFIX}${postId}`, platform, 1)
+           return { success: true, totalShares }
+        }
+      }
+
       // 1. Increment total share count
       totalShares = await redis.incr(`${SHARE_PREFIX}${postId}`)
 

@@ -6,8 +6,8 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 export default async function AlumniPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

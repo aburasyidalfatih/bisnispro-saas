@@ -18,8 +18,8 @@ import { EventViewCounter } from "./_components/view-counter"
 import { getEventViews } from "@/features/post/services/views.service"
 import DOMPurify from "isomorphic-dompurify"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 
 

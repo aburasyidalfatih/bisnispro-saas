@@ -73,7 +73,7 @@ export async function processWaQueueCron() {
         where: { id: msg.id },
         data: {
           status: "FAILED",
-          errorMessage: "Mesin pengirim terputus di tengah proses (server restart/mati). Silakan klik tombol Kirim Ulang."
+          error: "Mesin pengirim terputus di tengah proses (server restart/mati). Silakan klik tombol Kirim Ulang."
         }
       })
       failedCount++

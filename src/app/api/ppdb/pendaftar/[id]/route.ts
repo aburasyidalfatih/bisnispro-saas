@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/logger";
+import { requireTenantMembership } from "@/lib/api-utils";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -30,6 +31,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     if (!applicant) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+
+    const { error: tenantError } = await requireTenantMembership(applicant.tenantId);
+    if (tenantError) return tenantError;
 
     // SELF HEALING: Jika status DITERIMA tapi belum ada tagihan DAFTAR_ULANG, buatkan otomatis
     if (applicant.status === "DITERIMA") {
@@ -83,6 +87,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const { id } = await params;
     const body = await req.json();
     const { status, dataFormulir, dataOrangtua } = body;
+
+    const applicant = await db.pendaftarPpdb.findUnique({ where: { id } });
+    if (!applicant) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const { error: tenantError } = await requireTenantMembership(applicant.tenantId);
+    if (tenantError) return tenantError;
 
     const result = await db.$transaction(async (tx) => {
       // Update status pendaftar
@@ -152,6 +161,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     if (!pendaftar) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+
+    const { error: tenantError } = await requireTenantMembership(pendaftar.tenantId);
+    if (tenantError) return tenantError;
 
     await db.pendaftarPpdb.delete({
       where: { id }

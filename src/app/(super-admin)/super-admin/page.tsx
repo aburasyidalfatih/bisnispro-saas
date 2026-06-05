@@ -7,6 +7,7 @@ import Link from "next/link"
 import { SystemHealth } from "./_components/SystemHealth"
 import { TenantMap } from "./_components/TenantMap"
 import { TenantLeaderboard } from "./_components/TenantLeaderboard"
+import { SecurityLogs } from "./_components/SecurityLogs"
 
 interface Stats {
   tenantCount: number
@@ -75,6 +76,8 @@ export default function SuperAdminDashboard() {
       </div>
 
       <SystemHealth />
+      
+      <SecurityLogs />
     </div>
   )
 }

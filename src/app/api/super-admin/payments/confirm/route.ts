@@ -121,7 +121,7 @@ export async function POST(req: Request) {
 
       // 3. Berikan Komisi ke Afiliasi (20%) jika tenant mendaftar via referal
       if (payment.tenant.affiliateId) {
-        const settingsDoc = await tx.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
+        const settingsDoc = await db.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
         const commissionPct = settingsDoc ? parseInt(settingsDoc.value) / 100 : 0.20;
         const commissionAmount = payment.amount * commissionPct
         transactionOperations.push(
@@ -160,7 +160,7 @@ export async function POST(req: Request) {
         db.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } }).then(settingsDoc => {
           const commissionPct = settingsDoc ? parseInt(settingsDoc.value) / 100 : 0.20;
           const commissionAmount = payment.amount * commissionPct;
-          notifyAffiliateCommission(payment.tenant.affiliateId, commissionAmount, payment.tenant.name).catch(() => {})
+          notifyAffiliateCommission(payment.tenant.affiliateId as string, commissionAmount, payment.tenant.name).catch(() => {})
         })
       })
       }

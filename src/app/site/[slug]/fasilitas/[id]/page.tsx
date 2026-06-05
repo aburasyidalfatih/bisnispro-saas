@@ -9,8 +9,8 @@ import { ArrowLeft, Building2, Users, CheckCircle, Tag } from "lucide-react"
 import { db } from "@/lib/db"
 import DOMPurify from "isomorphic-dompurify"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 
 

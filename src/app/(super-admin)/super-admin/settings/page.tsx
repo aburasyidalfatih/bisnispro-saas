@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Import Components
 import { GeneralTab } from "./_components/general-tab"
 import { EmailTab } from "./_components/email-tab"
-import { WhatsappTab } from "./_components/whatsapp-tab"
+import { WhatsappTab } from "./_components/whatsapp"
 import { PaymentTab } from "./_components/payment-tab"
 import { StorageTab } from "./_components/storage-tab"
 import { GoogleTab } from "./_components/google-tab"

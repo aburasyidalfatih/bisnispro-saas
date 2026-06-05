@@ -23,7 +23,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const parsed = checkOutSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
 
-  const { error } = await requireTenantMembership(parsed.data.tenantId)
+  const oldRecord = await db.staffAttendance.findUnique({ where: { id } })
+  if (!oldRecord) return NextResponse.json({ error: "Not found" }, { status: 404 })
+
+  const { error } = await requireTenantMembership(oldRecord.tenantId)
   if (error) return error
 
   const record = await db.staffAttendance.update({

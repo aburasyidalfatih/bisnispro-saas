@@ -42,8 +42,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params
   const body = await req.json()
   const { tenantId, ...data } = body
-  if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  const { error } = await requireTenantMembership(tenantId)
+
+  const record = await db.classroom.findUnique({ where: { id } })
+  if (!record) return NextResponse.json({ error: "Not Found" }, { status: 404 })
+  const { error } = await requireTenantMembership(record.tenantId)
   if (error) return error
 
   const classroom = await db.classroom.update({ where: { id }, data })
@@ -52,14 +54,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const url = new URL(req.url)
-  const tenantId = url.searchParams.get("tenantId")
-  if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  const { error } = await requireTenantMembership(tenantId)
+
+  const record = await db.classroom.findUnique({ where: { id } })
+  if (!record) return NextResponse.json({ error: "Not Found" }, { status: 404 })
+  const { error } = await requireTenantMembership(record.tenantId)
   if (error) return error
 
   // Pindahkan siswa ke tanpa kelas sebelum hapus
-  await db.student.updateMany({ where: { classroomId: id }, data: { classroomId: null } })
+  await db.student.updateMany({ where: { classroomId: id, tenantId: record.tenantId }, data: { classroomId: null } })
   await db.classroom.delete({ where: { id } })
   return NextResponse.json({ message: "Kelas dihapus" })
 }

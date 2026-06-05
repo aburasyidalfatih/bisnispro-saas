@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/logger";
+import { requireTenantMembership } from "@/lib/api-utils";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -14,7 +15,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     const tagihan = await db.tagihanPpdb.findUnique({
       where: { id },
+      include: { pendaftar: true }
     });
+
+    if (!tagihan) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    const { error: tenantError } = await requireTenantMembership(tagihan.pendaftar.tenantId);
+    if (tenantError) return tenantError;
 
     return NextResponse.json(tagihan);
   } catch (error) {
@@ -33,9 +42,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const body = await req.json();
     const { status, pembayaranId, pembayaranStatus } = body;
 
+    const tagihan = await db.tagihanPpdb.findUnique({
+      where: { id },
+      include: { pendaftar: true }
+    });
+    if (!tagihan) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const { error: tenantError } = await requireTenantMembership(tagihan.pendaftar.tenantId);
+    if (tenantError) return tenantError;
+
     const result = await db.$transaction(async (tx) => {
       // Update Tagihan
-      const tagihan = await tx.tagihanPpdb.update({
+      const updatedTagihan = await tx.tagihanPpdb.update({
         where: { id },
         data: { status }
       });
@@ -48,7 +65,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         });
       }
 
-      return tagihan;
+      return updatedTagihan;
     });
 
     return NextResponse.json(result);

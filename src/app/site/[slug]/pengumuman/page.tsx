@@ -9,8 +9,8 @@ import { id } from "date-fns/locale"
 import { getPublicPosts, countPublicPosts } from "@/features/tenant/services/tenant-public-queries.service"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
 
 
 

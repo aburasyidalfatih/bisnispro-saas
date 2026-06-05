@@ -72,75 +72,84 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: e.message }, { status: 403 })
   }
 
-  const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
-  if (tenant) {
-    let effectiveQuota = tenant.studentQuota || 0
-    
-    // Auto-heal fallback for existing free tenants that might have 0 quota saved in DB
-    if (tenant.plan === "free" && effectiveQuota === 0) {
-      const freePlan = await db.subscriptionPlan.findUnique({ where: { slug: "free" } })
-      effectiveQuota = freePlan?.maxStudents || 1
-    }
-
-    const studentCount = await db.student.count({ where: { tenantId } })
-    if (studentCount >= effectiveQuota) {
-      return NextResponse.json({ 
-        error: `Kuota siswa Anda sudah penuh (maksimal ${effectiveQuota} siswa). Silakan upgrade paket untuk menambah kuota.` 
-      }, { status: 403 })
-    }
-  }
-
   try {
-    let userId: string | undefined = undefined
-
+    let hashedPassword = undefined
     if (email && password) {
       email = email.toLowerCase()
       const bcrypt = await import("bcryptjs")
-      let user = await db.user.findUnique({ where: { email } })
-      
-      if (user) {
-        const existingTu = await db.tenantUser.findUnique({
-          where: { tenantId_userId: { tenantId, userId: user.id } },
-        })
-        if (existingTu && existingTu.role !== "siswa") {
-          const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
-          const existingRoleLabel = roleMap[existingTu.role] || existingTu.role
-          return NextResponse.json({ error: `Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat akun Siswa.` }, { status: 400 })
-        }
-        if (!existingTu) {
-          await db.tenantUser.create({ data: { tenantId, userId: user.id, role: "siswa" } })
-        }
-        if (!(user as any).isSuperAdmin) {
-          const hashedPassword = await bcrypt.hash(password, 12)
-          await db.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
-        }
-        userId = user.id
-      } else {
-        const hashedPassword = await bcrypt.hash(password, 12)
-        const newUser = await db.user.create({
-          data: { name, email, phone, password: hashedPassword },
-        })
-        await db.tenantUser.create({
-          data: { tenantId, userId: newUser.id, role: "siswa" },
-        })
-        userId = newUser.id
-      }
+      hashedPassword = await bcrypt.hash(password, 12)
     }
 
-    const student = await db.student.create({
-      data: {
-        tenantId, name, nis: nis || undefined, nisn: nisn || undefined,
-        gender, birthPlace, birthDate: birthDate ? new Date(birthDate) : undefined,
-        address, phone, email: email || undefined,
-        fatherName, motherName, guardianName,
-        classroomId: classroomId || undefined,
-        userId,
-      },
-    })
+    const student = await db.$transaction(async (tx) => {
+      // Pengecekan kuota secara transaksional
+      const tenant = await tx.tenant.findUnique({ where: { id: tenantId } })
+      let effectiveQuota = tenant?.studentQuota || 0
+      
+      if (tenant?.plan === "free" && effectiveQuota === 0) {
+        const freePlan = await tx.subscriptionPlan.findUnique({ where: { slug: "free" } })
+        effectiveQuota = freePlan?.maxStudents || 1
+      }
+
+      const studentCount = await tx.student.count({ where: { tenantId } })
+      if (studentCount >= effectiveQuota) {
+        throw new Error(`QUOTA_EXCEEDED:${effectiveQuota}`)
+      }
+
+      let finalUserId: string | undefined = undefined
+
+      if (email && password) {
+        let user = await tx.user.findUnique({ where: { email } })
+        
+        if (user) {
+          const existingTu = await tx.tenantUser.findUnique({
+            where: { tenantId_userId: { tenantId, userId: user.id } },
+          })
+          if (existingTu && existingTu.role !== "siswa") {
+            throw new Error(`ROLE_CONFLICT:${existingTu.role}`)
+          }
+          if (!existingTu) {
+            await tx.tenantUser.create({ data: { tenantId, userId: user.id, role: "siswa" } })
+          }
+          if (!(user as any).isSuperAdmin) {
+            await tx.user.update({ where: { id: user.id }, data: { password: hashedPassword as string } })
+          }
+          finalUserId = user.id
+        } else {
+          const newUser = await tx.user.create({
+            data: { name, email, phone, password: hashedPassword as string },
+          })
+          await tx.tenantUser.create({
+            data: { tenantId, userId: newUser.id, role: "siswa" },
+          })
+          finalUserId = newUser.id
+        }
+      }
+
+      return await tx.student.create({
+        data: {
+          tenantId, name, nis: nis || undefined, nisn: nisn || undefined,
+          gender, birthPlace, birthDate: birthDate ? new Date(birthDate) : undefined,
+          address, phone, email: email || undefined,
+          fatherName, motherName, guardianName,
+          classroomId: classroomId || undefined,
+          userId: finalUserId,
+        },
+      })
+    }, { isolationLevel: "Serializable" })
 
     return NextResponse.json(student, { status: 201 })
   } catch (error: any) {
     console.error("Error creating student:", error)
+    if (error.message?.startsWith("QUOTA_EXCEEDED")) {
+      const quota = error.message.split(":")[1]
+      return NextResponse.json({ error: `Kuota siswa Anda sudah penuh (maksimal ${quota} siswa). Silakan upgrade paket untuk menambah kuota.` }, { status: 403 })
+    }
+    if (error.message?.startsWith("ROLE_CONFLICT")) {
+      const existingRole = error.message.split(":")[1]
+      const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+      const existingRoleLabel = roleMap[existingRole] || existingRole
+      return NextResponse.json({ error: `Email ini sudah terdaftar sebagai ${existingRoleLabel}. Silakan gunakan email lain untuk membuat akun Siswa.` }, { status: 400 })
+    }
     if (error.code === 'P2002') {
       const target = error.meta?.target as string[]
       if (target?.includes('nis')) {

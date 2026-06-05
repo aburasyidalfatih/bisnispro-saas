@@ -34,6 +34,7 @@ interface DiscountCode {
   usedCount: number
   expiresAt: string | null
   createdAt: string
+  affiliateEmail?: string
 }
 
 export default function DiscountsPage() {
@@ -110,7 +111,7 @@ export default function DiscountsPage() {
   }
 
   const handleSave = async () => {
-    if (editingDiscount.type === "CASHBACK") {
+    if (editingDiscount?.type === "CASHBACK") {
       if (!editingDiscount?.affiliateEmail?.trim()) {
         toast({ title: "Validasi", description: "Email Mitra Afiliasi wajib diisi untuk kupon Cashback.", variant: "destructive" })
         return
@@ -128,9 +129,9 @@ export default function DiscountsPage() {
       const url = isEdit ? `/api/super-admin/discounts/${editingDiscount.id}` : "/api/super-admin/discounts"
       const method = isEdit ? "PUT" : "POST"
 
-      let payload = {
+      let payload: any = {
         ...editingDiscount,
-        code: editingDiscount.code ? editingDiscount.code.toUpperCase().replace(/\s+/g, '') : ""
+        code: editingDiscount?.code ? editingDiscount.code.toUpperCase().replace(/\s+/g, '') : ""
       }
 
       if (payload.type === "CASHBACK") {
