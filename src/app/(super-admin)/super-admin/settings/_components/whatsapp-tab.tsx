@@ -191,7 +191,7 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Delay Minimum (Detik)</Label>
+                  <Label>Delay Minimum (Menit)</Label>
                   <Input 
                     type="number" 
                     value={form.STARSENDER_DELAY_MIN} 
@@ -201,7 +201,7 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Delay Maksimum (Detik)</Label>
+                  <Label>Delay Maksimum (Menit)</Label>
                   <Input 
                     type="number" 
                     value={form.STARSENDER_DELAY_MAX} 
@@ -212,7 +212,7 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
                 </div>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Penundaan waktu (jeda) acak sebelum pesan terkirim. Membantu menghindari blokir WhatsApp karena terdeteksi mengirim pesan terlalu cepat.
+                Penundaan waktu (jeda) acak dalam satuan <strong>Menit</strong> sebelum pesan terkirim. Membantu menghindari blokir WhatsApp karena terdeteksi mengirim pesan terlalu cepat.
               </p>
 
               <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID', 'STARSENDER_DELAY_MIN', 'STARSENDER_DELAY_MAX'])} disabled={saving}>

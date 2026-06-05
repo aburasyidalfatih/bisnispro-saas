@@ -152,8 +152,9 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
     metaToken: map.META_WA_ACCESS_TOKEN,
     wavioApiKey: map.WAVIO_API_KEY,
     wavioNumberId: map.WAVIO_NUMBER_ID,
-    delayMin: Math.min(Number(map.WA_DELAY_MIN) || Number(map.STARSENDER_DELAY_MIN) || 3, 60),
-    delayMax: Math.min(Number(map.WA_DELAY_MAX) || Number(map.STARSENDER_DELAY_MAX) || 8, 60),
+    // Batasi delay maksimal 60 menit agar tidak hang jika admin salah isi angka ribuan
+    delayMin: Math.min(Number(map.WA_DELAY_MIN) || Number(map.STARSENDER_DELAY_MIN) || 1, 60),
+    delayMax: Math.min(Number(map.WA_DELAY_MAX) || Number(map.STARSENDER_DELAY_MAX) || 3, 60),
   }
 }
 
@@ -212,11 +213,12 @@ export async function sendWhatsAppDirect(
         const config = await getWaConfig(tenantId || undefined)
 
         // Implement random delay for ALL providers
-        const safeMin = config.delayMin && config.delayMin > 0 ? config.delayMin : 3;
-        const safeMax = config.delayMax && config.delayMax > 0 ? config.delayMax : 8;
+        const safeMin = config.delayMin && config.delayMin > 0 ? config.delayMin : 1;
+        const safeMax = config.delayMax && config.delayMax > 0 ? config.delayMax : 3;
         
-        const minMs = safeMin * 1000;
-        const maxMs = Math.max(minMs, safeMax * 1000);
+        // Konversi dari Menit ke Milidetik (1 menit = 60000 ms)
+        const minMs = safeMin * 60000;
+        const maxMs = Math.max(minMs, safeMax * 60000);
         
         const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
         if (delay > 0) {
