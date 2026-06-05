@@ -206,7 +206,8 @@ export async function sendWhatsAppDirect(
   phone: string,
   message: string,
   tenantId?: string | null,
-  templateData?: TemplateData
+  templateData?: TemplateData,
+  skipDelay?: boolean
 ): Promise<{ success: boolean; error?: string }> {
   
   try {
@@ -221,7 +222,7 @@ export async function sendWhatsAppDirect(
         const maxMs = Math.max(minMs, safeMax * 60000);
         
         const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-        if (delay > 0) {
+        if (delay > 0 && !skipDelay) {
           await new Promise(r => setTimeout(r, delay));
         }
 

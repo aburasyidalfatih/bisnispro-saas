@@ -65,25 +65,24 @@ export async function processWaQueueCron() {
 
   logger.info(`WA Queue Cron: Processing ${pendingMessages.length} stuck messages`)
 
-  let enqueued = 0
+  let failedCount = 0
 
   for (const msg of pendingMessages) {
     try {
-      // Tambahkan ke keranjang BullMQ dengan jobId unik
-      // Kita tambahkan timestamp di jobId agar jika job sebelumnya FAILED/STALLED (karena server restart),
-      // cron ini tetap bisa memasukkannya kembali ke antrean sebagai job baru.
-      await waQueue.add(
-        "send-wa",
-        { tenantId: msg.tenantId || null, number: msg.targetNumber, message: msg.message, waQueueLogId: msg.id },
-        { jobId: `${msg.id}-${Date.now()}` }
-      )
-      enqueued++
+      await db.waQueueLog.update({
+        where: { id: msg.id },
+        data: {
+          status: "FAILED",
+          errorMessage: "Mesin pengirim terputus di tengah proses (server restart/mati). Silakan klik tombol Kirim Ulang."
+        }
+      })
+      failedCount++
     } catch (err: any) {
-      logger.error(`WA Cron: Failed to enqueue log ${msg.id}`, err)
+      logger.error(`WA Cron: Failed to update log status to FAILED ${msg.id}`, err)
     }
   }
 
-  logger.info(`WA Queue Cron: Done. Enqueued=${enqueued}`)
+  logger.info(`WA Queue Cron: Done. Marked as FAILED=${failedCount}`)
 
   // Cleanup logs older than 3 days
   const threeDaysAgo = new Date()
@@ -92,5 +91,5 @@ export async function processWaQueueCron() {
     where: { createdAt: { lt: threeDaysAgo } }
   })
   
-  return { processed: pendingMessages.length, enqueued, cleanedUp: cleanupRes.count }
+  return { processed: pendingMessages.length, failedCount, cleanedUp: cleanupRes.count }
 }

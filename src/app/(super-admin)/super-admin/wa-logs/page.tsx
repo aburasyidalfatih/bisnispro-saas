@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ServerPagination } from "@/components/shared/server-pagination"
-import { Megaphone, Search, Building2, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
+import { Megaphone, Search, Building2, Clock, CheckCircle2, AlertCircle, Loader2, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { toast } from "@/hooks/use-toast"
 
 interface WaQueueLog {
   id: string
@@ -36,6 +38,7 @@ export default function WaQueueLogsPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [resendingId, setResendingId] = useState<string | null>(null)
   const limit = 20
 
   const fetchLogs = useCallback(() => {
@@ -61,6 +64,26 @@ export default function WaQueueLogsPage() {
     return () => clearInterval(interval)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search])
+
+  const handleResend = async (id: string) => {
+    setResendingId(id)
+    try {
+      const res = await fetch(`/api/super-admin/wa-logs/${id}/resend`, {
+        method: "POST"
+      })
+      const data = await res.json()
+      if (res.ok) {
+        toast({ title: "✅ Berhasil", description: data.message })
+        fetchLogs()
+      } else {
+        throw new Error(data.error)
+      }
+    } catch (e: any) {
+      toast({ title: "❌ Gagal", description: e.message, variant: "destructive" })
+    } finally {
+      setResendingId(null)
+    }
+  }
 
   const totalPages = Math.ceil(total / limit)
 
@@ -141,6 +164,20 @@ export default function WaQueueLogsPage() {
                     )}
                   </div>
                 </div>
+                {log.status === "FAILED" && (
+                  <div className="flex-shrink-0 mt-2 sm:mt-0">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-2 rounded-xl text-xs" 
+                      onClick={() => handleResend(log.id)}
+                      disabled={resendingId === log.id}
+                    >
+                      {resendingId === log.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
+                      Kirim Ulang
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
