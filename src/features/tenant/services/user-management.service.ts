@@ -17,6 +17,19 @@ export async function listTenantUsers(tenantId: string, role?: string | null) {
     orderBy: { user: { createdAt: "desc" } },
   })
 
+  // Fetch staff records if role is guru or fetching all
+  let staffMap = new Map<string, string>()
+  if (!role || role === "guru") {
+    const userIds = data.map((tu) => tu.user.id)
+    const staffRecords = await tenantDb.staff.findMany({
+      where: { tenantId, userId: { in: userIds } },
+      select: { id: true, userId: true }
+    })
+    staffRecords.forEach(s => {
+      if (s.userId) staffMap.set(s.userId, s.id)
+    })
+  }
+
   return data.map((tu) => ({
     id: tu.user.id,
     tenantUserId: tu.id,
@@ -26,6 +39,7 @@ export async function listTenantUsers(tenantId: string, role?: string | null) {
     role: tu.role,
     isActive: tu.user.isActive,
     createdAt: tu.user.createdAt,
+    staffId: staffMap.get(tu.user.id) || null,
   }))
 }
 

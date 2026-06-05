@@ -31,6 +31,7 @@ interface UserRow {
   role: string
   isActive: boolean
   createdAt: string
+  staffId?: string | null
 }
 
 const roleConfig: Record<string, { label: string; badge: string; icon: any; addLabel: string; emptyLabel: string }> = {
@@ -404,8 +405,15 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem className="gap-2 rounded-lg cursor-pointer" onClick={() => setEditUser(u)}>
-                              <Pencil className="h-4 w-4" /> Edit
+                              <Pencil className="h-4 w-4" /> {u.role === "guru" ? "Edit Akun Login" : "Edit"}
                             </DropdownMenuItem>
+                            {u.role === "guru" && u.staffId && (
+                              <DropdownMenuItem asChild className="gap-2 rounded-lg cursor-pointer">
+                                <Link href={`/admin/website/gtk/${u.staffId}/edit`}>
+                                  <Users className="h-4 w-4" /> Edit Profil Website
+                                </Link>
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuSeparator />
                             <ConfirmDialog
                               trigger={
