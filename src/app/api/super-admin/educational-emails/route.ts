@@ -44,6 +44,12 @@ const DEFAULT_CAMPAIGNS = [
     title: "Hari 8: Berita & Agenda",
     subject: "Satu Tanda Utama Bahwa {{schoolName}} Adalah Sekolah yang 'Hidup'",
     content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nSelamat! Anda telah mencapai hari terakhir dari rangkaian edukasi digital SchoolPro.\n\nSatu tips terakhir yang sangat krusial: \"Website yang tidak pernah di-update akan dianggap sebagai sekolah yang tutup atau tidak aktif.\"\n\nBiasakan untuk menulis berita kegiatan atau mempublikasikan agenda akademik secara rutin. Ini menunjukkan transparansi dan keaktifan {{schoolName}} kepada publik. Jadikan website sekolah sebagai pusat informasi terpercaya!\n\n👉 **Tulis artikel atau berita pertama Anda sekarang:**\nhttps://schoolpro.id/admin/settings\n\nTerima kasih telah bersama SchoolPro dalam memajukan digitalisasi pendidikan Indonesia!\n\nSalam Hangat,\nTim SchoolPro Indonesia"
+  },
+  {
+    dayOffset: 9,
+    title: "Hari 9: Program Kemitraan (Affiliate)",
+    subject: "Undangan Khusus: Mari Tumbuh Bersama Sebagai Mitra SchoolPro!",
+    content: "Halo Bapak/Ibu Admin {{schoolName}},\n\nKami melihat Anda telah beradaptasi dengan sangat baik dalam menggunakan platform SchoolPro. Kami sangat mengapresiasi semangat Anda dalam memajukan digitalisasi pendidikan di lingkungan Anda.\n\nTahukah Anda bahwa Anda bisa mendapatkan **Penghasilan Tambahan (Passive Income)** hanya dengan merekomendasikan SchoolPro ke sekolah-sekolah lain di sekitar Anda?\n\nBergabunglah dengan **Program Mitra Afiliasi SchoolPro**! \n\nKeuntungan menjadi Mitra:\n✅ **Komisi Menarik:** Dapatkan persentase komisi rutin dari setiap sekolah yang mendaftar menggunakan kode unik Anda.\n✅ **Dashboard Transparan:** Pantau jumlah pendaftar dan saldo komisi Anda secara real-time langsung dari HP.\n✅ **Bantu Sekolah Lain:** Anda turut berkontribusi membantu sekolah lain untuk *Go Digital* dengan sistem yang sudah Anda buktikan sendiri kemudahannya.\n\nCaranya sangat mudah dan 100% GRATIS!\n\n👉 **Daftar Menjadi Mitra Afiliasi Sekarang:**\nhttps://schoolpro.id/mitra-afiliasi\n\nMari bersama-sama kita majukan ekosistem pendidikan di Indonesia, dan nikmati keuntungannya!\n\nSalam Hangat,\nTim SchoolPro Indonesia"
   }
 ]
 
@@ -78,34 +84,39 @@ export async function GET(req: Request) {
       }
     })
 
-    // Seed defaults if empty
-    if (campaignsWithStats.length === 0) {
-      await db.$transaction(
-        DEFAULT_CAMPAIGNS.map(c => 
-          db.dripCampaign.create({
-            data: {
-              dayOffset: c.dayOffset,
-              title: c.title,
-              subject: c.subject,
-              content: c.content,
-              isActive: true
-            }
-          })
+    // Sync defaults if any are missing (e.g. newly added Day 9)
+    if (campaignsWithStats.length < DEFAULT_CAMPAIGNS.length) {
+      const existingOffsets = campaignsWithStats.map(c => c.dayOffset)
+      const missingCampaigns = DEFAULT_CAMPAIGNS.filter(c => !existingOffsets.includes(c.dayOffset))
+      
+      if (missingCampaigns.length > 0) {
+        await db.$transaction(
+          missingCampaigns.map(c => 
+            db.dripCampaign.create({
+              data: {
+                dayOffset: c.dayOffset,
+                title: c.title,
+                subject: c.subject,
+                content: c.content,
+                isActive: true
+              }
+            })
+          )
         )
-      )
-      // Re-fetch after seed
-      const newCampaigns = await db.dripCampaign.findMany({ 
-        orderBy: { dayOffset: 'asc' },
-        include: { _count: { select: { logs: true } }, logs: { select: { isOpened: true, isClicked: true } } }
-      })
-      const newCampaignsWithStats = newCampaigns.map(c => {
-        const totalSent = c._count.logs
-        const totalOpened = c.logs.filter(l => l.isOpened).length
-        const totalClicked = c.logs.filter(l => l.isClicked).length
-        const { logs, _count, ...rest } = c
-        return { ...rest, stats: { sent: totalSent, opened: totalOpened, clicked: totalClicked } }
-      })
-      return NextResponse.json(newCampaignsWithStats)
+        // Re-fetch after seed
+        const newCampaigns = await db.dripCampaign.findMany({ 
+          orderBy: { dayOffset: 'asc' },
+          include: { _count: { select: { logs: true } }, logs: { select: { isOpened: true, isClicked: true } } }
+        })
+        const newCampaignsWithStats = newCampaigns.map(c => {
+          const totalSent = c._count.logs
+          const totalOpened = c.logs.filter(l => l.isOpened).length
+          const totalClicked = c.logs.filter(l => l.isClicked).length
+          const { logs, _count, ...rest } = c
+          return { ...rest, stats: { sent: totalSent, opened: totalOpened, clicked: totalClicked } }
+        })
+        return NextResponse.json(newCampaignsWithStats)
+      }
     }
 
     return NextResponse.json(campaignsWithStats)
