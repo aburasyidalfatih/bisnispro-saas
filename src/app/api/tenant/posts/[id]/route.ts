@@ -96,12 +96,31 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     }
   }
 
+  const postToDelete = await db.post.findFirst({
+    where: { id, tenantId }
+  })
+
+  if (!postToDelete) {
+    return NextResponse.json({ error: "Artikel tidak ditemukan" }, { status: 404 })
+  }
+
   const result = await db.post.deleteMany({
     where: { id, tenantId }
   })
 
-  if (result.count === 0) {
-    return NextResponse.json({ error: "Artikel tidak ditemukan" }, { status: 404 })
+  // [ANTI-FARMING] Deduct points when post is deleted
+  try {
+    const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
+    const isArticle = ["EDITORIAL", "BLOG_GURU"].includes(postToDelete.type as string)
+    await addGamificationPoints({
+      tenantId,
+      userId: session.user.id,
+      type: isArticle ? "ARTIKEL" : "PENGUMUMAN",
+      points: isArticle ? -20 : -5,
+      description: `Menghapus postingan: ${postToDelete.title}`
+    })
+  } catch (error) {
+    console.error("Failed to deduct gamification points", error)
   }
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
