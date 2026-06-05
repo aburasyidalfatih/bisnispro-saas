@@ -19,7 +19,7 @@ export default function MapContent({ points }: { points: MapPoint[] }) {
   
   const tileUrl = isDark 
     ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-    : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" // voyager is also nice, or light_all
+    : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" // Menggunakan OSM standar yang jauh lebih detail dan presisi jalannya
 
   return (
     <div className="rounded-xl overflow-hidden border border-border/50 shadow-inner" style={{ height: 500 }}>
@@ -31,19 +31,19 @@ export default function MapContent({ points }: { points: MapPoint[] }) {
       >
         <TileLayer
           key={tileUrl}
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url={isDark ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url={tileUrl}
         />
         {points.map((point, idx) => (
           <CircleMarker
             key={`${point.type}-${idx}`}
             center={[point.lat, point.lng]}
-            radius={point.type === "tenant" ? 8 : 6}
+            radius={point.type === "tenant" ? 5 : 4}
             pathOptions={{
-              color: point.type === "tenant" ? "#10b981" : "#f59e0b",
+              color: isDark ? "#0f172a" : "#ffffff", // Border putih agar tiap titik tidak menyatu
               fillColor: point.type === "tenant" ? "#10b981" : "#f59e0b",
-              fillOpacity: 0.8,
-              weight: 2,
+              fillOpacity: 1,
+              weight: 1.5,
             }}
           >
             <Popup>
