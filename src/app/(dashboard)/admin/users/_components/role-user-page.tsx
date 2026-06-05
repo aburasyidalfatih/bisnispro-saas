@@ -264,15 +264,9 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
           <p className="text-muted-foreground mt-1">Kelola data {config.label.toLowerCase()} ({filtered.length} data)</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={handleExport} disabled={exporting}>
-            {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} Ekspor Excel
-          </Button>
-          {role ==="guru" && (
-            <Button asChild variant="outline" className="gap-2 rounded-xl">
-              <Link href="/admin/users/guru/import">
-                <UserPlus className="h-4 w-4" />
-                Import Data
-              </Link>
+          {role !== "guru" && (
+            <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={handleExport} disabled={exporting}>
+              {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} Ekspor Excel
             </Button>
           )}
           {role ==="guru" ? (
