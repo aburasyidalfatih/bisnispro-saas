@@ -403,17 +403,9 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                                 <LogIn className="h-4 w-4" /> Login Sebagai
                               </DropdownMenuItem>
                             )}
-                            {u.role ==="guru" ? (
-                              <DropdownMenuItem asChild className="gap-2 rounded-lg cursor-pointer">
-                                <Link href={`/admin/website/gtk/${u.id}/edit`}>
-                                  <Pencil className="h-4 w-4" /> Edit
-                                </Link>
-                              </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuItem className="gap-2 rounded-lg cursor-pointer" onClick={() => setEditUser(u)}>
-                                <Pencil className="h-4 w-4" /> Edit
-                              </DropdownMenuItem>
-                            )}
+                            <DropdownMenuItem className="gap-2 rounded-lg cursor-pointer" onClick={() => setEditUser(u)}>
+                              <Pencil className="h-4 w-4" /> Edit
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <ConfirmDialog
                               trigger={
