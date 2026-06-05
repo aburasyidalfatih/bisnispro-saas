@@ -109,6 +109,14 @@ export async function POST(req: Request) {
         ],
       })
 
+      const { notifyAllSuperAdmins } = await import("@/features/super-admin/services/super-admin-notification.service")
+      notifyAllSuperAdmins({
+        title: "Pendaftar Tenant Baru",
+        message: `Sekolah/Lembaga "${tenant.name}" baru saja mendaftar.`,
+        type: "success",
+        metadata: { tenantId: tenant.id, slug: tenant.slug, ownerEmail: user.email }
+      }).catch(err => console.error("Gagal mengirim notifikasi super admin:", err))
+
       return { user, tenant }
     })
 
