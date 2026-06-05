@@ -145,15 +145,15 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
 
   return {
     provider,
-    apiUrl: map.STARSENDER_API_URL || process.env.STARSENDER_API_URL || "https://api.starsender.online/api",
-    apiKey: map.STARSENDER_API_KEY || process.env.STARSENDER_API_KEY || "",
-    deviceId: map.STARSENDER_DEVICE_ID || process.env.STARSENDER_DEVICE_ID,
+    apiUrl: map.WA_API_URL || map.STARSENDER_API_URL || process.env.STARSENDER_API_URL || "https://api.starsender.online/api",
+    apiKey: map.WA_API_KEY || map.STARSENDER_API_KEY || process.env.STARSENDER_API_KEY || "",
+    deviceId: map.WA_DEVICE_ID || map.STARSENDER_DEVICE_ID || process.env.STARSENDER_DEVICE_ID,
     metaPhoneId: map.META_WA_PHONE_NUMBER_ID,
     metaToken: map.META_WA_ACCESS_TOKEN,
     wavioApiKey: map.WAVIO_API_KEY,
     wavioNumberId: map.WAVIO_NUMBER_ID,
-    delayMin: Number(map.WA_DELAY_MIN) || Number(map.STARSENDER_DELAY_MIN) || 0,
-    delayMax: Number(map.WA_DELAY_MAX) || Number(map.STARSENDER_DELAY_MAX) || 0,
+    delayMin: Math.min(Number(map.WA_DELAY_MIN) || Number(map.STARSENDER_DELAY_MIN) || 3, 60),
+    delayMax: Math.min(Number(map.WA_DELAY_MAX) || Number(map.STARSENDER_DELAY_MAX) || 8, 60),
   }
 }
 

@@ -69,10 +69,13 @@ export async function processWaQueueCron() {
 
   for (const msg of pendingMessages) {
     try {
+      // Tambahkan ke keranjang BullMQ dengan jobId unik
+      // Kita tambahkan timestamp di jobId agar jika job sebelumnya FAILED/STALLED (karena server restart),
+      // cron ini tetap bisa memasukkannya kembali ke antrean sebagai job baru.
       await waQueue.add(
         "send-wa",
         { tenantId: msg.tenantId || null, number: msg.targetNumber, message: msg.message, waQueueLogId: msg.id },
-        { jobId: msg.id }
+        { jobId: `${msg.id}-${Date.now()}` }
       )
       enqueued++
     } catch (err: any) {
