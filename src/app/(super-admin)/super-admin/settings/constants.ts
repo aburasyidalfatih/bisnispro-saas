@@ -111,6 +111,11 @@ export type SettingsForm = {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
 
+  // Google Contacts Sync
+  GOOGLE_CONTACTS_CLIENT_ID: string;
+  GOOGLE_CONTACTS_CLIENT_SECRET: string;
+  GOOGLE_CONTACTS_REFRESH_TOKEN: string;
+
   // Google Indexing API
   GOOGLE_INDEXING_CLIENT_EMAIL: string;
   GOOGLE_INDEXING_PRIVATE_KEY: string;
@@ -263,6 +268,11 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   // Google OAuth
   GOOGLE_CLIENT_ID: "",
   GOOGLE_CLIENT_SECRET: "",
+
+  // Google Contacts Sync
+  GOOGLE_CONTACTS_CLIENT_ID: "",
+  GOOGLE_CONTACTS_CLIENT_SECRET: "",
+  GOOGLE_CONTACTS_REFRESH_TOKEN: "",
 
   // Google Indexing API
   GOOGLE_INDEXING_CLIENT_EMAIL: "",

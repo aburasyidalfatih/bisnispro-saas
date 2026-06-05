@@ -11,6 +11,7 @@ import { WhatsappTab } from "./_components/whatsapp"
 import { PaymentTab } from "./_components/payment-tab"
 import { StorageTab } from "./_components/storage-tab"
 import { GoogleTab } from "./_components/google-tab"
+import { GoogleContactsTab } from "./_components/google-contacts-tab"
 import { AiTab } from "./_components/ai-tab"
 import { BackupTab } from "./_components/backup-tab"
 import { RetentionTab } from "./_components/retention-tab"
@@ -79,6 +80,7 @@ export default function SuperAdminSettingsPage() {
             <TabsTrigger value="payment" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Pembayaran</TabsTrigger>
             <TabsTrigger value="storage" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Penyimpanan</TabsTrigger>
             <TabsTrigger value="google" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Google Login</TabsTrigger>
+            <TabsTrigger value="google-contacts" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Google Contacts</TabsTrigger>
             <TabsTrigger value="ai" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kecerdasan Buatan (AI)</TabsTrigger>
             <TabsTrigger value="backup" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">🔒 Backup DB</TabsTrigger>
             <TabsTrigger value="retention" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Retensi Tenant</TabsTrigger>
@@ -107,6 +109,10 @@ export default function SuperAdminSettingsPage() {
 
         <TabsContent value="google" className="outline-none">
           <GoogleTab form={form} setForm={setForm} handleSaveBatch={handleSaveBatch} saving={saving} />
+        </TabsContent>
+
+        <TabsContent value="google-contacts" className="outline-none">
+          <GoogleContactsTab form={form} setForm={setForm} handleSaveBatch={handleSaveBatch} saving={saving} />
         </TabsContent>
 
         <TabsContent value="ai" className="outline-none">

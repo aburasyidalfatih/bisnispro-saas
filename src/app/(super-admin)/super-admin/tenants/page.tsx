@@ -39,6 +39,7 @@ interface TenantRow {
   userCount: number
   owner: { name: string; email: string; phone: string | null } | null
   storageUsed?: number
+  isContactSynced?: boolean
 }
 
 const planBadge: Record<string, string> = {
@@ -145,12 +146,33 @@ export default function TenantsPage() {
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
 
+  const handleSyncContacts = async () => {
+    try {
+      toast({ title: "Sinkronisasi Dimulai", description: "Sedang memproses di latar belakang..." })
+      const res = await fetch("/api/super-admin/tenants/sync-contacts", { method: "POST" })
+      const data = await res.json()
+      if (res.ok) {
+        toast({ title: "Sinkronisasi Selesai", description: data.message })
+      } else {
+        toast({ title: "Gagal", description: data.error, variant: "destructive" })
+      }
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" })
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-        <div>
+        <div className="flex-1">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Manajemen Tenant</h1>
           <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola sekolah dan lembaga yang terdaftar ({total} tenant)</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button onClick={handleSyncContacts} variant="outline" className="gap-2 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 rounded-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><circle cx="12" cy="10" r="2"></circle><line x1="8" x2="8" y1="2" y2="4"></line><line x1="16" x2="16" y1="2" y2="4"></line></svg>
+            Sinkron Kontak Google
+          </Button>
         </div>
       </div>
 
@@ -239,7 +261,15 @@ export default function TenantsPage() {
                           {t.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-bold truncate max-w-[200px]">{t.name}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold truncate max-w-[200px]">{t.name}</p>
+                            {t.isContactSynced && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/20" title="Tersinkronisasi ke Google Contacts">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Synced
+                              </span>
+                            )}
+                          </div>
                           <p className="text-[10px] text-muted-foreground font-mono">ID: {t.id.slice(-8).toUpperCase()}</p>
                         </div>
                       </div>
@@ -375,7 +405,14 @@ export default function TenantsPage() {
                         {t.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-bold truncate">{t.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold truncate">{t.name}</p>
+                          {t.isContactSynced && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/20" title="Tersinkronisasi ke Google Contacts">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                          )}
+                        </div>
                         <p className="text-[10px] text-muted-foreground font-mono">ID: {t.id.slice(-8).toUpperCase()}</p>
                       </div>
                     </div>

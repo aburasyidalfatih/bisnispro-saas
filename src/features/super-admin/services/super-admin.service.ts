@@ -79,7 +79,8 @@ export async function getTenantsForSuperAdmin(params: {
         retentionStatus: t.retentionStatus,
         studentQuota: t.studentQuota, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
         userCount: t._count.users, owner: t.users[0]?.user || null,
-        storageUsed: storageMap.get(t.id) || 0
+        storageUsed: storageMap.get(t.id) || 0,
+        isContactSynced: !!(typeof t.settings === "string" ? JSON.parse(t.settings) : t.settings || {})?.googleContactId
       }
     }).filter(Boolean)
 
@@ -118,7 +119,8 @@ export async function getTenantsForSuperAdmin(params: {
     retentionStatus: t.retentionStatus,
     studentQuota: t.studentQuota, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
     userCount: t._count.users, owner: t.users[0]?.user || null,
-    storageUsed: storageMap.get(t.id) || 0
+    storageUsed: storageMap.get(t.id) || 0,
+    isContactSynced: !!(typeof t.settings === "string" ? JSON.parse(t.settings) : t.settings || {})?.googleContactId
   }))
 
   return { data: result, total, page, limit, totalPages: Math.ceil(total / limit) }

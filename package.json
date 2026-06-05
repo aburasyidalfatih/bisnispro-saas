@@ -68,6 +68,7 @@
     "exceljs": "^4.4.0",
     "framer-motion": "^12.38.0",
     "google-auth-library": "^10.6.2",
+    "googleapis": "^173.0.0",
     "handlebars": "^4.7.9",
     "html-react-parser": "^6.1.1",
     "idn-area-data": "^4.0.1",
