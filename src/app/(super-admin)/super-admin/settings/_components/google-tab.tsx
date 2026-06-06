@@ -65,7 +65,7 @@ export function GoogleTab({ form, setForm, handleSaveBatch, saving }: GoogleTabP
             <Label>Private Key (JSON)</Label>
             <div className="relative">
               <Input type={showPass ? "text" : "password"} value={form.GOOGLE_INDEXING_PRIVATE_KEY} onChange={e => setForm({...form, GOOGLE_INDEXING_PRIVATE_KEY: e.target.value})} placeholder="-----BEGIN PRIVATE KEY-----\n..." className="rounded-xl font-mono text-xs pr-10" />
-              <Button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
+              <Button variant="ghost" size="icon" type="button" onClick={() => setShowPass(!showPass)} className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground">{showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
             </div>
           </div>
           <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['GOOGLE_INDEXING_CLIENT_EMAIL', 'GOOGLE_INDEXING_PRIVATE_KEY'])} disabled={saving}>

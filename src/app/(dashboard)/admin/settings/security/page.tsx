@@ -386,8 +386,8 @@ export default function SecurityPage() {
                       <Input type={showGoogleSecret ?"text" :"password"} value={googleClientSecret}
                         onChange={e => setGoogleClientSecret(e.target.value)}
                         placeholder="GOCSPX-..." className="rounded-xl pr-10 font-mono text-xs" />
-                      <Button type="button" onClick={() => setShowGoogleSecret(!showGoogleSecret)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                      <Button variant="ghost" size="icon" type="button" onClick={() => setShowGoogleSecret(!showGoogleSecret)}
+                        className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                         {showGoogleSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>

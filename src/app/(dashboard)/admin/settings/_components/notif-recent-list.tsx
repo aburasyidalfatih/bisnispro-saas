@@ -61,7 +61,7 @@ export function NotifRecentList() {
         </div>
         <div className="flex items-center gap-3 ml-3">
           {unread > 0 && (
-            <Button onClick={markAllRead} className="text-[11px] text-primary hover:underline flex items-center gap-1">
+            <Button variant="ghost" onClick={markAllRead} className="text-[11px] text-primary hover:underline flex items-center gap-1">
               <Check className="h-3 w-3" /> Tandai semua
             </Button>
           )}

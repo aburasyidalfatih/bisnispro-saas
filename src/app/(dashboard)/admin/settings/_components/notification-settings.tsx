@@ -58,13 +58,13 @@ export function NotificationSettings({
                     {!active && ch.hint && <p className="text-[10px] text-amber-500 leading-tight">{ch.hint}</p>}
                   </div>
                 </div>
-                <Button onClick={() => toggleNotif(ch.key)}
+                <button onClick={() => toggleNotif(ch.key)}
                   className={cn("relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ml-2",
                     active ?"bg-primary" :"bg-muted-foreground/30")}
                   role="switch" aria-checked={active}>
                   <span className={cn("inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform",
                     active ?"translate-x-4" :"translate-x-0.5")} />
-                </Button>
+                </button>
               </div>
             )
           })}

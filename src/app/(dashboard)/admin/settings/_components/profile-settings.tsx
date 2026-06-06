@@ -121,8 +121,8 @@ export function ProfileSettings({
                   placeholder={placeholder}
                   className="rounded-xl h-9 text-sm pr-9"
                 />
-                <Button type="button" onClick={() => setShowPw(p => ({ ...p, [key]: !p[key as keyof typeof showPw] }))}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="icon" type="button" onClick={() => setShowPw(p => ({ ...p, [key]: !p[key as keyof typeof showPw] }))}
+                  className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                   {showPw[key as keyof typeof showPw] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                 </Button>
               </div>

@@ -74,7 +74,7 @@ export function EmailTab({ form, setForm, handleSaveBatch, saving }: EmailTabPro
             <Label>Password / API Key</Label>
             <div className="relative">
               <Input type={showPass ? "text" : "password"} value={form.SMTP_PASS} onChange={e => setForm({...form, SMTP_PASS: e.target.value})} placeholder="••••••••" className="rounded-xl pr-10" />
-              <Button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+              <Button variant="ghost" size="icon" type="button" onClick={() => setShowPass(!showPass)} className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground">
                 {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>

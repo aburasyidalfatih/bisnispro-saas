@@ -41,7 +41,7 @@ export function PaymentTab({ form, setForm, handleSaveBatch, saving }: PaymentTa
             <Label>API Key</Label>
             <div className="relative">
               <Input type={showTripayKey ? "text" : "password"} value={form.TRIPAY_API_KEY} onChange={e => setForm({...form, TRIPAY_API_KEY: e.target.value})} placeholder="API Key" className="rounded-xl pr-10" />
-              <Button type="button" onClick={() => setShowTripayKey(!showTripayKey)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showTripayKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
+              <Button variant="ghost" size="icon" type="button" onClick={() => setShowTripayKey(!showTripayKey)} className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground">{showTripayKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
             </div>
           </div>
           <div className="space-y-2">

@@ -66,7 +66,7 @@ export function ProviderWavio({ form, setForm, handleSaveBatch, saving }: Props)
             <Label>API Key</Label>
             <div className="relative">
               <Input type={showWAToken ? "text" : "password"} value={form.WAVIO_API_KEY} onChange={e => setForm({...form, WAVIO_API_KEY: e.target.value})} placeholder="wavio_xxx" className="rounded-xl pr-10" />
-              <Button type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
+              <Button variant="ghost" size="icon" type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
             </div>
           </div>
           <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['WAVIO_API_KEY', 'WAVIO_NUMBER_ID'])} disabled={saving}>

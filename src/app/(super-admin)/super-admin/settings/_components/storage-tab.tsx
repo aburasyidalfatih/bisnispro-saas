@@ -97,7 +97,7 @@ export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTa
             <Label>Secret Access Key</Label>
             <div className="relative">
               <Input type={showS3Secret ? "text" : "password"} value={form.S3_SECRET_KEY} onChange={e => setForm({...form, S3_SECRET_KEY: e.target.value})} placeholder="Secret Key" className="rounded-xl font-mono text-xs pr-10" />
-              <Button type="button" onClick={() => setShowS3Secret(!showS3Secret)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showS3Secret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
+              <Button variant="ghost" size="icon" type="button" onClick={() => setShowS3Secret(!showS3Secret)} className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground">{showS3Secret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
             </div>
           </div>
           <div className="space-y-2">

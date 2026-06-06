@@ -39,13 +39,13 @@ export function AttendanceSettings({
               <p className="text-[11px] text-muted-foreground leading-tight">Guru harus mengambil foto wajah saat check-in</p>
             </div>
           </div>
-          <Button onClick={() => setRawSettings((p:any) => ({ ...p, attendanceRequireSelfie: !p.attendanceRequireSelfie }))}
+          <button onClick={() => setRawSettings((p:any) => ({ ...p, attendanceRequireSelfie: !p.attendanceRequireSelfie }))}
             className={cn("relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ml-2",
               rawSettings.attendanceRequireSelfie ?"bg-primary" :"bg-muted-foreground/30")}
             role="switch" aria-checked={rawSettings.attendanceRequireSelfie}>
             <span className={cn("inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform",
               rawSettings.attendanceRequireSelfie ?"translate-x-4" :"translate-x-0.5")} />
-          </Button>
+          </button>
         </div>
         
         <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveOrg} disabled={savingOrg || !tenantId}>

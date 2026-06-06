@@ -324,8 +324,8 @@ export default function PaymentSettingsPage() {
                     placeholder="API Key dari dashboard Tripay"
                     className="rounded-xl pr-10"
                   />
-                  <Button type="button" onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="icon" type="button" onClick={() => setShowApiKey(!showApiKey)}
+                    className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
@@ -341,8 +341,8 @@ export default function PaymentSettingsPage() {
                     placeholder="Private Key dari dashboard Tripay"
                     className="rounded-xl pr-10"
                   />
-                  <Button type="button" onClick={() => setShowPrivateKey(!showPrivateKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="icon" type="button" onClick={() => setShowPrivateKey(!showPrivateKey)}
+                    className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     {showPrivateKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>

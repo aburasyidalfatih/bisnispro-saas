@@ -93,7 +93,7 @@ export default function PanelSiswaDashboard() {
               <Wallet className="w-3.5 h-3.5" /> Saldo Tabungan
             </span>
             <div className="flex items-center gap-3">
-              <Button onClick={() => setShowBalance(!showBalance)} className="text-indigo-100 hover:text-white transition-colors" title={showBalance ? "Sembunyikan Saldo" : "Tampilkan Saldo"}>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowBalance(!showBalance)} className="text-indigo-100 hover:text-white transition-colors" title={showBalance ? "Sembunyikan Saldo" : "Tampilkan Saldo"}>
                 {showBalance ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
               </Button>
               <Link href="/siswa/wallet" className="text-xs font-bold text-white hover:underline flex items-center">
