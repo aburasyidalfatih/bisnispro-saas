@@ -42,7 +42,7 @@ export function InvoiceDialog({
               <p className="text-[10px] text-white/60 uppercase tracking-wide">Nomor Invoice</p>
               <p className="text-sm font-mono font-bold">{invoice?.reference}</p>
             </div>
-            <Button onClick={copyRef} className="h-8 w-8 rounded-lg bg-white/20 hover:bg-white/30 transition flex items-center justify-center shrink-0">
+            <Button variant="ghost" size="icon" onClick={copyRef} className="h-8 w-8 rounded-lg bg-white/20 hover:bg-white/30 transition flex items-center justify-center shrink-0">
               {copied ? <CheckCheck className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             </Button>
           </div>
@@ -113,10 +113,10 @@ export function InvoiceDialog({
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-mono font-bold text-sm">{billing?.manualPayment?.number ||"-"}</span>
-                <Button onClick={() => {
+                <Button variant="ghost" size="icon" onClick={() => {
                   navigator.clipboard.writeText(billing?.manualPayment?.number ||"")
                   toast({ description:"Nomor rekening disalin" })
-                }} className="text-muted-foreground hover:text-primary transition"><Copy className="h-4 w-4" /></Button>
+                }} className="h-8 w-8 text-muted-foreground hover:text-primary transition"><Copy className="h-4 w-4" /></Button>
               </div>
             </div>
           </div>

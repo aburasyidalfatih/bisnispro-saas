@@ -151,8 +151,10 @@ export default function BillingHistoryPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-mono text-sm font-bold">{payment.reference}</span>
                           <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => copyRef(payment.reference, payment.id)}
-                            className="text-muted-foreground hover:text-foreground transition"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground transition"
                           >
                             {copiedId === payment.id ? <CheckCheck className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
                           </Button>
@@ -221,7 +223,7 @@ export default function BillingHistoryPage() {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-bold text-sm">{accNumber}</span>
-                            <Button onClick={() => copyRef(accNumber.replace(/\s/g,""),"acc-" + payment.id)} className="text-muted-foreground hover:text-primary transition">
+                            <Button variant="ghost" size="icon" onClick={() => copyRef(accNumber.replace(/\s/g,""),"acc-" + payment.id)} className="h-8 w-8 text-muted-foreground hover:text-primary transition">
                               {copiedId ==="acc-" + payment.id ? <CheckCheck className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                             </Button>
                           </div>
