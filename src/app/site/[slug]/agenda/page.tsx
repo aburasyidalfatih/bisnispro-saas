@@ -9,6 +9,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 
 import { Calendar, MapPin, Clock, ArrowRight, Search } from "lucide-react"
 import { format } from "date-fns"
+import { formatInTimeZone } from "date-fns-tz"
 import { id } from "date-fns/locale"
 
 export const revalidate = 60;
@@ -90,13 +91,13 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
                 
                 <div className="md:w-56 bg-primary/5 group-hover:bg-primary text-primary group-hover:text-white flex flex-col items-center justify-center p-8 text-center transition-colors duration-300">
                    <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-2">
-                      {format(new Date(event.startDate), 'MMMM', { locale: id })}
+                      {formatInTimeZone(new Date(event.startDate), 'Asia/Jakarta', 'MMMM', { locale: id })}
                    </p>
                    <p className="text-6xl font-black leading-none mb-2">
-                      {format(new Date(event.startDate), 'dd')}
+                      {formatInTimeZone(new Date(event.startDate), 'Asia/Jakarta', 'dd', { locale: id })}
                    </p>
                    <p className="text-sm font-bold opacity-80">
-                      {format(new Date(event.startDate), 'yyyy')}
+                      {formatInTimeZone(new Date(event.startDate), 'Asia/Jakarta', 'yyyy', { locale: id })}
                    </p>
                 </div>
                 <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">

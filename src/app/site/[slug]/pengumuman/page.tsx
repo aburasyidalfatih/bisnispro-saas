@@ -5,6 +5,7 @@ import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.s
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Megaphone, ArrowRight, Search, Calendar } from "lucide-react"
 import { format } from "date-fns"
+import { formatInTimeZone } from "date-fns-tz"
 import { id } from "date-fns/locale"
 import { getPublicPosts, countPublicPosts } from "@/features/tenant/services/tenant-public-queries.service"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
@@ -115,13 +116,13 @@ export default async function PengumumanPage({
                 
                 <div className="md:w-56 bg-blue-500/5 group-hover:bg-blue-600 text-blue-600 group-hover:text-white flex flex-col items-center justify-center p-8 text-center transition-colors duration-300">
                    <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-2">
-                      {format(new Date(post.createdAt), 'MMMM', { locale: id })}
+                      {formatInTimeZone(new Date(post.createdAt), 'Asia/Jakarta', 'MMMM', { locale: id })}
                    </p>
                    <p className="text-6xl font-black leading-none mb-2">
-                      {format(new Date(post.createdAt), 'dd')}
+                      {formatInTimeZone(new Date(post.createdAt), 'Asia/Jakarta', 'dd', { locale: id })}
                    </p>
                    <p className="text-sm font-bold opacity-80">
-                      {format(new Date(post.createdAt), 'yyyy')}
+                      {formatInTimeZone(new Date(post.createdAt), 'Asia/Jakarta', 'yyyy', { locale: id })}
                    </p>
                 </div>
                 <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">

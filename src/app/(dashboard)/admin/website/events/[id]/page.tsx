@@ -105,21 +105,13 @@ export default function EventFormPage() {
         setValue("location", d.location ||"")
         setValue("contactPerson", d.contactPerson ||"")
         
-        // Format dates for datetime-local input (YYYY-MM-DDThh:mm)
+        // Format dates for datetime-local input (YYYY-MM-DDThh:mm) in local timezone
         const formatDateTime = (dateStr: string) => {
-          if (!dateStr) return""
+          if (!dateStr) return ""
           const date = new Date(dateStr)
-          return date.toISOString().slice(0, 16)
+          const pad = (n: number) => n.toString().padStart(2, '0')
+          return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
         }
-        
-        setValue("startDate", new Date(d.startDate)) // React hook form can take string but datetime-local needs format. Let's see how register handles it.
-        // Wait, for datetime-local, the input value needs to be a string formatted as YYYY-MM-DDThh:mm.
-        // But zod expects a Date object because of coerce.date(). Let's handle it by letting react-hook-form pass string from DOM, and Zod coerces it.
-        // For setValue, we must pass Date to react-hook-form? No, coerce works on validation. We should pass what the input expects if we don't transform it back.
-        // The easiest is to just set it as string that datetime-local understands, and coerce will make it Date on submit, or we set it as string in Zod?
-        // Actually, since Zod output is Date, but input is string from DOM, setValue expects Date for type safety but DOM needs string.
-        // Let's set it as string but cast to any to bypass TS error or use Date object. react-hook-form with type="datetime-local" needs string.
-        // Let's use formatDateTime.
         
         // Let's cast as any for the form values to populate correctly
         setValue("startDate", formatDateTime(d.startDate) as any)

@@ -43,12 +43,11 @@ function registerHelpers() {
     return value ? value : defaultValue
   })
 
-  // --- Format Helpers ---
   Handlebars.registerHelper("dateFormat", function (dateStr: string) {
     if (!dateStr) return ""
     try {
       const d = new Date(dateStr)
-      return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+      return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jakarta" })
     } catch { return dateStr }
   })
   Handlebars.registerHelper("currencyFormat", (value: number) => {
