@@ -10,6 +10,10 @@ import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { GraduationCap, Search, Download, BookOpen } from"lucide-react"
 import { cn } from"@/lib/utils"
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table"
+import { EmptyState } from "@/components/ui/empty-state"
 
 const TYPE_ORDER = ["HARIAN","PTS","PAS","PRAKTEK"]
 const TYPE_LABELS: Record<string, string> = { HARIAN:"Harian", PTS:"PTS", PAS:"PAS", PRAKTEK:"Praktik" }
@@ -137,12 +141,14 @@ export default function AdminGradesPage() {
       {loading ? (
         <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="skeleton h-24 rounded-2xl" />)}</div>
       ) : entries.length === 0 ? (
-        <Card className="glass border-0">
-          <CardContent className="p-12 text-center">
-            <GraduationCap className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-            <p className="text-muted-foreground">Belum ada data nilai untuk filter ini</p>
-          </CardContent>
-        </Card>
+        <div className="w-full">
+          <EmptyState
+            icon={GraduationCap}
+            title="Belum ada data nilai"
+            description="Tidak ada data nilai akademik yang cocok dengan filter yang dipilih."
+            className="min-h-[300px]"
+          />
+        </div>
       ) : (
         <div className="space-y-4">
           {entries.map(({ student, grades: sg }) => {
@@ -174,38 +180,38 @@ export default function AdminGradesPage() {
                 </CardHeader>
                 <CardContent className="px-4 pb-4">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b border-border/50">
-                          <th className="text-left py-2 text-muted-foreground font-normal">Mata Pelajaran</th>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="font-normal text-muted-foreground">Mata Pelajaran</TableHead>
                           {TYPE_ORDER.map(t => (
-                            <th key={t} className="text-center py-2 text-muted-foreground font-normal px-2">{TYPE_LABELS[t]}</th>
+                            <TableHead key={t} className="text-center font-normal text-muted-foreground px-2">{TYPE_LABELS[t]}</TableHead>
                           ))}
-                          <th className="text-center py-2 text-muted-foreground font-normal">Rata-rata</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                          <TableHead className="text-center font-normal text-muted-foreground">Rata-rata</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
                         {Object.entries(subjectMap).map(([subjectName, mapelGrades]) => {
                           const avg = mapelGrades.reduce((a, b) => a + b.score, 0) / mapelGrades.length
                           return (
-                            <tr key={subjectName} className="border-b border-border/30 last:border-0">
-                              <td className="py-2 font-medium">{subjectName}</td>
+                            <TableRow key={subjectName} className="border-b border-border/30 last:border-0 hover:bg-muted/20">
+                              <TableCell className="py-2 font-medium">{subjectName}</TableCell>
                               {TYPE_ORDER.map(t => {
                                 const g = mapelGrades.find(g => g.type === t)
                                 return (
-                                  <td key={t} className={cn("text-center py-2 px-2 font-mono", g ? getScoreColor(g.score) :"text-muted-foreground/30")}>
+                                  <TableCell key={t} className={cn("text-center py-2 px-2 font-mono", g ? getScoreColor(g.score) :"text-muted-foreground/30")}>
                                     {g ? g.score :"—"}
-                                  </td>
+                                  </TableCell>
                                 )
                               })}
-                              <td className={cn("text-center py-2 font-bold", getScoreColor(avg))}>
+                              <TableCell className={cn("text-center py-2 font-bold", getScoreColor(avg))}>
                                 {Math.round(avg * 10) / 10}
-                              </td>
-                            </tr>
+                              </TableCell>
+                            </TableRow>
                           )
                         })}
-                      </tbody>
-                    </table>
+                      </TableBody>
+                    </Table>
                   </div>
                 </CardContent>
               </Card>

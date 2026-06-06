@@ -18,7 +18,10 @@ import { cn } from"@/lib/utils"
 import { format } from"date-fns"
 import { id as localeId } from"date-fns/locale"
 import { ConfirmDialog } from"@/components/shared/confirm-dialog"
-
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table"
+import { EmptyState } from "@/components/ui/empty-state"
 import * as XLSX from"xlsx"
 
 export default function StudentsPage() {
@@ -300,27 +303,36 @@ export default function StudentsPage() {
       {/* Table */}
       <Card className="glass border-0 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          {loading ? (
-            <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
-          ) : students.length === 0 ? (
-            <div className="py-20 text-center text-muted-foreground">
-              <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-40" />
-              <p>Tidak ada siswa ditemukan.</p>
-              <p className="text-sm mt-1">Sinkronisasi dari PPDB atau import via Excel.</p>
-            </div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40">
-                <tr>
-                  {["Siswa","NIS / NISN","Kelas","Orang Tua","Wallet","Status",""].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
-                {students.map(student => (
-                  <tr key={student.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3">
+          <Table>
+            <TableHeader className="bg-muted/40">
+              <TableRow>
+                {["Siswa","NIS / NISN","Kelas","Orang Tua","Wallet","Status",""].map(h => (
+                  <TableHead key={h} className="text-xs font-bold uppercase tracking-wider">{h}</TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-32 text-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mx-auto" />
+                  </TableCell>
+                </TableRow>
+              ) : students.length === 0 ? (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={7} className="p-0">
+                    <EmptyState
+                      icon={GraduationCap}
+                      title="Tidak ada siswa ditemukan"
+                      description="Sinkronisasi dari PPDB atau import via Excel."
+                      className="border-0 rounded-none shadow-none bg-transparent min-h-[300px]"
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                students.map(student => (
+                  <TableRow key={student.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
+                    <TableCell className="py-3">
                       <div className="flex items-center gap-3">
                         <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 font-bold text-primary text-sm">
                           {student.name.charAt(0).toUpperCase()}
@@ -330,35 +342,35 @@ export default function StudentsPage() {
                           <p className="text-xs text-muted-foreground">{student.gender ==="L" ?"Laki-laki" : student.gender ==="P" ?"Perempuan" :"—"}</p>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3">
                       <p className="font-mono text-xs">{student.nis ||"—"}</p>
                       <p className="font-mono text-xs text-muted-foreground">{student.nisn ||"—"}</p>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3">
                       {student.classroom
                         ? <Badge className="bg-blue-500/10 text-blue-600 border-blue-200 border text-[10px]">{student.classroom.name}</Badge>
                         : <span className="text-muted-foreground text-xs">—</span>
                       }
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3">
                       {student.parents?.length > 0
                         ? <span className="flex items-center gap-1 text-xs"><UserCheck className="h-3.5 w-3.5 text-emerald-600" />{student.parents.length} ortu</span>
                         : <span className="text-muted-foreground text-xs">—</span>
                       }
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3">
                       {student.walletAccount
                         ? <span className="font-semibold text-emerald-600 text-xs">Rp {student.walletAccount.balance.toLocaleString("id-ID")}</span>
                         : <span className="text-muted-foreground text-xs">Belum ada</span>
                       }
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3">
                       <Badge className={student.isActive ?"bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-[10px]" :"bg-slate-500/10 text-slate-500 border text-[10px]"}>
                         {student.isActive ?"Aktif" :"Nonaktif"}
                       </Badge>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3 text-right">
                       <div className="flex items-center gap-2 justify-end">
                         <Link href={`/admin/students/${student.id}`}>
                           <Button size="sm" variant="outline" className="rounded-lg text-xs h-8 gap-1">
@@ -377,12 +389,12 @@ export default function StudentsPage() {
                           onConfirm={() => handleDelete(student.id, student.name)}
                         />
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </div>
 
         {/* Pagination */}

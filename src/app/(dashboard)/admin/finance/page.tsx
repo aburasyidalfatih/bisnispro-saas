@@ -12,6 +12,10 @@ import {
 import Link from"next/link"
 import { format } from"date-fns"
 import { id as localeId } from"date-fns/locale"
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function FinanceDashboardPage() {
   const { data: session } = useSession()
@@ -124,34 +128,43 @@ export default function FinanceDashboardPage() {
           <Link href="/admin/finance/invoice" className="text-xs text-primary hover:underline">Lihat Semua →</Link>
         </CardHeader>
         <div className="overflow-x-auto">
-          {invoices.length === 0 ? (
-            <div className="py-12 text-center text-muted-foreground text-sm">Belum ada tagihan.</div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40">
-                <tr>
-                  {["Siswa","Tagihan","Nominal","Status"].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
-                {invoices.slice(0, 5).map((inv: any) => {
+          <Table>
+            <TableHeader className="bg-muted/40">
+              <TableRow>
+                {["Siswa","Tagihan","Nominal","Status"].map(h => (
+                  <TableHead key={h} className="text-xs font-bold uppercase">{h}</TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoices.length === 0 ? (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={4} className="p-0">
+                    <EmptyState
+                      icon={Receipt}
+                      title="Belum ada tagihan"
+                      description="Data tagihan siswa yang baru akan muncul di sini."
+                      className="border-0 rounded-none shadow-none bg-transparent min-h-[250px]"
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                invoices.slice(0, 5).map((inv: any) => {
                   const cfg = statusCfg[inv.status] || statusCfg.UNPAID
                   return (
-                    <tr key={inv.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                      <td className="px-4 py-3 font-semibold text-sm">{inv.student?.name}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">{inv.title}</td>
-                      <td className="px-4 py-3 font-bold">Rp {inv.amount.toLocaleString("id-ID")}</td>
-                      <td className="px-4 py-3">
+                    <TableRow key={inv.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors border-b last:border-0">
+                      <TableCell className="font-semibold py-3">{inv.student?.name}</TableCell>
+                      <TableCell className="text-muted-foreground py-3">{inv.title}</TableCell>
+                      <TableCell className="font-bold py-3">Rp {inv.amount.toLocaleString("id-ID")}</TableCell>
+                      <TableCell className="py-3">
                         <span className={`text-[10px] px-2 py-1 rounded-full border ${cfg.color}`}>{cfg.label}</span>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   )
-                })}
-              </tbody>
-            </table>
-          )}
+                })
+              )}
+            </TableBody>
+          </Table>
         </div>
       </Card>
     </div>

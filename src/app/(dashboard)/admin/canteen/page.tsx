@@ -10,6 +10,10 @@ import {
   ArrowRight, Loader2, BarChart3
 } from"lucide-react"
 import Link from"next/link"
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function AdminCanteenPage() {
   const { data: session } = useSession()
@@ -112,39 +116,48 @@ export default function AdminCanteenPage() {
         </CardHeader>
         {loading ? (
           <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-        ) : merchants.length === 0 ? (
-          <CardContent className="py-12 text-center text-muted-foreground text-sm">
-            <Store className="h-10 w-10 mx-auto mb-3 opacity-40" />
-            <p>Belum ada merchant terdaftar.</p>
-            <Link href="/admin/canteen/merchants">
-              <Button size="sm" className="mt-3 rounded-xl">Tambah Merchant</Button>
-            </Link>
-          </CardContent>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40">
-                <tr>
+            <Table>
+              <TableHeader className="bg-muted/40">
+                <TableRow>
                   {["Nama Merchant","Pemilik","Saldo","Status"].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
+                    <TableHead key={h} className="text-xs font-bold uppercase">{h}</TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
-                {merchants.slice(0, 5).map((m: any) => (
-                  <tr key={m.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3 font-semibold">{m.name}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{m.user?.name ||"—"}</td>
-                    <td className="px-4 py-3 font-bold text-emerald-600">Rp {(m.balance || 0).toLocaleString("id-ID")}</td>
-                    <td className="px-4 py-3">
-                      <Badge className={m.isActive ?"bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-[10px]" :"bg-slate-500/10 text-slate-500 border text-[10px]"}>
-                        {m.isActive ?"Aktif" :"Nonaktif"}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {merchants.length === 0 ? (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={4} className="p-0">
+                      <EmptyState
+                        icon={Store}
+                        title="Belum ada merchant terdaftar"
+                        action={
+                          <Link href="/admin/canteen/merchants">
+                            <Button className="rounded-xl mt-4">Tambah Merchant</Button>
+                          </Link>
+                        }
+                        className="border-0 rounded-none shadow-none bg-transparent min-h-[250px]"
+                      />
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  merchants.slice(0, 5).map((m: any) => (
+                    <TableRow key={m.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors border-b last:border-0">
+                      <TableCell className="font-semibold py-3">{m.name}</TableCell>
+                      <TableCell className="text-muted-foreground py-3">{m.user?.name ||"—"}</TableCell>
+                      <TableCell className="font-bold text-emerald-600 py-3">Rp {(m.balance || 0).toLocaleString("id-ID")}</TableCell>
+                      <TableCell className="py-3">
+                        <Badge className={m.isActive ?"bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-[10px]" :"bg-slate-500/10 text-slate-500 border text-[10px]"}>
+                          {m.isActive ?"Aktif" :"Nonaktif"}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
         )}
       </Card>

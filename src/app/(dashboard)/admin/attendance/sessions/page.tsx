@@ -10,10 +10,13 @@ import { Badge } from"@/components/ui/badge"
 import {
   CalendarCheck, Plus, Users, CheckCircle, XCircle, Loader2,
   Clock, AlertTriangle, BookOpen, ChevronRight
-} from"lucide-react"
 import Link from"next/link"
 import { format } from"date-fns"
 import { id as localeId } from"date-fns/locale"
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function AttendanceSessionsPage() {
   const { data: session } = useSession()
@@ -144,50 +147,60 @@ export default function AttendanceSessionsPage() {
       <Card className="glass border-0">
         <CardHeader><CardTitle className="text-base">Riwayat Sesi</CardTitle></CardHeader>
         <div className="overflow-x-auto">
-          {loading ? (
-            <div className="py-16 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
-          ) : sessions.length === 0 ? (
-            <div className="py-16 text-center text-muted-foreground">
-              <CalendarCheck className="h-12 w-12 mx-auto mb-4 opacity-40" />
-              <p>Belum ada sesi absensi.</p>
-            </div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40">
-                <tr>
-                  {["Tanggal","Kelas","Jenis","Siswa","Aksi"].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
-                {sessions.map((s: any) => (
-                  <tr key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3 font-semibold">
+          <Table>
+            <TableHeader className="bg-muted/40">
+              <TableRow>
+                {["Tanggal","Kelas","Jenis","Siswa","Aksi"].map(h => (
+                  <TableHead key={h} className="text-xs font-bold uppercase">{h}</TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="py-16 text-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mx-auto" />
+                  </TableCell>
+                </TableRow>
+              ) : sessions.length === 0 ? (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={5} className="p-0">
+                    <EmptyState
+                      icon={CalendarCheck}
+                      title="Belum ada sesi absensi"
+                      description="Buat sesi baru untuk mulai mencatat kehadiran."
+                      className="border-0 rounded-none shadow-none bg-transparent min-h-[300px]"
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                sessions.map((s: any) => (
+                  <TableRow key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors border-b last:border-0">
+                    <TableCell className="font-semibold py-3">
                       {format(new Date(s.date),"d MMM yyyy", { locale: localeId })}
-                    </td>
-                    <td className="px-4 py-3">{s.classroom?.name || <span className="text-muted-foreground">Semua</span>}</td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3">{s.classroom?.name || <span className="text-muted-foreground">Semua</span>}</TableCell>
+                    <TableCell className="py-3">
                       <Badge className="bg-blue-500/10 text-blue-600 border-blue-200 border text-[10px]">{s.type}</Badge>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3">
                       <span className="flex items-center gap-1.5">
                         <Users className="h-3.5 w-3.5 text-muted-foreground" />
                         {s._count?.records || 0} siswa
                       </span>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3">
                       <Link href={`/admin/attendance/sessions/${s.id}`}>
                         <Button size="sm" variant="outline" className="rounded-lg text-xs h-8 gap-1">
                           Buka <ChevronRight className="h-3.5 w-3.5" />
                         </Button>
                       </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </div>
       </Card>
     </div>
