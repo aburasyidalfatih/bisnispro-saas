@@ -110,7 +110,7 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
             </div>
 
             <button 
-              className="w-full gap-2 btn-gradient text-white border-0 rounded-xl"
+              className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl"
               onClick={() => handleSaveBatch(['platform_name', 'platform_tagline', 'platform_address', 'contact_email', 'META_PIXEL_ID'])}
               disabled={saving || uploadingLogo}
             >
@@ -148,7 +148,7 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
               + Tambah Nomor WA
             </Button>
             <button 
-              className="w-full gap-2 btn-gradient text-white border-0 rounded-xl"
+              className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl"
               onClick={() => handleSaveBatch(['SUPPORT_WA_NUMBERS'], { SUPPORT_WA_NUMBERS: JSON.stringify(waSupportList) })}
               disabled={saving}
             >

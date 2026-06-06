@@ -100,7 +100,7 @@ export function ActiveUrlCard({
             <ConfirmDialog
               trigger={
                 <button
-                  className="btn-gradient text-white border-0 rounded-xl gap-2 shrink-0"
+                  className="flex items-center justify-center h-10 px-4 btn-gradient text-white border-0 rounded-xl gap-2 shrink-0"
                   disabled={savingSubdomain || !subdomainInput.trim() || data?.hasChangedSubdomain || subdomainInput === data?.slug}
                 >
                   {savingSubdomain ? (

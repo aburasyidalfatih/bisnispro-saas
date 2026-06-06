@@ -171,7 +171,7 @@ export function StarSenderManager() {
             Penundaan waktu (jeda) acak sebelum pesan terkirim. Membantu menghindari blokir WhatsApp karena terdeteksi mengirim pesan terlalu cepat.
           </p>
           <button 
-            className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" 
+            className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" 
             onClick={handleSave} 
             disabled={saving}
           >

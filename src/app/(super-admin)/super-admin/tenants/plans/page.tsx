@@ -543,7 +543,7 @@ export default function PlansPage() {
               Batal
             </Button>
             <button
-              className="rounded-xl btn-gradient text-white border-0 px-8 gap-2"
+              className="justify-center items-center flex rounded-xl btn-gradient text-white border-0 px-8 gap-2"
               onClick={handleSave}
               disabled={saving}
             >

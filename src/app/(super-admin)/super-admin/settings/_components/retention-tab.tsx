@@ -96,7 +96,7 @@ export function RetentionTab({ form, setForm, handleSaveBatch, saving }: Retenti
 
       <div className="col-span-full">
         <button 
-          className="w-full gap-2 btn-gradient text-white border-0 rounded-xl"
+          className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl"
           onClick={() => handleSaveBatch([
             'RETENTION_30_EMAIL_SUBJECT', 'RETENTION_30_EMAIL_BODY', 'RETENTION_30_WA',
             'RETENTION_60_EMAIL_SUBJECT', 'RETENTION_60_EMAIL_BODY', 'RETENTION_60_WA',
