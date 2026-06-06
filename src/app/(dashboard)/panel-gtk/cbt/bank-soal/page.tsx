@@ -125,7 +125,7 @@ export default function BankSoalPage() {
 
       {/* Dialog Buat Bank Soal */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] max-w-full">
           <DialogHeader>
             <DialogTitle>Buat Bank Soal Baru</DialogTitle>
             <div id="dialog-description" className="text-sm text-muted-foreground">

@@ -196,7 +196,7 @@ export default function AlumniPage() {
                           {getStatusLabel(alumni.currentStatus)}
                         </span>
                         {alumni.institutionName && (
-                          <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[9px] font-medium text-muted-foreground truncate max-w-[120px]">
+                          <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[9px] font-medium text-muted-foreground truncate max-w-[120px] max-w-full">
                             @ {alumni.institutionName}
                           </span>
                         )}

@@ -100,7 +100,7 @@ export default function RekeningPage() {
           <DialogTrigger asChild>
             <Button className="rounded-xl shadow-md shadow-primary/20"><Plus className="h-4 w-4 mr-2" /> Tambah Rekening</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[425px] max-w-full">
             <DialogHeader>
               <DialogTitle>{editIndex !== null ?"Edit Rekening" :"Tambah Rekening Baru"}</DialogTitle>
             </DialogHeader>

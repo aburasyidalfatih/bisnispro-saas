@@ -172,7 +172,7 @@ function SystemTable() {
                           <div className="font-medium text-foreground">{notif.user?.name || "Pengguna Dihapus"}</div>
                           <div className="text-xs text-muted-foreground">{notif.tenant?.name || "Platform"}</div>
                         </TableCell>
-                        <TableCell className="px-4 py-3 align-top max-w-[300px]">
+                        <TableCell className="px-4 py-3 align-top max-w-[300px] max-w-full">
                           <div className="font-semibold mb-1">{notif.title}</div>
                           <div className="text-xs text-muted-foreground truncate" title={notif.message}>{notif.message}</div>
                         </TableCell>
@@ -278,7 +278,7 @@ function InternalTable() {
                           <div className="text-xs text-muted-foreground mb-1">Dari: <strong className="text-foreground">{msg.sender?.name || "Dihapus"}</strong></div>
                           <div className="text-xs text-muted-foreground">Ke: <strong className="text-foreground">{msg.receiver ? msg.receiver.name : "Semua Admin (Broadcast)"}</strong></div>
                         </TableCell>
-                        <TableCell className="px-4 py-3 align-top max-w-[300px]">
+                        <TableCell className="px-4 py-3 align-top max-w-[300px] max-w-full">
                           {msg.subject && <div className="font-semibold mb-1 truncate" title={msg.subject}>{msg.subject}</div>}
                           <div className="text-xs text-muted-foreground truncate" title={msg.body}>{msg.body}</div>
                         </TableCell>

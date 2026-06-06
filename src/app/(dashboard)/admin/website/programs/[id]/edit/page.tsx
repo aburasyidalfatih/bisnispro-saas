@@ -176,7 +176,7 @@ export default function EditProgramPage() {
   if (loading) return <div className="skeleton h-96 max-w-3xl rounded-2xl" />
 
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto pb-10">
+    <div className="space-y-6 max-w-[1200px] mx-auto pb-10 max-w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
@@ -218,7 +218,7 @@ export default function EditProgramPage() {
                 {previewUrl ? (
                   <div className="relative w-full aspect-video rounded-lg overflow-hidden flex items-center justify-center bg-black/5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" />
+                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" / loading="lazy" decoding="async">
                     <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-center">
                       <p className="text-white text-sm font-medium">Klik untuk mengubah foto</p>
                     </div>
@@ -314,7 +314,7 @@ export default function EditProgramPage() {
 
       {/* AI Content Modal */}
       <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+        <DialogContent className="sm:max-w-[500px] rounded-2xl max-w-full">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-violet-500" />

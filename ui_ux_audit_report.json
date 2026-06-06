@@ -1,0 +1,718 @@
+{
+  "hardcodedWidths": [
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(affiliate)\\layout.tsx",
+      "snippet": "w-[260px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(affiliate)\\_components\\affiliate-sidebar.tsx",
+      "snippet": "w-[260px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\attendance\\gtk\\page.tsx",
+      "snippet": "w-[120px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\broadcast\\page.tsx",
+      "snippet": "w-[300px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\broadcast\\page.tsx",
+      "snippet": "w-[200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\discipline\\page.tsx",
+      "snippet": "w-[200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\finance\\cashflow\\page.tsx",
+      "snippet": "w-[425px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\finance\\cashflow\\page.tsx",
+      "snippet": "w-[130px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\finance\\cashflow\\page.tsx",
+      "snippet": "w-[100px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\finance\\cashflow\\page.tsx",
+      "snippet": "w-[180px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\finance\\rekening\\page.tsx",
+      "snippet": "w-[425px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\ppdb\\periode\\page.tsx",
+      "snippet": "w-[560px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\ppdb\\tagihan\\page.tsx",
+      "snippet": "w-[520px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\settings\\ai\\page.tsx",
+      "snippet": "w-[250px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\settings\\ai\\page.tsx",
+      "snippet": "w-[200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\users\\_components\\role-user-page.tsx",
+      "snippet": "w-[425px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\about\\_components\\ai-content-modal.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\achievements\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\achievements\\new\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\achievements\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\achievements\\[id]\\edit\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\alumni\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\alumni\\new\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\alumni\\page.tsx",
+      "snippet": "w-[120px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\alumni\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\alumni\\[id]\\edit\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\categories\\page.tsx",
+      "snippet": "w-[425px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\documents\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\events\\[id]\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\extracurriculars\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\extracurriculars\\new\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\extracurriculars\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\extracurriculars\\[id]\\edit\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\facilities\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\facilities\\new\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\facilities\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\facilities\\[id]\\edit\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\id-card\\page.tsx",
+      "snippet": "w-[320px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\new\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\[id]\\edit\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\page.tsx",
+      "snippet": "w-[160px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\partners\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\partners\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\pengumuman\\[id]\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\pengumuman\\[id]\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\popups\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\popups\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\poster\\page.tsx",
+      "snippet": "w-[800px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\poster\\page.tsx",
+      "snippet": "w-[280px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\posts\\[id]\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\posts\\[id]\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\programs\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\programs\\new\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\programs\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\programs\\[id]\\edit\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\sliders\\new\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\sliders\\[id]\\edit\\page.tsx",
+      "snippet": "w-[1200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\client-layout.tsx",
+      "snippet": "w-[260px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\dashboard\\notifications\\page.tsx",
+      "snippet": "w-[400px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\ppdb\\berkas\\[id]\\page.tsx",
+      "snippet": "w-[150px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\ppdb\\formulir\\[id]\\page.tsx",
+      "snippet": "w-[150px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\ppdb\\status\\[id]\\page.tsx",
+      "snippet": "w-[200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\student-card\\_components\\card-generator.tsx",
+      "snippet": "w-[340px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\student-card\\_components\\card-generator.tsx",
+      "snippet": "w-[340px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\student-card\\_components\\card-generator.tsx",
+      "snippet": "w-[340px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\cbt\\bank-soal\\page.tsx",
+      "snippet": "w-[425px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\cbt\\bank-soal\\[id]\\page.tsx",
+      "snippet": "w-[700px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\cbt\\bank-soal\\[id]\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\cbt\\jadwal\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\nilai\\page.tsx",
+      "snippet": "w-[200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\nilai\\page.tsx",
+      "snippet": "w-[200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\page.tsx",
+      "snippet": "w-[140px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\page.tsx",
+      "snippet": "w-[180px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\posts\\page.tsx",
+      "snippet": "w-[300px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\siswa\\cbt\\page.tsx",
+      "snippet": "w-[250px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(landing)\\theme\\[id]\\page.tsx",
+      "type": "Z-Index abuse",
+      "snippet": "z-[9999]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\layout.tsx",
+      "snippet": "w-[260px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\analytics\\_components\\tenants-tab.tsx",
+      "snippet": "w-[180px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\notifications\\page.tsx",
+      "snippet": "w-[300px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\notifications\\page.tsx",
+      "snippet": "w-[300px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\tenants\\ai-packages\\_components\\ai-rates-manager.tsx",
+      "snippet": "w-[150px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\tenants\\ai-packages\\_components\\ai-rates-manager.tsx",
+      "snippet": "w-[150px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\tenants\\page.tsx",
+      "snippet": "w-[200px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\users\\page.tsx",
+      "snippet": "w-[150px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\users\\page.tsx",
+      "snippet": "w-[250px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\users\\page.tsx",
+      "snippet": "w-[100px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\_components\\SystemHealth.tsx",
+      "snippet": "w-[150px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\gtk\\[id]\\page.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\gtk\\[id]\\page.tsx",
+      "snippet": "w-[300px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\loading.tsx",
+      "type": "Z-Index abuse",
+      "snippet": "z-[9999]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\achievements-section.tsx",
+      "snippet": "w-[600px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\alumni-testimonials.tsx",
+      "snippet": "w-[800px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\navbar.tsx",
+      "snippet": "w-[140px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\navbar.tsx",
+      "snippet": "w-[360px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\partnerships-section.tsx",
+      "snippet": "w-[120px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\partnerships-section.tsx",
+      "snippet": "w-[120px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\popup-renderer.tsx",
+      "snippet": "w-[500px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\principal-welcome.tsx",
+      "snippet": "w-[280px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\staff-highlight.tsx",
+      "snippet": "w-[140px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\staff-highlight.tsx",
+      "snippet": "w-[140px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\layout\\header.tsx",
+      "snippet": "w-[120px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\layout\\mobile-app-layout.tsx",
+      "snippet": "w-[480px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\layout\\sidebar.tsx",
+      "snippet": "w-[260px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\layout\\sidebar.tsx",
+      "snippet": "w-[140px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\layout\\tenant-completeness-popup.tsx",
+      "snippet": "w-[425px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\providers\\confirm-provider.tsx",
+      "snippet": "w-[425px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\shared\\tenant-switcher.tsx",
+      "snippet": "w-[120px]"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\ui\\toast.tsx",
+      "snippet": "w-[420px]"
+    }
+  ],
+  "missingResponsiveBreakpoints": [],
+  "rawImgTags": [
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(auth)\\forgot-password\\client-page.tsx",
+      "snippet": "<img src={normalizeImageUrl(platformLogo) || \"/log"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(auth)\\forgot-password\\client-page.tsx",
+      "snippet": "<img src={normalizeImageUrl(platformLogo)} alt={`$"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(auth)\\login\\client-page.tsx",
+      "snippet": "<img src={normalizeImageUrl(platformLogo)} alt=\"Sc"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(auth)\\login\\client-page.tsx",
+      "snippet": "<img src={normalizeImageUrl(platformLogo)} alt={te"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(auth)\\register\\client-page.tsx",
+      "snippet": "<img src={normalizeImageUrl(platformLogo)} alt=\"Sc"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(auth)\\register\\client-page.tsx",
+      "snippet": "<img src={normalizeImageUrl(platformLogo)} alt={te"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\attendance\\gtk\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(s.imageUrl)} alt={s.na"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\donation\\campaigns\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(campaign.imageUrl) || "
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\ppdb\\tagihan\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(p.buktiUrl) || p.bukti"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\settings\\payment\\page.tsx",
+      "snippet": "<img src={ch.icon_url} alt={ch.name} className=\"h-"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\settings\\security\\page.tsx",
+      "snippet": "<img src={qrCode} alt=\"QR Code 2FA\" className=\"rou"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\settings\\_components\\profile-settings.tsx",
+      "snippet": "<img src={avatarPreview} alt=\"Avatar\" className=\"h"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\about\\_components\\principal-speech-form.tsx",
+      "snippet": "<img src={normalizeImageUrl(form.settings?.princip"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\achievements\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\achievements\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\alumni\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\alumni\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\extracurriculars\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\extracurriculars\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\facilities\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\facilities\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\id-card\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(tenant.logo) || tenant"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\id-card\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(person.imageUrl) || pe"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\gtk\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\partners\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"w-1"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\partners\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"w-1"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\popups\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"max"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\popups\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"max"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\poster\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(tenant.logo)} alt=\"Log"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\programs\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\programs\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"obj"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\sliders\\new\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"w-f"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\website\\sliders\\[id]\\edit\\page.tsx",
+      "snippet": "<img src={previewUrl} alt=\"Preview\" className=\"w-f"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\donasi\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(c.imageUrl)} alt={c.ti"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\ppdb\\berkas\\[id]\\page.tsx",
+      "snippet": "<img src={uploaded.fileUrl}\r\n                     "
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\student-card\\_components\\card-generator.tsx",
+      "snippet": "<img src={normalizeImageUrl(activeStudent.tenant.l"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\tagihan\\[id]\\_components\\checkout-form.tsx",
+      "snippet": "<img src={channel.icon_url} alt={channel.name} cla"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\wallet\\topup\\_components\\topup-form.tsx",
+      "snippet": "<img src={channel.icon_url} alt={channel.name} cla"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\_components\\parent-dashboard.tsx",
+      "snippet": "<img src={normalizeImageUrl(tenant.logo) || tenant"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\ortu\\_components\\parent-profile.tsx",
+      "snippet": "<img src={avatarPreview} alt=\"Avatar\" className=\"h"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\absensi\\page.tsx",
+      "snippet": "<img src={photoPreview} alt=\"Selfie\" className=\"w-"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-gtk\\ai\\ai-assistant-client.tsx",
+      "snippet": "<img src={ch.icon_url} alt={ch.name} className=\"ma"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-kantin\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(merchant.imageUrl) || "
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-kantin\\products\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(p.imageUrl) || p.image"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\panel-kantin\\scan\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(p.imageUrl) || p.image"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(public)\\daftarkan-sekolah\\page.tsx",
+      "snippet": "<img src={logoPreview} alt=\"Logo\" className=\"h-16 "
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(public)\\revisi-pengajuan\\[id]\\_components\\revision-form.tsx",
+      "snippet": "<img src={logoPreview} alt=\"Logo\" className=\"h-16 "
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\applications\\_components\\application-detail-modal.tsx",
+      "snippet": "<img src={normalizeImageUrl(selectedApp.logo) || s"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(super-admin)\\super-admin\\applications\\_components\\application-table.tsx",
+      "snippet": "<img src={normalizeImageUrl(app.logo) || app.logo}"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\invoice\\[id]\\page.tsx",
+      "snippet": "<img src={platformLogo} \r\n                alt={pla"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\invoice\\[id]\\page.tsx",
+      "snippet": "<img src={platformLogo} \r\n              alt={platf"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\alumni\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(item.imageUrl) || item"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\donasi\\[campaignId]\\_components\\donation-public-client.tsx",
+      "snippet": "<img src={normalizeImageUrl(campaign.tenant.logo) "
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\gallery\\gallery-grid.tsx",
+      "snippet": "<img src={normalizeImageUrl(items[lightbox].url) |"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\profil\\page.tsx",
+      "snippet": "<img src={normalizeImageUrl(videoThumbnail)} alt=\""
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\site\\[slug]\\_components\\partnerships-section.tsx",
+      "snippet": "<img src={finalSrc}\r\n      alt={alt}\r\n      loadin"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\layout\\gtk-app-layout.tsx",
+      "snippet": "<img src={brandLogo} alt={brandName} className=\"h-"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\pwa\\pwa-installer.tsx",
+      "snippet": "<img src={tenantLogo} alt=\"Logo\" className=\"h-full"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\shared\\affiliate-leaderboard-client.tsx",
+      "snippet": "<img src={top3[1].avatar!} className=\"object-cover"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\shared\\affiliate-leaderboard-client.tsx",
+      "snippet": "<img src={top3[0].avatar!} className=\"object-cover"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\shared\\affiliate-leaderboard-client.tsx",
+      "snippet": "<img src={top3[2].avatar!} className=\"object-cover"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\shared\\affiliate-leaderboard-client.tsx",
+      "snippet": "<img src={item.avatar} / alt=\"image\" loading=\"lazy"
+    },
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\components\\shared\\ai-topup-dialog.tsx",
+      "snippet": "<img src={ch.icon_url} alt={ch.name} className=\"ma"
+    }
+  ],
+  "emptyHrefs": [
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(public)\\daftarkan-sekolah\\page.tsx",
+      "snippet": "href=\"#\""
+    }
+  ],
+  "absoluteWithoutRelative": [],
+  "genericColorsInButtons": [
+    {
+      "file": "C:\\grafity project\\schoolpro\\src\\app\\(dashboard)\\admin\\finance\\page.tsx",
+      "snippet": "<Button size=\"sm\" className=\"rounded-xl bg-destructive text-destructive-foreground hover:bg-destruct"
+    }
+  ]
+}

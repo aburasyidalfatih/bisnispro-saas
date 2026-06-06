@@ -96,7 +96,7 @@ export default function FinanceDashboardPage() {
             <p className="text-sm text-red-600">Total Rp {totalDue.toLocaleString("id-ID")} belum dilunasi.</p>
           </div>
           <Link href="/admin/finance/invoice?status=UNPAID">
-            <Button size="sm" className="rounded-xl bg-red-500 hover:bg-red-600 shrink-0">Tinjau</Button>
+            <Button size="sm" className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:bg-red-600 shrink-0">Tinjau</Button>
           </Link>
         </div>
       )}

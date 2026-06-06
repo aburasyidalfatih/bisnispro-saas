@@ -221,7 +221,7 @@ export function SystemHealth() {
                 />
               </div>
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span className="truncate max-w-[150px]" title={metrics.cpu.model}>{metrics.cpu.model}</span>
+                <span className="truncate max-w-[150px] max-w-full" title={metrics.cpu.model}>{metrics.cpu.model}</span>
                 <span>Load: {metrics.cpu.loadAverage[0].toFixed(2)}</span>
               </div>
             </div>

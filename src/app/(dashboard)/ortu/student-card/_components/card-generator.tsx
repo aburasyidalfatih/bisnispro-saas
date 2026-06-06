@@ -51,7 +51,7 @@ export function StudentCardGenerator({ students }: { students: any[] }) {
           <div className="flex-1 flex justify-center bg-slate-100 rounded-[2.5rem] p-8 md:p-14 border-2 border-dashed print:border-0 print:bg-white print:p-0">
             
             {/* The ID Card Design (Premium) */}
-            <div className="relative w-[340px] h-[540px] bg-white rounded-3xl shadow-2xl overflow-hidden print:shadow-none print:w-[85.6mm] print:h-[53.98mm] print:rounded-none group">
+            <div className="relative w-[340px] h-[540px] bg-white rounded-3xl shadow-2xl overflow-hidden print:shadow-none print:w-[85.6mm] print:h-[53.98mm] print:rounded-none group max-w-full">
               
               {/* Premium Background / Watermark */}
               <div className="absolute inset-0 bg-slate-50/50 pointer-events-none" />
@@ -75,7 +75,7 @@ export function StudentCardGenerator({ students }: { students: any[] }) {
               {/* Header Content */}
               <div className="relative z-10 pt-6 px-6 flex flex-col items-center text-center">
                 {activeStudent.tenant?.logo ? (
-                  <img src={normalizeImageUrl(activeStudent.tenant.logo)} alt="Logo" className="w-12 h-12 object-contain drop-shadow-md mb-2 bg-white/20 p-1 rounded-full backdrop-blur-sm border border-white/30" />
+                  <img src={normalizeImageUrl(activeStudent.tenant.logo)} alt="Logo" className="w-12 h-12 object-contain drop-shadow-md mb-2 bg-white/20 p-1 rounded-full backdrop-blur-sm border border-white/30" / loading="lazy" decoding="async">
                 ) : null}
                 <p className="text-primary-foreground font-black text-lg tracking-[0.2em] uppercase drop-shadow-sm leading-tight">
                   KARTU PELAJAR

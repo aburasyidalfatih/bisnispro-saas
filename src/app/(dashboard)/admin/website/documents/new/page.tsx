@@ -99,7 +99,7 @@ export default function NewDocumentPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto pb-10">
+    <div className="space-y-6 max-w-[1200px] mx-auto pb-10 max-w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">

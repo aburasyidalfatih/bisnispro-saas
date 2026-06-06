@@ -51,7 +51,7 @@ export function StaffHighlight({ staff, labels }: StaffHighlightProps & { labels
         <div className="relative flex overflow-hidden group/slider -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-4">
           <div className="flex animate-marquee gap-5 shrink-0 items-center pr-5 group-hover/slider:[animation-play-state:paused]">
             {displayStaff.map((member, i) => (
-              <Link key={`${member.id}-${i}`} href={resolveHref(`/gtk/${member.id}`)} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px]">
+              <Link key={`${member.id}-${i}`} href={resolveHref(`/gtk/${member.id}`)} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px] max-w-full">
                 <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover/card:shadow-xl group-hover/card:border-primary/30 transition-all duration-300">
                   {member.imageUrl ? (
                     <Image src={normalizeImageUrl(member.imageUrl)!} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover/card:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" />
@@ -70,7 +70,7 @@ export function StaffHighlight({ staff, labels }: StaffHighlightProps & { labels
           
           <div aria-hidden="true" className="flex animate-marquee gap-5 shrink-0 items-center pr-5 group-hover/slider:[animation-play-state:paused]">
             {displayStaff.map((member, i) => (
-              <Link key={`${member.id}-clone-${i}`} href={resolveHref(`/gtk/${member.id}`)} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px]">
+              <Link key={`${member.id}-clone-${i}`} href={resolveHref(`/gtk/${member.id}`)} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px] max-w-full">
                 <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover/card:shadow-xl group-hover/card:border-primary/30 transition-all duration-300">
                   {member.imageUrl ? (
                     <Image src={normalizeImageUrl(member.imageUrl)!} alt={`Tenaga Pendidik: ${member.name}`} fill className="object-cover object-top group-hover/card:scale-110 transition-transform duration-500" sizes="(max-width: 768px) 128px, 128px" />

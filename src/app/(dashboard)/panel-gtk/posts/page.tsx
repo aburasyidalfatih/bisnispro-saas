@@ -86,7 +86,7 @@ export default function GTKPostsPage() {
                 ) : (
                   posts.map((post) => (
                     <TableRow key={post.id} className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors">
-                      <TableCell className="px-6 py-4 font-medium text-foreground max-w-[300px] truncate">
+                      <TableCell className="px-6 py-4 font-medium text-foreground max-w-[300px] truncate max-w-full">
                         {post.title}
                       </TableCell>
                       <TableCell className="px-6 py-4 text-muted-foreground">
@@ -120,7 +120,7 @@ export default function GTKPostsPage() {
                       <TableCell className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
                           {post.status === "PUBLISHED" && (
-                            <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-blue-500/10 hover:text-blue-600 transition-colors" title="Lihat di website">
+                            <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-blue-600 transition-colors" title="Lihat di website">
                               <a href={`/berita/${post.slug}`} target="_blank" rel="noopener noreferrer">
                                 <Eye className="h-4 w-4" />
                               </a>

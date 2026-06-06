@@ -86,7 +86,7 @@ export default function OrtuDonasiPage() {
           const pct = Math.min((c.collectedAmount / c.targetAmount) * 100, 100)
           return (
             <Card key={c.id} className="glass border-0 shadow-sm overflow-hidden">
-              {c.imageUrl && <img src={normalizeImageUrl(c.imageUrl)} alt={c.title} className="w-full h-36 object-cover" />}
+              {c.imageUrl && <img src={normalizeImageUrl(c.imageUrl)} alt={c.title} className="w-full h-36 object-cover" / loading="lazy" decoding="async">}
               <CardContent className="p-4">
                 <h3 className="font-bold mb-2">{c.title}</h3>
                 {c.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{c.description}</p>}
@@ -127,7 +127,7 @@ export default function OrtuDonasiPage() {
                     className="rounded-xl flex-1"
                   />
                   <Button
-                    className="rounded-xl shrink-0 bg-rose-500 hover:bg-rose-600"
+                    className="rounded-xl shrink-0 bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:bg-rose-600"
                     disabled={donating === c.id || !amounts[c.id]}
                     onClick={() => handleDonate(c)}
                   >

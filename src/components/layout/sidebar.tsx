@@ -198,7 +198,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                 }
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="font-bold text-sm tracking-tight leading-tight truncate max-w-[140px]">{brandName} v1.1</span>
+                <span className="font-bold text-sm tracking-tight leading-tight truncate max-w-[140px] max-w-full">{brandName} v1.1</span>
                 <span className={cn(
                   "text-[10px] font-medium leading-tight",
                   isSuperAdminPath ? "text-red-500" : "text-muted-foreground"

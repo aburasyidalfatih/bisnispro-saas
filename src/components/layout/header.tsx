@@ -110,7 +110,7 @@ function HeaderBreadcrumb() {
             <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
             <span className="text-muted-foreground/50">…</span>
             <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
-            <span className="font-semibold text-foreground truncate max-w-[120px]">{visibleCrumbs[visibleCrumbs.length - 1].label}</span>
+            <span className="font-semibold text-foreground truncate max-w-[120px] max-w-full">{visibleCrumbs[visibleCrumbs.length - 1].label}</span>
           </span>
           {/* Desktop: all crumbs */}
           <span className="hidden sm:contents">

@@ -231,7 +231,7 @@ export default function JadwalUjianPage() {
 
       {/* Dialog Add Jadwal */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] max-w-full">
           <DialogHeader>
             <DialogTitle>Buat Jadwal Ujian CBT</DialogTitle>
             <DialogDescription>Pilih bank soal dan tentukan waktu ujian agar siswa bisa mendapatkan akses masuk.</DialogDescription>

@@ -136,7 +136,7 @@ export default function PpdbPeriodePage() {
               <Plus className="h-4 w-4" /> Buat Gelombang
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto max-w-full">
             <DialogHeader>
               <DialogTitle>{editingPeriod ?"Edit Gelombang" :"Buat Gelombang Baru"}</DialogTitle>
             </DialogHeader>

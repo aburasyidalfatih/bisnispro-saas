@@ -269,7 +269,7 @@ export default function BroadcastPage() {
                     history.map((msg) => (
                       <TableRow key={msg.id}>
                         <TableCell className="font-mono text-sm whitespace-nowrap">{msg.to}</TableCell>
-                        <TableCell className="max-w-[300px]">
+                        <TableCell className="max-w-[300px] max-w-full">
                           <p className="truncate text-sm text-muted-foreground" title={msg.content}>
                             {msg.content}
                           </p>
@@ -279,7 +279,7 @@ export default function BroadcastPage() {
                             {msg.status.toLowerCase()}
                           </Badge>
                           {msg.error && (
-                            <p className="text-[10px] text-destructive mt-1 max-w-[200px] truncate" title={msg.error}>
+                            <p className="text-[10px] text-destructive mt-1 max-w-[200px] truncate max-w-full" title={msg.error}>
                               {msg.error}
                             </p>
                           )}

@@ -38,7 +38,7 @@ export function ImpersonateBanner() {
       <div className="bg-blue-500 text-white px-4 py-2 flex items-center justify-center gap-3 text-sm font-medium z-[100]">
         <User className="h-4 w-4" />
         <span>Melihat sebagai user: <strong>{userName}</strong></span>
-        <Button size="sm" variant="outline" className="h-7 rounded-lg border-blue-300 bg-blue-600 text-white hover:bg-blue-700 text-xs px-3" onClick={stop}>
+        <Button size="sm" variant="outline" className="h-7 rounded-lg border-blue-300 bg-primary text-white hover:bg-blue-700 text-xs px-3" onClick={stop}>
           Kembali ke Admin
         </Button>
       </div>

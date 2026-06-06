@@ -83,7 +83,7 @@ export default function PpdbStatusPage({ params }: { params: Promise<{ id: strin
             <Link href="/ortu/ppdb" className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
                <ArrowLeft className="h-4 w-4" />
             </Link>
-            <h1 className="font-bold text-lg max-w-[200px] truncate">{applicant.namaLengkap}</h1>
+            <h1 className="font-bold text-lg max-w-[200px] truncate max-w-full">{applicant.namaLengkap}</h1>
           </div>
         </div>
         <div className="flex items-center justify-between">

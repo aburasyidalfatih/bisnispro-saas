@@ -136,7 +136,7 @@ export default function EditPopupPage() {
   if (loading) return <div className="skeleton h-96 max-w-4xl rounded-2xl" />
 
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto pb-10">
+    <div className="space-y-6 max-w-[1200px] mx-auto pb-10 max-w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
@@ -222,7 +222,7 @@ export default function EditPopupPage() {
                 >
                   <Input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                   {previewUrl ? (
-                    <img src={previewUrl} alt="Preview" className="max-h-48 rounded-lg object-contain" />
+                    <img src={previewUrl} alt="Preview" className="max-h-48 rounded-lg object-contain" / loading="lazy" decoding="async">
                   ) : (
                     <div className="text-center py-4">
                       <ImageIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />

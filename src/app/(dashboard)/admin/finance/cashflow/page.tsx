@@ -117,7 +117,7 @@ export default function CashflowPage() {
           <DialogTrigger asChild>
             <Button className="rounded-xl shadow-md shadow-primary/20"><Plus className="h-4 w-4 mr-2" /> Tambah Transaksi</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[425px] max-w-full">
             <DialogHeader>
               <DialogTitle>Catat Transaksi Manual</DialogTitle>
             </DialogHeader>
@@ -217,7 +217,7 @@ export default function CashflowPage() {
                 Ekspor Excel
               </Button>
               <Select value={filterMonth} onValueChange={setFilterMonth}>
-                <SelectTrigger className="w-[130px] bg-background">
+                <SelectTrigger className="w-[130px] bg-background max-w-full">
                   <SelectValue placeholder="Bulan" />
                 </SelectTrigger>
                 <SelectContent>
@@ -227,7 +227,7 @@ export default function CashflowPage() {
                 </SelectContent>
               </Select>
               <Select value={filterYear} onValueChange={setFilterYear}>
-                <SelectTrigger className="w-[100px] bg-background">
+                <SelectTrigger className="w-[100px] bg-background max-w-full">
                   <SelectValue placeholder="Tahun" />
                 </SelectTrigger>
                 <SelectContent>
@@ -238,7 +238,7 @@ export default function CashflowPage() {
                 </SelectContent>
               </Select>
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-[180px] bg-background">
+                <SelectTrigger className="w-[180px] bg-background max-w-full">
                   <SelectValue placeholder="Filter Tipe" />
                 </SelectTrigger>
                 <SelectContent>

@@ -46,7 +46,7 @@ export function PopupRenderer({ popup }: PopupProps) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-0 bg-transparent shadow-none shadow-black/20">
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-0 bg-transparent shadow-none shadow-black/20 max-w-full">
         <div className="bg-background rounded-3xl overflow-hidden border shadow-2xl relative">
           <button 
             onClick={handleClose}

@@ -20,7 +20,7 @@ export default function AffiliateSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="flex h-screen w-[260px] flex-col glass border-r">
+    <aside className="flex h-screen w-[260px] flex-col glass border-r max-w-full">
       <div className="flex h-16 items-center px-4 border-b border-border/50">
         <Link href="/affiliate" className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl btn-gradient text-white font-bold text-sm shadow-lg">

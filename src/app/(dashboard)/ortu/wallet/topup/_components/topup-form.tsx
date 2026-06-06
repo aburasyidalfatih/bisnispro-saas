@@ -149,7 +149,7 @@ export function TopUpForm({ childrenWithWallets, paymentChannels, manualBanks = 
                 )}
              >
                 {channel.icon_url ? (
-                   <img src={channel.icon_url} alt={channel.name} className="h-8 w-12 object-contain bg-white rounded p-1" />
+                   <img src={channel.icon_url} alt={channel.name} className="h-8 w-12 object-contain bg-white rounded p-1" / loading="lazy" decoding="async">
                 ) : (
                    <CreditCard className="h-8 w-8 text-muted-foreground" />
                 )}

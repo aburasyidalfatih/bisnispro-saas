@@ -95,7 +95,7 @@ export function ParentProfile() {
          <div className="relative mb-3">
             <div className="h-24 w-24 rounded-full border-4 border-background overflow-hidden bg-muted shadow-xl flex items-center justify-center">
                {avatarPreview ? (
-                  <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" />
+                  <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" / loading="lazy" decoding="async">
                ) : (
                   <User className="h-10 w-10 text-muted-foreground" />
                )}

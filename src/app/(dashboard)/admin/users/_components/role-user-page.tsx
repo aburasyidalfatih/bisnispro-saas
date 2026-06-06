@@ -303,7 +303,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
 
       {/* Edit User Dialog */}
       <Dialog open={!!editUser} onOpenChange={(open) => !open && setEditUser(null)}>
-        <DialogContent className="glass border-0 sm:max-w-[425px]">
+        <DialogContent className="glass border-0 sm:max-w-[425px] max-w-full">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Pencil className="h-5 w-5 text-primary" />

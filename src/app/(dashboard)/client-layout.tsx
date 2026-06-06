@@ -141,7 +141,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {!isGuru && mobileOpen && (
             <div className="fixed inset-0 z-50 lg:hidden">
               <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-              <div className="relative z-10 h-full w-[260px]">
+              <div className="relative z-10 h-full w-[260px] max-w-full">
                 <Sidebar />
                 <Button
                   variant="ghost"

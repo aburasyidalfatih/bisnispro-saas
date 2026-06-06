@@ -58,7 +58,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
                 brandLogo ? "bg-transparent shadow-none" : "bg-primary"
               )}>
                 {brandLogo ? (
-                  <img src={brandLogo} alt={brandName} className="h-full w-full object-contain" />
+                  <img src={brandLogo} alt={brandName} className="h-full w-full object-contain" / loading="lazy" decoding="async">
                 ) : (
                   <span className="text-primary-foreground font-bold text-lg">{brandInitial}</span>
                 )}

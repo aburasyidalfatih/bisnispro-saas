@@ -227,7 +227,7 @@ export default function KelolaSoalPage() {
 
       {/* Dialog Add Question */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto max-w-full">
           <DialogHeader>
             <DialogTitle>Tambah Soal Pilihan Ganda</DialogTitle>
             <DialogDescription>Masukkan teks soal dan tentukan opsi jawabannya. Centang opsi yang merupakan kunci jawaban.</DialogDescription>
@@ -279,7 +279,7 @@ export default function KelolaSoalPage() {
 
       {/* Dialog AI Generator */}
       <Dialog open={isAiDialogOpen} onOpenChange={setIsAiDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] max-w-full">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-emerald-500" />

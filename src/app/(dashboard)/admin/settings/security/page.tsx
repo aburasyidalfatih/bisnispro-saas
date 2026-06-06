@@ -222,7 +222,7 @@ export default function SecurityPage() {
             {qrCode && !twoFAEnabled && (
               <div className="space-y-4">
                 <div className="flex justify-center">
-                  <img src={qrCode} alt="QR Code 2FA" className="rounded-xl border" width={200} height={200} />
+                  <img src={qrCode} alt="QR Code 2FA" className="rounded-xl border" width={200} height={200} / loading="lazy" decoding="async">
                 </div>
                 <div className="text-center">
                   <p className="text-xs text-muted-foreground mb-1">Atau masukkan kode manual:</p>

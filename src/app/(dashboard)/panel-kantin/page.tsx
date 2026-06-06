@@ -48,7 +48,7 @@ export default function PanelKantinPage() {
       {/* Header */}
       <div className="glass rounded-2xl p-6 flex items-center gap-4">
         {merchant?.imageUrl ? (
-          <img src={normalizeImageUrl(merchant.imageUrl) || merchant.imageUrl} alt={merchant.name} className="h-16 w-16 rounded-2xl object-cover" />
+          <img src={normalizeImageUrl(merchant.imageUrl) || merchant.imageUrl} alt={merchant.name} className="h-16 w-16 rounded-2xl object-cover" / loading="lazy" decoding="async">
         ) : (
           <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
             <ShoppingBag className="h-8 w-8 text-primary" />

@@ -105,7 +105,7 @@ export default function PpdbPendaftarDetailPage({ params }: { params: Promise<{ 
         
         <div className="flex items-center gap-2">
            {applicant.status ==="DITERIMA" && (
-             <Button className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0" onClick={handleSync}>
+             <Button className="rounded-xl bg-primary hover:bg-blue-700 text-white border-0" onClick={handleSync}>
                <CheckCircle className="mr-2 h-4 w-4" /> Sinkronisasi ke Siswa
              </Button>
            )}

@@ -190,7 +190,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                   {tenant.name.charAt(0)}
                 </div>
               )}
-              <div className="flex flex-col max-w-[140px] sm:max-w-none">
+              <div className="flex flex-col max-w-[140px] sm:max-w-none max-w-full">
                 <span className="block font-extrabold text-sm sm:text-base text-gray-900 leading-tight tracking-tight group-hover:text-primary transition-colors truncate">
                   {tenant.name}
                 </span>
@@ -309,7 +309,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                 />
 
                 {/* Side Drawer */}
-                <div className="fixed top-0 right-0 h-[100dvh] w-[85vw] max-w-[360px] bg-white z-[101] shadow-2xl flex flex-col xl:hidden animate-in slide-in-from-right duration-300 ease-out">
+                <div className="fixed top-0 right-0 h-[100dvh] w-[85vw] max-w-[360px] bg-white z-[101] shadow-2xl flex flex-col xl:hidden animate-in slide-in-from-right duration-300 ease-out max-w-full">
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between px-5 py-4 border-b border-border/50 bg-gray-50/50">
                     <span className="font-extrabold text-lg tracking-tight text-gray-900 truncate pr-4">

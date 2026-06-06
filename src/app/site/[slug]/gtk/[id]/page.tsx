@@ -77,8 +77,8 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
       <div className="relative pt-24 pb-16 overflow-hidden">
         {/* Background Decorative */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background z-0" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2 z-0" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[80px] -translate-x-1/2 translate-y-1/2 z-0" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2 z-0 max-w-full" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[80px] -translate-x-1/2 translate-y-1/2 z-0 max-w-full" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <Link 

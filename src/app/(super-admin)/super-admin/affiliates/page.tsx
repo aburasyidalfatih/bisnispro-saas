@@ -197,7 +197,7 @@ export default function SuperAdminAffiliatesPage() {
               <CardTitle>Daftar Mitra Afiliasi</CardTitle>
               <CardDescription>Semua marketer yang terdaftar di platform.</CardDescription>
             </div>
-            <div className="relative w-full sm:w-[250px]">
+            <div className="relative w-full sm:w-[250px] max-w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Cari nama atau email..."

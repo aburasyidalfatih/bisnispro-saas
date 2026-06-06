@@ -149,11 +149,10 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
                     <div key={item.id} className="p-4 bg-muted/30 rounded-2xl border border-transparent hover:border-primary/20 hover:bg-white transition-all">
                        <div className="flex gap-4 items-center">
                           <div className="h-12 w-12 rounded-xl overflow-hidden shrink-0">
-                             <img 
-                               src={normalizeImageUrl(item.imageUrl) || item.imageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974"} 
+                             <img src={normalizeImageUrl(item.imageUrl) || item.imageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974"} 
                                alt={item.name} 
                                className="h-full w-full object-cover" 
-                             />
+                             / loading="lazy" decoding="async">
                           </div>
                           <div>
                              <h5 className="font-bold text-sm leading-tight">{item.name}</h5>

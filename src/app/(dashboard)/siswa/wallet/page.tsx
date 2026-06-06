@@ -78,7 +78,7 @@ export default function WalletSiswaPage() {
             <Button className="bg-white text-indigo-600 rounded-xl py-3 font-bold text-sm shadow-sm flex items-center justify-center gap-2">
               <ArrowDownLeft className="w-4 h-4" /> Minta Saldo
             </Button>
-            <Button className="bg-indigo-500/50 text-white rounded-xl py-3 font-bold text-sm border border-indigo-400 backdrop-blur-sm flex items-center justify-center gap-2">
+            <Button className="bg-primary/50 text-white rounded-xl py-3 font-bold text-sm border border-indigo-400 backdrop-blur-sm flex items-center justify-center gap-2">
               Lihat QR Code
             </Button>
           </div>

@@ -63,7 +63,7 @@ export default function WebsitePosterPage() {
       </div>
 
       {/* Printable Poster Area */}
-      <div className="poster-print-area bg-white text-slate-900 w-full aspect-[1/1.414] (A4 ratio) p-12 shadow-2xl rounded-sm print:shadow-none print:p-0 mx-auto max-w-[800px] border relative overflow-hidden flex flex-col justify-between">
+      <div className="poster-print-area bg-white text-slate-900 w-full aspect-[1/1.414] (A4 ratio) p-12 shadow-2xl rounded-sm print:shadow-none print:p-0 mx-auto max-w-[800px] border relative overflow-hidden flex flex-col justify-between max-w-full">
         
         {/* Background Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-b-[100px] opacity-10" />
@@ -72,7 +72,7 @@ export default function WebsitePosterPage() {
         {/* Top Header */}
         <div className="text-center space-y-6 relative z-10 pt-8">
           {tenant?.logo ? (
-            <img src={normalizeImageUrl(tenant.logo)} alt="Logo" className="h-32 w-auto mx-auto object-contain drop-shadow-md" />
+            <img src={normalizeImageUrl(tenant.logo)} alt="Logo" className="h-32 w-auto mx-auto object-contain drop-shadow-md" / loading="lazy" decoding="async">
           ) : (
             <div className="h-32 w-32 bg-slate-100 rounded-full mx-auto flex items-center justify-center">
               <Globe className="h-12 w-12 text-slate-400" />
@@ -96,7 +96,7 @@ export default function WebsitePosterPage() {
               {websiteUrl ? (
                 <QRCode value={websiteUrl} size={280} level="H" fgColor="#0f172a" />
               ) : (
-                <div className="w-[280px] h-[280px] bg-slate-100 animate-pulse rounded-xl" />
+                <div className="w-[280px] h-[280px] bg-slate-100 animate-pulse rounded-xl max-w-full" />
               )}
             </div>
           </div>

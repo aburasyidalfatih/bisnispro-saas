@@ -166,7 +166,7 @@ export default function DisciplinePage() {
 
       {/* Filter */}
       <div className="flex gap-3 flex-wrap">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-[200px] max-w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input className="pl-10" placeholder="Cari siswa..." value={search} onChange={e => setSearch(e.target.value)} />
         </div>

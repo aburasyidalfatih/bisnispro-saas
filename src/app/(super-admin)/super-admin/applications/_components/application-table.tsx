@@ -83,11 +83,10 @@ export function ApplicationTable({
                     <div className="h-10 w-10 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden relative">
                       {app.logo ? (
                         <>
-                          <img 
-                            src={normalizeImageUrl(app.logo) || app.logo} 
+                          <img src={normalizeImageUrl(app.logo) || app.logo} 
                             alt="Logo" 
                             className="object-contain p-0.5 w-full h-full" 
-                            onError={(e) => {
+                            onError={(e) = loading="lazy" decoding="async"> {
                               e.currentTarget.style.display = 'none';
                               const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
                               if (nextSibling) nextSibling.style.display = 'block';

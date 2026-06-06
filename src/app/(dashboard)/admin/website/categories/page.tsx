@@ -212,7 +212,7 @@ export default function CategoryPage() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-2xl">
+        <DialogContent className="sm:max-w-[425px] rounded-2xl max-w-full">
           <DialogHeader>
             <DialogTitle>{editingId ?"Edit Kategori" :"Tambah Kategori Baru"}</DialogTitle>
             <DialogDescription>

@@ -58,7 +58,7 @@ export default async function TenantNotificationsPage() {
                         <TableCell className="px-4 py-3 whitespace-nowrap align-top">
                           {format(new Date(notif.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
                         </TableCell>
-                        <TableCell className="px-4 py-3 align-top max-w-[400px]">
+                        <TableCell className="px-4 py-3 align-top max-w-[400px] max-w-full">
                           <div className="font-semibold mb-1">{notif.title}</div>
                           <div className="text-sm text-muted-foreground">{notif.message}</div>
                         </TableCell>

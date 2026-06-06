@@ -41,7 +41,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50 animate-in fade-in-0 duration-200" onClick={() => setMobileOpen(false)} />
-          <div className="relative z-10 h-full w-[260px] animate-in slide-in-from-left-full duration-200">
+          <div className="relative z-10 h-full w-[260px] animate-in slide-in-from-left-full duration-200 max-w-full">
             <Sidebar />
             <Button variant="ghost" size="icon" className="absolute top-4 right-3 h-9 w-9 rounded-xl bg-background/80 backdrop-blur-sm shadow-md lg:hidden z-20" onClick={() => setMobileOpen(false)}>
               <X className="h-5 w-5" />

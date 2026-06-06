@@ -138,7 +138,7 @@ export default function UsersPage() {
                           {u.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-bold truncate max-w-[150px]">{u.name}</p>
+                          <p className="text-sm font-bold truncate max-w-[150px] max-w-full">{u.name}</p>
                           <p className="text-[11px] text-muted-foreground flex items-center gap-1">
                             <Mail className="h-3 w-3" /> {u.email}
                           </p>
@@ -172,12 +172,12 @@ export default function UsersPage() {
                     </TableCell>
 
                     <TableCell className="px-4 py-4">
-                      <div className="flex flex-wrap gap-1.5 max-w-[250px]">
+                      <div className="flex flex-wrap gap-1.5 max-w-[250px] max-w-full">
                         {u.tenants.length > 0 ? (
                           u.tenants.map((tu, i) => (
                             <div key={i} className="flex items-center gap-1.5 bg-primary/5 text-primary border border-primary/10 rounded-lg px-2 py-0.5">
                               <Building2 className="h-3 w-3" />
-                              <span className="text-[10px] font-bold uppercase truncate max-w-[100px]" title={tu.tenant.name}>
+                              <span className="text-[10px] font-bold uppercase truncate max-w-[100px] max-w-full" title={tu.tenant.name}>
                                 {tu.tenant.name}
                               </span>
                               <span className="text-[9px] opacity-60">({tu.role})</span>

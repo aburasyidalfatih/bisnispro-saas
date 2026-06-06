@@ -37,7 +37,7 @@ export function PrincipalWelcome({ tenantName, settings, staff = [] }: Principal
         <div className="grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-16 items-center">
           
           {/* Left Column - Image & Profile */}
-          <div className="relative mx-auto lg:mx-0 max-w-[280px] w-full flex flex-col items-center">
+          <div className="relative mx-auto lg:mx-0 max-w-[280px] w-full flex flex-col items-center max-w-full">
             
             {/* Image Container */}
             <div className="relative w-full z-10">

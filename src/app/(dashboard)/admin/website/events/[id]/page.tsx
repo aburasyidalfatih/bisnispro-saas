@@ -241,7 +241,7 @@ export default function EventFormPage() {
 
       {/* AI Content Modal */}
       <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+        <DialogContent className="sm:max-w-[500px] rounded-2xl max-w-full">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-violet-500" />

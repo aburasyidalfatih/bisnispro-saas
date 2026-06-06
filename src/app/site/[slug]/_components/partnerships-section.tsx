@@ -18,8 +18,7 @@ const PartnerImage = ({ src, alt }: { src: string | null | undefined, alt: strin
   const finalSrc = error || !src ? "https://schoolpro.id/logo-schoolpro.png" : src
 
   return (
-    <img 
-      src={finalSrc}
+    <img src={finalSrc}
       alt={alt}
       loading="lazy"
       decoding="async"
@@ -50,7 +49,7 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
       <div className="relative flex overflow-hidden group">
         <div className="flex animate-marquee gap-8 md:gap-16 shrink-0 items-center pr-8 md:pr-16 py-4">
           {displayPartners.map((partner, i) => (
-            <div key={`${partner.id}-${i}`} className="flex-shrink-0 w-[120px] md:w-[160px] grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+            <div key={`${partner.id}-${i}`} className="flex-shrink-0 w-[120px] md:w-[160px] grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300 max-w-full">
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">
@@ -68,7 +67,7 @@ export function PartnershipsSection({ partnerships }: { partnerships: Partnershi
         
         <div aria-hidden="true" className="flex animate-marquee gap-8 md:gap-16 shrink-0 items-center pr-8 md:pr-16 py-4">
           {displayPartners.map((partner, i) => (
-            <div key={`${partner.id}-clone-${i}`} className="flex-shrink-0 w-[120px] md:w-[160px] grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+            <div key={`${partner.id}-clone-${i}`} className="flex-shrink-0 w-[120px] md:w-[160px] grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300 max-w-full">
               {partner.websiteUrl ? (
                 <Link href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
                   <div className="relative aspect-video w-full">

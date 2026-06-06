@@ -75,7 +75,7 @@ export function CancelPaymentModal({ open, onOpenChange, payment, onSuccess }: C
           <Button
             onClick={handleCancel}
             disabled={canceling}
-            className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white border-0 gap-2"
+            className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:bg-rose-700 text-white border-0 gap-2"
           >
             {canceling ? "Memproses..." : "Ya, Tolak Transaksi"}
           </Button>

@@ -126,7 +126,7 @@ export default function NewSliderPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto pb-10">
+    <div className="space-y-6 max-w-[1200px] mx-auto pb-10 max-w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
@@ -157,7 +157,7 @@ export default function NewSliderPage() {
                 <Input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                 {previewUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-lg" />
+                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-lg" / loading="lazy" decoding="async">
                 ) : (
                   <div className="text-center py-8">
                     <ImageIcon className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />

@@ -258,9 +258,9 @@ export default function NilaiPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="px-6 py-4 font-bold w-16 text-center">No</TableHead>
-                  <TableHead className="px-6 py-4 font-bold min-w-[200px]">Nama Siswa</TableHead>
+                  <TableHead className="px-6 py-4 font-bold min-w-[200px] max-w-full">Nama Siswa</TableHead>
                   <TableHead className="px-6 py-4 font-bold w-48 text-center bg-primary/5 text-primary">Nilai</TableHead>
-                  <TableHead className="px-6 py-4 font-bold min-w-[200px]">Catatan / Evaluasi (Opsional)</TableHead>
+                  <TableHead className="px-6 py-4 font-bold min-w-[200px] max-w-full">Catatan / Evaluasi (Opsional)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

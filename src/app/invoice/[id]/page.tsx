@@ -115,11 +115,10 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
           <div className="flex justify-between items-start">
             {/* Left - Logo & Company */}
             <div className="flex items-start gap-4">
-              <img 
-                src={platformLogo} 
+              <img src={platformLogo} 
                 alt={platformName}
                 className="h-14 w-14 object-contain rounded-xl border border-gray-100 bg-white p-1 shadow-sm"
-              />
+              / loading="lazy" decoding="async">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">{platformName}</h2>
                 <p className="text-sm text-gray-500 mt-0.5">{platformTagline}</p>
@@ -354,11 +353,10 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         {/* Footer */}
         <div style={{ backgroundColor: "#F8F9FC" }} className="px-8 sm:px-10 py-6">
           <div className="flex items-start gap-4">
-            <img 
-              src={platformLogo} 
+            <img src={platformLogo} 
               alt={platformName}
               className="h-8 w-8 object-contain rounded-lg opacity-60"
-            />
+            / loading="lazy" decoding="async">
             <div className="text-xs text-gray-500 space-y-1">
               <p>Terima kasih atas kepercayaan Anda menggunakan layanan <strong>{platformName}</strong>.</p>
               <p>Jika Anda memiliki pertanyaan terkait invoice ini, silakan hubungi tim support kami melalui <strong>{contactEmail}</strong>.</p>

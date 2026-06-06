@@ -122,7 +122,7 @@ export default function AiSettingsPage() {
              <Coins className="h-8 w-8 text-primary" />
           </div>
           <CardTitle className="text-xl mb-2">Sisa Kuota Token AI</CardTitle>
-          <CardDescription className="mb-6 max-w-[250px] mx-auto">Digunakan untuk fitur otomatisasi, pembuatan soal CBT, dan asisten RPP.</CardDescription>
+          <CardDescription className="mb-6 max-w-[250px] mx-auto max-w-full">Digunakan untuk fitur otomatisasi, pembuatan soal CBT, dan asisten RPP.</CardDescription>
           <div className="text-5xl font-black text-primary bg-primary/5 px-8 py-5 rounded-3xl border border-primary/10 shadow-inner">
             {formData.aiTokens.toLocaleString("id-ID")}
           </div>
@@ -182,7 +182,7 @@ export default function AiSettingsPage() {
             </div>
             <div className="flex justify-end pt-4 border-t border-border/50">
               <Button 
-                className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2 font-semibold min-w-[200px]"
+                className="h-11 rounded-xl bg-primary hover:bg-blue-700 text-white border-0 gap-2 font-semibold min-w-[200px] max-w-full"
                 disabled={checkingOutAi || !selectedAiPkg}
                 onClick={handleCheckoutAi}
               >

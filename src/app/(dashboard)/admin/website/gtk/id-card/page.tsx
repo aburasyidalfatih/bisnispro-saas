@@ -85,12 +85,12 @@ export default function IDCardPrintPage() {
             const profileUrl = `${websiteUrl}/profil/gtk#${person.id}`
             
             return (
-              <div key={person.id} className="id-card-wrapper bg-white border shadow-md print:shadow-none rounded-[20px] overflow-hidden w-[320px] h-[480px] mx-auto flex flex-col relative print:border-2 print:border-slate-300 print:break-inside-avoid">
+              <div key={person.id} className="id-card-wrapper bg-white border shadow-md print:shadow-none rounded-[20px] overflow-hidden w-[320px] h-[480px] mx-auto flex flex-col relative print:border-2 print:border-slate-300 print:break-inside-avoid max-w-full">
                 {/* ID Card Background/Header */}
                 <div className="h-32 bg-gradient-to-br from-indigo-600 to-purple-700 relative flex flex-col items-center pt-4">
                   <div className="absolute inset-0 bg-black/10" />
                   {tenant?.logo && (
-                    <img src={normalizeImageUrl(tenant.logo) || tenant.logo} alt="Logo" className="h-10 w-auto relative z-10 object-contain drop-shadow-md mb-2" />
+                    <img src={normalizeImageUrl(tenant.logo) || tenant.logo} alt="Logo" className="h-10 w-auto relative z-10 object-contain drop-shadow-md mb-2" / loading="lazy" decoding="async">
                   )}
                   <p className="text-white relative z-10 font-bold text-sm tracking-wide text-center px-4 leading-tight uppercase">
                     {tenant?.name ||"Nama Sekolah"}
@@ -100,7 +100,7 @@ export default function IDCardPrintPage() {
                 {/* Profile Photo - Overlapping */}
                 <div className="absolute top-20 left-1/2 -translate-x-1/2 w-28 h-28 rounded-full border-4 border-white shadow-lg bg-slate-100 overflow-hidden z-20 flex items-center justify-center">
                   {person.imageUrl ? (
-                    <img src={normalizeImageUrl(person.imageUrl) || person.imageUrl} alt={person.name} className="w-full h-full object-cover" />
+                    <img src={normalizeImageUrl(person.imageUrl) || person.imageUrl} alt={person.name} className="w-full h-full object-cover" / loading="lazy" decoding="async">
                   ) : (
                     <span className="text-slate-400 text-xs">Tanpa Foto</span>
                   )}

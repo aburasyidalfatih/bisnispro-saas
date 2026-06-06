@@ -112,7 +112,7 @@ export function PrincipalSpeechForm({
               </div>
               {form.settings?.principalImage && (
                 <div className="mt-4 rounded-xl overflow-hidden border w-32 h-32">
-                  <img src={normalizeImageUrl(form.settings?.principalImage) || form.settings?.principalImage} alt="Principal preview" className="w-full h-full object-cover" />
+                  <img src={normalizeImageUrl(form.settings?.principalImage) || form.settings?.principalImage} alt="Principal preview" className="w-full h-full object-cover" / loading="lazy" decoding="async">
                 </div>
               )}
             </div>

@@ -159,7 +159,7 @@ export default function GuruDashboard() {
             {aiData && (
               <div 
                 onClick={() => setIsTopupOpen(true)}
-                className="flex flex-col items-center sm:items-start bg-black/10 hover:bg-black/20 cursor-pointer backdrop-blur-md rounded-2xl p-4 border border-white/10 min-w-[140px] transition-all"
+                className="flex flex-col items-center sm:items-start bg-black/10 hover:bg-black/20 cursor-pointer backdrop-blur-md rounded-2xl p-4 border border-white/10 min-w-[140px] transition-all max-w-full"
               >
                 <div className="flex items-center gap-1.5 text-amber-300 mb-1">
                   <Coins className="h-4 w-4" />
@@ -174,7 +174,7 @@ export default function GuruDashboard() {
             )}
 
             {/* Clock UI */}
-            <div className="flex flex-col items-center sm:items-end bg-black/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 min-w-[180px]">
+            <div className="flex flex-col items-center sm:items-end bg-black/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 min-w-[180px] max-w-full">
               <div className="flex items-center gap-2 text-primary-foreground/90 mb-1">
                 <Clock className="h-4 w-4" />
                 <span className="text-xs font-medium uppercase tracking-wider">

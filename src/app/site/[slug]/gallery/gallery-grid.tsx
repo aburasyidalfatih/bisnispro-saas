@@ -77,7 +77,7 @@ export function GalleryGrid({ items }: Props) {
           <div className="max-w-4xl max-h-[80vh] flex flex-col items-center gap-3"
             onClick={e => e.stopPropagation()}>
             <img src={normalizeImageUrl(items[lightbox].url) || items[lightbox].url} alt={items[lightbox].caption || `Foto ${lightbox + 1}`}
-              className="max-h-[70vh] max-w-full rounded-xl object-contain" />
+              className="max-h-[70vh] max-w-full rounded-xl object-contain" / loading="lazy" decoding="async">
             {items[lightbox].caption && (
               <p className="text-white text-sm text-center max-w-lg">{items[lightbox].caption}</p>
             )}

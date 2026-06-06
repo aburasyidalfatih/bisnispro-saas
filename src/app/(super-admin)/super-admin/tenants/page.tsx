@@ -263,7 +263,7 @@ export default function TenantsPage() {
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold truncate max-w-[200px]">{t.name}</p>
+                            <p className="text-sm font-bold truncate max-w-[200px] max-w-full">{t.name}</p>
                             {t.isContactSynced && (
                               <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-medium text-green-700 ring-1 ring-inset ring-green-600/20" title="Tersinkronisasi ke Google Contacts">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>

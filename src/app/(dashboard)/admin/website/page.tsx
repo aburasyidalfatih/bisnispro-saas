@@ -301,7 +301,7 @@ export default function WebsiteOverviewPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Domain Aktif</p>
-                  <p className="text-sm font-semibold font-mono truncate max-w-[160px]">
+                  <p className="text-sm font-semibold font-mono truncate max-w-[160px] max-w-full">
                     {customDomainUrl
                       ? data?.domain
                       : slug ? `${slug}.${rootDomain}` :"—"}

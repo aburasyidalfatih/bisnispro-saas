@@ -43,7 +43,7 @@ export default function CBTEntryPage() {
             </div>
             <div>
               <h3 className="text-2xl font-black text-slate-800 tracking-tight">Portal Ujian CBT</h3>
-              <p className="text-muted-foreground text-sm mt-2 leading-relaxed max-w-[250px] mx-auto">
+              <p className="text-muted-foreground text-sm mt-2 leading-relaxed max-w-[250px] mx-auto max-w-full">
                 Masukkan 6-digit PIN Ujian yang diberikan oleh pengawas kelas Anda.
               </p>
             </div>

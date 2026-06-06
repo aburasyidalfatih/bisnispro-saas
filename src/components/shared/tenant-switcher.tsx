@@ -40,7 +40,7 @@ export function TenantSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="gap-2 rounded-xl h-9 px-3">
           <Building2 className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium max-w-[120px] truncate">{currentTenant?.name}</span>
+          <span className="text-sm font-medium max-w-[120px] truncate max-w-full">{currentTenant?.name}</span>
           <ChevronDown className="h-3 w-3 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>

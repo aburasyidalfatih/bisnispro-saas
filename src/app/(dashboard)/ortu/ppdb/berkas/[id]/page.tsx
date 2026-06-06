@@ -166,7 +166,7 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
           <h1 className="font-bold text-lg">Upload Berkas</h1>
         </div>
         <p className="text-primary-foreground/80 text-sm flex items-center gap-2">
-          <span className="truncate max-w-[150px]">{applicant?.namaLengkap}</span> · <span className="font-mono text-[10px]">{applicant?.noPendaftaran}</span>
+          <span className="truncate max-w-[150px] max-w-full">{applicant?.namaLengkap}</span> · <span className="font-mono text-[10px]">{applicant?.noPendaftaran}</span>
         </p>
       </div>
 
@@ -265,11 +265,10 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
                         <div className="mt-3 rounded-xl border overflow-hidden bg-muted/30">
                           {isImage(uploaded.fileUrl) ? (
                             <div className="relative group">
-                              <img
-                                src={uploaded.fileUrl}
+                              <img src={uploaded.fileUrl}
                                 alt={req.nama}
                                 className="w-full max-h-40 object-cover"
-                              />
+                              / loading="lazy" decoding="async">
                               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                 <a href={uploaded.fileUrl} target="_blank" rel="noreferrer">
                                   <Button size="sm" variant="secondary" className="rounded-lg h-7 text-xs gap-1">

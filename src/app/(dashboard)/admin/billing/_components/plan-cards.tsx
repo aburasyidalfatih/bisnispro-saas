@@ -173,7 +173,7 @@ export function PlanCards({
               </Button>
             ) : (
               <Button 
-                className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2 font-semibold shadow-lg shadow-blue-500/20"
+                className="w-full h-11 rounded-xl bg-primary hover:bg-blue-700 text-white border-0 gap-2 font-semibold shadow-lg shadow-blue-500/20"
                 disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
                 onClick={() => { setSelectedPlanSlug("lite"); setShowCheckoutModal(true) }}
               >

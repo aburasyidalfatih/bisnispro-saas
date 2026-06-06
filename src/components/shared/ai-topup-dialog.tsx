@@ -139,7 +139,7 @@ export function AiTopupDialog({
                            </div>
                         </div>
                         <div className="h-8 w-12 bg-white rounded flex items-center justify-center p-1 border">
-                           <img src={ch.icon_url} alt={ch.name} className="max-h-full max-w-full object-contain" />
+                           <img src={ch.icon_url} alt={ch.name} className="max-h-full max-w-full object-contain" / loading="lazy" decoding="async">
                         </div>
                      </label>
                   ))}

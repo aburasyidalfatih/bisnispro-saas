@@ -87,7 +87,7 @@ export function PwaInstaller({ tenantName, tenantLogo }: PwaInstallerProps) {
       <div className="flex items-center gap-3 overflow-hidden">
         <div className="h-10 w-10 shrink-0 rounded-xl bg-muted overflow-hidden flex items-center justify-center">
           {tenantLogo ? (
-            <img src={tenantLogo} alt="Logo" className="h-full w-full object-cover" />
+            <img src={tenantLogo} alt="Logo" className="h-full w-full object-cover" / loading="lazy" decoding="async">
           ) : (
             <div className="h-full w-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
               {tenantName.charAt(0)}

@@ -334,7 +334,7 @@ export default function WithdrawalsPage() {
 
           <DialogFooter>
             <Button variant="ghost" onClick={() => setRejectTarget(null)} disabled={processing} className="rounded-xl">Batal</Button>
-            <Button onClick={handleReject} disabled={processing || !rejectNotes} className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white border-0 gap-2">
+            <Button onClick={handleReject} disabled={processing || !rejectNotes} className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:bg-rose-700 text-white border-0 gap-2">
               {processing ? "Memproses..." : "Ya, Tolak"}
             </Button>
           </DialogFooter>

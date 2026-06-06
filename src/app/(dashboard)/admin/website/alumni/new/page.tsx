@@ -141,7 +141,7 @@ export default function NewAlumniPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto pb-10">
+    <div className="space-y-6 max-w-[1200px] mx-auto pb-10 max-w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
@@ -182,7 +182,7 @@ export default function NewAlumniPage() {
                   />
                   
                   {previewUrl ? (
-                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" />
+                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" / loading="lazy" decoding="async">
                   ) : (
                     <div className="text-center p-4">
                       <User className="h-8 w-8 mx-auto mb-1 text-muted-foreground/50" />
@@ -299,7 +299,7 @@ export default function NewAlumniPage() {
 
       {/* AI Content Modal */}
       <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+        <DialogContent className="sm:max-w-[500px] rounded-2xl max-w-full">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-violet-500" />

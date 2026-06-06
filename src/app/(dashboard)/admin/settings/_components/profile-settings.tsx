@@ -56,7 +56,7 @@ export function ProfileSettings({
           <div className="relative shrink-0">
             <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-border">
               {avatarPreview
-                ? <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" />
+                ? <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" / loading="lazy" decoding="async">
                 : <div className="flex h-full w-full items-center justify-center bg-primary/10">
                     <span className="text-lg font-bold text-primary">{profileForm.name?.charAt(0)?.toUpperCase() ||"?"}</span>
                   </div>

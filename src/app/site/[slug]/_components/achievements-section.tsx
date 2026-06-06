@@ -44,7 +44,7 @@ export function AchievementsSection({ achievements, labels }: AchievementsSectio
 
   return (
     <section className="py-16 md:py-20 bg-primary/5 relative overflow-hidden">
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-amber-400/3 blur-3xl pointer-events-none" />
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-amber-400/3 blur-3xl pointer-events-none max-w-full" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">

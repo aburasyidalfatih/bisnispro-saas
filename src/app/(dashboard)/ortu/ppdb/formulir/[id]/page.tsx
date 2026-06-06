@@ -185,7 +185,7 @@ export default function PpdbFormulirPage({ params }: { params: Promise<{ id: str
           <h1 className="font-bold text-lg">Formulir Pendaftaran</h1>
         </div>
         <p className="text-primary-foreground/80 text-sm flex items-center flex-wrap gap-2">
-          <span className="truncate max-w-[150px]">{applicant?.namaLengkap}</span> · <span className="font-mono text-[10px]">{applicant?.noPendaftaran}</span>
+          <span className="truncate max-w-[150px] max-w-full">{applicant?.namaLengkap}</span> · <span className="font-mono text-[10px]">{applicant?.noPendaftaran}</span>
           {lastSaved && (
             <span className="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded-full font-medium animate-pulse whitespace-nowrap">
               Disimpan {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

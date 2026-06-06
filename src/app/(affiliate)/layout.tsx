@@ -45,7 +45,7 @@ export default function AffiliateLayout({ children }: { children: React.ReactNod
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <div className="relative z-10 h-full w-[260px]">
+          <div className="relative z-10 h-full w-[260px] max-w-full">
             <AffiliateSidebar />
             <Button variant="ghost" size="icon" className="absolute top-4 right-[-48px] h-9 w-9 rounded-xl bg-background" onClick={() => setMobileOpen(false)}>
               <X className="h-5 w-5" />

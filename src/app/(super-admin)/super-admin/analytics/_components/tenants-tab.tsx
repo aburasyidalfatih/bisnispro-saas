@@ -79,7 +79,7 @@ export function TenantsTab({ data }: { data: AnalyticsData }) {
                           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold">
                             {t.name.charAt(0).toUpperCase()}
                           </div>
-                          <span className="font-medium text-xs truncate max-w-[180px]">{t.name}</span>
+                          <span className="font-medium text-xs truncate max-w-[180px] max-w-full">{t.name}</span>
                         </div>
                       </TableCell>
                       <TableCell className="px-3 py-3 text-center">

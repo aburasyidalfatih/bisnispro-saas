@@ -189,7 +189,7 @@ export default function PaymentsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari Ref / Tenant..."
-                  className="rounded-xl pl-9 w-full sm:w-[200px] md:w-[250px] h-9"
+                  className="rounded-xl pl-9 w-full sm:w-[200px] md:w-[250px] h-9 max-w-full"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
