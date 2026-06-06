@@ -38,7 +38,7 @@ export function ApplicationDetailModal({ open, setOpen, selectedApp }: Applicati
                     <img src={normalizeImageUrl(selectedApp.logo) || selectedApp.logo} 
                       alt="Logo" 
                       className="object-contain p-1 w-full h-full" 
-                      onError={(e) = loading="lazy" decoding="async"> {
+                      onError={(e) => {
                         e.currentTarget.style.display = 'none';
                         const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
                         if (nextSibling) nextSibling.style.display = 'block';

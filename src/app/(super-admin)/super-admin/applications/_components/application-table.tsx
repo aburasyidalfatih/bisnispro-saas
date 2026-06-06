@@ -86,7 +86,7 @@ export function ApplicationTable({
                           <img src={normalizeImageUrl(app.logo) || app.logo} 
                             alt="Logo" 
                             className="object-contain p-0.5 w-full h-full" 
-                            onError={(e) = loading="lazy" decoding="async"> {
+                            onError={(e) => {
                               e.currentTarget.style.display = 'none';
                               const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
                               if (nextSibling) nextSibling.style.display = 'block';
