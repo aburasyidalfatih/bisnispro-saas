@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ServerPagination } from "@/components/shared/server-pagination"
-import { Bug, Search, User, Clock, MapPin, AlertCircle, Calendar, Building2 } from "lucide-react"
+import { Bug, Search, User, Calendar, Building2, AlertCircle } from "lucide-react"
 import { format } from "date-fns"
 import { id as dateLocaleId } from "date-fns/locale"
 import { CheckCircle2, Trash2 } from "lucide-react"
@@ -31,7 +31,7 @@ interface ErrorLog {
   isResolved: boolean
 }
 
-export default function ErrorLogPage() {
+export function ErrorLogTab() {
   const [errors, setErrors] = useState<ErrorLog[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -93,11 +93,6 @@ export default function ErrorLogPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Error Log Sistem</h1>
-        <p className="text-muted-foreground mt-1">Pantau error yang dialami oleh pengguna</p>
-      </div>
-
       <div className="flex flex-wrap gap-3">
         <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
