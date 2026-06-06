@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/comp
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
+import { Switch } from"@/components/ui/switch"
 import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 import { toast } from"@/hooks/use-toast"
 import {
@@ -355,12 +356,10 @@ export default function SecurityPage() {
                   <span className="text-xs bg-amber-500/10 text-amber-600 rounded-full px-2.5 py-1 font-medium">
                     Admin Only
                   </span>
-                  <Button
-                    onClick={() => setGoogleEnabled(!googleEnabled)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${googleEnabled ?"bg-primary" :"bg-muted"}`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${googleEnabled ?"translate-x-6" :"translate-x-1"}`} />
-                  </Button>
+                  <Switch
+                    checked={googleEnabled}
+                    onCheckedChange={setGoogleEnabled}
+                  />
                 </div>
               </div>
             </CardHeader>
