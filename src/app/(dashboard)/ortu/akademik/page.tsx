@@ -85,7 +85,7 @@ export default function AkademikParentPage() {
         {childrenData.length > 1 && (
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {childrenData.map((child: any) => (
-              <button
+              <Button
                 key={child.id}
                 onClick={() => setSelectedStudentId(child.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl whitespace-nowrap text-sm font-bold transition-colors shadow-sm ${
@@ -95,7 +95,7 @@ export default function AkademikParentPage() {
                 }`}
               >
                 <User className="h-4 w-4" /> {child.name.split(" ")[0]}
-              </button>
+              </Button>
             ))}
           </div>
         )}

@@ -93,9 +93,9 @@ export default function PpdbRegisterPage() {
       {/* Top Header Mobile Style */}
       <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
         <div className="flex items-center gap-3 text-primary-foreground mb-4">
-          <button type="button" onClick={() => router.back()} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+          <Button type="button" onClick={() => router.back()} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
              <ArrowLeft className="h-4 w-4" />
-          </button>
+          </Button>
           <h1 className="font-bold text-lg">Daftar Siswa Baru</h1>
         </div>
         <p className="text-primary-foreground/80 text-sm">Lengkapi formulir awal pendaftaran.</p>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Wallet, CreditCard, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
 
 export function TopUpForm({ childrenWithWallets, paymentChannels, manualBanks = [], user, tenant }: any) {
   const [selectedWallet, setSelectedWallet] = useState<string>(childrenWithWallets[0]?.walletAccount?.id)
@@ -115,7 +116,7 @@ export function TopUpForm({ childrenWithWallets, paymentChannels, manualBanks = 
         </div>
         <div className="mt-4">
            <p className="text-xs font-semibold text-muted-foreground mb-2">Atau masukkan nominal lain:</p>
-           <input 
+           <Input 
              type="text" 
              placeholder="Contoh: 150000"
              className="w-full p-3 rounded-xl border border-border bg-card font-mono focus:outline-none focus:ring-2 ring-primary"

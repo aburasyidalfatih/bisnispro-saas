@@ -116,7 +116,7 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
               <Label>Status Aktif</Label>
               <p className="text-[10px] text-muted-foreground">Matikan jika tenant menunggak atau suspend.</p>
             </div>
-            <button 
+            <Button 
               onClick={() => setEditForm({...editForm, isActive: !editForm.isActive})}
               className={cn(
                 "w-12 h-6 rounded-full transition-all relative",
@@ -124,7 +124,7 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
               )}
             >
               <div className={cn("absolute top-1 w-4 h-4 bg-white rounded-full transition-all", editForm.isActive ? "right-1" : "left-1")} />
-            </button>
+            </Button>
           </div>
         </div>
         <DialogFooter>

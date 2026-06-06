@@ -30,7 +30,7 @@ export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTa
           <div className="space-y-2">
             <Label>Pilih Provider Storage</Label>
             <div className="grid grid-cols-2 gap-4">
-              <button
+              <Button
                 onClick={() => {
                   setForm({...form, STORAGE_PROVIDER: "local"})
                   handleSaveBatch(['STORAGE_PROVIDER'], { STORAGE_PROVIDER: "local" })
@@ -42,8 +42,8 @@ export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTa
               >
                 <HardDrive className="h-6 w-6" />
                 <span className="font-semibold text-sm">Lokal (VPS Disk)</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => {
                   setForm({...form, STORAGE_PROVIDER: "s3"})
                   handleSaveBatch(['STORAGE_PROVIDER'], { STORAGE_PROVIDER: "s3" })
@@ -55,7 +55,7 @@ export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTa
               >
                 <Cloud className="h-6 w-6" />
                 <span className="font-semibold text-sm">S3 / Cloudflare R2</span>
-              </button>
+              </Button>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed mt-2">
               Mengubah penyimpanan ke S3/R2 akan membuat semua <strong>unggahan baru</strong> masuk ke Cloud. File lama akan tetap dibaca dari Lokal.
@@ -95,7 +95,7 @@ export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTa
             <Label>Secret Access Key</Label>
             <div className="relative">
               <Input type={showS3Secret ? "text" : "password"} value={form.S3_SECRET_KEY} onChange={e => setForm({...form, S3_SECRET_KEY: e.target.value})} placeholder="Secret Key" className="rounded-xl font-mono text-xs pr-10" />
-              <button type="button" onClick={() => setShowS3Secret(!showS3Secret)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showS3Secret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+              <Button type="button" onClick={() => setShowS3Secret(!showS3Secret)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showS3Secret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
             </div>
           </div>
           <div className="space-y-2">

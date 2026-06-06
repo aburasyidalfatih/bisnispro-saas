@@ -69,13 +69,13 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     {header.isPlaceholder ? null : (
-                      <button
+                      <Button
                         className="flex items-center gap-1 hover:text-foreground transition-colors"
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {header.column.getCanSort() && <ArrowUpDown className="h-3 w-3" />}
-                      </button>
+                      </Button>
                     )}
                   </TableHead>
                 ))}

@@ -60,13 +60,13 @@ export function NotificationBell() {
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <DropdownMenuLabel className="p-0 font-bold">Notifikasi</DropdownMenuLabel>
           {unreadCount > 0 && (
-            <button
+            <Button
               onClick={markAllAsRead}
               className="text-[11px] text-primary hover:underline flex items-center gap-1 font-medium"
             >
               <CheckCircle2 className="h-3 w-3" />
               Tandai dibaca
-            </button>
+            </Button>
           )}
         </div>
         

@@ -70,7 +70,7 @@ export function ProviderMeta({ form, setForm, handleSaveBatch, saving }: Props) 
             <Label>Permanent Access Token</Label>
             <div className="relative">
               <Input type={showWAToken ? "text" : "password"} value={form.META_WA_ACCESS_TOKEN} onChange={e => setForm({...form, META_WA_ACCESS_TOKEN: e.target.value})} placeholder="EAAxxxx..." className="rounded-xl pr-10" />
-              <button type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+              <Button type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
             </div>
           </div>
           <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['META_WA_PHONE_NUMBER_ID', 'META_WA_BUSINESS_ACCOUNT_ID', 'META_WA_ACCESS_TOKEN'])} disabled={saving}>

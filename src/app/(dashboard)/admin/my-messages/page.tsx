@@ -10,6 +10,7 @@ import { Message, Submission } from"./_components/types"
 import { InternalMessages } from"./_components/internal-messages"
 import { WebsiteMessages } from"./_components/website-messages"
 import { Announcements } from"./_components/announcements"
+import { Button } from "@/components/ui/button"
 
 export default function AdminMessagesPage() {
   const { branding } = useTenantBranding()
@@ -240,19 +241,19 @@ export default function AdminMessagesPage() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-1 rounded-xl border p-1 w-fit">
-        <button onClick={() => setActiveTab("pengumuman")}
+        <Button onClick={() => setActiveTab("pengumuman")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
             activeTab ==="pengumuman" ?"bg-primary text-white" :"hover:bg-muted")}>
           <MessageSquare className="h-4 w-4" />
           Pengumuman
-        </button>
-        <button onClick={() => setActiveTab("internal")}
+        </Button>
+        <Button onClick={() => setActiveTab("internal")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
             activeTab ==="internal" ?"bg-primary text-white" :"hover:bg-muted")}>
           <Users className="h-4 w-4" />
           Pesan Internal (GTK)
-        </button>
-        <button onClick={() => setActiveTab("website")}
+        </Button>
+        <Button onClick={() => setActiveTab("website")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
             activeTab ==="website" ?"bg-primary text-white" :"hover:bg-muted")}>
           <Globe className="h-4 w-4" />
@@ -263,7 +264,7 @@ export default function AdminMessagesPage() {
               {unread}
             </span>
           )}
-        </button>
+        </Button>
       </div>
 
       {activeTab ==="internal" && (

@@ -92,13 +92,13 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
 
       {/* Tabs Navigation */}
       <div className="flex gap-2 border-b">
-         <button 
+         <Button 
            onClick={() => setActiveTab("overview")}
            className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors", activeTab ==="overview" ?"border-primary text-primary" :"border-transparent text-muted-foreground hover:text-foreground")}
          >
             Daftar Tabungan
-         </button>
-         <button 
+         </Button>
+         <Button 
            onClick={() => setActiveTab("pending")}
            className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2", activeTab ==="pending" ?"border-amber-500 text-amber-600" :"border-transparent text-muted-foreground hover:text-foreground")}
          >
@@ -106,13 +106,13 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
             {stats.pendingCount > 0 && (
                <span className="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{stats.pendingCount}</span>
             )}
-         </button>
-         <button 
+         </Button>
+         <Button 
            onClick={() => setActiveTab("history")}
            className={cn("px-4 py-3 text-sm font-medium border-b-2 transition-colors", activeTab ==="history" ?"border-primary text-primary" :"border-transparent text-muted-foreground hover:text-foreground")}
          >
             Riwayat Transaksi Global
-         </button>
+         </Button>
       </div>
 
       {/* Tab Content: Overview */}

@@ -269,7 +269,7 @@ export default function FeaturesControlPage() {
                           const isEnabled = features[plan.key]?.[feature.key] ?? false
                           return (
                             <TableCell key={plan.key} className="py-3 px-2 text-center">
-                              <button
+                              <Button
                                 onClick={() => toggleFeature(plan.key, feature.key)}
                                 className={cn(
                                   "inline-flex items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200",
@@ -283,7 +283,7 @@ export default function FeaturesControlPage() {
                                 ) : (
                                   <><ToggleLeft className="h-4 w-4" /> OFF</>
                                 )}
-                              </button>
+                              </Button>
                             </TableCell>
                           )
                         })}

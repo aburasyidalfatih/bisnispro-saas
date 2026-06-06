@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ShieldAlert, Shield, AlertTriangle, ShieldCheck } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface SecurityLog {
   id: string
@@ -143,13 +144,13 @@ export function SecurityLogs() {
                       ) : (
                         <div className="flex items-center gap-2">
                           <span className="text-xs">{getActionRecommendation(log.attackType)}</span>
-                          <button
+                          <Button
                             onClick={() => handleBlockIp(log.ipAddress)}
                             disabled={blockingIp === log.ipAddress}
                             className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded transition-colors disabled:opacity-50"
                           >
                             {blockingIp === log.ipAddress ? "Memblokir..." : "Blokir IP"}
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </TableCell>

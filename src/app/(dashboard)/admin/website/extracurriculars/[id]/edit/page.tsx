@@ -210,7 +210,7 @@ export default function EditExtracurricularPage() {
                 onClick={() => fileInputRef.current?.click()}
                 className={`cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 transition-colors overflow-hidden relative ${file || previewUrl ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-primary/5'}`}
               >
-                <input 
+                <Input 
                   type="file" 
                   ref={fileInputRef} 
                   onChange={handleFileChange} 

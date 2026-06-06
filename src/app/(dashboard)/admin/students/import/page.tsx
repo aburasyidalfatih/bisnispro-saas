@@ -12,6 +12,7 @@ import Link from"next/link"
 import Papa from"papaparse"
 
 import { Crown } from"lucide-react"
+import { Input } from "@/components/ui/input"
 
 export default function ImportStudentsPage() {
   const { data: session } = useSession()
@@ -187,7 +188,7 @@ export default function ImportStudentsPage() {
                   ) : (
                      <>
                         <div className="border-2 border-dashed border-primary/30 rounded-2xl p-10 text-center hover:bg-primary/5 transition-colors relative">
-                           <input 
+                           <Input 
                               type="file" 
                               accept=".csv" 
                               onChange={handleFileUpload}

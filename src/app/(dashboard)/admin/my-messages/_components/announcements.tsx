@@ -9,6 +9,7 @@ import { Label } from"@/components/ui/label"
 import { MessageSquare, Plus, Loader2, Pencil, Trash2 } from"lucide-react"
 import { format } from"date-fns"
 import { id as localeId } from"date-fns/locale"
+import { Textarea } from "@/components/ui/textarea"
 
 interface AnnouncementsProps {
   announcements: any[]
@@ -80,7 +81,7 @@ export function Announcements({
                 </div>
                 <div className="space-y-2">
                   <Label>Isi Pengumuman</Label>
-                  <textarea 
+                  <Textarea 
                     value={addForm.content} 
                     onChange={e => setAddForm(p => ({...p, content: e.target.value}))}
                     className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -122,7 +123,7 @@ export function Announcements({
                 </div>
                 <div className="space-y-2">
                   <Label>Isi Pengumuman</Label>
-                  <textarea 
+                  <Textarea 
                     value={editForm.content} 
                     onChange={e => setEditForm(p => ({...p, content: e.target.value}))}
                     className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

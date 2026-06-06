@@ -31,7 +31,7 @@ export function StudentCardGenerator({ students }: { students: any[] }) {
       {/* Selector Siswa */}
       <div className="flex gap-2 overflow-x-auto pb-2 print:hidden">
         {students.map(s => (
-          <button
+          <Button
             key={s.id}
             onClick={() => setActiveStudentId(s.id)}
             className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
@@ -41,7 +41,7 @@ export function StudentCardGenerator({ students }: { students: any[] }) {
             }`}
           >
             {s.name}
-          </button>
+          </Button>
         ))}
       </div>
 

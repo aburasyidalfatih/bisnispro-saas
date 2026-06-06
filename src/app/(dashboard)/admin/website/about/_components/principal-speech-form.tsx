@@ -98,7 +98,7 @@ export function PrincipalSpeechForm({
                 <Input value={form.settings?.principalImage ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalImage: e.target.value } }))}
                   placeholder="https://... atau upload file" className="rounded-xl flex-1" />
                 <Label className="cursor-pointer">
-                  <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePrincipalImageUpload} />
+                  <Input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePrincipalImageUpload} />
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-input bg-background hover:bg-muted/50">
                     <Upload className="h-4 w-4" />
                   </div>

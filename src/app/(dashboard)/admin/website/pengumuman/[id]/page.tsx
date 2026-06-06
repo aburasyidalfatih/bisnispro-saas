@@ -352,7 +352,7 @@ export default function PengumumanFormPage() {
                 onChange={(url) => setValue("featuredImage", url ??"", { shouldValidate: true })}
                 hint="Rekomendasi rasio 16:9 (misal: 1280x720px)"
               />
-              <input type="hidden" {...register("featuredImage")} />
+              <Input type="hidden" {...register("featuredImage")} />
               {errors.featuredImage && <p className="text-xs text-red-500 mt-2">{errors.featuredImage.message}</p>}
             </CardContent>
           </Card>

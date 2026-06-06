@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Coins, Sparkles, AlertCircle } from "lucide-react"
+import { Input } from "@/components/ui/input"
 
 export function AiTopupDialog({ 
   open, 
@@ -125,7 +126,7 @@ export function AiTopupDialog({
                        className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-colors ${selectedMethod === ch.code ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/50'}`}
                      >
                         <div className="flex items-center gap-3">
-                           <input 
+                           <Input 
                              type="radio" 
                              name="payment_method" 
                              value={ch.code} 
@@ -147,7 +148,7 @@ export function AiTopupDialog({
                        className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-colors ${selectedMethod === 'MANUAL_TRANSFER' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/50'}`}
                      >
                         <div className="flex items-center gap-3">
-                           <input 
+                           <Input 
                              type="radio" 
                              name="payment_method" 
                              value="MANUAL_TRANSFER" 

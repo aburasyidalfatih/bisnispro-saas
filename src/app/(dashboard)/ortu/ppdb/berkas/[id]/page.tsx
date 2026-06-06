@@ -12,6 +12,7 @@ import {
   Loader2, AlertCircle, ExternalLink, ArrowRight
 } from "lucide-react"
 import Link from "next/link"
+import { Input } from "@/components/ui/input"
 
 interface Requirement {
   id: string
@@ -300,7 +301,7 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
 
                   {/* Actions */}
                   <div className="mt-4 flex gap-2">
-                    <input
+                    <Input
                       ref={el => { fileInputRefs.current[req.id] = el }}
                       type="file"
                       accept={req.tipeFile || "image/*,application/pdf"}

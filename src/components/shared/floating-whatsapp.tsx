@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { MessageCircle, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function FloatingWhatsApp({ 
   supportNumbers 
@@ -21,12 +22,12 @@ export function FloatingWhatsApp({
 
   if (supportNumbers.length === 1) {
     return (
-      <button 
+      <Button 
         onClick={handleSingleClick}
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:scale-110 transition-transform"
       >
         <MessageCircle className="h-7 w-7" />
-      </button>
+      </Button>
     )
   }
 
@@ -37,9 +38,9 @@ export function FloatingWhatsApp({
         <div className="absolute bottom-16 right-0 mb-4 w-64 rounded-2xl border bg-background p-4 shadow-xl animate-in slide-in-from-bottom-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="font-semibold text-sm">Hubungi Support</h3>
-            <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">
+            <Button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
           <div className="space-y-2">
             {supportNumbers.map((wa) => {
@@ -63,12 +64,12 @@ export function FloatingWhatsApp({
           </div>
         </div>
       )}
-      <button 
+      <Button 
         onClick={() => setIsOpen(!isOpen)}
         className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:scale-110 transition-transform ml-auto"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-7 w-7" />}
-      </button>
+      </Button>
     </div>
   )
 }

@@ -188,7 +188,7 @@ export default function NewStaffPage() {
                   onClick={() => fileInputRef.current?.click()}
                   className={`cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-2xl w-32 h-40 transition-colors overflow-hidden relative ${file ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-primary/5'}`}
                 >
-                  <input 
+                  <Input 
                     type="file" 
                     ref={fileInputRef} 
                     onChange={handleFileChange} 

@@ -203,13 +203,13 @@ export function BackupTab() {
 
           {backupData?.lastBackupLog && (
             <div className="mt-4">
-              <button
+              <Button
                 onClick={() => setShowBackupLog(!showBackupLog)}
                 className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Clock className="h-3.5 w-3.5" />
                 {showBackupLog ? "Sembunyikan" : "Lihat"} Log Terakhir
-              </button>
+              </Button>
               {showBackupLog && (
                 <pre className="mt-2 rounded-xl bg-slate-950 text-emerald-400 p-4 text-[10px] font-mono overflow-x-auto max-h-48 overflow-y-auto">
                   {backupData.lastBackupLog}

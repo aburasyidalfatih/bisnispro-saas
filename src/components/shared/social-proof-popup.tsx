@@ -7,6 +7,7 @@ import { Building2, X } from "lucide-react"
 import { normalizeImageUrl } from "@/lib/utils"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
 
 interface Registration {
   schoolName: string
@@ -72,13 +73,13 @@ export function SocialProofPopup() {
           {/* Subtle gradient background */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
           
-          <button 
+          <Button 
             onClick={() => setIsVisible(false)}
             className="absolute top-2 right-2 text-muted-foreground hover:text-foreground transition-colors p-1"
             aria-label="Tutup"
           >
             <X className="h-3 w-3" />
-          </button>
+          </Button>
 
           <div className="flex items-start gap-3 relative z-10">
             <div className="flex-shrink-0 relative h-10 w-10 rounded-full overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center">

@@ -94,10 +94,10 @@ export function AdsTable({ metaData, actionLoading, handleAction, handleUpdateBu
                           <div className="flex items-center gap-1 justify-end">
                             <span>{c.dailyBudget > 0 ? fmtRp(c.dailyBudget) : '-'}</span>
                             {c.status === 'ACTIVE' && (
-                              <button onClick={() => { setEditBudgetId(c.id); setNewBudget(c.dailyBudget.toString()) }}
+                              <Button onClick={() => { setEditBudgetId(c.id); setNewBudget(c.dailyBudget.toString()) }}
                                 className="text-muted-foreground hover:text-primary transition-colors">
                                 <PencilLine className="h-3 w-3" />
-                              </button>
+                              </Button>
                             )}
                           </div>
                         )}

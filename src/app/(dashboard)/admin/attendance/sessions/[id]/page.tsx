@@ -159,7 +159,7 @@ export default function AttendanceSessionDetailPage({ params }: { params: Promis
                 </div>
                 <div className="flex gap-1.5 flex-wrap justify-end">
                   {STATUS_OPTIONS.map(opt => (
-                    <button
+                    <Button
                       key={opt.value}
                       onClick={() => handleStatusChange(rec.studentId, opt.value)}
                       className={cn("h-8 px-3 rounded-lg text-xs font-semibold border transition-all",
@@ -169,7 +169,7 @@ export default function AttendanceSessionDetailPage({ params }: { params: Promis
                       )}
                     >
                       {opt.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </CardContent>

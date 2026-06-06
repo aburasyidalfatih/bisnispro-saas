@@ -7,6 +7,7 @@ import { Info, Sparkles, Upload, X } from"lucide-react"
 import { LazyRichTextEditor as RichTextEditor } from"@/components/ui/lazy-rich-text-editor"
 import { normalizeImageUrl } from"@/lib/utils"
 import { AboutFormState, AiPromptType } from"./types"
+import { Textarea } from "@/components/ui/textarea"
 
 interface AboutDetailsFormProps {
   form: AboutFormState
@@ -67,7 +68,7 @@ export function AboutDetailsForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
             <div className="space-y-1.5">
               <Label>Jam Operasional</Label>
-              <textarea value={form.settings?.operationalHours ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, operationalHours: e.target.value } }))}
+              <Textarea value={form.settings?.operationalHours ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, operationalHours: e.target.value } }))}
                 placeholder="Senin - Jumat: 07.00 - 16.00&#10;Sabtu: 07.00 - 12.00" rows={3}
                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
             </div>

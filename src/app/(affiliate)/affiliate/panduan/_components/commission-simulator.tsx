@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { TrendingUp, Users, Info, Building2, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerStudent: number, priceLite: number }) {
   const [selectedPlan, setSelectedPlan] = useState<"lite" | "pro">("pro")
@@ -24,7 +26,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
       <div className="space-y-6">
         {/* Toggle Plan Selection */}
         <div className="flex gap-2">
-          <button 
+          <Button 
             onClick={() => setSelectedPlan("lite")}
             className={cn(
               "flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-2 font-medium text-sm transition-all", 
@@ -35,8 +37,8 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
           >
             {selectedPlan === "lite" && <CheckCircle2 className="w-4 h-4" />}
             Paket Lite
-          </button>
-          <button 
+          </Button>
+          <Button 
             onClick={() => setSelectedPlan("pro")}
             className={cn(
               "flex-1 py-2 px-3 rounded-xl border flex items-center justify-center gap-2 font-medium text-sm transition-all", 
@@ -47,7 +49,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
           >
             {selectedPlan === "pro" && <CheckCircle2 className="w-4 h-4" />}
             Paket Pro
-          </button>
+          </Button>
         </div>
 
         <div className="space-y-3">
@@ -59,7 +61,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
               {schoolCount.toLocaleString("id-ID")} Sekolah
             </span>
           </div>
-          <input 
+          <Input 
             type="range" 
             min="1" 
             max="50" 
@@ -80,7 +82,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
                 {studentPerSchool.toLocaleString("id-ID")} Siswa
               </span>
             </div>
-            <input 
+            <Input 
               type="range" 
               min="50" 
               max="2000" 

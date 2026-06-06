@@ -129,9 +129,9 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                          <div className="bg-indigo-500/5 border border-indigo-500/10 rounded-2xl p-4 flex flex-col justify-between">
                             <div className="flex items-center justify-between mb-1">
                               <p className="text-[10px] font-bold text-indigo-600/80 uppercase tracking-wider flex items-center gap-1"><Wallet className="h-3 w-3" /> Tabungan</p>
-                              <button onClick={() => setShowBalance(!showBalance)} className="text-indigo-400 hover:text-indigo-600 transition-colors">
+                              <Button onClick={() => setShowBalance(!showBalance)} className="text-indigo-400 hover:text-indigo-600 transition-colors">
                                 {showBalance ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                              </button>
+                              </Button>
                             </div>
                             <h4 className="text-lg font-black text-indigo-700 transition-all duration-300">
                               {showBalance ? `Rp ${child.walletAccount.balance.toLocaleString("id-ID")}` : "••••••"}

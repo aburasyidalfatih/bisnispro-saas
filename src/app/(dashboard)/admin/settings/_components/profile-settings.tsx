@@ -62,16 +62,16 @@ export function ProfileSettings({
                   </div>
               }
             </div>
-            <button onClick={() => avatarInputRef.current?.click()} disabled={uploadingAvatar}
+            <Button onClick={() => avatarInputRef.current?.click()} disabled={uploadingAvatar}
               className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-primary/90">
               {uploadingAvatar ? <div className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Camera className="h-2.5 w-2.5" />}
-            </button>
-            <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarUpload} />
+            </Button>
+            <Input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarUpload} />
           </div>
           <div>
             <p className="text-sm font-medium">{profileForm.name ||"—"}</p>
             <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
-            {avatarPreview && <button onClick={() => { setAvatarPreview(""); setAvatarUrl("") }} className="text-xs text-destructive hover:underline">Hapus foto</button>}
+            {avatarPreview && <Button onClick={() => { setAvatarPreview(""); setAvatarUrl("") }} className="text-xs text-destructive hover:underline">Hapus foto</Button>}
           </div>
         </div>
 
@@ -121,10 +121,10 @@ export function ProfileSettings({
                   placeholder={placeholder}
                   className="rounded-xl h-9 text-sm pr-9"
                 />
-                <button type="button" onClick={() => setShowPw(p => ({ ...p, [key]: !p[key as keyof typeof showPw] }))}
+                <Button type="button" onClick={() => setShowPw(p => ({ ...p, [key]: !p[key as keyof typeof showPw] }))}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                   {showPw[key as keyof typeof showPw] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                </button>
+                </Button>
               </div>
             </div>
           ))}

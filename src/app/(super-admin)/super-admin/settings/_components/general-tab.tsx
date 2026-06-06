@@ -168,7 +168,7 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <button
+            <Button
               onClick={() => {
                 const newVal = form.allow_impersonate_user === "true" ? "false" : "true"
                 setForm({...form, allow_impersonate_user: newVal})
@@ -189,9 +189,9 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
                 </div>
               </div>
               <div className={cn("h-2.5 w-2.5 rounded-full", form.allow_impersonate_user === "true" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => {
                 const newVal = form.enable_custom_domain === "true" ? "false" : "true"
                 setForm({...form, enable_custom_domain: newVal})
@@ -212,9 +212,9 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
                 </div>
               </div>
               <div className={cn("h-2.5 w-2.5 rounded-full", form.enable_custom_domain === "true" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => {
                 const newVal = form.block_search_indexing === "true" ? "false" : "true"
                 setForm({...form, block_search_indexing: newVal})
@@ -235,7 +235,7 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
                 </div>
               </div>
               <div className={cn("h-2.5 w-2.5 rounded-full", form.block_search_indexing === "true" ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" : "bg-muted-foreground/30")} />
-            </button>
+            </Button>
           </CardContent>
         </Card>
 

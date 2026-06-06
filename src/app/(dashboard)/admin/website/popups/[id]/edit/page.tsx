@@ -220,7 +220,7 @@ export default function EditPopupPage() {
                   onClick={() => fileInputRef.current?.click()}
                   className={`cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-4 transition-colors overflow-hidden relative ${file || previewUrl ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-primary/5'}`}
                 >
-                  <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+                  <Input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                   {previewUrl ? (
                     <img src={previewUrl} alt="Preview" className="max-h-48 rounded-lg object-contain" />
                   ) : (

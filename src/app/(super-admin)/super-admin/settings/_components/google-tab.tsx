@@ -65,7 +65,7 @@ export function GoogleTab({ form, setForm, handleSaveBatch, saving }: GoogleTabP
             <Label>Private Key (JSON)</Label>
             <div className="relative">
               <Input type={showPass ? "text" : "password"} value={form.GOOGLE_INDEXING_PRIVATE_KEY} onChange={e => setForm({...form, GOOGLE_INDEXING_PRIVATE_KEY: e.target.value})} placeholder="-----BEGIN PRIVATE KEY-----\n..." className="rounded-xl font-mono text-xs pr-10" />
-              <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+              <Button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
             </div>
           </div>
           <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['GOOGLE_INDEXING_CLIENT_EMAIL', 'GOOGLE_INDEXING_PRIVATE_KEY'])} disabled={saving}>
@@ -86,7 +86,7 @@ export function GoogleTab({ form, setForm, handleSaveBatch, saving }: GoogleTabP
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">Konfigurasi Cloudflare Turnstile untuk mencegah serangan bot dan spam pada halaman Login Super Admin.</p>
           
-          <button
+          <Button
             onClick={() => {
               const newVal = form.TURNSTILE_ENABLED === "true" ? "false" : "true"
               setForm({...form, TURNSTILE_ENABLED: newVal})
@@ -107,7 +107,7 @@ export function GoogleTab({ form, setForm, handleSaveBatch, saving }: GoogleTabP
               </div>
             </div>
             <div className={cn("h-2.5 w-2.5 rounded-full", form.TURNSTILE_ENABLED === "true" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
-          </button>
+          </Button>
 
           <div className="space-y-2">
             <Label>Site Key</Label>

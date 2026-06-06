@@ -8,6 +8,7 @@ import { Users, Plus, Loader2, MessageSquare } from"lucide-react"
 import { format } from"date-fns"
 import { id } from"date-fns/locale"
 import { Message } from"./types"
+import { Textarea } from "@/components/ui/textarea"
 
 interface InternalMessagesProps {
   messages: Message[]
@@ -77,7 +78,7 @@ export function InternalMessages({
               </div>
               <div className="space-y-2">
                 <Label>Pesan</Label>
-                <textarea 
+                <Textarea 
                   value={composeForm.body} 
                   onChange={e => setComposeForm(p => ({...p, body: e.target.value}))}
                   className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

@@ -5,6 +5,7 @@ import { Label } from"@/components/ui/label"
 import { Phone, MapPin, Mail, MessageCircle } from"lucide-react"
 import { RegionSelector } from"@/components/ui/region-selector"
 import { AboutFormState } from"./types"
+import { Textarea } from "@/components/ui/textarea"
 
 interface ContactFormProps {
   form: AboutFormState
@@ -35,7 +36,7 @@ export function ContactForm({ form, setForm }: ContactFormProps) {
           />
           <div className="space-y-2">
             <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Alamat Lengkap</Label>
-            <textarea value={form.address} onChange={(e) => setForm(p => ({ ...p, address: e.target.value }))}
+            <Textarea value={form.address} onChange={(e) => setForm(p => ({ ...p, address: e.target.value }))}
               placeholder="Jl. Contoh No. 123" rows={3}
               className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
           </div>

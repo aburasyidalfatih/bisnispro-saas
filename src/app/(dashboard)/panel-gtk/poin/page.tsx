@@ -205,7 +205,7 @@ export default function BukuPoinPage() {
                   <div className="space-y-2 sm:col-span-2">
                     <label className="text-sm font-semibold mb-2 block">Jenis Catatan</label>
                     <div className="grid grid-cols-2 gap-4">
-                       <button
+                       <Button
                          onClick={() => setFormData({ ...formData, type: "PELANGGARAN" })}
                          className={cn(
                            "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 gap-2",
@@ -214,8 +214,8 @@ export default function BukuPoinPage() {
                        >
                          <AlertTriangle className="h-8 w-8" />
                          <span className="font-bold">Pelanggaran</span>
-                       </button>
-                       <button
+                       </Button>
+                       <Button
                          onClick={() => setFormData({ ...formData, type: "PENGHARGAAN" })}
                          className={cn(
                            "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 gap-2",
@@ -224,7 +224,7 @@ export default function BukuPoinPage() {
                        >
                          <Trophy className="h-8 w-8" />
                          <span className="font-bold">Penghargaan / Prestasi</span>
-                       </button>
+                       </Button>
                     </div>
                   </div>
 

@@ -12,6 +12,7 @@ import { Switch } from"@/components/ui/switch"
 import { ArrowLeft, Loader2, Heart } from"lucide-react"
 import Link from"next/link"
 import dynamic from"next/dynamic"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function CreateCampaignPage() {
   const { data: session } = useSession()
@@ -75,7 +76,7 @@ export default function CreateCampaignPage() {
 
           <div className="space-y-2">
             <Label>Deskripsi</Label>
-            <textarea
+            <Textarea
               value={form.description}
               onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
               placeholder="Ceritakan tujuan dan rencana penggunaan dana..."

@@ -217,24 +217,24 @@ export default function JurnalPage() {
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-semibold">Materi / Topik Bahasan</label>
                   <div className="flex gap-2">
-                     <button type="button" onClick={() => setFormData(p => ({...p, topic: "Melanjutkan materi sebelumnya"}))} className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors">Lanjut Materi</button>
-                     <button type="button" onClick={() => setFormData(p => ({...p, topic: "Ulangan Harian"}))} className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors">Ulangan</button>
+                     <Button type="button" onClick={() => setFormData(p => ({...p, topic: "Melanjutkan materi sebelumnya"}))} className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors">Lanjut Materi</Button>
+                     <Button type="button" onClick={() => setFormData(p => ({...p, topic: "Ulangan Harian"}))} className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors">Ulangan</Button>
                   </div>
                 </div>
                 <div className="relative">
                   <Input placeholder="Contoh: Bab 1. Eksponen dan Logaritma" value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="rounded-xl bg-muted/40 pr-10" />
-                  <button type="button" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Mulai berbicara, kami akan mengubahnya menjadi teks..."})} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
+                  <Button type="button" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Mulai berbicara, kami akan mengubahnya menjadi teks..."})} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
                      <Mic className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <label className="text-sm font-semibold">Catatan Khusus (Opsional)</label>
                 <div className="relative">
                   <Textarea placeholder="Ada kejadian khusus hari ini? (Siswa tidur, ribut, dll)" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="rounded-xl bg-muted/40 min-h-[80px] pr-10" />
-                  <button type="button" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Silakan sampaikan catatan kelas Anda secara lisan..."})} className="absolute right-2 bottom-3 p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
+                  <Button type="button" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Silakan sampaikan catatan kelas Anda secara lisan..."})} className="absolute right-2 bottom-3 p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
                      <Mic className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -276,7 +276,7 @@ export default function JurnalPage() {
                             { val: "IZIN", icon: UserMinus, label: "I", color: "text-amber-600", active: "bg-amber-500 text-white shadow-md shadow-amber-500/20" },
                             { val: "ALPHA", icon: UserX, label: "A", color: "text-rose-600", active: "bg-rose-500 text-white shadow-md shadow-rose-500/20" },
                           ].map(btn => (
-                            <button
+                            <Button
                               key={btn.val}
                               type="button"
                               onClick={() => handlePresenceChange(student.id, btn.val)}
@@ -289,7 +289,7 @@ export default function JurnalPage() {
                             >
                               <btn.icon className="h-4 w-4 hidden sm:block" />
                               {btn.label}
-                            </button>
+                            </Button>
                           ))}
                         </div>
                       </div>
@@ -331,7 +331,7 @@ export default function JurnalPage() {
             <h4 className="font-semibold text-primary text-sm">Saran Kelas Hari Ini</h4>
             <div className="flex flex-wrap gap-2 mt-2">
               {metadata.scheduleToday.map(s => (
-                <button 
+                <Button 
                   key={s.id}
                   onClick={() => {
                     setFormData({ ...formData, classroomId: s.classroom.id, subjectId: s.subject.id })
@@ -340,7 +340,7 @@ export default function JurnalPage() {
                   className="text-xs bg-white dark:bg-black border rounded-lg px-3 py-1.5 hover:border-primary hover:text-primary transition-colors flex items-center gap-1.5 font-medium"
                 >
                   <Clock className="h-3 w-3" /> {s.startTime} - {s.classroom.name}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

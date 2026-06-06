@@ -157,7 +157,7 @@ export default function AppearancePage() {
                 const isSaved = colorTheme === t.id
                 const gradient = themeGradients[t.id]
                 return (
-                  <button 
+                  <Button 
                     key={t.id} 
                     onClick={() => {
                       if (!canChangeTheme) return toast({ title:"Akses Ditolak", description:"Hanya Admin yang dapat mengubah tema.", variant:"destructive" })
@@ -186,7 +186,7 @@ export default function AppearancePage() {
                          {t.category}
                       </span>
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -363,7 +363,7 @@ export default function AppearancePage() {
                     <p className="text-[10px] text-muted-foreground">Tombol utama & tautan</p>
                   </div>
                   <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg">
-                    <input type="color" value={dynamicSettings.primaryColor ||"#4f46e5"} onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))} className="h-8 w-10 cursor-pointer rounded bg-transparent border-0 p-0" />
+                    <Input type="color" value={dynamicSettings.primaryColor ||"#4f46e5"} onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))} className="h-8 w-10 cursor-pointer rounded bg-transparent border-0 p-0" />
                     <Input value={dynamicSettings.primaryColor ||""} placeholder="Default" onChange={(e) => setDynamicSettings(p => ({ ...p, primaryColor: e.target.value }))} className="w-24 h-8 text-xs font-mono uppercase bg-transparent border-0 focus-visible:ring-0 shadow-none px-2" />
                   </div>
                 </div>
@@ -374,7 +374,7 @@ export default function AppearancePage() {
                     <p className="text-[10px] text-muted-foreground">Aksen & sorotan</p>
                   </div>
                   <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg">
-                    <input type="color" value={dynamicSettings.secondaryColor ||"#ec4899"} onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))} className="h-8 w-10 cursor-pointer rounded bg-transparent border-0 p-0" />
+                    <Input type="color" value={dynamicSettings.secondaryColor ||"#ec4899"} onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))} className="h-8 w-10 cursor-pointer rounded bg-transparent border-0 p-0" />
                     <Input value={dynamicSettings.secondaryColor ||""} placeholder="Default" onChange={(e) => setDynamicSettings(p => ({ ...p, secondaryColor: e.target.value }))} className="w-24 h-8 text-xs font-mono uppercase bg-transparent border-0 focus-visible:ring-0 shadow-none px-2" />
                   </div>
                 </div>

@@ -7,6 +7,7 @@ import { School, Phone, User, MailOpen, MailX, MoreHorizontal, Eye, Mail, CheckC
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import { checkDataCompleteness } from "@/lib/utils/data-completeness"
 import { Application } from "./types"
+import { Input } from "@/components/ui/input"
 
 interface ApplicationTableProps {
   filteredApps: Application[]
@@ -45,7 +46,7 @@ export function ApplicationTable({
           <TableHeader>
             <TableRow>
               <TableHead className="px-4 py-3 w-10 text-center">
-                <input 
+                <Input 
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 accent-primary"
                   checked={filteredApps.length > 0 && selectedIds.length === filteredApps.length} 
@@ -70,7 +71,7 @@ export function ApplicationTable({
             {filteredApps.map((app) => (
               <TableRow key={app.id} className={cn("hover:bg-muted/10 transition-colors", selectedIds.includes(app.id) && "bg-muted/30")}>
                 <TableCell className="px-4 py-4 text-center">
-                  <input 
+                  <Input 
                     type="checkbox"
                     className="h-4 w-4 rounded border-gray-300 accent-primary"
                     checked={selectedIds.includes(app.id)} 

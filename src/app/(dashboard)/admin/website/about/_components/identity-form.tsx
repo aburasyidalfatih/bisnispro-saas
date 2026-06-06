@@ -7,6 +7,7 @@ import { Globe, Building2, Upload, ArrowRight, ShieldCheck, ShieldOff } from"luc
 import Image from"next/image"
 import { normalizeImageUrl, cn } from"@/lib/utils"
 import { AboutFormState } from"./types"
+import { Textarea } from "@/components/ui/textarea"
 
 interface IdentityFormProps {
   form: AboutFormState
@@ -54,7 +55,7 @@ export function IdentityForm({
                   )}
                 </div>
                 <div className="flex-1 space-y-1">
-                  <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml" className="hidden" onChange={handleLogoUpload} />
+                  <Input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml" className="hidden" onChange={handleLogoUpload} />
                   <Button type="button" variant="outline" size="sm" className="rounded-xl gap-2 h-9" onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo}>
                     {uploadingLogo ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary border-t-transparent" /> : <Upload className="h-3.5 w-3.5" />}
                     {uploadingLogo ?"Mengunggah..." :"Upload Logo"}
@@ -67,7 +68,7 @@ export function IdentityForm({
 
             <div className="space-y-2 mb-4">
               <Label>Domain Website</Label>
-              <button onClick={() => router.push("/admin/settings/domain")}
+              <Button onClick={() => router.push("/admin/settings/domain")}
                 className="flex w-full items-center justify-between rounded-xl border bg-muted/30 px-3 py-2.5 text-left transition-colors hover:bg-muted/60">
                 <div className="flex items-center gap-2">
                   <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -88,7 +89,7 @@ export function IdentityForm({
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </button>
+              </Button>
               <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{slug ||"—"}</span></p>
             </div>
           </div>
@@ -110,7 +111,7 @@ export function IdentityForm({
 
             <div className="space-y-2">
               <Label>Deskripsi Singkat</Label>
-              <textarea value={form.description}
+              <Textarea value={form.description}
                 onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                 placeholder="Deskripsi singkat lembaga Anda (maks. 300 karakter)"
                 maxLength={300} rows={4}

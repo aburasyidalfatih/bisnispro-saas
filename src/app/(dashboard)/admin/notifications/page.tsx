@@ -359,15 +359,15 @@ export default function NotificationsPage() {
                     </div>
                     <div className="flex gap-4 p-3 bg-background rounded-xl border">
                       <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                        <input type="checkbox" className="rounded text-primary" checked={templatesForm[`${tpl.id}_enable_email`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_email`]: e.target.checked})} />
+                        <Input type="checkbox" className="rounded text-primary" checked={templatesForm[`${tpl.id}_enable_email`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_email`]: e.target.checked})} />
                         Email
                       </label>
                       <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                        <input type="checkbox" className="rounded text-emerald-500" checked={templatesForm[`${tpl.id}_enable_wa`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_wa`]: e.target.checked})} />
+                        <Input type="checkbox" className="rounded text-emerald-500" checked={templatesForm[`${tpl.id}_enable_wa`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_wa`]: e.target.checked})} />
                         WhatsApp
                       </label>
                       <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                        <input type="checkbox" className="rounded text-amber-500" checked={templatesForm[`${tpl.id}_enable_app`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_app`]: e.target.checked})} />
+                        <Input type="checkbox" className="rounded text-amber-500" checked={templatesForm[`${tpl.id}_enable_app`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_app`]: e.target.checked})} />
                         App Notif
                       </label>
                     </div>

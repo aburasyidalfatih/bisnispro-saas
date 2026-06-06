@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Wallet, ArrowUpRight, ArrowDownLeft, Coffee, Utensils, ShoppingBag, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function WalletSiswaPage() {
   const [data, setData] = useState<any>(null)
@@ -74,12 +75,12 @@ export default function WalletSiswaPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 mt-6">
-            <button className="bg-white text-indigo-600 rounded-xl py-3 font-bold text-sm shadow-sm flex items-center justify-center gap-2">
+            <Button className="bg-white text-indigo-600 rounded-xl py-3 font-bold text-sm shadow-sm flex items-center justify-center gap-2">
               <ArrowDownLeft className="w-4 h-4" /> Minta Saldo
-            </button>
-            <button className="bg-indigo-500/50 text-white rounded-xl py-3 font-bold text-sm border border-indigo-400 backdrop-blur-sm flex items-center justify-center gap-2">
+            </Button>
+            <Button className="bg-indigo-500/50 text-white rounded-xl py-3 font-bold text-sm border border-indigo-400 backdrop-blur-sm flex items-center justify-center gap-2">
               Lihat QR Code
-            </button>
+            </Button>
           </div>
         </div>
       </div>

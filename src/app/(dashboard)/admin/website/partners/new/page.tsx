@@ -120,7 +120,7 @@ export default function NewPartnershipPage() {
                 onClick={() => fileInputRef.current?.click()}
                 className={`cursor-pointer flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-4 transition-colors overflow-hidden relative aspect-video bg-white ${file ? 'border-primary' : 'border-border hover:border-primary/50'}`}
               >
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+                <Input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                 {previewUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={previewUrl} alt="Preview" className="w-1/2 h-full object-contain rounded-lg" />

@@ -187,23 +187,23 @@ export default function WebsiteGalleryPage() {
               <CardTitle className="text-base">Tambah Foto</CardTitle>
             </div>
             <div className="flex rounded-lg border overflow-hidden text-xs">
-              <button onClick={() => setAddMode("upload")}
+              <Button onClick={() => setAddMode("upload")}
                 className={cn("px-3 py-1.5 transition-colors", addMode ==="upload" ?"bg-primary text-white" :"hover:bg-muted")}>
                 Upload File
-              </button>
-              <button onClick={() => setAddMode("url")}
+              </Button>
+              <Button onClick={() => setAddMode("url")}
                 className={cn("px-3 py-1.5 transition-colors", addMode ==="url" ?"bg-primary text-white" :"hover:bg-muted")}>
                 URL
-              </button>
+              </Button>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           {addMode ==="upload" ? (
             <div>
-              <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif"
+              <Input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif"
                 multiple className="hidden" onChange={e => handleUpload(e.target.files)} />
-              <button
+              <Button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
                 className="flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border py-10 transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:opacity-50">
@@ -215,7 +215,7 @@ export default function WebsiteGalleryPage() {
                   <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP, GIF · Maks 2MB per file · Bisa pilih banyak</p>
                   <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">Rekomendasi rasio 16:9 atau 4:3 (Landscape)</p>
                 </div>
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="flex gap-2">
@@ -275,9 +275,9 @@ export default function WebsiteGalleryPage() {
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <ConfirmDialog
                       trigger={
-                        <button className="flex h-7 w-7 items-center justify-center rounded-lg bg-destructive text-white hover:bg-destructive/90">
+                        <Button className="flex h-7 w-7 items-center justify-center rounded-lg bg-destructive text-white hover:bg-destructive/90">
                           <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        </Button>
                       }
                       title="Hapus foto ini?"
                       description="Foto akan dihapus dari galeri website."
@@ -291,7 +291,7 @@ export default function WebsiteGalleryPage() {
                 </div>
                 {/* Caption */}
                 <div className="p-2">
-                  <input
+                  <Input
                     value={item.caption}
                     onChange={e => updateCaption(i, e.target.value)}
                     placeholder="Tambah caption..."

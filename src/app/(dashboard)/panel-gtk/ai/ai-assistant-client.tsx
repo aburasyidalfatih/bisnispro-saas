@@ -154,7 +154,7 @@ export default function AiAssistantClient({
                   </div>
                 ) : (
                   chatSessions.map((s) => (
-                    <button 
+                    <Button 
                       key={s.id} 
                       onClick={() => loadSession(s)}
                       className={`w-full text-left p-3 hover:bg-muted/50 transition-colors text-sm ${activeSessionId === s.id ? 'bg-primary/5 border-l-2 border-primary' : ''}`}
@@ -163,7 +163,7 @@ export default function AiAssistantClient({
                       <div className="text-[10px] text-muted-foreground mt-1">
                         {format(new Date(s.updatedAt), "dd MMM, HH:mm", { locale: id })}
                       </div>
-                    </button>
+                    </Button>
                   ))
                 )}
               </div>
@@ -316,7 +316,7 @@ export default function AiAssistantClient({
                                  className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-colors ${selectedMethod === ch.code ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/50'}`}
                                >
                                   <div className="flex items-center gap-3">
-                                     <input 
+                                     <Input 
                                        type="radio" 
                                        name="payment_method" 
                                        value={ch.code} 
@@ -338,7 +338,7 @@ export default function AiAssistantClient({
                                  className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-colors ${selectedMethod === 'MANUAL_TRANSFER' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/50'}`}
                                >
                                   <div className="flex items-center gap-3">
-                                     <input 
+                                     <Input 
                                        type="radio" 
                                        name="payment_method" 
                                        value="MANUAL_TRANSFER" 

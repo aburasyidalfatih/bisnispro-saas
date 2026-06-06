@@ -190,10 +190,10 @@ export default function AdsAnalyticsPage() {
           <div className="flex items-center justify-between gap-3">
             <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
               {DATE_PRESETS.map(p => (
-                <button key={p.value} onClick={() => setDatePreset(p.value)}
+                <Button key={p.value} onClick={() => setDatePreset(p.value)}
                   className={cn("px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap shrink-0",
                     datePreset === p.value ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                  )}>{p.label}</button>
+                  )}>{p.label}</Button>
               ))}
             </div>
             <Button variant="outline" size="sm" onClick={() => fetchCampaigns(datePreset)} disabled={metaLoading} className="rounded-xl h-8 shrink-0">

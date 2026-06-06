@@ -4,6 +4,8 @@ import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Globe } from"lucide-react"
 import { AboutFormState } from"./types"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 
 interface SeoFormProps {
   form: AboutFormState
@@ -31,7 +33,7 @@ export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label>Meta Title</Label>
-              <button type="button" onClick={() => setForm(p => ({ ...p, seoTitle: p.name ? `Website Resmi ${p.name}` :"" }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</button>
+              <Button type="button" onClick={() => setForm(p => ({ ...p, seoTitle: p.name ? `Website Resmi ${p.name}` :"" }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</Button>
             </div>
             <Input value={form.seoTitle} onChange={e => setForm(p => ({ ...p, seoTitle: e.target.value }))}
               placeholder="Judul halaman untuk Google (maks. 70 karakter)" className="rounded-xl" maxLength={70} />
@@ -40,9 +42,9 @@ export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label>Meta Description</Label>
-              <button type="button" onClick={() => setForm(p => ({ ...p, seoDesc: p.description || (p.name ? `Selamat datang di website resmi ${p.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` :"") }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</button>
+              <Button type="button" onClick={() => setForm(p => ({ ...p, seoDesc: p.description || (p.name ? `Selamat datang di website resmi ${p.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` :"") }))} className="text-[10px] text-primary hover:underline font-medium">Isi Otomatis</Button>
             </div>
-            <textarea value={form.seoDesc} onChange={e => setForm(p => ({ ...p, seoDesc: e.target.value }))}
+            <Textarea value={form.seoDesc} onChange={e => setForm(p => ({ ...p, seoDesc: e.target.value }))}
               placeholder="Deskripsi singkat untuk hasil pencarian Google (maks. 160 karakter)"
               maxLength={160} rows={3}
               className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />

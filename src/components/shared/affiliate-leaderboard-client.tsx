@@ -103,7 +103,7 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
             { id: "yearly", label: "Tahun Ini" },
             { id: "all", label: "Sepanjang Waktu" }
           ].map((f) => (
-            <button
+            <Button
               key={f.id}
               onClick={() => setFilter(f.id)}
               className={cn(
@@ -112,7 +112,7 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
               )}
             >
               {f.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

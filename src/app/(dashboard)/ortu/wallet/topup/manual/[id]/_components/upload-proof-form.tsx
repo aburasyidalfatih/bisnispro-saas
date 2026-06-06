@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
 import { Loader2, UploadCloud } from "lucide-react"
+import { Input } from "@/components/ui/input"
 
 export function UploadProofForm({ paymentId }: { paymentId: string }) {
   const [loading, setLoading] = useState(false)
@@ -43,7 +44,7 @@ export function UploadProofForm({ paymentId }: { paymentId: string }) {
          <p className="text-xs text-muted-foreground mb-4">Upload bukti transfer Anda agar dapat segera diverifikasi oleh admin.</p>
          
          <div className="border-2 border-dashed border-primary/30 rounded-xl p-4 text-center hover:bg-primary/5 transition-colors cursor-pointer relative">
-            <input 
+            <Input 
                type="file" 
                accept="image/*" 
                className="absolute inset-0 opacity-0 cursor-pointer"

@@ -247,12 +247,12 @@ export default function KelolaSoalPage() {
               <Label>Pilihan Jawaban (Minimal 2)</Label>
               {options.map((opt, idx) => (
                 <div key={opt.id} className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${opt.isCorrect ? 'border-primary bg-primary/5' : 'border-border'}`}>
-                  <button 
+                  <Button 
                     onClick={() => handleSetCorrect(idx)}
                     className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${opt.isCorrect ? 'bg-primary text-primary-foreground' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
                   >
                     {opt.id}
-                  </button>
+                  </Button>
                   <Textarea 
                     placeholder={`Teks pilihan ${opt.id}...`} 
                     className="min-h-[40px] h-[40px] resize-none" 

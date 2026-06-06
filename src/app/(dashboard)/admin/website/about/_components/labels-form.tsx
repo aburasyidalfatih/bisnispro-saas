@@ -5,6 +5,7 @@ import { Label } from"@/components/ui/label"
 import { Type } from"lucide-react"
 import { AboutFormState } from"./types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 
 interface LabelsFormProps {
   form: AboutFormState
@@ -267,7 +268,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  </div>
                  <div className="space-y-1.5">
                    <Label>Deskripsi Ajakan</Label>
-                   <textarea 
+                   <Textarea 
                      value={form.settings?.profilCtaDescription ||""} 
                      onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, profilCtaDescription: e.target.value } }))}
                      placeholder="Pintu kami selalu terbuka untuk Anda yang ingin berkonsultasi..." 

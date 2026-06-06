@@ -187,12 +187,12 @@ export default function PaymentSettingsPage() {
                 {useCustom ?"Menggunakan akun Tripay Anda sendiri" :"Menggunakan akun Tripay default platform"}
               </p>
             </div>
-            <button
+            <Button
               onClick={() => setUseCustom(!useCustom)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useCustom ?"bg-primary" :"bg-muted"}`}
             >
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ?"translate-x-6" :"translate-x-1"}`} />
-            </button>
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -289,18 +289,18 @@ export default function PaymentSettingsPage() {
               <div className="space-y-2">
                 <Label>Mode</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  <button
+                  <Button
                     onClick={() => toggleSandbox(true)}
                     className={`flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-semibold transition-all ${useSandbox ?"border-amber-500 bg-amber-500/10 text-amber-600" :"border-transparent bg-muted/50 text-muted-foreground hover:bg-muted"}`}
                   >
                     🧪 Sandbox
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => toggleSandbox(false)}
                     className={`flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-semibold transition-all ${!useSandbox ?"border-emerald-500 bg-emerald-500/10 text-emerald-600" :"border-transparent bg-muted/50 text-muted-foreground hover:bg-muted"}`}
                   >
                     🚀 Production
-                  </button>
+                  </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {useSandbox ?"Sandbox: untuk testing, tidak ada transaksi nyata." :"Production: transaksi nyata, gunakan kredensial production."}
@@ -324,10 +324,10 @@ export default function PaymentSettingsPage() {
                     placeholder="API Key dari dashboard Tripay"
                     className="rounded-xl pr-10"
                   />
-                  <button type="button" onClick={() => setShowApiKey(!showApiKey)}
+                  <Button type="button" onClick={() => setShowApiKey(!showApiKey)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -341,10 +341,10 @@ export default function PaymentSettingsPage() {
                     placeholder="Private Key dari dashboard Tripay"
                     className="rounded-xl pr-10"
                   />
-                  <button type="button" onClick={() => setShowPrivateKey(!showPrivateKey)}
+                  <Button type="button" onClick={() => setShowPrivateKey(!showPrivateKey)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     {showPrivateKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                  </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">Digunakan untuk membuat signature transaksi</p>
               </div>

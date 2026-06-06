@@ -355,12 +355,12 @@ export default function SecurityPage() {
                   <span className="text-xs bg-amber-500/10 text-amber-600 rounded-full px-2.5 py-1 font-medium">
                     Admin Only
                   </span>
-                  <button
+                  <Button
                     onClick={() => setGoogleEnabled(!googleEnabled)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${googleEnabled ?"bg-primary" :"bg-muted"}`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${googleEnabled ?"translate-x-6" :"translate-x-1"}`} />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -386,10 +386,10 @@ export default function SecurityPage() {
                       <Input type={showGoogleSecret ?"text" :"password"} value={googleClientSecret}
                         onChange={e => setGoogleClientSecret(e.target.value)}
                         placeholder="GOCSPX-..." className="rounded-xl pr-10 font-mono text-xs" />
-                      <button type="button" onClick={() => setShowGoogleSecret(!showGoogleSecret)}
+                      <Button type="button" onClick={() => setShowGoogleSecret(!showGoogleSecret)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                         {showGoogleSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   <div className="sm:col-span-2 rounded-xl border bg-muted/30 p-4 space-y-2">

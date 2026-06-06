@@ -5,6 +5,8 @@ import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Camera, LogOut, KeyRound, Save, Loader2, CreditCard, User } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export function ParentProfile() {
   const { data: session, update: updateSession } = useSession()
@@ -81,9 +83,9 @@ export function ParentProfile() {
       {/* Top Header */}
       <div className="bg-primary rounded-b-[2.5rem] pt-6 pb-24 px-6 relative z-0">
         <div className="flex items-center gap-3 text-primary-foreground mb-6">
-          <button onClick={() => router.push("/ortu")} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+          <Button onClick={() => router.push("/ortu")} className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
              <ArrowLeft className="h-4 w-4" />
-          </button>
+          </Button>
           <h1 className="font-bold text-lg">Profil Orang Tua</h1>
         </div>
       </div>
@@ -103,13 +105,13 @@ export function ParentProfile() {
                   </div>
                )}
             </div>
-            <button 
+            <Button 
                onClick={() => avatarInputRef.current?.click()}
                className="absolute bottom-0 right-0 h-8 w-8 bg-background border border-border rounded-full flex items-center justify-center text-primary shadow-sm hover:bg-muted transition-colors"
             >
                <Camera className="h-4 w-4" />
-            </button>
-            <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+            </Button>
+            <Input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
          </div>
 
          {/* Name & Subtitle */}
@@ -127,7 +129,7 @@ export function ParentProfile() {
             <div className="p-4 space-y-4">
                <div className="flex justify-between items-center border-b border-border/50 pb-3">
                   <span className="text-xs text-muted-foreground w-1/3">Nama Lengkap</span>
-                  <input 
+                  <Input 
                      value={profileForm.name} 
                      onChange={e => setProfileForm(p => ({...p, name: e.target.value}))} 
                      className="text-xs font-semibold text-foreground text-right w-2/3 bg-transparent border-none focus:outline-none focus:ring-0 p-0" 
@@ -135,7 +137,7 @@ export function ParentProfile() {
                </div>
                <div className="flex justify-between items-center border-b border-border/50 pb-3">
                   <span className="text-xs text-muted-foreground w-1/3">Telepon/WA</span>
-                  <input 
+                  <Input 
                      value={profileForm.phone} 
                      onChange={e => setProfileForm(p => ({...p, phone: e.target.value}))} 
                      className="text-xs font-semibold text-foreground text-right w-2/3 bg-transparent border-none focus:outline-none focus:ring-0 p-0" 
@@ -162,14 +164,14 @@ export function ParentProfile() {
          </div>
 
          {/* Save Button for Profile Updates */}
-         <button 
+         <Button 
             onClick={handleSaveProfile} 
             disabled={savingProfile}
             className="w-full btn-gradient text-white rounded-xl py-3 text-sm font-bold shadow-lg shadow-primary/20 mb-5 flex justify-center items-center gap-2 hover:opacity-90 transition-opacity"
          >
             {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Simpan Perubahan
-         </button>
+         </Button>
 
          {/* Keamanan & Akun */}
          <div className="w-full bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
@@ -178,11 +180,11 @@ export function ParentProfile() {
                <h3 className="font-bold text-sm text-foreground">Keamanan & Akun</h3>
             </div>
             <div className="p-2">
-               <button className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors">
+               <Button className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors">
                   <span className="text-sm font-medium text-foreground">Ubah Password</span>
                   <span className="text-muted-foreground">→</span>
-               </button>
-               <button 
+               </Button>
+               <Button 
                   onClick={async () => {
                      await signOut({ redirect: false })
                      window.location.href = "/login"
@@ -190,7 +192,7 @@ export function ParentProfile() {
                   className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-destructive/5 text-destructive transition-colors mt-1"
                >
                   <span className="text-sm font-bold flex items-center gap-2"><LogOut className="h-4 w-4" /> Keluar Aplikasi</span>
-               </button>
+               </Button>
             </div>
          </div>
 

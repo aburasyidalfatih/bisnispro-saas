@@ -108,13 +108,13 @@ export default function OrtuDonasiPage() {
                 {/* Quick nominal */}
                 <div className="flex gap-2 mb-3 flex-wrap">
                   {[10000, 25000, 50000, 100000].map(n => (
-                    <button
+                    <Button
                       key={n}
                       onClick={() => setAmounts(prev => ({ ...prev, [c.id]: n }))}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-all ${amounts[c.id] === n ? "bg-rose-500 text-white border-rose-500" : "bg-muted/50 text-muted-foreground border-border hover:border-rose-300"}`}
                     >
                       Rp {n.toLocaleString("id-ID")}
-                    </button>
+                    </Button>
                   ))}
                 </div>
 

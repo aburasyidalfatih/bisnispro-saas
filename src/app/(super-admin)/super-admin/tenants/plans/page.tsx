@@ -520,12 +520,12 @@ export default function PlansPage() {
                         <li key={i} className="flex items-center gap-2 rounded-xl bg-muted/40 px-3 py-2 text-sm group">
                           <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                           <span className="flex-1">{feat}</span>
-                          <button
+                          <Button
                             onClick={() => removeFeature(i)}
                             className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
                           >
                             <X className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         </li>
                       ))}
                     </ul>

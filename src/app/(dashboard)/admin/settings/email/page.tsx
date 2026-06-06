@@ -177,12 +177,12 @@ export default function EmailSettingsPage() {
                 {useCustom ?"Menggunakan konfigurasi SMTP Anda sendiri" :"Menggunakan SMTP default platform (Mailketing)"}
               </p>
             </div>
-            <button
+            <Button
               onClick={() => setUseCustom(!useCustom)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useCustom ?"bg-primary" :"bg-muted"}`}
             >
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ?"translate-x-6" :"translate-x-1"}`} />
-            </button>
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -230,13 +230,13 @@ export default function EmailSettingsPage() {
                     placeholder="••••••••"
                     className="rounded-xl pr-10"
                   />
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setShowPass(!showPass)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </CardContent>

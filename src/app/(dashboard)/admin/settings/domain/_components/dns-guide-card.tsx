@@ -73,12 +73,12 @@ export function DnsGuideCard({
                   <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">@</code>
-                      <button
+                      <Button
                         onClick={() => copyToClipboard("@","Name")}
                         className="text-muted-foreground hover:text-primary"
                       >
                         <Copy className="h-3 w-3" />
-                      </button>
+                      </Button>
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-3">
@@ -86,7 +86,7 @@ export function DnsGuideCard({
                       <code className="text-xs font-mono">
                         {rootDomain ||"schoolpro.id"}
                       </code>
-                      <button
+                      <Button
                         onClick={() =>
                           copyToClipboard(
                             rootDomain ||"schoolpro.id","CNAME value"
@@ -95,7 +95,7 @@ export function DnsGuideCard({
                         className="text-muted-foreground hover:text-primary"
                       >
                         <Copy className="h-3 w-3" />
-                      </button>
+                      </Button>
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-xs text-muted-foreground">3600</TableCell>
@@ -134,25 +134,25 @@ export function DnsGuideCard({
                   <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">_smp-verify</code>
-                      <button
+                      <Button
                         onClick={() =>
                           copyToClipboard("_smp-verify","TXT Name")
                         }
                         className="text-muted-foreground hover:text-primary"
                       >
                         <Copy className="h-3 w-3" />
-                      </button>
+                      </Button>
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono break-all">{customDomain.verifyToken}</code>
-                      <button
+                      <Button
                         onClick={() => copyToClipboard(customDomain.verifyToken,"TXT Value")}
                         className="text-muted-foreground hover:text-primary shrink-0"
                       >
                         <Copy className="h-3 w-3" />
-                      </button>
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>

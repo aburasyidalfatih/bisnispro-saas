@@ -313,7 +313,7 @@ export default function PostFormPage() {
                 value={featuredImageValue}
                 onChange={(url) => setValue("featuredImage", url ?? "", { shouldValidate: true })}
               />
-              <input type="hidden" {...register("featuredImage")} />
+              <Input type="hidden" {...register("featuredImage")} />
               {errors.featuredImage && <p className="text-xs text-red-500 mt-2">{errors.featuredImage.message}</p>}
             </CardContent>
           </Card>

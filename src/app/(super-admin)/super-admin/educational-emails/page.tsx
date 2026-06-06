@@ -127,7 +127,7 @@ export default function EducationalEmailsPage() {
             <CardContent className="px-2 pb-4">
               <div className="space-y-1">
                 {campaigns.map(c => (
-                  <button
+                  <Button
                     key={c.id}
                     onClick={() => setActiveTab(c.dayOffset)}
                     className={cn(
@@ -140,7 +140,7 @@ export default function EducationalEmailsPage() {
                       <span className="truncate">{c.title}</span>
                     </div>
                     {activeTab === c.dayOffset && <ChevronRight className="h-4 w-4 shrink-0" />}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </CardContent>

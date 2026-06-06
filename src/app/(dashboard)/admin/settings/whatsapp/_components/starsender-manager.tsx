@@ -126,13 +126,13 @@ export function StarSenderManager() {
                 placeholder="Token StarSender" 
                 className="rounded-xl pr-10" 
               />
-              <button 
+              <Button 
                 type="button" 
                 onClick={() => setShowToken(!showToken)} 
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               >
                 {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
+              </Button>
             </div>
           </div>
           <div className="space-y-2">

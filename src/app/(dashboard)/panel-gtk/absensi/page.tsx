@@ -402,9 +402,9 @@ export default function GTKAttendancePage() {
                       ) : photoPreview ? (
                         <div className="relative w-full h-48 rounded-lg overflow-hidden border border-border bg-black">
                           <img src={photoPreview} alt="Selfie" className="w-full h-full object-cover scale-x-[-1]" />
-                          <button onClick={() => setPhotoPreview("")} className="absolute top-2 right-2 bg-destructive text-white p-1.5 rounded-full shadow-md hover:bg-destructive/90">
+                          <Button onClick={() => setPhotoPreview("")} className="absolute top-2 right-2 bg-destructive text-white p-1.5 rounded-full shadow-md hover:bg-destructive/90">
                             <X className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
                       ) : (
                         <div 

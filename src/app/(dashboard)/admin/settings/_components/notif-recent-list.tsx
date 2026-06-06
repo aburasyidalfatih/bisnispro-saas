@@ -1,6 +1,7 @@
 import { useState, useEffect } from"react"
 import { Bell, Check, ArrowRight, Info, CheckCircle, AlertTriangle, XCircle } from"lucide-react"
 import { cn } from"@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 const typeIcons: Record<string, { icon: typeof Info; color: string }> = {
   info:    { icon: Info,          color:"text-blue-500 bg-blue-500/10" },
@@ -60,9 +61,9 @@ export function NotifRecentList() {
         </div>
         <div className="flex items-center gap-3 ml-3">
           {unread > 0 && (
-            <button onClick={markAllRead} className="text-[11px] text-primary hover:underline flex items-center gap-1">
+            <Button onClick={markAllRead} className="text-[11px] text-primary hover:underline flex items-center gap-1">
               <Check className="h-3 w-3" /> Tandai semua
-            </button>
+            </Button>
           )}
           <a href="/admin/notifications" className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1">
             Lihat semua <ArrowRight className="h-3 w-3" />

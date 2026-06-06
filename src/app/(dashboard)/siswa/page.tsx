@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, Clock, Wallet, Award, FileText, QrCode, MonitorSmartphone, Bell, ChevronRight, BookOpen, ChevronDown, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { DashboardSkeleton } from "@/components/shared/dashboard-skeleton"
+import { Button } from "@/components/ui/button"
 
 export default function PanelSiswaDashboard() {
   const { data: session } = useSession()
@@ -92,9 +93,9 @@ export default function PanelSiswaDashboard() {
               <Wallet className="w-3.5 h-3.5" /> Saldo Tabungan
             </span>
             <div className="flex items-center gap-3">
-              <button onClick={() => setShowBalance(!showBalance)} className="text-indigo-100 hover:text-white transition-colors" title={showBalance ? "Sembunyikan Saldo" : "Tampilkan Saldo"}>
+              <Button onClick={() => setShowBalance(!showBalance)} className="text-indigo-100 hover:text-white transition-colors" title={showBalance ? "Sembunyikan Saldo" : "Tampilkan Saldo"}>
                 {showBalance ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-              </button>
+              </Button>
               <Link href="/siswa/wallet" className="text-xs font-bold text-white hover:underline flex items-center">
                 Riwayat <ChevronRight className="w-3 h-3" />
               </Link>

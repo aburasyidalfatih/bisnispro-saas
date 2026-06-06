@@ -60,7 +60,7 @@ export default function JadwalPage() {
       {/* Day Tabs */}
       <div className="flex overflow-x-auto scrollbar-hide gap-2 py-2">
         {grouped.map(group => (
-          <button
+          <Button
             key={group.dayIndex}
             onClick={() => setActiveDay(group.dayIndex)}
             className={cn(
@@ -79,7 +79,7 @@ export default function JadwalPage() {
                 {group.items.length}
               </span>
             )}
-          </button>
+          </Button>
         ))}
       </div>
 

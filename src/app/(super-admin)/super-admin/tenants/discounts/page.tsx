@@ -346,7 +346,7 @@ export default function DiscountsPage() {
               </div>
 
               <div className="flex items-center gap-2 pt-2">
-                <input
+                <Input
                   type="checkbox"
                   id="isActive"
                   checked={editingDiscount.isActive}
