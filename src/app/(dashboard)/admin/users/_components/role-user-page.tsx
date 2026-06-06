@@ -19,6 +19,10 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table"
+import { EmptyState } from "@/components/ui/empty-state"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 
@@ -346,52 +350,60 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
       {/* Table */}
       <Card className="glass border-0 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-muted/30">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nama</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Telepon</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Bergabung</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader className="bg-muted/30">
+              <TableRow>
+                <TableHead className="uppercase tracking-wider">Nama</TableHead>
+                <TableHead className="uppercase tracking-wider">Email</TableHead>
+                <TableHead className="hidden md:table-cell uppercase tracking-wider">Telepon</TableHead>
+                <TableHead className="hidden lg:table-cell uppercase tracking-wider">Bergabung</TableHead>
+                <TableHead className="uppercase tracking-wider">Status</TableHead>
+                <TableHead className="text-right uppercase tracking-wider">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {loading ? (
                 [...Array(3)].map((_, i) => (
-                  <tr key={i} className="border-b"><td className="px-4 py-4" colSpan={6}><div className="skeleton h-6 w-full rounded-lg" /></td></tr>
+                  <TableRow key={i}>
+                    <TableCell colSpan={6} className="py-4">
+                      <div className="skeleton h-6 w-full rounded-lg" />
+                    </TableCell>
+                  </TableRow>
                 ))
               ) : visibleEntries.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center">
-                    <RoleIcon className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-                    <p className="text-sm text-muted-foreground">{config.emptyLabel}</p>
-                  </td>
-                </tr>
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={6} className="p-0">
+                    <EmptyState
+                      icon={RoleIcon}
+                      title={config.emptyLabel}
+                      description="Tambahkan pengguna baru untuk melihat data di tabel ini."
+                      className="border-0 rounded-none shadow-none bg-transparent"
+                    />
+                  </TableCell>
+                </TableRow>
               ) : (
                 visibleEntries.map((u) => (
-                  <tr key={u.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
-                    <td className="px-4 py-3">
+                  <TableRow key={u.id} className="hover:bg-muted/20 transition-colors">
+                    <TableCell className="py-3">
                       <div className="flex items-center gap-3">
                         <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-bold text-xs", config.badge)}>
                           {u.name.split("").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
                         </div>
                         <span className="text-sm font-medium">{u.name}</span>
                       </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">{u.email}</td>
-                    <td className="px-4 py-3 text-sm hidden md:table-cell">{u.phone ||"-"}</td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">{formatDate(u.createdAt)}</td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="py-3 text-sm">{u.email}</TableCell>
+                    <TableCell className="py-3 text-sm hidden md:table-cell">{u.phone ||"-"}</TableCell>
+                    <TableCell className="py-3 text-sm text-muted-foreground hidden lg:table-cell">{formatDate(u.createdAt)}</TableCell>
+                    <TableCell className="py-3">
                       <span className={cn("inline-flex items-center gap-1 text-xs font-medium rounded-full px-2 py-0.5",
                         u.isActive ?"bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :"bg-destructive/10 text-destructive"
                       )}>
                         <span className={cn("h-1.5 w-1.5 rounded-full", u.isActive ?"bg-emerald-500" :"bg-destructive")} />
                         {u.isActive ?"Aktif" :"Nonaktif"}
                       </span>
-                    </td>
-                    <td className="px-4 py-3 text-right">
+                    </TableCell>
+                    <TableCell className="py-3 text-right">
                       {u.role !=="owner" && (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -430,19 +442,19 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
               {visibleCount < filtered.length && (
-                <tr id="scroll-observer-users">
-                  <td colSpan={6} className="px-4 py-8 text-center">
+                <TableRow id="scroll-observer-users">
+                  <TableCell colSpan={6} className="py-8 text-center">
                     <div className="h-6 w-6 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600 mx-auto"></div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </Card>
     </div>
