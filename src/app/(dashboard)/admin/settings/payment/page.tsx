@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/comp
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { toast } from"@/hooks/use-toast"
 import { CreditCard, Save, Eye, EyeOff, Info, CheckCircle, ExternalLink, RefreshCw, Landmark, Plus, Trash2 } from"lucide-react"
 
@@ -187,12 +188,10 @@ export default function PaymentSettingsPage() {
                 {useCustom ?"Menggunakan akun Tripay Anda sendiri" :"Menggunakan akun Tripay default platform"}
               </p>
             </div>
-            <Button
-              onClick={() => setUseCustom(!useCustom)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useCustom ?"bg-primary" :"bg-muted"}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ?"translate-x-6" :"translate-x-1"}`} />
-            </Button>
+            <Switch
+              checked={useCustom}
+              onCheckedChange={setUseCustom}
+            />
           </div>
         </CardContent>
       </Card>
