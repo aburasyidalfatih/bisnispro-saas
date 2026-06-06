@@ -239,7 +239,7 @@ export default function EditStaffPage() {
                   {previewUrl ? (
                     <div className="relative w-full h-full">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" / loading="lazy" decoding="async">
+                      <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" loading="lazy" decoding="async" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-center p-2">
                         <p className="text-white text-[10px] font-medium">Ubah Foto</p>
                       </div>

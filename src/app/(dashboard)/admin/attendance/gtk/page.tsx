@@ -257,7 +257,7 @@ export default function AdminGTKAttendancePage() {
                       <TableCell className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="h-8 w-8 rounded-xl overflow-hidden bg-primary/10 shrink-0">
-                            {s.imageUrl ? <img src={normalizeImageUrl(s.imageUrl)} alt={s.name} className="h-full w-full object-cover" / loading="lazy" decoding="async"> : (
+                            {s.imageUrl ? <img src={normalizeImageUrl(s.imageUrl)} alt={s.name} className="h-full w-full object-cover" loading="lazy" decoding="async" /> : (
                               <div className="h-full w-full flex items-center justify-center font-bold text-primary text-xs">{s.name.charAt(0)}</div>
                             )}
                           </div>

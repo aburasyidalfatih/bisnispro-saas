@@ -156,7 +156,7 @@ export default function EditSliderPage() {
                 <Input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                 {previewUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-lg" / loading="lazy" decoding="async">
+                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-lg" loading="lazy" decoding="async" />
                 ) : (
                   <div className="text-center py-8">
                     <ImageIcon className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />

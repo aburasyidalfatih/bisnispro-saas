@@ -152,7 +152,7 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
                              <img src={normalizeImageUrl(item.imageUrl) || item.imageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974"} 
                                alt={item.name} 
                                className="h-full w-full object-cover" 
-                             / loading="lazy" decoding="async">
+                             loading="lazy" decoding="async" />
                           </div>
                           <div>
                              <h5 className="font-bold text-sm leading-tight">{item.name}</h5>

@@ -133,7 +133,7 @@ export function RevisionForm({ application }: { application: any }) {
               <Label>Logo Sekolah <span className="text-red-500">*</span></Label>
               <div className="flex items-center gap-4">
                 {logoPreview ? (
-                  <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded-lg border bg-white" / loading="lazy" decoding="async">
+                  <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded-lg border bg-white" loading="lazy" decoding="async" />
                 ) : (
                   <div className="h-16 w-16 rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
                     <ImageIcon className="h-6 w-6 text-muted-foreground" />

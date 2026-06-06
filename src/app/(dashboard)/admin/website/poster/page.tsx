@@ -72,7 +72,7 @@ export default function WebsitePosterPage() {
         {/* Top Header */}
         <div className="text-center space-y-6 relative z-10 pt-8">
           {tenant?.logo ? (
-            <img src={normalizeImageUrl(tenant.logo)} alt="Logo" className="h-32 w-auto mx-auto object-contain drop-shadow-md" / loading="lazy" decoding="async">
+            <img src={normalizeImageUrl(tenant.logo)} alt="Logo" className="h-32 w-auto mx-auto object-contain drop-shadow-md" loading="lazy" decoding="async" />
           ) : (
             <div className="h-32 w-32 bg-slate-100 rounded-full mx-auto flex items-center justify-center">
               <Globe className="h-12 w-12 text-slate-400" />

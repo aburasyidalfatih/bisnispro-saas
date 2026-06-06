@@ -222,7 +222,7 @@ export default function EditPopupPage() {
                 >
                   <Input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                   {previewUrl ? (
-                    <img src={previewUrl} alt="Preview" className="max-h-48 rounded-lg object-contain" / loading="lazy" decoding="async">
+                    <img src={previewUrl} alt="Preview" className="max-h-48 rounded-lg object-contain" loading="lazy" decoding="async" />
                   ) : (
                     <div className="text-center py-4">
                       <ImageIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />

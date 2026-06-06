@@ -182,7 +182,7 @@ export default function NewAlumniPage() {
                   />
                   
                   {previewUrl ? (
-                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" / loading="lazy" decoding="async">
+                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" loading="lazy" decoding="async" />
                   ) : (
                     <div className="text-center p-4">
                       <User className="h-8 w-8 mx-auto mb-1 text-muted-foreground/50" />

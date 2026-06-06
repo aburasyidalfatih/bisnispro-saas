@@ -123,7 +123,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <div className="flex items-center gap-2 mb-3">
             {campaign.tenant.logo && (
-              <img src={normalizeImageUrl(campaign.tenant.logo) || campaign.tenant.logo} alt={campaign.tenant.name} className="h-8 w-8 rounded-full bg-white p-0.5 object-contain" / loading="lazy" decoding="async">
+              <img src={normalizeImageUrl(campaign.tenant.logo) || campaign.tenant.logo} alt={campaign.tenant.name} className="h-8 w-8 rounded-full bg-white p-0.5 object-contain" loading="lazy" decoding="async" />
             )}
             <span className="text-sm font-semibold text-white/90">{campaign.tenant.name}</span>
           </div>

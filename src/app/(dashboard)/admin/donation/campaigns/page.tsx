@@ -109,7 +109,7 @@ export default function DonationCampaignsPage() {
             return (
               <Card key={campaign.id} className="glass border-0 shadow-sm overflow-hidden">
                 {campaign.imageUrl && (
-                  <img src={normalizeImageUrl(campaign.imageUrl) || campaign.imageUrl} alt={campaign.title} className="w-full h-36 object-cover" / loading="lazy" decoding="async">
+                  <img src={normalizeImageUrl(campaign.imageUrl) || campaign.imageUrl} alt={campaign.title} className="w-full h-36 object-cover" loading="lazy" decoding="async" />
                 )}
                 <CardContent className="p-5">
                   <div className="flex justify-between items-start mb-3">

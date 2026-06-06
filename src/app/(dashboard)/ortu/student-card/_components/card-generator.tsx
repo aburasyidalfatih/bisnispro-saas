@@ -75,7 +75,7 @@ export function StudentCardGenerator({ students }: { students: any[] }) {
               {/* Header Content */}
               <div className="relative z-10 pt-6 px-6 flex flex-col items-center text-center">
                 {activeStudent.tenant?.logo ? (
-                  <img src={normalizeImageUrl(activeStudent.tenant.logo)} alt="Logo" className="w-12 h-12 object-contain drop-shadow-md mb-2 bg-white/20 p-1 rounded-full backdrop-blur-sm border border-white/30" / loading="lazy" decoding="async">
+                  <img src={normalizeImageUrl(activeStudent.tenant.logo)} alt="Logo" className="w-12 h-12 object-contain drop-shadow-md mb-2 bg-white/20 p-1 rounded-full backdrop-blur-sm border border-white/30" loading="lazy" decoding="async" />
                 ) : null}
                 <p className="text-primary-foreground font-black text-lg tracking-[0.2em] uppercase drop-shadow-sm leading-tight">
                   KARTU PELAJAR

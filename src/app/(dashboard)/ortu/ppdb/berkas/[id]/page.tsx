@@ -268,7 +268,7 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
                               <img src={uploaded.fileUrl}
                                 alt={req.nama}
                                 className="w-full max-h-40 object-cover"
-                              / loading="lazy" decoding="async">
+                              loading="lazy" decoding="async" />
                               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                 <a href={uploaded.fileUrl} target="_blank" rel="noreferrer">
                                   <Button size="sm" variant="secondary" className="rounded-lg h-7 text-xs gap-1">

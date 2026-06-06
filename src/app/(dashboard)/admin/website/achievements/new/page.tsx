@@ -184,7 +184,7 @@ export default function NewAchievementPage() {
                 {previewUrl ? (
                   <div className="relative w-full aspect-video rounded-lg overflow-hidden flex items-center justify-center bg-black/5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" / loading="lazy" decoding="async">
+                    <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" loading="lazy" decoding="async" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                       <p className="text-white text-sm font-medium">Klik untuk mengubah foto</p>
                     </div>

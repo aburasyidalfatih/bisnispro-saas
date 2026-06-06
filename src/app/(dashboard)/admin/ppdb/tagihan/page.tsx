@@ -227,7 +227,7 @@ export default function PpdbTagihanPage() {
                         <div>
                           <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Bukti Transfer</p>
                           <a href={normalizeImageUrl(p.buktiUrl) || p.buktiUrl} target="_blank" rel="noreferrer" className="block rounded-xl overflow-hidden border hover:opacity-80 transition-opacity">
-                            <img src={normalizeImageUrl(p.buktiUrl) || p.buktiUrl} alt="Bukti" className="w-full aspect-video object-cover" / loading="lazy" decoding="async">
+                            <img src={normalizeImageUrl(p.buktiUrl) || p.buktiUrl} alt="Bukti" className="w-full aspect-video object-cover" loading="lazy" decoding="async" />
                           </a>
                         </div>
                       )}
