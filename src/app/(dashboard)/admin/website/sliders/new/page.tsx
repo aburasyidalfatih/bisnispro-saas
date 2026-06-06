@@ -256,7 +256,7 @@ export default function NewSliderPage() {
 
               <hr className="border-border/50" />
 
-              <button type="submit" className="flex items-center justify-center h-10 w-full gap-2 btn-gradient text-white border-0 rounded-xl" disabled={saving || !file}>
+              <button type="submit" className="flex items-center justify-center h-10 w-full gap-2 btn-gradient text-white border-0 rounded-xl px-4" disabled={saving || !file}>
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

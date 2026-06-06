@@ -109,7 +109,7 @@ export function ContactForm({ slug }: Props) {
         )}
 
         <button type="submit" disabled={sending}
-          className="w-full h-11 rounded-xl btn-gradient text-white font-medium flex items-center justify-center gap-2 disabled:opacity-70">
+          className="w-full h-11 rounded-xl btn-gradient text-white font-medium flex items-center justify-center gap-2 disabled:opacity-70 px-4">
           {sending ? (
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
           ) : (

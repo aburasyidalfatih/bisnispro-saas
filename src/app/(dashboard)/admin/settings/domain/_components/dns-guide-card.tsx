@@ -210,7 +210,7 @@ export function DnsGuideCard({
               waktu hingga 24 jam.
             </p>
             <button
-              className="justify-center items-center flex btn-gradient text-white border-0 rounded-xl gap-2 w-full"
+              className="justify-center items-center flex btn-gradient text-white border-0 rounded-xl gap-2 w-full h-10 px-4"
               onClick={handleVerify}
               disabled={verifying}
             >

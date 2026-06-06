@@ -363,7 +363,7 @@ export default function DiscountsPage() {
               Batal
             </Button>
             <button
-              className="justify-center items-center flex rounded-xl btn-gradient text-white border-0 px-8 gap-2"
+              className="justify-center items-center flex rounded-xl btn-gradient text-white border-0 px-8 gap-2 h-10"
               onClick={handleSave}
               disabled={saving}
             >

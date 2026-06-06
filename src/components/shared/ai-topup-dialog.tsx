@@ -180,7 +180,7 @@ export function AiTopupDialog({
                )}
                <button 
                  onClick={handleTopup} 
-                 className="justify-center items-center flex w-full rounded-xl btn-gradient text-white shadow-lg shadow-primary/20 h-11" 
+                 className="justify-center items-center flex w-full rounded-xl btn-gradient text-white shadow-lg shadow-primary/20 h-11 px-4" 
                  disabled={isLoadingTopup || !selectedMethod || !selectedPackageId}
                >
                   {isLoadingTopup ? (

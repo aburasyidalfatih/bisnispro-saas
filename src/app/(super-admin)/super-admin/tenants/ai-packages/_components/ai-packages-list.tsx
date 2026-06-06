@@ -266,7 +266,7 @@ export function AiPackagesList() {
           <DialogFooter className="px-6 py-4 border-t bg-muted/20 gap-2">
             <Button variant="ghost" className="rounded-xl" onClick={() => setIsDialogOpen(false)}>Batal</Button>
             <button
-              className="justify-center items-center flex rounded-xl btn-gradient text-white border-0 px-8 gap-2"
+              className="justify-center items-center flex rounded-xl btn-gradient text-white border-0 px-8 gap-2 h-10"
               onClick={handleSave}
               disabled={saving}
             >

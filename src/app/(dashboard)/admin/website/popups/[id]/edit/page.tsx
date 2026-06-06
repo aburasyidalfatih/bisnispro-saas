@@ -278,7 +278,7 @@ export default function EditPopupPage() {
 
               <hr className="border-border/50" />
 
-              <button type="submit" className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl" disabled={saving || !formData.title}>
+              <button type="submit" className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4" disabled={saving || !formData.title}>
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
