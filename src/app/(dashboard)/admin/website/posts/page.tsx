@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -105,21 +106,21 @@ export default function PostsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground bg-muted/30 border-b">
-                  <tr>
-                    <th className="px-4 py-3 font-medium rounded-tl-lg">Judul Artikel</th>
-                    <th className="px-4 py-3 font-medium">Tipe</th>
-                    <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium">Penulis</th>
-                    <th className="px-4 py-3 font-medium">Tanggal</th>
-                    <th className="px-4 py-3 font-medium text-right rounded-tr-lg">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-4 py-3 font-medium rounded-tl-lg">Judul Artikel</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Tipe</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Status</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Penulis</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Tanggal</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right rounded-tr-lg">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {posts.map(post => (
-                    <tr key={post.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
-                      <td className="px-4 py-3">
+                    <TableRow key={post.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
+                      <TableCell className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           {normalizeImageUrl(post.featuredImage) ? (
                             <div className="relative h-10 w-16 shrink-0 rounded overflow-hidden border">
@@ -149,8 +150,8 @@ export default function PostsPage() {
                             <div className="text-[11px] text-muted-foreground font-mono mt-0.5 line-clamp-1">/{post.slug}</div>
                           </div>
                         </div>
-                      </td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="px-4 py-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary">
                           {post.type.replace('_', ' ')}
                         </span>
@@ -159,8 +160,8 @@ export default function PostsPage() {
                             {post.category.name}
                           </span>
                         )}
-                      </td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="px-4 py-3">
                         {post.status ==="PUBLISHED" && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-500/10 px-2 rounded-full py-0.5">
                             <Globe className="h-3 w-3" /> Publik
@@ -181,10 +182,10 @@ export default function PostsPage() {
                             <FileText className="h-3 w-3" /> Draft
                           </span>
                         )}
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">{post.author?.name}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{format(new Date(post.createdAt), 'dd MMM yyyy')}</td>
-                      <td className="px-4 py-3 text-right">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-muted-foreground">{post.author?.name}</TableCell>
+                      <TableCell className="px-4 py-3 text-muted-foreground">{format(new Date(post.createdAt), 'dd MMM yyyy')}</TableCell>
+                      <TableCell className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
                           {post.status ==="PUBLISHED" && (
                             <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-blue-500/10 hover:text-blue-600" title="Lihat di website">
@@ -210,11 +211,11 @@ export default function PostsPage() {
                             onConfirm={() => deletePost(post.id)}
                           />
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>

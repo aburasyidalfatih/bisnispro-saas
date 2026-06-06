@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -188,27 +189,27 @@ export default function PpdbPendaftarPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/50">
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Pendaftar & Gelombang</th>
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Pendaftaran</th>
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Data & Berkas</th>
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Daftar Ulang</th>
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Status Akhir</th>
-                  <th className="text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-border/50">
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Pendaftar & Gelombang</TableHead>
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Pendaftaran</TableHead>
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Data & Berkas</TableHead>
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Daftar Ulang</TableHead>
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Status Akhir</TableHead>
+                  <TableHead className="text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filtered.map(a => {
                   const tagihanPendaftaran = a.tagihan?.find((t: any) => t.jenis ==="PENDAFTARAN")
                   const tagihanDU = a.tagihan?.find((t: any) => t.jenis ==="DAFTAR_ULANG")
                   const st = statusConfig[a.status] ?? { label: a.status, class:"bg-muted text-muted-foreground" }
                   
                   return (
-                    <tr key={a.id} className="hover:bg-muted/30 transition-colors group">
+                    <TableRow key={a.id} className="hover:bg-muted/30 transition-colors group">
                       {/* Kolom Pendaftar */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         <div className="font-semibold text-sm">{a.namaLengkap}</div>
                         <div className="flex items-center gap-1.5 mt-1 text-[11px] text-muted-foreground">
                           <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-foreground">{a.noPendaftaran}</code>
@@ -217,19 +218,19 @@ export default function PpdbPendaftarPage() {
                           <span>•</span>
                           <span>{format(new Date(a.createdAt),"d MMM yyyy", { locale: localeId })}</span>
                         </div>
-                      </td>
+                      </TableCell>
                       
                       {/* Kolom Pembayaran Pendaftaran */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         {tagihanPendaftaran ? (
                           <Badge className={tagihanPendaftaran.status ==="LUNAS" ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :"bg-red-500/10 text-red-600 border-red-500/20"}>
                             {tagihanPendaftaran.status ==="LUNAS" ?"Lunas" :"Belum Bayar"}
                           </Badge>
                         ) : <span className="text-muted-foreground text-xs font-medium italic">Tidak ada</span>}
-                      </td>
+                      </TableCell>
 
                       {/* Kolom Berkas */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         <div className="flex flex-col gap-1 text-[11px] font-medium">
                            <div className="flex items-center gap-1">
                              <span className="text-muted-foreground">Form:</span>
@@ -240,24 +241,24 @@ export default function PpdbPendaftarPage() {
                              <span className={a.berkas?.length > 0 ?"text-emerald-500" :"text-amber-500"}>{a.berkas?.length || 0} Diunggah</span>
                            </div>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* Kolom Daftar Ulang */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         {tagihanDU ? (
                           <Badge className={tagihanDU.status ==="LUNAS" ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :"bg-amber-500/10 text-amber-600 border-amber-500/20"}>
                             {tagihanDU.status ==="LUNAS" ?"Lunas" :"Menunggu"}
                           </Badge>
                         ) : <span className="text-muted-foreground text-xs">—</span>}
-                      </td>
+                      </TableCell>
 
                       {/* Kolom Status Akhir */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         <Badge className={st.class}>{st.label}</Badge>
-                      </td>
+                      </TableCell>
 
                       {/* Kolom Aksi */}
-                      <td className="px-4 py-4 text-right">
+                      <TableCell className="px-4 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Link href={`/admin/ppdb/pendaftar/${a.id}`}>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50" title="Lihat Detail">
@@ -274,12 +275,12 @@ export default function PpdbPendaftarPage() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   )
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
 

@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -40,43 +41,43 @@ export function ApplicationTable({
   return (
     <Card className="glass border-0 overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="text-xs text-muted-foreground uppercase bg-muted/30 border-b">
-            <tr>
-              <th className="px-4 py-3 w-10 text-center">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="px-4 py-3 w-10 text-center">
                 <input 
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 accent-primary"
                   checked={filteredApps.length > 0 && selectedIds.length === filteredApps.length} 
                   onChange={toggleSelectAll} 
                 />
-              </th>
-              <th className="px-4 py-3 font-semibold">Tenant (Sekolah)</th>
-              <th className="px-4 py-3 font-semibold">Penanggungjawab</th>
-              <th className="px-4 py-3 font-semibold">Kota / Provinsi</th>
-              <th className="px-4 py-3 font-semibold text-center">Jml. Siswa</th>
-              <th className="px-4 py-3 font-semibold">Affiliator</th>
-              <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border/50">
+              </TableHead>
+              <TableHead className="px-4 py-3 font-semibold">Tenant (Sekolah)</TableHead>
+              <TableHead className="px-4 py-3 font-semibold">Penanggungjawab</TableHead>
+              <TableHead className="px-4 py-3 font-semibold">Kota / Provinsi</TableHead>
+              <TableHead className="px-4 py-3 font-semibold text-center">Jml. Siswa</TableHead>
+              <TableHead className="px-4 py-3 font-semibold">Affiliator</TableHead>
+              <TableHead className="px-4 py-3 font-semibold">Status</TableHead>
+              <TableHead className="px-4 py-3 font-semibold text-right">Aksi</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {filteredApps.length === 0 && (
-              <tr>
-                <td colSpan={8} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran yang sesuai pencarian.</td>
-              </tr>
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran yang sesuai pencarian.</TableCell>
+              </TableRow>
             )}
             {filteredApps.map((app) => (
-              <tr key={app.id} className={cn("hover:bg-muted/10 transition-colors", selectedIds.includes(app.id) && "bg-muted/30")}>
-                <td className="px-4 py-4 text-center">
+              <TableRow key={app.id} className={cn("hover:bg-muted/10 transition-colors", selectedIds.includes(app.id) && "bg-muted/30")}>
+                <TableCell className="px-4 py-4 text-center">
                   <input 
                     type="checkbox"
                     className="h-4 w-4 rounded border-gray-300 accent-primary"
                     checked={selectedIds.includes(app.id)} 
                     onChange={() => toggleSelect(app.id)} 
                   />
-                </td>
-                <td className="px-4 py-4">
+                </TableCell>
+                <TableCell className="px-4 py-4">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden relative">
                       {app.logo ? (
@@ -107,19 +108,19 @@ export function ApplicationTable({
                       <p className="text-[10px] text-muted-foreground">Subdomain: <span className="text-primary">{app.schoolSlug}.schoolpro.id</span></p>
                     </div>
                   </div>
-                </td>
-                <td className="px-4 py-4">
+                </TableCell>
+                <TableCell className="px-4 py-4">
                   <p className="font-medium">{app.adminName}</p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5"><Phone className="h-3 w-3" /> {app.adminPhone}</p>
-                </td>
-                <td className="px-4 py-4">
+                </TableCell>
+                <TableCell className="px-4 py-4">
                   <p className="font-medium">{app.regency}</p>
                   <p className="text-xs text-muted-foreground">{app.province}</p>
-                </td>
-                <td className="px-4 py-4 text-center">
+                </TableCell>
+                <TableCell className="px-4 py-4 text-center">
                   <span className="font-semibold">{app.studentCount ? app.studentCount.toLocaleString('id-ID') : '-'}</span>
-                </td>
-                <td className="px-4 py-4">
+                </TableCell>
+                <TableCell className="px-4 py-4">
                   {app.affiliate ? (
                     <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">
                       <User className="h-3 w-3" /> {app.affiliate.user.name}
@@ -127,8 +128,8 @@ export function ApplicationTable({
                   ) : (
                     <span className="text-xs text-muted-foreground">-</span>
                   )}
-                </td>
-                <td className="px-4 py-4">
+                </TableCell>
+                <TableCell className="px-4 py-4">
                   <div className="flex flex-col gap-1.5 items-start">
                     {getStatusBadge(app.status)}
                     {app.status === 'APPROVED' && (
@@ -143,8 +144,8 @@ export function ApplicationTable({
                       )
                     )}
                   </div>
-                </td>
-                <td className="px-4 py-4 text-right">
+                </TableCell>
+                <TableCell className="px-4 py-4 text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="h-8 w-8 p-0">
@@ -178,11 +179,11 @@ export function ApplicationTable({
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </Card>
   )

@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from "react"
@@ -53,24 +54,24 @@ export default function GTKPostsPage() {
       <Card className="glass border-0">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground uppercase bg-muted/30 border-b border-border/50">
-                <tr>
-                  <th className="px-6 py-4 font-medium">Judul Artikel</th>
-                  <th className="px-6 py-4 font-medium">Kategori</th>
-                  <th className="px-6 py-4 font-medium">Tanggal</th>
-                  <th className="px-6 py-4 font-medium">Status</th>
-                  <th className="px-6 py-4 font-medium text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 py-4 font-medium">Judul Artikel</TableHead>
+                  <TableHead className="px-6 py-4 font-medium">Kategori</TableHead>
+                  <TableHead className="px-6 py-4 font-medium">Tanggal</TableHead>
+                  <TableHead className="px-6 py-4 font-medium">Status</TableHead>
+                  <TableHead className="px-6 py-4 font-medium text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {loading ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground animate-pulse">Memuat data artikel...</td>
-                  </tr>
+                  <TableRow>
+                    <TableCell colSpan={5} className="px-6 py-8 text-center text-muted-foreground animate-pulse">Memuat data artikel...</TableCell>
+                  </TableRow>
                 ) : posts.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
+                  <TableRow>
+                    <TableCell colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
                       <div className="flex flex-col items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
                           <FileText className="h-6 w-6 text-muted-foreground/50" />
@@ -80,21 +81,21 @@ export default function GTKPostsPage() {
                           <Link href="/panel-gtk/posts/new">Mulai Menulis</Link>
                         </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ) : (
                   posts.map((post) => (
-                    <tr key={post.id} className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4 font-medium text-foreground max-w-[300px] truncate">
+                    <TableRow key={post.id} className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors">
+                      <TableCell className="px-6 py-4 font-medium text-foreground max-w-[300px] truncate">
                         {post.title}
-                      </td>
-                      <td className="px-6 py-4 text-muted-foreground">
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-muted-foreground">
                         {post.category?.name || "-"}
-                      </td>
-                      <td className="px-6 py-4 text-muted-foreground">
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-muted-foreground">
                         {format(new Date(post.createdAt), "dd MMM yyyy", { locale: id })}
-                      </td>
-                      <td className="px-6 py-4">
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
                         {post.status === "PUBLISHED" && (
                           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
                             <CheckCircle className="h-3 w-3" /> Dipublikasikan
@@ -115,8 +116,8 @@ export default function GTKPostsPage() {
                             <FileText className="h-3 w-3" /> Draf
                           </span>
                         )}
-                      </td>
-                      <td className="px-6 py-4 text-right">
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
                           {post.status === "PUBLISHED" && (
                             <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-blue-500/10 hover:text-blue-600 transition-colors" title="Lihat di website">
@@ -131,12 +132,12 @@ export default function GTKPostsPage() {
                             </Link>
                           </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>

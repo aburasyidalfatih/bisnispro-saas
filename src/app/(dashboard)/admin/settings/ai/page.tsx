@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -208,27 +209,27 @@ export default function AiSettingsPage() {
         </CardHeader>
         <CardContent>
           <div className="rounded-xl border overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/50 border-b">
-                <tr>
-                  <th className="text-left font-medium p-3 text-muted-foreground">Waktu</th>
-                  <th className="text-left font-medium p-3 text-muted-foreground">Pengguna</th>
-                  <th className="text-left font-medium p-3 text-muted-foreground">Fitur</th>
-                  <th className="text-right font-medium p-3 text-muted-foreground">Token Digunakan</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-left font-medium p-3 text-muted-foreground">Waktu</TableHead>
+                  <TableHead className="text-left font-medium p-3 text-muted-foreground">Pengguna</TableHead>
+                  <TableHead className="text-left font-medium p-3 text-muted-foreground">Fitur</TableHead>
+                  <TableHead className="text-right font-medium p-3 text-muted-foreground">Token Digunakan</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {logsLoading ? (
-                  <tr><td colSpan={4} className="p-4 text-center text-muted-foreground">Memuat data...</td></tr>
+                  <TableRow><TableCell colSpan={4} className="p-4 text-center text-muted-foreground">Memuat data...</TableCell></TableRow>
                 ) : logs.length === 0 ? (
-                  <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic">Belum ada riwayat penggunaan AI.</td></tr>
+                  <TableRow><TableCell colSpan={4} className="p-8 text-center text-muted-foreground italic">Belum ada riwayat penggunaan AI.</TableCell></TableRow>
                 ) : (
                   logs.map((log) => (
-                    <tr key={log.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="p-3 whitespace-nowrap">
+                    <TableRow key={log.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="p-3 whitespace-nowrap">
                         {new Date(log.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                      </td>
-                      <td className="p-3">
+                      </TableCell>
+                      <TableCell className="p-3">
                         <div className="flex items-center gap-2">
                           <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
                             <User className="h-3 w-3 text-primary" />
@@ -238,20 +239,20 @@ export default function AiSettingsPage() {
                             <span className="text-[10px] text-muted-foreground">{log.user?.email}</span>
                           </div>
                         </div>
-                      </td>
-                      <td className="p-3">
+                      </TableCell>
+                      <TableCell className="p-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                           {log.feature}
                         </span>
-                      </td>
-                      <td className="p-3 text-right font-mono font-medium text-primary">
+                      </TableCell>
+                      <TableCell className="p-3 text-right font-mono font-medium text-primary">
                         {log.tokens.toLocaleString('id-ID')}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Trophy, ArrowLeft, TrendingUp, Users, Target, Crown, Award, Medal, Info } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 interface LeaderboardItem {
   id: string
@@ -211,45 +212,45 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
             </CardHeader>
             <CardContent>
               <div className="rounded-xl border overflow-hidden">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-3 font-medium text-center w-16">Peringkat</th>
-                      <th className="px-4 py-3 font-medium">Mitra</th>
-                      <th className="px-4 py-3 font-medium text-center">
+                <Table className="text-sm text-left">
+                  <TableHeader className="bg-muted/50 text-xs uppercase text-muted-foreground">
+                    <TableRow>
+                      <TableHead className="px-4 py-3 font-medium text-center w-16">Peringkat</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Mitra</TableHead>
+                      <TableHead className="px-4 py-3 font-medium text-center">
                         <div className="flex flex-col items-center gap-1">
                           <Target className="h-3.5 w-3.5" />
                           <span>Pengajuan</span>
                         </div>
-                      </th>
-                      <th className="px-4 py-3 font-medium text-center">
+                      </TableHead>
+                      <TableHead className="px-4 py-3 font-medium text-center">
                         <div className="flex flex-col items-center gap-1">
                           <Badge variant="outline" className="text-[10px] h-4">FREE</Badge>
                           <span>Aktif</span>
                         </div>
-                      </th>
-                      <th className="px-4 py-3 font-medium text-center">
+                      </TableHead>
+                      <TableHead className="px-4 py-3 font-medium text-center">
                         <div className="flex flex-col items-center gap-1">
                           <Badge className="bg-emerald-500/10 text-emerald-600 border-0 text-[10px] h-4">LITE</Badge>
                           <span>Aktif</span>
                         </div>
-                      </th>
-                      <th className="px-4 py-3 font-medium text-center">
+                      </TableHead>
+                      <TableHead className="px-4 py-3 font-medium text-center">
                         <div className="flex flex-col items-center gap-1">
                           <Badge className="bg-indigo-500/10 text-indigo-600 border-0 text-[10px] h-4">PRO</Badge>
                           <span>Aktif</span>
                         </div>
-                      </th>
-                      <th className="px-4 py-3 font-medium text-right">Skor Total</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/50">
+                      </TableHead>
+                      <TableHead className="px-4 py-3 font-medium text-right">Skor Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="divide-y divide-border/50">
                     {data.map((item) => (
-                      <tr key={item.id} className={cn("bg-background/50 hover:bg-muted/50 transition-colors", item.rank <= 3 && "bg-muted/10")}>
-                        <td className="px-4 py-3 text-center font-bold text-muted-foreground">
+                      <TableRow key={item.id} className={cn("bg-background/50 hover:bg-muted/50 transition-colors", item.rank <= 3 && "bg-muted/10")}>
+                        <TableCell className="px-4 py-3 text-center font-bold text-muted-foreground">
                           {item.rank}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0 overflow-hidden">
                               {item.avatar ? <img src={item.avatar} /> : item.name.charAt(0)}
@@ -259,26 +260,26 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                               <div className="text-[10px] text-muted-foreground font-mono">{item.referralCode}</div>
                             </div>
                           </div>
-                        </td>
-                        <td className="px-4 py-3 text-center font-medium">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-center font-medium">
                           {item.totalApplications > 0 ? item.totalApplications : <span className="text-muted-foreground/30">-</span>}
-                        </td>
-                        <td className="px-4 py-3 text-center">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-center">
                           {item.free > 0 ? item.free : <span className="text-muted-foreground/30">-</span>}
-                        </td>
-                        <td className="px-4 py-3 text-center">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-center">
                           {item.lite > 0 ? <span className="text-emerald-600 font-bold">{item.lite}</span> : <span className="text-muted-foreground/30">-</span>}
-                        </td>
-                        <td className="px-4 py-3 text-center">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-center">
                           {item.pro > 0 ? <span className="text-indigo-600 font-bold">{item.pro}</span> : <span className="text-muted-foreground/30">-</span>}
-                        </td>
-                        <td className="px-4 py-3 text-right">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-right">
                           <span className="font-bold text-amber-600">{item.score.toFixed(1)}</span>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
               <div className="mt-4 flex gap-4 text-xs text-muted-foreground border-t pt-4">
                 <span className="font-medium">Sistem Penilaian:</span>

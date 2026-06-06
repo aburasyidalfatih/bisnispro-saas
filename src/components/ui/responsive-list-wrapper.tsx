@@ -1,5 +1,6 @@
 import React from "react"
 import { cn } from "@/lib/utils"
+import { Table, TableBody, TableHeader } from "@/components/ui/table"
 
 interface ResponsiveListWrapperProps<T> {
   items: T[]
@@ -29,14 +30,14 @@ export function ResponsiveListWrapper<T>({
 
       {/* Desktop Rich Table View (Visible on screens >= sm) */}
       <div className="hidden sm:block overflow-hidden rounded-2xl border border-border bg-card">
-        <table className="w-full border-collapse text-left">
-          <thead>
+        <Table>
+          <TableHeader>
             {renderTableHeader()}
-          </thead>
-          <tbody className="divide-y divide-border/60">
+          </TableHeader>
+          <TableBody className="divide-y divide-border/60">
             {items.map((item, index) => renderTableRow(item, index))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   )

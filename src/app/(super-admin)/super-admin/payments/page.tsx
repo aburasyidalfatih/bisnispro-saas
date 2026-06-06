@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
@@ -211,51 +212,51 @@ export default function PaymentsPage() {
         <CardContent>
           {/* Desktop Table */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/50 text-muted-foreground font-medium">
-                  <th className="text-left py-3 px-2">ID Referensi</th>
-                  <th className="text-left py-3 px-2">Tenant</th>
-                  <th className="text-left py-3 px-2">Paket</th>
-                  <th className="text-left py-3 px-2">Nominal</th>
-                  <th className="text-left py-3 px-2">Siswa</th>
-                  <th className="text-left py-3 px-2">Status</th>
-                  <th className="text-left py-3 px-2">Tanggal</th>
-                  <th className="text-right py-3 px-2">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-border/50 text-muted-foreground font-medium">
+                  <TableHead className="text-left py-3 px-2">ID Referensi</TableHead>
+                  <TableHead className="text-left py-3 px-2">Tenant</TableHead>
+                  <TableHead className="text-left py-3 px-2">Paket</TableHead>
+                  <TableHead className="text-left py-3 px-2">Nominal</TableHead>
+                  <TableHead className="text-left py-3 px-2">Siswa</TableHead>
+                  <TableHead className="text-left py-3 px-2">Status</TableHead>
+                  <TableHead className="text-left py-3 px-2">Tanggal</TableHead>
+                  <TableHead className="text-right py-3 px-2">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filteredPayments.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="py-20 text-center text-muted-foreground italic">
+                  <TableRow>
+                    <TableCell colSpan={8} className="py-20 text-center text-muted-foreground italic">
                       Tidak ada transaksi ditemukan.
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ) : (
                   filteredPayments.map((p) => (
-                    <tr key={p.id} className={cn("transition-colors", p.status === "pending" ? "bg-amber-500/3 hover:bg-amber-500/8" : "hover:bg-muted/30")}>
-                      <td className="py-4 px-2 font-mono text-xs font-semibold">{p.reference}</td>
-                      <td className="py-4 px-2">
+                    <TableRow key={p.id} className={cn("transition-colors", p.status === "pending" ? "bg-amber-500/3 hover:bg-amber-500/8" : "hover:bg-muted/30")}>
+                      <TableCell className="py-4 px-2 font-mono text-xs font-semibold">{p.reference}</TableCell>
+                      <TableCell className="py-4 px-2">
                         <div className="flex items-center gap-2">
                           <div className="h-7 w-7 rounded-lg bg-muted flex items-center justify-center">
                             <School className="h-3.5 w-3.5 text-muted-foreground" />
                           </div>
                           <span className="font-medium">{p.tenant.name}</span>
                         </div>
-                      </td>
-                      <td className="py-4 px-2 uppercase text-[10px] font-bold tracking-wider">{p.plan}</td>
-                      <td className="py-4 px-2 font-bold text-primary">Rp {p.amount.toLocaleString("id-ID")}</td>
-                      <td className="py-4 px-2 text-xs text-muted-foreground">
+                      </TableCell>
+                      <TableCell className="py-4 px-2 uppercase text-[10px] font-bold tracking-wider">{p.plan}</TableCell>
+                      <TableCell className="py-4 px-2 font-bold text-primary">Rp {p.amount.toLocaleString("id-ID")}</TableCell>
+                      <TableCell className="py-4 px-2 text-xs text-muted-foreground">
                         <div className="flex flex-col gap-1">
                           <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}</span>
                           {p.method && <span className="text-[9px] uppercase border px-1.5 py-0.5 rounded-sm w-fit bg-muted/50">{p.method}</span>}
                         </div>
-                      </td>
-                      <td className="py-4 px-2">{getStatusBadge(p.status)}</td>
-                      <td className="py-4 px-2 text-xs text-muted-foreground">
+                      </TableCell>
+                      <TableCell className="py-4 px-2">{getStatusBadge(p.status)}</TableCell>
+                      <TableCell className="py-4 px-2 text-xs text-muted-foreground">
                         {new Date(p.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
-                      </td>
-                      <td className="py-4 px-2 text-right">
+                      </TableCell>
+                      <TableCell className="py-4 px-2 text-right">
                         {p.status === "pending" || p.status === "expired" ? (
                           <div className="flex items-center justify-end gap-2">
                             <Button
@@ -291,12 +292,12 @@ export default function PaymentsPage() {
                             </span>
                           </div>
                         ) : null}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
 
           {/* Mobile Card Layout */}

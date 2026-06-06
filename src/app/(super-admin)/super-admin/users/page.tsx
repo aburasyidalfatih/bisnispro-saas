@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
@@ -104,34 +105,34 @@ export default function UsersPage() {
       {/* Table */}
       <Card className="glass border-0 overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-muted/30">
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Nama & Email</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Akses Platform</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Lembaga (Tenant)</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Bergabung</th>
-                <th className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b bg-muted/30">
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Nama & Email</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Akses Platform</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Lembaga (Tenant)</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Bergabung</TableHead>
+                <TableHead className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {loading ? (
                 [...Array(3)].map((_, i) => (
-                  <tr key={i} className="border-b">
-                    <td className="px-4 py-5" colSpan={5}><div className="skeleton h-10 w-full rounded-xl" /></td>
-                  </tr>
+                  <TableRow key={i} className="border-b">
+                    <TableCell className="px-4 py-5" colSpan={5}><div className="skeleton h-10 w-full rounded-xl" /></TableCell>
+                  </TableRow>
                 ))
               ) : users.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-4 py-20 text-center">
+                <TableRow>
+                  <TableCell colSpan={5} className="px-4 py-20 text-center">
                     <Users className="h-12 w-12 mx-auto text-muted-foreground/20 mb-4" />
                     <p className="text-muted-foreground italic">Belum ada pengguna yang terdaftar.</p>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 users.map((u) => (
-                  <tr key={u.id} className="hover:bg-muted/20 transition-all group">
-                    <td className="px-4 py-4">
+                  <TableRow key={u.id} className="hover:bg-muted/20 transition-all group">
+                    <TableCell className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-muted text-muted-foreground font-bold shadow-sm group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                           {u.name.charAt(0).toUpperCase()}
@@ -143,9 +144,9 @@ export default function UsersPage() {
                           </p>
                         </div>
                       </div>
-                    </td>
+                    </TableCell>
 
-                    <td className="px-4 py-4">
+                    <TableCell className="px-4 py-4">
                       <div className="flex flex-col gap-1.5 items-start">
                         {u.isSuperAdmin && (
                           <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20 gap-1.5 rounded-lg px-2 py-0.5">
@@ -168,9 +169,9 @@ export default function UsersPage() {
                           </Badge>
                         )}
                       </div>
-                    </td>
+                    </TableCell>
 
-                    <td className="px-4 py-4">
+                    <TableCell className="px-4 py-4">
                       <div className="flex flex-wrap gap-1.5 max-w-[250px]">
                         {u.tenants.length > 0 ? (
                           u.tenants.map((tu, i) => (
@@ -186,16 +187,16 @@ export default function UsersPage() {
                           <span className="text-xs text-muted-foreground italic">Tidak ada lembaga</span>
                         )}
                       </div>
-                    </td>
+                    </TableCell>
 
-                    <td className="px-4 py-4">
+                    <TableCell className="px-4 py-4">
                       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         <Calendar className="h-3.5 w-3.5" />
                         {new Date(u.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                       </div>
-                    </td>
+                    </TableCell>
 
-                    <td className="px-4 py-4 text-right">
+                    <TableCell className="px-4 py-4 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
@@ -218,12 +219,12 @@ export default function UsersPage() {
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Pagination */}

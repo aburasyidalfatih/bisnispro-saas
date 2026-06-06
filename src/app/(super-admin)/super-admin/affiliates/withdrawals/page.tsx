@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
@@ -166,46 +167,46 @@ export default function WithdrawalsPage() {
             </div>
           ) : (
             <div className="rounded-xl border overflow-hidden">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Mitra</th>
-                    <th className="px-4 py-3 font-medium text-right">Nominal</th>
-                    <th className="px-4 py-3 font-medium">Rekening Tujuan</th>
-                    <th className="px-4 py-3 font-medium">Tanggal</th>
-                    <th className="px-4 py-3 font-medium text-center">Status</th>
-                    <th className="px-4 py-3 font-medium text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-4 py-3 font-medium">Mitra</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right">Nominal</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Rekening Tujuan</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Tanggal</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-center">Status</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {data.withdrawals.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground italic">Tidak ada data penarikan.</td>
-                    </tr>
+                    <TableRow>
+                      <TableCell colSpan={6} className="px-4 py-8 text-center text-muted-foreground italic">Tidak ada data penarikan.</TableCell>
+                    </TableRow>
                   ) : (
                     data.withdrawals.map((w) => (
-                      <tr key={w.id} className="bg-background/50 hover:bg-muted/50 transition-colors">
-                        <td className="px-4 py-4 whitespace-nowrap">
+                      <TableRow key={w.id} className="bg-background/50 hover:bg-muted/50 transition-colors">
+                        <TableCell className="px-4 py-4 whitespace-nowrap">
                           <div className="font-bold text-foreground">{w.affiliate.user.name}</div>
                           <div className="text-xs text-muted-foreground">{w.affiliate.user.email}</div>
-                        </td>
-                        <td className="px-4 py-4 text-right">
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-right">
                           <div className="font-bold text-lg text-primary">Rp {w.amount.toLocaleString('id-ID')}</div>
-                        </td>
-                        <td className="px-4 py-4">
+                        </TableCell>
+                        <TableCell className="px-4 py-4">
                           <div className="flex flex-col gap-1">
                             <span className="font-medium text-sm flex items-center gap-1.5"><Landmark className="h-3 w-3 text-muted-foreground"/> {w.bankName}</span>
                             <span className="text-xs font-mono">{w.bankAccount}</span>
                             <span className="text-[10px] text-muted-foreground uppercase">{w.accountName}</span>
                           </div>
-                        </td>
-                        <td className="px-4 py-4 text-xs text-muted-foreground">
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-xs text-muted-foreground">
                           {new Date(w.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-                        </td>
-                        <td className="px-4 py-4 text-center">
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-center">
                           {getStatusBadge(w.status)}
-                        </td>
-                        <td className="px-4 py-4 text-right">
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-right">
                           {w.status === "PENDING" && (
                             <div className="flex items-center justify-end gap-2">
                               <Button 
@@ -229,12 +230,12 @@ export default function WithdrawalsPage() {
                           {w.status === "PAID" && w.receiptUrl && (
                             <a href={w.receiptUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline">Lihat Bukti</a>
                           )}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))
                   )}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
 

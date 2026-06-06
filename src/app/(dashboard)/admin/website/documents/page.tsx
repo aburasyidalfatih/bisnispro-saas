@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -110,37 +111,37 @@ export default function DocumentsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground bg-muted/30 border-b">
-                  <tr>
-                    <th className="px-4 py-3 font-medium rounded-tl-lg">Judul Dokumen</th>
-                    <th className="px-4 py-3 font-medium">Tipe</th>
-                    <th className="px-4 py-3 font-medium">Ukuran</th>
-                    <th className="px-4 py-3 font-medium">Tanggal Upload</th>
-                    <th className="px-4 py-3 font-medium text-right rounded-tr-lg">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-4 py-3 font-medium rounded-tl-lg">Judul Dokumen</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Tipe</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Ukuran</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Tanggal Upload</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right rounded-tr-lg">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {documents.map(doc => (
-                    <tr key={doc.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
-                      <td className="px-4 py-3">
+                    <TableRow key={doc.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
+                      <TableCell className="px-4 py-3">
                         <div className="font-medium text-foreground">{doc.title}</div>
                         {doc.description && <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{doc.description}</div>}
-                      </td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="px-4 py-3">
                         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
                           {getTypeLabel(doc.type)}
                         </span>
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground text-xs">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-muted-foreground text-xs">
                         {formatBytes(doc.size)}
-                      </td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="px-4 py-3">
                         <div className="text-xs text-muted-foreground">
                           {format(new Date(doc.createdAt), 'dd MMM yyyy')}
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-right">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10 hover:text-primary" title="Download File">
                             <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" download>
@@ -159,11 +160,11 @@ export default function DocumentsPage() {
                             onConfirm={() => deleteDocument(doc.id)}
                           />
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>

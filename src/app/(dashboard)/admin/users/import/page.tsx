@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useState } from"react"
@@ -222,24 +223,24 @@ export default function ImportGTKPage() {
                               </div>
 
                               <div className="border rounded-xl overflow-hidden max-h-60 overflow-y-auto">
-                                 <table className="w-full text-xs">
-                                    <thead className="bg-muted sticky top-0">
-                                       <tr>
-                                          <th className="text-left p-3 font-semibold">Nama Lengkap</th>
-                                          <th className="text-left p-3 font-semibold">Email</th>
-                                          <th className="text-left p-3 font-semibold">Role</th>
-                                       </tr>
-                                    </thead>
-                                    <tbody className="divide-y">
+                                 <Table>
+                                    <TableHeader>
+                                       <TableRow>
+                                          <TableHead className="text-left p-3 font-semibold">Nama Lengkap</TableHead>
+                                          <TableHead className="text-left p-3 font-semibold">Email</TableHead>
+                                          <TableHead className="text-left p-3 font-semibold">Role</TableHead>
+                                       </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
                                        {parsedData.slice(0, 50).map((row, i) => (
-                                          <tr key={i}>
-                                             <td className="p-3">{row["Nama Lengkap"]}</td>
-                                             <td className="p-3">{row["Email"]}</td>
-                                             <td className="p-3">{row["Role (guru/admin/staff)"]}</td>
-                                          </tr>
+                                          <TableRow key={i}>
+                                             <TableCell className="p-3">{row["Nama Lengkap"]}</TableCell>
+                                             <TableCell className="p-3">{row["Email"]}</TableCell>
+                                             <TableCell className="p-3">{row["Role (guru/admin/staff)"]}</TableCell>
+                                          </TableRow>
                                        ))}
-                                    </tbody>
-                                 </table>
+                                    </TableBody>
+                                 </Table>
                               </div>
                            </div>
                         )}

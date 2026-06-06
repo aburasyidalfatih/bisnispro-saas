@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -52,36 +53,36 @@ export function TenantsTab({ data }: { data: AnalyticsData }) {
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/30">
-                  <th className="px-3 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Sekolah</th>
-                  <th className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Paket</th>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b bg-muted/30">
+                  <TableHead className="px-3 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Sekolah</TableHead>
+                  <TableHead className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Paket</TableHead>
                   <SortableHeader label="Siswa" column="studentCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <SortableHeader label="GTK" column="staffCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <SortableHeader label="Post" column="postCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <SortableHeader label="Login Bulan Ini" column="loginCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
-                  <th className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Terakhir Aktif</th>
-                  <th className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
+                  <TableHead className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Terakhir Aktif</TableHead>
+                  <TableHead className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filteredTenants.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="py-16 text-center text-muted-foreground italic">Tidak ada data.</td>
-                  </tr>
+                  <TableRow>
+                    <TableCell colSpan={8} className="py-16 text-center text-muted-foreground italic">Tidak ada data.</TableCell>
+                  </TableRow>
                 ) : (
                   filteredTenants.map(t => (
-                    <tr key={t.id} className="hover:bg-muted/20 transition-all">
-                      <td className="px-3 py-3">
+                    <TableRow key={t.id} className="hover:bg-muted/20 transition-all">
+                      <TableCell className="px-3 py-3">
                         <div className="flex items-center gap-2">
                           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary text-xs font-bold">
                             {t.name.charAt(0).toUpperCase()}
                           </div>
                           <span className="font-medium text-xs truncate max-w-[180px]">{t.name}</span>
                         </div>
-                      </td>
-                      <td className="px-3 py-3 text-center">
+                      </TableCell>
+                      <TableCell className="px-3 py-3 text-center">
                         <span className={cn(
                           "text-[10px] font-bold uppercase rounded-lg px-2 py-1 tracking-tighter",
                           t.plan === 'pro' ? 'bg-primary/10 text-primary' :
@@ -90,34 +91,34 @@ export function TenantsTab({ data }: { data: AnalyticsData }) {
                         )}>
                           {t.plan}
                         </span>
-                      </td>
-                      <td className="px-3 py-3 text-center font-bold text-xs">{t.studentCount}</td>
-                      <td className="px-3 py-3 text-center font-bold text-xs">{t.staffCount}</td>
-                      <td className="px-3 py-3 text-center font-bold text-xs">{t.postCount}</td>
-                      <td className="px-3 py-3 text-center">
+                      </TableCell>
+                      <TableCell className="px-3 py-3 text-center font-bold text-xs">{t.studentCount}</TableCell>
+                      <TableCell className="px-3 py-3 text-center font-bold text-xs">{t.staffCount}</TableCell>
+                      <TableCell className="px-3 py-3 text-center font-bold text-xs">{t.postCount}</TableCell>
+                      <TableCell className="px-3 py-3 text-center">
                         <span className={cn(
                           "font-bold text-xs",
                           t.loginCount > 0 ? "text-emerald-600" : "text-muted-foreground"
                         )}>
                           {t.loginCount}
                         </span>
-                      </td>
-                      <td className="px-3 py-3 text-center text-[10px] text-muted-foreground">
+                      </TableCell>
+                      <TableCell className="px-3 py-3 text-center text-[10px] text-muted-foreground">
                         {t.lastActiveAt ? new Date(t.lastActiveAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
-                      </td>
-                      <td className="px-3 py-3 text-center">
+                      </TableCell>
+                      <TableCell className="px-3 py-3 text-center">
                         <span className={cn(
                           "inline-flex items-center gap-1 text-[10px] font-bold uppercase rounded-full px-2 py-0.5",
                           t.isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"
                         )}>
                           {t.isActive ? "Aktif" : "Mati"}
                         </span>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>

@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -93,35 +94,35 @@ export default function EventsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground bg-muted/30 border-b">
-                  <tr>
-                    <th className="px-4 py-3 font-medium rounded-tl-lg">Judul Acara</th>
-                    <th className="px-4 py-3 font-medium">Tanggal</th>
-                    <th className="px-4 py-3 font-medium">Lokasi</th>
-                    <th className="px-4 py-3 font-medium text-right rounded-tr-lg">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-4 py-3 font-medium rounded-tl-lg">Judul Acara</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Tanggal</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Lokasi</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right rounded-tr-lg">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {events.map(event => (
-                    <tr key={event.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
-                      <td className="px-4 py-3">
+                    <TableRow key={event.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
+                      <TableCell className="px-4 py-3">
                         <div className="font-medium text-foreground">{event.title}</div>
-                      </td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="px-4 py-3">
                         <div className="text-xs">
                           {format(new Date(event.startDate), 'dd MMM yyyy HH:mm')} - 
                           <br/>{format(new Date(event.endDate), 'dd MMM yyyy HH:mm')}
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-muted-foreground">
                         {event.location ? (
                           <div className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" /> {event.location}
                           </div>
                         ) :"-"}
-                      </td>
-                      <td className="px-4 py-3 text-right">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-blue-500/10 hover:text-blue-600" title="Lihat di website">
                             <a href={`/agenda`} target="_blank" rel="noopener noreferrer">
@@ -145,11 +146,11 @@ export default function EventsPage() {
                             onConfirm={() => deleteEvent(event.id)}
                           />
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>

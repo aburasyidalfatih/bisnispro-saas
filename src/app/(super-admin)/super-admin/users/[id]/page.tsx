@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from "react"
@@ -89,24 +90,24 @@ export default function UserDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/30">
-                <tr>
-                  <th className="p-4 text-left font-semibold">Nama Tenant</th>
-                  <th className="p-4 text-left font-semibold">Slug (Subdomain)</th>
-                  <th className="p-4 text-left font-semibold">Role</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="p-4 text-left font-semibold">Nama Tenant</TableHead>
+                  <TableHead className="p-4 text-left font-semibold">Slug (Subdomain)</TableHead>
+                  <TableHead className="p-4 text-left font-semibold">Role</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {user.tenants.map((t: any, i: number) => (
-                  <tr key={i} className="hover:bg-muted/10">
-                    <td className="p-4 font-bold">{t.tenant.name}</td>
-                    <td className="p-4 text-primary font-mono text-xs">{t.tenant.slug}</td>
-                    <td className="p-4 uppercase text-xs font-semibold">{t.role}</td>
-                  </tr>
+                  <TableRow key={i} className="hover:bg-muted/10">
+                    <TableCell className="p-4 font-bold">{t.tenant.name}</TableCell>
+                    <TableCell className="p-4 text-primary font-mono text-xs">{t.tenant.slug}</TableCell>
+                    <TableCell className="p-4 uppercase text-xs font-semibold">{t.role}</TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       )}

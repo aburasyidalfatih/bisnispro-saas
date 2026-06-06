@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from "react"
@@ -48,49 +49,49 @@ export function GtkAiUsageHistory() {
       
       <CardContent className="flex-1 p-0 overflow-y-auto relative">
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-background/95 backdrop-blur-sm">
-              <tr className="border-b border-border/50">
-                <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Waktu</th>
-                <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Fitur</th>
-                <th className="px-4 py-3 text-right font-semibold text-muted-foreground">Token Terpotong</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-border/50">
+                <TableHead className="px-4 py-3 text-left font-semibold text-muted-foreground">Waktu</TableHead>
+                <TableHead className="px-4 py-3 text-left font-semibold text-muted-foreground">Fitur</TableHead>
+                <TableHead className="px-4 py-3 text-right font-semibold text-muted-foreground">Token Terpotong</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {usageLoading && usageLogs.length === 0 ? (
                 [...Array(5)].map((_, i) => (
-                  <tr key={i} className="border-b">
-                    <td className="px-4 py-4" colSpan={3}><div className="skeleton h-6 w-full rounded-md" /></td>
-                  </tr>
+                  <TableRow key={i} className="border-b">
+                    <TableCell className="px-4 py-4" colSpan={3}><div className="skeleton h-6 w-full rounded-md" /></TableCell>
+                  </TableRow>
                 ))
               ) : usageLogs.length === 0 ? (
-                <tr>
-                  <td colSpan={3} className="px-4 py-16 text-center">
+                <TableRow>
+                  <TableCell colSpan={3} className="px-4 py-16 text-center">
                     <Building2 className="h-10 w-10 mx-auto text-muted-foreground/20 mb-3" />
                     <p className="text-muted-foreground italic text-sm">Belum ada riwayat penggunaan token.</p>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 usageLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-muted/30 transition-all">
-                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                  <TableRow key={log.id} className="hover:bg-muted/30 transition-all">
+                    <TableCell className="px-4 py-3 text-muted-foreground whitespace-nowrap">
                       {new Date(log.createdAt).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
                         {log.feature === "AI_CHAT_GTK" ? "Chat Asisten AI" : log.feature}
                       </Badge>
-                    </td>
-                    <td className="px-4 py-3 text-right">
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-right">
                       <span className="font-bold text-rose-600 bg-rose-500/10 px-2.5 py-1 rounded-md">
                         -{log.tokens.toLocaleString("id-ID")}
                       </span>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </CardContent>
       {usageTotalPages > 1 && (

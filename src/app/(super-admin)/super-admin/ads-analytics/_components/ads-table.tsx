@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -47,36 +48,36 @@ export function AdsTable({ metaData, actionLoading, handleAction, handleUpdateBu
             <>
               {/* Desktop table */}
               <div className="hidden md:block overflow-x-auto">
-                <table className="w-full text-xs">
-                <thead>
-                  <tr className="border-b bg-muted/30">
-                    <th className="px-2 py-2 text-left font-bold text-muted-foreground uppercase">Kampanye</th>
-                    <th className="px-2 py-2 text-center font-bold text-muted-foreground uppercase">Status</th>
-                    <th className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Budget/Hari</th>
-                    <th className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Spend</th>
-                    <th className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Impr.</th>
-                    <th className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Clicks</th>
-                    <th className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">CPC</th>
-                    <th className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">CTR</th>
-                    <th className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Leads</th>
-                    <th className="px-2 py-2 text-center font-bold text-muted-foreground uppercase">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+                <Table>
+                <TableHeader>
+                  <TableRow className="border-b bg-muted/30">
+                    <TableHead className="px-2 py-2 text-left font-bold text-muted-foreground uppercase">Kampanye</TableHead>
+                    <TableHead className="px-2 py-2 text-center font-bold text-muted-foreground uppercase">Status</TableHead>
+                    <TableHead className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Budget/Hari</TableHead>
+                    <TableHead className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Spend</TableHead>
+                    <TableHead className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Impr.</TableHead>
+                    <TableHead className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Clicks</TableHead>
+                    <TableHead className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">CPC</TableHead>
+                    <TableHead className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">CTR</TableHead>
+                    <TableHead className="px-2 py-2 text-right font-bold text-muted-foreground uppercase">Leads</TableHead>
+                    <TableHead className="px-2 py-2 text-center font-bold text-muted-foreground uppercase">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {metaData.campaigns.map(c => (
-                    <tr key={c.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                      <td className="px-2 py-2">
+                    <TableRow key={c.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                      <TableCell className="px-2 py-2">
                         <p className="font-medium">{c.name}</p>
                         <p className="text-[9px] text-muted-foreground capitalize">{c.objective?.replace(/_/g, ' ').toLowerCase()}</p>
-                      </td>
-                      <td className="px-2 py-2 text-center">
+                      </TableCell>
+                      <TableCell className="px-2 py-2 text-center">
                         <Badge variant="outline" className={cn("text-[9px]",
                           c.status === 'ACTIVE' && 'bg-emerald-50 text-emerald-600 border-emerald-200',
                           c.status === 'PAUSED' && 'bg-amber-50 text-amber-600 border-amber-200',
                           !['ACTIVE','PAUSED'].includes(c.status) && 'bg-gray-50 text-gray-500 border-gray-200',
                         )}>{c.status === 'ACTIVE' ? 'Aktif' : c.status === 'PAUSED' ? 'Jeda' : c.status}</Badge>
-                      </td>
-                      <td className="px-2 py-2 text-right">
+                      </TableCell>
+                      <TableCell className="px-2 py-2 text-right">
                         {editBudgetId === c.id ? (
                           <div className="flex items-center gap-1 justify-end">
                             <Input type="number" value={newBudget} onChange={e => setNewBudget(e.target.value)}
@@ -100,14 +101,14 @@ export function AdsTable({ metaData, actionLoading, handleAction, handleUpdateBu
                             )}
                           </div>
                         )}
-                      </td>
-                      <td className="px-2 py-2 text-right font-bold text-rose-600">{c.spend > 0 ? fmtRp(c.spend) : '-'}</td>
-                      <td className="px-2 py-2 text-right">{c.impressions > 0 ? fmtNum(c.impressions) : '-'}</td>
-                      <td className="px-2 py-2 text-right font-semibold">{c.clicks > 0 ? fmtNum(c.clicks) : '-'}</td>
-                      <td className="px-2 py-2 text-right">{c.cpc > 0 ? fmtRp(c.cpc) : '-'}</td>
-                      <td className="px-2 py-2 text-right">{c.ctr > 0 ? `${c.ctr.toFixed(2)}%` : '-'}</td>
-                      <td className="px-2 py-2 text-right font-bold text-emerald-600">{c.leads > 0 ? c.leads : '-'}</td>
-                      <td className="px-2 py-2 text-center">
+                      </TableCell>
+                      <TableCell className="px-2 py-2 text-right font-bold text-rose-600">{c.spend > 0 ? fmtRp(c.spend) : '-'}</TableCell>
+                      <TableCell className="px-2 py-2 text-right">{c.impressions > 0 ? fmtNum(c.impressions) : '-'}</TableCell>
+                      <TableCell className="px-2 py-2 text-right font-semibold">{c.clicks > 0 ? fmtNum(c.clicks) : '-'}</TableCell>
+                      <TableCell className="px-2 py-2 text-right">{c.cpc > 0 ? fmtRp(c.cpc) : '-'}</TableCell>
+                      <TableCell className="px-2 py-2 text-right">{c.ctr > 0 ? `${c.ctr.toFixed(2)}%` : '-'}</TableCell>
+                      <TableCell className="px-2 py-2 text-right font-bold text-emerald-600">{c.leads > 0 ? c.leads : '-'}</TableCell>
+                      <TableCell className="px-2 py-2 text-center">
                         {(c.status === 'ACTIVE' || c.status === 'PAUSED') && (
                           <Button size="sm" variant="ghost" className="h-7 w-7 p-0 rounded-lg"
                             onClick={() => handleAction(c.id, c.status === 'ACTIVE' ? 'pause' : 'resume', c.name)}
@@ -116,11 +117,11 @@ export function AdsTable({ metaData, actionLoading, handleAction, handleUpdateBu
                               c.status === 'ACTIVE' ? <Pause className="h-3.5 w-3.5 text-amber-500" /> : <Play className="h-3.5 w-3.5 text-emerald-500" />}
                           </Button>
                         )}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
               </div>
 
               {/* Mobile campaign cards */}

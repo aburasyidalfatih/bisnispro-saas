@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -240,20 +241,20 @@ export default function AdminGTKAttendancePage() {
             <CardTitle className="text-base">Rekap Per Guru — {format(targetMonth,"MMMM yyyy", { locale: localeId })}</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40">
-                <tr>
+            <Table>
+              <TableHeader>
+                <TableRow>
                   {["Nama","Jabatan","Hadir","Izin","Sakit","Alpha","% Hadir","Terakhir"].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wide">{h}</th>
+                    <TableHead key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wide">{h}</TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {staffSummary.map(s => {
                   const pct = s.total > 0 ? Math.round((s.hadir / s.total) * 100) : 0
                   return (
-                    <tr key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                      <td className="px-4 py-3">
+                    <TableRow key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
+                      <TableCell className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="h-8 w-8 rounded-xl overflow-hidden bg-primary/10 shrink-0">
                             {s.imageUrl ? <img src={normalizeImageUrl(s.imageUrl)} alt={s.name} className="h-full w-full object-cover" /> : (
@@ -262,31 +263,31 @@ export default function AdminGTKAttendancePage() {
                           </div>
                           <p className="font-semibold">{s.name}</p>
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground text-xs">{s.role}</td>
-                      <td className="px-4 py-3 font-bold text-emerald-600">{s.hadir}</td>
-                      <td className="px-4 py-3 font-bold text-blue-600">{s.izin}</td>
-                      <td className="px-4 py-3 font-bold text-amber-600">{s.sakit}</td>
-                      <td className="px-4 py-3 font-bold text-red-600">{s.alpha}</td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-muted-foreground text-xs">{s.role}</TableCell>
+                      <TableCell className="px-4 py-3 font-bold text-emerald-600">{s.hadir}</TableCell>
+                      <TableCell className="px-4 py-3 font-bold text-blue-600">{s.izin}</TableCell>
+                      <TableCell className="px-4 py-3 font-bold text-amber-600">{s.sakit}</TableCell>
+                      <TableCell className="px-4 py-3 font-bold text-red-600">{s.alpha}</TableCell>
+                      <TableCell className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="flex-1 bg-muted rounded-full h-1.5 min-w-[40px]">
                             <div className={cn("h-full rounded-full", pct >= 80 ?"bg-emerald-500" : pct >= 60 ?"bg-amber-500" :"bg-red-500")} style={{ width: `${pct}%` }} />
                           </div>
                           <span className="text-xs font-bold w-8 text-right">{pct}%</span>
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-xs text-muted-foreground">
                         {s.lastRecord ? format(new Date(s.lastRecord.date),"d MMM", { locale: localeId }) :"—"}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   )
                 })}
                 {staffSummary.length === 0 && (
-                  <tr><td colSpan={8} className="text-center py-12 text-muted-foreground text-sm">Tidak ada rekord absensi bulan ini.</td></tr>
+                  <TableRow><TableCell colSpan={8} className="text-center py-12 text-muted-foreground text-sm">Tidak ada rekord absensi bulan ini.</TableCell></TableRow>
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </Card>
       )}
@@ -303,26 +304,26 @@ export default function AdminGTKAttendancePage() {
             ) : records.length === 0 ? (
               <div className="py-12 text-center text-muted-foreground text-sm">Tidak ada rekord untuk periode ini.</div>
             ) : (
-              <table className="w-full text-sm">
-                <thead className="bg-muted/40">
-                  <tr>
+              <Table>
+                <TableHeader>
+                  <TableRow>
                     {["Tanggal","Guru","Check-In","Check-Out","GPS","Status","Catatan"].map(h => (
-                      <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
+                      <TableHead key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</TableHead>
                     ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50">
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {records.map(r => {
                     const cfg = STATUS_CFG[r.status] || STATUS_CFG.ALPHA
                     return (
-                      <tr key={r.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                        <td className="px-4 py-3 font-semibold text-sm">
+                      <TableRow key={r.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
+                        <TableCell className="px-4 py-3 font-semibold text-sm">
                           {format(new Date(r.date),"d MMM yyyy", { locale: localeId })}
-                        </td>
-                        <td className="px-4 py-3 text-sm">{r.staff?.name}</td>
-                        <td className="px-4 py-3 font-mono text-xs">{r.checkInAt ? format(new Date(r.checkInAt),"HH:mm") :"—"}</td>
-                        <td className="px-4 py-3 font-mono text-xs">{r.checkOutAt ? format(new Date(r.checkOutAt),"HH:mm") :"—"}</td>
-                        <td className="px-4 py-3">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-sm">{r.staff?.name}</TableCell>
+                        <TableCell className="px-4 py-3 font-mono text-xs">{r.checkInAt ? format(new Date(r.checkInAt),"HH:mm") :"—"}</TableCell>
+                        <TableCell className="px-4 py-3 font-mono text-xs">{r.checkOutAt ? format(new Date(r.checkOutAt),"HH:mm") :"—"}</TableCell>
+                        <TableCell className="px-4 py-3">
                           {r.checkInLat && r.checkInLng ? (
                             <a href={`https://maps.google.com/?q=${r.checkInLat},${r.checkInLng}`} target="_blank" rel="noopener noreferrer">
                               <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200 border text-[10px] cursor-pointer hover:bg-emerald-100">
@@ -330,16 +331,16 @@ export default function AdminGTKAttendancePage() {
                               </Badge>
                             </a>
                           ) : <span className="text-muted-foreground text-xs">—</span>}
-                        </td>
-                        <td className="px-4 py-3">
+                        </TableCell>
+                        <TableCell className="px-4 py-3">
                           <Badge className={cn(cfg.badgeCls,"border text-[10px]")}>{cfg.label}</Badge>
-                        </td>
-                        <td className="px-4 py-3 text-xs text-muted-foreground max-w-[120px] truncate">{r.notes ||"—"}</td>
-                      </tr>
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-xs text-muted-foreground max-w-[120px] truncate">{r.notes ||"—"}</TableCell>
+                      </TableRow>
                     )
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             )}
           </div>
         </Card>

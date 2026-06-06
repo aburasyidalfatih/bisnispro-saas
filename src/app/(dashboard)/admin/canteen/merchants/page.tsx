@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -195,46 +196,46 @@ export default function MerchantsPage() {
         </CardHeader>
         <CardContent>
           <div className="rounded-xl border overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/50 border-b">
-                <tr>
-                  <th className="text-left font-medium p-4 text-muted-foreground">Informasi Kantin</th>
-                  <th className="text-left font-medium p-4 text-muted-foreground">Penanggung Jawab</th>
-                  <th className="text-right font-medium p-4 text-muted-foreground">Produk</th>
-                  <th className="text-right font-medium p-4 text-muted-foreground">Saldo Pendapatan</th>
-                  <th className="text-right font-medium p-4 text-muted-foreground">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-left font-medium p-4 text-muted-foreground">Informasi Kantin</TableHead>
+                  <TableHead className="text-left font-medium p-4 text-muted-foreground">Penanggung Jawab</TableHead>
+                  <TableHead className="text-right font-medium p-4 text-muted-foreground">Produk</TableHead>
+                  <TableHead className="text-right font-medium p-4 text-muted-foreground">Saldo Pendapatan</TableHead>
+                  <TableHead className="text-right font-medium p-4 text-muted-foreground">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {loading ? (
-                  <tr><td colSpan={5} className="p-8 text-center text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" /> Memuat data...</td></tr>
+                  <TableRow><TableCell colSpan={5} className="p-8 text-center text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" /> Memuat data...</TableCell></TableRow>
                 ) : filteredMerchants.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                  <TableRow>
+                    <TableCell colSpan={5} className="p-8 text-center text-muted-foreground">
                       <Store className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
                       Tidak ada merchant yang ditemukan.
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ) : (
                   filteredMerchants.map((m) => (
-                    <tr key={m.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="p-4">
+                    <TableRow key={m.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="p-4">
                         <p className="font-bold text-primary">{m.name}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">{m.description ||"Tidak ada deskripsi"}</p>
-                      </td>
-                      <td className="p-4">
+                      </TableCell>
+                      <TableCell className="p-4">
                         <p className="font-semibold">{m.user?.name ||"Tidak diketahui"}</p>
                         <p className="text-xs text-muted-foreground">{m.user?.email}</p>
-                      </td>
-                      <td className="p-4 text-right">
+                      </TableCell>
+                      <TableCell className="p-4 text-right">
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/10 text-indigo-600 border border-indigo-500/20">
                           {m._count?.products || 0} Item
                         </span>
-                      </td>
-                      <td className="p-4 text-right font-mono font-medium text-emerald-600">
+                      </TableCell>
+                      <TableCell className="p-4 text-right font-mono font-medium text-emerald-600">
                         Rp {m.balance.toLocaleString("id-ID")}
-                      </td>
-                      <td className="p-4 text-right">
+                      </TableCell>
+                      <TableCell className="p-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <ConfirmDialog
                             trigger={
@@ -248,12 +249,12 @@ export default function MerchantsPage() {
                             onConfirm={() => handleDelete(m.id)}
                           />
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>

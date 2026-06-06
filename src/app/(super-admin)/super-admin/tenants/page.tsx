@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
@@ -193,13 +194,13 @@ export default function TenantsPage() {
       <Card className="glass border-0 overflow-hidden shadow-xl">
         {/* Desktop Table */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-muted/30">
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Tenant / Institusi</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Kontak Owner</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest hidden lg:table-cell">URL / Domain</th>
-                <th 
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b bg-muted/30">
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Tenant / Institusi</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Kontak Owner</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest hidden lg:table-cell">URL / Domain</TableHead>
+                <TableHead 
                   className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("plan")}
                 >
@@ -207,8 +208,8 @@ export default function TenantsPage() {
                     Plan
                     <ArrowUpDown className="h-3 w-3" />
                   </div>
-                </th>
-                <th 
+                </TableHead>
+                <TableHead 
                   className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("aiTokens")}
                 >
@@ -216,8 +217,8 @@ export default function TenantsPage() {
                     Token AI
                     <ArrowUpDown className="h-3 w-3" />
                   </div>
-                </th>
-                <th 
+                </TableHead>
+                <TableHead 
                   className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("storage")}
                 >
@@ -225,8 +226,8 @@ export default function TenantsPage() {
                     Disk Usage
                     <ArrowUpDown className="h-3 w-3" />
                   </div>
-                </th>
-                <th 
+                </TableHead>
+                <TableHead 
                   className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest text-center cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("createdAt")}
                 >
@@ -234,28 +235,28 @@ export default function TenantsPage() {
                     <span className="flex items-center gap-1">Status <ArrowUpDown className="h-3 w-3" /></span>
                     <span className="text-[10px] font-normal">&amp; Tgl Disetujui</span>
                   </div>
-                </th>
-                <th className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
+                </TableHead>
+                <TableHead className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {loading ? (
                 [...Array(3)].map((_, i) => (
-                  <tr key={i} className="border-b">
-                    <td className="px-4 py-5" colSpan={8}><div className="skeleton h-10 w-full rounded-xl" /></td>
-                  </tr>
+                  <TableRow key={i} className="border-b">
+                    <TableCell className="px-4 py-5" colSpan={8}><div className="skeleton h-10 w-full rounded-xl" /></TableCell>
+                  </TableRow>
                 ))
               ) : tenants.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="px-4 py-20 text-center">
+                <TableRow>
+                  <TableCell colSpan={8} className="px-4 py-20 text-center">
                     <Building2 className="h-12 w-12 mx-auto text-muted-foreground/20 mb-4" />
                     <p className="text-muted-foreground italic">Belum ada tenant yang terdaftar.</p>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 tenants.map((t) => (
-                  <tr key={t.id} className="hover:bg-muted/20 transition-all group">
-                    <td className="px-4 py-4">
+                  <TableRow key={t.id} className="hover:bg-muted/20 transition-all group">
+                    <TableCell className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary font-bold shadow-sm">
                           {t.name.charAt(0).toUpperCase()}
@@ -273,14 +274,14 @@ export default function TenantsPage() {
                           <p className="text-[10px] text-muted-foreground font-mono">ID: {t.id.slice(-8).toUpperCase()}</p>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-4 py-4">
+                    </TableCell>
+                    <TableCell className="px-4 py-4">
                       <div className="space-y-1">
                         <p className="text-xs font-medium">{t.owner?.name || "-"}</p>
                         <p className="text-[11px] text-muted-foreground">{t.owner?.email || "-"}</p>
                       </div>
-                    </td>
-                    <td className="px-4 py-4 hidden lg:table-cell">
+                    </TableCell>
+                    <TableCell className="px-4 py-4 hidden lg:table-cell">
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2 group/link">
                           <div className="h-6 w-6 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
@@ -309,24 +310,24 @@ export default function TenantsPage() {
                           </div>
                         )}
                       </div>
-                    </td>
-                    <td className="px-4 py-4 text-center">
+                    </TableCell>
+                    <TableCell className="px-4 py-4 text-center">
                       <span className={cn("text-[10px] font-bold uppercase rounded-lg px-2 py-1 tracking-tighter", planBadge[t.plan] || planBadge.free)}>
                         {t.plan}
                       </span>
                       <p className="text-[9px] text-muted-foreground mt-1">{t.studentQuota} Siswa</p>
-                    </td>
-                    <td className="px-4 py-4 text-center">
+                    </TableCell>
+                    <TableCell className="px-4 py-4 text-center">
                       <span className="text-[11px] font-bold text-foreground">
                         {((t.aiTokens || 0) + ((t as any).aiAddonTokens || 0)).toLocaleString("id-ID")}
                       </span>
-                    </td>
-                    <td className="px-4 py-4 text-center">
+                    </TableCell>
+                    <TableCell className="px-4 py-4 text-center">
                       <span className="text-[11px] font-bold text-foreground">
                         {formatBytes(t.storageUsed || 0)}
                       </span>
-                    </td>
-                    <td className="px-4 py-4 text-center flex flex-col items-center justify-center gap-1.5">
+                    </TableCell>
+                    <TableCell className="px-4 py-4 text-center flex flex-col items-center justify-center gap-1.5">
                       <span className={cn(
                         "inline-flex items-center gap-1.5 text-[10px] font-bold uppercase rounded-full px-2.5 py-1",
                         t.retentionStatus === "SUSPENDED_60" ? "bg-amber-500/10 text-amber-600" :
@@ -337,8 +338,8 @@ export default function TenantsPage() {
                       <span className="text-[10px] text-muted-foreground font-mono">
                         {t.createdAt ? formatDate(t.createdAt) : '-'}
                       </span>
-                    </td>
-                    <td className="px-4 py-4 text-right">
+                    </TableCell>
+                    <TableCell className="px-4 py-4 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
@@ -373,12 +374,12 @@ export default function TenantsPage() {
                           />
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Mobile Card Layout */}

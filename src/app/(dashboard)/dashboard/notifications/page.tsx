@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
@@ -43,25 +44,25 @@ export default async function TenantNotificationsPage() {
           ) : (
             <div className="rounded-md border bg-card">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-muted-foreground bg-muted/50 uppercase border-b">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">Waktu</th>
-                      <th className="px-4 py-3 font-medium">Judul & Pesan</th>
-                      <th className="px-4 py-3 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="px-4 py-3 font-medium">Waktu</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Judul & Pesan</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {notifications.map((notif: any) => (
-                      <tr key={notif.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 whitespace-nowrap align-top">
+                      <TableRow key={notif.id} className="hover:bg-muted/30">
+                        <TableCell className="px-4 py-3 whitespace-nowrap align-top">
                           {format(new Date(notif.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
-                        </td>
-                        <td className="px-4 py-3 align-top max-w-[400px]">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top max-w-[400px]">
                           <div className="font-semibold mb-1">{notif.title}</div>
                           <div className="text-sm text-muted-foreground">{notif.message}</div>
-                        </td>
-                        <td className="px-4 py-3 align-top">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top">
                           {notif.isRead ? (
                             <span className="text-xs text-green-600 flex items-center gap-1">
                               <CheckCircle2 className="h-3 w-3" /> Dibaca
@@ -69,11 +70,11 @@ export default async function TenantNotificationsPage() {
                           ) : (
                             <Badge variant="secondary">Baru</Badge>
                           )}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </div>
           )}

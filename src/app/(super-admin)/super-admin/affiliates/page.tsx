@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
@@ -214,50 +215,50 @@ export default function SuperAdminAffiliatesPage() {
             </div>
           ) : (
             <div className="rounded-xl border overflow-hidden">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Mitra</th>
-                    <th className="px-4 py-3 font-medium">Kode Ref</th>
-                    <th className="px-4 py-3 font-medium text-right">Saldo Aktif</th>
-                    <th className="px-4 py-3 font-medium text-right">Req. Withdraw</th>
-                    <th className="px-4 py-3 font-medium text-center">Status</th>
-                    <th className="px-4 py-3 font-medium text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-4 py-3 font-medium">Mitra</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Kode Ref</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right">Saldo Aktif</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right">Req. Withdraw</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-center">Status</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {affiliates.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground italic">Belum ada mitra terdaftar atau tidak ditemukan.</td>
-                    </tr>
+                    <TableRow>
+                      <TableCell colSpan={6} className="px-4 py-8 text-center text-muted-foreground italic">Belum ada mitra terdaftar atau tidak ditemukan.</TableCell>
+                    </TableRow>
                   ) : (
                     affiliates.map((aff) => {
                       const pendingWd = aff.withdrawals.reduce((a, w) => a + w.amount, 0)
                       return (
-                        <tr key={aff.id} className="bg-background/50 hover:bg-muted/50 transition-colors">
-                          <td className="px-4 py-3 whitespace-nowrap">
+                        <TableRow key={aff.id} className="bg-background/50 hover:bg-muted/50 transition-colors">
+                          <TableCell className="px-4 py-3 whitespace-nowrap">
                             <div className="font-medium text-foreground">{aff.user.name}</div>
                             <div className="text-[10px] text-muted-foreground">{aff.user.email}</div>
-                          </td>
-                          <td className="px-4 py-3">
+                          </TableCell>
+                          <TableCell className="px-4 py-3">
                             <Badge variant="outline" className="font-mono text-xs">{aff.referralCode}</Badge>
-                          </td>
-                          <td className="px-4 py-3 text-right font-bold text-emerald-600">Rp {aff.balance.toLocaleString('id-ID')}</td>
-                          <td className="px-4 py-3 text-right">
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-right font-bold text-emerald-600">Rp {aff.balance.toLocaleString('id-ID')}</TableCell>
+                          <TableCell className="px-4 py-3 text-right">
                             {pendingWd > 0 ? (
                               <Badge className="bg-amber-500/10 text-amber-600 border-0">Rp {pendingWd.toLocaleString('id-ID')}</Badge>
                             ) : (
                               <span className="text-muted-foreground">-</span>
                             )}
-                          </td>
-                          <td className="px-4 py-3 text-center">
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-center">
                             {aff.isActive ? (
                               <Badge className="bg-emerald-500/10 text-emerald-600 border-0"><CheckCircle2 className="h-3 w-3 mr-1" /> Aktif</Badge>
                             ) : (
                               <Badge className="bg-rose-500/10 text-rose-600 border-0"><Ban className="h-3 w-3 mr-1" /> Nonaktif</Badge>
                             )}
-                          </td>
-                          <td className="px-4 py-3 text-right">
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-right">
                             <Button 
                               variant={aff.isActive ? "outline" : "default"} 
                               size="sm" 
@@ -266,13 +267,13 @@ export default function SuperAdminAffiliatesPage() {
                             >
                               {aff.isActive ? "Blokir" : "Aktifkan"}
                             </Button>
-                          </td>
-                        </tr>
+                          </TableCell>
+                        </TableRow>
                       )
                     })
                   )}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
 

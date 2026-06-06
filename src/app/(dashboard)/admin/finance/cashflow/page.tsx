@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -250,40 +251,40 @@ export default function CashflowPage() {
           </div>
         </CardHeader>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground uppercase bg-muted/40 border-b">
-              <tr>
-                <th className="px-4 py-3 font-bold">Tanggal</th>
-                <th className="px-4 py-3 font-bold">Tipe & Kategori</th>
-                <th className="px-4 py-3 font-bold">Keterangan</th>
-                <th className="px-4 py-3 font-bold text-right">Nominal</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="px-4 py-3 font-bold">Tanggal</TableHead>
+                <TableHead className="px-4 py-3 font-bold">Tipe & Kategori</TableHead>
+                <TableHead className="px-4 py-3 font-bold">Keterangan</TableHead>
+                <TableHead className="px-4 py-3 font-bold text-right">Nominal</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {loading ? (
-                <tr><td colSpan={4} className="py-10 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></td></tr>
+                <TableRow><TableCell colSpan={4} className="py-10 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></TableCell></TableRow>
               ) : data.length === 0 ? (
-                <tr><td colSpan={4} className="py-10 text-center text-muted-foreground">Belum ada transaksi dicatat.</td></tr>
+                <TableRow><TableCell colSpan={4} className="py-10 text-center text-muted-foreground">Belum ada transaksi dicatat.</TableCell></TableRow>
               ) : data.map(item => {
                 const isIncome = item.type ==="INCOME"
                 return (
-                  <tr key={item.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{format(new Date(item.recordedAt), 'dd MMM yyyy', { locale: localeId })}</td>
-                    <td className="px-4 py-3">
+                  <TableRow key={item.id} className="hover:bg-muted/30 transition-colors">
+                    <TableCell className="px-4 py-3 whitespace-nowrap text-muted-foreground">{format(new Date(item.recordedAt), 'dd MMM yyyy', { locale: localeId })}</TableCell>
+                    <TableCell className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold ${isIncome ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
                         {isIncome ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                         {item.category.replace(/_/g, ' ')}
                       </span>
-                    </td>
-                    <td className="px-4 py-3 max-w-xs truncate">{item.description}</td>
-                    <td className={`px-4 py-3 font-bold text-right ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    </TableCell>
+                    <TableCell className="px-4 py-3 max-w-xs truncate">{item.description}</TableCell>
+                    <TableCell className={`px-4 py-3 font-bold text-right ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
                       {isIncome ? '+' : '-'} Rp {item.amount.toLocaleString('id-ID')}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 )
               })}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </Card>
     </div>

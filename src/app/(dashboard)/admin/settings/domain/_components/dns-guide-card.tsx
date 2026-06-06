@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { ShieldCheck, Copy, AlertCircle, RefreshCw } from"lucide-react"
@@ -55,21 +56,21 @@ export function DnsGuideCard({
             <p className="text-sm font-semibold">Tambahkan CNAME Record</p>
           </div>
           <div className="rounded-xl border overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Type</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Name</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Value</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">TTL</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="px-4 py-3">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b bg-muted/50">
+                  <TableHead className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Type</TableHead>
+                  <TableHead className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Name</TableHead>
+                  <TableHead className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Value</TableHead>
+                  <TableHead className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">TTL</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="px-4 py-3">
                     <code className="rounded bg-muted px-1.5 py-0.5 text-xs">CNAME</code>
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">@</code>
                       <button
@@ -79,8 +80,8 @@ export function DnsGuideCard({
                         <Copy className="h-3 w-3" />
                       </button>
                     </div>
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">
                         {rootDomain ||"schoolpro.id"}
@@ -96,11 +97,11 @@ export function DnsGuideCard({
                         <Copy className="h-3 w-3" />
                       </button>
                     </div>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">3600</td>
-                </tr>
-              </tbody>
-            </table>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-xs text-muted-foreground">3600</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </div>
           <p className="text-xs text-muted-foreground">
             Jika domain root tidak mendukung CNAME, gunakan{""}
@@ -117,20 +118,20 @@ export function DnsGuideCard({
             <p className="text-sm font-semibold">Tambahkan TXT Record untuk Verifikasi</p>
           </div>
           <div className="rounded-xl border overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Type</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Name</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="px-4 py-3">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b bg-muted/50">
+                  <TableHead className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Type</TableHead>
+                  <TableHead className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Name</TableHead>
+                  <TableHead className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Value</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="px-4 py-3">
                     <code className="rounded bg-muted px-1.5 py-0.5 text-xs">TXT</code>
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">_smp-verify</code>
                       <button
@@ -142,8 +143,8 @@ export function DnsGuideCard({
                         <Copy className="h-3 w-3" />
                       </button>
                     </div>
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono break-all">{customDomain.verifyToken}</code>
                       <button
@@ -153,10 +154,10 @@ export function DnsGuideCard({
                         <Copy className="h-3 w-3" />
                       </button>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </div>
         </div>
 

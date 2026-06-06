@@ -10,6 +10,7 @@ import { Badge } from"@/components/ui/badge"
 import {
   CalendarCheck, Plus, Users, CheckCircle, XCircle, Loader2,
   Clock, AlertTriangle, BookOpen, ChevronRight
+} from "lucide-react"
 import Link from"next/link"
 import { format } from"date-fns"
 import { id as localeId } from"date-fns/locale"

@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useSession } from "next-auth/react"
@@ -253,24 +254,24 @@ export default function NilaiPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0 overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground uppercase bg-muted/20 border-b border-border/50 sticky top-0 z-10">
-                <tr>
-                  <th className="px-6 py-4 font-bold w-16 text-center">No</th>
-                  <th className="px-6 py-4 font-bold min-w-[200px]">Nama Siswa</th>
-                  <th className="px-6 py-4 font-bold w-48 text-center bg-primary/5 text-primary">Nilai</th>
-                  <th className="px-6 py-4 font-bold min-w-[200px]">Catatan / Evaluasi (Opsional)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 py-4 font-bold w-16 text-center">No</TableHead>
+                  <TableHead className="px-6 py-4 font-bold min-w-[200px]">Nama Siswa</TableHead>
+                  <TableHead className="px-6 py-4 font-bold w-48 text-center bg-primary/5 text-primary">Nilai</TableHead>
+                  <TableHead className="px-6 py-4 font-bold min-w-[200px]">Catatan / Evaluasi (Opsional)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {studentsData.map((student, index) => (
-                  <tr key={student.id} className="hover:bg-muted/10 transition-colors group">
-                    <td className="px-6 py-4 font-medium text-center text-muted-foreground">{index + 1}</td>
-                    <td className="px-6 py-4">
+                  <TableRow key={student.id} className="hover:bg-muted/10 transition-colors group">
+                    <TableCell className="px-6 py-4 font-medium text-center text-muted-foreground">{index + 1}</TableCell>
+                    <TableCell className="px-6 py-4">
                       <p className="font-bold text-foreground">{student.name}</p>
                       <p className="text-xs text-muted-foreground mt-0.5 font-mono">{student.nisn || '-'}</p>
-                    </td>
-                    <td className="px-6 py-3 bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                    </TableCell>
+                    <TableCell className="px-6 py-3 bg-primary/5 group-hover:bg-primary/10 transition-colors">
                       <Input 
                         type="number" 
                         min="0" max="100" step="0.1"
@@ -279,19 +280,19 @@ export default function NilaiPage() {
                         value={gradesInput[student.id]?.score || ""}
                         onChange={(e) => handleGradeChange(student.id, "score", e.target.value)}
                       />
-                    </td>
-                    <td className="px-6 py-3">
+                    </TableCell>
+                    <TableCell className="px-6 py-3">
                       <Input 
                         placeholder="Catatan..."
                         className="bg-transparent border-transparent hover:border-border focus:border-primary focus:bg-background h-10 transition-all"
                         value={gradesInput[student.id]?.notes || ""}
                         onChange={(e) => handleGradeChange(student.id, "notes", e.target.value)}
                       />
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
           <div className="p-4 bg-muted/20 border-t flex items-center justify-between sm:hidden">
             <Button onClick={handleSaveGrades} disabled={saving} className="rounded-xl w-full">

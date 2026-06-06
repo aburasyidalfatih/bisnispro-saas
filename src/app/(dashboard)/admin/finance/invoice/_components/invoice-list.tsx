@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -173,57 +174,57 @@ export function InvoiceList({ tenantId }: { tenantId: string }) {
       {/* Table */}
       <Card className="glass border-0 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/40">
-              <tr>
+          <Table>
+            <TableHeader>
+              <TableRow>
                 {["Kode","Siswa / Kelas","Judul Tagihan","Nominal","Jatuh Tempo","Status",""].map(h => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  <TableHead key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider whitespace-nowrap">{h}</TableHead>
                 ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {loading ? (
-                <tr><td colSpan={7} className="py-20 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></td></tr>
+                <TableRow><TableCell colSpan={7} className="py-20 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></TableCell></TableRow>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={7} className="py-20 text-center text-muted-foreground text-sm">Tidak ada tagihan ditemukan.</td></tr>
+                <TableRow><TableCell colSpan={7} className="py-20 text-center text-muted-foreground text-sm">Tidak ada tagihan ditemukan.</TableCell></TableRow>
               ) : filtered.map(inv => {
                 const cfg = statusConfig[inv.status] || statusConfig.UNPAID
                 const Icon = cfg.icon
                 return (
-                  <tr key={inv.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{inv.code}</td>
-                    <td className="px-4 py-3">
+                  <TableRow key={inv.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
+                    <TableCell className="px-4 py-3 font-mono text-xs text-muted-foreground">{inv.code}</TableCell>
+                    <TableCell className="px-4 py-3">
                       <p className="font-semibold">{inv.student.name}</p>
                       <p className="text-xs text-muted-foreground">{inv.student.nis} · {inv.student.classroom?.name ||"—"}</p>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       <p>{inv.title}</p>
                       {inv.billingType && <p className="text-xs text-muted-foreground">{inv.billingType.name}</p>}
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       <p className="font-bold">Rp {inv.amount.toLocaleString("id-ID")}</p>
                       {inv.amountPaid > 0 && (
                         <p className="text-xs text-emerald-600">+Rp {inv.amountPaid.toLocaleString("id-ID")} dibayar</p>
                       )}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                    </TableCell>
+                    <TableCell className="px-4 py-3 whitespace-nowrap text-sm">
                       {format(new Date(inv.dueDate),"d MMM yyyy", { locale: localeId })}
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       <Badge className={`${cfg.color} border text-[10px] gap-1`}>
                         <Icon className="h-3 w-3" /> {cfg.label}
                       </Badge>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       <Link href={`/admin/finance/invoice/${inv.id}`}>
                         <Button size="sm" variant="outline" className="rounded-lg text-xs h-8">Detail</Button>
                       </Link>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 )
               })}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Pagination */}

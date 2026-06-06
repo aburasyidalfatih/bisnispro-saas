@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { use, useEffect, useState } from"react"
@@ -129,48 +130,48 @@ export default function ClassroomDetailPage({ params }: { params: Promise<{ id: 
           {filtered?.length === 0 ? (
             <div className="py-16 text-center text-muted-foreground text-sm">Tidak ada siswa ditemukan.</div>
           ) : (
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40">
-                <tr>
+            <Table>
+              <TableHeader>
+                <TableRow>
                   {["#","Nama Siswa","NIS","Wallet","Ortu",""].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
+                    <TableHead key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filtered?.map((s: any, i: number) => (
-                  <tr key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3 text-muted-foreground text-xs font-mono w-8">{i + 1}</td>
-                    <td className="px-4 py-3">
+                  <TableRow key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
+                    <TableCell className="px-4 py-3 text-muted-foreground text-xs font-mono w-8">{i + 1}</TableCell>
+                    <TableCell className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center font-bold text-primary text-xs shrink-0">
                           {s.name.charAt(0)}
                         </div>
                         <p className="font-semibold">{s.name}</p>
                       </div>
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{s.nis ||"—"}</td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3 font-mono text-xs text-muted-foreground">{s.nis ||"—"}</TableCell>
+                    <TableCell className="px-4 py-3">
                       {s.walletAccount
                         ? <span className="text-emerald-600 font-semibold text-xs">Rp {s.walletAccount.balance.toLocaleString("id-ID")}</span>
                         : <span className="text-muted-foreground text-xs">—</span>
                       }
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       {s.parents?.length > 0
                         ? <span className="flex items-center gap-1 text-xs text-emerald-600"><UserCheck className="h-3.5 w-3.5" /> {s.parents.length}</span>
                         : <span className="text-muted-foreground text-xs">—</span>
                       }
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       <Link href={`/admin/students/${s.id}`}>
                         <Button size="sm" variant="outline" className="h-7 text-xs rounded-lg px-2">Detail</Button>
                       </Link>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           )}
         </div>
       </Card>

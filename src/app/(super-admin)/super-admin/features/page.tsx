@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from "react"
@@ -231,29 +232,29 @@ export default function FeaturesControlPage() {
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left text-xs font-medium text-muted-foreground pb-3 pr-4 w-[40%]">Fitur</th>
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b">
+                    <TableHead className="text-left text-xs font-medium text-muted-foreground pb-3 pr-4 w-[40%]">Fitur</TableHead>
                     {PLAN_META.map(plan => {
                       const Icon = plan.icon
                       return (
-                        <th key={plan.key} className="text-center text-xs font-medium pb-3 px-2 w-[20%]">
+                        <TableHead key={plan.key} className="text-center text-xs font-medium pb-3 px-2 w-[20%]">
                           <div className="flex items-center justify-center gap-1">
                             <Icon className={cn("h-3.5 w-3.5", plan.text)} />
                             <span className={plan.text}>{plan.label}</span>
                           </div>
-                        </th>
+                        </TableHead>
                       )
                     })}
-                  </tr>
-                </thead>
-                <tbody>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {FEATURE_LIST.filter(f => f.category === category).map(feature => {
                     const Icon = feature.icon
                     return (
-                      <tr key={feature.key} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                        <td className="py-3 pr-4">
+                      <TableRow key={feature.key} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                        <TableCell className="py-3 pr-4">
                           <div className="flex items-center gap-3">
                             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted">
                               <Icon className="h-4 w-4 text-muted-foreground" />
@@ -263,11 +264,11 @@ export default function FeaturesControlPage() {
                               <p className="text-[11px] text-muted-foreground line-clamp-1">{feature.description}</p>
                             </div>
                           </div>
-                        </td>
+                        </TableCell>
                         {PLAN_META.map(plan => {
                           const isEnabled = features[plan.key]?.[feature.key] ?? false
                           return (
-                            <td key={plan.key} className="py-3 px-2 text-center">
+                            <TableCell key={plan.key} className="py-3 px-2 text-center">
                               <button
                                 onClick={() => toggleFeature(plan.key, feature.key)}
                                 className={cn(
@@ -283,14 +284,14 @@ export default function FeaturesControlPage() {
                                   <><ToggleLeft className="h-4 w-4" /> OFF</>
                                 )}
                               </button>
-                            </td>
+                            </TableCell>
                           )
                         })}
-                      </tr>
+                      </TableRow>
                     )
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>

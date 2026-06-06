@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { DollarSign, TrendingUp, Users, Target, ArrowUpRight, ArrowDownRight, UserPlus, Eye } from "lucide-react"
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
@@ -122,30 +123,30 @@ export function FinanceTab({ data }: { data: AnalyticsData }) {
             <CardHeader><CardTitle className="text-base">Top 5 Afiliasi</CardTitle><CardDescription>Berdasarkan total pendapatan.</CardDescription></CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b bg-muted/30">
-                      <th className="px-3 py-2 text-left text-xs font-bold text-muted-foreground uppercase">#</th>
-                      <th className="px-3 py-2 text-left text-xs font-bold text-muted-foreground uppercase">Nama</th>
-                      <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Kode</th>
-                      <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Klik</th>
-                      <th className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Referral</th>
-                      <th className="px-3 py-2 text-right text-xs font-bold text-muted-foreground uppercase">Pendapatan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b bg-muted/30">
+                      <TableHead className="px-3 py-2 text-left text-xs font-bold text-muted-foreground uppercase">#</TableHead>
+                      <TableHead className="px-3 py-2 text-left text-xs font-bold text-muted-foreground uppercase">Nama</TableHead>
+                      <TableHead className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Kode</TableHead>
+                      <TableHead className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Klik</TableHead>
+                      <TableHead className="px-3 py-2 text-center text-xs font-bold text-muted-foreground uppercase">Referral</TableHead>
+                      <TableHead className="px-3 py-2 text-right text-xs font-bold text-muted-foreground uppercase">Pendapatan</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {data.affiliateStats.topAffiliates.map((a, i) => (
-                      <tr key={a.code} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                        <td className="px-3 py-2.5 font-bold text-muted-foreground">{i + 1}</td>
-                        <td className="px-3 py-2.5 font-medium">{a.name}</td>
-                        <td className="px-3 py-2.5 text-center"><code className="text-xs bg-muted px-2 py-0.5 rounded">{a.code}</code></td>
-                        <td className="px-3 py-2.5 text-center">{a.clicks}</td>
-                        <td className="px-3 py-2.5 text-center">{a.referrals}</td>
-                        <td className="px-3 py-2.5 text-right font-bold text-emerald-600">Rp {a.earnings.toLocaleString('id-ID')}</td>
-                      </tr>
+                      <TableRow key={a.code} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                        <TableCell className="px-3 py-2.5 font-bold text-muted-foreground">{i + 1}</TableCell>
+                        <TableCell className="px-3 py-2.5 font-medium">{a.name}</TableCell>
+                        <TableCell className="px-3 py-2.5 text-center"><code className="text-xs bg-muted px-2 py-0.5 rounded">{a.code}</code></TableCell>
+                        <TableCell className="px-3 py-2.5 text-center">{a.clicks}</TableCell>
+                        <TableCell className="px-3 py-2.5 text-center">{a.referrals}</TableCell>
+                        <TableCell className="px-3 py-2.5 text-right font-bold text-emerald-600">Rp {a.earnings.toLocaleString('id-ID')}</TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>

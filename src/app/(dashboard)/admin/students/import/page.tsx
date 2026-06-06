@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useState } from"react"
@@ -224,24 +225,24 @@ export default function ImportStudentsPage() {
                               </div>
 
                               <div className="border rounded-xl overflow-hidden max-h-60 overflow-y-auto">
-                                 <table className="w-full text-xs">
-                                    <thead className="bg-muted sticky top-0">
-                                       <tr>
-                                          <th className="text-left p-3 font-semibold">Nama Lengkap</th>
-                                          <th className="text-left p-3 font-semibold">NISN</th>
-                                          <th className="text-left p-3 font-semibold">L/P</th>
-                                       </tr>
-                                    </thead>
-                                    <tbody className="divide-y">
+                                 <Table>
+                                    <TableHeader>
+                                       <TableRow>
+                                          <TableHead className="text-left p-3 font-semibold">Nama Lengkap</TableHead>
+                                          <TableHead className="text-left p-3 font-semibold">NISN</TableHead>
+                                          <TableHead className="text-left p-3 font-semibold">L/P</TableHead>
+                                       </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
                                        {parsedData.slice(0, 50).map((row, i) => (
-                                          <tr key={i}>
-                                             <td className="p-3">{row["Nama Lengkap"]}</td>
-                                             <td className="p-3">{row["NISN"]}</td>
-                                             <td className="p-3">{row["Gender (L/P)"]}</td>
-                                          </tr>
+                                          <TableRow key={i}>
+                                             <TableCell className="p-3">{row["Nama Lengkap"]}</TableCell>
+                                             <TableCell className="p-3">{row["NISN"]}</TableCell>
+                                             <TableCell className="p-3">{row["Gender (L/P)"]}</TableCell>
+                                          </TableRow>
                                        ))}
-                                    </tbody>
-                                 </table>
+                                    </TableBody>
+                                 </Table>
                                  {parsedData.length > 50 && (
                                     <div className="text-center p-2 bg-muted/30 text-xs text-muted-foreground">
                                        Menampilkan 50 baris pertama dari {parsedData.length} baris...

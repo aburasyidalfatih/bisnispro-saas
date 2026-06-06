@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
@@ -124,32 +125,32 @@ export default async function AffiliateCommissionsPage() {
              </div>
           ) : (
             <div className="rounded-xl border overflow-hidden overflow-x-auto">
-              <table className="w-full text-sm text-left whitespace-nowrap md:whitespace-normal">
-                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Tanggal</th>
-                    <th className="px-4 py-3 font-medium">Sekolah</th>
-                    <th className="px-4 py-3 font-medium text-right">Nominal</th>
-                    <th className="px-4 py-3 font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-4 py-3 font-medium">Tanggal</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Sekolah</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-right">Nominal</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {affiliate.commissions.map((comm) => (
-                    <tr key={comm.id} className="bg-background/50 hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
+                    <TableRow key={comm.id} className="bg-background/50 hover:bg-muted/50 transition-colors">
+                      <TableCell className="px-4 py-3 whitespace-nowrap text-muted-foreground">
                         {new Date(comm.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </td>
-                      <td className="px-4 py-3 font-medium">{comm.tenant.name}</td>
-                      <td className="px-4 py-3 text-right font-bold text-emerald-600">+ Rp {comm.amount.toLocaleString('id-ID')}</td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 font-medium">{comm.tenant.name}</TableCell>
+                      <TableCell className="px-4 py-3 text-right font-bold text-emerald-600">+ Rp {comm.amount.toLocaleString('id-ID')}</TableCell>
+                      <TableCell className="px-4 py-3">
                         {comm.status === "AVAILABLE" && <Badge className="bg-emerald-500/10 text-emerald-600 border-0">Tersedia</Badge>}
                         {comm.status === "PENDING" && <Badge className="bg-amber-500/10 text-amber-600 border-0">Tertunda</Badge>}
                         {comm.status === "PAID" && <Badge variant="outline" className="text-muted-foreground">Telah Ditarik</Badge>}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>

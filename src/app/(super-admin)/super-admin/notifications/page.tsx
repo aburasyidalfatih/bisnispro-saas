@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useState, useEffect } from "react"
@@ -47,29 +48,29 @@ function DripTable() {
           <div className="space-y-4">
             <div className="rounded-md border bg-card">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-muted-foreground bg-muted/50 uppercase border-b">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">Tanggal Kirim</th>
-                      <th className="px-4 py-3 font-medium">Tenant</th>
-                      <th className="px-4 py-3 font-medium">Campaign</th>
-                      <th className="px-4 py-3 font-medium">Status Baca</th>
-                      <th className="px-4 py-3 font-medium">Status Klik</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="px-4 py-3 font-medium">Tanggal Kirim</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Tenant</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Campaign</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Status Baca</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Status Klik</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {data.map(log => (
-                      <tr key={log.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 whitespace-nowrap">
+                      <TableRow key={log.id} className="hover:bg-muted/30">
+                        <TableCell className="px-4 py-3 whitespace-nowrap">
                           {format(new Date(log.sentAt), "dd MMM yyyy, HH:mm", { locale: id })}
-                        </td>
-                        <td className="px-4 py-3">
+                        </TableCell>
+                        <TableCell className="px-4 py-3">
                           <span className="font-medium text-foreground">{log.tenant?.name || "Tenant Dihapus"}</span>
-                        </td>
-                        <td className="px-4 py-3">
+                        </TableCell>
+                        <TableCell className="px-4 py-3">
                           {log.campaign?.title || "Campaign Dihapus"}
-                        </td>
-                        <td className="px-4 py-3">
+                        </TableCell>
+                        <TableCell className="px-4 py-3">
                           {log.isOpened ? (
                             <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
                               <CheckCircle2 className="h-3 w-3 mr-1" /> Dibaca
@@ -79,8 +80,8 @@ function DripTable() {
                               <XCircle className="h-3 w-3" /> Belum Dibaca
                             </span>
                           )}
-                        </td>
-                        <td className="px-4 py-3">
+                        </TableCell>
+                        <TableCell className="px-4 py-3">
                           {log.isClicked ? (
                             <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
                               <CheckCircle2 className="h-3 w-3 mr-1" /> Diklik
@@ -88,11 +89,11 @@ function DripTable() {
                           ) : (
                             <span className="text-xs text-muted-foreground">-</span>
                           )}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </div>
             
@@ -151,31 +152,31 @@ function SystemTable() {
           <div className="space-y-4">
             <div className="rounded-md border bg-card">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-muted-foreground bg-muted/50 uppercase border-b">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">Waktu</th>
-                      <th className="px-4 py-3 font-medium">Penerima</th>
-                      <th className="px-4 py-3 font-medium">Judul & Pesan</th>
-                      <th className="px-4 py-3 font-medium">Channel</th>
-                      <th className="px-4 py-3 font-medium">Status (In-App)</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="px-4 py-3 font-medium">Waktu</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Penerima</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Judul & Pesan</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Channel</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Status (In-App)</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {data.map(notif => (
-                      <tr key={notif.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 whitespace-nowrap align-top">
+                      <TableRow key={notif.id} className="hover:bg-muted/30">
+                        <TableCell className="px-4 py-3 whitespace-nowrap align-top">
                           {format(new Date(notif.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
-                        </td>
-                        <td className="px-4 py-3 align-top">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top">
                           <div className="font-medium text-foreground">{notif.user?.name || "Pengguna Dihapus"}</div>
                           <div className="text-xs text-muted-foreground">{notif.tenant?.name || "Platform"}</div>
-                        </td>
-                        <td className="px-4 py-3 align-top max-w-[300px]">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top max-w-[300px]">
                           <div className="font-semibold mb-1">{notif.title}</div>
                           <div className="text-xs text-muted-foreground truncate" title={notif.message}>{notif.message}</div>
-                        </td>
-                        <td className="px-4 py-3 align-top">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top">
                           <Badge variant="outline" className={
                             notif.channel === 'email' ? "bg-blue-500/10 text-blue-600 border-blue-500/20" :
                             notif.channel === 'whatsapp' ? "bg-green-500/10 text-green-600 border-green-500/20" :
@@ -183,8 +184,8 @@ function SystemTable() {
                           }>
                             {notif.channel.toUpperCase()}
                           </Badge>
-                        </td>
-                        <td className="px-4 py-3 align-top">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top">
                           {notif.isRead ? (
                             <span className="text-xs text-green-600 flex items-center gap-1">
                               <CheckCircle2 className="h-3 w-3" /> Dibaca
@@ -192,11 +193,11 @@ function SystemTable() {
                           ) : (
                             <span className="text-xs text-muted-foreground">-</span>
                           )}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </div>
             {/* Pagination Controls */}
@@ -254,34 +255,34 @@ function InternalTable() {
           <div className="space-y-4">
             <div className="rounded-md border bg-card">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-muted-foreground bg-muted/50 uppercase border-b">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">Waktu</th>
-                      <th className="px-4 py-3 font-medium">Tenant</th>
-                      <th className="px-4 py-3 font-medium">Pengirim & Penerima</th>
-                      <th className="px-4 py-3 font-medium">Subjek & Pesan</th>
-                      <th className="px-4 py-3 font-medium">Status Baca</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="px-4 py-3 font-medium">Waktu</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Tenant</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Pengirim & Penerima</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Subjek & Pesan</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Status Baca</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {data.map(msg => (
-                      <tr key={msg.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 whitespace-nowrap align-top">
+                      <TableRow key={msg.id} className="hover:bg-muted/30">
+                        <TableCell className="px-4 py-3 whitespace-nowrap align-top">
                           {format(new Date(msg.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
-                        </td>
-                        <td className="px-4 py-3 align-top">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top">
                           <span className="font-medium text-foreground">{msg.tenant?.name || "Tenant Dihapus"}</span>
-                        </td>
-                        <td className="px-4 py-3 align-top">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top">
                           <div className="text-xs text-muted-foreground mb-1">Dari: <strong className="text-foreground">{msg.sender?.name || "Dihapus"}</strong></div>
                           <div className="text-xs text-muted-foreground">Ke: <strong className="text-foreground">{msg.receiver ? msg.receiver.name : "Semua Admin (Broadcast)"}</strong></div>
-                        </td>
-                        <td className="px-4 py-3 align-top max-w-[300px]">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top max-w-[300px]">
                           {msg.subject && <div className="font-semibold mb-1 truncate" title={msg.subject}>{msg.subject}</div>}
                           <div className="text-xs text-muted-foreground truncate" title={msg.body}>{msg.body}</div>
-                        </td>
-                        <td className="px-4 py-3 align-top">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 align-top">
                           {msg.isRead ? (
                             <span className="text-xs text-green-600 flex items-center gap-1">
                               <CheckCircle2 className="h-3 w-3" /> Dibaca
@@ -291,11 +292,11 @@ function InternalTable() {
                               <XCircle className="h-3 w-3" /> Belum
                             </span>
                           )}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </div>
             {/* Pagination Controls */}

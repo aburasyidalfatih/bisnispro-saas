@@ -22,7 +22,9 @@ const config = [
       "react/no-unescaped-entities": "warn",
       "@typescript-eslint/no-empty-object-type": "warn",
       "@next/next/no-html-link-for-pages": "warn",
-      "@typescript-eslint/ban-ts-comment": "warn"
+      "@typescript-eslint/ban-ts-comment": "warn",
+      "@typescript-eslint/no-require-imports": "warn",
+      "@typescript-eslint/no-array-constructor": "warn"
     },
   },
 ]

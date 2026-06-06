@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -127,43 +128,43 @@ export default function AttendanceDashboardPage() {
           ) : sessions.length === 0 ? (
             <div className="py-12 text-center text-muted-foreground text-sm">Belum ada sesi absensi.</div>
           ) : (
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40">
-                <tr>
+            <Table>
+              <TableHeader>
+                <TableRow>
                   {["Tanggal","Kelas","Guru / Pencatat","Mata Pelajaran","Siswa Dicatat","Aksi"].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</th>
+                    <TableHead key={h} className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase">{h}</TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {sessions.slice(0, 8).map((s: any) => (
-                  <tr key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-sm whitespace-nowrap">
+                  <TableRow key={s.id} className="hover:bg-white/50 dark:hover:bg-white/5 transition-colors">
+                    <TableCell className="px-4 py-3 font-semibold text-sm whitespace-nowrap">
                       {format(new Date(s.date),"d MMM yyyy", { locale: localeId })}
-                    </td>
-                    <td className="px-4 py-3 text-sm">{s.classroom?.name || <span className="text-muted-foreground">—</span>}</td>
-                    <td className="px-4 py-3 text-sm">
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-sm">{s.classroom?.name || <span className="text-muted-foreground">—</span>}</TableCell>
+                    <TableCell className="px-4 py-3 text-sm">
                       <span className="font-medium">{s.creatorName ||"Sistem"}</span>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-sm">
                       <Badge variant="outline" className="text-xs font-normal bg-muted/50">{s.subjectName ||"Harian"}</Badge>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       <span className="flex items-center gap-1.5 text-sm">
                         <Users className="h-3.5 w-3.5 text-muted-foreground" /> {s._count?.records || 0}
                       </span>
-                    </td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">
                       <Link href={`/admin/attendance/sessions/${s.id}`}>
                         <Button size="sm" variant="outline" className="rounded-lg h-7 text-xs gap-1">
                           Buka <ArrowRight className="h-3 w-3" />
                         </Button>
                       </Link>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           )}
         </div>
       </Card>

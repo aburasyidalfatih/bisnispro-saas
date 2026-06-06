@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from "react"
@@ -69,27 +70,27 @@ export default function HasilUjianPage() {
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 text-slate-500 font-semibold uppercase text-xs">
-                <tr>
-                  <th className="px-4 py-3 rounded-tl-xl">Nama Siswa</th>
-                  <th className="px-4 py-3">NISN</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Benar</th>
-                  <th className="px-4 py-3">Peringatan (Cheat)</th>
-                  <th className="px-4 py-3 text-right rounded-tr-xl">Nilai Akhir</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-4 py-3 rounded-tl-xl">Nama Siswa</TableHead>
+                  <TableHead className="px-4 py-3">NISN</TableHead>
+                  <TableHead className="px-4 py-3">Status</TableHead>
+                  <TableHead className="px-4 py-3">Benar</TableHead>
+                  <TableHead className="px-4 py-3">Peringatan (Cheat)</TableHead>
+                  <TableHead className="px-4 py-3 text-right rounded-tr-xl">Nilai Akhir</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {data.results.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">Belum ada siswa yang mengikuti ujian ini.</td>
-                  </tr>
+                  <TableRow>
+                    <TableCell colSpan={6} className="px-4 py-8 text-center text-muted-foreground">Belum ada siswa yang mengikuti ujian ini.</TableCell>
+                  </TableRow>
                 ) : data.results.map((r: any) => (
-                  <tr key={r.sessionId} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-4 py-4 font-bold text-slate-800">{r.studentName}</td>
-                    <td className="px-4 py-4 text-slate-600">{r.nisn}</td>
-                    <td className="px-4 py-4">
+                  <TableRow key={r.sessionId} className="hover:bg-slate-50/50 transition-colors">
+                    <TableCell className="px-4 py-4 font-bold text-slate-800">{r.studentName}</TableCell>
+                    <TableCell className="px-4 py-4 text-slate-600">{r.nisn}</TableCell>
+                    <TableCell className="px-4 py-4">
                       {r.status === "FINISHED" ? (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-100 text-emerald-700">
                           <CheckCircle2 className="w-3.5 h-3.5" /> Selesai
@@ -99,11 +100,11 @@ export default function HasilUjianPage() {
                           <Loader2 className="w-3.5 h-3.5 animate-spin" /> Mengerjakan
                         </span>
                       )}
-                    </td>
-                    <td className="px-4 py-4 text-slate-600 font-medium">
+                    </TableCell>
+                    <TableCell className="px-4 py-4 text-slate-600 font-medium">
                       {r.correctCount} / {r.totalQuestions}
-                    </td>
-                    <td className="px-4 py-4">
+                    </TableCell>
+                    <TableCell className="px-4 py-4">
                       {r.cheatCount > 0 ? (
                         <span className="inline-flex items-center gap-1 text-red-600 font-bold bg-red-50 px-2 py-1 rounded-md">
                           <AlertTriangle className="w-4 h-4" /> {r.cheatCount}x Pindah Tab
@@ -111,16 +112,16 @@ export default function HasilUjianPage() {
                       ) : (
                         <span className="text-slate-400">-</span>
                       )}
-                    </td>
-                    <td className="px-4 py-4 text-right">
+                    </TableCell>
+                    <TableCell className="px-4 py-4 text-right">
                       <span className={`text-xl font-black ${r.score < 75 ? 'text-red-500' : 'text-emerald-500'}`}>
                         {r.score}
                       </span>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>

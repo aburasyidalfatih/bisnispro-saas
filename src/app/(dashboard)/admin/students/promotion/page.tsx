@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -249,41 +250,41 @@ export default function PromotionPage() {
                 </div>
               ) : (
                 <div className="max-h-[500px] overflow-y-auto">
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted/40 sticky top-0 z-10 backdrop-blur-md">
-                      <tr>
-                        <th className="p-3 w-10 text-center">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="p-3 w-10 text-center">
                           <Checkbox 
                             checked={selectedStudents.length === students.length && students.length > 0} 
                             onCheckedChange={toggleSelectAll} 
                           />
-                        </th>
-                        <th className="p-3 text-left font-semibold text-muted-foreground uppercase text-xs tracking-wider">Nama Lengkap</th>
-                        <th className="p-3 text-left font-semibold text-muted-foreground uppercase text-xs tracking-wider">NIS</th>
-                        <th className="p-3 text-left font-semibold text-muted-foreground uppercase text-xs tracking-wider">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/50">
+                        </TableHead>
+                        <TableHead className="p-3 text-left font-semibold text-muted-foreground uppercase text-xs tracking-wider">Nama Lengkap</TableHead>
+                        <TableHead className="p-3 text-left font-semibold text-muted-foreground uppercase text-xs tracking-wider">NIS</TableHead>
+                        <TableHead className="p-3 text-left font-semibold text-muted-foreground uppercase text-xs tracking-wider">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                       {students.map(student => (
-                        <tr 
+                        <TableRow 
                           key={student.id} 
                           className={`hover:bg-muted/30 transition-colors cursor-pointer ${selectedStudents.includes(student.id) ? 'bg-primary/5' : ''}`}
                           onClick={() => toggleStudent(student.id)}
                         >
-                          <td className="p-3 text-center">
+                          <TableCell className="p-3 text-center">
                             <Checkbox checked={selectedStudents.includes(student.id)} />
-                          </td>
-                          <td className="p-3 font-medium">{student.name}</td>
-                          <td className="p-3 font-mono text-xs text-muted-foreground">{student.nis ||"-"}</td>
-                          <td className="p-3">
+                          </TableCell>
+                          <TableCell className="p-3 font-medium">{student.name}</TableCell>
+                          <TableCell className="p-3 font-mono text-xs text-muted-foreground">{student.nis ||"-"}</TableCell>
+                          <TableCell className="p-3">
                             <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 text-[10px] font-bold border border-emerald-200">
                               Aktif
                             </span>
-                          </td>
-                        </tr>
+                          </TableCell>
+                        </TableRow>
                       ))}
-                    </tbody>
-                  </table>
+                    </TableBody>
+                  </Table>
                 </div>
               )}
             </div>

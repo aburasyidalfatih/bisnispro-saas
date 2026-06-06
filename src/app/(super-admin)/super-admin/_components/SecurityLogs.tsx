@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from "react"
@@ -109,34 +110,34 @@ export function SecurityLogs() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground bg-muted/50 uppercase rounded-t-lg">
-                <tr>
-                  <th className="px-4 py-3 font-medium rounded-tl-lg">Waktu</th>
-                  <th className="px-4 py-3 font-medium">IP Address</th>
-                  <th className="px-4 py-3 font-medium">Tipe Serangan</th>
-                  <th className="px-4 py-3 font-medium">Tingkat Bahaya</th>
-                  <th className="px-4 py-3 font-medium rounded-tr-lg">Tindakan Disarankan</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-4 py-3 font-medium rounded-tl-lg">Waktu</TableHead>
+                  <TableHead className="px-4 py-3 font-medium">IP Address</TableHead>
+                  <TableHead className="px-4 py-3 font-medium">Tipe Serangan</TableHead>
+                  <TableHead className="px-4 py-3 font-medium">Tingkat Bahaya</TableHead>
+                  <TableHead className="px-4 py-3 font-medium rounded-tr-lg">Tindakan Disarankan</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3 whitespace-nowrap">
+                  <TableRow key={log.id} className="hover:bg-muted/30 transition-colors">
+                    <TableCell className="px-4 py-3 whitespace-nowrap">
                       {new Date(log.createdAt).toLocaleString("id-ID", {
                         dateStyle: "medium",
                         timeStyle: "short",
                       })}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs">{log.ipAddress}</td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="px-4 py-3 font-mono text-xs">{log.ipAddress}</TableCell>
+                    <TableCell className="px-4 py-3">
                       <div className="flex items-center gap-1.5 font-medium text-red-600 dark:text-red-400">
                         <AlertTriangle className="w-3.5 h-3.5" />
                         {log.attackType}
                       </div>
-                    </td>
-                    <td className="px-4 py-3">{getSeverityBadge(log.severity)}</td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    </TableCell>
+                    <TableCell className="px-4 py-3">{getSeverityBadge(log.severity)}</TableCell>
+                    <TableCell className="px-4 py-3 text-muted-foreground">
                       {bannedIps.includes(log.ipAddress) ? (
                         <Badge variant="destructive" className="bg-red-800 text-white">IP TERBLOKIR</Badge>
                       ) : (
@@ -151,11 +152,11 @@ export function SecurityLogs() {
                           </button>
                         </div>
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </CardContent>

@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { notFound, redirect } from "next/navigation"
@@ -228,18 +229,18 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
 
         {/* Invoice Items Table */}
         <div className="px-8 sm:px-10 pb-6">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr style={{ backgroundColor: "#F8F9FC" }}>
-                <th className="py-3.5 px-4 font-semibold text-gray-600 uppercase text-xs tracking-wider rounded-l-lg">Deskripsi</th>
-                <th className="py-3.5 px-4 font-semibold text-gray-600 uppercase text-xs tracking-wider text-center">Qty</th>
-                <th className="py-3.5 px-4 font-semibold text-gray-600 uppercase text-xs tracking-wider text-right">Harga Satuan</th>
-                <th className="py-3.5 px-4 font-semibold text-gray-600 uppercase text-xs tracking-wider text-right rounded-r-lg">Jumlah</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-gray-100">
-                <td className="py-5 px-4">
+          <Table>
+            <TableHeader>
+              <TableRow style={{ backgroundColor: "#F8F9FC" }}>
+                <TableHead className="py-3.5 px-4 font-semibold text-gray-600 uppercase text-xs tracking-wider rounded-l-lg">Deskripsi</TableHead>
+                <TableHead className="py-3.5 px-4 font-semibold text-gray-600 uppercase text-xs tracking-wider text-center">Qty</TableHead>
+                <TableHead className="py-3.5 px-4 font-semibold text-gray-600 uppercase text-xs tracking-wider text-right">Harga Satuan</TableHead>
+                <TableHead className="py-3.5 px-4 font-semibold text-gray-600 uppercase text-xs tracking-wider text-right rounded-r-lg">Jumlah</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow className="border-b border-gray-100">
+                <TableCell className="py-5 px-4">
                   <p className="font-semibold text-gray-900">
                     {invoiceType === "ADDON_QUOTA" ? "Penambahan Kuota Siswa" : 
                      invoiceType === "AI_QUOTA" ? "Top-Up Token AI" : 
@@ -251,22 +252,22 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
                   {meta.isLockedPrice && (
                     <p className="text-[10px] text-blue-600 bg-blue-50 inline-block px-2 py-0.5 rounded mt-1">Harga Kontrak Aktif</p>
                   )}
-                </td>
-                <td className="py-5 px-4 text-center text-gray-700 font-medium">{studentCount}</td>
-                <td className="py-5 px-4 text-right text-gray-700 font-medium">Rp {Number(pricePerStudent).toLocaleString("id-ID")}</td>
-                <td className="py-5 px-4 text-right text-gray-900 font-bold">Rp {Number(studentCount * pricePerStudent).toLocaleString("id-ID")}</td>
-              </tr>
+                </TableCell>
+                <TableCell className="py-5 px-4 text-center text-gray-700 font-medium">{studentCount}</TableCell>
+                <TableCell className="py-5 px-4 text-right text-gray-700 font-medium">Rp {Number(pricePerStudent).toLocaleString("id-ID")}</TableCell>
+                <TableCell className="py-5 px-4 text-right text-gray-900 font-bold">Rp {Number(studentCount * pricePerStudent).toLocaleString("id-ID")}</TableCell>
+              </TableRow>
               {isProrated && (
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4" colSpan={3}>
+                <TableRow className="border-b border-gray-100">
+                  <TableCell className="py-3 px-4" colSpan={3}>
                     <p className="text-sm text-gray-600">Prorata sisa masa aktif ({daysRemaining} hari / 365 hari)</p>
                     <p className="text-xs text-gray-400">Harga disesuaikan dengan sisa masa aktif paket</p>
-                  </td>
-                  <td className="py-3 px-4 text-right text-gray-700 font-medium">× {(ratio * 100).toFixed(1)}%</td>
-                </tr>
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-right text-gray-700 font-medium">× {(ratio * 100).toFixed(1)}%</TableCell>
+                </TableRow>
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Total Summary */}

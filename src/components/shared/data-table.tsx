@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, ArrowUpDown } from "lucide-react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -61,12 +62,12 @@ export function DataTable<TData, TValue>({
       )}
 
       <div className="rounded-xl border overflow-hidden">
-        <table className="w-full">
-          <thead>
+        <Table>
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b bg-muted/30">
+              <TableRow key={headerGroup.id} className="border-b bg-muted/30">
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <TableHead key={header.id} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     {header.isPlaceholder ? null : (
                       <button
                         className="flex items-center gap-1 hover:text-foreground transition-colors"
@@ -76,31 +77,31 @@ export function DataTable<TData, TValue>({
                         {header.column.getCanSort() && <ArrowUpDown className="h-3 w-3" />}
                       </button>
                     )}
-                  </th>
+                  </TableHead>
                 ))}
-              </tr>
+              </TableRow>
             ))}
-          </thead>
-          <tbody>
+          </TableHeader>
+          <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
+                <TableRow key={row.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3 text-sm">
+                    <TableCell key={cell.id} className="px-4 py-3 text-sm">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
+                    </TableCell>
                   ))}
-                </tr>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td colSpan={columns.length} className="px-4 py-12 text-center text-sm text-muted-foreground">
+              <TableRow>
+                <TableCell colSpan={columns.length} className="px-4 py-12 text-center text-sm text-muted-foreground">
                   Tidak ada data
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       {/* Pagination */}

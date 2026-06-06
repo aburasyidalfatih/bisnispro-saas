@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useEffect, useState } from"react"
@@ -122,37 +123,37 @@ export default function PpdbTagihanPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/50">
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Pendaftar</th>
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Jenis</th>
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Nominal</th>
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Status Tagihan</th>
-                  <th className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Pembayaran</th>
-                  <th className="px-4 py-3" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-border/50">
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Pendaftar</TableHead>
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Jenis</TableHead>
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Nominal</TableHead>
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Status Tagihan</TableHead>
+                  <TableHead className="text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Pembayaran</TableHead>
+                  <TableHead className="px-4 py-3" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filtered.map(b => {
                   const latestPembayaran = b.pembayaran?.[0]
                   const isPending = latestPembayaran?.status ==="PENDING"
                   return (
-                    <tr key={b.id} className="hover:bg-muted/30 transition-colors group">
-                      <td className="px-6 py-4">
+                    <TableRow key={b.id} className="hover:bg-muted/30 transition-colors group">
+                      <TableCell className="px-6 py-4">
                         <div className="font-semibold">{b.pendaftar?.namaLengkap}</div>
                         <code className="text-[10px] text-muted-foreground font-mono">{b.pendaftar?.noPendaftaran}</code>
-                      </td>
-                      <td className="px-4 py-4">
+                      </TableCell>
+                      <TableCell className="px-4 py-4">
                         <Badge variant="outline" className="text-[10px] uppercase tracking-wider font-bold">{b.jenis}</Badge>
-                      </td>
-                      <td className="px-4 py-4 font-bold">Rp {b.nominal?.toLocaleString()}</td>
-                      <td className="px-4 py-4">
+                      </TableCell>
+                      <TableCell className="px-4 py-4 font-bold">Rp {b.nominal?.toLocaleString()}</TableCell>
+                      <TableCell className="px-4 py-4">
                         <Badge className={b.status ==="LUNAS" ?"bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :"bg-red-500/10 text-red-600 border-red-500/20"}>
                           {b.status}
                         </Badge>
-                      </td>
-                      <td className="px-4 py-4">
+                      </TableCell>
+                      <TableCell className="px-4 py-4">
                         {latestPembayaran ? (
                           <div className="flex items-center gap-2">
                             <Badge className={
@@ -166,17 +167,17 @@ export default function PpdbTagihanPage() {
                             )}
                           </div>
                         ) : <span className="text-muted-foreground text-xs">Belum ada</span>}
-                      </td>
-                      <td className="px-4 py-4">
+                      </TableCell>
+                      <TableCell className="px-4 py-4">
                         <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => { setSelectedTagihan(b); setIsDialogOpen(true) }}>
                           <Eye className="h-4 w-4" />
                         </Button>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   )
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
 

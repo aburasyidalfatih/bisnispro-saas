@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 "use client"
 
 import { useState } from"react"
@@ -129,30 +130,30 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
                </div>
             </div>
             <div className="overflow-x-auto">
-               <table className="w-full text-sm text-left">
-                  <thead className="bg-muted/50 text-muted-foreground text-xs uppercase">
-                     <tr>
-                        <th className="px-6 py-4 font-medium">Siswa</th>
-                        <th className="px-6 py-4 font-medium">Orang Tua</th>
-                        <th className="px-6 py-4 font-medium text-right">Saldo Dompet</th>
-                        <th className="px-6 py-4 font-medium text-center">Aksi</th>
-                     </tr>
-                  </thead>
-                  <tbody className="divide-y">
+               <Table>
+                  <TableHeader>
+                     <TableRow>
+                        <TableHead className="px-6 py-4 font-medium">Siswa</TableHead>
+                        <TableHead className="px-6 py-4 font-medium">Orang Tua</TableHead>
+                        <TableHead className="px-6 py-4 font-medium text-right">Saldo Dompet</TableHead>
+                        <TableHead className="px-6 py-4 font-medium text-center">Aksi</TableHead>
+                     </TableRow>
+                  </TableHeader>
+                  <TableBody>
                      {filteredWallets.length === 0 ? (
-                        <tr>
-                           <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
+                        <TableRow>
+                           <TableCell colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
                               Tidak ada data tabungan yang ditemukan.
-                           </td>
-                        </tr>
+                           </TableCell>
+                        </TableRow>
                      ) : (
                         filteredWallets.map((w: any) => (
-                           <tr key={w.id} className="hover:bg-muted/30 transition-colors">
-                              <td className="px-6 py-4">
+                           <TableRow key={w.id} className="hover:bg-muted/30 transition-colors">
+                              <TableCell className="px-6 py-4">
                                  <p className="font-semibold text-foreground">{w.student.name}</p>
                                  <p className="text-xs text-muted-foreground">NISN: {w.student.nisn ||"-"}</p>
-                              </td>
-                              <td className="px-6 py-4">
+                              </TableCell>
+                              <TableCell className="px-6 py-4">
                                  {w.student.parents?.[0]?.user ? (
                                     <>
                                        <p className="font-medium">{w.student.parents[0].user.name}</p>
@@ -161,20 +162,20 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
                                  ) : (
                                     <span className="text-xs text-muted-foreground italic">Belum terhubung ortu</span>
                                  )}
-                              </td>
-                              <td className="px-6 py-4 text-right">
+                              </TableCell>
+                              <TableCell className="px-6 py-4 text-right">
                                  <p className="font-mono font-bold text-base text-primary">Rp {w.balance.toLocaleString("id-ID")}</p>
-                              </td>
-                              <td className="px-6 py-4 text-center">
+                              </TableCell>
+                              <TableCell className="px-6 py-4 text-center">
                                  <Button variant="outline" size="sm" className="h-8 rounded-lg text-xs">
                                     Lihat Detail
                                  </Button>
-                              </td>
-                           </tr>
+                              </TableCell>
+                           </TableRow>
                         ))
                      )}
-                  </tbody>
-               </table>
+                  </TableBody>
+               </Table>
             </div>
          </Card>
       )}
@@ -266,34 +267,34 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
       {activeTab ==="history" && (
          <Card className="border-0 shadow-md">
             <div className="overflow-x-auto">
-               <table className="w-full text-sm text-left">
-                  <thead className="bg-muted/50 text-muted-foreground text-xs uppercase">
-                     <tr>
-                        <th className="px-6 py-4 font-medium">Tanggal</th>
-                        <th className="px-6 py-4 font-medium">Siswa</th>
-                        <th className="px-6 py-4 font-medium">Jenis Mutasi</th>
-                        <th className="px-6 py-4 font-medium">Deskripsi</th>
-                        <th className="px-6 py-4 font-medium text-right">Nominal</th>
-                        <th className="px-6 py-4 font-medium text-right">Saldo Akhir</th>
-                     </tr>
-                  </thead>
-                  <tbody className="divide-y">
+               <Table>
+                  <TableHeader>
+                     <TableRow>
+                        <TableHead className="px-6 py-4 font-medium">Tanggal</TableHead>
+                        <TableHead className="px-6 py-4 font-medium">Siswa</TableHead>
+                        <TableHead className="px-6 py-4 font-medium">Jenis Mutasi</TableHead>
+                        <TableHead className="px-6 py-4 font-medium">Deskripsi</TableHead>
+                        <TableHead className="px-6 py-4 font-medium text-right">Nominal</TableHead>
+                        <TableHead className="px-6 py-4 font-medium text-right">Saldo Akhir</TableHead>
+                     </TableRow>
+                  </TableHeader>
+                  <TableBody>
                      {transactions.length === 0 ? (
-                        <tr>
-                           <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
+                        <TableRow>
+                           <TableCell colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                               Belum ada riwayat transaksi.
-                           </td>
-                        </tr>
+                           </TableCell>
+                        </TableRow>
                      ) : (
                         transactions.map((t: any) => (
-                           <tr key={t.id} className="hover:bg-muted/30 transition-colors">
-                              <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
+                           <TableRow key={t.id} className="hover:bg-muted/30 transition-colors">
+                              <TableCell className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
                                  {format(new Date(t.createdAt),"dd MMM yyyy HH:mm", { locale: id })}
-                              </td>
-                              <td className="px-6 py-4 font-medium">
+                              </TableCell>
+                              <TableCell className="px-6 py-4 font-medium">
                                  {t.wallet.student.name}
-                              </td>
-                              <td className="px-6 py-4">
+                              </TableCell>
+                              <TableCell className="px-6 py-4">
                                  {t.type ==="DEPOSIT" ? (
                                     <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
                                        <ArrowDownRight className="h-3 w-3" /> Masuk (Top Up)
@@ -307,24 +308,24 @@ export function WalletManager({ tenantId, wallets, pendingTopups, transactions, 
                                        <ArrowUpRight className="h-3 w-3" /> Bayar Tagihan
                                     </span>
                                  )}
-                              </td>
-                              <td className="px-6 py-4 text-xs">
+                              </TableCell>
+                              <TableCell className="px-6 py-4 text-xs">
                                  {t.description}
                                  {t.referenceId && <span className="block text-[10px] text-muted-foreground mt-0.5">{t.referenceId}</span>}
-                              </td>
-                              <td className="px-6 py-4 text-right font-mono font-bold">
+                              </TableCell>
+                              <TableCell className="px-6 py-4 text-right font-mono font-bold">
                                  <span className={t.type ==="DEPOSIT" ?"text-emerald-600" :"text-destructive"}>
                                     {t.type ==="DEPOSIT" ?"+" :"-"}Rp {t.amount.toLocaleString("id-ID")}
                                  </span>
-                              </td>
-                              <td className="px-6 py-4 text-right font-mono">
+                              </TableCell>
+                              <TableCell className="px-6 py-4 text-right font-mono">
                                  Rp {t.balanceAfter.toLocaleString("id-ID")}
-                              </td>
-                           </tr>
+                              </TableCell>
+                           </TableRow>
                         ))
                      )}
-                  </tbody>
-               </table>
+                  </TableBody>
+               </Table>
             </div>
          </Card>
       )}
