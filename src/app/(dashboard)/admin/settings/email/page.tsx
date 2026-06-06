@@ -1,13 +1,14 @@
 "use client"
 
-import { useEffect, useState } from"react"
-import { useSession } from"next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
-import { Button } from"@/components/ui/button"
-import { Input } from"@/components/ui/input"
-import { Label } from"@/components/ui/label"
-import { toast } from"@/hooks/use-toast"
-import { Mail, Save, Send, Eye, EyeOff, Info, CheckCircle } from"lucide-react"
+import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { toast } from "@/hooks/use-toast"
+import { Mail, Save, Send, Eye, EyeOff, Info, CheckCircle } from "lucide-react"
 
 interface SmtpConfig {
   smtpHost: string
@@ -177,12 +178,10 @@ export default function EmailSettingsPage() {
                 {useCustom ?"Menggunakan konfigurasi SMTP Anda sendiri" :"Menggunakan SMTP default platform (Mailketing)"}
               </p>
             </div>
-            <Button
-              onClick={() => setUseCustom(!useCustom)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useCustom ?"bg-primary" :"bg-muted"}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useCustom ?"translate-x-6" :"translate-x-1"}`} />
-            </Button>
+            <Switch
+              checked={useCustom}
+              onCheckedChange={setUseCustom}
+            />
           </div>
         </CardContent>
       </Card>
@@ -231,9 +230,11 @@ export default function EmailSettingsPage() {
                     className="rounded-xl pr-10"
                   />
                   <Button
+                    variant="ghost"
+                    size="icon"
                     type="button"
                     onClick={() => setShowPass(!showPass)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground hover:text-foreground"
                   >
                     {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
