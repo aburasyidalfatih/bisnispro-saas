@@ -4,9 +4,13 @@ import { useEffect, useState, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ServerPagination } from "@/components/shared/server-pagination"
-import { Bug, Search, User, Clock, MapPin, AlertCircle } from "lucide-react"
+import { Bug, Search, User, Clock, MapPin, AlertCircle, Calendar, Building2 } from "lucide-react"
+import { format } from "date-fns"
+import { id as dateLocaleId } from "date-fns/locale"
+import { CheckCircle2, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -24,6 +28,7 @@ interface ErrorLog {
   tenant: { name: string } | null
   user: { name: string; email: string } | null
   createdAt: string
+  isResolved: boolean
 }
 
 export default function ErrorLogPage() {
@@ -33,12 +38,13 @@ export default function ErrorLogPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("")
+  const [statusFilter, setStatusFilter] = useState("unresolved")
   const [selectedError, setSelectedError] = useState<ErrorLog | null>(null)
   const limit = 20
 
   const fetchErrors = useCallback(() => {
     setLoading(true)
-    fetch(`/api/super-admin/errors?page=${page}&limit=${limit}&search=${search}&category=${categoryFilter}`)
+    fetch(`/api/super-admin/errors?page=${page}&limit=${limit}&search=${search}&category=${categoryFilter}&status=${statusFilter}`)
       .then((r) => r.json())
       .then((data) => {
         setErrors(data.data || [])
@@ -46,9 +52,42 @@ export default function ErrorLogPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [page, search, categoryFilter])
+  }, [page, search, categoryFilter, statusFilter])
 
   useEffect(() => { fetchErrors() }, [fetchErrors])
+
+  const toggleResolve = async (e: React.MouseEvent, errId: string, currentStatus: boolean) => {
+    e.stopPropagation()
+    try {
+      const res = await fetch(`/api/super-admin/errors/${errId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isResolved: !currentStatus }),
+      })
+      if (res.ok) {
+        fetchErrors()
+        if (selectedError?.id === errId) setSelectedError((prev) => prev ? { ...prev, isResolved: !currentStatus } : null)
+      }
+    } catch (error) {
+      console.error("Failed to update status", error)
+    }
+  }
+
+  const deleteError = async (e: React.MouseEvent, errId: string) => {
+    e.stopPropagation()
+    if (!confirm("Apakah Anda yakin ingin menghapus log ini secara permanen?")) return
+    try {
+      const res = await fetch(`/api/super-admin/errors/${errId}`, {
+        method: "DELETE",
+      })
+      if (res.ok) {
+        fetchErrors()
+        if (selectedError?.id === errId) setSelectedError(null)
+      }
+    } catch (error) {
+      console.error("Failed to delete log", error)
+    }
+  }
 
   const totalPages = Math.ceil(total / limit)
 
@@ -73,6 +112,15 @@ export default function ErrorLogPage() {
           <option value="SYSTEM_BUG">System Bug</option>
           <option value="USER_ERROR">User Error</option>
         </select>
+        <select 
+          value={statusFilter}
+          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+          className="h-10 px-3 py-2 rounded-xl border bg-background text-sm"
+        >
+          <option value="">Semua Status</option>
+          <option value="unresolved">Belum Selesai</option>
+          <option value="resolved">Sudah Selesai</option>
+        </select>
       </div>
 
       <Card className="glass border-0 overflow-hidden">
@@ -90,7 +138,7 @@ export default function ErrorLogPage() {
             {errors.map((err) => (
               <div 
                 key={err.id} 
-                className="flex items-start gap-3 p-4 hover:bg-muted/20 transition-colors cursor-pointer"
+                className={cn("flex items-start gap-3 p-4 hover:bg-muted/20 transition-colors cursor-pointer group", err.isResolved && "opacity-60 grayscale")}
                 onClick={() => setSelectedError(err)}
               >
                 <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl mt-0.5", 
@@ -107,14 +155,18 @@ export default function ErrorLogPage() {
                     {err.method && <Badge variant="outline" className="text-[10px]">{err.method}</Badge>}
                   </div>
                   <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground flex-wrap">
-                    {err.path && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {err.path}</span>}
-                    {err.tenant && <span className="flex items-center gap-1 font-medium text-primary">{err.tenant.name}</span>}
-                    {err.user && <span className="flex items-center gap-1"><User className="h-3 w-3" />{err.user.name}</span>}
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {new Date(err.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
-                    </span>
+                    <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{format(new Date(err.createdAt), "dd MMM yyyy HH:mm", { locale: dateLocaleId })}</span>
+                    {err.tenant && <span className="flex items-center gap-1"><Building2 className="h-3.5 w-3.5" />{err.tenant.name}</span>}
+                    {err.user && <span className="flex items-center gap-1"><User className="h-3.5 w-3.5" />{err.user.name}</span>}
                   </div>
+                </div>
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button variant="ghost" size="icon" className={cn("h-8 w-8", err.isResolved ? "text-green-500 hover:text-green-600" : "text-muted-foreground hover:text-green-500")} onClick={(e) => toggleResolve(e, err.id, err.isResolved)}>
+                    <CheckCircle2 className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={(e) => deleteError(e, err.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             ))}

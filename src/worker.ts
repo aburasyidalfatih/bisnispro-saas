@@ -411,6 +411,26 @@ setInterval(async () => {
 }, 10 * 60 * 1000) // 10 minutes
 
 // ============================================================
+// AUTO CLEANUP ERROR LOGS (older than 30 days)
+// ============================================================
+setInterval(async () => {
+  console.log("[cron] Running Error Log Cleanup...")
+  try {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const result = await db.errorLog.deleteMany({
+      where: {
+        createdAt: { lt: thirtyDaysAgo }
+      }
+    })
+    if (result.count > 0) {
+      console.log(`[cron] Cleaned up ${result.count} old error logs.`)
+    }
+  } catch (error) {
+    console.error("[cron] Failed Error Log Cleanup", error)
+  }
+}, 24 * 60 * 60 * 1000) // Runs every 24 hours
+
+// ============================================================
 // AUTO APPROVE APPLICATIONS (24H)
 // ============================================================
 setInterval(async () => {

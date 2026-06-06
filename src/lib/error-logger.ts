@@ -1,4 +1,5 @@
 import { db } from "@/lib/db"
+import { enqueueWhatsApp } from "@/features/notification/services/wa-queue.service"
 
 type ErrorCategory = "SYSTEM_BUG" | "USER_ERROR"
 
@@ -38,6 +39,22 @@ export async function logAppError(
         metadata: options.metadata || {},
       }
     })
+
+    if (category === "SYSTEM_BUG") {
+      // Notify Developer via WhatsApp
+      const waNumber = process.env.DEVELOPER_WA_NUMBER
+      if (waNumber) {
+        try {
+          const text = `🚨 *SCHOOLPRO SYSTEM BUG* 🚨\n\n*Message:* ${message}\n*Path:* ${options.path || "-"}\n*Time:* ${new Date().toLocaleString("id-ID")}`
+          // Queue the WhatsApp message without blocking the main thread significantly
+          enqueueWhatsApp(waNumber, text, options.tenantId || null).catch(err => {
+            console.error("Failed to queue WA alert for error", err)
+          })
+        } catch (e) {
+          console.error("Failed to queue WA alert for error", e)
+        }
+      }
+    }
   } catch (e) {
     console.error("[ERROR_LOGGER_FAILED]", e)
   }

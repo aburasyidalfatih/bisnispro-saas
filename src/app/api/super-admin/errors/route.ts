@@ -14,6 +14,7 @@ export async function GET(req: Request) {
     const limit = parseInt(url.searchParams.get("limit") || "20")
     const search = url.searchParams.get("search") || ""
     const category = url.searchParams.get("category") || ""
+    const status = url.searchParams.get("status") || ""
 
     const where: any = {
       OR: [
@@ -24,6 +25,11 @@ export async function GET(req: Request) {
     
     if (category) {
       where.category = category
+    }
+    if (status === "resolved") {
+      where.isResolved = true
+    } else if (status === "unresolved") {
+      where.isResolved = false
     }
 
     const [errors, total] = await Promise.all([
