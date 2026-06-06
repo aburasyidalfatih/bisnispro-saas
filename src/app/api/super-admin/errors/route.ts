@@ -13,12 +13,17 @@ export async function GET(req: Request) {
     const page = parseInt(url.searchParams.get("page") || "1")
     const limit = parseInt(url.searchParams.get("limit") || "20")
     const search = url.searchParams.get("search") || ""
+    const category = url.searchParams.get("category") || ""
 
-    const where = {
+    const where: any = {
       OR: [
         { message: { contains: search, mode: "insensitive" as const } },
         { path: { contains: search, mode: "insensitive" as const } },
       ],
+    }
+    
+    if (category) {
+      where.category = category
     }
 
     const [errors, total] = await Promise.all([

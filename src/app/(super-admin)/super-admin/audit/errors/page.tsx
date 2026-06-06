@@ -16,6 +16,7 @@ import {
 
 interface ErrorLog {
   id: string
+  category: string
   message: string
   stack: string | null
   path: string | null
@@ -31,12 +32,13 @@ export default function ErrorLogPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState("")
   const [selectedError, setSelectedError] = useState<ErrorLog | null>(null)
   const limit = 20
 
   const fetchErrors = useCallback(() => {
     setLoading(true)
-    fetch(`/api/super-admin/errors?page=${page}&limit=${limit}&search=${search}`)
+    fetch(`/api/super-admin/errors?page=${page}&limit=${limit}&search=${search}&category=${categoryFilter}`)
       .then((r) => r.json())
       .then((data) => {
         setErrors(data.data || [])
@@ -44,7 +46,7 @@ export default function ErrorLogPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [page, search])
+  }, [page, search, categoryFilter])
 
   useEffect(() => { fetchErrors() }, [fetchErrors])
 
@@ -57,9 +59,20 @@ export default function ErrorLogPage() {
         <p className="text-muted-foreground mt-1">Pantau error yang dialami oleh pengguna</p>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Cari pesan error atau path..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1) }} className="pl-9 rounded-xl" />
+      <div className="flex flex-wrap gap-3">
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input placeholder="Cari pesan error atau path..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1) }} className="pl-9 rounded-xl" />
+        </div>
+        <select 
+          value={categoryFilter}
+          onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
+          className="h-10 px-3 py-2 rounded-xl border bg-background text-sm"
+        >
+          <option value="">Semua Kategori</option>
+          <option value="SYSTEM_BUG">System Bug</option>
+          <option value="USER_ERROR">User Error</option>
+        </select>
       </div>
 
       <Card className="glass border-0 overflow-hidden">
@@ -80,12 +93,17 @@ export default function ErrorLogPage() {
                 className="flex items-start gap-3 p-4 hover:bg-muted/20 transition-colors cursor-pointer"
                 onClick={() => setSelectedError(err)}
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-destructive/10 mt-0.5">
-                  <AlertCircle className="h-4 w-4 text-destructive" />
+                <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl mt-0.5", 
+                  err.category === "USER_ERROR" ? "bg-amber-500/10 text-amber-500" : "bg-destructive/10 text-destructive"
+                )}>
+                  <AlertCircle className="h-4 w-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-bold text-destructive truncate max-w-[500px]">{err.message}</span>
+                    <Badge variant="outline" className={cn("text-[10px]", err.category === "USER_ERROR" ? "border-amber-500 text-amber-500" : "border-destructive text-destructive")}>
+                      {err.category === "USER_ERROR" ? "User Error" : "System Bug"}
+                    </Badge>
+                    <span className={cn("text-sm font-bold truncate max-w-[500px]", err.category === "USER_ERROR" ? "text-amber-500" : "text-destructive")}>{err.message}</span>
                     {err.method && <Badge variant="outline" className="text-[10px]">{err.method}</Badge>}
                   </div>
                   <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground flex-wrap">

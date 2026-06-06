@@ -378,6 +378,7 @@ model ErrorLog {
   id        String   @id @default(cuid())
   tenantId  String?
   userId    String?
+  category  String   @default("SYSTEM_BUG")
   message   String
   stack     String?
   path      String?

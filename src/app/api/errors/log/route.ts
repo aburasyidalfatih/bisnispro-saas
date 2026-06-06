@@ -16,6 +16,7 @@ export async function POST(req: Request) {
     
     const newLog = await db.errorLog.create({
       data: {
+        category: "SYSTEM_BUG",
         message: String(message),
         stack: stack ? String(stack) : null,
         path: path ? String(path) : null,
