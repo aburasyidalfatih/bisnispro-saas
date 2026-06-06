@@ -54,7 +54,7 @@ export function ConfigDomainCard({
               className="rounded-xl font-mono"
               disabled={data?.isCustomDomainEnabled === false}
             />
-            <Button
+            <button
               className="btn-gradient text-white border-0 rounded-xl gap-2 shrink-0"
               onClick={handleSave}
               disabled={saving || !domainInput.trim() || data?.isCustomDomainEnabled === false}
@@ -65,7 +65,7 @@ export function ConfigDomainCard({
                 <Save className="h-4 w-4" />
               )}
               Simpan
-            </Button>
+            </button>
           </div>
           <p className="text-xs text-muted-foreground">
             Masukkan domain tanpa <code className="bg-muted px-1 rounded">https://</code> atau{""}

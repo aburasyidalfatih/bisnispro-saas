@@ -95,7 +95,7 @@ export function RetentionTab({ form, setForm, handleSaveBatch, saving }: Retenti
       </Card>
 
       <div className="col-span-full">
-        <Button 
+        <button 
           className="w-full gap-2 btn-gradient text-white border-0 rounded-xl"
           onClick={() => handleSaveBatch([
             'RETENTION_30_EMAIL_SUBJECT', 'RETENTION_30_EMAIL_BODY', 'RETENTION_30_WA',
@@ -106,7 +106,7 @@ export function RetentionTab({ form, setForm, handleSaveBatch, saving }: Retenti
         >
           {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
           Simpan Semua Pesan Retensi
-        </Button>
+        </button>
       </div>
 
       <Card className="glass border-0 shadow-sm overflow-hidden col-span-full mt-6">

@@ -157,7 +157,7 @@ export default function AppearancePage() {
                 const isSaved = colorTheme === t.id
                 const gradient = themeGradients[t.id]
                 return (
-                  <Button 
+                  <button 
                     key={t.id} 
                     onClick={() => {
                       if (!canChangeTheme) return toast({ title:"Akses Ditolak", description:"Hanya Admin yang dapat mengubah tema.", variant:"destructive" })
@@ -186,7 +186,7 @@ export default function AppearancePage() {
                          {t.category}
                       </span>
                     </div>
-                  </Button>
+                  </button>
                 )
               })}
             </div>

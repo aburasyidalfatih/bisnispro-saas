@@ -247,10 +247,10 @@ export default function NilaiPage() {
                <Button variant="outline" size="sm" className="hidden sm:flex rounded-xl bg-background hover:bg-muted">
                  <Download className="mr-2 h-4 w-4" /> Unduh Format Excel
                </Button>
-               <Button onClick={handleSaveGrades} disabled={saving} className="rounded-xl shadow-md shadow-primary/20">
+               <button onClick={handleSaveGrades} disabled={saving} className="rounded-xl shadow-md shadow-primary/20">
                  {saving ? <div className="animate-spin h-4 w-4 border-2 border-white/20 border-t-white rounded-full mr-2" /> : <Save className="mr-2 h-4 w-4" />}
                  Simpan Nilai
-               </Button>
+               </button>
             </div>
           </CardHeader>
           <CardContent className="p-0 overflow-x-auto">
@@ -295,10 +295,10 @@ export default function NilaiPage() {
             </Table>
           </CardContent>
           <div className="p-4 bg-muted/20 border-t flex items-center justify-between sm:hidden">
-            <Button onClick={handleSaveGrades} disabled={saving} className="rounded-xl w-full">
+            <button onClick={handleSaveGrades} disabled={saving} className="rounded-xl w-full">
               {saving ? <div className="animate-spin h-4 w-4 border-2 border-white/20 border-t-white rounded-full mr-2" /> : <Save className="mr-2 h-4 w-4" />}
               Simpan Nilai
-            </Button>
+            </button>
           </div>
         </Card>
       )}

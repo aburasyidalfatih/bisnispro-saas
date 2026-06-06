@@ -258,10 +258,10 @@ export default function WebsiteAboutPage() {
               <ExternalLink className="h-3.5 w-3.5" /> Lihat Halaman
             </a>
           )}
-          <Button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSave} disabled={saving}>
+          <button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSave} disabled={saving}>
             {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
             Simpan
-          </Button>
+          </button>
         </div>
       </div>
 

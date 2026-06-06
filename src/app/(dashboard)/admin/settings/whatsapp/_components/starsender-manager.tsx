@@ -170,14 +170,14 @@ export function StarSenderManager() {
           <p className="text-xs text-muted-foreground leading-relaxed mt-1">
             Penundaan waktu (jeda) acak sebelum pesan terkirim. Membantu menghindari blokir WhatsApp karena terdeteksi mengirim pesan terlalu cepat.
           </p>
-          <Button 
+          <button 
             className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" 
             onClick={handleSave} 
             disabled={saving}
           >
             {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
             Simpan Konfigurasi
-          </Button>
+          </button>
         </CardContent>
       </Card>
 

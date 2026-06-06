@@ -360,10 +360,10 @@ export default function SuperAdminAffiliatesPage() {
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setIsSettingsOpen(false)} disabled={savingSettings} className="rounded-xl">Batal</Button>
-            <Button onClick={handleSaveSettings} disabled={savingSettings} className="rounded-xl gap-2 border-0 btn-gradient text-white">
+            <button onClick={handleSaveSettings} disabled={savingSettings} className="rounded-xl gap-2 border-0 btn-gradient text-white">
               {savingSettings ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
               Simpan Pengaturan
-            </Button>
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

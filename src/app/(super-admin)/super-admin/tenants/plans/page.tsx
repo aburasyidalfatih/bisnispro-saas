@@ -542,7 +542,7 @@ export default function PlansPage() {
             <Button variant="ghost" className="rounded-xl" onClick={() => setIsDialogOpen(false)}>
               Batal
             </Button>
-            <Button
+            <button
               className="rounded-xl btn-gradient text-white border-0 px-8 gap-2"
               onClick={handleSave}
               disabled={saving}
@@ -552,7 +552,7 @@ export default function PlansPage() {
               ) : (
                 <><Save className="h-4 w-4" /> Simpan Perubahan</>
               )}
-            </Button>
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -178,7 +178,7 @@ export function AiTopupDialog({
                     </span>
                  </div>
                )}
-               <Button 
+               <button 
                  onClick={handleTopup} 
                  className="w-full rounded-xl btn-gradient text-white shadow-lg shadow-primary/20 h-11" 
                  disabled={isLoadingTopup || !selectedMethod || !selectedPackageId}
@@ -186,7 +186,7 @@ export function AiTopupDialog({
                   {isLoadingTopup ? (
                     <><div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" /> Memproses...</>
                   ) : "Bayar Sekarang"}
-               </Button>
+               </button>
             </div>
           </div>
         </div>

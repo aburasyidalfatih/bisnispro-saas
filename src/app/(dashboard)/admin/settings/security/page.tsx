@@ -406,10 +406,10 @@ export default function SecurityPage() {
               )}
 
               <div className="flex justify-end">
-                <Button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSaveGoogle} disabled={savingGoogle}>
+                <button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSaveGoogle} disabled={savingGoogle}>
                   {savingGoogle && <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />}
                   Simpan Pengaturan Google
-                </Button>
+                </button>
               </div>
             </CardContent>
           </Card>

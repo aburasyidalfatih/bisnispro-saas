@@ -62,10 +62,10 @@ export function ProfileSettings({
                   </div>
               }
             </div>
-            <Button onClick={() => avatarInputRef.current?.click()} disabled={uploadingAvatar}
+            <button onClick={() => avatarInputRef.current?.click()} disabled={uploadingAvatar}
               className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-primary/90">
               {uploadingAvatar ? <div className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Camera className="h-2.5 w-2.5" />}
-            </Button>
+            </button>
             <Input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarUpload} />
           </div>
           <div>
@@ -94,10 +94,10 @@ export function ProfileSettings({
             Gunakan email yang paling sering digunakan. Update rutin terkait SchoolPro akan disampaikan melalui email.
           </p>
         </div>
-        <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveProfile} disabled={savingProfile}>
+        <button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveProfile} disabled={savingProfile}>
           {savingProfile ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
           Simpan Profil
-        </Button>
+        </button>
 
         {/* Separator */}
         <div className="flex items-center gap-2 py-1">
@@ -140,10 +140,10 @@ export function ProfileSettings({
             </div>
           )}
         </div>
-        <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleChangePassword} disabled={savingPassword}>
+        <button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleChangePassword} disabled={savingPassword}>
           {savingPassword ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <KeyRound className="h-3.5 w-3.5" />}
           Ubah Password
-        </Button>
+        </button>
       </CardContent>
     </Card>
   )

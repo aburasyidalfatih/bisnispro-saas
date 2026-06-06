@@ -68,7 +68,7 @@ export function IdentityForm({
 
             <div className="space-y-2 mb-4">
               <Label>Domain Website</Label>
-              <Button onClick={() => router.push("/admin/settings/domain")}
+              <button onClick={() => router.push("/admin/settings/domain")}
                 className="flex w-full items-center justify-between rounded-xl border bg-muted/30 px-3 py-2.5 text-left transition-colors hover:bg-muted/60">
                 <div className="flex items-center gap-2">
                   <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -89,7 +89,7 @@ export function IdentityForm({
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </Button>
+              </button>
               <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{slug ||"—"}</span></p>
             </div>
           </div>

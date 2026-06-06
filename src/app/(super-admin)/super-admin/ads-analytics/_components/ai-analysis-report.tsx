@@ -41,7 +41,7 @@ export function AiAnalysisReport({ aiReports, aiGenerating, showAiReport, setSho
             {/* Report List */}
             {aiReports.map(r => (
               <div key={r.date} className={cn("border rounded-xl overflow-hidden transition-all", showAiReport === r.date && "ring-1 ring-violet-500/30")}>
-                <Button onClick={() => setShowAiReport(showAiReport === r.date ? null : r.date)}
+                <button onClick={() => setShowAiReport(showAiReport === r.date ? null : r.date)}
                   className="w-full flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/10">
@@ -60,7 +60,7 @@ export function AiAnalysisReport({ aiReports, aiGenerating, showAiReport, setSho
                     </div>
                   </div>
                   {showAiReport === r.date ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </Button>
+                </button>
                 {showAiReport === r.date && (
                   <div className="border-t p-4 bg-card">
                     <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-sm prose-headings:font-bold prose-p:text-xs prose-li:text-xs prose-strong:text-foreground">

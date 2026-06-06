@@ -97,7 +97,7 @@ export function ConfirmPaymentModal({ open, onOpenChange, payment, onSuccess }: 
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={confirming} className="rounded-xl">
             Batal
           </Button>
-          <Button
+          <button
             onClick={handleConfirm}
             disabled={confirming}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white border-0 gap-2"
@@ -107,7 +107,7 @@ export function ConfirmPaymentModal({ open, onOpenChange, payment, onSuccess }: 
             ) : (
               <><ShieldCheck className="h-4 w-4" /> Ya, Konfirmasi & Aktifkan Paket</>
             )}
-          </Button>
+          </button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

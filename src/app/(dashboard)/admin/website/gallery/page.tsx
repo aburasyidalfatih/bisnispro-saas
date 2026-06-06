@@ -169,10 +169,10 @@ export default function WebsiteGalleryPage() {
               <ExternalLink className="h-3.5 w-3.5" /> Lihat Galeri
             </a>
           )}
-          <Button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSave} disabled={saving}>
+          <button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSave} disabled={saving}>
             {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
             Simpan ({gallery.length})
-          </Button>
+          </button>
         </div>
       </div>
 
@@ -203,7 +203,7 @@ export default function WebsiteGalleryPage() {
             <div>
               <Input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif"
                 multiple className="hidden" onChange={e => handleUpload(e.target.files)} />
-              <Button
+              <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
                 className="flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border py-10 transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:opacity-50">
@@ -215,7 +215,7 @@ export default function WebsiteGalleryPage() {
                   <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP, GIF · Maks 2MB per file · Bisa pilih banyak</p>
                   <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">Rekomendasi rasio 16:9 atau 4:3 (Landscape)</p>
                 </div>
-              </Button>
+              </button>
             </div>
           ) : (
             <div className="flex gap-2">
@@ -275,7 +275,7 @@ export default function WebsiteGalleryPage() {
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <ConfirmDialog
                       trigger={
-                        <Button className="flex h-7 w-7 items-center justify-center rounded-lg bg-destructive text-white hover:bg-destructive/90">
+                        <Button variant="ghost" size="icon" className="flex h-7 w-7 items-center justify-center rounded-lg bg-destructive text-white hover:bg-destructive/90">
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       }
@@ -303,10 +303,10 @@ export default function WebsiteGalleryPage() {
             ))}
           </div>
           <div className="flex justify-end">
-            <Button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSave} disabled={saving}>
+            <button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSave} disabled={saving}>
               {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
               Simpan Galeri
-            </Button>
+            </button>
           </div>
         </>
       )}

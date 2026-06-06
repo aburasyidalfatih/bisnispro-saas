@@ -209,7 +209,7 @@ export function DnsGuideCard({
               Setelah menambahkan DNS record, klik tombol di bawah. Propagasi DNS bisa memakan
               waktu hingga 24 jam.
             </p>
-            <Button
+            <button
               className="btn-gradient text-white border-0 rounded-xl gap-2 w-full"
               onClick={handleVerify}
               disabled={verifying}
@@ -220,7 +220,7 @@ export function DnsGuideCard({
                 <RefreshCw className="h-4 w-4" />
               )}
               {verifying ?"Memeriksa DNS..." :"Verifikasi Sekarang"}
-            </Button>
+            </button>
           </div>
         )}
       </CardContent>

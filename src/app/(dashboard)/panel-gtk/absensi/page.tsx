@@ -394,7 +394,7 @@ export default function GTKAttendancePage() {
                             <Button size="icon" variant="destructive" className="h-12 w-12 rounded-full shadow-lg" onClick={stopCamera}>
                               <X className="h-5 w-5" />
                             </Button>
-                            <Button size="icon" className="h-12 w-12 rounded-full shadow-lg bg-emerald-500 hover:bg-emerald-600" onClick={capturePhoto}>
+                            <Button variant="ghost" size="icon" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-emerald-500 hover:bg-emerald-600" onClick={capturePhoto}>
                               <Camera className="h-5 w-5 text-white" />
                             </Button>
                           </div>

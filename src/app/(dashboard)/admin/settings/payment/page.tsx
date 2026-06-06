@@ -157,10 +157,10 @@ export default function PaymentSettingsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Payment Gateway (Tripay)</h1>
           <p className="text-muted-foreground mt-1">Konfigurasi Tripay untuk menerima pembayaran di tenant Anda.</p>
         </div>
-        <Button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSave} disabled={saving}>
+        <button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={handleSave} disabled={saving}>
           {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
           Simpan
-        </Button>
+        </button>
       </div>
 
       {/* Info */}

@@ -86,7 +86,7 @@ export function GoogleTab({ form, setForm, handleSaveBatch, saving }: GoogleTabP
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">Konfigurasi Cloudflare Turnstile untuk mencegah serangan bot dan spam pada halaman Login Super Admin.</p>
           
-          <Button
+          <button
             onClick={() => {
               const newVal = form.TURNSTILE_ENABLED === "true" ? "false" : "true"
               setForm({...form, TURNSTILE_ENABLED: newVal})
@@ -107,7 +107,7 @@ export function GoogleTab({ form, setForm, handleSaveBatch, saving }: GoogleTabP
               </div>
             </div>
             <div className={cn("h-2.5 w-2.5 rounded-full", form.TURNSTILE_ENABLED === "true" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground/30")} />
-          </Button>
+          </button>
 
           <div className="space-y-2">
             <Label>Site Key</Label>

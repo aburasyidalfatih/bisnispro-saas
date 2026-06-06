@@ -236,7 +236,7 @@ export default function EditPartnershipPage() {
 
               <hr className="border-border/50" />
 
-              <Button type="submit" className="w-full gap-2 btn-gradient text-white border-0 rounded-xl" disabled={saving}>
+              <button type="submit" className="w-full gap-2 btn-gradient text-white border-0 rounded-xl" disabled={saving}>
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -245,7 +245,7 @@ export default function EditPartnershipPage() {
                 ) : (
                   <><Save className="h-4 w-4" /> Perbarui Data</>
                 )}
-              </Button>
+              </button>
               <Button type="button" variant="ghost" className="w-full rounded-xl" onClick={() => router.back()} disabled={saving}>
                 Batal
               </Button>
