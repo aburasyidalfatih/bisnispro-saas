@@ -241,19 +241,19 @@ export default function AdminMessagesPage() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-1 rounded-xl border p-1 w-fit">
-        <Button onClick={() => setActiveTab("pengumuman")}
+        <Button variant="ghost" onClick={() => setActiveTab("pengumuman")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
             activeTab ==="pengumuman" ?"bg-primary text-white" :"hover:bg-muted")}>
           <MessageSquare className="h-4 w-4" />
           Pengumuman
         </Button>
-        <Button onClick={() => setActiveTab("internal")}
+        <Button variant="ghost" onClick={() => setActiveTab("internal")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
             activeTab ==="internal" ?"bg-primary text-white" :"hover:bg-muted")}>
           <Users className="h-4 w-4" />
           Pesan Internal (GTK)
         </Button>
-        <Button onClick={() => setActiveTab("website")}
+        <Button variant="ghost" onClick={() => setActiveTab("website")}
           className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
             activeTab ==="website" ?"bg-primary text-white" :"hover:bg-muted")}>
           <Globe className="h-4 w-4" />

@@ -193,16 +193,18 @@ export function MenuBuilder() {
             {level === 0 && (
               <div className="flex flex-col gap-0.5 mr-2">
                 <Button 
+                  variant="ghost" size="icon"
                   onClick={() => handleMove(menu,"up", items)}
                   disabled={index === 0}
-                  className="text-muted-foreground hover:text-primary disabled:opacity-30 p-1"
+                  className="h-6 w-6 rounded-md text-muted-foreground hover:text-primary disabled:opacity-30"
                 >
                   <ArrowUp className="h-3 w-3" />
                 </Button>
                 <Button 
+                  variant="ghost" size="icon"
                   onClick={() => handleMove(menu,"down", items)}
                   disabled={index === items.length - 1}
-                  className="text-muted-foreground hover:text-primary disabled:opacity-30 p-1"
+                  className="h-6 w-6 rounded-md text-muted-foreground hover:text-primary disabled:opacity-30"
                 >
                   <ArrowDown className="h-3 w-3" />
                 </Button>

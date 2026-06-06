@@ -5,25 +5,20 @@ import { cn } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95",
   {
     variants: {
       variant: {
-        // Default — solid primary, sedikit lebih soft dari sebelumnya
         default:
-          "bg-primary/90 text-primary-foreground shadow-sm hover:bg-primary hover:shadow-md",
-        // Destructive — merah lebih soft
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md",
         destructive:
-          "bg-destructive/85 text-destructive-foreground shadow-sm hover:bg-destructive/95 hover:shadow-md",
-        // Outline — border tipis, hover subtle
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 hover:shadow-md",
         outline:
-          "border border-input bg-background/80 shadow-sm hover:bg-accent hover:text-accent-foreground hover:border-primary/30",
-        // Secondary — muted background, tidak mencolok
+          "border border-input bg-background shadow-sm hover:bg-secondary hover:text-secondary-foreground",
         secondary:
-          "bg-secondary/80 text-secondary-foreground shadow-sm hover:bg-secondary",
-        // Ghost — transparan, hover sangat subtle
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost:
-          "hover:bg-accent/60 hover:text-accent-foreground",
+          "hover:bg-secondary hover:text-secondary-foreground",
         // Link — text only
         link:
           "text-primary underline-offset-4 hover:underline",

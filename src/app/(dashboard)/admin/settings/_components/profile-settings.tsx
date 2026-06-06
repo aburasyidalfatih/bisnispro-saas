@@ -94,7 +94,7 @@ export function ProfileSettings({
             Gunakan email yang paling sering digunakan. Update rutin terkait SchoolPro akan disampaikan melalui email.
           </p>
         </div>
-        <button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveProfile} disabled={savingProfile}>
+        <button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleSaveProfile} disabled={savingProfile}>
           {savingProfile ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
           Simpan Profil
         </button>
@@ -140,7 +140,7 @@ export function ProfileSettings({
             </div>
           )}
         </div>
-        <button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleChangePassword} disabled={savingPassword}>
+        <button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9" onClick={handleChangePassword} disabled={savingPassword}>
           {savingPassword ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <KeyRound className="h-3.5 w-3.5" />}
           Ubah Password
         </button>

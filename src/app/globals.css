@@ -126,12 +126,13 @@
     transition: filter 150ms ease, transform 100ms ease, box-shadow 150ms ease;
   }
   .btn-gradient:hover {
-    filter: brightness(1.05);
-    box-shadow: 0 4px 16px hsl(var(--glow-color) / 0.20);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 16px hsl(var(--glow-color) / 0.35);
+    transform: translateY(-1px);
   }
   .btn-gradient:active {
-    transform: scale(0.98);
-    filter: brightness(0.97);
+    transform: scale(0.96) translateY(0);
+    filter: brightness(0.95);
   }
 
   .orb-1 { background-color:var(--gradient-orb1); }
