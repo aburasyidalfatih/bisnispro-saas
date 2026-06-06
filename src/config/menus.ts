@@ -52,6 +52,7 @@ import {
   FileCheck,
   BadgeDollarSign,
   Zap,
+  Bug,
   type LucideIcon,
 } from "lucide-react"
 import { cn, normalizeImageUrl } from "@/lib/utils"
@@ -518,6 +519,7 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
         { label: "Riwayat Notifikasi", href: "/super-admin/notifications", icon: BellRing },
         { label: "Log Antrean WA", href: "/super-admin/wa-logs", icon: Megaphone },
         { label: "Audit Log Global", href: "/super-admin/audit", icon: FileText },
+        { label: "Error Log Sistem", href: "/super-admin/audit/errors", icon: Bug },
       ],
     },
     {

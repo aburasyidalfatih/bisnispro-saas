@@ -13,6 +13,17 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error("App error:", error)
+    // Save error to database
+    fetch("/api/errors/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: error.message || "Unknown Error",
+        stack: error.stack,
+        path: window.location.pathname,
+        metadata: { digest: error.digest }
+      })
+    }).catch(e => console.error("Failed to log error to DB:", e))
   }, [error])
 
   return (

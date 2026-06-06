@@ -46,8 +46,18 @@ export function WebsiteFooter({ tenant }: FooterProps) {
   // Build dynamic program/service list from tenant data or fallback
   const tenantPrograms = (tenant as any)?.programs
   const programItems = (tenantPrograms && Array.isArray(tenantPrograms) && tenantPrograms.length > 0)
-    ? tenantPrograms.slice(0, 6).map((p: any) => p.name || p.title || "Program")
-    : ["Program Unggulan", "Kegiatan Belajar", "Pengembangan Siswa", "Ekstrakurikuler", "Bimbingan Konseling", "Layanan Informasi"]
+    ? tenantPrograms.slice(0, 6).map((p: any) => ({ 
+        label: p.name || p.title || "Program", 
+        href: p.id ? `/program/${p.id}` : "/program" 
+      }))
+    : [
+        { label: "Program Unggulan", href: "/program" },
+        { label: "Kegiatan Belajar", href: "/program" },
+        { label: "Pengembangan Siswa", href: "/program" },
+        { label: "Ekstrakurikuler", href: "/program" },
+        { label: "Bimbingan Konseling", href: "/program" },
+        { label: "Layanan Informasi", href: "/program" }
+      ]
 
   return (
     <footer>
@@ -141,15 +151,15 @@ export function WebsiteFooter({ tenant }: FooterProps) {
             <div>
               <h3 className="font-bold text-white text-sm mb-4">Program Kami</h3>
               <ul className="space-y-2.5">
-                {programItems.map((item) => (
-                  <li key={item}>
+                {programItems.map((item: any, i: number) => (
+                  <li key={item.label + i}>
                     <Link
-                      href={resolveHref("/program")}
+                      href={resolveHref(item.href)}
                       className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
                       style={{ color: "rgba(255,255,255,0.45)" }}
                     >
                       <span style={{ color: "hsl(var(--primary))" }}>›</span>
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}

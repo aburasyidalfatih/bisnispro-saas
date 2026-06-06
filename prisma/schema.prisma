@@ -111,6 +111,7 @@ model Tenant {
   walletTransactions   WalletTransaction[]
   websiteMenus         WebsiteMenu[]
   pageViews            PageView[]
+  errorLogs            ErrorLog[]
 
   @@index([isActive])
   @@index([plan])
@@ -174,6 +175,7 @@ model User {
   verificationTokens   VerificationToken[]
   aiTokens             Int                   @default(0)
   aiChatSessions       AiChatSession[]
+  errorLogs            ErrorLog[]
 
   @@index([isActive])
   @@index([isSuperAdmin])
@@ -370,6 +372,28 @@ model AuditLog {
   @@index([tenantId, createdAt])
   @@index([action, createdAt])
   @@map("audit_logs")
+}
+
+model ErrorLog {
+  id        String   @id @default(cuid())
+  tenantId  String?
+  userId    String?
+  message   String
+  stack     String?
+  path      String?
+  method    String?
+  metadata  Json?
+  isResolved Boolean @default(false)
+  createdAt DateTime @default(now())
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([isResolved])
+  @@index([tenantId, createdAt])
+  @@map("error_logs")
 }
 
 model FileUpload {
