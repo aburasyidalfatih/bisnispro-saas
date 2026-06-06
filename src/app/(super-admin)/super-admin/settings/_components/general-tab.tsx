@@ -169,13 +169,14 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
           </CardHeader>
           <CardContent className="space-y-4">
             <Button
+              variant="outline"
               onClick={() => {
                 const newVal = form.allow_impersonate_user === "true" ? "false" : "true"
                 setForm({...form, allow_impersonate_user: newVal})
                 handleSaveBatch(['allow_impersonate_user'], { allow_impersonate_user: newVal })
               }}
               className={cn(
-                "flex w-full items-center justify-between rounded-xl border-2 p-4 transition-all duration-200 text-left",
+                "flex w-full items-center justify-between rounded-xl p-4 transition-all duration-200 text-left h-auto",
                 form.allow_impersonate_user === "true" ? "border-primary bg-primary/5" : "border-transparent bg-muted/50 hover:bg-muted"
               )}
             >
@@ -192,13 +193,14 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
             </Button>
 
             <Button
+              variant="outline"
               onClick={() => {
                 const newVal = form.enable_custom_domain === "true" ? "false" : "true"
                 setForm({...form, enable_custom_domain: newVal})
                 handleSaveBatch(['enable_custom_domain'], { enable_custom_domain: newVal })
               }}
               className={cn(
-                "flex w-full items-center justify-between rounded-xl border-2 p-4 transition-all duration-200 text-left",
+                "flex w-full items-center justify-between rounded-xl p-4 transition-all duration-200 text-left h-auto",
                 form.enable_custom_domain === "true" ? "border-primary bg-primary/5" : "border-transparent bg-muted/50 hover:bg-muted"
               )}
             >
@@ -215,13 +217,14 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
             </Button>
 
             <Button
+              variant="outline"
               onClick={() => {
                 const newVal = form.block_search_indexing === "true" ? "false" : "true"
                 setForm({...form, block_search_indexing: newVal})
                 handleSaveBatch(['block_search_indexing'], { block_search_indexing: newVal })
               }}
               className={cn(
-                "flex w-full items-center justify-between rounded-xl border-2 p-4 transition-all duration-200 text-left",
+                "flex w-full items-center justify-between rounded-xl p-4 transition-all duration-200 text-left h-auto",
                 form.block_search_indexing === "true" ? "border-amber-500 bg-amber-500/5" : "border-transparent bg-muted/50 hover:bg-muted"
               )}
             >

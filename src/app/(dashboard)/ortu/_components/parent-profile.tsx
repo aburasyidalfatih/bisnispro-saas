@@ -180,7 +180,7 @@ export function ParentProfile() {
                <h3 className="font-bold text-sm text-foreground">Keamanan & Akun</h3>
             </div>
             <div className="p-2">
-               <Button className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors">
+               <Button variant="outline" className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors">
                   <span className="text-sm font-medium text-foreground">Ubah Password</span>
                   <span className="text-muted-foreground">→</span>
                </Button>

@@ -129,6 +129,7 @@ export default function EducationalEmailsPage() {
                 {campaigns.map(c => (
                   <Button
                     key={c.id}
+                    variant="ghost"
                     onClick={() => setActiveTab(c.dayOffset)}
                     className={cn(
                       "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left text-sm transition-colors",

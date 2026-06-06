@@ -177,7 +177,7 @@ export default function AkademikParentPage() {
 
             {/* Tombol Unduh Rapor Lengkap */}
             <div className="pt-4">
-              <Button className="w-full rounded-2xl h-14 bg-white hover:bg-muted text-primary border-2 border-primary/20 shadow-none font-bold text-sm">
+              <Button variant="outline" className="w-full rounded-2xl h-14 bg-white hover:bg-muted text-primary border-2 border-primary/20 shadow-none font-bold text-sm">
                   <Download className="mr-2 h-5 w-5" /> Unduh Rapor PDF Lengkap
               </Button>
               <p className="text-center text-[10px] text-muted-foreground mt-3">Rapor resmi yang ditandatangani Kepala Sekolah</p>

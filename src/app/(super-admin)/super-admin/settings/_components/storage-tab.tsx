@@ -31,12 +31,13 @@ export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTa
             <Label>Pilih Provider Storage</Label>
             <div className="grid grid-cols-2 gap-4">
               <Button
+                variant="outline"
                 onClick={() => {
                   setForm({...form, STORAGE_PROVIDER: "local"})
                   handleSaveBatch(['STORAGE_PROVIDER'], { STORAGE_PROVIDER: "local" })
                 }}
                 className={cn(
-                  "flex flex-col items-center justify-center rounded-xl border-2 p-4 transition-all duration-200 gap-2",
+                  "flex flex-col items-center justify-center rounded-xl p-4 transition-all duration-200 gap-2",
                   form.STORAGE_PROVIDER === "local" ? "border-orange-500 bg-orange-500/10 text-orange-600" : "border-border hover:bg-muted text-muted-foreground"
                 )}
               >
@@ -44,12 +45,13 @@ export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTa
                 <span className="font-semibold text-sm">Lokal (VPS Disk)</span>
               </Button>
               <Button
+                variant="outline"
                 onClick={() => {
                   setForm({...form, STORAGE_PROVIDER: "s3"})
                   handleSaveBatch(['STORAGE_PROVIDER'], { STORAGE_PROVIDER: "s3" })
                 }}
                 className={cn(
-                  "flex flex-col items-center justify-center rounded-xl border-2 p-4 transition-all duration-200 gap-2",
+                  "flex flex-col items-center justify-center rounded-xl p-4 transition-all duration-200 gap-2",
                   form.STORAGE_PROVIDER === "s3" ? "border-orange-500 bg-orange-500/10 text-orange-600" : "border-border hover:bg-muted text-muted-foreground"
                 )}
               >

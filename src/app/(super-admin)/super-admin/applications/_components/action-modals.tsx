@@ -53,7 +53,7 @@ export function ActionModal({
         )}
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>Batal</Button>
-          <Button 
+          <Button variant="outline" 
             className={cn(
               actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : actionType === "RESEND_EMAIL" ? "bg-purple-500 hover:bg-purple-600" : "bg-rose-500 hover:bg-rose-600",
               "text-white"
@@ -137,7 +137,7 @@ export function BulkActionModal({
             )}
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpen(false)} disabled={isUpdating}>Batal</Button>
-              <Button 
+              <Button variant="outline" 
                 className={cn(
                   actionType === "APPROVED" ? "bg-emerald-500 hover:bg-emerald-600" : actionType === "REVISION" ? "bg-blue-500 hover:bg-blue-600" : actionType === "RESEND_EMAIL" ? "bg-purple-500 hover:bg-purple-600" : "bg-rose-500 hover:bg-rose-600",
                   "text-white"

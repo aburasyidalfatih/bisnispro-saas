@@ -317,7 +317,7 @@ export default function SuperAdminAffiliatesPage() {
           </DialogHeader>
           <DialogFooter className="mt-4">
             <Button variant="ghost" onClick={() => setToggleTarget(null)} disabled={toggling} className="rounded-xl">Batal</Button>
-            <Button 
+            <Button variant="outline" 
               onClick={handleToggleStatus} 
               disabled={toggling}
               className={cn("rounded-xl border-0", toggleTarget?.isActive ? "bg-rose-600 hover:bg-rose-700 text-white" : "bg-emerald-600 hover:bg-emerald-700 text-white")}

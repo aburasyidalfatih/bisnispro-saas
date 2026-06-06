@@ -364,7 +364,7 @@ export default function PpdbBerkasPage({ params }: { params: Promise<{ id: strin
               </p>
             </div>
           )}
-          <Button
+          <Button variant="outline"
             className={cn(
               "w-full h-12 rounded-xl font-bold gap-2 text-white border-0",
               allRequiredDone ? "bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/20" : "bg-muted text-muted-foreground cursor-not-allowed"
