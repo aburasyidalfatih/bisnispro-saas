@@ -32,7 +32,6 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
   // Only show alumni who have testimonials
   const withTestimonials = alumni.filter((a) => a.testimonial && a.testimonial.trim().length > 0)
   
-  if (withTestimonials.length === 0) return null
 
   const [current, setCurrent] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -62,6 +61,8 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
   const person = withTestimonials[current]
 
   const { resolveHref } = useRouting()
+
+  if (withTestimonials.length === 0) return null
 
   return (
     <section className="py-16 md:py-20 bg-primary/5 relative overflow-hidden">

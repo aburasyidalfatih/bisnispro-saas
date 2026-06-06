@@ -10,6 +10,8 @@ import { syncPostViewsToDatabase, syncEventViewsToDatabase } from "@/features/po
 import { syncShareCountsToDatabase } from "@/features/post/services/share.service"
 import { processLeaderboardSync } from "@/features/gamification/services/leaderboard.service"
 import { approveApplication } from "@/features/tenant/services/application.service"
+import * as Sentry from "@sentry/nextjs"
+import { Queue } from "bullmq"
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -29,7 +31,6 @@ console.log("🛠️  Starting BullMQ Enterprise Workers...")
 // ============================================================
 async function reportToSentry(workerName: string, job: Job | undefined, err: Error) {
   try {
-    const Sentry = require("@sentry/nextjs")
     Sentry.withScope((scope: any) => {
       scope.setTag("worker", workerName)
       scope.setTag("jobId", job?.id || "unknown")
@@ -482,7 +483,6 @@ setInterval(async () => {
     })
     const settingsMap = platformSettings.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as any)
     
-    const Queue = require("bullmq").Queue
     const emailQueue = new Queue("email-queue", { connection })
     const waQueue = new Queue("wa-queue", { connection })
 

@@ -113,7 +113,6 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
 
   useEffect(() => { fetchUsers() }, [fetchUsers])
 
-  if (!isAdmin) return null
 
   const filtered = search
     ? users.filter((u) => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()))
@@ -235,6 +234,8 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
     new Date(d).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
 
   const RoleIcon = config.icon
+
+  if (!isAdmin) return null
 
   return (
     <div className="space-y-6">

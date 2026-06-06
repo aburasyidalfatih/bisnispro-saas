@@ -5,9 +5,9 @@ import { getBillingSettings } from '@/features/finance/services/billing-notifica
 import { format } from 'date-fns'
 import { id as localeId } from 'date-fns/locale'
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await params
     const { searchParams } = new URL(req.url)
     const type = searchParams.get('type') || 'tenant' // 'tenant' or 'student'
     const tenantId = searchParams.get('tenantId') // required if type === 'student'

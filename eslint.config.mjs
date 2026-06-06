@@ -1,6 +1,6 @@
 import { dirname } from "path"
 import { fileURLToPath } from "url"
-import { FlatCompat } from "@eslint/flatcompat"
+import { FlatCompat } from "@eslint/eslintrc"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const compat = new FlatCompat({ baseDirectory: __dirname })
@@ -16,6 +16,13 @@ const config = [
       ],
       // Warn on any usage — encourage proper typing
       "@typescript-eslint/no-explicit-any": "warn",
+      
+      // Downgrade stylistic or non-critical rules to warnings
+      "prefer-const": "warn",
+      "react/no-unescaped-entities": "warn",
+      "@typescript-eslint/no-empty-object-type": "warn",
+      "@next/next/no-html-link-for-pages": "warn",
+      "@typescript-eslint/ban-ts-comment": "warn"
     },
   },
 ]

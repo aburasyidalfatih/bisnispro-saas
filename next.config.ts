@@ -116,16 +116,18 @@ export default withSentryConfig(nextConfig, {
   // Upload source maps for better stack traces (only when auth token set)
   widenClientFileUpload: true,
 
-  // Disable Sentry telemetry to Sentry servers
-  disableLogger: true,
-
   // Source maps configuration
   sourcemaps: {
     deleteSourcemapsAfterUpload: true,
   },
 
-  // Auto-instrument server components and API routes
-  autoInstrumentServerFunctions: true,
-  autoInstrumentMiddleware: true,
-  autoInstrumentAppDirectory: true,
+  // Webpack plugin configuration (replaces top-level deprecated options)
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+    autoInstrumentServerFunctions: true,
+    autoInstrumentMiddleware: true,
+    autoInstrumentAppDirectory: true,
+  }
 })

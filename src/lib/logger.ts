@@ -2,6 +2,7 @@
  * Structured logger for production use.
  * Outputs JSON in production, pretty-prints in development.
  */
+import * as Sentry from "@sentry/nextjs"
 
 type LogLevel = "debug" | "info" | "warn" | "error"
 
@@ -74,7 +75,6 @@ export const logger = {
     // ENTERPRISE TELEMETRY — Sentry Integration (Active)
     if (IS_PROD && process.env.NEXT_PUBLIC_SENTRY_DSN) {
       try {
-        const Sentry = require("@sentry/nextjs")
         Sentry.captureException(error || new Error(message), { extra: errorMeta })
       } catch {
         // Sentry not available — fail silently

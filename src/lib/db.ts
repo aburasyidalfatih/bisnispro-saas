@@ -1,5 +1,7 @@
 import { PrismaClient, Prisma } from "@prisma/client"
 import { withAccelerate } from "@prisma/extension-accelerate"
+import { logger } from "@/lib/logger"
+import * as Sentry from "@sentry/nextjs"
 export type { Prisma }
 
 const SLOW_QUERY_THRESHOLD_MS = 500
@@ -39,7 +41,6 @@ function createPrismaClient(): PrismaClient {
     ;(client as any).$on?.("query", (e: any) => {
       if (e.duration > SLOW_QUERY_THRESHOLD_MS) {
         try {
-          const { logger } = require("@/lib/logger")
           logger.warn("Slow query detected", {
             durationMs: e.duration,
             query: e.query?.substring(0, 300),
@@ -48,7 +49,6 @@ function createPrismaClient(): PrismaClient {
 
           // Also report to Sentry if available
           if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
-            const Sentry = require("@sentry/nextjs")
             Sentry.captureMessage(`Slow query: ${e.duration}ms`, {
               level: "warning",
               extra: { query: e.query?.substring(0, 300), duration: e.duration },

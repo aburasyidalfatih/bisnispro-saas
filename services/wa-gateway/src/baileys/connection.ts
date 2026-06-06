@@ -33,6 +33,7 @@ setInterval(() => {
 }, 5 * 60 * 1000) // Check every 5 minutes
 
 export const startWhatsAppSession = async (tenantId: string) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { state, saveState } = await usePrismaAuthState(tenantId)
   const { version } = await fetchLatestBaileysVersion()
 
