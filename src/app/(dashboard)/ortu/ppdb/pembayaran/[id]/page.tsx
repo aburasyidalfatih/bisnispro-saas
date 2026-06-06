@@ -156,7 +156,7 @@ export default function PpdbPaymentPage({ params }: { params: Promise<{ id: stri
               </div>
 
               <Button 
-                className="w-full h-12 rounded-xl btn-gradient text-white font-bold border-0"
+                className="w-full h-12 rounded-xl btn-gradient text-white font-bold border-0 flex items-center justify-center"
                 onClick={handleConfirm}
                 disabled={submitting}
               >

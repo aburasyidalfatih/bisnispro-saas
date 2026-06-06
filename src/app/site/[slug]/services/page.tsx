@@ -57,7 +57,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
           <p className="mt-3 text-muted-foreground max-w-lg mx-auto">
             Kami juga menerima permintaan layanan yang disesuaikan dengan kebutuhan spesifik Anda.
           </p>
-          <Link href={`${base}/contact`} className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl btn-gradient text-white font-medium">
+          <Link href={`${base}/contact`} className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl btn-gradient text-white font-medium justify-center">
             Konsultasi Gratis <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

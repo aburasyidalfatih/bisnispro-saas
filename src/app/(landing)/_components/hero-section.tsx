@@ -60,7 +60,7 @@ export function HeroSection() {
             <Link href="/daftarkan-sekolah" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="w-full gap-2 rounded-xl btn-gradient text-white shadow-xl glow-primary h-12 md:h-14 px-6 md:px-8 text-sm md:text-base border-0"
+                className="w-full gap-2 rounded-xl btn-gradient text-white shadow-xl glow-primary h-12 md:h-14 px-6 md:px-8 text-sm md:text-base border-0 flex items-center justify-center"
               >
                 Buat Website Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
               </Button>

@@ -113,7 +113,7 @@ export default function SchedulesPage() {
           <p className="text-muted-foreground">Kelola roster jadwal per kelas</p>
         </div>
         {selectedClass && (
-          <Button className="gap-2 btn-gradient" onClick={() => setShowForm(true)}>
+          <Button className="gap-2 btn-gradient flex items-center justify-center h-10 px-4" onClick={() => setShowForm(true)}>
             <Plus className="h-4 w-4" /> Tambah Slot
           </Button>
         )}
@@ -184,7 +184,7 @@ export default function SchedulesPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleAdd} disabled={saving || !form.subjectId || !form.staffId || !form.dayOfWeek} className="btn-gradient">
+              <Button onClick={handleAdd} disabled={saving || !form.subjectId || !form.staffId || !form.dayOfWeek} className="btn-gradient flex items-center justify-center h-10 px-4">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Simpan Jadwal
               </Button>

@@ -44,7 +44,7 @@ export default function GTKPostsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Artikel Saya</h1>
           <p className="text-muted-foreground mt-1 text-sm">Kelola artikel dan berita yang Anda tulis.</p>
         </div>
-        <Button asChild className="btn-gradient text-white rounded-xl shadow-sm hover:shadow-md transition-all gap-2">
+        <Button asChild className="btn-gradient text-white rounded-xl shadow-sm hover:shadow-md transition-all gap-2 flex items-center justify-center h-10 px-4">
           <Link href="/panel-gtk/posts/new">
             <Plus className="h-4 w-4" /> Tulis Artikel
           </Link>

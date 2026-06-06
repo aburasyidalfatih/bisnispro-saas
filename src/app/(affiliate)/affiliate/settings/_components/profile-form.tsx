@@ -70,7 +70,7 @@ export function ProfileForm({ initialData }: { initialData: { name: string, emai
         <p className="text-xs text-muted-foreground mt-1">Demi keamanan login, Anda hanya diizinkan menggunakan email @gmail.com.</p>
       </div>
 
-      <Button type="submit" disabled={loading} className="w-full sm:w-auto btn-gradient text-white rounded-xl">
+      <Button type="submit" disabled={loading} className="w-full sm:w-auto btn-gradient text-white rounded-xl flex items-center justify-center h-10 px-4">
         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
         Simpan Profil
       </Button>

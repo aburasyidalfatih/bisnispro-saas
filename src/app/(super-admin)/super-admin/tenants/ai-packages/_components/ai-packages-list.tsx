@@ -136,7 +136,7 @@ export function AiPackagesList() {
         <p className="text-muted-foreground text-sm">
           Kelola paket *Top-Up* Token AI yang bisa dibeli oleh sekolah secara terpisah.
         </p>
-        <Button onClick={openCreate} className="btn-gradient text-white border-0 rounded-xl gap-2 h-10 shadow-lg shadow-primary/20">
+        <Button onClick={openCreate} className="btn-gradient text-white border-0 rounded-xl gap-2 h-10 shadow-lg shadow-primary/20 flex items-center justify-center">
           <Plus className="h-4 w-4" /> Tambah Paket
         </Button>
       </div>

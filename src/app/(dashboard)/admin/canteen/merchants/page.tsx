@@ -121,7 +121,7 @@ export default function MerchantsPage() {
         </div>
         <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
           <DialogTrigger asChild>
-            <Button className="btn-gradient text-white border-0 rounded-xl gap-2 h-9">
+            <Button className="btn-gradient text-white border-0 rounded-xl gap-2 h-9 flex items-center justify-center">
               <Plus className="h-4 w-4" /> Tambah Merchant
             </Button>
           </DialogTrigger>
@@ -163,7 +163,7 @@ export default function MerchantsPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowAddModal(false)}>Batal</Button>
-              <Button className="btn-gradient text-white border-0" onClick={handleAdd} disabled={isSubmitting}>
+              <Button className="btn-gradient text-white border-0 flex items-center justify-center h-10 px-4" onClick={handleAdd} disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Simpan Merchant
               </Button>

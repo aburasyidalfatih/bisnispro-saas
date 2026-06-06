@@ -24,7 +24,7 @@ export function AiAnalysisReport({ aiReports, aiGenerating, showAiReport, setSho
             </CardTitle>
             <CardDescription>AI menganalisa data Meta Ads + data internal SchoolPro untuk rekomendasi optimasi biaya.</CardDescription>
           </div>
-          <Button onClick={handleGenerateAi} disabled={aiGenerating} className="rounded-xl btn-gradient text-white">
+          <Button onClick={handleGenerateAi} disabled={aiGenerating} className="rounded-xl btn-gradient text-white flex items-center justify-center h-10 px-4">
             {aiGenerating ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Menganalisa...</> : <><Sparkles className="h-4 w-4 mr-2" /> Generate Analisa</>}
           </Button>
         </div>

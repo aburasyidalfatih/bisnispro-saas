@@ -82,7 +82,7 @@ export default function PublicPpdbPage({ params }: { params: Promise<{ slug: str
                    <div className="space-y-4">
                       <p className="text-sm text-center text-muted-foreground mb-8">Silakan login atau buat akun terlebih dahulu untuk melanjutkan proses pendaftaran.</p>
                       <Link href={`/login?callbackUrl=${resolveHref("/ppdb/daftar")}`}>
-                         <Button className="w-full h-14 rounded-2xl btn-gradient text-white text-lg font-bold shadow-xl shadow-primary/20 group">
+                         <Button className="w-full h-14 rounded-2xl btn-gradient text-white text-lg font-bold shadow-xl shadow-primary/20 group flex items-center justify-center">
                            Mulai Pendaftaran <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                          </Button>
                       </Link>

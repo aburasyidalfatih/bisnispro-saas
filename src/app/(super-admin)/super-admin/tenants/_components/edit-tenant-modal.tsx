@@ -129,7 +129,7 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-xl" disabled={loading}>Batal</Button>
-          <Button onClick={handleUpdate} disabled={loading} className="rounded-xl btn-gradient text-white border-0 px-8">
+          <Button onClick={handleUpdate} disabled={loading} className="rounded-xl btn-gradient text-white border-0 px-8 flex items-center justify-center">
             {loading ? "Menyimpan..." : "Simpan Perubahan"}
           </Button>
         </DialogFooter>

@@ -115,7 +115,7 @@ export default function ImportGTKPage() {
           Fasilitas Import Data GTK secara massal (Excel/CSV) hanya tersedia untuk sekolah dengan paket berlangganan.
         </p>
         <Link href="/admin/billing">
-          <Button size="lg" className="btn-gradient text-white rounded-xl px-10 shadow-lg glow-primary border-0 font-bold text-base h-12">
+          <Button size="lg" className="btn-gradient text-white rounded-xl px-10 shadow-lg glow-primary border-0 font-bold text-base h-12 flex items-center justify-center">
             Upgrade Paket Sekarang
           </Button>
         </Link>
@@ -217,7 +217,7 @@ export default function ImportGTKPage() {
                                  <Button 
                                     onClick={handleImport} 
                                     disabled={loading}
-                                    className="btn-gradient text-white border-0 rounded-xl shadow-lg"
+                                    className="btn-gradient text-white border-0 rounded-xl shadow-lg flex items-center justify-center h-10 px-4"
                                  >
                                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :"Mulai Import"}
                                  </Button>

@@ -96,7 +96,7 @@ export default function DisciplinePage() {
           <h1 className="text-2xl font-bold tracking-tight">Catatan Perilaku (BK)</h1>
           <p className="text-muted-foreground">Rekam pelanggaran dan penghargaan siswa</p>
         </div>
-        <Button className="gap-2 btn-gradient" onClick={() => setShowForm(true)}>
+        <Button className="gap-2 btn-gradient flex items-center justify-center h-10 px-4" onClick={() => setShowForm(true)}>
           <Plus className="h-4 w-4" /> Tambah Catatan
         </Button>
       </div>
@@ -155,7 +155,7 @@ export default function DisciplinePage() {
               <Textarea placeholder="Ceritakan kejadian secara singkat..." value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2} className="resize-none" />
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleSave} disabled={saving || !form.studentId || !form.staffId || !form.description} className="btn-gradient">
+              <Button onClick={handleSave} disabled={saving || !form.studentId || !form.staffId || !form.description} className="btn-gradient flex items-center justify-center h-10 px-4">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}Simpan Catatan
               </Button>
               <Button variant="outline" onClick={() => setShowForm(false)}>Batal</Button>

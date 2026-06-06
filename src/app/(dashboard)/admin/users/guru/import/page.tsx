@@ -207,7 +207,7 @@ export default function ImportGTKPage() {
                                  <Button 
                                     onClick={handleImport} 
                                     disabled={loading}
-                                    className="btn-gradient text-white border-0 rounded-xl shadow-lg"
+                                    className="btn-gradient text-white border-0 rounded-xl shadow-lg flex items-center justify-center h-10 px-4"
                                  >
                                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :"Mulai Import"}
                                  </Button>

@@ -234,7 +234,7 @@ export default function SecurityPage() {
                     className="rounded-xl text-center tracking-widest text-lg" />
                 </div>
                 <div className="flex gap-2">
-                  <Button className="flex-1 btn-gradient text-white border-0 rounded-xl" onClick={handleVerify2FA}
+                  <Button className="flex-1 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4" onClick={handleVerify2FA}
                     disabled={verifyLoading || verifyCode.length !== 6}>
                     {verifyLoading ?"Memverifikasi..." :"Aktifkan 2FA"}
                   </Button>
@@ -263,7 +263,7 @@ export default function SecurityPage() {
                   </Button>
                 </div>
               ) : (
-                <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2" onClick={handleSetup2FA} disabled={setupLoading}>
+                <Button className="btn-gradient text-white border-0 rounded-xl w-full gap-2 flex items-center justify-center h-10 px-4" onClick={handleSetup2FA} disabled={setupLoading}>
                   {setupLoading ?"Memuat..." : <><ShieldCheck className="h-4 w-4" /> Aktifkan 2FA</>}
                 </Button>
               )

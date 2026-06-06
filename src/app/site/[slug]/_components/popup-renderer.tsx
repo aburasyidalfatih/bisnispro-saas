@@ -71,7 +71,7 @@ export function PopupRenderer({ popup }: PopupProps) {
             )}
 
             {(popup.buttonText && popup.buttonLink) && (
-              <Button asChild className="w-full btn-gradient text-white rounded-xl h-12 font-bold shadow-lg shadow-primary/20">
+              <Button asChild className="w-full btn-gradient text-white rounded-xl h-12 font-bold shadow-lg shadow-primary/20 flex items-center justify-center">
                 <a href={popup.buttonLink} target="_blank" rel="noopener">
                    {popup.buttonText} <ExternalLink className="ml-2 h-4 w-4" />
                 </a>

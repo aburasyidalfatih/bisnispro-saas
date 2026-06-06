@@ -21,7 +21,7 @@ export function CtaSection() {
             <Link href="/daftarkan-sekolah">
               <Button
                 size="lg"
-                className="rounded-xl md:rounded-2xl btn-gradient text-white shadow-2xl glow-primary h-12 md:h-14 px-7 md:px-10 text-sm md:text-lg font-semibold gap-3 border-0 w-full sm:w-auto"
+                className="rounded-xl md:rounded-2xl btn-gradient text-white shadow-2xl glow-primary h-12 md:h-14 px-7 md:px-10 text-sm md:text-lg font-semibold gap-3 border-0 w-full sm:w-auto flex items-center justify-center"
               >
                 Buat Website Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
               </Button>

@@ -94,7 +94,7 @@ export function ProfilGTKForm({ staff, sessionImage, sessionEmail }: ProfilGTKFo
                 <X className="h-4 w-4 mr-2" />
                 Batal
               </Button>
-              <Button type="submit" size="sm" disabled={isSaving} className="btn-gradient text-white">
+              <Button type="submit" size="sm" disabled={isSaving} className="btn-gradient text-white flex items-center justify-center h-10 px-4">
                 {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                 Simpan
               </Button>

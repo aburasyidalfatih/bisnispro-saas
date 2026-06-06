@@ -225,7 +225,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
                  <span className="text-muted-foreground">Total Bayar:</span>
                  <span className="font-bold text-lg">Rp {applicant.tagihan?.[0]?.nominal.toLocaleString()}</span>
               </div>
-              <Button className="w-full h-12 rounded-xl btn-gradient text-white border-0 font-bold" asChild>
+              <Button className="w-full h-12 rounded-xl btn-gradient text-white border-0 font-bold flex items-center justify-center" asChild>
                  <Link href={`/ortu/ppdb/pembayaran/${applicant.tagihan?.[0]?.id}`}>Bayar Sekarang</Link>
               </Button>
            </div>
@@ -256,7 +256,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
               <h2 className="text-2xl font-extrabold">Isi Formulir Lengkap</h2>
               <p className="text-muted-foreground max-w-sm mx-auto">Pembayaran lunas! Sekarang silakan lengkapi data profil, orang tua, dan asal sekolah Anda.</p>
            </div>
-           <Button className="w-full h-14 rounded-2xl btn-gradient text-white border-0 font-bold text-lg" asChild>
+           <Button className="w-full h-14 rounded-2xl btn-gradient text-white border-0 font-bold text-lg flex items-center justify-center" asChild>
               <Link href={`/ortu/ppdb/formulir/${applicant.id}`}>Mulai Isi Formulir <ArrowRight className="ml-2 h-5 w-5" /></Link>
            </Button>
         </div>
@@ -272,7 +272,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
               <h2 className="text-2xl font-extrabold">Unggah Berkas</h2>
               <p className="text-muted-foreground max-w-sm mx-auto">Data formulir sudah disimpan. Tahap terakhir adalah mengunggah dokumen persyaratan yang diminta.</p>
            </div>
-           <Button className="w-full h-14 rounded-2xl btn-gradient text-white border-0 font-bold text-lg" asChild>
+           <Button className="w-full h-14 rounded-2xl btn-gradient text-white border-0 font-bold text-lg flex items-center justify-center" asChild>
               <Link href={`/ortu/ppdb/berkas/${applicant.id}`}>Unggah Dokumen <ArrowRight className="ml-2 h-5 w-5" /></Link>
            </Button>
         </div>
@@ -381,7 +381,7 @@ function WorkflowAction({ workflow, applicant, handleFinalize }: { workflow: any
                           <p className="text-xs text-muted-foreground mt-1">Proses verifikasi 1-24 jam kerja.</p>
                        </div>
                      ) : (
-                       <Button className="w-full h-12 rounded-xl btn-gradient text-white border-0 font-bold" asChild>
+                       <Button className="w-full h-12 rounded-xl btn-gradient text-white border-0 font-bold flex items-center justify-center" asChild>
                           <Link href={`/ortu/ppdb/pembayaran/${tagihanDU.id}`}>
                              Bayar Daftar Ulang
                           </Link>

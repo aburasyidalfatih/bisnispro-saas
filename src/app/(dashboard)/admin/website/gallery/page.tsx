@@ -226,7 +226,7 @@ export default function WebsiteGalleryPage() {
                   className="rounded-xl pl-9"
                   onKeyDown={e => e.key ==="Enter" && addByUrl()} />
               </div>
-              <Button className="rounded-xl btn-gradient text-white border-0 shrink-0" onClick={addByUrl}>
+              <Button className="rounded-xl btn-gradient text-white border-0 shrink-0 flex items-center justify-center h-10 px-4" onClick={addByUrl}>
                 <Plus className="h-4 w-4 mr-1" /> Tambah
               </Button>
             </div>

@@ -63,7 +63,7 @@ export function AdsConnection({
                     <p className="text-xs text-muted-foreground">Lihat & kelola kampanye Facebook/Instagram Ads.</p>
                   </div>
                 </div>
-                <Button onClick={() => setShowConnect(!showConnect)} className="rounded-xl btn-gradient text-white">
+                <Button onClick={() => setShowConnect(!showConnect)} className="rounded-xl btn-gradient text-white flex items-center justify-center h-10 px-4">
                   <Link2 className="h-4 w-4 mr-1.5" /> Hubungkan
                 </Button>
               </div>
@@ -84,7 +84,7 @@ export function AdsConnection({
                       onChange={e => setConnectForm((p: any) => ({ ...p, accountId: e.target.value }))} className="rounded-xl" />
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={handleConnect} disabled={connecting} className="rounded-xl btn-gradient text-white flex-1">
+                    <Button onClick={handleConnect} disabled={connecting} className="rounded-xl btn-gradient text-white flex-1 flex items-center justify-center h-10 px-4">
                       {connecting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Link2 className="h-4 w-4 mr-2" />}
                       Verifikasi & Hubungkan
                     </Button>

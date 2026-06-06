@@ -30,7 +30,7 @@ export default function Error({
             Error ID: {error.digest}
           </p>
         )}
-        <Button onClick={reset} className="rounded-xl btn-gradient text-white border-0 gap-2">
+        <Button onClick={reset} className="rounded-xl btn-gradient text-white border-0 gap-2 flex items-center justify-center h-10 px-4">
           <RefreshCw className="h-4 w-4" />
           Coba Lagi
         </Button>

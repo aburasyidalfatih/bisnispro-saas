@@ -56,7 +56,7 @@ export default function WebsitePosterPage() {
           </Button>
         </Link>
         <div className="flex items-center gap-2">
-          <Button onClick={() => window.print()} className="gap-2 btn-gradient">
+          <Button onClick={() => window.print()} className="gap-2 btn-gradient flex items-center justify-center h-10 px-4">
             <Printer className="h-4 w-4" /> Cetak / Simpan PDF
           </Button>
         </div>

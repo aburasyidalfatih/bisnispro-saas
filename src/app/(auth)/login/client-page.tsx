@@ -174,7 +174,7 @@ export default function LoginPage({
               </div>
             )}
 
-            <Button type="submit" className="w-full h-11 rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 gap-2" disabled={loading}>
+            <Button type="submit" className="w-full h-11 rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 gap-2 flex items-center justify-center" disabled={loading}>
               {loading ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               ) : (

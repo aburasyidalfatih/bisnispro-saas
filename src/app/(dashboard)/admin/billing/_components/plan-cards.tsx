@@ -160,7 +160,7 @@ export function PlanCards({
           <div className="mt-auto pt-3">
             {billing?.plan ==="lite" ? (
               <Button 
-                className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20"
+                className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20 flex items-center justify-center"
                 disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
                 onClick={() => { setSelectedPlanSlug("lite"); setShowCheckoutModal(true) }}
               >
@@ -263,7 +263,7 @@ export function PlanCards({
           <div className="mt-auto pt-3">
             {billing?.plan ==="pro" ? (
               <Button 
-                className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20"
+                className="w-full h-11 rounded-xl btn-gradient text-white border-0 gap-2 font-semibold shadow-lg shadow-primary/20 flex items-center justify-center"
                 disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
                 onClick={() => { setSelectedPlanSlug("pro"); setShowCheckoutModal(true) }}
               >

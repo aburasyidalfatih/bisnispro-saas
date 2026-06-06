@@ -57,7 +57,7 @@ export default function PPDBOverviewPage() {
               <Calendar className="mr-2 h-4 w-4" /> Kelola Gelombang
             </Link>
           </Button>
-          <Button className="rounded-xl btn-gradient text-white border-0 shadow-lg shadow-primary/20" asChild>
+          <Button className="rounded-xl btn-gradient text-white border-0 shadow-lg shadow-primary/20 flex items-center justify-center h-10 px-4" asChild>
             <Link href="/admin/ppdb/pendaftar">
               <Users className="mr-2 h-4 w-4" /> Meja Pendaftar
             </Link>

@@ -336,7 +336,7 @@ export default function NotificationsPage() {
         <TabsContent value="templates" className="m-0 focus-visible:outline-none focus-visible:ring-0 space-y-6">
           <div className="flex justify-end">
             <Button 
-              className="gap-2 btn-gradient text-white border-0 rounded-xl" 
+              className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4" 
               onClick={handleSaveTemplates}
               disabled={savingTemplates}
             >

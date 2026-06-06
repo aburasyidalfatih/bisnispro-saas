@@ -76,7 +76,7 @@ export default function PpdbPortalPage() {
                           <span className="text-xs font-bold text-primary">{workflow.label}</span>
                        </div>
                        <Link href={`/ortu/ppdb/status/${reg.id}`} className="w-full md:w-auto">
-                          <Button className="rounded-xl btn-gradient text-white shadow-lg shadow-primary/20 border-0 font-bold w-full h-11">
+                          <Button className="rounded-xl btn-gradient text-white shadow-lg shadow-primary/20 border-0 font-bold w-full h-11 flex items-center justify-center">
                             Lanjutkan Proses <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
                        </Link>
@@ -132,7 +132,7 @@ export default function PpdbPortalPage() {
                 <h3 className="text-lg font-bold">Belum Ada Pendaftaran</h3>
                 <p className="text-muted-foreground text-sm max-w-sm mt-2 mb-8">Anda belum memiliki riwayat pendaftaran siswa baru. Silakan klik tombol di bawah untuk mulai mendaftar.</p>
                 <Link href="/ortu/ppdb/daftar">
-                   <Button className="rounded-xl btn-gradient text-white shadow-xl border-0 h-12 px-8">
+                   <Button className="rounded-xl btn-gradient text-white shadow-xl border-0 h-12 px-8 flex items-center justify-center">
                      Mulai Daftar Sekarang
                    </Button>
                 </Link>

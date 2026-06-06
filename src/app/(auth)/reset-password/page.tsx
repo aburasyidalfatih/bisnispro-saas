@@ -94,7 +94,7 @@ export default function ResetPasswordPage() {
 
           {success ? (
             <div className="text-center">
-              <Link href={loginUrl}><Button className="rounded-xl btn-gradient text-white border-0 glow-primary">Masuk Sekarang</Button></Link>
+              <Link href={loginUrl}><Button className="rounded-xl btn-gradient text-white border-0 glow-primary flex items-center justify-center h-10 px-4">Masuk Sekarang</Button></Link>
             </div>
           ) : (
             <form onSubmit={onSubmit} className="space-y-5">
@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
                 <Label htmlFor="confirm">Konfirmasi Password</Label>
                 <Input id="confirm" name="confirm" type="password" placeholder="Ulangi password baru" required minLength={8} className="h-11 rounded-xl bg-background/50" />
               </div>
-              <Button type="submit" className="w-full h-11 rounded-xl btn-gradient text-white shadow-lg glow-primary border-0" disabled={loading}>
+              <Button type="submit" className="w-full h-11 rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 flex items-center justify-center" disabled={loading}>
                 {loading ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : "Reset Password"}
               </Button>
             </form>

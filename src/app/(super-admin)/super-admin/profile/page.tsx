@@ -154,7 +154,7 @@ export default function SuperAdminProfilePage() {
                   placeholder="08123456789"
                 />
               </div>
-              <Button type="submit" disabled={loading} className="w-full sm:w-auto rounded-xl btn-gradient">
+              <Button type="submit" disabled={loading} className="w-full sm:w-auto rounded-xl btn-gradient flex items-center justify-center h-10 px-4">
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                 Simpan Profil
               </Button>

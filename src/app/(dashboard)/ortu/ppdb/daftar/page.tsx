@@ -167,7 +167,7 @@ export default function PpdbRegisterPage() {
 
           <Button 
             type="submit" 
-            className="w-full h-14 rounded-2xl btn-gradient text-white text-lg font-bold shadow-xl shadow-primary/20 group"
+            className="w-full h-14 rounded-2xl btn-gradient text-white text-lg font-bold shadow-xl shadow-primary/20 group flex items-center justify-center"
             disabled={submitting}
           >
             {submitting ? "Sedang Memproses..." : (

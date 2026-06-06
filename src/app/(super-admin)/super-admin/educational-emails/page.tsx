@@ -238,7 +238,7 @@ export default function EducationalEmailsPage() {
                   <Button 
                     onClick={() => handleSave(activeCampaign)}
                     disabled={savingId === activeCampaign.id}
-                    className="gap-2 btn-gradient text-white border-0"
+                    className="gap-2 btn-gradient text-white border-0 flex items-center justify-center h-10 px-4"
                   >
                     {savingId === activeCampaign.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                     Simpan Perubahan

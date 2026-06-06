@@ -96,7 +96,7 @@ export function ProviderStarsender({ form, setForm, handleSaveBatch, saving }: P
             Penundaan waktu (jeda) acak dalam satuan <strong>Menit</strong> sebelum pesan terkirim. Membantu menghindari blokir WhatsApp karena terdeteksi mengirim pesan terlalu cepat.
           </p>
 
-          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID', 'STARSENDER_DELAY_MIN', 'STARSENDER_DELAY_MAX'])} disabled={saving}>
+          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2 flex items-center justify-center h-10 px-4" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID', 'STARSENDER_DELAY_MIN', 'STARSENDER_DELAY_MAX'])} disabled={saving}>
             <Save className="h-4 w-4" /> Simpan WhatsApp
           </Button>
         </CardContent>

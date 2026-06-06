@@ -192,7 +192,7 @@ export function BackupTab() {
         </CardHeader>
         <CardContent className="space-y-3">
           <Button
-            className="w-full gap-2 btn-gradient text-white border-0 rounded-xl h-12 opacity-80 cursor-not-allowed"
+            className="w-full gap-2 btn-gradient text-white border-0 rounded-xl h-12 opacity-80 cursor-not-allowed flex items-center justify-center"
             disabled={true}
           >
             <Database className="h-4 w-4" /> Backup Manual via UI Dinonaktifkan

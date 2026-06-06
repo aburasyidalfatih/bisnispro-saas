@@ -74,7 +74,7 @@ export default function ForgotPasswordPage({
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" name="email" type="email" placeholder="nama@email.com" required className="h-11 rounded-xl bg-background/50" />
               </div>
-              <Button type="submit" className="w-full h-11 rounded-xl btn-gradient text-white shadow-lg glow-primary border-0" disabled={loading}>
+              <Button type="submit" className="w-full h-11 rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 flex items-center justify-center" disabled={loading}>
                 {loading ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : "Kirim Link Reset"}
               </Button>
               <div className="text-center">

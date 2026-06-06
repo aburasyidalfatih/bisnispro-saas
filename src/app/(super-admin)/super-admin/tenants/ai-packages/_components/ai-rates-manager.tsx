@@ -94,7 +94,7 @@ export function AiRatesManager() {
         </div>
       </CardContent>
       <CardFooter className="flex justify-end pt-4 border-t border-border/50">
-        <Button onClick={handleSave} disabled={saving} className="btn-gradient text-white border-0 gap-2 min-w-[150px] rounded-xl h-10">
+        <Button onClick={handleSave} disabled={saving} className="btn-gradient text-white border-0 gap-2 min-w-[150px] rounded-xl h-10 flex items-center justify-center">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           Simpan Tarif
         </Button>

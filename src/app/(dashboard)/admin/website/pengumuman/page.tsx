@@ -79,7 +79,7 @@ export default function PengumumanPage() {
           <h1 className="text-2xl font-bold tracking-tight">{typeFilter ==="PENGUMUMAN" ?"Pengumuman" :"Artikel & Pos"}</h1>
           <p className="text-muted-foreground mt-1">{typeFilter ==="PENGUMUMAN" ?"Kelola papan pengumuman sekolah untuk siswa dan publik." :"Kelola pos editorial, blog guru, dan pengumuman."}</p>
         </div>
-        <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
+        <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
           <Link href={`/admin/website/pengumuman/new`}>
             <Plus className="h-4 w-4" /> Tulis Pengumuman Baru
           </Link>

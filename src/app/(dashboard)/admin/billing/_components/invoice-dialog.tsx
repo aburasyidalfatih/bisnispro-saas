@@ -137,7 +137,7 @@ export function InvoiceDialog({
             <Button variant="outline" className="rounded-xl" onClick={() => setShowInvoice(false)}>
               Tutup
             </Button>
-            <Button className="rounded-xl gap-1.5 btn-gradient text-white border-0" asChild>
+            <Button className="rounded-xl gap-1.5 btn-gradient text-white border-0 flex items-center justify-center h-10 px-4" asChild>
               <Link href="/admin/billing/history">
                 <ExternalLink className="h-4 w-4" /> Lihat Riwayat
               </Link>

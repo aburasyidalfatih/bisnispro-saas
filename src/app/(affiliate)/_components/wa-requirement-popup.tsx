@@ -83,7 +83,7 @@ export function WaRequirementPopup() {
             />
           </div>
 
-          <Button type="submit" disabled={loading || phone.length < 10} className="w-full btn-gradient text-white rounded-xl h-12 text-md">
+          <Button type="submit" disabled={loading || phone.length < 10} className="w-full btn-gradient text-white rounded-xl h-12 text-md flex items-center justify-center">
             {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "Simpan Nomor WA"}
           </Button>
         </form>

@@ -66,7 +66,7 @@ export default function IDCardPrintPage() {
               <ArrowLeft className="h-4 w-4" /> Kembali
             </Button>
           </Link>
-          <Button onClick={() => window.print()} className="gap-2 btn-gradient">
+          <Button onClick={() => window.print()} className="gap-2 btn-gradient flex items-center justify-center h-10 px-4">
             <Printer className="h-4 w-4" /> Cetak / Save PDF
           </Button>
         </div>

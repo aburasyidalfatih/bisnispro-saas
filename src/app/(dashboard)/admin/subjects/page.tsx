@@ -131,7 +131,7 @@ export default function SubjectsPage() {
           <Button variant="outline" className="gap-2 rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50 hidden sm:flex" onClick={handleExport} disabled={exporting}>
             {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} Ekspor Excel
           </Button>
-          <Button className="gap-2 btn-gradient rounded-xl" onClick={() => { resetForm(); setShowForm(true) }}>
+          <Button className="gap-2 btn-gradient rounded-xl flex items-center justify-center h-10 px-4" onClick={() => { resetForm(); setShowForm(true) }}>
             <Plus className="h-4 w-4" /> Tambah Mapel
           </Button>
         </div>
@@ -159,7 +159,7 @@ export default function SubjectsPage() {
               <Input placeholder="Deskripsi singkat mata pelajaran..." value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleSave} disabled={saving || !form.name.trim()} className="btn-gradient">
+              <Button onClick={handleSave} disabled={saving || !form.name.trim()} className="btn-gradient flex items-center justify-center h-10 px-4">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 {editing ?"Simpan Perubahan" :"Tambahkan"}
               </Button>

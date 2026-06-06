@@ -250,14 +250,14 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
         </div>
         <div className="flex gap-2">
           {role ==="guru" ? (
-            <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
+            <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
               <Link href="/admin/website/gtk/new">
                 <UserPlus className="h-4 w-4" />
                 {config.addLabel}
               </Link>
             </Button>
           ) : (
-            <Button className="gap-2 btn-gradient text-white border-0 rounded-xl" onClick={() => setShowAdd(!showAdd)}>
+            <Button className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4" onClick={() => setShowAdd(!showAdd)}>
               <UserPlus className="h-4 w-4" />
               {config.addLabel}
             </Button>
@@ -290,7 +290,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
               <Input name="password" type="password" placeholder="Default: 12345678" className="rounded-xl" />
             </div>
             <div className="flex items-end gap-2 md:col-span-2 lg:col-span-4">
-              <Button type="submit" className="btn-gradient text-white border-0 rounded-xl" disabled={addLoading}>
+              <Button type="submit" className="btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4" disabled={addLoading}>
                 {addLoading ?"Menyimpan..." :"Simpan"}
               </Button>
               <Button type="button" variant="outline" className="rounded-xl" onClick={() => setShowAdd(false)}>
@@ -332,7 +332,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
                 <Button type="button" variant="outline" className="rounded-xl" onClick={() => setEditUser(null)}>
                   Batal
                 </Button>
-                <Button type="submit" className="btn-gradient text-white border-0 rounded-xl" disabled={editLoading}>
+                <Button type="submit" className="btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4" disabled={editLoading}>
                   {editLoading ?"Menyimpan..." :"Simpan Perubahan"}
                 </Button>
               </div>

@@ -148,7 +148,7 @@ export default function BroadcastPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full sm:w-auto gap-2 btn-gradient text-white border-0" 
+                  className="w-full sm:w-auto gap-2 btn-gradient text-white border-0 flex items-center justify-center h-10 px-4" 
                   disabled={loading}
                 >
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

@@ -48,7 +48,7 @@ export function PaymentTab({ form, setForm, handleSaveBatch, saving }: PaymentTa
             <Label>Private Key</Label>
             <Input type="password" value={form.TRIPAY_PRIVATE_KEY} onChange={e => setForm({...form, TRIPAY_PRIVATE_KEY: e.target.value})} placeholder="Private Key" className="rounded-xl" />
           </div>
-          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['TRIPAY_MODE', 'TRIPAY_MERCHANT_CODE', 'TRIPAY_API_KEY', 'TRIPAY_PRIVATE_KEY'])} disabled={saving}>
+          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2 flex items-center justify-center h-10 px-4" onClick={() => handleSaveBatch(['TRIPAY_MODE', 'TRIPAY_MERCHANT_CODE', 'TRIPAY_API_KEY', 'TRIPAY_PRIVATE_KEY'])} disabled={saving}>
             <Save className="h-4 w-4" /> Simpan Pembayaran
           </Button>
         </CardContent>
@@ -101,7 +101,7 @@ export function PaymentTab({ form, setForm, handleSaveBatch, saving }: PaymentTa
               <p className="text-[10px] text-muted-foreground">Awali dengan kode negara, contoh: 62812...</p>
             </div>
           </div>
-          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-4" onClick={() => handleSaveBatch(['MANUAL_PAYMENT_BANK', 'MANUAL_PAYMENT_NUMBER', 'MANUAL_PAYMENT_NAME', 'MANUAL_PAYMENT_WA'])} disabled={saving}>
+          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-4 flex items-center justify-center h-10 px-4" onClick={() => handleSaveBatch(['MANUAL_PAYMENT_BANK', 'MANUAL_PAYMENT_NUMBER', 'MANUAL_PAYMENT_NAME', 'MANUAL_PAYMENT_WA'])} disabled={saving}>
             <Save className="h-4 w-4" /> Simpan Rekening Manual
           </Button>
         </CardContent>

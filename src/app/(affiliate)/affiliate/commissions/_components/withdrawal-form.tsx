@@ -73,7 +73,7 @@ export function WithdrawalForm({ balance, hasBankInfo }: { balance: number, hasB
       <Button 
         type="submit" 
         disabled={loading || !hasBankInfo || balance < 50000 || !amount} 
-        className="w-full btn-gradient text-white border-0 shadow-lg rounded-xl"
+        className="w-full btn-gradient text-white border-0 shadow-lg rounded-xl flex items-center justify-center h-10 px-4"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
         Tarik Dana Sekarang

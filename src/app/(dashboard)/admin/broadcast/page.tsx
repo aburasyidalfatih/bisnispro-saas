@@ -109,7 +109,7 @@ export default function BroadcastPage() {
         <p className="text-muted-foreground max-w-md">
           Fitur Broadcast WhatsApp tersedia untuk pelanggan paket Lite dan Pro. Silakan tingkatkan paket langganan Anda untuk menikmati fitur ini.
         </p>
-        <Button asChild className="mt-4 btn-gradient text-white border-0">
+        <Button asChild className="mt-4 btn-gradient text-white border-0 flex items-center justify-center h-10 px-4">
           <a href="/admin/billing">Upgrade Paket Sekarang</a>
         </Button>
       </div>
@@ -203,7 +203,7 @@ export default function BroadcastPage() {
 
                     <Button 
                       type="submit" 
-                      className="w-full sm:w-auto gap-2 btn-gradient text-white border-0" 
+                      className="w-full sm:w-auto gap-2 btn-gradient text-white border-0 flex items-center justify-center h-10 px-4" 
                       disabled={loading}
                     >
                       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

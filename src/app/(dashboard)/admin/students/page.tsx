@@ -188,7 +188,7 @@ export default function StudentsPage() {
           <Link href="/admin/students/import">
             <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex">Import</Button>
           </Link>
-          <Button onClick={() => setShowAdd(!showAdd)} className="rounded-xl gap-2 hidden sm:flex btn-gradient text-white border-0"><Plus className="h-4 w-4" /> Tambah Siswa</Button>
+          <Button onClick={() => setShowAdd(!showAdd)} className="rounded-xl gap-2 hidden sm:flex btn-gradient text-white border-0 flex items-center justify-center h-10 px-4"><Plus className="h-4 w-4" /> Tambah Siswa</Button>
         </div>
       </div>
 
@@ -263,7 +263,7 @@ export default function StudentsPage() {
               <Input name="password" type="password" placeholder="Biarkan kosong untuk random password" className="rounded-xl" />
             </div>
             <div className="flex items-end gap-2 lg:col-span-3">
-              <Button type="submit" className="btn-gradient text-white border-0 rounded-xl px-8" disabled={addLoading}>
+              <Button type="submit" className="btn-gradient text-white border-0 rounded-xl px-8 flex items-center justify-center" disabled={addLoading}>
                 {addLoading ?"Menyimpan..." :"Simpan Cepat"}
               </Button>
               <Button type="button" variant="outline" className="rounded-xl" onClick={() => setShowAdd(false)}>

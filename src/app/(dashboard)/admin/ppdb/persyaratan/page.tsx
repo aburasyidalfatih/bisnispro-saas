@@ -130,7 +130,7 @@ export default function PpdbPersyaratanPage() {
                 <Label className="cursor-pointer">Wajib Diunggah?</Label>
                 <Switch checked={newReq.isWajib} onCheckedChange={(v) => setNewReq({ ...newReq, isWajib: v })} />
               </div>
-              <Button onClick={handleAdd} className="w-full rounded-xl btn-gradient text-white border-0 gap-2" disabled={!selectedPeriode}>
+              <Button onClick={handleAdd} className="w-full rounded-xl btn-gradient text-white border-0 gap-2 flex items-center justify-center h-10 px-4" disabled={!selectedPeriode}>
                 <Plus className="h-4 w-4" /> Tambah
               </Button>
             </CardContent>

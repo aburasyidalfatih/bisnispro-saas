@@ -247,7 +247,7 @@ export default function RegisterSchoolPage() {
               Chat Admin Sekarang 
             </Button>
           ) : (
-            <Button className="w-full rounded-xl btn-gradient text-white border-0" onClick={() => window.location.href = "/"}> 
+            <Button className="w-full rounded-xl btn-gradient text-white border-0 flex items-center justify-center h-10 px-4" onClick={() => window.location.href = "/"}> 
               Selesai 
             </Button>
           )}
@@ -567,7 +567,7 @@ export default function RegisterSchoolPage() {
 
           <Button 
             type="submit" 
-            className="w-full btn-gradient text-white border-0 rounded-2xl h-14 text-lg font-bold gap-3 shadow-lg shadow-primary/20 transition-all hover:scale-[1.01]" 
+            className="w-full btn-gradient text-white border-0 rounded-2xl h-14 text-lg font-bold gap-3 shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] flex items-center justify-center" 
             disabled={loading || isAvailable === false || isChecking}
           >
             {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <Send className="h-6 w-6" />}

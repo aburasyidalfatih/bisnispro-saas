@@ -114,7 +114,7 @@ export default function PartnershipsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Kerjasama Lembaga</h1>
           <p className="text-muted-foreground mt-1">Kelola logo lembaga/perusahaan yang bekerja sama dengan sekolah.</p>
         </div>
-        <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
+        <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
           <Link href="/admin/website/partners/new">
             <Plus className="h-4 w-4" /> Tambah Kerjasama
           </Link>

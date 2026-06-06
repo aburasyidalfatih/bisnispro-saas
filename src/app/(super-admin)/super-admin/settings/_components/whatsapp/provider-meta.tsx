@@ -73,7 +73,7 @@ export function ProviderMeta({ form, setForm, handleSaveBatch, saving }: Props) 
               <Button variant="ghost" size="icon" type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
             </div>
           </div>
-          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2" onClick={() => handleSaveBatch(['META_WA_PHONE_NUMBER_ID', 'META_WA_BUSINESS_ACCOUNT_ID', 'META_WA_ACCESS_TOKEN'])} disabled={saving}>
+          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2 flex items-center justify-center h-10 px-4" onClick={() => handleSaveBatch(['META_WA_PHONE_NUMBER_ID', 'META_WA_BUSINESS_ACCOUNT_ID', 'META_WA_ACCESS_TOKEN'])} disabled={saving}>
             <Save className="h-4 w-4" /> Simpan Kredensial Meta
           </Button>
         </CardContent>

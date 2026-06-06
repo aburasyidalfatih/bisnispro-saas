@@ -152,7 +152,7 @@ export default function CategoryPage() {
           <h1 className="text-2xl font-bold tracking-tight">Kategori Artikel</h1>
           <p className="text-muted-foreground mt-1">Kelola kategori untuk mengklasifikasikan postingan website.</p>
         </div>
-        <Button onClick={handleCreate} className="gap-2 btn-gradient text-white border-0 rounded-xl">
+        <Button onClick={handleCreate} className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
           <Plus className="h-4 w-4" /> Tambah Kategori
         </Button>
       </div>
@@ -258,7 +258,7 @@ export default function CategoryPage() {
               <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="rounded-xl">
                 Batal
               </Button>
-              <Button type="submit" disabled={isSaving} className="rounded-xl btn-gradient text-white border-0">
+              <Button type="submit" disabled={isSaving} className="rounded-xl btn-gradient text-white border-0 flex items-center justify-center h-10 px-4">
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 {editingId ?"Simpan Perubahan" :"Buat Kategori"}
               </Button>

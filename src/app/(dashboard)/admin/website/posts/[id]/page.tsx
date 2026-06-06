@@ -385,7 +385,7 @@ export default function PostFormPage() {
           </Card>
 
           <div className="flex flex-col gap-3">
-            <Button type="submit" disabled={loading} className="w-full gap-2 btn-gradient text-white border-0 rounded-xl py-6 shadow-md hover:shadow-lg transition-all">
+            <Button type="submit" disabled={loading} className="w-full gap-2 btn-gradient text-white border-0 rounded-xl py-6 shadow-md hover:shadow-lg transition-all flex items-center justify-center">
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
               <span className="text-base font-semibold">{isNew ?"Simpan & Publikasikan" :"Perbarui Artikel"}</span>
             </Button>

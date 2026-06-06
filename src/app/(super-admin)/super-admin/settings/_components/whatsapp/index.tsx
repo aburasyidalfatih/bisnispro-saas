@@ -90,7 +90,7 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
           </Tabs>
 
           <Button 
-            className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-6" 
+            className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-6 flex items-center justify-center h-10 px-4" 
             onClick={() => handleSaveBatch([
               'WA_TEMPLATE_PENDING', 'WA_ENABLE_PENDING', 'EMAIL_ENABLE_PENDING',
               'WA_TEMPLATE_APPROVED', 'WA_ENABLE_APPROVED', 'EMAIL_ENABLE_APPROVED',

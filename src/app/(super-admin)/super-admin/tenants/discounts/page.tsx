@@ -172,7 +172,7 @@ export default function DiscountsPage() {
             Kelola kode diskon potongan harga untuk upgrade tenant.
           </p>
         </div>
-        <Button onClick={openCreate} className="btn-gradient rounded-xl px-4 gap-2 border-0 text-white shadow-lg">
+        <Button onClick={openCreate} className="btn-gradient rounded-xl px-4 gap-2 border-0 text-white shadow-lg flex items-center justify-center">
           <Plus className="w-4 h-4" /> Tambah Diskon
         </Button>
       </div>

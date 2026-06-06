@@ -249,7 +249,7 @@ export default function AddStudentManualPage() {
 
           {currentStep < STEPS.length ? (
             <Button
-              className="rounded-xl px-8 btn-gradient text-white border-0 shadow-lg shadow-primary/20 group"
+              className="rounded-xl px-8 btn-gradient text-white border-0 shadow-lg shadow-primary/20 group flex items-center justify-center"
               onClick={() => setCurrentStep(s => s + 1)}
               disabled={!isStepValid()}
             >

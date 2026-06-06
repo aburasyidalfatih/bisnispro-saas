@@ -169,7 +169,7 @@ export function CheckoutDialog({
           </div>
 
           <Button
-            className="w-full h-12 rounded-xl btn-gradient text-white border-0 gap-2 text-base font-semibold shadow-lg shadow-primary/20"
+            className="w-full h-12 rounded-xl btn-gradient text-white border-0 gap-2 text-base font-semibold shadow-lg shadow-primary/20 flex items-center justify-center"
             disabled={checkingOut || (selectedPlanSlug ==="pro" && studentCount < minStudents) || billing?.hasPendingInvoice}
             onClick={() => { handleCheckout(); }}
           >

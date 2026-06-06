@@ -34,7 +34,7 @@ export default function AdminsPage() {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Akun Super Admin</h1>
           <p className="text-muted-foreground mt-1 text-sm">Daftar pengguna dengan akses penuh ke sistem.</p>
         </div>
-        <Button className="gap-2 btn-gradient text-white border-0 rounded-xl" disabled>
+        <Button className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4" disabled>
           <UserPlus className="h-4 w-4" />
           Tambah Admin
         </Button>

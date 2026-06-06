@@ -132,7 +132,7 @@ export default function PpdbPeriodePage() {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="rounded-xl btn-gradient text-white border-0 shadow-md shadow-primary/20 gap-2" onClick={openCreate}>
+            <Button className="rounded-xl btn-gradient text-white border-0 shadow-md shadow-primary/20 gap-2 flex items-center justify-center h-10 px-4" onClick={openCreate}>
               <Plus className="h-4 w-4" /> Buat Gelombang
             </Button>
           </DialogTrigger>
@@ -240,7 +240,7 @@ export default function PpdbPeriodePage() {
 
             <DialogFooter className="pt-2">
               <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="rounded-xl">Batal</Button>
-              <Button onClick={handleSave} className="rounded-xl btn-gradient text-white border-0">Simpan Gelombang</Button>
+              <Button onClick={handleSave} className="rounded-xl btn-gradient text-white border-0 flex items-center justify-center h-10 px-4">Simpan Gelombang</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -259,7 +259,7 @@ export default function PpdbPeriodePage() {
             </div>
             <h3 className="font-bold text-lg mb-1">Belum Ada Gelombang</h3>
             <p className="text-sm text-muted-foreground mb-6 max-w-xs">Buat gelombang pendaftaran pertama untuk mulai menerima calon siswa baru.</p>
-            <Button className="rounded-xl btn-gradient text-white border-0 gap-2" onClick={openCreate}>
+            <Button className="rounded-xl btn-gradient text-white border-0 gap-2 flex items-center justify-center h-10 px-4" onClick={openCreate}>
               <Plus className="h-4 w-4" /> Buat Gelombang Pertama
             </Button>
           </CardContent>

@@ -265,7 +265,7 @@ export function RevisionForm({ application }: { application: any }) {
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
               Pastikan semua data yang Anda perbaiki sudah benar sesuai dengan catatan admin sebelum menekan tombol di bawah.
             </p>
-            <Button type="submit" size="lg" disabled={loading} className="w-full sm:w-auto btn-gradient text-white shadow-xl glow-primary rounded-xl h-14 px-10 text-lg font-semibold">
+            <Button type="submit" size="lg" disabled={loading} className="w-full sm:w-auto btn-gradient text-white shadow-xl glow-primary rounded-xl h-14 px-10 text-lg font-semibold flex items-center justify-center">
               {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
               {loading ? "Memproses..." : "Ajukan Kembali"}
             </Button>

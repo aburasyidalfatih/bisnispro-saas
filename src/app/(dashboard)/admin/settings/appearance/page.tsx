@@ -213,12 +213,12 @@ export default function AppearancePage() {
           </CardHeader>
           <CardContent className="p-6 bg-gradient-to-br from-muted/30 to-muted/10 flex-1 flex items-center justify-center">
             <div className="w-full mx-auto rounded-xl border border-border/50 overflow-hidden bg-background shadow-2xl ring-1 ring-black/5 transition-all duration-500 hover:shadow-primary/10">
-              <div className="h-1.5 btn-gradient w-full" />
+              <div className="h-1.5 btn-gradient w-full flex items-center justify-center" />
               <div className="p-4 space-y-4">
                 {/* Navbar Wireframe */}
                 <div className="flex items-center justify-between border-b pb-3">
                   <div className="flex items-center gap-3">
-                    <div className="h-6 w-6 rounded-md btn-gradient shadow-sm" />
+                    <div className="h-6 w-6 rounded-md btn-gradient shadow-sm flex items-center justify-center" />
                     <div className="h-2.5 w-24 rounded-full bg-foreground/80" />
                   </div>
                   <div className="flex gap-2">
@@ -229,7 +229,7 @@ export default function AppearancePage() {
                 </div>
                 {/* Hero Section Wireframe */}
                 <div className="h-28 rounded-xl bg-primary/10 flex flex-col items-center justify-center gap-2.5 relative overflow-hidden group">
-                  <div className="absolute inset-0 opacity-10 btn-gradient transition-opacity duration-700 group-hover:opacity-20" />
+                  <div className="absolute inset-0 opacity-10 btn-gradient transition-opacity duration-700 group-hover:opacity-20 flex items-center justify-center h-10 px-4" />
                   <div className="h-3 w-1/2 rounded-full bg-primary/80 z-10" />
                   <div className="h-2 w-2/3 rounded-full bg-muted-foreground/50 z-10" />
                   <div className="h-6 w-20 rounded-full mt-2 btn-gradient z-10 shadow-sm text-[8px] flex items-center justify-center text-white/90 font-bold tracking-wider">CTA BUTTON</div>
@@ -433,7 +433,7 @@ export default function AppearancePage() {
               }}>
                 Batal
               </Button>
-              <Button size="sm" className="rounded-xl btn-gradient text-white border-0 shadow-lg shadow-primary/25" onClick={handleSave} disabled={saving}>
+              <Button size="sm" className="rounded-xl btn-gradient text-white border-0 shadow-lg shadow-primary/25 flex items-center justify-center h-10 px-4" onClick={handleSave} disabled={saving}>
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Terapkan Tema
               </Button>

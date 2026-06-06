@@ -113,7 +113,7 @@ export default function AlumniPage() {
           <h1 className="text-2xl font-bold tracking-tight">Database Alumni & Testimonial</h1>
           <p className="text-muted-foreground mt-1">Kelola data lulusan dan testimoni sukses mereka.</p>
         </div>
-        <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl">
+        <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
           <Link href="/admin/website/alumni/new">
             <Plus className="h-4 w-4" /> Tambah Alumni
           </Link>

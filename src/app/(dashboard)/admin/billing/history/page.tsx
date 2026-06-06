@@ -122,7 +122,7 @@ export default function BillingHistoryPage() {
               <p className="font-semibold text-lg">Belum ada invoice</p>
               <p className="text-muted-foreground text-sm mt-1">Invoice akan muncul di sini setelah Anda melakukan request upgrade.</p>
             </div>
-            <Button className="rounded-xl btn-gradient text-white border-0 mt-2" asChild>
+            <Button className="rounded-xl btn-gradient text-white border-0 mt-2 flex items-center justify-center h-10 px-4" asChild>
               <Link href="/admin/billing">Upgrade Paket</Link>
             </Button>
           </CardContent>

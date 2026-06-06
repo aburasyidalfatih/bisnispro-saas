@@ -232,7 +232,7 @@ export default function EventFormPage() {
           <Button asChild variant="outline" className="rounded-xl">
             <Link href="/admin/website/events">Batal</Link>
           </Button>
-          <Button type="submit" disabled={loading} className="gap-2 btn-gradient text-white border-0 rounded-xl px-8">
+          <Button type="submit" disabled={loading} className="gap-2 btn-gradient text-white border-0 rounded-xl px-8 flex items-center justify-center">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {isNew ?"Simpan Acara" :"Update Acara"}
           </Button>

@@ -38,7 +38,7 @@ export function LandingNavbar({ appLogo, platformName }: LandingNavbarProps) {
           <Link href="/daftarkan-sekolah">
             <Button
               size="sm"
-              className="rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 text-xs md:text-sm"
+              className="rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 text-xs md:text-sm flex items-center justify-center h-10 px-4"
             >
               Daftar Gratis
             </Button>
