@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
 import { enqueueWhatsApp } from "@/features/notification/services/wa-queue.service"
+import { emailQueue } from "@/lib/queue"
 
 type ErrorCategory = "SYSTEM_BUG" | "USER_ERROR"
 
@@ -41,18 +42,34 @@ export async function logAppError(
     })
 
     if (category === "SYSTEM_BUG") {
-      // Notify Developer via WhatsApp
-      const waNumber = process.env.DEVELOPER_WA_NUMBER
-      if (waNumber) {
-        try {
-          const text = `🚨 *SCHOOLPRO SYSTEM BUG* 🚨\n\n*Message:* ${message}\n*Path:* ${options.path || "-"}\n*Time:* ${new Date().toLocaleString("id-ID")}`
-          // Queue the WhatsApp message without blocking the main thread significantly
-          enqueueWhatsApp(waNumber, text, options.tenantId || null).catch(err => {
-            console.error("Failed to queue WA alert for error", err)
-          })
-        } catch (e) {
-          console.error("Failed to queue WA alert for error", e)
+      try {
+        // Fetch all Super Admins
+        const superAdmins = await db.user.findMany({
+          where: { isSuperAdmin: true, isActive: true },
+          select: { phone: true, email: true }
+        })
+        
+        const text = `🚨 *SCHOOLPRO SYSTEM BUG* 🚨\n\n*Message:* ${message}\n*Path:* ${options.path || "-"}\n*Time:* ${new Date().toLocaleString("id-ID")}`
+        const emailBody = `<h3>🚨 SCHOOLPRO SYSTEM BUG</h3><p><strong>Message:</strong> ${message}</p><p><strong>Path:</strong> ${options.path || "-"}</p><p><strong>Time:</strong> ${new Date().toLocaleString("id-ID")}</p>`
+
+        for (const admin of superAdmins) {
+          if (admin.phone) {
+            enqueueWhatsApp(admin.phone, text, options.tenantId || null).catch(err => {
+              console.error("Failed to queue WA alert for error", err)
+            })
+          }
+          if (admin.email) {
+            emailQueue.add("system-bug-alert", {
+              to: admin.email,
+              subject: "🚨 SchoolPro System Bug Alert",
+              htmlContent: emailBody
+            }).catch(err => {
+              console.error("Failed to queue Email alert for error", err)
+            })
+          }
         }
+      } catch (e) {
+        console.error("Failed to queue alerts for error", e)
       }
     }
   } catch (e) {
