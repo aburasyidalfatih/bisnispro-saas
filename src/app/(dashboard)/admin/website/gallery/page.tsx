@@ -229,7 +229,7 @@ export default function WebsiteGalleryPage() {
               <div className="relative flex-1">
                 <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input value={urlInput} onChange={e => setUrlInput(e.target.value)}
-                  placeholder="https://contoh.com/foto.jpg"
+                  placeholder="Link YouTube (https://youtu.be/...) atau URL Foto"
                   className="rounded-xl pl-9"
                   onKeyDown={e => e.key ==="Enter" && addByUrl()} />
               </div>
@@ -320,12 +320,7 @@ export default function WebsiteGalleryPage() {
               </div>
             ))}
           </div>
-          <div className="flex justify-end">
-            <button className="justify-center items-center flex gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4" onClick={handleSave} disabled={saving}>
-              {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
-              Simpan Galeri
-            </button>
-          </div>
+
         </>
       )}
     </div>
