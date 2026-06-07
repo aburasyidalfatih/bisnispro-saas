@@ -229,7 +229,7 @@ export default function WebsiteGalleryPage() {
               <div className="relative flex-1">
                 <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input value={urlInput} onChange={e => setUrlInput(e.target.value)}
-                  placeholder="Link YouTube (https://youtu.be/...) atau URL Foto"
+                  placeholder="Masukkan link YouTube (contoh: https://youtu.be/...)"
                   className="rounded-xl pl-9"
                   onKeyDown={e => e.key ==="Enter" && addByUrl()} />
               </div>
