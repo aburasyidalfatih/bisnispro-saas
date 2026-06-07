@@ -2173,3 +2173,6 @@ model LessonProgress {
   @@unique([enrollmentId, lessonId])
   @@map("lesson_progress")
 }
+
+// Cache buster: 2026-06-07
+
