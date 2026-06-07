@@ -140,19 +140,34 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
               </Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {gallery.slice(0, 8).map((item: any, i: number) => (
-                <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
-                  <NextImage src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
-                    fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                  {item.caption && (
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="text-white text-xs line-clamp-1">{item.caption}</p>
-                    </div>
-                  )}
-                </Link>
-              ))}
+              {gallery.slice(0, 8).map((item: any, i: number) => {
+                const isVideo = item.url.includes("youtube.com") || item.url.includes("youtu.be");
+                const videoId = isVideo ? item.url.split("v=")[1]?.split("&")[0] || item.url.split("youtu.be/")[1]?.split("?")[0] : null;
+                const thumbnailUrl = isVideo && videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : (normalizeImageUrl(item.url) || item.url);
+
+                return (
+                  <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
+                    <NextImage src={thumbnailUrl} alt={item.imageAlt || item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    {isVideo && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-sm group-hover:bg-primary transition-colors">
+                          <svg className="w-6 h-6 text-white translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
+                    {item.caption && (
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <p className="text-white text-xs line-clamp-1">{item.caption}</p>
+                      </div>
+                    )}
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </section>

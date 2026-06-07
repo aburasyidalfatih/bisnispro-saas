@@ -190,19 +190,34 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
             {/* Horizontal scrollable gallery */}
             <div className="relative group/gallery">
               <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                {gallery.slice(0, 12).map((item: any, i: number) => (
-                  <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-[4/3] relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
-                    <NextImage src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Galeri ${i + 1}`}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      className="object-cover group-hover/item:scale-105 transition-transform duration-500" />
-                    {item.caption && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-end">
-                        <p className="text-white text-sm font-medium">{item.caption}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                {gallery.slice(0, 12).map((item: any, i: number) => {
+                  const isVideo = item.url.includes("youtube.com") || item.url.includes("youtu.be");
+                  const videoId = isVideo ? item.url.split("v=")[1]?.split("&")[0] || item.url.split("youtu.be/")[1]?.split("?")[0] : null;
+                  const thumbnailUrl = isVideo && videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : (normalizeImageUrl(item.url) || item.url);
+
+                  return (
+                    <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-[4/3] relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
+                      <NextImage src={thumbnailUrl} alt={item.imageAlt || item.caption || `Galeri ${i + 1}`}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        className="object-cover group-hover/item:scale-105 transition-transform duration-500" />
+                      {isVideo && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-sm group-hover/item:bg-primary transition-colors">
+                            <svg className="w-6 h-6 text-white translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                      {item.caption && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-end">
+                          <p className="text-white text-sm font-medium">{item.caption}</p>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
