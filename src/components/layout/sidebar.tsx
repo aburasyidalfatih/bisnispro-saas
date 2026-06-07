@@ -274,7 +274,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                             <item.icon className="h-[18px] w-[18px]" />
                           </div>
                           {!collapsed && (
-                          <span className="flex-1 text-left flex items-center gap-2">
+                          <span className="flex-1 text-left flex items-center gap-2 pr-8">
                             {item.label}
                             {item.badge !== undefined && !collapsed && (
                               <span className={cn(
