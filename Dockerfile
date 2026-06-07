@@ -74,9 +74,7 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 # Copy clean production dependencies for worker
 COPY --from=prod-deps /app/node_modules ./node_modules
 
-# Re-copy prisma CLI after copying node_modules (npm prune might have removed devDeps including prisma cli, but engines are retained if Prisma manages them, though let's copy to be safe)
-COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
-COPY --from=deps /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+RUN npm install -g prisma@6.19.3
 COPY --from=deps /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
 
 RUN mkdir -p ./uploads ./.next/cache && chown -R nextjs:nodejs ./uploads ./.next/cache
