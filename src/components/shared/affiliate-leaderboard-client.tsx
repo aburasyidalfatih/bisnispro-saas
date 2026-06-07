@@ -105,6 +105,7 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
           ].map((f) => (
             <Button
               key={f.id}
+              variant="ghost"
               onClick={() => setFilter(f.id)}
               className={cn(
                 "px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap",
