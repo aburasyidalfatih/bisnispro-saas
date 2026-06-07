@@ -43,21 +43,6 @@ export function WebsiteFooter({ tenant }: FooterProps) {
     ...(tenant.youtube ? [{ icon: YoutubeIcon, href: `https://youtube.com/${tenant.youtube}`, label: "YouTube" }] : []),
   ]
 
-  // Build dynamic program/service list from tenant data or fallback
-  const tenantPrograms = (tenant as any)?.programs
-  const programItems = (tenantPrograms && Array.isArray(tenantPrograms) && tenantPrograms.length > 0)
-    ? tenantPrograms.slice(0, 6).map((p: any) => ({ 
-        label: p.name || p.title || "Program", 
-        href: p.id ? `/program/${p.id}` : "/program" 
-      }))
-    : [
-        { label: "Program Unggulan", href: "/program" },
-        { label: "Kegiatan Belajar", href: "/program" },
-        { label: "Pengembangan Siswa", href: "/program" },
-        { label: "Ekstrakurikuler", href: "/program" },
-        { label: "Bimbingan Konseling", href: "/program" },
-        { label: "Layanan Informasi", href: "/program" }
-      ]
 
   return (
     <footer>
@@ -69,7 +54,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
         <div className="absolute inset-0 bg-black/60 mix-blend-multiply"></div>
         
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
             {/* Col 1 — Brand */}
             <div>
@@ -147,24 +132,6 @@ export function WebsiteFooter({ tenant }: FooterProps) {
               </ul>
             </div>
 
-            {/* Col 3 — Program Kami (Dynamic) */}
-            <div>
-              <h3 className="font-bold text-white text-sm mb-4">Program Kami</h3>
-              <ul className="space-y-2.5">
-                {programItems.map((item: any, i: number) => (
-                  <li key={item.label + i}>
-                    <Link
-                      href={resolveHref(item.href)}
-                      className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
-                      style={{ color: "rgba(255,255,255,0.45)" }}
-                    >
-                      <span style={{ color: "hsl(var(--primary))" }}>›</span>
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
 
             {/* Col 4 — Kontak Kami */}
             <div>
@@ -239,7 +206,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.3)" }}>
-              &copy; {year} {tenant.name}. All rights reserved. <span className="ml-2">Powered by <a href="https://schoolpro.id" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SchoolPro.id</a> v1.0.5 {process.env.NEXT_PUBLIC_APP_VERSION ? `(rev: ${process.env.NEXT_PUBLIC_APP_VERSION.substring(0, 7)})` : "(dev)"}</span>
+              &copy; {year} {tenant.name}. All rights reserved. <span className="ml-2">Powered by <a href="https://schoolpro.id" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SchoolPro.id</a> v1.0.5 {process.env.NEXT_PUBLIC_APP_VERSION ? `(rev: ${process.env.NEXT_PUBLIC_APP_VERSION.substring(0, 7)})` : ""}</span>
             </p>
             <div className="flex gap-4">
               <Link href={resolveHref("/contact")} className="text-[11px] transition-colors hover:text-white/60" style={{ color: "rgba(255,255,255,0.3)" }}>

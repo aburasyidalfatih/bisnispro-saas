@@ -52,6 +52,22 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+        {/* Map Section */}
+        {tenant.address && (
+          <div className="mb-12 w-full h-[400px] rounded-2xl overflow-hidden border bg-muted shadow-sm">
+            <iframe
+              title="Lokasi Sekolah"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent((tenant.name || "") + " " + (tenant.address || ""))}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+            />
+          </div>
+        )}
+
         <div className="grid md:grid-cols-2 gap-12">
           {/* Contact Info */}
           <div className="space-y-6">
