@@ -8,6 +8,8 @@ export const revalidate = 60;
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string, categorySlug: string }> }) {
+  const headerList = await headers();
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug, categorySlug } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
