@@ -8,11 +8,12 @@ import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 import { toast } from"@/hooks/use-toast"
-import { Save, ImageIcon, Plus, Trash2, ExternalLink, Upload, GripVertical, X, Link as LinkIcon } from"lucide-react"
-import { cn, normalizeImageUrl } from"@/lib/utils"
+import { Save, ImageIcon, Plus, Trash2, ExternalLink, Upload, GripVertical, X, Link as LinkIcon, PlayCircle } from"lucide-react"
+import { cn, normalizeImageUrl, extractYouTubeId } from"@/lib/utils"
 import Image from"next/image"
 
 interface GalleryItem {
+  type?: "image" | "video"
   url: string
   caption: string
 }
@@ -96,11 +97,17 @@ export default function WebsiteGalleryPage() {
 
   const addByUrl = () => {
     if (!urlInput.trim()) return
-    if (!urlInput.startsWith("http")) {
-      toast({ title:"URL tidak valid", description:"Masukkan URL yang dimulai dengan https://", variant:"destructive" })
-      return
+    const inputUrl = urlInput.trim()
+    const ytId = extractYouTubeId(inputUrl)
+    if (ytId) {
+      setGallery(prev => [{ type: "video", url: inputUrl, caption: "" }, ...prev])
+    } else {
+      if (!inputUrl.startsWith("http")) {
+        toast({ title:"URL tidak valid", description:"Masukkan URL gambar yang valid atau link YouTube.", variant:"destructive" })
+        return
+      }
+      setGallery(prev => [{ type: "image", url: inputUrl, caption: "" }, ...prev])
     }
-    setGallery(prev => [{ url: urlInput.trim(), caption:"" }, ...prev])
     setUrlInput("")
   }
 
@@ -193,7 +200,7 @@ export default function WebsiteGalleryPage() {
               </Button>
               <Button onClick={() => setAddMode("url")}
                 className={cn("px-3 py-1.5 transition-colors", addMode ==="url" ?"bg-primary text-white" :"hover:bg-muted")}>
-                URL
+                Video YouTube / URL
               </Button>
             </div>
           </div>
@@ -262,11 +269,22 @@ export default function WebsiteGalleryPage() {
                 )}>
                 {/* Image */}
                 <div className="aspect-square relative">
-                  <Image src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Foto ${i + 1}`}
-                    fill
-                    className="object-cover" />
+                  {item.type === "video" && extractYouTubeId(item.url) ? (
+                    <Image src={`https://img.youtube.com/vi/${extractYouTubeId(item.url)}/hqdefault.jpg`} alt={item.caption || `Video ${i + 1}`}
+                      fill
+                      className="object-cover" />
+                  ) : (
+                    <Image src={normalizeImageUrl(item.url) || item.url} alt={item.caption || `Foto ${i + 1}`}
+                      fill
+                      className="object-cover" />
+                  )}
                   {/* Overlay controls */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
+                  {item.type === "video" && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                       <PlayCircle className="h-12 w-12 text-white/90 drop-shadow-md" />
+                    </div>
+                  )}
                   <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-black/60 cursor-grab">
                       <GripVertical className="h-4 w-4 text-white" />
