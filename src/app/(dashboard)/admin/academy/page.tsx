@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { auth } from "@/lib/auth"
 import { db as prisma } from "@/lib/db"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,7 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 
 export default async function AcademyCatalogPage() {
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   const userId = session?.user?.id
 
   // Fetch all published courses
