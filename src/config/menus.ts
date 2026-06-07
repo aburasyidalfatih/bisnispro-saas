@@ -230,6 +230,13 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
         }] : []),
       ],
     },
+    ...(has("academy") ? [{
+      title: "Academy (LMS)",
+      items: [
+        { label: "Katalog Kelas", href: `${basePath}/academy`, icon: GraduationCap },
+        { label: "Kelas Saya", href: `${basePath}/academy/my-courses`, icon: BookOpen },
+      ]
+    }] : []),
     ...(has("laporan") ? [{
       title: "Laporan",
       items: [
@@ -510,6 +517,16 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
           label: "Email Edukasi",
           href: "/super-admin/educational-emails",
           icon: Mail,
+        },
+      ],
+    },
+    {
+      title: "Academy (LMS)",
+      items: [
+        {
+          label: "Manajemen Kelas",
+          href: "/super-admin/academy",
+          icon: GraduationCap,
         },
       ],
     },

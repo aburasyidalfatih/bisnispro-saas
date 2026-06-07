@@ -46,6 +46,7 @@ const FEATURE_LIST: FeatureItem[] = [
   { key: "email_smtp", label: "Email SMTP", description: "Konfigurasi pengiriman email dari server sendiri.", icon: Mail, category: "Komunikasi" },
   
   // Fitur Lanjutan
+  { key: "academy", label: "Academy (LMS)", description: "Katalog kelas dan sistem pembelajaran tenant.", icon: GraduationCap, category: "Fitur Lanjutan" },
   { key: "laporan", label: "Laporan", description: "Dashboard laporan dan ekspor data.", icon: FileText, category: "Fitur Lanjutan" },
   { key: "custom_domain", label: "Custom Domain", description: "Gunakan domain sendiri (.sch.id, dll).", icon: Globe, category: "Fitur Lanjutan" },
   { key: "ai_settings", label: "Kecerdasan Buatan (AI)", description: "Asisten AI untuk konten dan analisis.", icon: BrainCircuit, category: "Fitur Lanjutan" },
