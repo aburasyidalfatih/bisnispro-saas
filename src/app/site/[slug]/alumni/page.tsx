@@ -128,10 +128,16 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
       <section className="py-20 bg-slate-900 text-white text-center relative overflow-hidden">
          <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
          <div className="relative z-10 max-w-4xl mx-auto px-4">
-            <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">Mendidik dengan Hati, <br/> Mencetak Generasi Berprestasi</h2>
-            <div className="flex justify-center gap-6">
-               <a href={`${base}/contact`} className="px-10 py-4 bg-primary rounded-full font-bold hover:scale-105 transition-transform">PPDB Sekarang</a>
-               <a href={`${base}/`} className="px-10 py-4 bg-white/10 backdrop-blur-md rounded-full font-bold hover:bg-white/20 transition-all border border-white/20">Tentang Kami</a>
+            <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">
+              {tenant.tagline ? (
+                <>{tenant.tagline}</>
+              ) : (
+                <>Mendidik dengan Hati, <br/> Mencetak Generasi Berprestasi</>
+              )}
+            </h2>
+            <div className="flex justify-center gap-4 md:gap-6 flex-wrap">
+               <a href={tenant.settings?.ppdbUrl ? String(tenant.settings.ppdbUrl) : `${base}/contact`} className="px-8 md:px-10 py-3 md:py-4 bg-primary rounded-full font-bold hover:scale-105 transition-transform text-sm md:text-base">{tenant.settings?.ppdbUrl ? "PPDB Sekarang" : "Hubungi Kami"}</a>
+               <a href={`${base}/`} className="px-8 md:px-10 py-3 md:py-4 bg-white/10 backdrop-blur-md rounded-full font-bold hover:bg-white/20 transition-all border border-white/20 text-sm md:text-base">Tentang Kami</a>
             </div>
          </div>
       </section>
