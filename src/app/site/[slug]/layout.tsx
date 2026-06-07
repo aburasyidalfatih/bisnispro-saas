@@ -22,9 +22,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
 
+  const headerList = await headers()
+  const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+
   const canonicalDomain = tenant.domain 
     ? `https://${tenant.domain}` 
-    : `https://${tenant.slug}.schoolpro.id`
+    : `https://${tenant.slug}.${rootDomain}`
 
     const ogImageBase = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
     // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
@@ -136,7 +139,7 @@ export default async function WebsiteLayout({
               "@context": "https://schema.org",
               "@type": "EducationalOrganization",
               "name": tenant.name,
-              "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}`,
+              "url": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`,
               "logo": tenant.logo || "https://schoolpro.id/logo-schoolpro.png",
               "telephone": tenant.phone || "",
               "email": tenant.email || "",
