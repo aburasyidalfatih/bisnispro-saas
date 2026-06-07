@@ -50,7 +50,7 @@ export function ContactForm({ form, setForm }: ContactFormProps) {
               <Input type="email" value={form.email} onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))} placeholder="info@lembaga.com" className="rounded-xl" />
             </div>
             <div className="space-y-2 lg:col-span-2 mt-2">
-              <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Link Google Maps (Opsional)</Label>
+              <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Code Embed google map</Label>
               <Input value={form.settings?.mapUrl || ""} onChange={(e) => setForm(p => ({ ...p, settings: { ...p.settings, mapUrl: e.target.value } }))} placeholder="https://maps.app.goo.gl/... atau tag <iframe>" className="rounded-xl" />
               <p className="text-[11px] text-muted-foreground">Masukkan link dari tombol Share Google Maps, atau kode Embed (iframe).</p>
             </div>
