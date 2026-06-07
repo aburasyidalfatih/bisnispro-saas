@@ -79,15 +79,15 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const base = await getPublicBasePath(slug)
 
   const rawGallery = Array.isArray(tenant.gallery) ? tenant.gallery : []
-  const gallery = rawGallery.map((item: any) =>
-    typeof item === "string" ? { url: item, caption: "" } : item
-  )
+  const gallery = rawGallery
+    .map((item: any) => typeof item === "string" ? { url: item, caption: "" } : item)
+    .filter((item: any) => item && typeof item === "object")
 
   // Build stats from tenant data
   const staffCount = tenant._count?.staff || tenant.staff?.length || 0
   const programCount = tenant._count?.programs || tenant.programs?.length || 0
   const achievementCount = tenant._count?.achievements || tenant.achievements?.length || 0
-  
+
   let establishedYear = new Date().getFullYear()
   if ((tenant.settings as any)?.establishedYear) {
     establishedYear = parseInt((tenant.settings as any).establishedYear, 10)

@@ -46,9 +46,9 @@ export default async function GalleryPage({ params }: { params: Promise<{ slug: 
 
   // Support both old format (string[]) and new format ({url, caption}[])
   const raw = (tenantGallery as any[]) || []
-  const gallery = raw.map((item: any) =>
-    typeof item === "string" ? { url: item, caption: "" } : item
-  )
+  const gallery = raw
+    .map((item: any) => typeof item === "string" ? { url: item, caption: "" } : item)
+    .filter((item: any) => item && typeof item === "object")
 
   // Custom Theme rendering
   if (tenant.customThemeId && tenant.customTheme?.galleryHtml) {
