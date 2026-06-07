@@ -108,6 +108,38 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
   return (
     <div className="bg-background min-h-screen pt-4 md:pt-12 pb-24 font-sans text-foreground">
       <ReadingProgress />
+
+      {/* JSON-LD for BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Berita",
+                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}/berita`
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": post.title,
+                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}/berita/${post.slug}`
+              }
+            ]
+          })
+        }}
+      />
+
       {/* JSON-LD for Article Rich Snippets */}
       <script
         type="application/ld+json"
@@ -172,7 +204,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
           <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image
               src={(normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.featuredImage))!}
-              alt={post.title}
+              alt={post.imageAlt || post.title}
               fill
               priority
               className="object-cover"

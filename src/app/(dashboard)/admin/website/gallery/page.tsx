@@ -16,6 +16,7 @@ interface GalleryItem {
   type?: "image" | "video"
   url: string
   caption: string
+  imageAlt?: string
 }
 
 export default function WebsiteGalleryPage() {

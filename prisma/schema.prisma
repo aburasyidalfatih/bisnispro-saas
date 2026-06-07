@@ -127,6 +127,7 @@ model TenantGallery {
   id          String   @id @default(cuid())
   tenantId    String
   imageUrl    String
+  imageAlt    String?
   title       String?
   description String?
   sortOrder   Int      @default(0)
@@ -489,6 +490,7 @@ model Post {
   slug          String
   content       String
   featuredImage String?
+  imageAlt      String?
   type          String    @default("BLOG_GURU")
   status        String    @default("PUBLISHED")
   createdAt     DateTime  @default(now())

@@ -62,6 +62,7 @@ export default function PostFormPage() {
       type: (typeQuery && ["BLOG_GURU","EDITORIAL","PENGUMUMAN"].includes(typeQuery) ? typeQuery :"BLOG_GURU") as any,
       status:"PUBLISHED",
       featuredImage:"",
+      imageAlt:"",
       categoryId:"",
       content:"",
       seoTitle:"",
@@ -103,6 +104,7 @@ export default function PostFormPage() {
         setValue("type", d.type)
         setValue("status", d.status)
         setValue("featuredImage", normalizeImageUrl(d.featuredImage) ||"")
+        setValue("imageAlt", d.imageAlt ||"")
         setValue("categoryId", d.categoryId ||"")
         setValue("seoTitle", d.seoTitle ||"")
         setValue("seoDesc", d.seoDesc ||"")
@@ -380,6 +382,17 @@ export default function PostFormPage() {
                 hint="Rekomendasi rasio 16:9 (misal: 1280x720px)"
               />
               <Input type="hidden" {...register("featuredImage")} />
+              <div className="mt-4 space-y-2">
+                <Label htmlFor="imageAlt" className="text-sm font-medium">Alt Text Gambar (SEO)</Label>
+                <Input 
+                  id="imageAlt" 
+                  {...register("imageAlt")} 
+                  className="rounded-xl" 
+                  placeholder="Deskripsikan gambar ini untuk Google..." 
+                />
+                <p className="text-[10px] text-muted-foreground">Penting untuk aksesibilitas dan pencarian gambar Google (Google Images).</p>
+                {errors.imageAlt && <p className="text-xs text-red-500">{errors.imageAlt.message}</p>}
+              </div>
               {errors.featuredImage && <p className="text-xs text-red-500 mt-2">{errors.featuredImage.message}</p>}
             </CardContent>
           </Card>

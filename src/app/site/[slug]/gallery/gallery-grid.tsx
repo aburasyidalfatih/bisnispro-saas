@@ -9,6 +9,7 @@ interface GalleryItem {
   type?: "image" | "video"
   url: string
   caption: string
+  imageAlt?: string
 }
 
 interface Props {
@@ -43,7 +44,7 @@ export function GalleryGrid({ items }: Props) {
             {item.type === "video" && extractYouTubeId(item.url) ? (
               <Image 
                 src={`https://img.youtube.com/vi/${extractYouTubeId(item.url)}/hqdefault.jpg`} 
-                alt={item.caption || `Video ${i + 1}`}
+                alt={item.imageAlt || item.caption || `Video ${i + 1}`}
                 width={600}
                 height={450}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -52,7 +53,7 @@ export function GalleryGrid({ items }: Props) {
             ) : (
               <Image 
                 src={normalizeImageUrl(item.url) || item.url} 
-                alt={item.caption || `Foto ${i + 1}`}
+                alt={item.imageAlt || item.caption || `Foto ${i + 1}`}
                 width={600}
                 height={600}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -103,7 +104,7 @@ export function GalleryGrid({ items }: Props) {
                  />
               </div>
             ) : (
-               <img src={normalizeImageUrl(items[lightbox].url) || items[lightbox].url} alt={items[lightbox].caption || `Foto ${lightbox + 1}`}
+               <img src={normalizeImageUrl(items[lightbox].url) || items[lightbox].url} alt={items[lightbox].imageAlt || items[lightbox].caption || `Foto ${lightbox + 1}`}
                  className="max-h-[70vh] max-w-full rounded-xl object-contain shadow-2xl" loading="lazy" decoding="async" />
             )}
             {items[lightbox].caption && (
