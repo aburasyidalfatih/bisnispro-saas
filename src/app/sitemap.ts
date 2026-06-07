@@ -3,6 +3,7 @@ import { headers } from "next/headers"
 import { db } from "@/lib/db"
 import { resolveDomainToSlug } from "@/features/tenant/services/domain.service"
 
+export const dynamic = "force-dynamic";
 export const revalidate = 3600 // Edge Caching ISR (1 jam)
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

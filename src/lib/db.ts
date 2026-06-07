@@ -6,6 +6,11 @@ export type { Prisma }
 
 const SLOW_QUERY_THRESHOLD_MS = 500
 
+// Provide dummy fallback for build time
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = "postgresql://dummy:dummy@localhost:5432/dummy"
+}
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }

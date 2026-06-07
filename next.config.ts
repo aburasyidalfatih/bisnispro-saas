@@ -55,7 +55,7 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
   typescript: {
-    ignoreBuildErrors: true, // Hemat RAM yang sangat besar saat build di VPS
+    ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,

@@ -10,6 +10,8 @@ import { FeaturesSection } from "./_components/features-section"
 import { CtaSection } from "./_components/cta-section"
 import { LandingFooter } from "./_components/landing-footer"
 
+export const dynamic = "force-dynamic";
+
 export default async function LandingPage() {
   const settings = await db.platformSetting.findMany({
     where: { key: { in: ["app_logo", "platform_name", "platform_tagline", "SUPPORT_WA_NUMBERS"] } },
