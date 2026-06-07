@@ -58,39 +58,76 @@ export const getTenantLayoutData = async (slug: string) => {
 export const getTenantHomeData = async (slug: string) => {
   return unstable_cache(
     async () => {
-      return db.tenant.findUnique({
-        where: { slug },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          gallery: true,
-          about: true,
-          settings: true,
-          customThemeId: true,
-          customTheme: true,
-          template: true,
-          createdAt: true,
-          _count: {
-            select: { staff: true, programs: true, achievements: true }
-          },
-          staff: { orderBy: { sortOrder: 'asc' }, take: 100 },
-          alumni: { where: { isApproved: true }, orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
-          programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 10 },
-          extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
-          facilities: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
-          achievements: { orderBy: [{ order: 'asc' }, { date: 'desc' }], take: 10 },
-          posts: { 
-            where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
-            orderBy: { createdAt: 'desc' }, take: 20,
-            include: { author: { select: { name: true, avatar: true } } }
-          },
-          events: { orderBy: { createdAt: 'desc' }, take: 6 },
-          documents: { orderBy: { createdAt: 'desc' }, take: 10 },
-          sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
-          partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
-        }
-      })
+      try {
+        return await db.tenant.findUnique({
+          where: { slug },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            gallery: true,
+            about: true,
+            settings: true,
+            customThemeId: true,
+            customTheme: true,
+            template: true,
+            createdAt: true,
+            _count: {
+              select: { staff: true, programs: true, achievements: true }
+            },
+            staff: { orderBy: { sortOrder: 'asc' }, take: 100 },
+            alumni: { where: { isApproved: true }, orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
+            programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 10 },
+            extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
+            facilities: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
+            achievements: { orderBy: [{ order: 'asc' }, { date: 'desc' }], take: 10 },
+            posts: { 
+              where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
+              orderBy: { createdAt: 'desc' }, take: 20,
+              include: { author: { select: { name: true, avatar: true } } }
+            },
+            events: { orderBy: { createdAt: 'desc' }, take: 6 },
+            documents: { orderBy: { createdAt: 'desc' }, take: 10 },
+            sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
+            partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
+          }
+        })
+      } catch (e) {
+        console.error("Fallback getTenantHomeData due to schema error:", e)
+        return await db.tenant.findUnique({
+          where: { slug },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            gallery: true,
+            about: true,
+            settings: true,
+            customThemeId: true,
+            customTheme: true,
+            template: true,
+            createdAt: true,
+            _count: {
+              select: { staff: true, programs: true, achievements: true }
+            },
+            staff: { orderBy: { sortOrder: 'asc' }, take: 100 },
+            alumni: { orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
+            programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 10 },
+            extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
+            facilities: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
+            achievements: { orderBy: [{ order: 'asc' }, { date: 'desc' }], take: 10 },
+            posts: { 
+              where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
+              orderBy: { createdAt: 'desc' }, take: 20,
+              include: { author: { select: { name: true, avatar: true } } }
+            },
+            events: { orderBy: { createdAt: 'desc' }, take: 6 },
+            documents: { orderBy: { createdAt: 'desc' }, take: 10 },
+            sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
+            partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
+          }
+        })
+      }
     },
     [`tenant-home-${slug}`],
     { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
@@ -100,13 +137,24 @@ export const getTenantHomeData = async (slug: string) => {
 export const getTenantAlumni = async (slug: string) => {
   return unstable_cache(
     async () => {
-      return db.tenant.findUnique({
-        where: { slug },
-        select: {
-          id: true,
-          alumni: { where: { isApproved: true }, orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }] },
-        }
-      })
+      try {
+        return await db.tenant.findUnique({
+          where: { slug },
+          select: {
+            id: true,
+            alumni: { where: { isApproved: true }, orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }] },
+          }
+        })
+      } catch (e) {
+        console.error("Fallback getTenantAlumni due to schema error:", e)
+        return await db.tenant.findUnique({
+          where: { slug },
+          select: {
+            id: true,
+            alumni: { orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }] },
+          }
+        })
+      }
     },
     [`tenant-alumni-${slug}`],
     { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
