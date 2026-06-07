@@ -122,7 +122,6 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
               </div>
             )}
           </div>
-        </div>
       </section>
 
       {/* ── FOOTER HIGHLIGHT ── */}
