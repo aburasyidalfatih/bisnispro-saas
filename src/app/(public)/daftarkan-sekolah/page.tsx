@@ -121,6 +121,11 @@ export default function RegisterSchoolPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    if (!form.adminPosition) {
+      toast({ title: "Gagal", description: "Silakan pilih Jabatan di Sekolah.", variant: "destructive" })
+      return
+    }
+
     const correctAnswer = captchaParams.a + captchaParams.b
     if (parseInt(captchaAnswer) !== correctAnswer) {
       toast({ title: "Verifikasi Gagal", description: "Hasil perhitungan matematika tidak tepat.", variant: "destructive" })
@@ -463,7 +468,6 @@ export default function RegisterSchoolPage() {
                 <div className="space-y-2">
                   <Label>Jabatan di Sekolah</Label>
                   <Select
-                    required
                     value={form.adminPosition}
                     onValueChange={(v) => setForm({...form, adminPosition: v})}
                   >
