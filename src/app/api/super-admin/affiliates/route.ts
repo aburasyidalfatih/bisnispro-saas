@@ -13,8 +13,9 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get("page") || "1")
     const limit = parseInt(searchParams.get("limit") || "10")
     const search = searchParams.get("search") || ""
+    const sortBy = searchParams.get("sortBy") || undefined
 
-    const result = await getAffiliatesForSuperAdmin({ page, limit, search })
+    const result = await getAffiliatesForSuperAdmin({ page, limit, search, sortBy })
     return NextResponse.json(result)
   } catch (error: any) {
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })

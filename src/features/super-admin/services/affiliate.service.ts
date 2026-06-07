@@ -4,8 +4,9 @@ export async function getAffiliatesForSuperAdmin(params: {
   page: number
   limit: number
   search: string
+  sortBy?: string
 }) {
-  const { page, limit, search } = params
+  const { page, limit, search, sortBy } = params
 
   const where: any = {}
 
@@ -17,14 +18,22 @@ export async function getAffiliatesForSuperAdmin(params: {
     ]
   }
 
+  const orderBy: any = {}
+  if (sortBy === "balance") {
+    orderBy.balance = "desc"
+  } else {
+    orderBy.createdAt = "desc"
+  }
+
   const [affiliates, total] = await Promise.all([
     db.affiliateProfile.findMany({
       where,
       include: {
         user: { select: { name: true, email: true } },
-        withdrawals: { where: { status: "PENDING" } }
+        withdrawals: { where: { status: "PENDING" } },
+        _count: { select: { tenants: true } }
       },
-      orderBy: { createdAt: "desc" },
+      orderBy,
       skip: (page - 1) * limit,
       take: limit,
     }),

@@ -20,6 +20,7 @@ interface Affiliate {
   createdAt: string
   user: { name: string; email: string }
   withdrawals: Array<{ amount: number }>
+  _count?: { tenants: number }
 }
 
 interface Stats {
@@ -36,6 +37,7 @@ export default function SuperAdminAffiliatesPage() {
   })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [sortBy, setSortBy] = useState("createdAt")
   const [page, setPage] = useState(1)
   const [toggleTarget, setToggleTarget] = useState<Affiliate | null>(null)
   const [toggling, setToggling] = useState(false)
@@ -89,6 +91,7 @@ export default function SuperAdminAffiliatesPage() {
       url.searchParams.set("page", page.toString())
       url.searchParams.set("limit", "10")
       if (search) url.searchParams.set("search", search)
+      if (sortBy) url.searchParams.set("sortBy", sortBy)
       
       const res = await fetch(url.toString())
       const result = await res.json()
@@ -97,11 +100,11 @@ export default function SuperAdminAffiliatesPage() {
     } catch {
       setLoading(false)
     }
-  }, [page, search])
+  }, [page, search, sortBy])
 
   useEffect(() => {
     setPage(1)
-  }, [search])
+  }, [search, sortBy])
 
   useEffect(() => { 
     const timer = setTimeout(() => fetchAffiliates(), 500)
@@ -197,8 +200,17 @@ export default function SuperAdminAffiliatesPage() {
               <CardTitle>Daftar Mitra Afiliasi</CardTitle>
               <CardDescription>Semua marketer yang terdaftar di platform.</CardDescription>
             </div>
-            <div className="relative w-full sm:w-[250px] max-w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <select
+                className="flex h-10 w-full sm:w-[180px] items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="createdAt">Terbaru</option>
+                <option value="balance">Saldo Terbesar</option>
+              </select>
+              <div className="relative w-full sm:w-[250px] max-w-full">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Cari nama atau email..."
                 className="rounded-xl pl-9"
@@ -220,6 +232,7 @@ export default function SuperAdminAffiliatesPage() {
                   <TableRow>
                     <TableHead className="px-4 py-3 font-medium">Mitra</TableHead>
                     <TableHead className="px-4 py-3 font-medium">Kode Ref</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-center">Total Sekolah</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-right">Saldo Aktif</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-right">Req. Withdraw</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-center">Status</TableHead>
@@ -242,6 +255,9 @@ export default function SuperAdminAffiliatesPage() {
                           </TableCell>
                           <TableCell className="px-4 py-3">
                             <Badge variant="outline" className="font-mono text-xs">{aff.referralCode}</Badge>
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-center">
+                            <Badge variant="secondary" className="font-medium">{aff._count?.tenants || 0} Sekolah</Badge>
                           </TableCell>
                           <TableCell className="px-4 py-3 text-right font-bold text-emerald-600">Rp {aff.balance.toLocaleString('id-ID')}</TableCell>
                           <TableCell className="px-4 py-3 text-right">
