@@ -253,7 +253,7 @@ export default function AiAssistantClient({
                      className="flex-1 rounded-full bg-muted/30 focus-visible:ring-primary/20"
                      disabled={isLoading || totalTokens < 50}
                    />
-                   <Button variant="ghost" size="icon" type="submit" size="icon" disabled={isLoading || !input.trim() || totalTokens < 50} className="rounded-full shrink-0 h-10 w-10">
+                   <Button variant="ghost" size="icon" type="submit" disabled={isLoading || !input.trim() || totalTokens < 50} className="rounded-full shrink-0 h-10 w-10">
                      <Send className="h-4 w-4" />
                    </Button>
                  </form>

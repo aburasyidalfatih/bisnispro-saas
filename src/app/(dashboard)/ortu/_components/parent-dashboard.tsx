@@ -129,7 +129,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                          <div className="bg-indigo-500/5 border border-indigo-500/10 rounded-2xl p-4 flex flex-col justify-between">
                             <div className="flex items-center justify-between mb-1">
                               <p className="text-[10px] font-bold text-indigo-600/80 uppercase tracking-wider flex items-center gap-1"><Wallet className="h-3 w-3" /> Tabungan</p>
-                              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowBalance(!showBalance)} className="text-indigo-400 hover:text-indigo-600 transition-colors">
+                              <Button variant="ghost" size="icon" className="h-6 w-6 text-indigo-400 hover:text-indigo-600 transition-colors" onClick={() => setShowBalance(!showBalance)}>
                                 {showBalance ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                               </Button>
                             </div>

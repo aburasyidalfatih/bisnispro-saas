@@ -42,7 +42,7 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
 
   // Server-side map resolving
   let finalEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent((tenant.name || "") + " " + (tenant.address || ""))}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-  const mapUrl = tenant.settings?.mapUrl;
+  const mapUrl = (tenant.settings as any)?.mapUrl;
 
   if (mapUrl) {
     if (mapUrl.includes("<iframe") && mapUrl.includes("src=")) {

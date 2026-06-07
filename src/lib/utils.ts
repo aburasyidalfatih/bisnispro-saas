@@ -114,7 +114,8 @@ export function checkIsMainDomain(hostname?: string): boolean {
   return host === root || host === `www.${root}` || host === "localhost" || host === "127.0.0.1" || host.startsWith("localhost:")
 }
 
-export function extractYouTubeId(url: string): string | null {
+export function extractYouTubeId(url?: string | null): string | null {
+  if (!url) return null;
   const match = url.match(/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/)
   return match ? match[1] : null
 }

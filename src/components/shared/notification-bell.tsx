@@ -60,9 +60,9 @@ export function NotificationBell() {
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <DropdownMenuLabel className="p-0 font-bold">Notifikasi</DropdownMenuLabel>
           {unreadCount > 0 && (
-            <Button variant="ghost" className="p-0 h-auto" 
+            <Button variant="ghost"
               onClick={markAllAsRead}
-              className="text-[11px] text-primary hover:underline flex items-center gap-1 font-medium"
+              className="p-0 h-auto text-[11px] text-primary hover:underline flex items-center gap-1 font-medium"
             >
               <CheckCircle2 className="h-3 w-3" />
               Tandai dibaca
