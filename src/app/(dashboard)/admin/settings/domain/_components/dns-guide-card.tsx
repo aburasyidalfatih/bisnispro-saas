@@ -74,8 +74,10 @@ export function DnsGuideCard({
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">@</code>
                       <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => copyToClipboard("@","Name")}
-                        className="text-muted-foreground hover:text-primary"
+                        className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-muted"
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
@@ -87,12 +89,14 @@ export function DnsGuideCard({
                         {rootDomain ||"schoolpro.id"}
                       </code>
                       <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() =>
                           copyToClipboard(
                             rootDomain ||"schoolpro.id","CNAME value"
                           )
                         }
-                        className="text-muted-foreground hover:text-primary"
+                        className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-muted"
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
@@ -135,10 +139,12 @@ export function DnsGuideCard({
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">_smp-verify</code>
                       <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() =>
                           copyToClipboard("_smp-verify","TXT Name")
                         }
-                        className="text-muted-foreground hover:text-primary"
+                        className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-muted"
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
@@ -148,8 +154,10 @@ export function DnsGuideCard({
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono break-all">{customDomain.verifyToken}</code>
                       <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => copyToClipboard(customDomain.verifyToken,"TXT Value")}
-                        className="text-muted-foreground hover:text-primary shrink-0"
+                        className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-muted shrink-0"
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
