@@ -191,13 +191,13 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
             <div className="relative group/gallery">
               <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {gallery.slice(0, 12).map((item: any, i: number) => {
-                  const isVideo = item.url.includes("youtube.com") || item.url.includes("youtu.be");
-                  const videoId = isVideo ? item.url.split("v=")[1]?.split("&")[0] || item.url.split("youtu.be/")[1]?.split("?")[0] : null;
+                  const isVideo = item.url?.includes("youtube.com") || item.url?.includes("youtu.be");
+                  const videoId = isVideo ? item.url?.split("v=")[1]?.split("&")[0] || item.url?.split("youtu.be/")[1]?.split("?")[0] : null;
                   const thumbnailUrl = isVideo && videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : (normalizeImageUrl(item.url) || item.url);
 
                   return (
                     <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-[4/3] relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
-                      <NextImage src={thumbnailUrl} alt={item.imageAlt || item.caption || `Galeri ${i + 1}`}
+                      <NextImage src={thumbnailUrl || '/placeholder.png'} alt={item.imageAlt || item.caption || `Galeri ${i + 1}`}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         className="object-cover group-hover/item:scale-105 transition-transform duration-500" />

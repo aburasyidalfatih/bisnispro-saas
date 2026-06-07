@@ -141,13 +141,13 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {gallery.slice(0, 8).map((item: any, i: number) => {
-                const isVideo = item.url.includes("youtube.com") || item.url.includes("youtu.be");
-                const videoId = isVideo ? item.url.split("v=")[1]?.split("&")[0] || item.url.split("youtu.be/")[1]?.split("?")[0] : null;
+                const isVideo = item.url?.includes("youtube.com") || item.url?.includes("youtu.be");
+                const videoId = isVideo ? item.url?.split("v=")[1]?.split("&")[0] || item.url?.split("youtu.be/")[1]?.split("?")[0] : null;
                 const thumbnailUrl = isVideo && videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : (normalizeImageUrl(item.url) || item.url);
 
                 return (
                   <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
-                    <NextImage src={thumbnailUrl} alt={item.imageAlt || item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
+                    <NextImage src={thumbnailUrl || '/placeholder.png'} alt={item.imageAlt || item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-300" />

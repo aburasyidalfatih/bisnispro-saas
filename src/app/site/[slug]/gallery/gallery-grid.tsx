@@ -52,7 +52,7 @@ export function GalleryGrid({ items }: Props) {
               />
             ) : (
               <Image 
-                src={normalizeImageUrl(item.url) || item.url} 
+                src={normalizeImageUrl(item.url) || item.url || '/placeholder.png'} 
                 alt={item.imageAlt || item.caption || `Foto ${i + 1}`}
                 width={600}
                 height={600}
