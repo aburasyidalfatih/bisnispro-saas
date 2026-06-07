@@ -502,7 +502,10 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
           const commissionsToProcess: { affiliateId: string, amount: number, type: string }[] = [];
 
           if (originalAffiliateId && originalCommissionAmount > 0) {
-            commissionsToProcess.push({ affiliateId: originalAffiliateId, amount: originalCommissionAmount, type: "REFERRAL" });
+            // Cegah double komisi: jika referral sama dengan kupon cashback, berikan cashback saja
+            if (originalAffiliateId !== cashbackAffiliateId) {
+              commissionsToProcess.push({ affiliateId: originalAffiliateId, amount: originalCommissionAmount, type: "REFERRAL" });
+            }
           }
 
           if (cashbackAffiliateId && cashbackAmount > 0) {
