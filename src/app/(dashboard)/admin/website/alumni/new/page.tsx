@@ -39,6 +39,7 @@ export default function NewAlumniPage() {
     institutionName:"",
     testimonial:""
   })
+  const [isCustomStatus, setIsCustomStatus] = useState(false)
 
   // AI State
   const [aiModalOpen, setAiModalOpen] = useState(false)
@@ -221,8 +222,16 @@ export default function NewAlumniPage() {
                   <div className="space-y-2">
                     <Label htmlFor="currentStatus">Status Saat Ini</Label>
                     <Select 
-                      value={formData.currentStatus} 
-                      onValueChange={v => setFormData({...formData, currentStatus: v})}
+                      value={isCustomStatus ? "LAINNYA" : formData.currentStatus} 
+                      onValueChange={v => {
+                        if (v === "LAINNYA") {
+                          setIsCustomStatus(true)
+                          setFormData({...formData, currentStatus: ""})
+                        } else {
+                          setIsCustomStatus(false)
+                          setFormData({...formData, currentStatus: v})
+                        }
+                      }}
                     >
                       <SelectTrigger className="rounded-xl">
                         <SelectValue placeholder="Pilih Status" />
@@ -232,8 +241,19 @@ export default function NewAlumniPage() {
                         <SelectItem value="KERJA">Bekerja</SelectItem>
                         <SelectItem value="WIRAUSAHA">Wirausaha</SelectItem>
                         <SelectItem value="MENCARI_KERJA">Mencari Kerja</SelectItem>
+                        <SelectItem value="LAINNYA">Lainnya (Ketik Sendiri)</SelectItem>
                       </SelectContent>
                     </Select>
+                    {isCustomStatus && (
+                      <Input 
+                        placeholder="Masukkan status lainnya..." 
+                        value={formData.currentStatus}
+                        onChange={e => setFormData({...formData, currentStatus: e.target.value})}
+                        className="rounded-xl mt-2"
+                        required
+                        autoFocus
+                      />
+                    )}
                   </div>
                 </div>
               </div>
