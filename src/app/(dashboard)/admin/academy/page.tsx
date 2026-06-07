@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import prisma from "@/lib/prisma"
+import { db as prisma } from "@/lib/db"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, Play, Lock, ChevronRight, BookOpen } from "lucide-react"
