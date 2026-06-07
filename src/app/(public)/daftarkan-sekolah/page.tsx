@@ -183,7 +183,11 @@ export default function RegisterSchoolPage() {
         uploadedLogoUrl = uploadData.url
       } catch (err: any) {
         setLoading(false)
-        toast({ title: "Gagal", description: err.message, variant: "destructive" })
+        let errMsg = err.message
+        if (errMsg === "Failed to fetch" || errMsg === "Network Error") {
+           errMsg = "Koneksi terputus saat mengunggah logo. Pastikan internet stabil atau coba gunakan file logo dengan ukuran lebih kecil (maks 2MB)."
+        }
+        toast({ title: "Gagal Mengunggah Logo", description: errMsg, variant: "destructive" })
         return
       }
     }
