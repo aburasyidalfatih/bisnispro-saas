@@ -45,29 +45,10 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
         ]}
       />
 
-      {/* ── STATISTICS BAR ── */}
-      <section className="py-12 bg-muted/40 border-b border-border/50">
-         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-wrap justify-center gap-8 md:gap-20">
-            {[
-              { label: "Total Lulusan", value: "2.500+" },
-              { label: "Melanjutkan Studi", value: "85%" },
-              { label: "Bekerja & Berwirausaha", value: "15%" },
-              { label: "Mitra Universitas", value: "50+" },
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                 <div className="text-2xl font-black text-primary leading-none mb-1">{stat.value}</div>
-                 <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</div>
-              </div>
-            ))}
-         </div>
-      </section>
 
       {/* ── ALUMNI GRID & TESTIMONIALS ── */}
-      <section className="py-12 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-3 gap-16">
-          
-          {/* Left Column: Testimonial Feed */}
-          <div className="lg:col-span-2 space-y-12">
+      <section className="py-12 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div className="space-y-12">
             <div className="flex items-center gap-4 mb-8">
                <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-white">
                   <Quote className="h-6 w-6" />
@@ -141,64 +122,6 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
               </div>
             )}
           </div>
-
-          {/* Right Column: Alumni Success Grid (Sidebar style) */}
-          <div className="space-y-12">
-            {alumni.length > 0 && (
-              <div>
-                 <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                    <GraduationCap className="h-6 w-6 text-primary" /> Alumni Berjaya
-                 </h3>
-               <div className="grid gap-4">
-                  {alumni.slice(0, 4).map((item: any) => (
-                    <div key={item.id} className="p-4 bg-muted/30 rounded-2xl border border-transparent hover:border-primary/20 hover:bg-white transition-all">
-                       <div className="flex gap-4 items-center">
-                          <div className="h-12 w-12 rounded-xl overflow-hidden shrink-0">
-                             <img src={normalizeImageUrl(item.imageUrl) || item.imageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974"} 
-                               alt={item.name} 
-                               className="h-full w-full object-cover" 
-                             loading="lazy" decoding="async" />
-                          </div>
-                          <div>
-                             <h5 className="font-bold text-sm leading-tight">{item.name}</h5>
-                             <p className="text-[10px] text-muted-foreground">{item.institutionName || "Mitra Institusi"}</p>
-                          </div>
-                       </div>
-                    </div>
-                  ))}
-               </div>
-              </div>
-            )}
-
-            <div className="bg-primary/5 rounded-[2.5rem] p-8 border border-primary/10">
-               <Heart className="h-10 w-10 text-primary mb-6" />
-               <h3 className="text-xl font-bold mb-4">Update Data Alumni</h3>
-               <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-                  Apakah Anda alumni kami? Mari tetap terhubung dan bagikan kabar gembira Anda untuk menginspirasi adik-adik kelas.
-               </p>
-               <a 
-                 href={`${base}/contact`} 
-                 className="block text-center w-full py-3 bg-primary text-white rounded-xl font-bold text-sm hover:shadow-lg transition-all"
-               >
-                 Isi Tracer Study
-               </a>
-            </div>
-
-            <div className="relative rounded-[2.5rem] overflow-hidden group">
-               <OptimizedImage 
-                 src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070" 
-                 alt="Graduation" 
-                 width={400} 
-                 height={600} 
-                 className="object-cover aspect-[3/4] group-hover:scale-105 transition-transform duration-700" 
-               />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] mb-2 text-primary">Class of 2024</p>
-                  <h4 className="text-2xl font-black">Bersiaplah Menjadi Bagian dari Mereka</h4>
-               </div>
-            </div>
-          </div>
-
         </div>
       </section>
 
