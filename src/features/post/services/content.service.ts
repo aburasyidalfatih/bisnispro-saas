@@ -95,7 +95,8 @@ export async function createPost(params: {
 
     // [AUTO-INDEXING] Asynchronously Ping Search Engines if published
     if (finalStatus === "PUBLISHED") {
-      const host = tenant.domain || `${tenant.slug}.schoolpro.id`
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      const host = tenant.domain || `${tenant.slug}.${rootDomain}`
       const isPengumuman = typeof data.type === 'string' && data.type.includes("PENGUMUMAN")
       const postUrl = `https://${host}/${isPengumuman ? 'pengumuman' : 'berita'}/${post.slug}`
       
@@ -188,7 +189,8 @@ export async function createEvent(params: {
     }
 
     // [AUTO-INDEXING] Asynchronously Ping Search Engines for new Event
-    const host = tenant.domain || `${tenant.slug}.schoolpro.id`
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const host = tenant.domain || `${tenant.slug}.${rootDomain}`
     const eventUrl = `https://${host}/agenda/${event.id}`
     
     const settings = tenant.settings as any || {}
