@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { GalleryGrid } from "./gallery-grid"
@@ -15,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   
   const title = `Galeri Dokumentasi`
   const description = `Galeri dokumentasi kegiatan dan fasilitas unggulan di ${tenant.name}`
-  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
 
   return {
     title,
@@ -30,6 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function GalleryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const headerList = await headers();
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()

@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getTenantLayoutData, getTenantPrograms } from "@/features/tenant/services/tenant-modular.service"
@@ -32,6 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function ProgramDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
+  const headerList = await headers();
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug, id } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
@@ -69,7 +72,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
             "provider": {
               "@type": "Organization",
               "name": tenant.name,
-              "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}`
+              "url": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`
             }
           })
         }}
@@ -156,7 +159,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/program/${program.id}`} 
+          url={`https://${tenant.domain || tenant.slug + '.' + rootDomain}/program/${program.id}`} 
           title={program.name}
           tenantId={tenant.id}
         />

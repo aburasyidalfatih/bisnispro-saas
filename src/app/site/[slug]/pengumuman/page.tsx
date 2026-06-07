@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import Link from "next/link"
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   
   const title = `Papan Pengumuman`
   const description = `Informasi penting dan pengumuman resmi dari ${tenant.name}`
-  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
   
   return {
     title,

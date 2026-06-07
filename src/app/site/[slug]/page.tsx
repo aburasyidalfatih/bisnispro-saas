@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 
 
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   let imageUrl = tenant.logo || "https://schoolpro.id/default-og.jpg"
   if (imageUrl.startsWith("/")) {
-    const domain = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+    const domain = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
     imageUrl = `${domain}${imageUrl}`
   }
 
@@ -49,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title,
       description,
-      url: `https://${tenant.domain || tenant.slug + '.schoolpro.id'}`,
+      url: `https://${tenant.domain || tenant.slug + '.' + rootDomain}`,
       siteName: tenant.name,
       images: [{ url: imageUrl, width: 1200, height: 630 }],
       type: "website",
@@ -64,6 +65,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function SitePage({ params }: { params: Promise<{ slug: string }> }) {
+  const headerList = await headers();
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug } = await params
 
   const tenant = await getTenantHomeData(slug)

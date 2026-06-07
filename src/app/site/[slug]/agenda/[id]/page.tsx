@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
@@ -40,6 +41,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function AgendaDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
+  const headerList = await headers();
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug, id } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
@@ -78,7 +81,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
             "organizer": {
               "@type": "Organization",
               "name": tenant.name,
-              "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}`
+              "url": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`
             }
           })
         }}
@@ -164,7 +167,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/agenda/${event.slug || event.id}`} 
+          url={`https://${tenant.domain || tenant.slug + '.' + rootDomain}/agenda/${event.slug || event.id}`} 
           title={event.title}
           tenantId={tenant.id}
         />

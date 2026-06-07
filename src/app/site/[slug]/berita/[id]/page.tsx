@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getTenantLayoutData, getTenantPosts } from "@/features/tenant/services/tenant-modular.service"
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = post.content?.replace(/<[^>]*>/g, "").substring(0, 160) || "Berita Terbaru"
   let imageUrl = normalizeImageUrl(post.featuredImage) || normalizeImageUrl(post.featuredImage) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
   
-  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
   if (imageUrl.startsWith("/")) {
     imageUrl = `${domainUrl}${imageUrl}`
   }
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${post.title} - ${tenant.name}`,
       description,
-      url: `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.slug}`,
+      url: `https://${tenant.domain || tenant.slug + '.' + rootDomain}/berita/${post.slug}`,
       siteName: tenant.name,
       images: [{ url: finalOgImageUrl, width: 1200, height: 630 }],
       type: "article",
@@ -63,6 +64,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function BeritaDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
+  const headerList = await headers();
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug, id } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
@@ -126,7 +129,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
                 "url": tenant.logo || "https://schoolpro.id/logo-schoolpro.png"
               }
             },
-            "url": `https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.slug}`
+            "url": `https://${tenant.domain || tenant.slug + '.' + rootDomain}/berita/${post.slug}`
           })
         }}
       />
@@ -191,7 +194,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/berita/${post.slug}`} 
+          url={`https://${tenant.domain || tenant.slug + '.' + rootDomain}/berita/${post.slug}`} 
           title={post.title}
           postId={post.id}
           tenantId={tenant.id}

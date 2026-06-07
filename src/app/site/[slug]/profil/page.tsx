@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { 
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = `Profil & Sejarah`
   const profileData = await getTenantProfileData(slug)
   const description = profileData?.about?.replace(/<[^>]*>/g, "").substring(0, 160) || `Informasi lengkap mengenai profil, sejarah, visi, dan misi ${tenant.name}`
-  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.schoolpro.id`
+  const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
   
   return {
     title,
@@ -39,6 +40,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function ProfilTerpaduPage({ params }: { params: Promise<{ slug: string }> }) {
+  const headerList = await headers();
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()

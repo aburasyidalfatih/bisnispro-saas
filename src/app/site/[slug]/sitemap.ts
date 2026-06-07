@@ -18,13 +18,14 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   // Determine base URL dynamically based on headers
   const headerList = await headers()
   const protocol = headerList.get("x-forwarded-proto") || "https"
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
   const domainUrl = `${protocol}://${host}`
   
   // Base path logic for subdirectories (if on schoolpro.id/site/[slug])
   // Wait, if it's accessed via custom domain, the base path is just ""
   // But if accessed via schoolpro.id/site/demo, the base path is /site/demo
-  const isMainDomain = host === "schoolpro.id" || host === "www.schoolpro.id" || host.startsWith("localhost")
+  const isMainDomain = host === rootDomain || host === `www.${rootDomain}` || host.startsWith("localhost")
   const basePath = isMainDomain ? `/site/${slug}` : ""
 
   const baseUrl = `${domainUrl}${basePath}`

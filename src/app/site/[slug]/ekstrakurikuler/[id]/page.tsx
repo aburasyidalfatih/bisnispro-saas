@@ -1,3 +1,4 @@
+import { headers } from "next/headers"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getTenantLayoutData, getTenantExtracurriculars } from "@/features/tenant/services/tenant-modular.service"
@@ -32,6 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function ExtracurricularDetailPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
+  const headerList = await headers();
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug, id } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
@@ -139,7 +142,7 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.schoolpro.id'}/ekstrakurikuler/${extra.slug || extra.id}`} 
+          url={`https://${tenant.domain || tenant.slug + '.' + rootDomain}/ekstrakurikuler/${extra.slug || extra.id}`} 
           title={extra.name}
           tenantId={tenant.id}
         />
