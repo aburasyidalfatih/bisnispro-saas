@@ -31,7 +31,7 @@ export async function getAffiliatesForSuperAdmin(params: {
       include: {
         user: { select: { name: true, email: true } },
         withdrawals: { where: { status: "PENDING" } },
-        _count: { select: { tenants: true } }
+        _count: { select: { tenantApplications: true } }
       },
       orderBy,
       skip: (page - 1) * limit,

@@ -20,7 +20,7 @@ interface Affiliate {
   createdAt: string
   user: { name: string; email: string }
   withdrawals: Array<{ amount: number }>
-  _count?: { tenants: number }
+  _count?: { tenantApplications: number }
 }
 
 interface Stats {
@@ -258,7 +258,7 @@ export default function SuperAdminAffiliatesPage() {
                             <Badge variant="outline" className="font-mono text-xs">{aff.referralCode}</Badge>
                           </TableCell>
                           <TableCell className="px-4 py-3 text-center">
-                            <Badge variant="secondary" className="font-medium">{aff._count?.tenants || 0} Sekolah</Badge>
+                            <Badge variant="secondary" className="font-medium">{aff._count?.tenantApplications || 0} Sekolah</Badge>
                           </TableCell>
                           <TableCell className="px-4 py-3 text-right font-bold text-emerald-600">Rp {aff.balance.toLocaleString('id-ID')}</TableCell>
                           <TableCell className="px-4 py-3 text-right">
