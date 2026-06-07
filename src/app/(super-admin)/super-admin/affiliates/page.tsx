@@ -218,6 +218,7 @@ export default function SuperAdminAffiliatesPage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
