@@ -54,17 +54,52 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         {/* Map Section */}
         {tenant.address && (
-          <div className="mb-12 w-full h-[400px] rounded-2xl overflow-hidden border bg-muted shadow-sm">
-            <iframe
-              title="Lokasi Sekolah"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://maps.google.com/maps?q=${encodeURIComponent((tenant.name || "") + " " + (tenant.address || ""))}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-            />
+          <div className="mb-12 relative w-full h-[400px] rounded-2xl overflow-hidden border bg-muted shadow-sm group">
+            {(() => {
+              const mapUrl = tenant.settings?.mapUrl;
+              // Jika admin memasukkan iframe embed code lengkap
+              if (mapUrl && mapUrl.includes("<iframe") && mapUrl.includes("src=")) {
+                const match = mapUrl.match(/src="([^"]+)"/);
+                if (match && match[1]) {
+                  return (
+                    <iframe
+                      title="Lokasi Sekolah"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                      src={match[1]}
+                    />
+                  )
+                }
+              }
+              // Default fallback: pencarian nama + alamat
+              return (
+                <>
+                  <iframe
+                    title="Lokasi Sekolah"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent((tenant.name || "") + " " + (tenant.address || ""))}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                  />
+                  {/* Jika admin memasukkan link google maps (short link/dll) */}
+                  {mapUrl && mapUrl.startsWith("http") && !mapUrl.includes("<iframe") && (
+                    <div className="absolute bottom-4 left-4 z-10 transition-transform duration-300 group-hover:-translate-y-1">
+                      <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white text-slate-800 px-4 py-2.5 rounded-xl shadow-lg border hover:bg-slate-50 font-medium text-sm transition-colors">
+                        <MapPin className="h-4 w-4 text-primary" />
+                        Buka di Google Maps
+                      </a>
+                    </div>
+                  )}
+                </>
+              )
+            })()}
           </div>
         )}
 
