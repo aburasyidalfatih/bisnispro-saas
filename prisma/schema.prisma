@@ -709,6 +709,7 @@ model Alumni {
   testimonial     String?
   imageUrl        String?
   sortOrder       Int      @default(0)
+  isApproved      Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)

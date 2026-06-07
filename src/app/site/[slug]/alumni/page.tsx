@@ -5,6 +5,7 @@ import { getTenantLayoutData, getTenantAlumni } from "@/features/tenant/services
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn, normalizeImageUrl } from "@/lib/utils"
+import { AlumniSubmissionForm } from "./_components/alumni-submission-form"
 
 export const revalidate = 60;
 
@@ -71,9 +72,12 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
                <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-white">
                   <Quote className="h-6 w-6" />
                </div>
-               <div>
-                  <h2 className="text-3xl font-bold">Apa Kata Mereka?</h2>
-                  <p className="text-muted-foreground">Testimoni tulus dari para alumni tentang perjalanan mereka.</p>
+               <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                 <div>
+                    <h2 className="text-3xl font-bold">Apa Kata Mereka?</h2>
+                    <p className="text-muted-foreground">Testimoni tulus dari para alumni tentang perjalanan mereka.</p>
+                 </div>
+                 <AlumniSubmissionForm tenantId={tenant.id} />
                </div>
             </div>
 
@@ -109,7 +113,7 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
                     <div className="mt-8 relative">
                        <Quote className="absolute -top-4 -left-2 h-12 w-12 text-primary/5 -z-10" />
                        <p className="text-lg text-slate-700 leading-relaxed italic relative z-10">
-                         "{item.testimonial || "Pendidikan di sekolah ini bukan hanya tentang nilai di atas kertas, tapi tentang bagaimana menjadi manusia yang bermanfaat dan memiliki integritas tinggi. Saya bangga menjadi bagian dari keluarga besar ini."}"
+                         "{item.testimonial}"
                        </p>
                     </div>
 
@@ -140,10 +144,11 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
 
           {/* Right Column: Alumni Success Grid (Sidebar style) */}
           <div className="space-y-12">
-            <div>
-               <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                  <GraduationCap className="h-6 w-6 text-primary" /> Alumni Berjaya
-               </h3>
+            {alumni.length > 0 && (
+              <div>
+                 <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <GraduationCap className="h-6 w-6 text-primary" /> Alumni Berjaya
+                 </h3>
                <div className="grid gap-4">
                   {alumni.slice(0, 4).map((item: any) => (
                     <div key={item.id} className="p-4 bg-muted/30 rounded-2xl border border-transparent hover:border-primary/20 hover:bg-white transition-all">
@@ -162,7 +167,8 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
                     </div>
                   ))}
                </div>
-            </div>
+              </div>
+            )}
 
             <div className="bg-primary/5 rounded-[2.5rem] p-8 border border-primary/10">
                <Heart className="h-10 w-10 text-primary mb-6" />

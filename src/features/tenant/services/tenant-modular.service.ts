@@ -75,7 +75,7 @@ export const getTenantHomeData = async (slug: string) => {
             select: { staff: true, programs: true, achievements: true }
           },
           staff: { orderBy: { sortOrder: 'asc' }, take: 100 },
-          alumni: { orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
+          alumni: { where: { isApproved: true }, orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
           programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 10 },
           extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
           facilities: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
@@ -104,7 +104,7 @@ export const getTenantAlumni = async (slug: string) => {
         where: { slug },
         select: {
           id: true,
-          alumni: { orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }] },
+          alumni: { where: { isApproved: true }, orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }] },
         }
       })
     },

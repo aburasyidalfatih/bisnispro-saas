@@ -6,10 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/comp
 import { Button } from"@/components/ui/button"
 import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 import { toast } from"@/hooks/use-toast"
-import { Plus, Trash2, Edit, GraduationCap, Quote, User, GripVertical, Eye } from"lucide-react"
+import { Plus, Trash2, Edit, GraduationCap, Quote, User, GripVertical, Eye, CheckCircle2, XCircle } from"lucide-react"
 import Link from"next/link"
 import Image from"next/image"
-import { getAlumni, deleteAlumni, updateAlumniOrder } from"@/features/alumni/actions/alumni.action"
+import { getAlumni, deleteAlumni, updateAlumniOrder, toggleAlumniApproval } from"@/features/alumni/actions/alumni.action"
 import { cn, normalizeImageUrl } from"@/lib/utils"
 
 interface Alumni {
@@ -20,6 +20,7 @@ interface Alumni {
   institutionName?: string | null
   testimonial?: string | null
   imageUrl?: string | null
+  isApproved?: boolean
 }
 
 export default function AlumniPage() {
@@ -58,6 +59,17 @@ export default function AlumniPage() {
       loadData()
     } catch (err: any) {
       toast({ title:"Gagal", description: err.message, variant:"destructive" })
+    }
+  }
+
+  const handleToggleApproval = async (id: string, currentStatus: boolean) => {
+    if (!tenantId) return
+    try {
+      await toggleAlumniApproval(id, tenantId, !currentStatus)
+      toast({ title: !currentStatus ? "Testimoni disetujui" : "Testimoni disembunyikan" })
+      loadData()
+    } catch (err: any) {
+      toast({ title: "Gagal", description: err.message, variant: "destructive" })
     }
   }
 
@@ -167,6 +179,15 @@ export default function AlumniPage() {
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="font-bold text-sm truncate">{alumni.name}</h3>
                         <div className="flex gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => handleToggleApproval(alumni.id, alumni.isApproved ?? true)}
+                            className={cn("h-7 w-7 rounded-md", alumni.isApproved !== false ? "text-green-600 hover:text-green-700 bg-green-50" : "text-amber-600 hover:text-amber-700 bg-amber-50")}
+                            title={alumni.isApproved !== false ? "Sembunyikan dari Publik" : "Tampilkan ke Publik"}
+                          >
+                            {alumni.isApproved !== false ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
+                          </Button>
                           <Button asChild variant="ghost" size="icon" className="h-7 w-7 rounded-md text-muted-foreground hover:text-blue-600" title="Lihat di website">
                             <a href={`/alumni`} target="_blank" rel="noopener noreferrer">
                               <Eye className="h-3.5 w-3.5" />
@@ -192,6 +213,11 @@ export default function AlumniPage() {
                       </div>
                       <p className="text-[10px] text-muted-foreground font-medium">Lulusan Tahun {alumni.graduationYear}</p>
                       <div className="mt-1.5 flex flex-wrap gap-1">
+                        {alumni.isApproved === false && (
+                          <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-bold text-amber-700">
+                            Menunggu Persetujuan
+                          </span>
+                        )}
                         <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold text-primary">
                           {getStatusLabel(alumni.currentStatus)}
                         </span>
