@@ -193,15 +193,15 @@ export default function WebsiteGalleryPage() {
               </div>
               <CardTitle className="text-base">Tambah Foto</CardTitle>
             </div>
-            <div className="flex rounded-lg border overflow-hidden text-xs">
-              <Button onClick={() => setAddMode("upload")}
-                className={cn("px-3 py-1.5 transition-colors", addMode ==="upload" ?"bg-primary text-white" :"hover:bg-muted")}>
+            <div className="flex rounded-lg bg-muted p-1 text-xs">
+              <button onClick={() => setAddMode("upload")}
+                className={cn("flex items-center justify-center rounded-md px-3 py-1.5 font-medium transition-all", addMode ==="upload" ?"bg-background text-foreground shadow-sm" :"text-muted-foreground hover:text-foreground")}>
                 Upload File
-              </Button>
-              <Button onClick={() => setAddMode("url")}
-                className={cn("px-3 py-1.5 transition-colors", addMode ==="url" ?"bg-primary text-white" :"hover:bg-muted")}>
-                Video YouTube / URL
-              </Button>
+              </button>
+              <button onClick={() => setAddMode("url")}
+                className={cn("flex items-center justify-center rounded-md px-3 py-1.5 font-medium transition-all", addMode ==="url" ?"bg-background text-foreground shadow-sm" :"text-muted-foreground hover:text-foreground")}>
+                Video YouTube
+              </button>
             </div>
           </div>
         </CardHeader>
