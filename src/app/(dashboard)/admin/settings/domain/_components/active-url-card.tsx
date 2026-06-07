@@ -60,7 +60,7 @@ export function ActiveUrlCard({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 rounded-full px-2.5 py-1 font-bold flex items-center gap-1.5">
+            <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full px-2.5 py-1 font-bold flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               AKTIF
             </span>
@@ -127,7 +127,7 @@ export function ActiveUrlCard({
           </div>
 
           {data?.hasChangedSubdomain && (
-            <div className="flex items-start gap-2 text-amber-600 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
+            <div className="flex items-start gap-2 text-amber-600 dark:text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <p className="text-xs font-medium">Anda sudah pernah mengganti subdomain. Batas pergantian telah habis.</p>
             </div>
@@ -144,7 +144,7 @@ export function ActiveUrlCard({
             <div className="flex items-center gap-3">
               <div
                 className={cn("flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm",
-                  isVerified ?"bg-emerald-500/10 text-emerald-600" :"bg-amber-500/10 text-amber-600"
+                  isVerified ?"bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :"bg-amber-500/10 text-amber-600 dark:text-amber-400"
                 )}
               >
                 {isVerified ? (
@@ -164,7 +164,7 @@ export function ActiveUrlCard({
               <div className="flex flex-col items-end gap-1">
                 <StatusBadge status={customDomain.status} />
                 {isVerified && (
-                  <span className="text-[9px] bg-emerald-500/10 text-emerald-600 font-bold px-1.5 py-0.5 rounded uppercase">Aktif</span>
+                  <span className="text-[9px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold px-1.5 py-0.5 rounded uppercase">Aktif</span>
                 )}
               </div>
               {isVerified && (
