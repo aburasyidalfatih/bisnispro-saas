@@ -59,12 +59,18 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
               >
                 {/* Image & Badge */}
                 <div className="relative aspect-[4/3] overflow-hidden">
-                  <OptimizedImage
-                    src={item.imageUrl || "https://images.unsplash.com/photo-1578574515318-de1f8553dae0?q=80&w=2070"}
-                    alt={item.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+                  {(!item.imageUrl || item.imageUrl.trim() === "" || item.imageUrl === "null") ? (
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
+                      <Trophy className="h-20 w-20 text-white/20" />
+                    </div>
+                  ) : (
+                    <OptimizedImage
+                      src={item.imageUrl}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  )}
                   <div className="absolute top-4 left-4 bg-primary text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
                     {item.level || "NASIONAL"}
                   </div>
