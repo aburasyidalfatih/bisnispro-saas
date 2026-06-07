@@ -52,10 +52,24 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
       finalEmbedUrl = mapUrl;
     } else if (mapUrl.startsWith("http")) {
       try {
-        const res = await fetch(mapUrl, { redirect: "follow", headers: { "User-Agent": "Mozilla/5.0" }, next: { revalidate: 86400 } });
-        const coordsMatch = res.url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-        if (coordsMatch) {
-          finalEmbedUrl = `https://maps.google.com/maps?q=${coordsMatch[1]},${coordsMatch[2]}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        const res = await fetch(mapUrl, { redirect: "manual", headers: { "User-Agent": "Mozilla/5.0" }, next: { revalidate: 86400 } });
+        const finalUrl = res.headers.get("location") || res.url;
+        
+        let lat, lng;
+        const exactMatch = finalUrl.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+        if (exactMatch) {
+          lat = exactMatch[1];
+          lng = exactMatch[2];
+        } else {
+          const coordsMatch = finalUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+          if (coordsMatch) {
+            lat = coordsMatch[1];
+            lng = coordsMatch[2];
+          }
+        }
+        
+        if (lat && lng) {
+          finalEmbedUrl = `https://maps.google.com/maps?q=${lat},${lng}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
         }
       } catch (e) {
         console.error("Map resolution failed", e);
