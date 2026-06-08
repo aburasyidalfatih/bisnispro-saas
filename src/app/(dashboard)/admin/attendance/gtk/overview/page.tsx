@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Users, CalendarCheck, CheckCircle, XCircle, Clock,
   Minus, Loader2, MapPin, LogIn, LogOut, Search, Edit2,
-  Download, TrendingUp, Filter, Calendar, ChevronLeft, ChevronRight, X, User as UserIcon, Settings
+  Download, TrendingUp, Filter, Calendar, ChevronLeft, ChevronRight, X, User as UserIcon, Settings, FileText
 } from "lucide-react"
 import { format, startOfMonth, endOfMonth, subMonths, addMonths, subDays, addDays } from "date-fns"
 import { id as localeId } from "date-fns/locale"
@@ -487,7 +487,7 @@ export default function AdminGTKAttendancePage() {
         {[
           { id: "overview", label: "Overview", icon: TrendingUp, href: "/admin/attendance/gtk/overview" },
           { id: "presence", label: "Presensi Harian", icon: CalendarCheck, href: "/admin/attendance/gtk/presence" },
-          { id: "permits", label: "Riwayat Log", icon: Clock, href: "/admin/attendance/gtk/permits" },
+          { id: "permits", label: "Perizinan", icon: FileText, href: "/admin/attendance/gtk/permits" },
           { id: "settings", label: "Pengaturan", icon: Settings, href: "/admin/attendance/gtk/settings" },
         ].map((tab) => {
           const Icon = tab.icon

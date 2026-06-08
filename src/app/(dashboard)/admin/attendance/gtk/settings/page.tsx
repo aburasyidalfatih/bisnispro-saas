@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Clock, MapPin, Loader2, Save, TrendingUp, CalendarCheck, Settings } from "lucide-react"
+import { Clock, MapPin, Loader2, Save, TrendingUp, CalendarCheck, Settings, FileText } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -103,7 +103,7 @@ export default function GtkAttendanceSettingsPage() {
         {[
           { id: "overview", label: "Overview", icon: TrendingUp, href: "/admin/attendance/gtk/overview" },
           { id: "presence", label: "Presensi Harian", icon: CalendarCheck, href: "/admin/attendance/gtk/presence" },
-          { id: "permits", label: "Riwayat Log", icon: Clock, href: "/admin/attendance/gtk/permits" },
+          { id: "permits", label: "Perizinan", icon: FileText, href: "/admin/attendance/gtk/permits" },
           { id: "settings", label: "Pengaturan", icon: Settings, href: "/admin/attendance/gtk/settings" },
         ].map((tab) => {
           const Icon = tab.icon
