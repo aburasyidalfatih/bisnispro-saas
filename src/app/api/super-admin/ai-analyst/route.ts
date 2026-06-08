@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   
   // Strict Super Admin Check
   if (!session?.user?.id || !session.user.isSuperAdmin) {
-    return NextResponse.json({ error: "Unauthorized. Super Admin access only." }, { status: 401 })
+    return new Response("Unauthorized. Super Admin access only.", { status: 401 })
   }
 
   try {
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     // Get specialized AI Agent Model for Text-to-SQL
     const modelResult = await getAiAgentModel()
     if (!modelResult.success || !modelResult.model) {
-      return NextResponse.json({ error: "Gagal memuat model AI Agent. Periksa pengaturan API Key." }, { status: 500 })
+      return new Response(modelResult.error || "Gagal memuat model AI Agent. Periksa pengaturan API Key.", { status: 500 })
     }
 
     // Read Prisma Schema for context
@@ -138,6 +138,6 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
     return result.toTextStreamResponse()
   } catch (error: any) {
     console.error("AI Analyst Error:", error)
-    return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 })
+    return new Response(error.message || "Terjadi kesalahan server", { status: 500 })
   }
 }
