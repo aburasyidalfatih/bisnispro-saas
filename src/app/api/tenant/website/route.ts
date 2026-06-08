@@ -50,6 +50,33 @@ export async function GET(req: Request) {
   try {
     const { getWebsiteData } = await import("@/features/tenant/services/tenant-management.service")
     const tenant = await getWebsiteData(tenantId)
+
+    // SANITASI DATA: Cek apakah user adalah admin/owner
+    let isPrivileged = session.user.isSuperAdmin === true;
+    if (!isPrivileged && session.user.tenants) {
+      const currentTenant = session.user.tenants.find((t: any) => t.id === tenantId)
+      if (currentTenant && ["owner", "admin"].includes(currentTenant.role)) {
+        isPrivileged = true
+      }
+    }
+
+    if (!isPrivileged && tenant) {
+      // Hapus secrets dari root model
+      if ('googleClientSecret' in tenant) delete tenant.googleClientSecret;
+      
+      // Sanitasi settings jika ada
+      if (tenant.settings && typeof tenant.settings === 'object') {
+        const settings = tenant.settings as any;
+        // Hapus kredensial SMTP
+        if (settings.smtp) delete settings.smtp;
+        
+        // Hapus kunci rahasia lainnya agar tidak terekspos ke publik / network tab
+        delete settings.whatsappToken;
+        delete settings.waGateway;
+        delete settings.paymentGatewaySecret;
+      }
+    }
+
     return NextResponse.json(tenant)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Tenant tidak ditemukan" }, { status: 404 })
