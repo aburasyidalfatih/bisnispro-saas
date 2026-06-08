@@ -71,24 +71,14 @@ export function GtkTokenManager({
             <div className="bg-amber-500/20 p-1.5 rounded-lg">
               <Coins className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
-            Informasi Token Anda
+            Token AI Anda
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-5 relative z-10">
           <div className="text-4xl font-black tracking-tight mb-1 flex items-center gap-2 text-amber-600 dark:text-amber-400">
-            {totalTokens.toLocaleString("id-ID")}
+            {userTokens.toLocaleString("id-ID")}
           </div>
-          <div className="space-y-2 mt-5 max-w-sm">
-            <div className="flex justify-between items-center text-sm p-2 bg-white/50 dark:bg-black/20 rounded-xl">
-              <span className="text-muted-foreground font-medium">Token Pribadi</span>
-              <span className="font-bold text-amber-600 dark:text-amber-400">{userTokens.toLocaleString("id-ID")}</span>
-            </div>
-            <div className="flex justify-between items-center text-sm p-2 bg-white/50 dark:bg-black/20 rounded-xl">
-              <span className="text-muted-foreground font-medium">Token Sekolah</span>
-              <span className="font-bold text-primary">{tenantTokens.toLocaleString("id-ID")}</span>
-            </div>
-          </div>
-          {totalTokens < 1000 && (
+          {userTokens < 1000 && (
             <div className="mt-4 p-3 max-w-sm bg-red-500/10 text-red-700 dark:text-red-400 rounded-xl text-xs font-semibold border border-red-500/20 flex gap-2 items-start">
               <Sparkles className="h-4 w-4 shrink-0 mt-0.5" />
               <span>Sisa token menipis. Top-up segera agar AI tetap bisa membantu tugas Anda.</span>
