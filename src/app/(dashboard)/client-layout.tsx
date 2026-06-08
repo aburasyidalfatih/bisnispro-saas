@@ -86,7 +86,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           if (pa.laporan) allowedPaths.push("/admin/reports")
           if (pa.donasi) allowedPaths.push("/admin/donation")
           if (pa.akademik) allowedPaths.push("/admin/schedules", "/admin/grades", "/admin/discipline")
-          if (pa.kehadiran) allowedPaths.push("/admin/attendance")
+          if (pa.kehadiran_guru) allowedPaths.push("/admin/attendance/gtk")
+          if (pa.kehadiran_siswa) allowedPaths.push("/admin/attendance", "/admin/attendance/students", "/admin/attendance/sessions", "/admin/attendance/permits")
 
           const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(`${p}/`))
           

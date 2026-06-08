@@ -152,6 +152,7 @@ export function PlanCards({
               <>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Custom Domain</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Broadcast WhatsApp</span></div>
+                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Kehadiran Guru (GTK)</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Semua fitur Free</span></div>
               </>
             )}
@@ -255,7 +256,7 @@ export function PlanCards({
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Semua fitur Lite</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Akademik & E-Rapor</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Keuangan & E-Kantin</span></div>
-                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Kehadiran & Donasi</span></div>
+                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Absensi Siswa & Donasi</span></div>
               </>
             )}
           </div>

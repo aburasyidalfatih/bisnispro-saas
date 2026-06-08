@@ -167,16 +167,22 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             ],
           }
         ] : []),
-        ...(has("kehadiran") ? [
+        ...((has("kehadiran_guru") || has("kehadiran_siswa")) ? [
           {
             label: "Kehadiran",
-            href: `${basePath}/attendance`,
+            href: has("kehadiran_siswa") ? `${basePath}/attendance` : `${basePath}/attendance/gtk`,
             icon: CalendarCheck,
             children: [
-              { label: "Overview Presensi", href: `${basePath}/attendance`, icon: LayoutDashboard },
-              { label: "Absensi Siswa", href: `${basePath}/attendance/students`, icon: GraduationCap },
-              { label: "Absensi Guru (GTK)", href: `${basePath}/attendance/gtk`, icon: Users },
-              { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
+              ...(has("kehadiran_siswa") ? [
+                { label: "Overview Presensi", href: `${basePath}/attendance`, icon: LayoutDashboard },
+                { label: "Absensi Siswa", href: `${basePath}/attendance/students`, icon: GraduationCap },
+              ] : []),
+              ...(has("kehadiran_guru") ? [
+                { label: "Absensi Guru (GTK)", href: `${basePath}/attendance/gtk`, icon: Users },
+              ] : []),
+              ...(has("kehadiran_siswa") ? [
+                { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
+              ] : []),
             ],
           }
         ] : []),

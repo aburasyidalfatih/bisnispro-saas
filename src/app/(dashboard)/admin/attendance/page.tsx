@@ -10,8 +10,30 @@ import { id } from"date-fns/locale"
 export default async function AttendanceOverviewPage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
-  const tenantId = session.user.tenants?.[0]?.id
+  const tenant = session.user.tenants?.[0]
+  const tenantId = tenant?.id
   if (!tenantId) redirect("/admin")
+
+  // Check plan feature access
+  const plan = tenant?.plan || "free"
+  const setting = await db.platformSetting.findUnique({
+    where: { key: "PLAN_FEATURE_ACCESS" }
+  })
+  const allPlans = setting?.value ? JSON.parse(setting.value) : {}
+  const planAccess = allPlans[plan] || {}
+
+  const hasTeacher = !!planAccess.kehadiran_guru
+  const hasStudent = !!planAccess.kehadiran_siswa
+
+  if (hasTeacher && !hasStudent) {
+    redirect("/admin/attendance/gtk")
+  }
+  if (!hasTeacher && hasStudent) {
+    redirect("/admin/attendance/students")
+  }
+  if (!hasTeacher && !hasStudent) {
+    redirect("/admin")
+  }
 
   const todayStr = format(new Date(),"yyyy-MM-dd")
 

@@ -32,7 +32,8 @@ const FEATURE_LIST: FeatureItem[] = [
   { key: "data_master", label: "Data Master", description: "Data admin, guru, siswa, orang tua, kelas, dan mata pelajaran.", icon: Users, category: "Data & Manajemen" },
   { key: "ppdb", label: "PPDB Online", description: "Penerimaan peserta didik baru secara online.", icon: UserPlus, category: "Data & Manajemen" },
   { key: "akademik", label: "Akademik", description: "Jadwal pelajaran, e-rapor, dan catatan perilaku (BK).", icon: GraduationCap, category: "Akademik & Kehadiran" },
-  { key: "kehadiran", label: "Kehadiran", description: "Absensi siswa, guru, dan pengajuan izin.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
+  { key: "kehadiran_guru", label: "Kehadiran Guru (GTK)", description: "Absensi guru, rekap harian/bulanan/tahunan, dan koreksi manual.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
+  { key: "kehadiran_siswa", label: "Kehadiran Siswa", description: "Sesi absensi siswa, jurnal kelas, dan pengajuan izin siswa.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
   
   // Keuangan
   { key: "keuangan", label: "Keuangan & Kas", description: "Tagihan SPP, tabungan, cashflow, dan jenis tagihan.", icon: Wallet, category: "Keuangan" },
