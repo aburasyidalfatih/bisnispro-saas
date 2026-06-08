@@ -470,6 +470,6 @@ export const config = {
      * 3. /static (inside /public)
      * 4. all root files (favicon.ico, sitemap.xml, robots.txt, etc.)
      */
-    "/((?!api|_next|static|[\\w-]+\\.\\w+).*)",
+    "/((?!_next|static|[\\w-]+\\.\\w+).*)",
   ],
 }
