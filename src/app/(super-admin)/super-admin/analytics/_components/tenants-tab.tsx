@@ -12,6 +12,9 @@ import { Loader2 } from "lucide-react"
 export function TenantsTab() {
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [tableSearch, setTableSearch] = useState("")
+  const [sortColumn, setSortColumn] = useState<string>("loginCount")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
   useEffect(() => {
     fetch("/api/super-admin/analytics?tab=tenants")
@@ -30,9 +33,6 @@ export function TenantsTab() {
   }
 
   if (!data || !data.tenantActivity) return <div className="p-8 text-center text-muted-foreground">Gagal memuat data tenants.</div>
-  const [tableSearch, setTableSearch] = useState("")
-  const [sortColumn, setSortColumn] = useState<string>("loginCount")
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
   const handleSort = (col: string) => {
     if (sortColumn === col) {
