@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 
 export default function AiAnalystClient({ initialSessions = [] }: { initialSessions?: any[] }) {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
+  const [showHistoryOnMobile, setShowHistoryOnMobile] = useState(false)
   const router = useRouter()
   
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
@@ -50,6 +51,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
   const startNewChat = () => {
     setActiveSessionId(null)
     setMessages([])
+    setShowHistoryOnMobile(false)
   }
 
   return (
@@ -64,12 +66,20 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
             Asisten C-Level virtual untuk menganalisis data bisnis, omset, dan metrik operasional secara real-time.
           </p>
         </div>
+        <Button 
+          variant="outline" 
+          className="lg:hidden w-full sm:w-auto shadow-sm" 
+          onClick={() => setShowHistoryOnMobile(!showHistoryOnMobile)}
+        >
+          <History className="h-4 w-4 mr-2" />
+          {showHistoryOnMobile ? "Tutup Riwayat" : "Lihat Riwayat"}
+        </Button>
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-250px)] min-h-[500px]">
         {/* Sidebar History */}
-        <div className="lg:col-span-1 space-y-6">
-          <Card className="shadow-sm border-0 glass h-[calc(100vh-220px)] flex flex-col">
+        <div className={`w-full lg:w-1/4 ${showHistoryOnMobile ? 'block' : 'hidden lg:block'} space-y-6 h-full`}>
+          <Card className="shadow-sm border-0 glass h-full flex flex-col">
             <CardHeader className="pb-3 border-b border-border/50">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
@@ -90,7 +100,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                     initialSessions.map((s) => (
                       <Button 
                         key={s.id} 
-                        onClick={() => loadSession(s)}
+                        onClick={() => { loadSession(s); setShowHistoryOnMobile(false); }}
                         variant="ghost"
                         className={`w-full justify-start text-left p-3 hover:bg-muted/50 rounded-none h-auto transition-colors text-sm ${activeSessionId === s.id ? 'bg-primary/5 border-l-2 border-primary' : ''}`}
                       >
@@ -110,8 +120,8 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
         </div>
 
         {/* Chat Area */}
-        <div className="lg:col-span-3">
-          <Card className="border shadow-sm bg-background/50 backdrop-blur-xl h-[calc(100vh-220px)] flex flex-col overflow-hidden relative">
+        <div className={`w-full lg:w-3/4 ${showHistoryOnMobile ? 'hidden lg:block' : 'block'} h-full`}>
+          <Card className="border shadow-sm bg-background/50 backdrop-blur-xl h-full flex flex-col overflow-hidden relative">
             {/* Top decorative gradient */}
             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary/40 via-primary to-primary/40"></div>
             
@@ -153,13 +163,13 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8 text-left">
                         <div 
                           className="text-xs bg-background/60 backdrop-blur-sm p-4 rounded-2xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all border shadow-sm group flex flex-col gap-2"
-                          onClick={() => handleInputChange({ target: { value: "Tolong hitung perkiraan MRR dari tenant yang berstatus AKTIF saat ini." } } as any)}
+                          onClick={() => handleInputChange({ target: { value: "Tolong hitung perkiraan pendapatan dari tenant yang berstatus AKTIF saat ini." } } as any)}
                         >
                           <div className="flex items-center gap-2 text-foreground font-medium">
-                            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors">💰</div>
+                            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors"><Sparkles className="h-4 w-4" /></div>
                             Keuangan
                           </div>
-                          <span className="text-muted-foreground leading-snug">"Tolong hitung perkiraan MRR dari tenant yang berstatus AKTIF saat ini."</span>
+                          <span className="text-muted-foreground leading-snug">"Tolong hitung perkiraan pendapatan dari tenant yang berstatus AKTIF saat ini."</span>
                         </div>
 
                         <div 
@@ -167,7 +177,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                           onClick={() => handleInputChange({ target: { value: "Ada berapa tenant yang mendaftar bulan ini tapi belum membayar tagihan?" } } as any)}
                         >
                           <div className="flex items-center gap-2 text-foreground font-medium">
-                            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">🏢</div>
+                            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors"><Building2 className="h-4 w-4" /></div>
                             Tenant & Sekolah
                           </div>
                           <span className="text-muted-foreground leading-snug">"Berapa tenant yang mendaftar bulan ini tapi belum bayar tagihan?"</span>
@@ -175,13 +185,13 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
 
                         <div 
                           className="text-xs bg-background/60 backdrop-blur-sm p-4 rounded-2xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all border shadow-sm group flex flex-col gap-2 sm:col-span-2"
-                          onClick={() => handleInputChange({ target: { value: "Tampilkan jam berapa traffic halaman paling ramai kemarin beserta jumlah PageView-nya." } } as any)}
+                          onClick={() => handleInputChange({ target: { value: "Tampilkan jam berapa traffic sistem paling ramai kemarin berdasarkan data." } } as any)}
                         >
                           <div className="flex items-center gap-2 text-foreground font-medium">
-                            <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors">📈</div>
+                            <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors"><History className="h-4 w-4" /></div>
                             Analitik Sistem
                           </div>
-                          <span className="text-muted-foreground leading-snug">"Tampilkan jam berapa traffic halaman paling ramai kemarin beserta jumlah PageView-nya."</span>
+                          <span className="text-muted-foreground leading-snug">"Tampilkan jam berapa traffic sistem paling ramai kemarin berdasarkan data."</span>
                         </div>
                       </div>
                     </div>
@@ -197,34 +207,39 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                           </div>
                           <div className={`p-4 rounded-2xl text-sm leading-relaxed overflow-hidden ${m.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-muted/50 rounded-tl-sm border border-border/50'}`}>
                             {m.content && (
-                              <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-muted prose-pre:border prose-pre:text-foreground prose-a:text-primary">
-                                <ReactMarkdown>{m.content}</ReactMarkdown>
+                              <div className="overflow-x-auto max-w-full">
+                                <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-muted prose-pre:border prose-pre:text-foreground prose-a:text-primary prose-table:min-w-full prose-td:px-3 prose-td:py-2 prose-th:px-3 prose-th:py-2 prose-th:bg-muted/50">
+                                  <ReactMarkdown>{m.content}</ReactMarkdown>
+                                </div>
                               </div>
                             )}
                             
                             {/* Display tool invocations */}
                             {m.toolInvocations?.map((toolInvocation) => (
-                              <div key={toolInvocation.toolCallId} className={cn("p-3 bg-background border rounded-xl text-xs flex flex-col gap-2 shadow-sm", m.content ? "mt-4" : "mt-1")}>
-                                <div className="flex items-center gap-2 font-medium">
+                              <div key={toolInvocation.toolCallId} className={cn("mt-4 p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono w-full overflow-hidden")}>
+                                <div className="flex items-center gap-2.5">
                                   {toolInvocation.state === 'result' ? (
-                                    <div className="h-5 w-5 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                                      <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                                    <div className="h-5 w-5 rounded-md bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shrink-0">
+                                      <CheckCircle2 className="h-3 w-3 text-emerald-400" />
                                     </div>
                                   ) : (
-                                    <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center">
-                                      <Loader2 className="h-3 w-3 text-primary animate-spin" />
+                                    <div className="h-5 w-5 rounded-md bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shrink-0">
+                                      <Loader2 className="h-3 w-3 text-blue-400 animate-spin" />
                                     </div>
                                   )}
-                                  <span className={toolInvocation.state === 'result' ? 'text-foreground' : 'text-primary animate-pulse'}>
-                                    {toolInvocation.state === 'result' ? 'Selesai menganalisis database' : 'Sedang mencari data dari database...'}
+                                  <span className={toolInvocation.state === 'result' ? 'text-[#8B949E]' : 'text-blue-400 animate-pulse'}>
+                                    {toolInvocation.state === 'result' ? '> execution_completed' : '> executing_postgres_query...'}
                                   </span>
                                 </div>
                                 
                                 {toolInvocation.state === 'result' && toolInvocation.result?.results && (
-                                  <div className="bg-muted/50 border border-border/50 p-2 rounded-lg text-[10px] text-muted-foreground flex items-center gap-2 ml-7">
-                                    <Database className="h-3 w-3" />
-                                    Berhasil menarik {Array.isArray(toolInvocation.result.results) ? toolInvocation.result.results.length : 1} baris data
-                                    {toolInvocation.result.note && ` (${toolInvocation.result.note})`}
+                                  <div className="bg-[#161B22] border border-[#30363D] p-3 rounded-lg text-[11px] text-[#8B949E] flex items-start gap-2.5 ml-7">
+                                    <Database className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#8B949E]" />
+                                    <div>
+                                      <div className="font-semibold text-[#C9D1D9] mb-1">DATA_RETRIEVED_SUCCESSFULLY</div>
+                                      Total records: <span className="text-emerald-400 font-bold">{Array.isArray(toolInvocation.result.results) ? toolInvocation.result.results.length : 1}</span> rows
+                                      {toolInvocation.result.note && ` | Warning: ${toolInvocation.result.note}`}
+                                    </div>
                                   </div>
                                 )}
                               </div>
