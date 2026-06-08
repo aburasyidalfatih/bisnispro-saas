@@ -35,7 +35,7 @@ const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> =
 
 export default function GTKAttendancePage() {
   const { data: session } = useSession()
-  const { toast } = useToast()
+  const { toast, dismiss } = useToast()
   const tenant = session?.user?.tenants?.[0]
 
   const [staff, setStaff] = useState<any>(null)
@@ -204,11 +204,13 @@ export default function GTKAttendancePage() {
     setGeoState("loading")
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        dismiss() // Clear any lingering error toasts
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude })
         setLocationName(`${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`)
         setGeoState("success")
       },
       (err) => {
+        dismiss()
         setGeoState("error")
         toast({ title: "Gagal mendapatkan lokasi", description: err.message, variant: "destructive" })
       },
