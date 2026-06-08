@@ -290,7 +290,13 @@ export async function deleteFile(filePath: string): Promise<{ success: boolean; 
       return { success: true }
     }
 
-    const resolvedPath = path.resolve(filePath)
+    // Normalisasi input untuk membuang anomali path lokal atau null byte
+    const safeFilePath = path.normalize(filePath).replace(/\0/g, "");
+    if (safeFilePath.includes("..")) {
+       return { success: false, error: "Format path tidak diizinkan" }
+    }
+
+    const resolvedPath = path.resolve(safeFilePath)
     const resolvedBase = path.resolve(UPLOAD_DIR)
     if (!resolvedPath.startsWith(resolvedBase)) {
       return { success: false, error: "Cannot delete file outside upload directory" }

@@ -31,15 +31,17 @@ export async function GET(
   const { path: segments } = await params
 
   // Sanitasi setiap segment — tolak path traversal
-  // Izinkan: huruf, angka, titik, strip, underscore
-  const sanitized = segments.map((s) => s.replace(/[^a-zA-Z0-9._-]/g, ""))
+  // Izinkan: huruf, angka, titik, strip, underscore, spasi
+  const sanitized = segments.map((s) => s.replace(/[^a-zA-Z0-9._-\s]/g, ""))
   // Tolak jika ada segment yang berubah setelah sanitasi (ada karakter berbahaya)
   if (sanitized.some((s, i) => s !== segments[i])) {
     return NextResponse.json({ error: "Invalid path" }, { status: 400 })
   }
-  // Tolak path traversal eksplisit
-  if (sanitized.some((s) => s === ".." || s === ".")) {
-    return NextResponse.json({ error: "Invalid path" }, { status: 400 })
+
+  // Rekonstruksi path dan bersihkan dari upaya traversal lokal
+  const requestedPath = path.normalize(path.join(...sanitized))
+  if (requestedPath.includes("..") || requestedPath.startsWith("\0")) {
+    return NextResponse.json({ error: "Invalid path format" }, { status: 400 })
   }
 
   const filePath = path.join(UPLOAD_DIR, ...sanitized)

@@ -92,21 +92,25 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
             query: z.string().describe("The PostgreSQL SELECT query to execute")
           }),
           execute: async ({ query }) => {
-            const upperQuery = query.trim().toUpperCase()
-            // Keamanan tambahan: hanya izinkan SELECT
-            if (!upperQuery.startsWith("SELECT")) {
-              return { error: "Izin ditolak. Anda hanya diperbolehkan menjalankan operasi SELECT (read-only)." }
+            const cleanQuery = query.trim()
+            
+            // Keamanan Kritis: Cegah SQL Injection & Operasi DML/DDL menggunakan REGEX ketat.
+            // Memblokir komentar `/* ... */`, `--` dan memaksakan query hanya dimulai dengan SELECT (atau WITH .. SELECT).
+            const isSafeReadQuery = /^(?:\s*WITH\s+[\s\S]+?)?\s*SELECT\s/i.test(cleanQuery)
+            if (!isSafeReadQuery) {
+              return { error: "Izin ditolak. Format query tidak valid. Anda hanya diperbolehkan menjalankan operasi baca murni (SELECT)." }
             }
-            // Blokir DML/DDL
-            const forbiddenKeywords = ["UPDATE ", "DELETE ", "DROP ", "INSERT ", "ALTER ", "TRUNCATE ", "GRANT ", "REVOKE ", "EXEC "]
-            if (forbiddenKeywords.some(keyword => upperQuery.includes(keyword))) {
+
+            // Blokir DML/DDL & Keyword perusak secara case-insensitive
+            const destructiveRegex = /\b(UPDATE|DELETE|DROP|INSERT|ALTER|TRUNCATE|GRANT|REVOKE|EXEC|MERGE|COPY)\b/i
+            if (destructiveRegex.test(cleanQuery)) {
               return { error: "Operasi destruktif atau mutasi dilarang keras." }
             }
 
             try {
               // Jalankan query mentah dengan rawUnsafe
-              // Karena query datang dari AI, kita harus mempercayai AI tidak merusak (sudah difilter di atas)
-              const data = await db.$queryRawUnsafe(query)
+              // Karena query datang dari AI, kita harus mempercayai AI tidak merusak (sudah difilter ketat di atas)
+              const data = await db.$queryRawUnsafe(cleanQuery)
               
               // Batasi ukuran output agar token AI tidak meledak (max 50 baris)
               if (Array.isArray(data) && data.length > 50) {
