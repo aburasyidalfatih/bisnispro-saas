@@ -62,6 +62,8 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
     if (rendered) return rendered
   }
 
+  const tz = (tenant.settings as any)?.timezone || (tenant.settings as any)?.attendance?.timezone || "Asia/Jakarta"
+
   return (
     <div className="bg-background min-h-screen pb-12">
       {/* ── HERO SECTION ── */}
@@ -96,13 +98,13 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
                 
                 <div className="md:w-56 bg-primary/5 group-hover:bg-primary text-primary group-hover:text-white flex flex-col items-center justify-center p-8 text-center transition-colors duration-300">
                    <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-2">
-                      {formatInTimeZone(new Date(event.startDate), 'Asia/Jakarta', 'MMMM', { locale: id })}
+                      {formatInTimeZone(new Date(event.startDate), tz, 'MMMM', { locale: id })}
                    </p>
                    <p className="text-6xl font-black leading-none mb-2">
-                      {formatInTimeZone(new Date(event.startDate), 'Asia/Jakarta', 'dd', { locale: id })}
+                      {formatInTimeZone(new Date(event.startDate), tz, 'dd', { locale: id })}
                    </p>
                    <p className="text-sm font-bold opacity-80">
-                      {formatInTimeZone(new Date(event.startDate), 'Asia/Jakarta', 'yyyy', { locale: id })}
+                      {formatInTimeZone(new Date(event.startDate), tz, 'yyyy', { locale: id })}
                    </p>
                 </div>
                 <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">

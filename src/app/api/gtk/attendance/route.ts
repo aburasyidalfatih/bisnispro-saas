@@ -74,7 +74,7 @@ export async function POST(req: Request) {
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })
   const settings = (tenant?.settings as Record<string, any>) || {}
-  const tz = settings.attendance?.timezone || "Asia/Jakarta"
+  const tz = settings.timezone || settings.attendance?.timezone || "Asia/Jakarta"
 
   const dateStr = new Date().toLocaleDateString("en-CA", { timeZone: tz })
   const today = new Date(`${dateStr}T00:00:00.000Z`)

@@ -85,6 +85,8 @@ export default async function PengumumanPage({
     if (rendered) return rendered
   }
 
+  const tz = (tenant.settings as any)?.timezone || (tenant.settings as any)?.attendance?.timezone || "Asia/Jakarta"
+
   return (
     <div className="bg-background min-h-screen pb-12">
       {/* ── HERO SECTION ── */}
@@ -119,13 +121,13 @@ export default async function PengumumanPage({
                 
                 <div className="md:w-56 bg-blue-500/5 group-hover:bg-blue-600 text-blue-600 group-hover:text-white flex flex-col items-center justify-center p-8 text-center transition-colors duration-300">
                    <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-2">
-                      {formatInTimeZone(new Date(post.createdAt), 'Asia/Jakarta', 'MMMM', { locale: id })}
+                      {formatInTimeZone(new Date(post.createdAt), tz, 'MMMM', { locale: id })}
                    </p>
                    <p className="text-6xl font-black leading-none mb-2">
-                      {formatInTimeZone(new Date(post.createdAt), 'Asia/Jakarta', 'dd', { locale: id })}
+                      {formatInTimeZone(new Date(post.createdAt), tz, 'dd', { locale: id })}
                    </p>
                    <p className="text-sm font-bold opacity-80">
-                      {formatInTimeZone(new Date(post.createdAt), 'Asia/Jakarta', 'yyyy', { locale: id })}
+                      {formatInTimeZone(new Date(post.createdAt), tz, 'yyyy', { locale: id })}
                    </p>
                 </div>
                 <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">

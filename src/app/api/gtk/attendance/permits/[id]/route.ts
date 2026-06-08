@@ -42,7 +42,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       // We use timezone logic similar to the manual attendance
       const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })
       const settings = (tenant?.settings as Record<string, any>) || {}
-      const tz = settings.attendance?.timezone || "Asia/Jakarta"
+      const tz = settings.timezone || settings.attendance?.timezone || "Asia/Jakarta"
 
       const attendanceStatus = permit.type.toUpperCase() // e.g. "SAKIT" or "IZIN"
 

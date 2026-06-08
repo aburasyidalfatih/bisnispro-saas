@@ -8,6 +8,7 @@ import Image from"next/image"
 import { normalizeImageUrl, cn } from"@/lib/utils"
 import { AboutFormState } from"./types"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface IdentityFormProps {
   form: AboutFormState
@@ -91,6 +92,21 @@ export function IdentityForm({
                 <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
               </button>
               <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{slug ||"—"}</span></p>
+            </div>
+
+            <div className="space-y-2 mb-4">
+              <Label>Zona Waktu (Timezone)</Label>
+              <Select value={form.settings?.timezone || "Asia/Jakarta"} onValueChange={v => setForm(p => ({ ...p, settings: { ...p.settings, timezone: v } }))}>
+                <SelectTrigger className="rounded-xl h-10 w-full bg-background border-input">
+                  <SelectValue placeholder="Pilih Zona Waktu" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Asia/Jakarta">WIB (Asia/Jakarta)</SelectItem>
+                  <SelectItem value="Asia/Makassar">WITA (Asia/Makassar)</SelectItem>
+                  <SelectItem value="Asia/Jayapura">WIT (Asia/Jayapura)</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground">Basis waktu untuk keseluruhan website tenan.</p>
             </div>
           </div>
 
