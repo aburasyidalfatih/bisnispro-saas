@@ -17,6 +17,8 @@ export type SettingsForm = {
   GEMINI_MODEL: string;
   OPENROUTER_API_KEY: string;
   OPENROUTER_MODEL: string;
+  AI_AGENT_PROVIDER: string;
+  AI_AGENT_MODEL: string;
   
   // Email
   SMTP_HOST: string;
@@ -175,6 +177,8 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   GEMINI_MODEL: "gemini-1.5-flash",
   OPENROUTER_API_KEY: "",
   OPENROUTER_MODEL: "",
+  AI_AGENT_PROVIDER: "openai",
+  AI_AGENT_MODEL: "gpt-4o",
   
   // Email
   SMTP_HOST: "",

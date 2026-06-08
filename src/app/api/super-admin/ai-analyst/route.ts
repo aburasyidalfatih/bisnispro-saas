@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { streamText, tool } from "ai"
-import { getAiModel } from "@/features/ai/services/ai.service"
+import { getAiAgentModel } from "@/features/ai/services/ai.service"
 import { db } from "@/lib/db"
 import fs from "fs"
 import path from "path"
@@ -13,17 +13,17 @@ export async function POST(req: Request) {
   const session = await auth()
   
   // Strict Super Admin Check
-  if (!session?.user?.id || session.user.role !== "SUPERADMIN") {
+  if (!session?.user?.id || !session.user.isSuperAdmin) {
     return NextResponse.json({ error: "Unauthorized. Super Admin access only." }, { status: 401 })
   }
 
   try {
     const { messages, sessionId } = await req.json()
 
-    // Get AI Model (Pass empty string since Super Admin doesn't belong to a tenant)
-    const modelResult = await getAiModel("")
+    // Get specialized AI Agent Model for Text-to-SQL
+    const modelResult = await getAiAgentModel()
     if (!modelResult.success || !modelResult.model) {
-      return NextResponse.json({ error: "Gagal memuat model AI. Periksa pengaturan API Key." }, { status: 500 })
+      return NextResponse.json({ error: "Gagal memuat model AI Agent. Periksa pengaturan API Key." }, { status: 500 })
     }
 
     // Read Prisma Schema for context

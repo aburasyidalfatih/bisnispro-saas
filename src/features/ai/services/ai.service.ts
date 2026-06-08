@@ -77,6 +77,45 @@ export async function getAiModel(tenantId: string): Promise<AiModelResult> {
   }
 }
 
+export async function getAiAgentModel(): Promise<AiModelResult> {
+  try {
+    // Fetch global AI settings for agent
+    const settings = await db.platformSetting.findMany({
+      where: { key: { in: ["AI_AGENT_PROVIDER", "AI_AGENT_MODEL", "OPENAI_API_KEY", "GEMINI_API_KEY", "OPENROUTER_API_KEY"] } }
+    })
+    
+    const settingsMap: Record<string, string> = {}
+    settings.forEach(s => { settingsMap[s.key] = s.value })
+
+    const aiProvider = settingsMap.AI_AGENT_PROVIDER || "openai"
+    
+    if (aiProvider === "gemini") {
+      const apiKey = settingsMap.GEMINI_API_KEY || process.env.GEMINI_API_KEY
+      if (!apiKey) return { success: false, error: "Gemini API Key not configured." }
+      
+      const provider = createGoogleGenerativeAI({ apiKey })
+      const modelName = settingsMap.AI_AGENT_MODEL || "gemini-1.5-pro"
+      return { success: true, model: provider(modelName) }
+    } else if (aiProvider === "openrouter") {
+      const apiKey = settingsMap.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY
+      if (!apiKey) return { success: false, error: "OpenRouter API Key not configured." }
+      
+      const provider = createOpenRouter({ apiKey })
+      const modelName = settingsMap.AI_AGENT_MODEL || "meta-llama/llama-3-70b-instruct"
+      return { success: true, model: provider(modelName) }
+    } else {
+      const apiKey = settingsMap.OPENAI_API_KEY || process.env.OPENAI_API_KEY
+      if (!apiKey) return { success: false, error: "OpenAI API Key not configured." }
+      
+      const provider = createOpenAI({ apiKey })
+      const modelName = settingsMap.AI_AGENT_MODEL || "gpt-4o"
+      return { success: true, model: provider(modelName) }
+    }
+  } catch (error) {
+    return { success: false, error: "Failed to initialize AI Agent model" }
+  }
+}
+
 export async function deductAiToken(tenantId: string, tokensUsed: number, userId: string, feature: string) {
   try {
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
