@@ -62,6 +62,7 @@ export default function GTKAttendancePage() {
     reason: "",
     proofUrl: ""
   })
+  const [permitFile, setPermitFile] = useState<File | null>(null)
 
   // Selfie state
   const [requireSelfie, setRequireSelfie] = useState(false)
@@ -147,11 +148,30 @@ export default function GTKAttendancePage() {
     if (!tenant || !staff) return
     setSubmittingPermit(true)
     try {
+      let finalProofUrl = permitForm.proofUrl
+
+      if (permitFile) {
+        const formData = new FormData()
+        formData.append("file", permitFile)
+        formData.append("tenantId", tenant.id)
+        formData.append("subDir", "permits")
+        
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData
+        })
+        const uploadData = await uploadRes.json()
+        if (!uploadRes.ok) throw new Error(uploadData.error || "Gagal upload file")
+        
+        finalProofUrl = uploadData.url
+      }
+
       const res = await fetch("/api/gtk/attendance/permits", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...permitForm,
+          proofUrl: finalProofUrl,
           tenantId: tenant.id,
           staffId: staff.id
         })
@@ -167,6 +187,7 @@ export default function GTKAttendancePage() {
         reason: "",
         proofUrl: ""
       })
+      setPermitFile(null)
     } catch (err: any) {
       toast({ title: "Gagal mengajukan izin", description: err.message, variant: "destructive" })
     } finally {
@@ -613,15 +634,18 @@ export default function GTKAttendancePage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-muted-foreground">Link Lampiran (Opsional)</label>
+                      <label className="text-xs font-bold text-muted-foreground">Surat/Dokumen Lampiran (Opsional)</label>
                       <Input 
-                        type="url" 
-                        placeholder="https://..."
-                        value={permitForm.proofUrl}
-                        onChange={e => setPermitForm({ ...permitForm, proofUrl: e.target.value })}
-                        className="rounded-xl"
+                        type="file" 
+                        accept="image/*,.pdf"
+                        onChange={e => {
+                          if (e.target.files && e.target.files[0]) {
+                            setPermitFile(e.target.files[0])
+                          }
+                        }}
+                        className="rounded-xl h-auto py-2 text-sm"
                       />
-                      <p className="text-[10px] text-muted-foreground">URL surat dokter atau dokumen pendukung lainnya.</p>
+                      <p className="text-[10px] text-muted-foreground">Upload surat dokter, surat tugas luar, atau dokumen pendukung lainnya (Maks 2MB, PDF/Gambar).</p>
                     </div>
                     <Button type="submit" disabled={submittingPermit} className="w-full rounded-xl font-bold h-11 bg-blue-600 hover:bg-blue-700 mt-2">
                       {submittingPermit ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
