@@ -113,6 +113,7 @@ model Tenant {
   pageViews            PageView[]
   errorLogs            ErrorLog[]
   courseEnrollments    CourseEnrollment[]
+  staffPermits         StaffPermit[]
 
   @@index([isActive])
   @@index([plan])
@@ -754,6 +755,7 @@ model Staff {
   user            User?              @relation(fields: [userId], references: [id])
   StaffAttendance StaffAttendance[]
   journals        TeacherJournal[]
+  staffPermits    StaffPermit[]
 
   @@index([tenantId])
   @@index([userId])
@@ -2179,3 +2181,26 @@ model LessonProgress {
 
 // Cache buster: 2026-06-07
 
+model StaffPermit {
+  id          String    @id @default(cuid())
+  tenantId    String
+  staffId     String
+  submittedBy String
+  type        String
+  startDate   DateTime  @db.Date
+  endDate     DateTime  @db.Date
+  reason      String
+  proofUrl    String?
+  status      String    @default("PENDING")
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  staff       Staff     @relation(fields: [staffId], references: [id])
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([staffId])
+  @@index([createdAt])
+  @@map("staff_permits")
+}
