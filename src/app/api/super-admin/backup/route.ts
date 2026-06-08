@@ -108,8 +108,15 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === "download") {
-    const filename = body.filename
-    if (!filename || !filename.startsWith("schoolpro_db_")) {
+    // Sanitasi input filename untuk mencegah Path Traversal
+    const rawFilename = body.filename
+    if (!rawFilename) {
+      return NextResponse.json({ error: "Nama file tidak valid" }, { status: 400 })
+    }
+
+    // Ambil base name murni (menghapus ../ atau absolute path)
+    const filename = path.basename(rawFilename)
+    if (!filename.startsWith("schoolpro_db_")) {
       return NextResponse.json({ error: "Nama file tidak valid" }, { status: 400 })
     }
     
