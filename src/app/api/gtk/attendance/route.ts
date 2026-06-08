@@ -31,7 +31,7 @@ export async function GET(req: Request) {
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
-  const { error } = await requireTenantMembership(tenantId)
+  const { error } = await requireTenantMembership(tenantId, ["admin", "owner", "guru"])
   if (error) return error
 
   const where: any = {
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
 
   const { tenantId, staffId, checkInLat, checkInLng, checkInPhoto, notes } = parsed.data
 
-  const { error } = await requireTenantMembership(tenantId)
+  const { error } = await requireTenantMembership(tenantId, ["admin", "owner", "guru"])
   if (error) return error
 
   const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })

@@ -102,8 +102,9 @@ export async function requireSuperAdmin() {
  * Require authenticated user AND verify they have membership in the given tenant.
  * SuperAdmins bypass the membership check.
  * Use this at the top of ALL tenant-scoped API routes to prevent cross-tenant data leaks.
+ * @param allowedRoles Array of roles allowed to access this API. If provided, strictly checks the user's role.
  */
-export async function requireTenantMembership(tenantId: string) {
+export async function requireTenantMembership(tenantId: string, allowedRoles?: string[]) {
   const { session, error } = await requireAuth()
   if (error) return { session: null, error }
 
@@ -114,6 +115,12 @@ export async function requireTenantMembership(tenantId: string) {
     })
     if (!tu) {
       return { session: null, error: NextResponse.json({ error: "Forbidden — no access to this tenant" }, { status: 403 }) }
+    }
+
+    if (allowedRoles && allowedRoles.length > 0) {
+      if (!allowedRoles.includes(tu.role)) {
+        return { session: null, error: NextResponse.json({ error: "Forbidden — insufficient role permissions" }, { status: 403 }) }
+      }
     }
   }
 

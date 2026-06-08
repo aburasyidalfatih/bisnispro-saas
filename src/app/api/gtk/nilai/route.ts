@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request) {
   try {
@@ -20,6 +21,9 @@ export async function GET(req: Request) {
     if (!tenantId || !classroomId || !subjectId || !type) {
       return new NextResponse("Missing parameters", { status: 400 })
     }
+
+    const { error } = await requireTenantMembership(tenantId, ["admin", "owner", "guru"])
+    if (error) return error
 
     // Ambil daftar siswa di kelas tersebut beserta nilai mereka jika ada
     const students = await db.student.findMany({
@@ -66,6 +70,9 @@ export async function POST(req: Request) {
     if (!tenantId || !staffId || !classroomId || !subjectId || !type || !grades) {
       return new NextResponse("Missing required fields", { status: 400 })
     }
+
+    const { error } = await requireTenantMembership(tenantId, ["admin", "owner", "guru"])
+    if (error) return error
 
     const result = await db.$transaction(async (tx) => {
       let savedCount = 0
