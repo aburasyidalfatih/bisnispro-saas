@@ -174,9 +174,10 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             href: `${basePath}/attendance/gtk/overview`,
             icon: Users,
             children: [
-              { label: "Overview Kehadiran Guru", href: `${basePath}/attendance/gtk/overview`, icon: TrendingUp },
+              { label: "Overview", href: `${basePath}/attendance/gtk/overview`, icon: TrendingUp },
               { label: "Presensi Guru", href: `${basePath}/attendance/gtk/presence`, icon: CalendarCheck },
               { label: "Perizinan", href: `${basePath}/attendance/gtk/permits`, icon: Clock },
+              { label: "Pengaturan", href: `${basePath}/attendance/gtk/settings`, icon: Settings },
             ],
           }
         ] : []),
@@ -186,7 +187,7 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             href: `${basePath}/attendance/students/overview`,
             icon: GraduationCap,
             children: [
-              { label: "Overview Kehadiran Siswa", href: `${basePath}/attendance/students/overview`, icon: LayoutDashboard },
+              { label: "Overview", href: `${basePath}/attendance/students/overview`, icon: LayoutDashboard },
               { label: "Presensi Siswa", href: `${basePath}/attendance/students/presence`, icon: GraduationCap },
               { label: "Perizinan Siswa", href: `${basePath}/attendance/students/permits`, icon: FileCheck },
             ],
