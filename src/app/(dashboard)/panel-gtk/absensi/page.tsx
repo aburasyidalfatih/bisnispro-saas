@@ -9,8 +9,11 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
   MapPin, Clock, CheckCircle, LogIn, LogOut, Loader2,
-  Navigation, AlertCircle, Calendar, History, Camera, X
+  Navigation, AlertCircle, Calendar, History, Camera, X, FileText, Send
 } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { format, isToday } from "date-fns"
 import { id as localeId } from "date-fns/locale"
 import { cn } from "@/lib/utils"
@@ -46,6 +49,19 @@ export default function GTKAttendancePage() {
   const [checkingOut, setCheckingOut] = useState(false)
   const [notes, setNotes] = useState("")
   const [now, setNow] = useState(new Date())
+
+  // Permits state
+  const [permits, setPermits] = useState<any[]>([])
+  const [permitsLoading, setPermitsLoading] = useState(true)
+  const [openPermitModal, setOpenPermitModal] = useState(false)
+  const [submittingPermit, setSubmittingPermit] = useState(false)
+  const [permitForm, setPermitForm] = useState({
+    type: "IZIN",
+    startDate: format(new Date(), "yyyy-MM-dd"),
+    endDate: format(new Date(), "yyyy-MM-dd"),
+    reason: "",
+    proofUrl: ""
+  })
 
   // Selfie state
   const [requireSelfie, setRequireSelfie] = useState(false)
@@ -109,6 +125,54 @@ export default function GTKAttendancePage() {
   }, [tenant, staff])
 
   useEffect(() => { fetchAttendance() }, [fetchAttendance])
+
+  const fetchPermits = useCallback(async () => {
+    if (!tenant || !staff) return
+    setPermitsLoading(true)
+    try {
+      const res = await fetch(`/api/gtk/attendance/permits?tenantId=${tenant.id}&staffId=${staff.id}&take=20`)
+      const d = await res.json()
+      setPermits(d.data || [])
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setPermitsLoading(false)
+    }
+  }, [tenant, staff])
+
+  useEffect(() => { fetchPermits() }, [fetchPermits])
+
+  const handleSubmitPermit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!tenant || !staff) return
+    setSubmittingPermit(true)
+    try {
+      const res = await fetch("/api/gtk/attendance/permits", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...permitForm,
+          tenantId: tenant.id,
+          staffId: staff.id
+        })
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      toast({ title: "Pengajuan izin berhasil dikirim!" })
+      setOpenPermitModal(false)
+      fetchPermits()
+      setPermitForm({
+        type: "IZIN",
+        startDate: format(new Date(), "yyyy-MM-dd"),
+        endDate: format(new Date(), "yyyy-MM-dd"),
+        reason: "",
+        proofUrl: ""
+      })
+    } catch (err: any) {
+      toast({ title: "Gagal mengajukan izin", description: err.message, variant: "destructive" })
+    } finally {
+      setSubmittingPermit(false)
+    }
+  }
 
   // Get GPS location
   const getLocation = () => {
@@ -480,6 +544,96 @@ export default function GTKAttendancePage() {
           </CardContent>
         </Card>
 
+        {/* Pengajuan Izin */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="glass border-0 shadow-sm bg-blue-50/50 dark:bg-blue-900/10">
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-sm text-blue-900 dark:text-blue-100 flex items-center gap-2 mb-1">
+                  <FileText className="h-4 w-4" /> Pengajuan Izin / Sakit
+                </h3>
+                <p className="text-xs text-blue-700/70 dark:text-blue-200/70">Buat surat izin jika berhalangan hadir.</p>
+              </div>
+              <Dialog open={openPermitModal} onOpenChange={setOpenPermitModal}>
+                <DialogTrigger asChild>
+                  <Button className="rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20">
+                    Ajukan
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md border-0 glass-panel">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-blue-600" /> Formulir Izin / Sakit
+                    </DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSubmitPermit} className="space-y-4 mt-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-muted-foreground">Jenis Izin</label>
+                      <Select value={permitForm.type} onValueChange={v => setPermitForm({ ...permitForm, type: v })}>
+                        <SelectTrigger className="rounded-xl">
+                          <SelectValue placeholder="Pilih Jenis" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="IZIN">Izin</SelectItem>
+                          <SelectItem value="SAKIT">Sakit</SelectItem>
+                          <SelectItem value="TUGAS_LUAR">Tugas Luar</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-muted-foreground">Dari Tanggal</label>
+                        <Input 
+                          type="date" 
+                          required 
+                          value={permitForm.startDate}
+                          onChange={e => setPermitForm({ ...permitForm, startDate: e.target.value })}
+                          className="rounded-xl"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-muted-foreground">Sampai Tanggal</label>
+                        <Input 
+                          type="date" 
+                          required 
+                          value={permitForm.endDate}
+                          onChange={e => setPermitForm({ ...permitForm, endDate: e.target.value })}
+                          className="rounded-xl"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-muted-foreground">Keterangan / Alasan</label>
+                      <Textarea 
+                        required 
+                        placeholder="Tuliskan alasan lengkap Anda..."
+                        value={permitForm.reason}
+                        onChange={e => setPermitForm({ ...permitForm, reason: e.target.value })}
+                        className="rounded-xl resize-none h-24"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-muted-foreground">Link Lampiran (Opsional)</label>
+                      <Input 
+                        type="url" 
+                        placeholder="https://..."
+                        value={permitForm.proofUrl}
+                        onChange={e => setPermitForm({ ...permitForm, proofUrl: e.target.value })}
+                        className="rounded-xl"
+                      />
+                      <p className="text-[10px] text-muted-foreground">URL surat dokter atau dokumen pendukung lainnya.</p>
+                    </div>
+                    <Button type="submit" disabled={submittingPermit} className="w-full rounded-xl font-bold h-11 bg-blue-600 hover:bg-blue-700 mt-2">
+                      {submittingPermit ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+                      Kirim Pengajuan
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Rekap Bulan Ini */}
         <div>
           <p className="font-bold text-sm mb-3 flex items-center gap-2">
@@ -536,6 +690,58 @@ export default function GTKAttendancePage() {
                         {rec.notes && <p className="text-xs text-muted-foreground italic mt-0.5 truncate">"{rec.notes}"</p>}
                       </div>
                       <Badge className={cn(cfg.bg, cfg.color, "border text-[10px] shrink-0")}>{cfg.label}</Badge>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Riwayat Pengajuan Izin */}
+        <div>
+          <p className="font-bold text-sm mb-3 flex items-center gap-2 mt-8">
+            <FileText className="h-4 w-4 text-muted-foreground" /> Riwayat Pengajuan Izin
+          </p>
+          {permitsLoading ? (
+            <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+          ) : permits.length === 0 ? (
+            <Card className="glass border-0">
+              <CardContent className="py-12 text-center text-muted-foreground text-sm">Belum ada riwayat pengajuan izin.</CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-2">
+              {permits.map(permit => {
+                const getStatusColor = (status: string) => {
+                  if (status === "APPROVED") return "bg-emerald-500/10 text-emerald-600 border-emerald-200"
+                  if (status === "REJECTED") return "bg-red-500/10 text-red-600 border-red-200"
+                  return "bg-amber-500/10 text-amber-600 border-amber-200"
+                }
+                const statusLabel = permit.status === "APPROVED" ? "Disetujui" : permit.status === "REJECTED" ? "Ditolak" : "Menunggu"
+                return (
+                  <Card key={permit.id} className="glass border-0 shadow-sm">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge variant="outline" className={cn("text-[10px] uppercase font-bold", 
+                          permit.type === "IZIN" ? "text-blue-600 border-blue-200" :
+                          permit.type === "SAKIT" ? "text-amber-600 border-amber-200" : "text-purple-600 border-purple-200"
+                        )}>
+                          {permit.type.replace("_", " ")}
+                        </Badge>
+                        <Badge className={cn("text-[10px] border shadow-sm", getStatusColor(permit.status))}>
+                          {statusLabel}
+                        </Badge>
+                      </div>
+                      <p className="font-bold text-sm text-foreground">
+                        {format(new Date(permit.startDate), "d MMM yyyy", { locale: localeId })}
+                        {permit.startDate !== permit.endDate && ` - ${format(new Date(permit.endDate), "d MMM yyyy", { locale: localeId })}`}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{permit.reason}</p>
+                      {permit.proofUrl && (
+                        <a href={permit.proofUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 mt-2 hover:underline">
+                          <FileText className="h-3 w-3" /> Lampiran
+                        </a>
+                      )}
                     </CardContent>
                   </Card>
                 )
