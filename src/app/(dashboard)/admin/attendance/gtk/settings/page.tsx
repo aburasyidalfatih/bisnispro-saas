@@ -170,6 +170,7 @@ export default function GtkAttendanceSettingsPage() {
                       className="rounded-xl text-sm h-11"
                     />
                     <p className="text-[10px] text-muted-foreground">Batas kelonggaran waktu sebelum dicatat telat.</p>
+                  </div>
                 </div>
               </div>
 
