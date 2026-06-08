@@ -561,24 +561,13 @@ export default function GTKAttendancePage() {
                   Absensi hari ini selesai!
                 </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Pengajuan Izin */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="glass border-0 shadow-sm bg-blue-50/50 dark:bg-blue-900/10">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-sm text-blue-900 dark:text-blue-100 flex items-center gap-2 mb-1">
-                  <FileText className="h-4 w-4" /> Pengajuan Izin / Sakit
-                </h3>
-                <p className="text-xs text-blue-700/70 dark:text-blue-200/70">Buat surat izin jika berhalangan hadir.</p>
-              </div>
+              {/* Pengajuan Izin Button */}
               <Dialog open={openPermitModal} onOpenChange={setOpenPermitModal}>
                 <DialogTrigger asChild>
-                  <Button className="rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20">
-                    Ajukan
+                  <Button variant="outline" className="w-full h-12 rounded-2xl font-bold border-blue-200 text-blue-700 bg-blue-50/50 hover:bg-blue-100 hover:text-blue-800 transition-colors">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Ajukan Izin / Sakit
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md border-0 glass-panel">
@@ -654,9 +643,9 @@ export default function GTKAttendancePage() {
                   </form>
                 </DialogContent>
               </Dialog>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Rekap Bulan Ini */}
         <div>
