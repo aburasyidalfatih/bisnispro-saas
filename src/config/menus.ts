@@ -432,6 +432,7 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
     {
       items: [
         { label: "Dashboard", href: "/super-admin", icon: LayoutDashboard },
+        { label: "AI Copilot (Analyst)", href: "/super-admin/ai-analyst", icon: BrainCircuit },
       ],
     },
     {
