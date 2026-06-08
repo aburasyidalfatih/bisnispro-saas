@@ -9,7 +9,6 @@ import { useTenantBranding } from"@/components/providers/tenant-branding-provide
 import { ProfileSettings } from"./_components/profile-settings"
 import { AcademicSettings } from"./_components/academic-settings"
 import { IntegrationSettings } from"./_components/integration-settings"
-import { AttendanceSettings } from"./_components/attendance-settings"
 import { NotificationSettings } from"./_components/notification-settings"
 
 export default function SettingsGeneralPage() {
@@ -225,14 +224,6 @@ export default function SettingsGeneralPage() {
               session={session}
               orgForm={orgForm}
               setOrgForm={setOrgForm}
-              rawSettings={rawSettings}
-              setRawSettings={setRawSettings}
-              savingOrg={savingOrg}
-              tenantId={tenantId}
-              handleSaveOrg={handleSaveOrg}
-            />
-
-            <AttendanceSettings
               rawSettings={rawSettings}
               setRawSettings={setRawSettings}
               savingOrg={savingOrg}

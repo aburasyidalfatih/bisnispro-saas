@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Clock, MapPin, Loader2, Save, TrendingUp, CalendarCheck, Settings, FileText } from "lucide-react"
+import { Clock, MapPin, Loader2, Save, TrendingUp, CalendarCheck, Settings, FileText, Camera } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -27,6 +27,7 @@ export default function GtkAttendanceSettingsPage() {
     radiusGps: "100",
     schoolLat: "",
     schoolLng: "",
+    requireSelfie: false,
   })
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export default function GtkAttendanceSettingsPage() {
           radiusGps: att.radiusGps?.toString() || "100",
           schoolLat: att.schoolLat?.toString() || "",
           schoolLng: att.schoolLng?.toString() || "",
+          requireSelfie: data?.attendanceRequireSelfie || false,
         })
       } catch (err) {
         console.error("Gagal memuat pengaturan", err)
@@ -66,7 +68,8 @@ export default function GtkAttendanceSettingsPage() {
             radiusGps: parseInt(form.radiusGps) || 0,
             schoolLat: parseFloat(form.schoolLat) || null,
             schoolLng: parseFloat(form.schoolLng) || null,
-          }
+          },
+          attendanceRequireSelfie: form.requireSelfie,
         }
       }
 
@@ -171,6 +174,32 @@ export default function GtkAttendanceSettingsPage() {
                     />
                     <p className="text-[10px] text-muted-foreground">Batas kelonggaran waktu sebelum dicatat telat.</p>
                   </div>
+                </div>
+              </div>
+
+              {/* Wajib Selfie */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <Camera className="h-4 w-4 text-primary" />
+                  <h3 className="font-semibold text-sm">Wajib Selfie (Swafoto)</h3>
+                </div>
+                <div className="flex items-center justify-between rounded-xl border border-border bg-muted/20 px-4 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 shrink-0">
+                      <Camera className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold leading-tight text-foreground">Wajibkan Foto Selfie</p>
+                      <p className="text-xs text-muted-foreground mt-1">Guru harus mengambil foto wajah saat melakukan check-in dan check-out absensi.</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setForm(f => ({ ...f, requireSelfie: !f.requireSelfie }))}
+                    className={cn("relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors",
+                      form.requireSelfie ? "bg-primary" : "bg-muted-foreground/30")}
+                    role="switch" aria-checked={form.requireSelfie}>
+                    <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform",
+                      form.requireSelfie ? "translate-x-6" : "translate-x-1")} />
+                  </button>
                 </div>
               </div>
 
