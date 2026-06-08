@@ -122,9 +122,9 @@ export default function GuruDashboard() {
   }, [tenantId])
 
   const quickActions = [
+    { label: "Kehadiran", icon: Clock, color: "text-emerald-500", bg: "bg-emerald-500/10", href: "/panel-gtk/absensi" },
     { label: "Ujian CBT", icon: MonitorSmartphone, color: "text-rose-500", bg: "bg-rose-500/10", href: "/panel-gtk/cbt/jadwal" },
     { label: "Jadwal", icon: Calendar, color: "text-blue-500", bg: "bg-blue-500/10", href: "/panel-gtk/jadwal" },
-    { label: "Kehadiran", icon: Clock, color: "text-emerald-500", bg: "bg-emerald-500/10", href: "/panel-gtk/absensi" },
     { label: "Nilai", icon: Award, color: "text-amber-500", bg: "bg-amber-500/10", href: "/panel-gtk/nilai" },
     { label: "Jurnal", icon: BookOpen, color: "text-indigo-500", bg: "bg-indigo-500/10", href: "/panel-gtk/jurnal" },
     { label: "Bank Soal", icon: FileText, color: "text-pink-500", bg: "bg-pink-500/10", href: "/panel-gtk/cbt/bank-soal" },
