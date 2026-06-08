@@ -23,7 +23,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const currentPlan = (session?.user as any)?.tenants?.[0]?.plan || "free"
-  const { access: planAccess } = usePlanAccess(currentPlan)
+  const { access: planAccess, loading: planLoading } = usePlanAccess(currentPlan)
 
   // Determine if the user is a normal member (orangtua/siswa) instead of admin
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
@@ -38,6 +38,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
     if (status === "authenticated") {
+      if (planLoading) return
+
       if (session?.user?.isSuperAdmin) {
         const isImpersonating = document.cookie.includes("impersonate-tenant=")
         if (!isImpersonating) router.push("/super-admin")
@@ -64,22 +66,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            }
         }
 
-        // Redirect free tenants from the root dashboard to the website dashboard (ONLY FOR ADMINS)
-        const plan = currentTenant?.plan || "free"
-        if (plan === "free" && (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant))) {
+        // Redirect based on plan feature access (ONLY FOR ADMINS)
+        if (currentRole === "owner" || currentRole === "admin" || (session?.user?.isSuperAdmin && isImpersonatingTenant)) {
+          const pa = (planAccess as any)?._plan_access || {}
+          
+          // Paths that are always allowed for any plan
           const allowedPaths = [
-            "/admin/website",
-            "/admin/users",
-            "/admin/students",
-            "/admin/students/classrooms",
-            "/admin/subjects",
             "/admin/settings",
             "/admin/billing",
             "/admin/notifications",
-            "/admin/my-messages"
+            "/admin/my-messages",
           ]
           
-          const pa = (planAccess as any)?._plan_access || {}
+          if (pa.website_content) allowedPaths.push("/admin/website")
+          if (pa.data_master) {
+            allowedPaths.push(
+              "/admin/users",
+              "/admin/students",
+              "/admin/students/classrooms",
+              "/admin/subjects"
+            )
+          }
           if (pa.ppdb) allowedPaths.push("/admin/ppdb")
           if (pa.keuangan) allowedPaths.push("/admin/finance")
           if (pa.e_kantin) allowedPaths.push("/admin/canteen")
@@ -88,16 +95,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           if (pa.akademik) allowedPaths.push("/admin/schedules", "/admin/grades", "/admin/discipline")
           if (pa.kehadiran_guru) allowedPaths.push("/admin/attendance/gtk")
           if (pa.kehadiran_siswa) allowedPaths.push("/admin/attendance", "/admin/attendance/students", "/admin/attendance/sessions", "/admin/attendance/permits")
+          if (pa.audit_log) allowedPaths.push("/admin/audit")
+          if (pa.whatsapp_gateway) allowedPaths.push("/admin/wa-logs")
+          if (pa.broadcast_wa) allowedPaths.push("/admin/broadcast")
 
           const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(`${p}/`))
           
-          if (pathname === "/admin" || !isAllowed) {
-            router.replace("/admin/website")
+          if (pathname === "/admin") {
+            // If they are on the root dashboard, redirect if they don't have dashboard analytics
+            if (!pa.dashboard_analytics) {
+              if (pa.website_content) router.replace("/admin/website")
+              else if (pa.kehadiran_guru) router.replace("/admin/attendance/gtk")
+              else router.replace("/admin/settings")
+            }
+          } else if (pathname.startsWith("/admin") && !isAllowed) {
+            // Redirect to the first available dashboard or landing page
+            if (pa.dashboard_analytics) router.replace("/admin")
+            else if (pa.website_content) router.replace("/admin/website")
+            else if (pa.kehadiran_guru) router.replace("/admin/attendance/gtk")
+            else router.replace("/admin/settings")
           }
         }
       }
     }
-  }, [status, session, router, pathname, currentTenant, isAdminRole, planAccess])
+  }, [status, session, router, pathname, currentTenant, isAdminRole, planAccess, planLoading])
 
   if (status === "loading") {
     return (

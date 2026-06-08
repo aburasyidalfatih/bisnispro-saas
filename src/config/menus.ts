@@ -53,6 +53,7 @@ import {
   BadgeDollarSign,
   Zap,
   Bug,
+  Clock,
   type LucideIcon,
 } from "lucide-react"
 import { cn, normalizeImageUrl } from "@/lib/utils"
@@ -167,22 +168,27 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             ],
           }
         ] : []),
-        ...((has("kehadiran_guru") || has("kehadiran_siswa")) ? [
+        ...(has("kehadiran_guru") ? [
           {
-            label: "Kehadiran",
-            href: has("kehadiran_siswa") ? `${basePath}/attendance` : `${basePath}/attendance/gtk`,
-            icon: CalendarCheck,
+            label: "Kehadiran Guru",
+            href: `${basePath}/attendance/gtk?tab=today`,
+            icon: Users,
             children: [
-              ...(has("kehadiran_siswa") ? [
-                { label: "Overview Presensi", href: `${basePath}/attendance`, icon: LayoutDashboard },
-                { label: "Absensi Siswa", href: `${basePath}/attendance/students`, icon: GraduationCap },
-              ] : []),
-              ...(has("kehadiran_guru") ? [
-                { label: "Absensi Guru (GTK)", href: `${basePath}/attendance/gtk`, icon: Users },
-              ] : []),
-              ...(has("kehadiran_siswa") ? [
-                { label: "Pengajuan Izin", href: `${basePath}/attendance/permits`, icon: FileCheck },
-              ] : []),
+              { label: "Overview Kehadiran Guru", href: `${basePath}/attendance/gtk?tab=monthly`, icon: TrendingUp },
+              { label: "Presensi Guru", href: `${basePath}/attendance/gtk?tab=today`, icon: CalendarCheck },
+              { label: "Perizinan", href: `${basePath}/attendance/gtk?tab=logs`, icon: Clock },
+            ],
+          }
+        ] : []),
+        ...(has("kehadiran_siswa") ? [
+          {
+            label: "Kehadiran Siswa",
+            href: `${basePath}/attendance`,
+            icon: GraduationCap,
+            children: [
+              { label: "Overview Kehadiran Siswa", href: `${basePath}/attendance`, icon: LayoutDashboard },
+              { label: "Presensi Siswa", href: `${basePath}/attendance/students`, icon: GraduationCap },
+              { label: "Perizinan Siswa", href: `${basePath}/attendance/permits`, icon: FileCheck },
             ],
           }
         ] : []),

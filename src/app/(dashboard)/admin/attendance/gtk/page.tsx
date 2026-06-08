@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useEffect, useState, useMemo } from "react"
 import { useSession } from "next-auth/react"
 import { useToast } from "@/hooks/use-toast"
+import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -39,7 +40,16 @@ export default function AdminGTKAttendancePage() {
   const { toast } = useToast()
   const tenant = session?.user?.tenants?.[0]
 
+  const searchParams = useSearchParams()
+  const tabParam = searchParams.get("tab")
+
   const [activeTab, setActiveTab] = useState<"today" | "monthly" | "yearly" | "logs">("today")
+
+  useEffect(() => {
+    if (tabParam && ["today", "monthly", "yearly", "logs"].includes(tabParam)) {
+      setActiveTab(tabParam as any)
+    }
+  }, [tabParam])
   const [staffList, setStaffList] = useState<any[]>([])
   
   // Modal State
