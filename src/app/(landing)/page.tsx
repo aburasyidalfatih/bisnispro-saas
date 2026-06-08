@@ -1,5 +1,4 @@
 import { db } from "@/lib/db"
-import { ReferralCapture } from "@/components/shared/referral-capture"
 import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp"
 import { SocialProofPopup } from "@/components/shared/social-proof-popup"
 import { LandingNavbar } from "./_components/landing-navbar"
@@ -41,7 +40,6 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-mesh">
-      <ReferralCapture />
       <FloatingWhatsApp supportNumbers={supportWaNumbers} />
       <SocialProofPopup />
       

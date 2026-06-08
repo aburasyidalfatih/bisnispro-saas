@@ -347,9 +347,14 @@ export default async function middleware(request: NextRequest) {
     if (!isSystemRoute && pathname.match(/^\/[a-zA-Z0-9-]{5,15}$/)) {
       const code = pathname.substring(1).toLowerCase()
       const redirectUrl = new URL("/", request.url)
+      
+      // Salin semua parameter UTM dll yang ada
+      request.nextUrl.searchParams.forEach((value, key) => {
+        redirectUrl.searchParams.set(key, value)
+      })
+      
       redirectUrl.searchParams.set("ref", code)
-      const res = addSecurityHeaders(NextResponse.redirect(redirectUrl))
-      return res
+      return addSecurityHeaders(NextResponse.redirect(redirectUrl))
     }
 
     return addSecurityHeaders(NextResponse.next(), "public")

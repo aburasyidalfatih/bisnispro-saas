@@ -77,6 +77,8 @@ export const viewport: Viewport = {
   themeColor: "#6c47ff",
 }
 
+import { ReferralCapture } from "@/components/shared/referral-capture"
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Baca tema dari cookie untuk SSR — hanya berlaku untuk dashboard/tenant pages
   // Landing page dan super admin selalu pakai aurora (override di masing-masing layout)
@@ -122,6 +124,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <ConfirmProvider>
                 <ImpersonateBanner />
                 <MetaPixel pixelId={metaPixelId} />
+                <ReferralCapture />
                 {children}
                 <Toaster />
               </ConfirmProvider>
