@@ -111,47 +111,77 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
 
         {/* Chat Area */}
         <div className="lg:col-span-3">
-          <Card className="border-0 shadow-sm glass h-[calc(100vh-220px)] flex flex-col">
-            <CardHeader className="border-b border-border/50 bg-muted/20 py-3">
+          <Card className="border shadow-sm bg-background/50 backdrop-blur-xl h-[calc(100vh-220px)] flex flex-col overflow-hidden relative">
+            {/* Top decorative gradient */}
+            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary/40 via-primary to-primary/40"></div>
+            
+            <CardHeader className="border-b border-border/40 bg-background/80 backdrop-blur-md py-4 z-10 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="bg-primary/20 p-2 rounded-full">
+                <div className="bg-gradient-to-br from-primary/20 to-primary/5 p-2.5 rounded-xl border border-primary/20 shadow-inner">
                   <Bot className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="text-base">Data Copilot</CardTitle>
-                  <CardDescription className="text-xs">Didukung oleh Text-to-SQL Agent</CardDescription>
+                  <CardTitle className="text-base font-semibold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">Data Copilot</CardTitle>
+                  <CardDescription className="text-xs flex items-center gap-1.5 mt-0.5">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    Online • Didukung oleh Text-to-SQL
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
             
-            <CardContent className="flex-1 p-0 overflow-hidden relative">
+            <CardContent className="flex-1 p-0 overflow-hidden relative bg-gradient-to-b from-muted/10 to-background">
               <ScrollArea className="h-full w-full p-4 sm:p-6">
                 {messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center space-y-4 text-muted-foreground py-20">
-                    <div className="bg-primary/10 p-4 rounded-full">
-                      <Building2 className="h-8 w-8 text-primary" />
+                  <div className="flex flex-col items-center justify-center h-full text-center space-y-6 text-muted-foreground py-10 sm:py-20 animate-in fade-in zoom-in duration-500">
+                    <div className="relative group">
+                      <div className="absolute -inset-1 bg-gradient-to-r from-primary to-primary/50 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                      <div className="relative bg-background border border-primary/20 p-5 rounded-full shadow-lg">
+                        <Sparkles className="h-10 w-10 text-primary animate-pulse" />
+                      </div>
                     </div>
-                    <div className="max-w-md">
-                      <h3 className="text-lg font-bold text-foreground">Halo, Super Admin!</h3>
-                      <p className="text-sm mt-2">Saya adalah analis data virtual Anda. Tanyakan apa saja tentang bisnis SchoolPro:</p>
-                      <div className="flex flex-col gap-2 mt-4 text-left">
+                    
+                    <div className="max-w-xl px-4">
+                      <h3 className="text-2xl font-bold text-foreground tracking-tight">Halo, Super Admin! 👋</h3>
+                      <p className="text-sm mt-3 text-muted-foreground leading-relaxed">
+                        Saya adalah **AI Business Analyst** virtual Anda. Saya terhubung langsung ke *database* SchoolPro dan siap menyajikan data secara *real-time*.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8 text-left">
                         <div 
-                          className="text-xs bg-muted p-3 rounded-xl cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors border"
-                          onClick={() => handleInputChange({ target: { value: "Ada berapa tenant yang mendaftar bulan ini tapi belum membayar tagihan?" } } as any)}
-                        >
-                          "Ada berapa tenant yang mendaftar bulan ini tapi belum membayar tagihan?"
-                        </div>
-                        <div 
-                          className="text-xs bg-muted p-3 rounded-xl cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors border"
-                          onClick={() => handleInputChange({ target: { value: "Tampilkan jam berapa traffic halaman (PageView) paling ramai kemarin." } } as any)}
-                        >
-                          "Tampilkan jam berapa traffic halaman (PageView) paling ramai kemarin."
-                        </div>
-                        <div 
-                          className="text-xs bg-muted p-3 rounded-xl cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors border"
+                          className="text-xs bg-background/60 backdrop-blur-sm p-4 rounded-2xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all border shadow-sm group flex flex-col gap-2"
                           onClick={() => handleInputChange({ target: { value: "Tolong hitung perkiraan MRR dari tenant yang berstatus AKTIF saat ini." } } as any)}
                         >
-                          "Tolong hitung perkiraan MRR dari tenant yang berstatus AKTIF saat ini."
+                          <div className="flex items-center gap-2 text-foreground font-medium">
+                            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors">💰</div>
+                            Keuangan
+                          </div>
+                          <span className="text-muted-foreground leading-snug">"Tolong hitung perkiraan MRR dari tenant yang berstatus AKTIF saat ini."</span>
+                        </div>
+
+                        <div 
+                          className="text-xs bg-background/60 backdrop-blur-sm p-4 rounded-2xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all border shadow-sm group flex flex-col gap-2"
+                          onClick={() => handleInputChange({ target: { value: "Ada berapa tenant yang mendaftar bulan ini tapi belum membayar tagihan?" } } as any)}
+                        >
+                          <div className="flex items-center gap-2 text-foreground font-medium">
+                            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">🏢</div>
+                            Tenant & Sekolah
+                          </div>
+                          <span className="text-muted-foreground leading-snug">"Berapa tenant yang mendaftar bulan ini tapi belum bayar tagihan?"</span>
+                        </div>
+
+                        <div 
+                          className="text-xs bg-background/60 backdrop-blur-sm p-4 rounded-2xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all border shadow-sm group flex flex-col gap-2 sm:col-span-2"
+                          onClick={() => handleInputChange({ target: { value: "Tampilkan jam berapa traffic halaman paling ramai kemarin beserta jumlah PageView-nya." } } as any)}
+                        >
+                          <div className="flex items-center gap-2 text-foreground font-medium">
+                            <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors">📈</div>
+                            Analitik Sistem
+                          </div>
+                          <span className="text-muted-foreground leading-snug">"Tampilkan jam berapa traffic halaman paling ramai kemarin beserta jumlah PageView-nya."</span>
                         </div>
                       </div>
                     </div>
