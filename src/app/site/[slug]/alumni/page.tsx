@@ -17,7 +17,7 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
   if (!tenant) notFound()
 
   const alumniData = await getTenantAlumni(slug)
-  const alumni = alumniData?.alumni || []
+  const alumni = (alumniData as any)?.alumni || []
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering
