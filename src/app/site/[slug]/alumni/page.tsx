@@ -136,7 +136,7 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
               )}
             </h2>
             <div className="flex justify-center gap-4 md:gap-6 flex-wrap">
-               <a href={tenant.settings?.ppdbUrl ? String(tenant.settings.ppdbUrl) : `${base}/contact`} className="px-8 md:px-10 py-3 md:py-4 bg-primary rounded-full font-bold hover:scale-105 transition-transform text-sm md:text-base">{tenant.settings?.ppdbUrl ? "PPDB Sekarang" : "Hubungi Kami"}</a>
+               <a href={(tenant.settings as any)?.ppdbUrl ? String((tenant.settings as any).ppdbUrl) : `${base}/contact`} className="px-8 md:px-10 py-3 md:py-4 bg-primary rounded-full font-bold hover:scale-105 transition-transform text-sm md:text-base">{(tenant.settings as any)?.ppdbUrl ? "PPDB Sekarang" : "Hubungi Kami"}</a>
                <a href={`${base}/`} className="px-8 md:px-10 py-3 md:py-4 bg-white/10 backdrop-blur-md rounded-full font-bold hover:bg-white/20 transition-all border border-white/20 text-sm md:text-base">Tentang Kami</a>
             </div>
          </div>
