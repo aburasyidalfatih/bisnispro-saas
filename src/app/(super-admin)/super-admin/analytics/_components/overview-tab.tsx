@@ -15,7 +15,7 @@ import { useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 
 export function OverviewTab() {
-  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [data, setData] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

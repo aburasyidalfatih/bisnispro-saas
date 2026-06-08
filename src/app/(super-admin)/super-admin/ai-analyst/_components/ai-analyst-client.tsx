@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation"
 export default function AiAnalystClient({ initialSessions = [] }: { initialSessions?: any[] }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(initialSessions.length > 0 ? initialSessions[0].id : null)
   const router = useRouter()
   
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({

@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
@@ -7,11 +7,10 @@ import { cn } from "@/lib/utils"
 import { AnalyticsData } from "./types"
 import { SortableHeader } from "./shared-components"
 
-import { useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 
 export function TenantsTab() {
-  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [data, setData] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

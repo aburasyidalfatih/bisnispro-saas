@@ -164,14 +164,6 @@ const getOverviewData = unstable_cache(
 // ============================================
 const getGrowthData = unstable_cache(
   async () => {
-    const now = new Date()
-    const startOfToday = new Date()
-    startOfToday.setHours(0, 0, 0, 0)
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-    const sixtyDaysAgoDate = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
-    const ninetyDaysAgoDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
-
     const totalTenants = await db.tenant.count()
 
     const [totalApplications, approvedApplications, rejectedApplications, pendingApplications, freeTenants, liteTenants, proTenants] = await Promise.all([
@@ -179,53 +171,26 @@ const getGrowthData = unstable_cache(
     ])
     const upgradeRate = totalTenants > 0 ? (((liteTenants + proTenants) / totalTenants) * 100) : 0
 
-    const [activeRecently, inactive30Days, inactive60Days, inactive90Days, retentionActive, retentionAtRisk, retentionChurned, expiredNotRenewed] = await Promise.all([
-      db.tenant.count({ where: { isActive: true, lastActiveAt: { gte: thirtyDaysAgo } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: thirtyDaysAgo, gte: sixtyDaysAgoDate } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: sixtyDaysAgoDate, gte: ninetyDaysAgoDate } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: ninetyDaysAgoDate } } }), db.tenant.count({ where: { retentionStatus: "ACTIVE" } }), db.tenant.count({ where: { retentionStatus: "AT_RISK" } }), db.tenant.count({ where: { retentionStatus: "CHURNED" } }), db.subscription.count({ where: { status: "EXPIRED", endDate: { lt: now } } }),
-    ])
-
-    let totalPageViews = 0, uniqueVisitors = 0, todayPageViews = 0, todayUniqueVisitors = 0
-    let visitorSources: any[] = [], visitorMediums: any[] = [], visitorTopPages: any[] = [], visitorDevices: any[] = [], visitorBrowsers: any[] = [], visitorTrend7Days: any[] = [], topTrafficTenants: any[] = []
-
-    try {
-      const [totalViews, todayViews, sourcesAgg, mediumsAgg, topPagesAgg, devicesAgg, browsersAgg, trafficTenantsAgg] = await Promise.all([
-        db.pageView.count({ where: { createdAt: { gte: thirtyDaysAgo } } }), db.pageView.count({ where: { createdAt: { gte: startOfToday } } }),
-        db.pageView.groupBy({ by: ['source'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
-        db.pageView.groupBy({ by: ['medium'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
-        db.pageView.groupBy({ by: ['path'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
-        db.pageView.groupBy({ by: ['device'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
-        db.pageView.groupBy({ by: ['browser'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
-        db.pageView.groupBy({ by: ['tenantId'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 10 }),
-      ])
-      totalPageViews = totalViews
-      todayPageViews = todayViews
-      visitorSources = sourcesAgg.map(g => ({ name: g.source || "direct", views: g._count.id }))
-      visitorMediums = mediumsAgg.map(g => ({ name: g.medium || "unknown", views: g._count.id }))
-      visitorTopPages = topPagesAgg.map(g => ({ path: g.path, views: g._count.id }))
-      visitorDevices = devicesAgg.map(g => ({ name: g.device || "unknown", views: g._count.id }))
-      visitorBrowsers = browsersAgg.map(g => ({ name: g.browser || "unknown", views: g._count.id }))
-
-      if (trafficTenantsAgg.length > 0) {
-        const tNames = await db.tenant.findMany({ where: { id: { in: trafficTenantsAgg.map(t => t.tenantId) } }, select: { id: true, name: true } })
-        const tnMap = new Map(tNames.map(t => [t.id, t.name]))
-        topTrafficTenants = trafficTenantsAgg.map(g => ({ name: tnMap.get(g.tenantId) || 'Unknown', views: g._count.id }))
-      }
-
-      const uniqueRows = await db.pageView.findMany({ where: { createdAt: { gte: thirtyDaysAgo } }, select: { sessionId: true, ipHash: true, createdAt: true } })
-      uniqueVisitors = new Set(uniqueRows.map(pv => pv.sessionId || pv.ipHash)).size
-      todayUniqueVisitors = new Set(uniqueRows.filter(pv => pv.createdAt >= startOfToday).map(pv => pv.sessionId || pv.ipHash)).size
-      visitorTrend7Days = buildDailyTrendWithVisitors(uniqueRows.filter(pv => pv.createdAt >= sevenDaysAgo), 7)
-    } catch (e) {}
-
     const provinceGroups = await db.tenantApplication.groupBy({ by: ['province'], where: { province: { not: null } }, _count: { id: true }, orderBy: { _count: { id: 'desc' } } })
     const geoDistribution = provinceGroups.map(g => ({ name: g.province!, value: g._count.id })).slice(0, 15)
     const regencyGroups = await db.tenantApplication.groupBy({ by: ['regency'], where: { regency: { not: null } }, _count: { id: true }, orderBy: { _count: { id: 'desc' } }, take: 10 })
     const topRegencies = regencyGroups.map(g => ({ name: g.regency!, value: g._count.id }))
 
+    const [totalPendaftar, ppdbStatusGroups, activePpdbPeriods] = await Promise.all([
+      db.pendaftarPpdb.count(), db.pendaftarPpdb.groupBy({ by: ['status'], _count: { id: true } }), db.periodePpdb.count({ where: { isActive: true } }),
+    ])
+
+    const [donationsAgg, activeCampaigns, unpaidInvoices] = await Promise.all([
+      db.donation.aggregate({ where: { status: "PAID" }, _sum: { amount: true } }),
+      db.donationCampaign.count({ where: { isActive: true, deletedAt: null } }),
+      db.invoice.count({ where: { status: "UNPAID", deletedAt: null } }),
+    ])
+
     return {
       conversionFunnel: { totalApplications, approvedApplications, rejectedApplications, pendingApplications, approvalRate: totalApplications > 0 ? ((approvedApplications / totalApplications) * 100) : 0, freeTenants, liteTenants, proTenants, upgradeRate: Math.round(upgradeRate * 10) / 10 },
-      retentionStats: { activeRecently, inactive30Days, inactive60Days, inactive90Days, retentionActive, retentionAtRisk, retentionChurned, expiredNotRenewed, churnRate: totalTenants > 0 ? Math.round(((inactive60Days + inactive90Days) / totalTenants) * 1000) / 10 : 0 },
-      visitorStats: { totalPageViews, uniqueVisitors, todayPageViews, todayUniqueVisitors, sources: visitorSources, mediums: visitorMediums, topPages: visitorTopPages, devices: visitorDevices, browsers: visitorBrowsers, trend7Days: visitorTrend7Days, topTrafficTenants },
       geoStats: { provinces: geoDistribution, topRegencies, totalProvinces: geoDistribution.length },
+      ppdbStats: { totalPendaftar, statusBreakdown: ppdbStatusGroups.map(g => ({ name: g.status, value: g._count.id })), activePeriods: activePpdbPeriods },
+      financeStats: { totalDonations: donationsAgg._sum.amount || 0, activeCampaigns, unpaidInvoices },
     }
   },
   ["sa-analytics-growth"], { revalidate: 600 }
@@ -281,14 +246,7 @@ const getFinanceData = unstable_cache(
       orderBy: { totalEarnings: 'desc' }, take: 5,
     })
 
-    const [donationsAgg, activeCampaigns, unpaidInvoices] = await Promise.all([
-      db.donation.aggregate({ where: { status: "PAID" }, _sum: { amount: true } }),
-      db.donationCampaign.count({ where: { isActive: true, deletedAt: null } }),
-      db.invoice.count({ where: { status: "UNPAID", deletedAt: null } }),
-    ])
-
     return {
-      financeStats: { totalDonations: donationsAgg._sum.amount || 0, activeCampaigns, unpaidInvoices },
       revenueStats: { totalRevenue, thisMonthRevenue, lastMonthRevenue, revenueGrowth: lastMonthRevenue > 0 ? (((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100) : 0, arpu, revenueTrend, revenuePerPlan, payingTenantCount: payingTenants.length },
       affiliateStats: { totalAffiliates, activeAffiliates, totalClicks: totalAffiliateClicks._sum.clicks || 0, totalCommissionsPaid: totalCommissionsPaid._sum.amount || 0, pendingCommissions: pendingCommissions._sum.amount || 0, affiliateApplications, conversionRate: (totalAffiliateClicks._sum.clicks || 0) > 0 ? Math.round((affiliateApplications / (totalAffiliateClicks._sum.clicks || 1)) * 1000) / 10 : 0, topAffiliates: topAffiliates.map(a => ({ name: a.user.name || a.referralCode, code: a.referralCode, earnings: a.totalEarnings, clicks: a.clicks, referrals: a._count.tenantApplications })) },
     }
@@ -320,10 +278,11 @@ const getEcosystemData = unstable_cache(
 // ============================================
 const getAiInfraData = unstable_cache(
   async () => {
-    const [aiUsageAgg, totalWaSent, totalWaFailed] = await Promise.all([
+    const [aiUsageAgg, totalWaSent, totalWaFailed, totalCbtExams, totalTeacherJournals] = await Promise.all([
       db.aiUsageLog.aggregate({ _sum: { tokens: true } }),
       db.waQueueLog.count({ where: { status: "SENT" } }),
-      db.waQueueLog.count({ where: { status: "FAILED" } })
+      db.waQueueLog.count({ where: { status: "FAILED" } }),
+      db.cbtExam.count(), db.teacherJournal.count()
     ])
 
     const aiUsersGroups = await db.aiUsageLog.groupBy({ by: ['tenantId'], _sum: { tokens: true }, orderBy: { _sum: { tokens: 'desc' } }, take: 5 })
@@ -337,6 +296,7 @@ const getAiInfraData = unstable_cache(
 
     return {
       aiInfraStats: { totalAiTokensUsed: aiUsageAgg._sum.tokens || 0, topAiTenants, waSent: totalWaSent, waFailed: totalWaFailed, totalStorageBytes: 0 },
+      academicStats: { totalCbtExams, totalTeacherJournals },
     }
   },
   ["sa-analytics-ai-infra"], { revalidate: 600 }
@@ -347,6 +307,16 @@ const getAiInfraData = unstable_cache(
 // ============================================
 const getEngagementData = unstable_cache(
   async () => {
+    const now = new Date()
+    const startOfToday = new Date()
+    startOfToday.setHours(0, 0, 0, 0)
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    const sixtyDaysAgoDate = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
+    const ninetyDaysAgoDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+
+    const totalTenants = await db.tenant.count()
+
     const tenantScores = await db.tenantScore.findMany({ select: { totalScore: true, tenant: { select: { plan: true } } } })
     const scoreByPlan = new Map<string, { sum: number; count: number }>()
     const scoreBrackets = [
@@ -365,11 +335,58 @@ const getEngagementData = unstable_cache(
     const avgScorePerPlan = [...scoreByPlan.entries()].map(([plan, data]) => ({ plan, avgScore: data.count > 0 ? Math.round(data.sum / data.count) : 0, count: data.count }))
     const avgTotalScore = tenantScores.length > 0 ? Math.round(tenantScores.reduce((sum, ts) => sum + ts.totalScore, 0) / tenantScores.length) : 0
 
-    const [totalCbtExams, totalTeacherJournals] = await Promise.all([ db.cbtExam.count(), db.teacherJournal.count() ])
+    let totalPageViews = 0, uniqueVisitors = 0, todayPageViews = 0, todayUniqueVisitors = 0
+    let visitorSources: any[] = [], visitorMediums: any[] = [], visitorTopPages: any[] = [], visitorDevices: any[] = [], visitorBrowsers: any[] = [], visitorTrend7Days: any[] = [], topTrafficTenants: any[] = []
+
+    try {
+      const [totalViews, todayViews, sourcesAgg, mediumsAgg, topPagesAgg, devicesAgg, browsersAgg, trafficTenantsAgg] = await Promise.all([
+        db.pageView.count({ where: { createdAt: { gte: thirtyDaysAgo } } }), db.pageView.count({ where: { createdAt: { gte: startOfToday } } }),
+        db.pageView.groupBy({ by: ['source'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
+        db.pageView.groupBy({ by: ['medium'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
+        db.pageView.groupBy({ by: ['path'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
+        db.pageView.groupBy({ by: ['device'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
+        db.pageView.groupBy({ by: ['browser'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 15 }),
+        db.pageView.groupBy({ by: ['tenantId'], _count: { id: true }, where: { createdAt: { gte: thirtyDaysAgo } }, orderBy: { _count: { id: 'desc' } }, take: 10 }),
+      ])
+      totalPageViews = totalViews
+      todayPageViews = todayViews
+      visitorSources = sourcesAgg.map(g => ({ name: g.source || "direct", views: g._count.id }))
+      visitorMediums = mediumsAgg.map(g => ({ name: g.medium || "unknown", views: g._count.id }))
+      visitorTopPages = topPagesAgg.map(g => ({ path: g.path, views: g._count.id }))
+      visitorDevices = devicesAgg.map(g => ({ name: g.device || "unknown", views: g._count.id }))
+      visitorBrowsers = browsersAgg.map(g => ({ name: g.browser || "unknown", views: g._count.id }))
+
+      if (trafficTenantsAgg.length > 0) {
+        const tNames = await db.tenant.findMany({ where: { id: { in: trafficTenantsAgg.map(t => t.tenantId) } }, select: { id: true, name: true } })
+        const tnMap = new Map(tNames.map(t => [t.id, t.name]))
+        topTrafficTenants = trafficTenantsAgg.map(g => ({ name: tnMap.get(g.tenantId) || 'Unknown', views: g._count.id }))
+      }
+
+      const uniqueRows = await db.pageView.findMany({ where: { createdAt: { gte: thirtyDaysAgo } }, select: { sessionId: true, ipHash: true, createdAt: true } })
+      uniqueVisitors = new Set(uniqueRows.map(pv => pv.sessionId || pv.ipHash)).size
+      todayUniqueVisitors = new Set(uniqueRows.filter(pv => pv.createdAt >= startOfToday).map(pv => pv.sessionId || pv.ipHash)).size
+      visitorTrend7Days = buildDailyTrendWithVisitors(uniqueRows.filter(pv => pv.createdAt >= sevenDaysAgo), 7)
+    } catch (e) {}
+
+    const [activeRecently, inactive30Days, inactive60Days, inactive90Days, retentionActive, retentionAtRisk, retentionChurned, expiredNotRenewed] = await Promise.all([
+      db.tenant.count({ where: { isActive: true, lastActiveAt: { gte: thirtyDaysAgo } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: thirtyDaysAgo, gte: sixtyDaysAgoDate } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: sixtyDaysAgoDate, gte: ninetyDaysAgoDate } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: ninetyDaysAgoDate } } }), db.tenant.count({ where: { retentionStatus: "ACTIVE" } }), db.tenant.count({ where: { retentionStatus: "AT_RISK" } }), db.tenant.count({ where: { retentionStatus: "CHURNED" } }), db.subscription.count({ where: { status: "EXPIRED", endDate: { lt: now } } }),
+    ])
+
+    const [tenantsWithPpdb, tenantsWithWaGateway, tenantsWithDonasi, tenantsWithCanteen, tenantsWithCustomDomain, tenantsWithAi] = await Promise.all([
+      db.periodePpdb.groupBy({ by: ['tenantId'] }).then(r => r.length), db.waSession.count({ where: { status: "CONNECTED" } }), db.donationCampaign.groupBy({ by: ['tenantId'] }).then(r => r.length), db.canteenMerchant.groupBy({ by: ['tenantId'] }).then(r => r.length), db.tenant.count({ where: { domain: { not: null } } }), db.tenant.count({ where: { aiTokens: { gt: 0 } } }),
+    ])
+
+    const featureAdoption = [
+      { feature: "PPDB Online", count: tenantsWithPpdb, icon: "ppdb" }, { feature: "WhatsApp Gateway", count: tenantsWithWaGateway, icon: "wa" }, { feature: "Donasi & Infaq", count: tenantsWithDonasi, icon: "donasi" }, { feature: "E-Kantin", count: tenantsWithCanteen, icon: "kantin" }, { feature: "Custom Domain", count: tenantsWithCustomDomain, icon: "domain" }, { feature: "AI / Kecerdasan Buatan", count: tenantsWithAi, icon: "ai" },
+    ].sort((a, b) => b.count - a.count)
+
 
     return {
+      totalTenants,
       engagementStats: { avgTotalScore, avgScorePerPlan, scoreBrackets, totalScored: tenantScores.length },
-      academicStats: { totalCbtExams, totalTeacherJournals },
+      visitorStats: { totalPageViews, uniqueVisitors, todayPageViews, todayUniqueVisitors, sources: visitorSources, mediums: visitorMediums, topPages: visitorTopPages, devices: visitorDevices, browsers: visitorBrowsers, trend7Days: visitorTrend7Days, topTrafficTenants },
+      retentionStats: { activeRecently, inactive30Days, inactive60Days, inactive90Days, retentionActive, retentionAtRisk, retentionChurned, expiredNotRenewed, churnRate: totalTenants > 0 ? Math.round(((inactive60Days + inactive90Days) / totalTenants) * 1000) / 10 : 0 },
+      featureAdoption,
     }
   },
   ["sa-analytics-engagement"], { revalidate: 600 }
@@ -389,22 +406,8 @@ const getTenantsData = unstable_cache(
 
     const tenantActivity = allTenants.map(t => ({ id: t.id, name: t.name, plan: t.plan, studentCount: 0, staffCount: 0, postCount: 0, loginCount: tenantLoginMap.get(t.id) || 0, lastActiveAt: t.lastActiveAt, isActive: t.isActive }))
 
-    const [totalPendaftar, ppdbStatusGroups, activePpdbPeriods] = await Promise.all([
-      db.pendaftarPpdb.count(), db.pendaftarPpdb.groupBy({ by: ['status'], _count: { id: true } }), db.periodePpdb.count({ where: { isActive: true } }),
-    ])
-
-    const [tenantsWithPpdb, tenantsWithWaGateway, tenantsWithDonasi, tenantsWithCanteen, tenantsWithCustomDomain, tenantsWithAi] = await Promise.all([
-      db.periodePpdb.groupBy({ by: ['tenantId'] }).then(r => r.length), db.waSession.count({ where: { status: "CONNECTED" } }), db.donationCampaign.groupBy({ by: ['tenantId'] }).then(r => r.length), db.canteenMerchant.groupBy({ by: ['tenantId'] }).then(r => r.length), db.tenant.count({ where: { domain: { not: null } } }), db.tenant.count({ where: { aiTokens: { gt: 0 } } }),
-    ])
-
-    const featureAdoption = [
-      { feature: "PPDB Online", count: tenantsWithPpdb, icon: "ppdb" }, { feature: "WhatsApp Gateway", count: tenantsWithWaGateway, icon: "wa" }, { feature: "Donasi & Infaq", count: tenantsWithDonasi, icon: "donasi" }, { feature: "E-Kantin", count: tenantsWithCanteen, icon: "kantin" }, { feature: "Custom Domain", count: tenantsWithCustomDomain, icon: "domain" }, { feature: "AI / Kecerdasan Buatan", count: tenantsWithAi, icon: "ai" },
-    ].sort((a, b) => b.count - a.count)
-
     return {
       tenantActivity,
-      ppdbStats: { totalPendaftar, statusBreakdown: ppdbStatusGroups.map(g => ({ name: g.status, value: g._count.id })), activePeriods: activePpdbPeriods },
-      featureAdoption,
     }
   },
   ["sa-analytics-tenants"], { revalidate: 600 }
