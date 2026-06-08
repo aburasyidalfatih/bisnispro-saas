@@ -49,6 +49,24 @@ export async function GET(req: NextRequest) {
       const normalizedPlan = plan.toLowerCase()
       const planAccess = allPlans[normalizedPlan] || allPlans["free"] || {}
 
+      // Auto-migrate old database state for the new attendance keys
+      if (planAccess.kehadiran !== undefined) {
+        if (planAccess.kehadiran_guru === undefined) {
+          planAccess.kehadiran_guru = planAccess.kehadiran
+        }
+        if (planAccess.kehadiran_siswa === undefined) {
+          planAccess.kehadiran_siswa = planAccess.kehadiran
+        }
+      } else {
+        // Fallback to defaults if neither old nor new keys exist
+        if (planAccess.kehadiran_guru === undefined) {
+          planAccess.kehadiran_guru = normalizedPlan === "pro" || normalizedPlan === "lite"
+        }
+        if (planAccess.kehadiran_siswa === undefined) {
+          planAccess.kehadiran_siswa = normalizedPlan === "pro"
+        }
+      }
+
       // Convert ke format lama untuk backward compatibility dengan hook
       const legacyFormat: Record<string, boolean> = { ...DEFAULT_FREE_ACCESS }
       for (const [newKey, oldKey] of Object.entries(KEY_MAP)) {
