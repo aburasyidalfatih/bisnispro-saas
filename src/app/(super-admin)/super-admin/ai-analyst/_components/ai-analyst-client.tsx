@@ -188,7 +188,9 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {messages.map((m) => (
+                    {messages
+                      .filter(m => !(m.role === 'assistant' && !m.content && (!m.toolInvocations || m.toolInvocations.length === 0)))
+                      .map((m) => (
                       <div key={m.id} className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}>
                           <div className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
                             {m.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}

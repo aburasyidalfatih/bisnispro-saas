@@ -138,9 +138,11 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
       }
     })
 
-    const response = result.toTextStreamResponse()
-    response.headers.set('x-session-id', currentSessionId)
-    return response
+    return result.toTextStreamResponse({
+      headers: {
+        'x-session-id': currentSessionId
+      }
+    })
   } catch (error: any) {
     console.error("AI Analyst Error:", error)
     return new Response(error.message || "Terjadi kesalahan server", { status: 500 })
