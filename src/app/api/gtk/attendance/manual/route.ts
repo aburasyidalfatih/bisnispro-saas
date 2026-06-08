@@ -31,8 +31,7 @@ export async function POST(req: Request) {
   const { error } = await requireTenantMembership(tenantId)
   if (error) return error
 
-  const dateObj = new Date(date)
-  dateObj.setHours(0, 0, 0, 0)
+  const dateObj = new Date(`${date}T00:00:00.000Z`)
 
   const record = await db.staffAttendance.upsert({
     where: { tenantId_staffId_date: { tenantId, staffId, date: dateObj } },

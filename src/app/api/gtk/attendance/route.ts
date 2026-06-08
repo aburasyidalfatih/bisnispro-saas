@@ -72,10 +72,15 @@ export async function POST(req: Request) {
   const { error } = await requireTenantMembership(tenantId)
   if (error) return error
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })
+  const settings = (tenant?.settings as Record<string, any>) || {}
+  const tz = settings.attendance?.timezone || "Asia/Jakarta"
+
+  const dateStr = new Date().toLocaleDateString("en-CA", { timeZone: tz })
+  const today = new Date(`${dateStr}T00:00:00.000Z`)
 
   // Upsert: create jika belum ada rekord hari ini, update jika sudah ada
+  // Perbaikan Bug: update TIDAK boleh menimpa checkInAt
   const record = await db.staffAttendance.upsert({
     where: { tenantId_staffId_date: { tenantId, staffId, date: today } },
     create: {
@@ -90,7 +95,6 @@ export async function POST(req: Request) {
       notes,
     },
     update: {
-      checkInAt: new Date(),
       checkInLat,
       checkInLng,
       checkInPhoto,

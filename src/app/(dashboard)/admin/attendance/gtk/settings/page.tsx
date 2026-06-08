@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Clock, MapPin, Loader2, Save, TrendingUp, CalendarCheck, Settings } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
@@ -26,6 +27,7 @@ export default function GtkAttendanceSettingsPage() {
     radiusGps: "100",
     schoolLat: "",
     schoolLng: "",
+    timezone: "Asia/Jakarta",
   })
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function GtkAttendanceSettingsPage() {
           radiusGps: att.radiusGps?.toString() || "100",
           schoolLat: att.schoolLat?.toString() || "",
           schoolLng: att.schoolLng?.toString() || "",
+          timezone: att.timezone || "Asia/Jakarta",
         })
       } catch (err) {
         console.error("Gagal memuat pengaturan", err)
@@ -65,6 +68,7 @@ export default function GtkAttendanceSettingsPage() {
             radiusGps: parseInt(form.radiusGps) || 0,
             schoolLat: parseFloat(form.schoolLat) || null,
             schoolLng: parseFloat(form.schoolLng) || null,
+            timezone: form.timezone,
           }
         }
       }
@@ -169,6 +173,20 @@ export default function GtkAttendanceSettingsPage() {
                       className="rounded-xl text-sm h-11"
                     />
                     <p className="text-[10px] text-muted-foreground">Batas kelonggaran waktu sebelum dicatat telat.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Zona Waktu (Timezone)</label>
+                    <Select value={form.timezone} onValueChange={v => setForm(f => ({ ...f, timezone: v }))}>
+                      <SelectTrigger className="rounded-xl text-sm h-11 bg-white dark:bg-zinc-950">
+                        <SelectValue placeholder="Pilih Zona Waktu" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Asia/Jakarta">WIB (Asia/Jakarta)</SelectItem>
+                        <SelectItem value="Asia/Makassar">WITA (Asia/Makassar)</SelectItem>
+                        <SelectItem value="Asia/Jayapura">WIT (Asia/Jayapura)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-[10px] text-muted-foreground">Basis waktu yang digunakan saat staf melakukan check-in.</p>
                   </div>
                 </div>
               </div>
