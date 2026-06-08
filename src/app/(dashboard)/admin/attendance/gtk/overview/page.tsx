@@ -5,6 +5,7 @@ import { useEffect, useState, useMemo } from "react"
 import { useSession } from "next-auth/react"
 import { useToast } from "@/hooks/use-toast"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -43,13 +44,9 @@ export default function AdminGTKAttendancePage() {
   const searchParams = useSearchParams()
   const tabParam = searchParams.get("tab")
 
-  const [activeTab, setActiveTab] = useState<"today" | "monthly" | "yearly" | "logs">("today")
+  const activeTab: string = "monthly";
 
-  useEffect(() => {
-    if (tabParam && ["today", "monthly", "yearly", "logs"].includes(tabParam)) {
-      setActiveTab(tabParam as any)
-    }
-  }, [tabParam])
+  
   const [staffList, setStaffList] = useState<any[]>([])
   
   // Modal State
@@ -485,21 +482,19 @@ export default function AdminGTKAttendancePage() {
       </div>
 
       {/* Tabs Selector */}
+
       <div className="flex border-b border-border/50 pb-px overflow-x-auto gap-1">
         {[
-          { id: "today", label: "Presensi Harian", icon: CalendarCheck },
-          { id: "monthly", label: "Rekap Bulanan", icon: TrendingUp },
-          { id: "yearly", label: "Rekap Tahunan", icon: Users },
-          { id: "logs", label: "Riwayat Log", icon: Clock },
+          { id: "overview", label: "Overview", icon: TrendingUp, href: "/admin/attendance/gtk/overview" },
+          { id: "presence", label: "Presensi Harian", icon: CalendarCheck, href: "/admin/attendance/gtk/presence" },
+          { id: "permits", label: "Riwayat Log", icon: Clock, href: "/admin/attendance/gtk/permits" },
         ].map((tab) => {
           const Icon = tab.icon
-          const isActive = activeTab === tab.id
+          const isActive = "monthly" === tab.id || ("monthly" === "monthly" && tab.id === "overview") || ("monthly" === "today" && tab.id === "presence") || ("monthly" === "logs" && tab.id === "permits")
           return (
-            <button
+            <Link
               key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id as any)
-              }}
+              href={tab.href}
               className={cn(
                 "flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-all border-b-2 -mb-px rounded-t-xl shrink-0",
                 isActive 
@@ -509,7 +504,7 @@ export default function AdminGTKAttendancePage() {
             >
               <Icon className="h-4 w-4" />
               {tab.label}
-            </button>
+            </Link>
           )
         })}
       </div>

@@ -63,7 +63,7 @@ export default function AttendanceSessionsPage() {
         toast({ title:"Sesi absensi dibuat!" })
       }
       const sessionId = data.session?.id || data.id
-      window.location.href = `/admin/attendance/sessions/${sessionId}`
+      window.location.href = `/admin/attendance/students/presence/${sessionId}`
     } catch (err: any) {
       toast({ title:"Gagal", description: err.message, variant:"destructive" })
     } finally {
@@ -191,7 +191,7 @@ export default function AttendanceSessionsPage() {
                       </span>
                     </TableCell>
                     <TableCell className="py-3">
-                      <Link href={`/admin/attendance/sessions/${s.id}`}>
+                      <Link href={`/admin/attendance/students/presence/${s.id}`}>
                         <Button size="sm" variant="outline" className="rounded-lg text-xs h-8 gap-1">
                           Buka <ChevronRight className="h-3.5 w-3.5" />
                         </Button>

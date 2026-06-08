@@ -102,7 +102,7 @@ export default function AttendanceSessionDetailPage({ params }: { params: Promis
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       <div className="flex items-center gap-3">
-        <Link href="/admin/attendance/sessions">
+        <Link href="/admin/attendance/students/presence">
           <Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="h-5 w-5" /></Button>
         </Link>
         <div className="flex-1">

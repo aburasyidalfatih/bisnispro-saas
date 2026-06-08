@@ -171,24 +171,24 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
         ...(has("kehadiran_guru") ? [
           {
             label: "Kehadiran Guru",
-            href: `${basePath}/attendance/gtk?tab=today`,
+            href: `${basePath}/attendance/gtk/overview`,
             icon: Users,
             children: [
-              { label: "Overview Kehadiran Guru", href: `${basePath}/attendance/gtk?tab=monthly`, icon: TrendingUp },
-              { label: "Presensi Guru", href: `${basePath}/attendance/gtk?tab=today`, icon: CalendarCheck },
-              { label: "Perizinan", href: `${basePath}/attendance/gtk?tab=logs`, icon: Clock },
+              { label: "Overview Kehadiran Guru", href: `${basePath}/attendance/gtk/overview`, icon: TrendingUp },
+              { label: "Presensi Guru", href: `${basePath}/attendance/gtk/presence`, icon: CalendarCheck },
+              { label: "Perizinan", href: `${basePath}/attendance/gtk/permits`, icon: Clock },
             ],
           }
         ] : []),
         ...(has("kehadiran_siswa") ? [
           {
             label: "Kehadiran Siswa",
-            href: `${basePath}/attendance`,
+            href: `${basePath}/attendance/students/overview`,
             icon: GraduationCap,
             children: [
-              { label: "Overview Kehadiran Siswa", href: `${basePath}/attendance`, icon: LayoutDashboard },
-              { label: "Presensi Siswa", href: `${basePath}/attendance/students`, icon: GraduationCap },
-              { label: "Perizinan Siswa", href: `${basePath}/attendance/permits`, icon: FileCheck },
+              { label: "Overview Kehadiran Siswa", href: `${basePath}/attendance/students/overview`, icon: LayoutDashboard },
+              { label: "Presensi Siswa", href: `${basePath}/attendance/students/presence`, icon: GraduationCap },
+              { label: "Perizinan Siswa", href: `${basePath}/attendance/students/permits`, icon: FileCheck },
             ],
           }
         ] : []),

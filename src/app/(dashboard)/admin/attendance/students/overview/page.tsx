@@ -43,9 +43,9 @@ export default function AttendanceDashboardPage() {
   const totalRecords = sessions.reduce((a, s) => a + (s._count?.records || 0), 0)
 
   const navItems = [
-    { label:"Absensi Siswa", href:"/admin/attendance/sessions", icon: CalendarCheck, color:"from-blue-500 to-indigo-500", desc: `${todaySessions.length} sesi dibuka hari ini` },
-    { label:"Pengajuan Izin", href:"/admin/attendance/permits", icon: FileCheck, color:"from-amber-500 to-orange-500", desc: `${pendingPermits} menunggu persetujuan`, badge: pendingPermits },
-    { label:"Rekap Per Kelas", href:"/admin/attendance/sessions", icon: Users, color:"from-emerald-500 to-teal-500", desc: `${classrooms.length} kelas terdaftar` },
+    { label:"Absensi Siswa", href:"/admin/attendance/students/presence", icon: CalendarCheck, color:"from-blue-500 to-indigo-500", desc: `${todaySessions.length} sesi dibuka hari ini` },
+    { label:"Pengajuan Izin", href:"/admin/attendance/students/permits", icon: FileCheck, color:"from-amber-500 to-orange-500", desc: `${pendingPermits} menunggu persetujuan`, badge: pendingPermits },
+    { label:"Rekap Per Kelas", href:"/admin/attendance/students/presence", icon: Users, color:"from-emerald-500 to-teal-500", desc: `${classrooms.length} kelas terdaftar` },
   ]
 
   return (
@@ -85,7 +85,7 @@ export default function AttendanceDashboardPage() {
             <p className="font-bold text-amber-800">{pendingPermits} pengajuan izin menunggu</p>
             <p className="text-sm text-amber-700">Tinjau dan setujui pengajuan dari orang tua.</p>
           </div>
-          <Link href="/admin/attendance/permits">
+          <Link href="/admin/attendance/students/permits">
             <Button size="sm" className="rounded-xl bg-amber-500 hover:bg-amber-600 shrink-0">Tinjau</Button>
           </Link>
         </div>
@@ -120,7 +120,7 @@ export default function AttendanceDashboardPage() {
       <Card className="glass border-0">
         <CardHeader className="flex-row items-center justify-between pb-2">
           <CardTitle className="text-base">Sesi Absensi Terbaru</CardTitle>
-          <Link href="/admin/attendance/sessions" className="text-xs text-primary hover:underline">Lihat Semua →</Link>
+          <Link href="/admin/attendance/students/presence" className="text-xs text-primary hover:underline">Lihat Semua →</Link>
         </CardHeader>
         <div className="overflow-x-auto">
           {loading ? (
@@ -155,7 +155,7 @@ export default function AttendanceDashboardPage() {
                       </span>
                     </TableCell>
                     <TableCell className="px-4 py-3">
-                      <Link href={`/admin/attendance/sessions/${s.id}`}>
+                      <Link href={`/admin/attendance/students/presence/${s.id}`}>
                         <Button size="sm" variant="outline" className="rounded-lg h-7 text-xs gap-1">
                           Buka <ArrowRight className="h-3 w-3" />
                         </Button>

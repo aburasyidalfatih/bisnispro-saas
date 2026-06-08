@@ -26,10 +26,10 @@ export default async function AttendanceOverviewPage() {
   const hasStudent = !!planAccess.kehadiran_siswa
 
   if (hasTeacher && !hasStudent) {
-    redirect("/admin/attendance/gtk")
+    redirect("/admin/attendance/gtk/overview")
   }
   if (!hasTeacher && hasStudent) {
-    redirect("/admin/attendance/students")
+    redirect("/admin/attendance/students/overview")
   }
   if (!hasTeacher && !hasStudent) {
     redirect("/admin")
@@ -98,7 +98,7 @@ export default async function AttendanceOverviewPage() {
             </div>
             <div className="flex justify-between items-center text-xs text-muted-foreground border-t pt-3">
                <span>{studentAttendanceToday} hadir dari {totalStudents} siswa</span>
-               <Link href="/admin/attendance/students" className="text-blue-600 font-semibold hover:underline flex items-center gap-1">Detail <ArrowRight className="h-3 w-3"/></Link>
+               <Link href="/admin/attendance/students/overview" className="text-blue-600 font-semibold hover:underline flex items-center gap-1">Detail <ArrowRight className="h-3 w-3"/></Link>
             </div>
           </CardContent>
         </Card>
@@ -119,7 +119,7 @@ export default async function AttendanceOverviewPage() {
             </div>
             <div className="flex justify-between items-center text-xs text-muted-foreground border-t pt-3">
                <span>{gtkAttendanceToday} hadir dari {totalGtk} guru</span>
-               <Link href="/admin/attendance/gtk" className="text-purple-600 font-semibold hover:underline flex items-center gap-1">Detail <ArrowRight className="h-3 w-3"/></Link>
+               <Link href="/admin/attendance/gtk/overview" className="text-purple-600 font-semibold hover:underline flex items-center gap-1">Detail <ArrowRight className="h-3 w-3"/></Link>
             </div>
           </CardContent>
         </Card>
@@ -140,7 +140,7 @@ export default async function AttendanceOverviewPage() {
             </div>
             <div className="flex justify-between items-center text-xs text-muted-foreground border-t pt-3">
                <span>Pengajuan izin butuh respon</span>
-               <Link href="/admin/attendance/permits" className="text-amber-600 font-semibold hover:underline flex items-center gap-1">Proses <ArrowRight className="h-3 w-3"/></Link>
+               <Link href="/admin/attendance/students/permits" className="text-amber-600 font-semibold hover:underline flex items-center gap-1">Proses <ArrowRight className="h-3 w-3"/></Link>
             </div>
           </CardContent>
         </Card>
@@ -149,7 +149,7 @@ export default async function AttendanceOverviewPage() {
       {/* Quick Menu */}
       <h2 className="text-lg font-bold mt-8 mb-4">Menu Presensi</h2>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-         <Link href="/admin/attendance/students">
+         <Link href="/admin/attendance/students/presence">
             <Card className="hover:border-primary hover:shadow-md transition-all cursor-pointer h-full">
                <CardContent className="p-5 flex flex-col items-center text-center gap-3">
                   <div className="h-14 w-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -163,7 +163,7 @@ export default async function AttendanceOverviewPage() {
             </Card>
          </Link>
          
-         <Link href="/admin/attendance/gtk">
+         <Link href="/admin/attendance/gtk/presence">
             <Card className="hover:border-primary hover:shadow-md transition-all cursor-pointer h-full">
                <CardContent className="p-5 flex flex-col items-center text-center gap-3">
                   <div className="h-14 w-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
@@ -177,7 +177,7 @@ export default async function AttendanceOverviewPage() {
             </Card>
          </Link>
 
-         <Link href="/admin/attendance/permits">
+         <Link href="/admin/attendance/students/permits">
             <Card className="hover:border-primary hover:shadow-md transition-all cursor-pointer h-full">
                <CardContent className="p-5 flex flex-col items-center text-center gap-3">
                   <div className="h-14 w-14 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
