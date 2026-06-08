@@ -2,19 +2,33 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { AnalyticsData, COLORS } from "./types"
-import { BrainCircuit, Database, HardDrive, Megaphone, Server, ShieldAlert } from "lucide-react"
+import { BrainCircuit, Database, HardDrive, Megaphone, Server, ShieldAlert, Loader2 } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, PieChart, Pie } from "recharts"
+import { useState, useEffect } from "react"
 
-interface Props {
-  data: AnalyticsData
-}
+export function AiInfraTab() {
+  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [loading, setLoading] = useState(true)
 
-export function AiInfraTab({ data }: Props) {
-  const { aiInfraStats, academicStats } = data
+  useEffect(() => {
+    fetch("/api/super-admin/analytics?tab=ai-infra")
+      .then(res => res.json())
+      .then(d => setData(d))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
 
-  if (!aiInfraStats || !academicStats) {
-    return <div className="p-8 text-center text-muted-foreground">Memuat data infrastruktur...</div>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
+
+  if (!data || !data.aiInfraStats || !data.academicStats) return <div className="p-8 text-center text-muted-foreground">Gagal memuat data AI & Infra.</div>
+
+  const { aiInfraStats, academicStats } = data
 
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 Bytes'

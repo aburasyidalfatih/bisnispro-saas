@@ -11,7 +11,30 @@ import {
 import { AnalyticsData, COLORS, PLAN_COLORS } from "./types"
 import { SummaryCard, MiniStat } from "./shared-components"
 
-export function OverviewTab({ data }: { data: AnalyticsData }) {
+import { useState, useEffect } from "react"
+import { Loader2 } from "lucide-react"
+
+export function OverviewTab() {
+  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/super-admin/analytics?tab=overview")
+      .then(res => res.json())
+      .then(d => setData(d))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (!data || !data.positionBreakdown) return <div>Gagal memuat data overview.</div>
   // Process position chart
   const sortedPositions = [...data.positionBreakdown].sort((a, b) => b.value - a.value)
   const topPositions = sortedPositions.slice(0, 6).map(p => ({

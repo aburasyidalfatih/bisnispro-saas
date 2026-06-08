@@ -5,7 +5,30 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 import { cn } from "@/lib/utils"
 import { AnalyticsData, COLORS } from "./types"
 
-export function GrowthTab({ data }: { data: AnalyticsData }) {
+import { useState, useEffect } from "react"
+import { Loader2 } from "lucide-react"
+
+export function GrowthTab() {
+  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/super-admin/analytics?tab=growth")
+      .then(res => res.json())
+      .then(d => setData(d))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (!data || !data.conversionFunnel) return <div>Gagal memuat data growth.</div>
   return (
     <div className="space-y-8 mt-6">
       {/* SECTION 9: CONVERSION FUNNEL */}

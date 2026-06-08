@@ -6,7 +6,30 @@ import { cn } from "@/lib/utils"
 import { AnalyticsData, COLORS } from "./types"
 import { SummaryCard } from "./shared-components"
 
-export function EngagementTab({ data }: { data: AnalyticsData }) {
+import { useState, useEffect } from "react"
+import { Loader2 } from "lucide-react"
+
+export function EngagementTab() {
+  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/super-admin/analytics?tab=engagement")
+      .then(res => res.json())
+      .then(d => setData(d))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (!data || !data.engagementStats) return <div className="p-8 text-center text-muted-foreground">Gagal memuat data engagement.</div>
   return (
     <div className="space-y-8 mt-6">
       {/* SECTION 7: VISITOR TRACKING */}

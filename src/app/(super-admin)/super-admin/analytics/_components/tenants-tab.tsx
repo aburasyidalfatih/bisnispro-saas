@@ -7,7 +7,30 @@ import { cn } from "@/lib/utils"
 import { AnalyticsData } from "./types"
 import { SortableHeader } from "./shared-components"
 
-export function TenantsTab({ data }: { data: AnalyticsData }) {
+import { useState, useEffect } from "react"
+import { Loader2 } from "lucide-react"
+
+export function TenantsTab() {
+  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/super-admin/analytics?tab=tenants")
+      .then(res => res.json())
+      .then(d => setData(d))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (!data || !data.tenantActivity) return <div className="p-8 text-center text-muted-foreground">Gagal memuat data tenants.</div>
   const [tableSearch, setTableSearch] = useState("")
   const [sortColumn, setSortColumn] = useState<string>("loginCount")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")

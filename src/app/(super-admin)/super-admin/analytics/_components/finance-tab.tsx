@@ -6,7 +6,30 @@ import { cn } from "@/lib/utils"
 import { AnalyticsData, COLORS, PLAN_COLORS } from "./types"
 import { SummaryCard } from "./shared-components"
 
-export function FinanceTab({ data }: { data: AnalyticsData }) {
+import { useState, useEffect } from "react"
+import { Loader2 } from "lucide-react"
+
+export function FinanceTab() {
+  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/super-admin/analytics?tab=finance")
+      .then(res => res.json())
+      .then(d => setData(d))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (!data || !data.revenueStats) return <div>Gagal memuat data finance.</div>
   return (
     <div className="space-y-8 mt-6">
       {/* SECTION 8: REVENUE & PENDAPATAN */}

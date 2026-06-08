@@ -14,45 +14,13 @@ import { EcosystemTab } from "./_components/ecosystem-tab"
 import { TenantsTab } from "./_components/tenants-tab"
 
 export default function AnalyticsPage() {
-  const [data, setData] = useState<AnalyticsData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState("overview")
+  const [loadedTabs, setLoadedTabs] = useState<Set<string>>(new Set(["overview"]))
 
-  useEffect(() => {
-    fetch("/api/super-admin/analytics")
-      .then(res => {
-        if (!res.ok) throw new Error("API error")
-        return res.json()
-      })
-      .then(d => {
-        // Safe defaults for new sections that may not exist yet
-        const defaults = {
-          visitorStats: { totalPageViews: 0, uniqueVisitors: 0, todayPageViews: 0, todayUniqueVisitors: 0, sources: [], mediums: [], topPages: [], devices: [], browsers: [], trend7Days: [], topTrafficTenants: [] },
-          revenueStats: { totalRevenue: 0, thisMonthRevenue: 0, lastMonthRevenue: 0, revenueGrowth: 0, arpu: 0, revenueTrend: [], revenuePerPlan: [], payingTenantCount: 0 },
-          conversionFunnel: { totalApplications: 0, approvedApplications: 0, rejectedApplications: 0, pendingApplications: 0, approvalRate: 0, freeTenants: 0, liteTenants: 0, proTenants: 0, upgradeRate: 0 },
-          retentionStats: { activeRecently: 0, inactive30Days: 0, inactive60Days: 0, inactive90Days: 0, retentionActive: 0, retentionAtRisk: 0, retentionChurned: 0, expiredNotRenewed: 0, churnRate: 0 },
-          affiliateStats: { totalAffiliates: 0, activeAffiliates: 0, totalClicks: 0, totalCommissionsPaid: 0, pendingCommissions: 0, affiliateApplications: 0, conversionRate: 0, topAffiliates: [] },
-          featureAdoption: [],
-          geoStats: { provinces: [], topRegencies: [], totalProvinces: 0 },
-          engagementStats: { avgTotalScore: 0, avgScorePerPlan: [], scoreBrackets: [], totalScored: 0 },
-          ecosystemStats: { totalGmv: 0, canteenGmv: 0, savingDeposits: 0, savingWithdrawals: 0, ppdbPayments: 0 },
-          aiInfraStats: { totalAiTokensUsed: 0, topAiTenants: [], waSent: 0, waFailed: 0, totalStorageBytes: 0 },
-          academicStats: { totalCbtExams: 0, totalTeacherJournals: 0 },
-        }
-        setData({ ...defaults, ...d })
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
+  const handleTabChange = (val: string) => {
+    setActiveTab(val)
+    setLoadedTabs((prev) => new Set(prev).add(val))
   }
-
-  if (!data) return <div>Gagal memuat data analitik.</div>
 
   return (
     <div className="space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -64,7 +32,7 @@ export default function AnalyticsPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-8">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-8">
         <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
           <TabsList className="inline-flex w-max sm:w-auto h-auto gap-2 bg-transparent sm:bg-muted p-0 sm:p-1">
             <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">Overview</TabsTrigger>
@@ -77,32 +45,32 @@ export default function AnalyticsPage() {
           </TabsList>
         </div>
 
-        <TabsContent value="overview">
-          <OverviewTab data={data} />
+        <TabsContent value="overview" forceMount className={activeTab === "overview" ? "block" : "hidden"}>
+          {loadedTabs.has("overview") && <OverviewTab />}
         </TabsContent>
 
-        <TabsContent value="growth">
-          <GrowthTab data={data} />
+        <TabsContent value="growth" forceMount className={activeTab === "growth" ? "block" : "hidden"}>
+          {loadedTabs.has("growth") && <GrowthTab />}
         </TabsContent>
 
-        <TabsContent value="finance">
-          <FinanceTab data={data} />
+        <TabsContent value="finance" forceMount className={activeTab === "finance" ? "block" : "hidden"}>
+          {loadedTabs.has("finance") && <FinanceTab />}
         </TabsContent>
 
-        <TabsContent value="ecosystem">
-          <EcosystemTab data={data} />
+        <TabsContent value="ecosystem" forceMount className={activeTab === "ecosystem" ? "block" : "hidden"}>
+          {loadedTabs.has("ecosystem") && <EcosystemTab />}
         </TabsContent>
 
-        <TabsContent value="ai-infra">
-          <AiInfraTab data={data} />
+        <TabsContent value="ai-infra" forceMount className={activeTab === "ai-infra" ? "block" : "hidden"}>
+          {loadedTabs.has("ai-infra") && <AiInfraTab />}
         </TabsContent>
 
-        <TabsContent value="engagement">
-          <EngagementTab data={data} />
+        <TabsContent value="engagement" forceMount className={activeTab === "engagement" ? "block" : "hidden"}>
+          {loadedTabs.has("engagement") && <EngagementTab />}
         </TabsContent>
 
-        <TabsContent value="tenants">
-          <TenantsTab data={data} />
+        <TabsContent value="tenants" forceMount className={activeTab === "tenants" ? "block" : "hidden"}>
+          {loadedTabs.has("tenants") && <TenantsTab />}
         </TabsContent>
       </Tabs>
     </div>

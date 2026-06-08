@@ -2,19 +2,33 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { AnalyticsData, COLORS } from "./types"
-import { Wallet, Store, PiggyBank, GraduationCap, TrendingUp } from "lucide-react"
+import { Wallet, Store, PiggyBank, GraduationCap, TrendingUp, Loader2 } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, PieChart, Pie } from "recharts"
+import { useState, useEffect } from "react"
 
-interface Props {
-  data: AnalyticsData
-}
+export function EcosystemTab() {
+  const [data, setData] = useState<Partial<AnalyticsData> | null>(null)
+  const [loading, setLoading] = useState(true)
 
-export function EcosystemTab({ data }: Props) {
-  const { ecosystemStats } = data
+  useEffect(() => {
+    fetch("/api/super-admin/analytics?tab=ecosystem")
+      .then(res => res.json())
+      .then(d => setData(d))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
 
-  if (!ecosystemStats) {
-    return <div className="p-8 text-center text-muted-foreground">Memuat data ekosistem transaksi...</div>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
+
+  if (!data || !data.ecosystemStats) return <div>Gagal memuat data ecosystem.</div>
+
+  const { ecosystemStats } = data
 
   const formatRupiah = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
