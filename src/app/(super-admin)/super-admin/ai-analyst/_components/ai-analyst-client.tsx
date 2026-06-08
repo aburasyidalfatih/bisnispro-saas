@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database } from "lucide-react"
+import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database, PanelLeft } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import ReactMarkdown from "react-markdown"
@@ -15,8 +15,8 @@ import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 
 export default function AiAnalystClient({ initialSessions = [] }: { initialSessions?: any[] }) {
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
-  const [showHistoryOnMobile, setShowHistoryOnMobile] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const router = useRouter()
   
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
@@ -51,34 +51,45 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
   const startNewChat = () => {
     setActiveSessionId(null)
     setMessages([])
-    setShowHistoryOnMobile(false)
+    setIsMobileSidebarOpen(false)
   }
 
   return (
     <div className="space-y-6 pb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <BrainCircuit className="h-6 w-6 text-primary" />
-            AI Business Analyst
-          </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Asisten C-Level virtual untuk menganalisis data bisnis, omset, dan metrik operasional secara real-time.
-          </p>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="hidden lg:flex hover:bg-muted" 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            title="Toggle Sidebar"
+          >
+            <PanelLeft className="h-5 w-5 text-muted-foreground" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+              <BrainCircuit className="h-6 w-6 text-primary" />
+              AI Business Analyst
+            </h1>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Asisten C-Level virtual untuk menganalisis data bisnis, omset, dan metrik operasional secara real-time.
+            </p>
+          </div>
         </div>
         <Button 
           variant="outline" 
           className="lg:hidden w-full sm:w-auto shadow-sm" 
-          onClick={() => setShowHistoryOnMobile(!showHistoryOnMobile)}
+          onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
         >
           <History className="h-4 w-4 mr-2" />
-          {showHistoryOnMobile ? "Tutup Riwayat" : "Lihat Riwayat"}
+          {isMobileSidebarOpen ? "Tutup Riwayat" : "Lihat Riwayat"}
         </Button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-250px)] min-h-[500px]">
         {/* Sidebar History */}
-        <div className={`w-full lg:w-1/4 ${showHistoryOnMobile ? 'block' : 'hidden lg:block'} space-y-6 h-full`}>
+        <div className={`w-full ${isSidebarOpen ? 'lg:w-1/4 lg:block' : 'lg:hidden'} ${isMobileSidebarOpen ? 'block' : 'hidden'} space-y-6 h-full transition-all duration-300`}>
           <Card className="shadow-sm border-0 glass h-full flex flex-col">
             <CardHeader className="pb-3 border-b border-border/50">
               <div className="flex items-center justify-between">
@@ -100,7 +111,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                     initialSessions.map((s) => (
                       <Button 
                         key={s.id} 
-                        onClick={() => { loadSession(s); setShowHistoryOnMobile(false); }}
+                        onClick={() => { loadSession(s); setIsMobileSidebarOpen(false); }}
                         variant="ghost"
                         className={`w-full justify-start text-left p-3 hover:bg-muted/50 rounded-none h-auto transition-colors text-sm ${activeSessionId === s.id ? 'bg-primary/5 border-l-2 border-primary' : ''}`}
                       >
@@ -120,7 +131,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
         </div>
 
         {/* Chat Area */}
-        <div className={`w-full lg:w-3/4 ${showHistoryOnMobile ? 'hidden lg:block' : 'block'} h-full`}>
+        <div className={`w-full ${isSidebarOpen ? 'lg:w-3/4' : 'lg:w-full'} ${isMobileSidebarOpen ? 'hidden lg:block' : 'block'} h-full transition-all duration-300`}>
           <Card className="border shadow-sm bg-background/50 backdrop-blur-xl h-full flex flex-col overflow-hidden relative">
             {/* Top decorative gradient */}
             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary/40 via-primary to-primary/40"></div>
@@ -157,7 +168,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                     <div className="max-w-xl px-4">
                       <h3 className="text-2xl font-bold text-foreground tracking-tight">Halo, Super Admin! 👋</h3>
                       <p className="text-sm mt-3 text-muted-foreground leading-relaxed">
-                        Saya adalah **AI Business Analyst** virtual Anda. Saya terhubung langsung ke *database* SchoolPro dan siap menyajikan data secara *real-time*.
+                        Saya adalah <strong>AI Business Analyst</strong> virtual Anda. Saya terhubung langsung ke <em>database</em> SchoolPro dan siap menyajikan data secara <em>real-time</em>.
                       </p>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8 text-left">
