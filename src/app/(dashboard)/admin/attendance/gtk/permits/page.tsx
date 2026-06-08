@@ -32,7 +32,7 @@ export default function GTKPermitsPage() {
   const { data: session } = useSession()
   const { toast } = useToast()
   
-  const [tenant, setTenant] = useState<any>(null)
+  const tenant = session?.user?.tenants?.[0]?.tenant || session?.user?.tenants?.[0]
   const [staffList, setStaffList] = useState<any[]>([])
   
   const [subTab, setSubTab] = useState<"permits" | "logs">("permits")
@@ -62,16 +62,10 @@ export default function GTKPermitsPage() {
   })
 
   useEffect(() => {
-    fetch("/api/user/tenants")
-      .then(r => r.json())
-      .then(d => {
-        if (d.data?.length > 0) {
-          const t = d.data[0].tenant
-          setTenant(t)
-          fetchStaff(t.id)
-        }
-      })
-  }, [])
+    if (tenant?.id) {
+      fetchStaff(tenant.id)
+    }
+  }, [tenant?.id])
 
   const fetchStaff = async (tenantId: string) => {
     const res = await fetch(`/api/gtk/staff?tenantId=${tenantId}`)
