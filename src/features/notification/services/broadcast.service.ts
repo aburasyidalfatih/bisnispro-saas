@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { waQueue } from "@/lib/queue"
 import { getWaConfig } from "@/features/notification/services/notification.service"
+import { getWaQueueDelays } from "@/features/notification/services/wa-queue.service"
 
 // ==========================================
 // Query: Resolve Broadcast Recipients
@@ -49,11 +50,8 @@ export async function enqueueBroadcast(params: {
   // 1. Resolve recipients
   const recipients = await resolveBroadcastRecipients(tenantId, target)
 
-  // 2. Get WA config for delay settings
-  const waConfig = await getWaConfig(tenantId)
-  const delayMin = waConfig.delayMin || 3
-  const delayMax = waConfig.delayMax || 5
-  const isStarSender = waConfig.provider === "starsender"
+  // 2. Calculate sequential non-overlapping delays for all recipients
+  const delays = await getWaQueueDelays(tenantId, recipients.length)
 
   // 3. Create broadcast log entry
   const broadcastLog = await db.waMessage.create({
@@ -65,16 +63,13 @@ export async function enqueueBroadcast(params: {
     },
   })
 
-  // 4. Enqueue each recipient as individual BullMQ job
+  // 4. Enqueue each recipient as individual BullMQ job with sequential delay
   const jobs = recipients.map((recipient, index) => {
     const finalMessage = message
       .replace(/{{name}}/g, recipient.name || "")
       .replace(/{{phone}}/g, recipient.phone || "")
 
-    // Calculate delay: stagger messages to avoid rate limiting
-    const delayMs = isStarSender
-      ? index * 500
-      : index * (Math.floor(Math.random() * (delayMax - delayMin + 1)) + delayMin) * 1000
+    const delayMs = delays[index]
 
     return {
       name: "broadcast-wa",

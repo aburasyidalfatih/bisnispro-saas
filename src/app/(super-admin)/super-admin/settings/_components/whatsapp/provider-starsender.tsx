@@ -14,10 +14,60 @@ interface Props {
   saving: boolean;
 }
 
+interface GatewayItem {
+  apiKey: string;
+  deviceId: string;
+}
+
 export function ProviderStarsender({ form, setForm, handleSaveBatch, saving }: Props) {
   const [showWAToken, setShowWAToken] = useState(false)
   const [testWANumber, setTestWANumber] = useState("")
   const [testing, setTesting] = useState(false)
+
+  // Parse gateways list from JSON with safety check
+  let gateways: GatewayItem[] = []
+  try {
+    const parsed = JSON.parse(form.STARSENDER_KEYS_JSON || "[]")
+    if (Array.isArray(parsed)) {
+      gateways = parsed
+    }
+  } catch (e) {
+    gateways = []
+  }
+
+  // Populate first gateway with old fields if list is empty
+  if (!gateways || gateways.length === 0) {
+    gateways = [{ 
+      apiKey: form.STARSENDER_API_KEY || "", 
+      deviceId: form.STARSENDER_DEVICE_ID || "" 
+    }]
+  }
+
+  const updateGateways = (newGateways: GatewayItem[]) => {
+    const firstApiKey = newGateways[0]?.apiKey || ""
+    const firstDeviceId = newGateways[0]?.deviceId || ""
+    setForm(prev => ({
+      ...prev,
+      STARSENDER_API_KEY: firstApiKey,
+      STARSENDER_DEVICE_ID: firstDeviceId,
+      STARSENDER_KEYS_JSON: JSON.stringify(newGateways)
+    }))
+  }
+
+  const handleGatewayChange = (index: number, field: keyof GatewayItem, value: string) => {
+    const updated = [...gateways]
+    updated[index] = { ...updated[index], [field]: value }
+    updateGateways(updated)
+  }
+
+  const handleAddGateway = () => {
+    updateGateways([...gateways, { apiKey: "", deviceId: "" }])
+  }
+
+  const handleRemoveGateway = (index: number) => {
+    const updated = gateways.filter((_, i) => i !== index)
+    updateGateways(updated)
+  }
 
   const handleTestWA = async () => {
     if (!testWANumber) { toast({ title: "Isi nomor tujuan", variant: "destructive" }); return }
@@ -57,20 +107,74 @@ export function ProviderStarsender({ form, setForm, handleSaveBatch, saving }: P
             <CardTitle className="text-lg">StarSender API</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>API Token / Key</Label>
-            <div className="relative">
-              <Input type={showWAToken ? "text" : "password"} value={form.STARSENDER_API_KEY} onChange={e => setForm({...form, STARSENDER_API_KEY: e.target.value})} placeholder="Token StarSender" className="rounded-xl pr-10" />
-              <Button variant="ghost" size="icon" type="button" onClick={() => setShowWAToken(!showWAToken)} className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground">{showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Device ID (Opsional)</Label>
-            <Input value={form.STARSENDER_DEVICE_ID} onChange={e => setForm({...form, STARSENDER_DEVICE_ID: e.target.value})} placeholder="ID Perangkat" className="rounded-xl" />
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <Label className="font-bold text-sm">Daftar API Gateway StarSender</Label>
+            
+            {gateways.map((gw, idx) => (
+              <div key={idx} className="p-4 rounded-2xl border border-border/80 bg-muted/20 space-y-3 relative">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold bg-muted border px-2 py-1 rounded-md text-foreground">Gateway #{idx + 1}</span>
+                  {gateways.length > 1 && (
+                    <Button 
+                      type="button"
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleRemoveGateway(idx)}
+                      className="text-destructive hover:bg-destructive/10 h-7 text-xs rounded-lg px-2"
+                    >
+                      Hapus
+                    </Button>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">API Token / Key</Label>
+                  <div className="relative">
+                    <Input 
+                      type={showWAToken ? "text" : "password"} 
+                      value={gw.apiKey} 
+                      onChange={e => handleGatewayChange(idx, "apiKey", e.target.value)} 
+                      placeholder="Token StarSender" 
+                      className="rounded-xl pr-10" 
+                    />
+                    {idx === 0 && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        type="button" 
+                        onClick={() => setShowWAToken(!showWAToken)} 
+                        className="absolute right-1 h-8 w-8 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      >
+                        {showWAToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Device ID (Opsional)</Label>
+                  <Input 
+                    value={gw.deviceId} 
+                    onChange={e => handleGatewayChange(idx, "deviceId", e.target.value)} 
+                    placeholder="ID Perangkat" 
+                    className="rounded-xl" 
+                  />
+                </div>
+              </div>
+            ))}
+
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={handleAddGateway}
+              className="w-full border-dashed rounded-xl h-10 border-primary/30 text-primary hover:bg-primary/5 text-xs font-medium"
+            >
+              + Tambah API Key Lainnya
+            </Button>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 pt-2 border-t">
             <div className="space-y-2">
               <Label>Delay Minimum (Menit)</Label>
               <Input 
@@ -96,7 +200,7 @@ export function ProviderStarsender({ form, setForm, handleSaveBatch, saving }: P
             Penundaan waktu (jeda) acak dalam satuan <strong>Menit</strong> sebelum pesan terkirim. Membantu menghindari blokir WhatsApp karena terdeteksi mengirim pesan terlalu cepat.
           </p>
 
-          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2 flex items-center justify-center h-10 px-4" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID', 'STARSENDER_DELAY_MIN', 'STARSENDER_DELAY_MAX'])} disabled={saving}>
+          <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2 flex items-center justify-center h-10 px-4" onClick={() => handleSaveBatch(['STARSENDER_API_KEY', 'STARSENDER_DEVICE_ID', 'STARSENDER_KEYS_JSON', 'STARSENDER_DELAY_MIN', 'STARSENDER_DELAY_MAX'])} disabled={saving}>
             <Save className="h-4 w-4" /> Simpan WhatsApp
           </Button>
         </CardContent>

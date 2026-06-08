@@ -3,6 +3,7 @@ import { Redis } from "ioredis"
 import { db } from "./lib/db"
 
 import { sendWhatsAppDirect, sendEmail } from "@/features/notification/services/notification.service"
+import { getWaQueueDelay } from "@/features/notification/services/wa-queue.service"
 import { ImportService } from "@/features/import/services/import.service"
 import { processGamificationPoints } from "@/features/gamification/services/gamification.service"
 import { FinanceService } from "@/features/finance/services/finance.service"
@@ -85,7 +86,8 @@ const waWorker = new Worker(
     await throttlePerTenant(tenantId)
 
     try {
-      const result = await sendWhatsAppDirect(number, message, tenantId, templateData)
+      // Pass skipDelay = true because the delay was already processed at queue level
+      const result = await sendWhatsAppDirect(number, message, tenantId, templateData, true)
 
       if (!result.success) {
         throw new Error(result.error || "Failed to send WhatsApp message")
@@ -556,12 +558,13 @@ setInterval(async () => {
             status: "PENDING"
           }
         })
+        const delay = await getWaQueueDelay(tenant.id)
         await waQueue.add("retention-warning-wa", {
           tenantId: tenant.id,
           number: phone,
           message: waMsg,
           waQueueLogId: waLog.id
-        })
+        }, { delay })
       }
     }
 
@@ -603,9 +606,10 @@ setInterval(async () => {
         const waLog = await db.waQueueLog.create({
           data: { tenantId: tenant.id, targetNumber: phone, message: waMsg, status: "PENDING" }
         })
+        const delay = await getWaQueueDelay(tenant.id)
         await waQueue.add("retention-suspend-wa", {
           tenantId: tenant.id, number: phone, message: waMsg, waQueueLogId: waLog.id
-        })
+        }, { delay })
       }
     }
 
@@ -641,9 +645,10 @@ setInterval(async () => {
         const waLog = await db.waQueueLog.create({
           data: { tenantId: tenant.id, targetNumber: phone, message: waMsg, status: "PENDING" }
         })
+        const delay = await getWaQueueDelay(tenant.id)
         await waQueue.add("retention-delete-wa", {
           tenantId: tenant.id, number: phone, message: waMsg, waQueueLogId: waLog.id
-        })
+        }, { delay })
       }
 
       await db.tenant.delete({

@@ -104,6 +104,8 @@ export interface WaConfig {
   wavioNumberId?: string
   delayMin?: number
   delayMax?: number
+  isCustom?: boolean
+  gateways?: { apiKey: string; deviceId?: string }[]
 }
 
 /**
@@ -125,12 +127,17 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
         provider: "starsender",
         delayMin: Number(settings.whatsapp.waDelayMin || 0),
         delayMax: Number(settings.whatsapp.waDelayMax || 0),
+        isCustom: true,
+        gateways: [{
+          apiKey: settings.whatsapp.waApiKey,
+          deviceId: settings.whatsapp.waDeviceId || "",
+        }],
       }
     }
   }
   // Fallback ke platform settings dari database, lalu env var
   const platformSettings = await db.platformSetting.findMany({
-    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID", "WA_ACTIVE_PROVIDER", "META_WA_PHONE_NUMBER_ID", "META_WA_ACCESS_TOKEN", "WAVIO_API_KEY", "WAVIO_NUMBER_ID", "STARSENDER_DELAY_MIN", "STARSENDER_DELAY_MAX"] } },
+    where: { key: { in: ["STARSENDER_API_URL", "STARSENDER_API_KEY", "STARSENDER_DEVICE_ID", "WA_ACTIVE_PROVIDER", "META_WA_PHONE_NUMBER_ID", "META_WA_ACCESS_TOKEN", "WAVIO_API_KEY", "WAVIO_NUMBER_ID", "STARSENDER_DELAY_MIN", "STARSENDER_DELAY_MAX", "STARSENDER_KEYS_JSON"] } },
   })
   const map = Object.fromEntries(
     platformSettings.filter((s) => s.value).map((s) => [s.key, s.value!])
@@ -141,6 +148,27 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
   // Permintaan khusus: Jangan gunakan Wavio untuk Tenant. Hanya untuk Super Admin.
   if (tenantId && provider === "wavio") {
     provider = "starsender";
+  }
+
+  // Parse StarSender multiple gateways
+  let gateways: { apiKey: string; deviceId?: string }[] = []
+  if (map.STARSENDER_KEYS_JSON) {
+    try {
+      const parsed = JSON.parse(map.STARSENDER_KEYS_JSON)
+      if (Array.isArray(parsed)) {
+        gateways = parsed
+      }
+    } catch {
+      gateways = []
+    }
+  }
+
+  // Fallback to single gateway if JSON is empty but single key exists
+  if ((!gateways || gateways.length === 0) && (map.WA_API_KEY || map.STARSENDER_API_KEY || process.env.STARSENDER_API_KEY)) {
+    gateways = [{
+      apiKey: map.WA_API_KEY || map.STARSENDER_API_KEY || process.env.STARSENDER_API_KEY || "",
+      deviceId: map.WA_DEVICE_ID || map.STARSENDER_DEVICE_ID || process.env.STARSENDER_DEVICE_ID || "",
+    }]
   }
 
   return {
@@ -155,6 +183,8 @@ export async function getWaConfig(tenantId?: string): Promise<WaConfig> {
     // Batasi delay maksimal 60 menit agar tidak hang jika admin salah isi angka ribuan
     delayMin: Math.min(Number(map.WA_DELAY_MIN) || Number(map.STARSENDER_DELAY_MIN) || 1, 60),
     delayMax: Math.min(Number(map.WA_DELAY_MAX) || Number(map.STARSENDER_DELAY_MAX) || 3, 60),
+    isCustom: false,
+    gateways,
   }
 }
 
@@ -358,7 +388,33 @@ export async function sendWhatsAppDirect(
         // Internal Gateway Has Been Removed
 
         // 2. Fallback ke StarSender (Legacy / starsender provider)
-        if (!config.apiKey) {
+        let activeApiKey = config.apiKey
+        let activeDeviceId = config.deviceId
+
+        // Rotate StarSender gateways if multiple are configured
+        if (config.provider === "starsender" && config.gateways && config.gateways.length > 1) {
+          const { getRedisClient } = await import("@/lib/redis")
+          try {
+            const redis = await getRedisClient()
+            const count = config.gateways.length
+            const index = await redis.incr("wa:starsender:index")
+            const selectedGw = config.gateways[index % count]
+            if (selectedGw) {
+              activeApiKey = selectedGw.apiKey
+              activeDeviceId = selectedGw.deviceId
+              logger.info(`StarSender Rotation: Using gateway index ${index % count} (API Key: ...${activeApiKey.slice(-5)})`)
+            }
+          } catch (err) {
+            logger.error("StarSender Rotation: Failed to get index from Redis, using first gateway", err)
+            const selectedGw = config.gateways[0]
+            if (selectedGw) {
+              activeApiKey = selectedGw.apiKey
+              activeDeviceId = selectedGw.deviceId
+            }
+          }
+        }
+
+        if (!activeApiKey) {
           return { success: false, error: "WA gateway belum dikonfigurasi" }
         }
 
@@ -369,13 +425,13 @@ export async function sendWhatsAppDirect(
             to: phone,
             body: message,
           }
-          if (config.deviceId) body.deviceId = config.deviceId
+          if (activeDeviceId) body.deviceId = activeDeviceId
 
           const res = await fetch(`${config.apiUrl}/send`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: config.apiKey,
+              Authorization: activeApiKey,
             },
             body: JSON.stringify(body),
           })
