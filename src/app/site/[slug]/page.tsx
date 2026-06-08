@@ -83,10 +83,11 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     .map((item: any) => typeof item === "string" ? { url: item, caption: "" } : item)
     .filter((item: any) => item && typeof item === "object")
 
+  const t = tenant as any
   // Build stats from tenant data
-  const staffCount = tenant._count?.staff || tenant.staff?.length || 0
-  const programCount = tenant._count?.programs || tenant.programs?.length || 0
-  const achievementCount = tenant._count?.achievements || tenant.achievements?.length || 0
+  const staffCount = t._count?.staff || t.staff?.length || 0
+  const programCount = t._count?.programs || t.programs?.length || 0
+  const achievementCount = t._count?.achievements || t.achievements?.length || 0
 
   let establishedYear = new Date().getFullYear()
   if ((tenant.settings as any)?.establishedYear) {
@@ -104,12 +105,12 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const themeProps = { tenant, base, gallery, stats }
 
   // Jika sekolah menggunakan Custom Theme dari Super Admin
-  if (tenant.customThemeId && tenant.customTheme) {
+  if (tenant.customThemeId && t.customTheme) {
     const rendered = renderCustomTheme({
-      templateHtml: tenant.customTheme.indexHtml,
-      layoutHtml: tenant.customTheme.layoutHtml,
-      customCss: tenant.customTheme.customCss,
-      customJs: tenant.customTheme.customJs,
+      templateHtml: t.customTheme.indexHtml,
+      layoutHtml: t.customTheme.layoutHtml,
+      customCss: t.customTheme.customCss,
+      customJs: t.customTheme.customJs,
       context: { tenant, base, gallery, stats, settings: tenant.settings || {} },
     })
     if (rendered) return rendered
