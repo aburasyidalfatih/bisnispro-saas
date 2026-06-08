@@ -12,12 +12,25 @@ import { id } from "date-fns/locale"
 import ReactMarkdown from "react-markdown"
 import { cn } from "@/lib/utils"
 
+import { useRouter } from "next/navigation"
+
 export default function AiAnalystClient({ initialSessions = [] }: { initialSessions?: any[] }) {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
+  const router = useRouter()
   
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
     api: "/api/super-admin/ai-analyst",
     body: { sessionId: activeSessionId },
+    onResponse: (response) => {
+      const newSessionId = response.headers.get('x-session-id')
+      if (newSessionId && !activeSessionId) {
+        setActiveSessionId(newSessionId)
+      }
+    },
+    onFinish: () => {
+      // Refresh the route to seamlessly update the sidebar history
+      router.refresh()
+    },
     onError: (err) => {
       alert("Gagal mengirim pesan: " + err.message)
     }

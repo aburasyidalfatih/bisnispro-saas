@@ -62,6 +62,22 @@ ${schemaContext}
 
 Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan menyertakan data asli dari database alih-alih menjawab secara hipotetis.`
 
+    // Handle Session Creation Early
+    let currentSessionId = sessionId
+    if (!currentSessionId) {
+      const firstUserMsg = messages.find((m: any) => m.role === "user")?.content || "Percakapan Analisis Baru"
+      const title = firstUserMsg.length > 50 ? firstUserMsg.substring(0, 50) + "..." : firstUserMsg
+      
+      const newSession = await db.aiChatSession.create({
+         data: {
+            userId: session.user.id,
+            title: "[Analyst] " + title,
+            messages: "[]"
+         }
+      })
+      currentSessionId = newSession.id
+    }
+
     // Generate Stream with Tools
     const result = await streamText({
       model: modelResult.model,
@@ -112,30 +128,19 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
       async onFinish({ text }) {
         try {
            const allMessages = [...messages, { role: "assistant", content: text }]
-           if (sessionId) {
-              await db.aiChatSession.update({
-                 where: { id: sessionId },
-                 data: { messages: JSON.stringify(allMessages) }
-              })
-           } else {
-              const firstUserMsg = messages.find((m: any) => m.role === "user")?.content || "Percakapan Analisis Baru"
-              const title = firstUserMsg.length > 50 ? firstUserMsg.substring(0, 50) + "..." : firstUserMsg
-              
-              await db.aiChatSession.create({
-                 data: {
-                    userId: session.user.id,
-                    title: "[Analyst] " + title,
-                    messages: JSON.stringify(allMessages)
-                 }
-              })
-           }
+           await db.aiChatSession.update({
+              where: { id: currentSessionId },
+              data: { messages: JSON.stringify(allMessages) }
+           })
         } catch (err) {
            console.error("Failed to save chat session", err)
         }
       }
     })
 
-    return result.toTextStreamResponse()
+    const response = result.toTextStreamResponse()
+    response.headers.set('x-session-id', currentSessionId)
+    return response
   } catch (error: any) {
     console.error("AI Analyst Error:", error)
     return new Response(error.message || "Terjadi kesalahan server", { status: 500 })
