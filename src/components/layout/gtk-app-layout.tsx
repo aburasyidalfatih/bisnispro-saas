@@ -17,6 +17,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useEffect, useState } from "react"
+import { AiTopupDialog } from "@/components/shared/ai-topup-dialog"
+import { Coins } from "lucide-react"
 
 export function GtkAppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -27,6 +30,18 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
 
   const tenantPlan = session?.user?.tenants?.[0]?.plan || "free"
   const isPremium = tenantPlan === "premium" || tenantPlan === "pro"
+
+  const [aiData, setAiData] = useState<any>(null)
+  const [isTopupOpen, setIsTopupOpen] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/gtk/ai/info')
+      .then(r => r.json())
+      .then(d => {
+         if (!d.error) setAiData(d)
+      })
+      .catch(console.error)
+  }, [])
 
   const navItems: { label: string; icon: any; href: string; badge?: string }[] = [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
@@ -93,6 +108,17 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-4">
+            {aiData && (
+              <button 
+                onClick={() => setIsTopupOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors"
+                title="Top up Token AI"
+              >
+                <Coins className="h-4 w-4" />
+                <span className="text-xs font-bold">{aiData.userTokens.toLocaleString("id-ID")}</span>
+              </button>
+            )}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -136,6 +162,17 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
+
+      {aiData && (
+        <AiTopupDialog 
+          open={isTopupOpen}
+          onOpenChange={setIsTopupOpen}
+          userTokens={aiData.userTokens}
+          aiPackages={aiData.aiPackages}
+          paymentChannels={aiData.paymentChannels}
+          manualPayment={aiData.manualPayment}
+        />
+      )}
 
       {/* Main Content */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8 pb-32 lg:pb-8">
