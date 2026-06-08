@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History } from "lucide-react"
+import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import ReactMarkdown from "react-markdown"
+import { cn } from "@/lib/utils"
 
 export default function AiAnalystClient({ initialSessions = [] }: { initialSessions?: any[] }) {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
@@ -148,21 +150,37 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                           <div className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
                             {m.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
                           </div>
-                          <div className={`p-3 sm:p-4 rounded-2xl text-sm leading-relaxed ${m.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-muted/50 rounded-tl-sm border border-border/50'}`}>
-                            <div className="whitespace-pre-wrap">{m.content}</div>
+                          <div className={`p-4 rounded-2xl text-sm leading-relaxed overflow-hidden ${m.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-muted/50 rounded-tl-sm border border-border/50'}`}>
+                            {m.content && (
+                              <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-muted prose-pre:border prose-pre:text-foreground prose-a:text-primary">
+                                <ReactMarkdown>{m.content}</ReactMarkdown>
+                              </div>
+                            )}
+                            
                             {/* Display tool invocations */}
                             {m.toolInvocations?.map((toolInvocation) => (
-                              <div key={toolInvocation.toolCallId} className="mt-3 p-3 bg-background/50 border rounded-lg text-xs font-mono">
-                                <div className="flex items-center gap-2 text-muted-foreground mb-1 font-semibold">
-                                  <Sparkles className="h-3 w-3" />
-                                  Menggunakan Tool: {toolInvocation.toolName}
+                              <div key={toolInvocation.toolCallId} className={cn("p-3 bg-background border rounded-xl text-xs flex flex-col gap-2 shadow-sm", m.content ? "mt-4" : "mt-1")}>
+                                <div className="flex items-center gap-2 font-medium">
+                                  {toolInvocation.state === 'result' ? (
+                                    <div className="h-5 w-5 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                                      <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                                    </div>
+                                  ) : (
+                                    <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center">
+                                      <Loader2 className="h-3 w-3 text-primary animate-spin" />
+                                    </div>
+                                  )}
+                                  <span className={toolInvocation.state === 'result' ? 'text-foreground' : 'text-primary animate-pulse'}>
+                                    {toolInvocation.state === 'result' ? 'Selesai menganalisis database' : 'Sedang mencari data dari database...'}
+                                  </span>
                                 </div>
-                                {toolInvocation.state === 'result' ? (
-                                  <div className="max-h-32 overflow-auto text-[10px]">
-                                    {JSON.stringify(toolInvocation.result).substring(0, 200)}...
+                                
+                                {toolInvocation.state === 'result' && toolInvocation.result?.results && (
+                                  <div className="bg-muted/50 border border-border/50 p-2 rounded-lg text-[10px] text-muted-foreground flex items-center gap-2 ml-7">
+                                    <Database className="h-3 w-3" />
+                                    Berhasil menarik {Array.isArray(toolInvocation.result.results) ? toolInvocation.result.results.length : 1} baris data
+                                    {toolInvocation.result.note && ` (${toolInvocation.result.note})`}
                                   </div>
-                                ) : (
-                                  <div className="text-[10px] animate-pulse">Menjalankan query...</div>
                                 )}
                               </div>
                             ))}
