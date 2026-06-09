@@ -306,6 +306,8 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                                         </ResponsiveContainer>
                                       </CardContent>
                                     </Card>
+                                  )}
+
                                   {toolInvocation.toolName === 'generate_marketing_image' && (
                                     <div className={cn("p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono overflow-hidden")}>
                                       <div className="flex items-center gap-2.5">
