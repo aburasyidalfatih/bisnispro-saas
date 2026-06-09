@@ -297,7 +297,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                                           <PieChart>
                                             <Pie data={toolInvocation.args.data} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
                                               {toolInvocation.args.data.map((entry: any, index: number) => (
-                                                <Cell key={\`cell-\${index}\`} fill={COLORS[index % COLORS.length]} />
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                               ))}
                                             </Pie>
                                             <RechartsTooltip contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', fontSize: '12px' }} />
