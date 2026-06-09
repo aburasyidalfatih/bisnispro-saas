@@ -17,6 +17,7 @@ export const runtime = "nodejs"
  * - memory: RSS memory usage in MB
  * - timestamp: current server time
  */
+// eslint-disable-next-line react-doctor/nextjs-no-side-effect-in-get-handler
 export async function GET() {
   const startTime = Date.now()
   const checks: Record<string, { status: string; latencyMs?: number; error?: string }> = {}

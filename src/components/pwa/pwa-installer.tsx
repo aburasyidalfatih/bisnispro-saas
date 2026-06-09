@@ -35,6 +35,7 @@ export function PwaInstaller({ tenantName, tenantLogo }: PwaInstallerProps) {
     // Check session storage if dismissed recently
     const dismissed = sessionStorage.getItem(`pwa-dismissed-${tenantName}`)
     if (dismissed) {
+      // eslint-disable-next-line react-doctor/no-adjust-state-on-prop-change
       setIsDismissed(true)
     }
 

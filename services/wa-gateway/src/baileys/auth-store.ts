@@ -1,7 +1,7 @@
 import { AuthenticationCreds, SignalDataTypeMap, initAuthCreds, BufferJSON } from '@whiskeysockets/baileys'
 import prisma from '../prisma'
 
-export const usePrismaAuthState = async (tenantId: string) => {
+export const getPrismaAuthState = async (tenantId: string) => {
   // Try to find existing session
   let session = await prisma.waSession.findUnique({
     where: { tenantId }

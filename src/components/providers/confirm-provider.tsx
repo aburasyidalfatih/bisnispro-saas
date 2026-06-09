@@ -57,7 +57,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
     setIsOpen(false)
   }
 
-  const Icon = () => {
+  const renderIcon = () => {
     if (options?.variant === "destructive") return <Trash2 className="h-7 w-7 text-red-600" />
     if (options?.variant === "info") return <Info className="h-7 w-7 text-blue-600" />
     if (options?.variant === "success") return <CheckCircle2 className="h-7 w-7 text-emerald-600" />
@@ -86,7 +86,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
           <div className="px-6 pt-10 pb-6 text-center flex flex-col items-center relative">
             <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-primary/5 to-transparent -z-10" />
             <div className={cn("mx-auto flex h-20 w-20 items-center justify-center rounded-full mb-6 ring-8 ring-background shadow-lg", iconBg())}>
-              <Icon />
+              {renderIcon()}
             </div>
             <AlertDialogHeader className="text-center w-full">
               <AlertDialogTitle className="text-2xl font-extrabold text-center w-full">{options?.title}</AlertDialogTitle>

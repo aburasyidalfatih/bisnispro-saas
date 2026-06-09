@@ -19,11 +19,13 @@ export function ResetPasswordModal({ open, onOpenChange, tenant, onSuccess }: Re
   const [newPassword, setNewPassword] = useState("")
   const [reseting, setReseting] = useState(false)
 
-  useEffect(() => {
+  const [prevOpen, setPrevOpen] = useState(open)
+  if (open !== prevOpen) {
+    setPrevOpen(open)
     if (!open) {
       setNewPassword("")
     }
-  }, [open])
+  }
 
   const handleResetPassword = async () => {
     if (!tenant || !newPassword) return

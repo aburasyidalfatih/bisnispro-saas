@@ -3,5 +3,5 @@
 import { RoleUserPage } from"../_components/role-user-page"
 
 export default function AdminUsersPage() {
-  return <RoleUserPage role="admin" />
+  return <RoleUserPage userRole="admin" />
 }

@@ -22,36 +22,46 @@ export function SocialProofPopup() {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
+    let isMounted = true;
+
     fetch("/api/public/recent-registrations")
       .then(res => res.json())
       .then(data => {
+        if (!isMounted) return;
         if (Array.isArray(data) && data.length > 0) {
           setRegistrations(data)
-          // Show the first one after 3 seconds of landing
-          setTimeout(() => setIsVisible(true), 3000)
+          timer = setTimeout(() => setIsVisible(true), 3000)
         }
       })
       .catch(console.error)
+      
+    return () => {
+      isMounted = false;
+      if (timer) clearTimeout(timer);
+    }
   }, [])
 
   useEffect(() => {
     if (!isVisible || registrations.length === 0) return
 
-    // Hide after 5 seconds of being visible
+    let nextTimer: NodeJS.Timeout;
+    
     const hideTimer = setTimeout(() => {
       setIsVisible(false)
-      
-      // Calculate random delay before showing the next one (between 5 to 15 seconds)
       const nextDelay = Math.floor(Math.random() * 10000) + 5000
       
-      setTimeout(() => {
+      nextTimer = setTimeout(() => {
         setCurrentIndex(prev => (prev + 1) % registrations.length)
         setIsVisible(true)
       }, nextDelay)
       
     }, 5000)
 
-    return () => clearTimeout(hideTimer)
+    return () => {
+      clearTimeout(hideTimer)
+      if (nextTimer) clearTimeout(nextTimer)
+    }
   }, [isVisible, registrations.length])
 
   if (registrations.length === 0) return null

@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import makeWASocket, { DisconnectReason, fetchLatestBaileysVersion } from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
 import pino from 'pino'
-import { usePrismaAuthState } from './auth-store'
+import { getPrismaAuthState } from './auth-store'
 import prisma from '../prisma'
 import qrcode from 'qrcode'
 
@@ -33,8 +33,7 @@ setInterval(() => {
 }, 5 * 60 * 1000) // Check every 5 minutes
 
 export const startWhatsAppSession = async (tenantId: string) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { state, saveState } = await usePrismaAuthState(tenantId)
+  const { state, saveState } = await getPrismaAuthState(tenantId)
   const { version } = await fetchLatestBaileysVersion()
 
   const sock = makeWASocket({

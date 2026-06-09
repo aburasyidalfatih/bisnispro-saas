@@ -63,11 +63,11 @@ const roleConfig: Record<string, { label: string; badge: string; icon: any; addL
 }
 
 interface RoleUserPageProps {
-  role: "admin" | "guru" | "orangtua"
+  userRole: "admin" | "guru" | "orangtua"
 }
 
-export function RoleUserPage({ role }: RoleUserPageProps) {
-  const config = roleConfig[role]
+export function RoleUserPage({ userRole }: RoleUserPageProps) {
+  const config = roleConfig[userRole]
   const { data: session, status } = useSession()
   const [users, setUsers] = useState<UserRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -109,11 +109,11 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
   const fetchUsers = useCallback(() => {
     if (!resolvedTenantId || !isAdmin) return
     setLoading(true)
-    fetch(`/api/tenant/users?tenantId=${resolvedTenantId}&role=${role}`)
+    fetch(`/api/tenant/users?tenantId=${resolvedTenantId}&role=${userRole}`)
       .then((r) => r.json())
       .then((data) => { setUsers(data.data || []); setLoading(false) })
       .catch(() => setLoading(false))
-  }, [resolvedTenantId, isAdmin, role])
+  }, [resolvedTenantId, isAdmin, userRole])
 
   useEffect(() => { fetchUsers() }, [fetchUsers])
 
@@ -158,7 +158,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
         name: fd.get("name"),
         email: fd.get("email"),
         phone: fd.get("phone"),
-        role,
+        role: userRole,
         password: fd.get("password") || undefined,
       }),
     })
@@ -249,7 +249,7 @@ export function RoleUserPage({ role }: RoleUserPageProps) {
           <p className="text-muted-foreground mt-1">Kelola data {config.label.toLowerCase()} ({filtered.length} data)</p>
         </div>
         <div className="flex gap-2">
-          {role ==="guru" ? (
+          {userRole ==="guru" ? (
             <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
               <Link href="/admin/website/gtk/new">
                 <UserPlus className="h-4 w-4" />

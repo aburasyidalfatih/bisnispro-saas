@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { logger } from "@/lib/logger";
 import { requireTenantMembership } from "@/lib/api-utils";
 
+// eslint-disable-next-line react-doctor/nextjs-no-side-effect-in-get-handler
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
