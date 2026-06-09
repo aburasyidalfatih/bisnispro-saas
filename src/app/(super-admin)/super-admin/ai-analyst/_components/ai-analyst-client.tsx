@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database, PanelLeft } from "lucide-react"
+import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database, PanelLeft, Image as ImageIcon } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import ReactMarkdown from "react-markdown"
@@ -306,6 +306,50 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                                         </ResponsiveContainer>
                                       </CardContent>
                                     </Card>
+                                  {toolInvocation.toolName === 'generate_marketing_image' && (
+                                    <div className={cn("p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono overflow-hidden")}>
+                                      <div className="flex items-center gap-2.5">
+                                        {toolInvocation.state === 'result' && toolInvocation.result?.success ? (
+                                          <div className="h-5 w-5 rounded-md bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shrink-0">
+                                            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                                          </div>
+                                        ) : toolInvocation.state === 'result' && toolInvocation.result?.error ? (
+                                          <div className="h-5 w-5 rounded-md bg-red-500/10 flex items-center justify-center border border-red-500/20 shrink-0">
+                                            <span className="text-red-400 font-bold">X</span>
+                                          </div>
+                                        ) : (
+                                          <div className="h-5 w-5 rounded-md bg-purple-500/10 flex items-center justify-center border border-purple-500/20 shrink-0">
+                                            <Loader2 className="h-3 w-3 text-purple-400 animate-spin" />
+                                          </div>
+                                        )}
+                                        <span className={toolInvocation.state === 'result' ? (toolInvocation.result?.error ? 'text-red-400' : 'text-[#8B949E]') : 'text-purple-400 animate-pulse'}>
+                                          {toolInvocation.state === 'result' ? (toolInvocation.result?.error ? '> execution_failed' : '> image_generation_completed') : '> generating_image_with_ai...'}
+                                        </span>
+                                      </div>
+                                      
+                                      {toolInvocation.state === 'result' && toolInvocation.result?.success && (
+                                        <div className="bg-[#161B22] border border-[#30363D] p-3 rounded-lg flex flex-col items-start gap-3 ml-7">
+                                          <div className="flex items-center gap-2 text-[11px] text-[#8B949E]">
+                                            <ImageIcon className="h-3.5 w-3.5 text-[#8B949E]" />
+                                            <span className="font-semibold text-[#C9D1D9]">IMAGE_READY</span>
+                                          </div>
+                                          <div className="w-full relative rounded-md overflow-hidden border border-[#30363D]">
+                                            <img src={toolInvocation.result.imageUrl} alt="Generated Asset" className="w-full h-auto object-cover" />
+                                          </div>
+                                          <div className="flex gap-2 w-full mt-1">
+                                            <Button variant="outline" size="sm" className="w-full h-8 text-xs bg-transparent border-[#30363D] text-[#C9D1D9] hover:bg-[#30363D]" onClick={() => window.open(toolInvocation.result.imageUrl, '_blank')}>
+                                              View Full Size
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {toolInvocation.state === 'result' && toolInvocation.result?.error && (
+                                        <div className="bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-[11px] text-red-400 ml-7">
+                                          {toolInvocation.result.error}
+                                        </div>
+                                      )}
+                                    </div>
                                   )}
                                </div>
                             ))}

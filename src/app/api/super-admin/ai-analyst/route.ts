@@ -26,6 +26,10 @@ export async function POST(req: Request) {
       return new Response(modelResult.error || "Gagal memuat model AI Agent. Periksa pengaturan API Key.", { status: 500 })
     }
 
+    // Fetch OpenAI API Key for Image Generation
+    const openAiSetting = await db.platformSetting.findUnique({ where: { key: "OPENAI_API_KEY" } })
+    const openAiKey = openAiSetting?.value || process.env.OPENAI_API_KEY
+
     // Read Prisma Schema for context
     let schemaContext = ""
     try {
@@ -55,6 +59,7 @@ ${businessContext}
 
 Anda memiliki alat (tool) bernama "execute_postgres_query". Anda BISA dan HARUS menggunakannya jika pengguna menanyakan data berbasis angka, statistik, performa, jam aktif, dan sebagainya.
 Selain itu, Anda memiliki tool "render_bar_chart" dan "render_pie_chart". Jika pengguna meminta visualisasi grafik, atau jika Anda merasa data akan lebih mudah dipahami dalam bentuk grafik, silakan panggil tool grafik tersebut *SETELAH* Anda mendapatkan data dari database.
+Anda juga memiliki tool "generate_marketing_image" yang bisa membuat gambar (misal: banner promosi, logo) menggunakan DALL-E 3. Gunakan tool ini jika pengguna meminta pembuatan aset visual atau materi promosi.
 
 **PANDUAN TEXT-TO-SQL:**
 Berikut adalah struktur database (Prisma Schema) saat ini:
@@ -161,6 +166,40 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
           }),
           execute: async ({ title, description, data }) => {
             return { success: true, message: "Pie chart rendered on client successfully." }
+          }
+        }),
+        generate_marketing_image: tool({
+          description: "Generates a promotional or marketing image using OpenAI DALL-E 3 based on the user's prompt. Use this when the user asks to create an image, banner, or visual asset.",
+          parameters: z.object({
+            prompt: z.string().describe("A highly detailed prompt for the image generation model. Make it descriptive and optimize it for a high-quality marketing asset."),
+            size: z.enum(["1024x1024", "1024x1792", "1792x1024"]).default("1024x1024").describe("The dimensions of the generated image.")
+          }),
+          execute: async ({ prompt, size }) => {
+            if (!openAiKey) {
+              return { error: "OpenAI API Key is missing. Cannot generate image." }
+            }
+            try {
+              const response = await fetch("https://api.openai.com/v1/images/generations", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${openAiKey}`
+                },
+                body: JSON.stringify({
+                  model: "dall-e-3",
+                  prompt: prompt,
+                  n: 1,
+                  size: size
+                })
+              })
+              const data = await response.json()
+              if (data.error) {
+                return { error: data.error.message }
+              }
+              return { success: true, imageUrl: data.data[0].url }
+            } catch (error: any) {
+              return { error: "Failed to generate image: " + error.message }
+            }
           }
         }),
       },
