@@ -142,7 +142,7 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
       }
     })
 
-    return result.toTextStreamResponse({
+    return result.toDataStreamResponse({
       headers: {
         'x-session-id': currentSessionId
       }
