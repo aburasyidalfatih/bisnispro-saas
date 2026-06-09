@@ -30,9 +30,15 @@ export async function POST(req: Request) {
     let schemaContext = ""
     try {
       const schemaPath = path.join(process.cwd(), "prisma", "schema.prisma")
-      schemaContext = fs.readFileSync(schemaPath, "utf-8")
+      if (fs.existsSync(schemaPath)) {
+        schemaContext = fs.readFileSync(schemaPath, "utf-8")
+      } else {
+        // Fallback untuk Vercel Production jika file tidak ditemukan di root CWD
+        const { Prisma } = require("@prisma/client")
+        schemaContext = Prisma.dmmf.datamodel.models.map((m: any) => `model ${m.name} { ${m.fields.map((f:any)=>f.name).join(', ')} }`).join('\n')
+      }
     } catch (e) {
-      console.warn("Could not read schema.prisma", e)
+      console.warn("Could not load schema context", e)
     }
 
     const businessContext = `
@@ -95,15 +101,17 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
             const cleanQuery = query.trim()
             
             // Keamanan Kritis: Cegah SQL Injection & Operasi DML/DDL menggunakan REGEX ketat.
-            // Memblokir komentar `/* ... */`, `--` dan memaksakan query hanya dimulai dengan SELECT (atau WITH .. SELECT).
-            const isSafeReadQuery = /^(?:\s*WITH\s+[\s\S]+?)?\s*SELECT\s/i.test(cleanQuery)
+            // Bersihkan komentar agar regex pendeteksi SELECT tidak terkecoh
+            const queryWithoutComments = cleanQuery.replace(/--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim()
+            
+            const isSafeReadQuery = /^(?:\s*WITH\s+[\s\S]+?)?\s*SELECT\s/i.test(queryWithoutComments)
             if (!isSafeReadQuery) {
               return { error: "Izin ditolak. Format query tidak valid. Anda hanya diperbolehkan menjalankan operasi baca murni (SELECT)." }
             }
 
             // Blokir DML/DDL & Keyword perusak secara case-insensitive
             const destructiveRegex = /\b(UPDATE|DELETE|DROP|INSERT|ALTER|TRUNCATE|GRANT|REVOKE|EXEC|MERGE|COPY)\b/i
-            if (destructiveRegex.test(cleanQuery)) {
+            if (destructiveRegex.test(queryWithoutComments)) {
               return { error: "Operasi destruktif atau mutasi dilarang keras." }
             }
 
