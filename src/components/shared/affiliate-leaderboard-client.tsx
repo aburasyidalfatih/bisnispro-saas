@@ -44,7 +44,7 @@ function ScoreInfoTooltip({ iconClass }: { iconClass: string }) {
       <Info className={iconClass} />
       {open && (
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2 bg-slate-800 text-white text-[10px] rounded-lg shadow-xl z-50 text-center leading-tight font-normal">
-          Sistem Penilaian: Pengajuan (0.5), Free (1), Lite (3), Pro (5)
+          Sistem Penilaian: Berdasarkan jumlah pengajuan dan paket langganan sekolah aktif.
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-slate-800"></div>
         </div>
       )}
@@ -208,8 +208,8 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
           {/* Full List */}
           <Card className="glass shadow-sm mt-8">
             <CardHeader className="pb-4">
-              <CardTitle>Semua Peringkat</CardTitle>
-              <CardDescription>Menampilkan urutan semua afiliator di platform.</CardDescription>
+              <CardTitle>Top 10 Afiliator</CardTitle>
+              <CardDescription>Menampilkan 10 peringkat mitra terbaik di platform.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="rounded-xl border overflow-hidden">
@@ -224,29 +224,11 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                           <span>Pengajuan</span>
                         </div>
                       </TableHead>
-                      <TableHead className="px-4 py-3 font-medium text-center">
-                        <div className="flex flex-col items-center gap-1">
-                          <Badge variant="outline" className="text-[10px] h-4">FREE</Badge>
-                          <span>Aktif</span>
-                        </div>
-                      </TableHead>
-                      <TableHead className="px-4 py-3 font-medium text-center">
-                        <div className="flex flex-col items-center gap-1">
-                          <Badge className="bg-emerald-500/10 text-emerald-600 border-0 text-[10px] h-4">LITE</Badge>
-                          <span>Aktif</span>
-                        </div>
-                      </TableHead>
-                      <TableHead className="px-4 py-3 font-medium text-center">
-                        <div className="flex flex-col items-center gap-1">
-                          <Badge className="bg-indigo-500/10 text-indigo-600 border-0 text-[10px] h-4">PRO</Badge>
-                          <span>Aktif</span>
-                        </div>
-                      </TableHead>
                       <TableHead className="px-4 py-3 font-medium text-right">Skor Total</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody className="divide-y divide-border/50">
-                    {data.map((item) => (
+                    {data.slice(0, 10).map((item) => (
                       <TableRow key={item.id} className={cn("bg-background/50 hover:bg-muted/50 transition-colors", item.rank <= 3 && "bg-muted/10")}>
                         <TableCell className="px-4 py-3 text-center font-bold text-muted-foreground">
                           {item.rank}
@@ -265,15 +247,6 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                         <TableCell className="px-4 py-3 text-center font-medium">
                           {item.totalApplications > 0 ? item.totalApplications : <span className="text-muted-foreground/30">-</span>}
                         </TableCell>
-                        <TableCell className="px-4 py-3 text-center">
-                          {item.free > 0 ? item.free : <span className="text-muted-foreground/30">-</span>}
-                        </TableCell>
-                        <TableCell className="px-4 py-3 text-center">
-                          {item.lite > 0 ? <span className="text-emerald-600 font-bold">{item.lite}</span> : <span className="text-muted-foreground/30">-</span>}
-                        </TableCell>
-                        <TableCell className="px-4 py-3 text-center">
-                          {item.pro > 0 ? <span className="text-indigo-600 font-bold">{item.pro}</span> : <span className="text-muted-foreground/30">-</span>}
-                        </TableCell>
                         <TableCell className="px-4 py-3 text-right">
                           <span className="font-bold text-amber-600">{item.score.toFixed(1)}</span>
                         </TableCell>
@@ -284,10 +257,7 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
               </div>
               <div className="mt-4 flex gap-4 text-xs text-muted-foreground border-t pt-4">
                 <span className="font-medium">Sistem Penilaian:</span>
-                <span>Pengajuan: <strong className="text-foreground">0.5 pt</strong></span>
-                <span>Tenant Free: <strong className="text-foreground">1 pt</strong></span>
-                <span>Tenant Lite: <strong className="text-emerald-600">3 pt</strong></span>
-                <span>Tenant Pro: <strong className="text-indigo-600">5 pt</strong></span>
+                <span>Berdasarkan akumulasi jumlah pengajuan dan tipe paket sekolah yang berhasil aktif.</span>
               </div>
             </CardContent>
           </Card>
