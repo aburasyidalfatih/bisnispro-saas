@@ -220,9 +220,13 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                           <div className={`p-4 rounded-2xl text-sm leading-relaxed overflow-hidden ${m.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-muted/50 rounded-tl-sm border border-border/50'}`}>
                             {m.content && (
                               <div className="overflow-x-auto max-w-full">
-                                <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-muted prose-pre:border prose-pre:text-foreground prose-a:text-primary prose-table:min-w-full prose-td:px-3 prose-td:py-2 prose-th:px-3 prose-th:py-2 prose-th:bg-muted/50">
-                                  <ReactMarkdown>{m.content}</ReactMarkdown>
-                                </div>
+                                {m.role === 'user' ? (
+                                  <div className="whitespace-pre-wrap">{m.content}</div>
+                                ) : (
+                                  <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-muted prose-pre:border prose-pre:text-foreground prose-a:text-primary prose-table:min-w-full prose-td:px-3 prose-td:py-2 prose-th:px-3 prose-th:py-2 prose-th:bg-muted/50">
+                                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                                  </div>
+                                )}
                               </div>
                             )}
                             
