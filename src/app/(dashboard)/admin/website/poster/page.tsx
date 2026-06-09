@@ -29,7 +29,7 @@ export default function WebsitePosterPage() {
             const domainRes = await fetch(`/api/tenant/domain?tenantId=${id}`)
             const domainData = await domainRes.json()
             const rootDomain = getRootDomain()
-            let protocol = window.location.protocol
+            const protocol = window.location.protocol
             
             if (domainData?.customDomain?.status ==="verified" && domainData.domain) {
               setWebsiteUrl(`https://${domainData.domain}`)

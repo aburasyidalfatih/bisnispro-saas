@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Send, MessageSquare, Loader2, User } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { format } from "date-fns"
@@ -143,16 +144,17 @@ export default function GuruMessagesPage() {
             <form onSubmit={handleSend} className="space-y-4 max-w-2xl">
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Kepada</label>
-                <select 
-                  value={receiverId} 
-                  onChange={e => setReceiverId(e.target.value)}
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <option value="admin">Admin Sekolah (Semua Admin)</option>
-                  {tenantUsers.map(u => (
-                    <option key={u.id} value={u.id}>{u.name} ({u.role.toUpperCase()})</option>
-                  ))}
-                </select>
+                <Select value={receiverId} onValueChange={setReceiverId}>
+                  <SelectTrigger className="w-full rounded-xl h-10">
+                    <SelectValue placeholder="Pilih penerima" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin Sekolah (Semua Admin)</SelectItem>
+                    {tenantUsers.map(u => (
+                      <SelectItem key={u.id} value={u.id}>{u.name} ({u.role.toUpperCase()})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Subjek (Opsional)</label>

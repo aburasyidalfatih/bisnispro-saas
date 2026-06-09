@@ -55,9 +55,10 @@ export function WebsiteMessages({
               <div key={sub.id}
                 className={cn("rounded-xl border transition-colors",
                   !sub.isRead ?"border-primary/30 bg-primary/5" :"border-border")}>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => toggleExpand(sub.id)}
-                  className="flex w-full items-center gap-3 p-4 text-left">
+                  className="flex w-full items-center justify-start gap-3 p-4 h-auto text-left font-normal hover:bg-transparent">
                   <div className={cn("h-2 w-2 rounded-full shrink-0", !sub.isRead ?"bg-primary" :"bg-transparent")} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -74,7 +75,7 @@ export function WebsiteMessages({
                     </span>
                     {expandedId === sub.id ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
                   </div>
-                </button>
+                </Button>
 
                 {expandedId === sub.id && (
                   <div className="px-4 pb-4 border-t pt-3 space-y-3">

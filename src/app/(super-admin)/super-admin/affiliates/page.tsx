@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Users, CreditCard, Wallet, Search, Ban, CheckCircle2, ChevronRight, Trophy, Settings, Save } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
@@ -201,14 +202,15 @@ export default function SuperAdminAffiliatesPage() {
               <CardDescription>Semua marketer yang terdaftar di platform.</CardDescription>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-              <select
-                className="flex h-10 w-full sm:w-[180px] items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="createdAt">Terbaru</option>
-                <option value="balance">Saldo Terbesar</option>
-              </select>
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
+                <SelectTrigger className="w-full sm:w-[180px] h-10 rounded-xl">
+                  <SelectValue placeholder="Urutkan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="createdAt">Terbaru</SelectItem>
+                  <SelectItem value="balance">Saldo Terbesar</SelectItem>
+                </SelectContent>
+              </Select>
               <div className="relative w-full sm:w-[250px] max-w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -377,10 +379,10 @@ export default function SuperAdminAffiliatesPage() {
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setIsSettingsOpen(false)} disabled={savingSettings} className="rounded-xl">Batal</Button>
-            <button onClick={handleSaveSettings} disabled={savingSettings} className="justify-center items-center flex rounded-xl gap-2 border-0 btn-gradient text-white h-10 px-4">
+            <Button onClick={handleSaveSettings} disabled={savingSettings} className="justify-center items-center flex rounded-xl gap-2 border-0 btn-gradient text-white h-10 px-4">
               {savingSettings ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
               Simpan Pengaturan
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Clock, MapPin, Loader2, Save, TrendingUp, CalendarCheck, Settings, FileText, Camera } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
@@ -145,7 +147,7 @@ export default function GtkAttendanceSettingsPage() {
                 </div>
                 <div className="grid sm:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Jam Masuk</label>
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Jam Masuk</Label>
                     <Input 
                       type="time" 
                       value={form.gtkCheckIn} 
@@ -155,7 +157,7 @@ export default function GtkAttendanceSettingsPage() {
                     <p className="text-[10px] text-muted-foreground">Waktu wajib staf sudah melakukan check-in.</p>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Jam Pulang</label>
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Jam Pulang</Label>
                     <Input 
                       type="time" 
                       value={form.gtkCheckOut} 
@@ -165,7 +167,7 @@ export default function GtkAttendanceSettingsPage() {
                     <p className="text-[10px] text-muted-foreground">Waktu minimal staf diperbolehkan check-out.</p>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Toleransi Telat (Menit)</label>
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Toleransi Telat (Menit)</Label>
                     <Input 
                       type="number" 
                       value={form.lateTolerance} 
@@ -193,13 +195,10 @@ export default function GtkAttendanceSettingsPage() {
                       <p className="text-xs text-muted-foreground mt-1">Guru harus mengambil foto wajah saat melakukan check-in dan check-out absensi.</p>
                     </div>
                   </div>
-                  <button onClick={() => setForm(f => ({ ...f, requireSelfie: !f.requireSelfie }))}
-                    className={cn("relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors",
-                      form.requireSelfie ? "bg-primary" : "bg-muted-foreground/30")}
-                    role="switch" aria-checked={form.requireSelfie}>
-                    <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform",
-                      form.requireSelfie ? "translate-x-6" : "translate-x-1")} />
-                  </button>
+                  <Switch 
+                    checked={form.requireSelfie}
+                    onCheckedChange={v => setForm(f => ({ ...f, requireSelfie: v }))}
+                  />
                 </div>
               </div>
 
@@ -211,7 +210,7 @@ export default function GtkAttendanceSettingsPage() {
                 </div>
                 <div className="grid sm:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Garis Lintang (Latitude)</label>
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Garis Lintang (Latitude)</Label>
                     <Input 
                       type="text" 
                       placeholder="-6.2088"
@@ -221,7 +220,7 @@ export default function GtkAttendanceSettingsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Garis Bujur (Longitude)</label>
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Garis Bujur (Longitude)</Label>
                     <Input 
                       type="text" 
                       placeholder="106.8456"
@@ -231,7 +230,7 @@ export default function GtkAttendanceSettingsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Radius Maksimal (Meter)</label>
+                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Radius Maksimal (Meter)</Label>
                     <Input 
                       type="number" 
                       placeholder="100"

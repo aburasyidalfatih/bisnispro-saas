@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/comp
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { useColorTheme } from"@/components/providers/color-theme-provider"
 import { themes } from"@/lib/themes"
 import { Check, Sun, Moon, Monitor, Palette, Info, Save, RotateCcw, LayoutTemplate, Lock, Loader2, Type, Crown } from"lucide-react"
@@ -385,16 +386,20 @@ export default function AppearancePage() {
             <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/50 flex flex-col">
               <h4 className="text-sm font-bold flex items-center gap-2 text-foreground"><Type className="h-4 w-4 text-muted-foreground" /> Tipografi (Font Family)</h4>
               
-              <select
+              <Select
                 value={dynamicSettings.fontFamily ||"inter"}
-                onChange={(e) => setDynamicSettings(p => ({ ...p, fontFamily: e.target.value }))}
-                className="w-full h-11 rounded-xl border-border bg-background px-4 text-sm font-medium shadow-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
+                onValueChange={(v) => setDynamicSettings(p => ({ ...p, fontFamily: v }))}
               >
-                <option value="inter">Modern Minimalist (Inter)</option>
-                <option value="plus-jakarta">Professional (Plus Jakarta Sans)</option>
-                <option value="playfair">Klasik & Elegan (Playfair Display)</option>
-                <option value="outfit">Ceria & Kreatif (Outfit)</option>
-              </select>
+                <SelectTrigger className="w-full h-11 rounded-xl border-border bg-background px-4 text-sm font-medium shadow-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                  <SelectValue placeholder="Pilih Font" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="inter">Modern Minimalist (Inter)</SelectItem>
+                  <SelectItem value="plus-jakarta">Professional (Plus Jakarta Sans)</SelectItem>
+                  <SelectItem value="playfair">Klasik & Elegan (Playfair Display)</SelectItem>
+                  <SelectItem value="outfit">Ceria & Kreatif (Outfit)</SelectItem>
+                </SelectContent>
+              </Select>
               
               <div className="mt-auto pt-4 flex-1">
                 <div className="bg-background rounded-xl border p-4 shadow-sm h-full flex flex-col justify-center">

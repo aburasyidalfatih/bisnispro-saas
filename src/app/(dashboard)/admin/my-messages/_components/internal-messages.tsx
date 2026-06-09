@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { Users, Plus, Loader2, MessageSquare } from"lucide-react"
 import { format } from"date-fns"
 import { id } from"date-fns/locale"
@@ -60,17 +61,20 @@ export function InternalMessages({
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label>Kirim Ke</Label>
-                <select 
+                <Select 
                   value={composeForm.receiverId} 
-                  onChange={e => setComposeForm(p => ({...p, receiverId: e.target.value}))}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  onValueChange={v => setComposeForm(p => ({...p, receiverId: v}))}
                   disabled={loadingUsers}
                 >
-                  <option value="">-- Pilih Penerima --</option>
-                  {tenantUsers.map(u => (
-                    <option key={u.id} value={u.id}>{u.name} ({u.role.toUpperCase()})</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <SelectValue placeholder="-- Pilih Penerima --" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tenantUsers.map(u => (
+                      <SelectItem key={u.id} value={u.id}>{u.name} ({u.role.toUpperCase()})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Subjek (Opsional)</Label>

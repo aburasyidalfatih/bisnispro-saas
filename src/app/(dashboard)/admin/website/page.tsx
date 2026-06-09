@@ -72,8 +72,8 @@ export default function WebsiteOverviewPage() {
 
   useEffect(() => {
     if (typeof window !=="undefined") {
-      let host = window.location.host
-      let protocol = window.location.protocol
+      const host = window.location.host
+      const protocol = window.location.protocol
       setAppUrl(`${protocol}//${host}`)
       setRootDomain(getRootDomain())
     }

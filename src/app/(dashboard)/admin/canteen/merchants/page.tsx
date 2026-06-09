@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/comp
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { Store, Plus, Search, Loader2, Trash2 } from"lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from"@/components/ui/dialog"
 import { useToast } from"@/hooks/use-toast"
@@ -132,16 +133,19 @@ export default function MerchantsPage() {
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label>Penanggung Jawab (Akun Pengguna)</Label>
-                <select 
+                <Select 
                   value={formData.userId} 
-                  onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  onValueChange={(v) => setFormData({ ...formData, userId: v })}
                 >
-                  <option value="">-- Pilih Pengguna --</option>
-                  {users.map(u => (
-                    <option key={u.user.id} value={u.user.id}>{u.user.name} ({u.role})</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <SelectValue placeholder="-- Pilih Pengguna --" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map(u => (
+                      <SelectItem key={u.user.id} value={u.user.id}>{u.user.name} ({u.role})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-[11px] text-muted-foreground">Pilih akun pengguna yang akan login ke Panel Kantin.</p>
               </div>
               <div className="space-y-2">

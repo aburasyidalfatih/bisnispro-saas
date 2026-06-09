@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 import {
   Users, CalendarCheck, CheckCircle, XCircle, Clock,
   Minus, Loader2, MapPin, LogIn, LogOut, Search, Edit2,
@@ -377,7 +378,7 @@ export default function AdminGTKAttendancePage() {
 
   // EXPORT CSV DYNAMIC
   const downloadCSV = (headers: string[], rows: any[][], filename: string) => {
-    let csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n")
+    const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n")
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
@@ -1099,7 +1100,7 @@ export default function AdminGTKAttendancePage() {
             <div className="space-y-4 text-left">
               {/* Staff Select / Display */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Guru / Staf</label>
+                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Guru / Staf</Label>
                 <Select value={manualForm.staffId} onValueChange={(val) => {
                   const found = staffList.find(s => s.id === val)
                   setManualForm(prev => ({ ...prev, staffId: val, staffName: found?.name || "" }))
@@ -1117,7 +1118,7 @@ export default function AdminGTKAttendancePage() {
 
               {/* Date Selection */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Tanggal Absen</label>
+                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Tanggal Absen</Label>
                 <Input 
                   type="date" 
                   value={manualForm.date} 
@@ -1128,7 +1129,7 @@ export default function AdminGTKAttendancePage() {
 
               {/* Status Selector Button Groups */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Status Kehadiran</label>
+                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Status Kehadiran</Label>
                 <div className="grid grid-cols-4 gap-2">
                   {[
                     { key: "HADIR", label: "Hadir", activeCls: "bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600", normalCls: "border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20" },
@@ -1138,17 +1139,18 @@ export default function AdminGTKAttendancePage() {
                   ].map((btn) => {
                     const isActive = manualForm.status === btn.key
                     return (
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         key={btn.key}
                         onClick={() => setManualForm(f => ({ ...f, status: btn.key }))}
                         className={cn(
-                          "py-1.5 text-center text-xs font-semibold border rounded-xl transition-all shadow-sm",
+                          "h-auto px-0 py-1.5 text-center text-xs font-semibold border rounded-xl transition-all shadow-sm",
                           isActive ? btn.activeCls : btn.normalCls
                         )}
                       >
                         {btn.label}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
@@ -1158,9 +1160,9 @@ export default function AdminGTKAttendancePage() {
               {manualForm.status === "HADIR" && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                       <LogIn className="h-3 w-3 text-emerald-600" /> Jam Masuk
-                    </label>
+                    </Label>
                     <Input 
                       type="time" 
                       value={manualForm.checkInTime} 
@@ -1169,9 +1171,9 @@ export default function AdminGTKAttendancePage() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                       <LogOut className="h-3 w-3 text-red-600" /> Jam Pulang
-                    </label>
+                    </Label>
                     <Input 
                       type="time" 
                       value={manualForm.checkOutTime} 
@@ -1184,7 +1186,7 @@ export default function AdminGTKAttendancePage() {
 
               {/* Notes */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Catatan / Alasan</label>
+                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Catatan / Alasan</Label>
                 <Textarea 
                   placeholder="Isikan keterangan (misal: dinas luar, lupa scan masuk, dsb.)..." 
                   value={manualForm.notes} 

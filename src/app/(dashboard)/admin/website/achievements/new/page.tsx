@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/comp
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
-import { Textarea } from"@/components/ui/textarea"
-import { toast } from"@/hooks/use-toast"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon, Sparkles, Wand2, Loader2 as Loader2Icon } from"lucide-react"
 import Link from"next/link"
 import { useRouter } from"next/navigation"
@@ -227,18 +228,18 @@ export default function NewAchievementPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="level">Tingkat Prestasi</Label>
-                <select 
-                  id="level"
-                  value={formData.level}
-                  onChange={e => setFormData({...formData, level: e.target.value})}
-                  className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="LOKAL">Tingkat Lokal / Sekolah</option>
-                  <option value="KABUPATEN">Tingkat Kabupaten/Kota</option>
-                  <option value="PROVINSI">Tingkat Provinsi</option>
-                  <option value="NASIONAL">Tingkat Nasional</option>
-                  <option value="INTERNASIONAL">Tingkat Internasional</option>
-                </select>
+                <Select value={formData.level} onValueChange={val => setFormData({...formData, level: val})}>
+                  <SelectTrigger id="level" className="w-full rounded-xl h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="LOKAL">Tingkat Lokal / Sekolah</SelectItem>
+                    <SelectItem value="KABUPATEN">Tingkat Kabupaten/Kota</SelectItem>
+                    <SelectItem value="PROVINSI">Tingkat Provinsi</SelectItem>
+                    <SelectItem value="NASIONAL">Tingkat Nasional</SelectItem>
+                    <SelectItem value="INTERNASIONAL">Tingkat Internasional</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -268,7 +269,7 @@ export default function NewAchievementPage() {
               <CardTitle className="text-base">Aksi</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 pt-6">
-              <button type="submit" className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4" disabled={saving || !formData.title || !formData.date}>
+              <Button type="submit" className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4" disabled={saving || !formData.title || !formData.date}>
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -277,7 +278,7 @@ export default function NewAchievementPage() {
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Prestasi</>
                 )}
-              </button>
+              </Button>
               <Button type="button" variant="ghost" className="w-full rounded-xl" onClick={() => router.back()} disabled={saving}>
                 Batal
               </Button>

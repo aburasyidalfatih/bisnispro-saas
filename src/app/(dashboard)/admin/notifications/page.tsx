@@ -8,6 +8,7 @@ import { Label } from"@/components/ui/label"
 import { Textarea } from"@/components/ui/textarea"
 import { Input } from"@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
+import { Switch } from"@/components/ui/switch"
 import { ServerPagination } from"@/components/shared/server-pagination"
 import { Bell, Check, Info, CheckCircle, AlertTriangle, XCircle, FileText, Save, Loader2 } from"lucide-react"
 import { cn } from"@/lib/utils"
@@ -358,18 +359,18 @@ export default function NotificationsPage() {
                       <CardDescription className="mt-1">{tpl.desc}</CardDescription>
                     </div>
                     <div className="flex gap-4 p-3 bg-background rounded-xl border">
-                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                        <input type="checkbox" className="h-4 w-4 rounded accent-primary cursor-pointer" checked={templatesForm[`${tpl.id}_enable_email`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_email`]: e.target.checked})} />
-                        Email
-                      </label>
-                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                        <input type="checkbox" className="h-4 w-4 rounded accent-emerald-500 cursor-pointer" checked={templatesForm[`${tpl.id}_enable_wa`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_wa`]: e.target.checked})} />
-                        WhatsApp
-                      </label>
-                      <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                        <input type="checkbox" className="h-4 w-4 rounded accent-amber-500 cursor-pointer" checked={templatesForm[`${tpl.id}_enable_app`]} onChange={(e) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_app`]: e.target.checked})} />
-                        App Notif
-                      </label>
+                      <div className="flex items-center gap-2">
+                        <Switch id={`${tpl.id}_email`} checked={templatesForm[`${tpl.id}_enable_email`]} onCheckedChange={(c) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_email`]: c})} />
+                        <Label htmlFor={`${tpl.id}_email`} className="text-xs font-bold cursor-pointer">Email</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch id={`${tpl.id}_wa`} checked={templatesForm[`${tpl.id}_enable_wa`]} onCheckedChange={(c) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_wa`]: c})} />
+                        <Label htmlFor={`${tpl.id}_wa`} className="text-xs font-bold cursor-pointer">WhatsApp</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch id={`${tpl.id}_app`} checked={templatesForm[`${tpl.id}_enable_app`]} onCheckedChange={(c) => setTemplatesForm({...templatesForm, [`${tpl.id}_enable_app`]: c})} />
+                        <Label htmlFor={`${tpl.id}_app`} className="text-xs font-bold cursor-pointer">App Notif</Label>
+                      </div>
                     </div>
                   </div>
                 </CardHeader>

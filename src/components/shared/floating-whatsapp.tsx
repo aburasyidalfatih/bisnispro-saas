@@ -38,7 +38,7 @@ export function FloatingWhatsApp({
         <div className="absolute bottom-16 right-0 mb-4 w-64 rounded-2xl border bg-background p-4 shadow-xl animate-in slide-in-from-bottom-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="font-semibold text-sm">Hubungi Support</h3>
-            <Button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 text-muted-foreground hover:text-foreground">
               <X className="h-4 w-4" />
             </Button>
           </div>

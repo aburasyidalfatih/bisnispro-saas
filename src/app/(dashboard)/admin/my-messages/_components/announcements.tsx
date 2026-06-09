@@ -6,6 +6,7 @@ import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from"@/components/ui/dialog"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { MessageSquare, Plus, Loader2, Pencil, Trash2 } from"lucide-react"
 import { format } from"date-fns"
 import { id as localeId } from"date-fns/locale"
@@ -64,16 +65,20 @@ export function Announcements({
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label>Tujuan Pengumuman</Label>
-                  <select 
+                  <Select 
                     value={addForm.target} 
-                    onChange={e => setAddForm(p => ({...p, target: e.target.value}))}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    onValueChange={v => setAddForm(p => ({...p, target: v}))}
                   >
-                    <option value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</option>
-                    <option value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</option>
-                    <option value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</option>
-                    <option value="PENGUMUMAN_SISWA">Khusus Siswa</option>
-                  </select>
+                    <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                      <SelectValue placeholder="Pilih Tujuan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</SelectItem>
+                      <SelectItem value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</SelectItem>
+                      <SelectItem value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</SelectItem>
+                      <SelectItem value="PENGUMUMAN_SISWA">Khusus Siswa</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label>Judul Pengumuman</Label>
@@ -106,16 +111,20 @@ export function Announcements({
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label>Tujuan Pengumuman</Label>
-                  <select 
+                  <Select 
                     value={editForm.target} 
-                    onChange={e => setEditForm(p => ({...p, target: e.target.value}))}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    onValueChange={v => setEditForm(p => ({...p, target: v}))}
                   >
-                    <option value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</option>
-                    <option value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</option>
-                    <option value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</option>
-                    <option value="PENGUMUMAN_SISWA">Khusus Siswa</option>
-                  </select>
+                    <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                      <SelectValue placeholder="Pilih Tujuan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</SelectItem>
+                      <SelectItem value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</SelectItem>
+                      <SelectItem value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</SelectItem>
+                      <SelectItem value="PENGUMUMAN_SISWA">Khusus Siswa</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label>Judul Pengumuman</Label>

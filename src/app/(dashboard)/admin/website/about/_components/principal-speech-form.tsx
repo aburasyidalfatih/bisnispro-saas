@@ -5,6 +5,7 @@ import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Info, Sparkles, Upload, X } from"lucide-react"
 import { LazyRichTextEditor as RichTextEditor } from"@/components/ui/lazy-rich-text-editor"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { normalizeImageUrl } from"@/lib/utils"
 import { AboutFormState, AiPromptType } from"./types"
 
@@ -42,32 +43,34 @@ export function PrincipalSpeechForm({
             <div className="space-y-4 p-4 rounded-xl border bg-muted/20">
               <div className="space-y-2">
                 <Label>Pilih dari Data GTK</Label>
-                <select
-                  value={staffList.find(s => s.name === form.settings?.principalName)?.id ||""}
-                  onChange={(e) => {
-                    const selectedId = e.target.value
-                    if (selectedId) {
-                      const selected = staffList.find(s => s.id === selectedId)
-                      if (selected) {
-                        setForm(p => ({
-                          ...p,
-                          settings: {
-                            ...p.settings,
-                            principalName: selected.name,
-                            principalTitle: selected.role ||"Kepala Sekolah",
-                            principalImage: selected.imageUrl || p.settings?.principalImage
-                          }
-                        }))
-                      }
+                <Select
+                  value={staffList.find(s => s.name === form.settings?.principalName)?.id || "empty"}
+                  onValueChange={(v) => {
+                    if (v === "empty") return
+                    const selected = staffList.find(s => s.id === v)
+                    if (selected) {
+                      setForm(p => ({
+                        ...p,
+                        settings: {
+                          ...p.settings,
+                          principalName: selected.name,
+                          principalTitle: selected.role ||"Kepala Sekolah",
+                          principalImage: selected.imageUrl || p.settings?.principalImage
+                        }
+                      }))
                     }
                   }}
-                  className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
-                  <option value="">-- Isi Manual Atau Pilih GTK --</option>
-                  {staffList.map(s => (
-                    <option key={s.id} value={s.id}>{s.name} ({s.role})</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="rounded-xl border-input bg-background w-full">
+                    <SelectValue placeholder="-- Isi Manual Atau Pilih GTK --" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="empty">-- Isi Manual Atau Pilih GTK --</SelectItem>
+                    {staffList.map(s => (
+                      <SelectItem key={s.id} value={s.id}>{s.name} ({s.role})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-[11px] text-muted-foreground">Pilih GTK untuk mengisi otomatis Nama, Jabatan, dan Foto.</p>
               </div>
 

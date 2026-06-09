@@ -1,13 +1,12 @@
 import { db } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, Palette, Download, Trash2, CalendarDays, Lock } from "lucide-react"
+import { Palette, Download, CalendarDays, Lock } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { ThemeUploadModal } from "./_components/theme-upload-modal"
 import Image from "next/image"
-import Link from "next/link"
 import { ThemeActionButtons } from "./_components/theme-action-buttons"
 
 export default async function SuperAdminThemesPage() {

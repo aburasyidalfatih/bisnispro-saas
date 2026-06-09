@@ -7,6 +7,7 @@ import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Textarea } from"@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { toast } from"@/hooks/use-toast"
 import { Upload, ArrowLeft, Save, FileType } from"lucide-react"
 import Link from"next/link"
@@ -166,15 +167,18 @@ export default function NewDocumentPage() {
 
             <div className="space-y-2">
               <Label htmlFor="type">Kategori / Tipe</Label>
-              <select 
-                id="type"
+              <Select 
                 value={formData.type}
-                onChange={e => setFormData({...formData, type: e.target.value})}
-                className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                onValueChange={v => setFormData({...formData, type: v})}
               >
-                <option value="UNDUHAN_UMUM">Unduhan Umum (Bebas)</option>
-                <option value="MATERI_TUGAS">Materi / Tugas Sekolah</option>
-              </select>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Pilih Kategori" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="UNDUHAN_UMUM">Unduhan Umum (Bebas)</SelectItem>
+                  <SelectItem value="MATERI_TUGAS">Materi / Tugas Sekolah</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -198,7 +202,7 @@ export default function NewDocumentPage() {
               <CardTitle className="text-base">Aksi</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 pt-6">
-              <button type="submit" className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4" disabled={saving || !file || !formData.title}>
+              <Button type="submit" className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4" disabled={saving || !file || !formData.title}>
                 {saving ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -207,7 +211,7 @@ export default function NewDocumentPage() {
                 ) : (
                   <><Save className="h-4 w-4" /> Simpan Dokumen</>
                 )}
-              </button>
+              </Button>
               <Button type="button" variant="ghost" className="w-full rounded-xl" onClick={() => router.back()} disabled={saving}>
                 Batal
               </Button>

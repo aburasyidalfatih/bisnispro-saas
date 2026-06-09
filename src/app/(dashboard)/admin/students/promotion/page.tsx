@@ -7,6 +7,7 @@ import { useRouter } from"next/navigation"
 import { useToast } from"@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
+import { Label } from"@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { Checkbox } from"@/components/ui/checkbox"
 import { ChevronLeft, TrendingUp, Loader2, Users, AlertCircle, ArrowRight } from"lucide-react"
@@ -191,7 +192,7 @@ export default function PromotionPage() {
 
               {targetStatus ==="CLASSROOM" && (
                 <div className="pt-2">
-                  <label className="text-xs font-semibold mb-1.5 block">Pilih Kelas Tujuan:</label>
+                  <Label className="text-xs font-semibold mb-1.5 block">Pilih Kelas Tujuan:</Label>
                   <Select value={targetClassroomId} onValueChange={setTargetClassroomId}>
                     <SelectTrigger className="w-full bg-background">
                       <SelectValue placeholder="-- Kelas Tujuan --" />

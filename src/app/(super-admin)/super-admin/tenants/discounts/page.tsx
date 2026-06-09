@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
 import { Tag, Edit, Plus, Trash2, Save, X } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -249,14 +250,15 @@ export default function DiscountsPage() {
             <div className="px-6 py-5 space-y-4">
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold">Tipe Kupon</Label>
-                <select
-                  value={editingDiscount.type || "DISCOUNT"}
-                  onChange={e => setEditingDiscount({ ...editingDiscount, type: e.target.value })}
-                  className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="DISCOUNT">Diskon Normal (Potong Harga)</option>
-                  <option value="CASHBACK">Cashback Afiliasi (Komisi Saldo)</option>
-                </select>
+                <Select value={editingDiscount.type || "DISCOUNT"} onValueChange={(value) => setEditingDiscount({ ...editingDiscount, type: value })}>
+                  <SelectTrigger className="w-full h-10 rounded-xl">
+                    <SelectValue placeholder="Tipe Kupon" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="DISCOUNT">Diskon Normal (Potong Harga)</SelectItem>
+                    <SelectItem value="CASHBACK">Cashback Afiliasi (Komisi Saldo)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {editingDiscount.type !== "CASHBACK" && (
@@ -362,7 +364,7 @@ export default function DiscountsPage() {
             <Button variant="ghost" className="rounded-xl" onClick={() => setIsDialogOpen(false)}>
               Batal
             </Button>
-            <button
+            <Button
               className="justify-center items-center flex rounded-xl btn-gradient text-white border-0 px-8 gap-2 h-10"
               onClick={handleSave}
               disabled={saving}
@@ -372,7 +374,7 @@ export default function DiscountsPage() {
               ) : (
                 <><Save className="h-4 w-4" /> Simpan</>
               )}
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

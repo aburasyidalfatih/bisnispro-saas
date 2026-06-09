@@ -6,6 +6,7 @@ import { useSession } from"next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from"@/components/ui/dialog"
 import { Textarea } from"@/components/ui/textarea"
@@ -123,7 +124,7 @@ export default function CashflowPage() {
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Jenis Transaksi</label>
+                <Label className="text-sm font-semibold">Jenis Transaksi</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <div 
                     onClick={() => setFormData({...formData, type:"INCOME", category:""})}
@@ -136,7 +137,7 @@ export default function CashflowPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Kategori (Akun)</label>
+                <Label className="text-sm font-semibold">Kategori (Akun)</Label>
                 <Select value={formData.category} onValueChange={v => setFormData({...formData, category: v})} required>
                   <SelectTrigger><SelectValue placeholder="Pilih Kategori" /></SelectTrigger>
                   <SelectContent>
@@ -147,15 +148,15 @@ export default function CashflowPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Nominal (Rp)</label>
+                <Label className="text-sm font-semibold">Nominal (Rp)</Label>
                 <Input type="number" min="0" required value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} placeholder="Contoh: 1500000" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Keterangan</label>
+                <Label className="text-sm font-semibold">Keterangan</Label>
                 <Textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Keterangan transaksi..." required />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Tanggal</label>
+                <Label className="text-sm font-semibold">Tanggal</Label>
                 <Input type="date" required value={formData.recordedAt} onChange={e => setFormData({...formData, recordedAt: e.target.value})} />
               </div>
               <Button type="submit" disabled={saving} className="w-full h-12 rounded-xl text-md font-bold mt-2">

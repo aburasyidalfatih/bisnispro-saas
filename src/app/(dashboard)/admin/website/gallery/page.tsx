@@ -177,10 +177,10 @@ export default function WebsiteGalleryPage() {
               <ExternalLink className="h-3.5 w-3.5" /> Lihat Galeri
             </a>
           )}
-          <button className="justify-center items-center flex gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4" onClick={handleSave} disabled={saving}>
+          <Button className="justify-center items-center flex gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4" onClick={handleSave} disabled={saving}>
             {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
             Simpan ({gallery.length})
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -195,14 +195,14 @@ export default function WebsiteGalleryPage() {
               <CardTitle className="text-base">Tambah Foto</CardTitle>
             </div>
             <div className="flex rounded-lg bg-muted p-1 text-xs">
-              <button onClick={() => setAddMode("upload")}
-                className={cn("flex items-center justify-center rounded-md px-3 py-1.5 font-medium transition-all", addMode ==="upload" ?"bg-background text-foreground shadow-sm" :"text-muted-foreground hover:text-foreground")}>
+              <Button variant="ghost" onClick={() => setAddMode("upload")}
+                className={cn("flex items-center justify-center rounded-md px-3 py-1.5 font-medium transition-all h-8", addMode ==="upload" ?"bg-background text-foreground shadow-sm" :"text-muted-foreground hover:text-foreground")}>
                 Upload File
-              </button>
-              <button onClick={() => setAddMode("url")}
-                className={cn("flex items-center justify-center rounded-md px-3 py-1.5 font-medium transition-all", addMode ==="url" ?"bg-background text-foreground shadow-sm" :"text-muted-foreground hover:text-foreground")}>
+              </Button>
+              <Button variant="ghost" onClick={() => setAddMode("url")}
+                className={cn("flex items-center justify-center rounded-md px-3 py-1.5 font-medium transition-all h-8", addMode ==="url" ?"bg-background text-foreground shadow-sm" :"text-muted-foreground hover:text-foreground")}>
                 Video YouTube
-              </button>
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -211,10 +211,11 @@ export default function WebsiteGalleryPage() {
             <div>
               <Input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif"
                 multiple className="hidden" onChange={e => handleUpload(e.target.files)} />
-              <button
+              <Button
+                variant="outline"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border py-10 transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:opacity-50">
+                className="flex w-full flex-col h-auto items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border py-10 transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:opacity-50">
                 {uploading
                   ? <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                   : <Upload className="h-8 w-8 text-muted-foreground/50" />}
@@ -223,7 +224,7 @@ export default function WebsiteGalleryPage() {
                   <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP, GIF · Maks 2MB per file · Bisa pilih banyak</p>
                   <p className="text-xs text-primary font-semibold mt-2 bg-primary/10 inline-block px-2 py-1 rounded-md">Rekomendasi rasio 16:9 atau 4:3 (Landscape)</p>
                 </div>
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="flex gap-2">

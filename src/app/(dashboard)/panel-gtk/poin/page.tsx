@@ -269,9 +269,9 @@ export default function BukuPoinPage() {
 
           <div className="md:col-span-2 pt-4 flex justify-end gap-3 sticky bottom-0 bg-background/80 backdrop-blur-md p-4 border-t z-10 -mx-4 sm:mx-0 sm:rounded-2xl sm:border sm:static">
              <Button variant="outline" className="rounded-xl px-6" onClick={() => setMode("list")} disabled={saving}>Batal</Button>
-             <button className="rounded-xl px-8 shadow-md shadow-primary/20" onClick={handleSubmit} disabled={saving || !formData.studentId}>
+             <Button className="rounded-xl px-8 shadow-md shadow-primary/20" onClick={handleSubmit} disabled={saving || !formData.studentId}>
                {saving ? <div className="animate-spin h-5 w-5 border-2 border-white/20 border-t-white rounded-full" /> : <><Save className="mr-2 h-4 w-4" /> Simpan Catatan</>}
-             </button>
+             </Button>
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ import { Switch } from"@/components/ui/switch"
 import { useToast } from"@/hooks/use-toast"
 import { Plus, Trash2, Edit, Loader2, ArrowUp, ArrowDown, ChevronRight } from"lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from"@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 
 interface MenuItem {
   id: string
@@ -299,17 +300,21 @@ export function MenuBuilder() {
 
             <div className="space-y-2">
               <Label>Induk Menu (Parent)</Label>
-              <select 
-                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              <Select 
                 value={formData.parentId}
-                onChange={e => setFormData({...formData, parentId: e.target.value})}
-                disabled={!!editingMenu?.children?.length || (editingMenu?.isSystem && !editingMenu.parentId)} // Tidak boleh jadi submenu jika punya child
+                onValueChange={v => setFormData({...formData, parentId: v})}
+                disabled={!!editingMenu?.children?.length || (editingMenu?.isSystem && !editingMenu.parentId)}
               >
-                <option value="root">-- Menu Utama (Root) --</option>
-                {menus.filter(m => m.id !== editingMenu?.id).map(m => (
-                  <option key={m.id} value={m.id}>{m.label}</option>
-                ))}
-              </select>
+                <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <SelectValue placeholder="Pilih Induk Menu" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="root">-- Menu Utama (Root) --</SelectItem>
+                  {menus.filter(m => m.id !== editingMenu?.id).map(m => (
+                    <SelectItem key={m.id} value={m.id}>{m.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/50 mt-2">

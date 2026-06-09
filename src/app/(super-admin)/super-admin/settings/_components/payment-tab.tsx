@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CreditCard, Save, ShieldCheck, Eye, EyeOff } from "lucide-react"
 import type { SettingsForm } from "../constants"
 
@@ -28,10 +29,15 @@ export function PaymentTab({ form, setForm, handleSaveBatch, saving }: PaymentTa
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>Tripay Mode</Label>
-            <select value={form.TRIPAY_MODE} onChange={e => setForm({...form, TRIPAY_MODE: e.target.value})} className="flex h-10 w-full rounded-xl border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-              <option value="sandbox">Sandbox (Testing)</option>
-              <option value="live">Live (Produksi)</option>
-            </select>
+            <Select value={form.TRIPAY_MODE} onValueChange={(value) => setForm({...form, TRIPAY_MODE: value})}>
+              <SelectTrigger className="w-full h-10 rounded-xl">
+                <SelectValue placeholder="Tripay Mode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sandbox">Sandbox (Testing)</SelectItem>
+                <SelectItem value="live">Live (Produksi)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label>Merchant Code</Label>

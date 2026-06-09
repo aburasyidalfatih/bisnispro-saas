@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
 import {
   Zap, Star, CheckCircle2,
-  Users, ShieldCheck, Edit, X, HardDrive, ArrowUpDown, CreditCard, Save, Timer
+  Users, Edit, X, HardDrive, CreditCard, Save, Timer
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -376,15 +377,16 @@ export default function PlansPage() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold">Periode Tagihan</Label>
-                    <select
-                      className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm focus:ring-2 focus:ring-primary outline-none"
-                      value={editingPlan.interval}
-                      onChange={e => setEditingPlan({ ...editingPlan, interval: e.target.value })}
-                    >
-                      <option value="MONTHLY">Bulanan</option>
-                      <option value="YEARLY">Tahunan</option>
-                      <option value="ONETIME">Sekali Bayar</option>
-                    </select>
+                    <Select value={editingPlan.interval} onValueChange={(value) => setEditingPlan({ ...editingPlan, interval: value })}>
+                      <SelectTrigger className="w-full h-10 rounded-xl">
+                        <SelectValue placeholder="Periode Tagihan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MONTHLY">Bulanan</SelectItem>
+                        <SelectItem value="YEARLY">Tahunan</SelectItem>
+                        <SelectItem value="ONETIME">Sekali Bayar</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               )}
@@ -542,7 +544,7 @@ export default function PlansPage() {
             <Button variant="ghost" className="rounded-xl" onClick={() => setIsDialogOpen(false)}>
               Batal
             </Button>
-            <button
+            <Button
               className="justify-center items-center flex rounded-xl btn-gradient text-white border-0 px-8 gap-2 h-10"
               onClick={handleSave}
               disabled={saving}
@@ -552,7 +554,7 @@ export default function PlansPage() {
               ) : (
                 <><Save className="h-4 w-4" /> Simpan Perubahan</>
               )}
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -62,10 +62,10 @@ export function ProfileSettings({
                   </div>
               }
             </div>
-            <button onClick={() => avatarInputRef.current?.click()} disabled={uploadingAvatar}
-              className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-primary/90">
+            <Button variant="outline" size="icon" onClick={() => avatarInputRef.current?.click()} disabled={uploadingAvatar}
+              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-primary/90 border-0 p-0">
               {uploadingAvatar ? <div className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Camera className="h-2.5 w-2.5" />}
-            </button>
+            </Button>
             <Input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarUpload} />
           </div>
           <div>
@@ -94,10 +94,10 @@ export function ProfileSettings({
             Gunakan email yang paling sering digunakan. Update rutin terkait SchoolPro akan disampaikan melalui email.
           </p>
         </div>
-        <button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9 px-4" onClick={handleSaveProfile} disabled={savingProfile}>
+        <Button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9 px-4" onClick={handleSaveProfile} disabled={savingProfile}>
           {savingProfile ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
           Simpan Profil
-        </button>
+        </Button>
 
         {/* Separator */}
         <div className="flex items-center gap-2 py-1">
@@ -140,10 +140,10 @@ export function ProfileSettings({
             </div>
           )}
         </div>
-        <button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9 px-4" onClick={handleChangePassword} disabled={savingPassword}>
+        <Button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9 px-4" onClick={handleChangePassword} disabled={savingPassword}>
           {savingPassword ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <KeyRound className="h-3.5 w-3.5" />}
           Ubah Password
-        </button>
+        </Button>
       </CardContent>
     </Card>
   )

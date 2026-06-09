@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from"@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import Link from"next/link"
 import { LazyRichTextEditor as RichTextEditor } from"@/components/ui/lazy-rich-text-editor"
 import { ImageUploadDirect } from"@/components/ui/image-upload-direct"
@@ -302,35 +303,37 @@ export default function PostFormPage() {
             <CardContent className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <select 
-                  id="status" 
-                  {...register("status")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
-                >
-                  <option value="PUBLISHED">🟢 Publikasikan Langsung</option>
-                  <option value="PENDING">🔵 Menunggu Review (Draf Guru)</option>
-                  <option value="REJECTED">🔴 Tolak / Perlu Revisi</option>
-                  <option value="DRAFT">🟡 Simpan sebagai Draft</option>
-                </select>
+                <Select value={watch("status")} onValueChange={v => setValue("status", v as any, { shouldValidate: true })}>
+                  <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-shadow hover:border-primary/50">
+                    <SelectValue placeholder="Pilih Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PUBLISHED">🟢 Publikasikan Langsung</SelectItem>
+                    <SelectItem value="PENDING">🔵 Menunggu Review (Draf Guru)</SelectItem>
+                    <SelectItem value="REJECTED">🔴 Tolak / Perlu Revisi</SelectItem>
+                    <SelectItem value="DRAFT">🟡 Simpan sebagai Draft</SelectItem>
+                  </SelectContent>
+                </Select>
                 {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="type">Jenis / Layout</Label>
-                <select 
-                  id="type" 
-                  {...register("type")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
-                >
-                  {(typeQuery ==="PENGUMUMAN" || watch("type") ==="PENGUMUMAN") ? (
-                    <option value="PENGUMUMAN">Pengumuman Publik (Web)</option>
-                  ) : (
-                    <>
-                      <option value="BLOG_GURU">Standar (Blog Guru)</option>
-                      <option value="EDITORIAL">Editorial Khusus</option>
-                    </>
-                  )}
-                </select>
+                <Select value={watch("type")} onValueChange={v => setValue("type", v as any, { shouldValidate: true })}>
+                  <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-shadow hover:border-primary/50">
+                    <SelectValue placeholder="Pilih Jenis" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(typeQuery ==="PENGUMUMAN" || watch("type") ==="PENGUMUMAN") ? (
+                      <SelectItem value="PENGUMUMAN">Pengumuman Publik (Web)</SelectItem>
+                    ) : (
+                      <>
+                        <SelectItem value="BLOG_GURU">Standar (Blog Guru)</SelectItem>
+                        <SelectItem value="EDITORIAL">Editorial Khusus</SelectItem>
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
                 {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
               </div>
 
@@ -339,16 +342,16 @@ export default function PostFormPage() {
                   <Label htmlFor="categoryId">Kategori Artikel</Label>
                   <Link href="/admin/website/categories" className="text-[10px] text-primary hover:underline font-medium">Kelola</Link>
                 </div>
-                <select 
-                  id="categoryId" 
-                  {...register("categoryId")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-shadow hover:border-primary/50"
-                >
-                  <option value="">-- Pilih Kategori --</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
+                <Select value={watch("categoryId")} onValueChange={v => setValue("categoryId", v, { shouldValidate: true })}>
+                  <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-shadow hover:border-primary/50">
+                    <SelectValue placeholder="-- Pilih Kategori --" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-[10px] text-muted-foreground">Kategori dinamis yang akan tampil di web publik.</p>
                 {errors.categoryId && <p className="text-xs text-red-500">{errors.categoryId.message}</p>}
               </div>
@@ -435,15 +438,16 @@ export default function PostFormPage() {
             
             <div className="space-y-2">
               <Label>Gaya Bahasa</Label>
-              <select 
-                value={aiTone}
-                onChange={(e) => setAiTone(e.target.value)}
-                className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                <option value="formal">Formal & Jurnalistik (Berita Resmi)</option>
-                <option value="santai">Santai & Inspiratif (Bercerita / Storytelling)</option>
-                <option value="pengumuman">Surat Edaran / Pengumuman Resmi</option>
-              </select>
+              <Select value={aiTone} onValueChange={setAiTone}>
+                <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm">
+                  <SelectValue placeholder="Pilih Gaya Bahasa" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="formal">Formal & Jurnalistik (Berita Resmi)</SelectItem>
+                  <SelectItem value="santai">Santai & Inspiratif (Bercerita / Storytelling)</SelectItem>
+                  <SelectItem value="pengumuman">Surat Edaran / Pengumuman Resmi</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
             <div className="rounded-xl bg-violet-500/10 p-3 flex gap-2 items-start mt-2 border border-violet-500/20">

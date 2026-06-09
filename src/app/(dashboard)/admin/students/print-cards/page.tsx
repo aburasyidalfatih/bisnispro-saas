@@ -4,6 +4,7 @@ import { redirect } from"next/navigation"
 import Link from"next/link"
 import { Building, Filter, Printer, ArrowLeft, ShieldCheck, Wallet } from"lucide-react"
 import { Button } from"@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import QRCodeClient from"@/components/ui/qr-code"
 import { PrintButton } from"./_components/print-button"
 
@@ -52,16 +53,20 @@ export default async function PrintCardsPage({
 
         <div className="bg-white p-4 rounded-xl border flex flex-col sm:flex-row gap-4 items-center justify-between">
            <form className="flex gap-3 w-full sm:w-auto">
-             <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-muted-foreground" />
-                <select name="classroomId" defaultValue={classroomId ||""} className="h-10 px-3 rounded-lg border text-sm focus:outline-none focus:ring-1 focus:ring-primary w-full sm:w-48 bg-background">
-                   <option value="" disabled>-- Pilih Kelas --</option>
-                   <option value="all">Semua Siswa</option>
-                   {classrooms.map(c => (
-                     <option key={c.id} value={c.id}>{c.name}</option>
-                   ))}
-                </select>
-             </div>
+              <div className="flex items-center gap-2">
+                 <Filter className="h-4 w-4 text-muted-foreground" />
+                 <Select name="classroomId" defaultValue={classroomId ||""}>
+                   <SelectTrigger className="w-full sm:w-48 bg-background">
+                     <SelectValue placeholder="-- Pilih Kelas --" />
+                   </SelectTrigger>
+                   <SelectContent>
+                     <SelectItem value="all">Semua Siswa</SelectItem>
+                     {classrooms.map(c => (
+                       <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+              </div>
              <Button type="submit" className="rounded-lg">Tampilkan</Button>
            </form>
 

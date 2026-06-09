@@ -99,7 +99,7 @@ export function ActiveUrlCard({
             </div>
             <ConfirmDialog
               trigger={
-                <button
+                <Button
                   className="flex items-center justify-center h-10 px-4 btn-gradient text-white border-0 rounded-xl gap-2 shrink-0"
                   disabled={savingSubdomain || !subdomainInput.trim() || data?.hasChangedSubdomain || subdomainInput === data?.slug}
                 >
@@ -109,7 +109,7 @@ export function ActiveUrlCard({
                     <Save className="h-4 w-4" />
                   )}
                   Ganti Subdomain
-                </button>
+                </Button>
               }
               title="Yakin ingin mengganti subdomain?"
               description={<span className="block space-y-2">

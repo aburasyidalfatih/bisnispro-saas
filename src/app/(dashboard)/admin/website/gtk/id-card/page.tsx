@@ -34,7 +34,7 @@ export default function IDCardPrintPage() {
       setStaff(Array.isArray(staffData) ? staffData : [])
       
       const rootDomain = getRootDomain()
-      let protocol = window.location.protocol
+      const protocol = window.location.protocol
       
       if (domainData?.customDomain?.status ==="verified" && domainData.domain) {
         setWebsiteUrl(`https://${domainData.domain}`)

@@ -109,14 +109,14 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
               <p className="text-[10px] text-muted-foreground mt-1">Kosongkan jika tidak ingin menggunakan Meta Pixel tracking.</p>
             </div>
 
-            <button 
+            <Button 
               className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4"
               onClick={() => handleSaveBatch(['platform_name', 'platform_tagline', 'platform_address', 'contact_email', 'META_PIXEL_ID'])}
               disabled={saving || uploadingLogo}
             >
               {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
               Simpan Identitas Platform
-            </button>
+            </Button>
           </CardContent>
         </Card>
 
@@ -147,14 +147,14 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
             }}>
               + Tambah Nomor WA
             </Button>
-            <button 
+            <Button 
               className="justify-center items-center flex w-full gap-2 btn-gradient text-white border-0 rounded-xl h-10 px-4"
               onClick={() => handleSaveBatch(['SUPPORT_WA_NUMBERS'], { SUPPORT_WA_NUMBERS: JSON.stringify(waSupportList) })}
               disabled={saving}
             >
               {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-4 w-4" />}
               Simpan WhatsApp Support
-            </button>
+            </Button>
           </CardContent>
         </Card>
       </div>

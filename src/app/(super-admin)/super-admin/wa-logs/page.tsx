@@ -7,6 +7,7 @@ import { ServerPagination } from "@/components/shared/server-pagination"
 import { Megaphone, Search, Building2, Clock, CheckCircle2, AlertCircle, Loader2, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { toast } from "@/hooks/use-toast"
 
 interface WaQueueLog {
@@ -123,9 +124,9 @@ export default function WaQueueLogsPage() {
               <div key={log.id} className="flex flex-col sm:flex-row items-start gap-4 p-5 hover:bg-muted/30 transition-colors">
                 <div className="flex-1 min-w-0 space-y-2">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-sm bg-muted/50 px-2 py-1 rounded-md border text-foreground">
+                    <Badge variant="outline" className="font-bold text-sm bg-muted/50 px-2 py-1 rounded-md text-foreground">
                       {log.targetNumber}
-                    </span>
+                    </Badge>
                     <span className={cn(
                       "flex items-center gap-1.5 text-[11px] font-bold uppercase rounded-full px-2.5 py-1 border shadow-sm", 
                       statusColors[log.status] || "bg-muted text-muted-foreground"
@@ -147,10 +148,10 @@ export default function WaQueueLogsPage() {
 
                   <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground font-medium flex-wrap">
                     {log.tenant && (
-                      <span className="flex items-center gap-1.5 bg-background border px-2 py-1 rounded-md">
+                      <Badge variant="outline" className="flex items-center gap-1.5 bg-background px-2 py-1 rounded-md">
                         <Building2 className="h-3.5 w-3.5" />
                         {log.tenant.name}
-                      </span>
+                      </Badge>
                     )}
                     <span className="flex items-center gap-1.5" title="Waktu Masuk Antrean">
                       <Clock className="h-3.5 w-3.5" />

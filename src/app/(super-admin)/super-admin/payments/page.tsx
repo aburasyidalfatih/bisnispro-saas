@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
   Receipt, Search, CheckCircle2, Clock, XCircle, AlertCircle,
   TrendingUp, Wallet, CreditCard, School, ShieldCheck
@@ -194,18 +195,19 @@ export default function PaymentsPage() {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              <select
-                className="h-9 rounded-xl border border-input bg-background px-2 sm:px-3 text-xs focus:ring-2 focus:ring-primary outline-none shrink-0"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                <option value="all">Semua</option>
-                <option value="paid">Berhasil</option>
-                <option value="pending">Menunggu</option>
-                <option value="expired">Kedaluwarsa</option>
-                <option value="failed">Gagal</option>
-                <option value="refunded">Refunded</option>
-              </select>
+              <Select value={filter} onValueChange={(value) => setFilter(value)}>
+                <SelectTrigger className="h-9 rounded-xl text-xs w-[130px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua</SelectItem>
+                  <SelectItem value="paid">Berhasil</SelectItem>
+                  <SelectItem value="pending">Menunggu</SelectItem>
+                  <SelectItem value="expired">Kedaluwarsa</SelectItem>
+                  <SelectItem value="failed">Gagal</SelectItem>
+                  <SelectItem value="refunded">Refunded</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardHeader>
@@ -249,7 +251,7 @@ export default function PaymentsPage() {
                       <TableCell className="py-4 px-2 text-xs text-muted-foreground">
                         <div className="flex flex-col gap-1">
                           <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}</span>
-                          {p.method && <span className="text-[9px] uppercase border px-1.5 py-0.5 rounded-sm w-fit bg-muted/50">{p.method}</span>}
+                          {p.method && <Badge variant="outline" className="text-[9px] uppercase px-1.5 py-0.5 rounded-sm w-fit bg-muted/50">{p.method}</Badge>}
                         </div>
                       </TableCell>
                       <TableCell className="py-4 px-2">{getStatusBadge(p.status)}</TableCell>

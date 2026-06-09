@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 
@@ -148,16 +149,17 @@ export default function WithdrawalsPage() {
         <CardHeader className="pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <CardTitle>Daftar Request Withdraw</CardTitle>
-            <select
-              className="h-9 rounded-xl border border-input bg-background px-3 text-xs outline-none"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">Semua Status</option>
-              <option value="PENDING">Menunggu Transfer</option>
-              <option value="PAID">Selesai (Ditransfer)</option>
-              <option value="FAILED">Ditolak</option>
-            </select>
+            <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value)}>
+              <SelectTrigger className="h-9 w-[180px] rounded-xl text-xs">
+                <SelectValue placeholder="Semua Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua Status</SelectItem>
+                <SelectItem value="PENDING">Menunggu Transfer</SelectItem>
+                <SelectItem value="PAID">Selesai (Ditransfer)</SelectItem>
+                <SelectItem value="FAILED">Ditolak</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardHeader>
         <CardContent>

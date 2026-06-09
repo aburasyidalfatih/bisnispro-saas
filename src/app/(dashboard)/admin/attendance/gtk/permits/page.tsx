@@ -12,6 +12,7 @@ import { Clock, TrendingUp, CalendarCheck, Settings, Download, Search, CheckCirc
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
 import { format } from "date-fns"
@@ -200,8 +201,8 @@ export default function GTKPermitsPage() {
 
       {/* Sub-Tabs */}
       <div className="flex bg-muted/50 p-1 rounded-xl w-fit">
-        <button onClick={() => setSubTab("permits")} className={cn("px-4 py-1.5 text-xs font-bold rounded-lg transition-all", subTab === "permits" ? "bg-white dark:bg-zinc-900 shadow text-foreground" : "text-muted-foreground hover:text-foreground")}>Pengajuan Izin</button>
-        <button onClick={() => setSubTab("logs")} className={cn("px-4 py-1.5 text-xs font-bold rounded-lg transition-all", subTab === "logs" ? "bg-white dark:bg-zinc-900 shadow text-foreground" : "text-muted-foreground hover:text-foreground")}>Riwayat Log Absen</button>
+        <Button variant="ghost" onClick={() => setSubTab("permits")} className={cn("px-4 py-1.5 h-auto text-xs font-bold rounded-lg transition-all", subTab === "permits" ? "bg-white dark:bg-zinc-900 shadow text-foreground hover:bg-white" : "text-muted-foreground hover:text-foreground")}>Pengajuan Izin</Button>
+        <Button variant="ghost" onClick={() => setSubTab("logs")} className={cn("px-4 py-1.5 h-auto text-xs font-bold rounded-lg transition-all", subTab === "logs" ? "bg-white dark:bg-zinc-900 shadow text-foreground hover:bg-white" : "text-muted-foreground hover:text-foreground")}>Riwayat Log Absen</Button>
       </div>
 
       {/* Permits Section */}
@@ -340,7 +341,7 @@ export default function GTKPermitsPage() {
           </div>
           <div className="p-6 space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Guru / Staf</label>
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Guru / Staf</Label>
               <Select value={form.staffId} onValueChange={v => setForm({ ...form, staffId: v })}>
                 <SelectTrigger className="rounded-xl text-sm h-11"><SelectValue placeholder="Pilih Guru/Staf" /></SelectTrigger>
                 <SelectContent>
@@ -349,7 +350,7 @@ export default function GTKPermitsPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Jenis Izin</label>
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Jenis Izin</Label>
               <Select value={form.type} onValueChange={v => setForm({ ...form, type: v })}>
                 <SelectTrigger className="rounded-xl text-sm h-11"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -361,20 +362,20 @@ export default function GTKPermitsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Dari Tgl</label>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Dari Tgl</Label>
                 <Input type="date" value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })} className="rounded-xl h-11" />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sampai Tgl</label>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sampai Tgl</Label>
                 <Input type="date" value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })} className="rounded-xl h-11" />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Alasan / Keterangan</label>
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Alasan / Keterangan</Label>
               <Textarea value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} className="rounded-xl resize-none" rows={3} placeholder="Jelaskan alasan izin..." />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">URL Surat Bukti (Opsional)</label>
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">URL Surat Bukti (Opsional)</Label>
               <Input value={form.proofUrl} onChange={e => setForm({ ...form, proofUrl: e.target.value })} placeholder="Link Google Drive / Upload file" className="rounded-xl h-11" />
               <p className="text-[10px] text-muted-foreground">Isi dengan link file bukti surat dokter atau surat tugas jika ada.</p>
             </div>

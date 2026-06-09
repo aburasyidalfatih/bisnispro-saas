@@ -26,6 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from"@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 
 type FormData = z.infer<typeof postSchema>
 
@@ -297,28 +298,30 @@ export default function PengumumanFormPage() {
             <CardContent className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <select 
-                  id="status" 
-                  {...register("status")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
-                >
-                  <option value="PUBLISHED">🟢 Publikasikan Langsung</option>
-                  <option value="PENDING">🔵 Menunggu Review (Draf Guru)</option>
-                  <option value="REJECTED">🔴 Tolak / Perlu Revisi</option>
-                  <option value="DRAFT">🟡 Simpan sebagai Draft</option>
-                </select>
+                <Select value={watch("status")} onValueChange={v => setValue("status", v as any, { shouldValidate: true })}>
+                  <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm transition-shadow hover:border-primary/50">
+                    <SelectValue placeholder="Pilih Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PUBLISHED">🟢 Publikasikan Langsung</SelectItem>
+                    <SelectItem value="PENDING">🔵 Menunggu Review (Draf Guru)</SelectItem>
+                    <SelectItem value="REJECTED">🔴 Tolak / Perlu Revisi</SelectItem>
+                    <SelectItem value="DRAFT">🟡 Simpan sebagai Draft</SelectItem>
+                  </SelectContent>
+                </Select>
                 {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="type">Jenis / Layout</Label>
-                <select 
-                  id="type" 
-                  {...register("type")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
-                >
-                  <option value="PENGUMUMAN">Pengumuman Publik (Web)</option>
-                </select>
+                <Select value={watch("type")} onValueChange={v => setValue("type", v as any, { shouldValidate: true })}>
+                  <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm transition-shadow hover:border-primary/50">
+                    <SelectValue placeholder="Pilih Jenis" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PENGUMUMAN">Pengumuman Publik (Web)</SelectItem>
+                  </SelectContent>
+                </Select>
                 {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
               </div>
 

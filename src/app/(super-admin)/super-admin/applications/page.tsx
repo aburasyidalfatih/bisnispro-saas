@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
 import { CheckCircle, RefreshCcw, XCircle, Trash2, Mail, Search, MessageSquareOff, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -313,17 +314,18 @@ export default function SuperAdminApplicationsPage() {
               className="pl-9 h-10 rounded-xl w-full"
             />
           </div>
-          <select 
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="flex h-10 w-full sm:w-40 items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            <option value="ALL">Semua Status</option>
-            <option value="PENDING">Pending</option>
-            <option value="APPROVED">Disetujui</option>
-            <option value="REVISION">Revisi</option>
-            <option value="REJECTED">Ditolak</option>
-          </select>
+          <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value)}>
+            <SelectTrigger className="w-full sm:w-40 h-10 rounded-xl">
+              <SelectValue placeholder="Semua Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Semua Status</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="APPROVED">Disetujui</SelectItem>
+              <SelectItem value="REVISION">Revisi</SelectItem>
+              <SelectItem value="REJECTED">Ditolak</SelectItem>
+            </SelectContent>
+          </Select>
           <div className="flex gap-2 shrink-0 items-center">
             <Badge variant="secondary" className="px-3 py-1 rounded-lg flex items-center">{filteredApps.length} Hasil</Badge>
             <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-3 py-1 rounded-lg flex items-center">

@@ -105,9 +105,10 @@ export default function AddStudentManualPage() {
         <div className="flex items-center gap-0">
           {STEPS.map((step, idx) => (
             <div key={step.id} className="flex items-center flex-1">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => currentStep > step.id && setCurrentStep(step.id)}
-                className="flex items-center gap-3 group"
+                className="flex items-center justify-start gap-3 group h-auto p-0 hover:bg-transparent"
               >
                 <div className={cn("h-9 w-9 rounded-full flex items-center justify-center border-2 font-bold text-sm shrink-0 transition-all",
                   currentStep > step.id ?"bg-emerald-500 border-emerald-500 text-white" :
@@ -119,7 +120,7 @@ export default function AddStudentManualPage() {
                   <p className={cn("text-xs font-bold leading-none", currentStep === step.id ?"text-foreground" :"text-muted-foreground")}>{step.title}</p>
                   <p className="text-[10px] text-muted-foreground leading-none mt-0.5 hidden md:block">{step.desc}</p>
                 </div>
-              </button>
+              </Button>
               {idx < STEPS.length - 1 && (
                 <div className={cn("h-0.5 flex-1 mx-3 rounded", currentStep > step.id + 1 || (currentStep > step.id) ?"bg-emerald-400" :"bg-muted")} />
               )}

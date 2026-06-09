@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, Plus, ArrowLeft, Trash2, CheckCircle2, GripVertical, FileText, Sparkles } from "lucide-react"
@@ -300,60 +301,64 @@ export default function KelolaSoalPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Jenjang Pendidikan</Label>
-                <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={aiPrompt.educationLevel}
-                  onChange={(e) => setAiPrompt({ ...aiPrompt, educationLevel: e.target.value })}
-                >
-                  <option value="SD/Sederajat">SD / Sederajat</option>
-                  <option value="SMP/Sederajat">SMP / Sederajat</option>
-                  <option value="SMA/SMK/Sederajat">SMA/SMK / Sederajat</option>
-                </select>
+                <Select value={aiPrompt.educationLevel} onValueChange={(val) => setAiPrompt({ ...aiPrompt, educationLevel: val })}>
+                  <SelectTrigger className="w-full h-10 rounded-md">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SD/Sederajat">SD / Sederajat</SelectItem>
+                    <SelectItem value="SMP/Sederajat">SMP / Sederajat</SelectItem>
+                    <SelectItem value="SMA/SMK/Sederajat">SMA/SMK / Sederajat</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Tipe Soal</Label>
-                <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={aiPrompt.questionType}
-                  onChange={(e) => setAiPrompt({ ...aiPrompt, questionType: e.target.value })}
-                >
-                  <option value="MULTIPLE_CHOICE_4">Pilihan Ganda (A-D)</option>
-                  <option value="MULTIPLE_CHOICE_5">Pilihan Ganda (A-E)</option>
-                  <option value="TRUE_FALSE">Benar / Salah</option>
-                  <option value="ESSAY">Essay (Uraian)</option>
-                </select>
+                <Select value={aiPrompt.questionType} onValueChange={(val) => setAiPrompt({ ...aiPrompt, questionType: val })}>
+                  <SelectTrigger className="w-full h-10 rounded-md">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="MULTIPLE_CHOICE_4">Pilihan Ganda (A-D)</SelectItem>
+                    <SelectItem value="MULTIPLE_CHOICE_5">Pilihan Ganda (A-E)</SelectItem>
+                    <SelectItem value="TRUE_FALSE">Benar / Salah</SelectItem>
+                    <SelectItem value="ESSAY">Essay (Uraian)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Tingkat Kesulitan</Label>
-                <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={aiPrompt.difficulty}
-                  onChange={(e) => setAiPrompt({ ...aiPrompt, difficulty: e.target.value })}
-                >
-                  <option value="Mudah">Mudah</option>
-                  <option value="Sedang">Sedang</option>
-                  <option value="Sulit (HOTS)">Sulit (HOTS)</option>
-                </select>
+                <Select value={aiPrompt.difficulty} onValueChange={(val) => setAiPrompt({ ...aiPrompt, difficulty: val })}>
+                  <SelectTrigger className="w-full h-10 rounded-md">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Mudah">Mudah</SelectItem>
+                    <SelectItem value="Sedang">Sedang</SelectItem>
+                    <SelectItem value="Sulit (HOTS)">Sulit (HOTS)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Jumlah Soal</Label>
-                <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={aiPrompt.count}
-                  onChange={(e) => setAiPrompt({ ...aiPrompt, count: e.target.value })}
-                >
-                  <option value="1">1 Soal</option>
-                  <option value="3">3 Soal</option>
-                  <option value="5">5 Soal</option>
-                  <option value="10">10 Soal</option>
-                  <option value="15">15 Soal</option>
-                  <option value="20">20 Soal</option>
-                  <option value="30">30 Soal</option>
-                  <option value="40">40 Soal</option>
-                  <option value="50">50 Soal</option>
-                </select>
+                <Select value={aiPrompt.count} onValueChange={(val) => setAiPrompt({ ...aiPrompt, count: val })}>
+                  <SelectTrigger className="w-full h-10 rounded-md">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 Soal</SelectItem>
+                    <SelectItem value="3">3 Soal</SelectItem>
+                    <SelectItem value="5">5 Soal</SelectItem>
+                    <SelectItem value="10">10 Soal</SelectItem>
+                    <SelectItem value="15">15 Soal</SelectItem>
+                    <SelectItem value="20">20 Soal</SelectItem>
+                    <SelectItem value="30">30 Soal</SelectItem>
+                    <SelectItem value="40">40 Soal</SelectItem>
+                    <SelectItem value="50">50 Soal</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <p className="text-xs text-muted-foreground bg-slate-50 p-3 rounded-lg border">

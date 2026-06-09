@@ -69,8 +69,8 @@ export function IdentityForm({
 
             <div className="space-y-2 mb-4">
               <Label>Domain Website</Label>
-              <button onClick={() => router.push("/admin/settings/domain")}
-                className="flex w-full items-center justify-between rounded-xl border bg-muted/30 px-3 py-2.5 text-left transition-colors hover:bg-muted/60">
+              <Button type="button" variant="outline" onClick={() => router.push("/admin/settings/domain")}
+                className="flex w-full h-auto items-center justify-between rounded-xl border bg-muted/30 px-3 py-2.5 text-left transition-colors hover:bg-muted/60 font-normal">
                 <div className="flex items-center gap-2">
                   <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div>
@@ -90,7 +90,7 @@ export function IdentityForm({
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </button>
+              </Button>
               <p className="text-[11px] text-muted-foreground">Subdomain aktif: <span className="font-mono">{slug ||"—"}</span></p>
             </div>
 
@@ -140,12 +140,16 @@ export function IdentityForm({
         <div className="grid gap-4 sm:grid-cols-2 mt-2">
           <div className="space-y-2">
             <Label>Status Sekolah</Label>
-            <select value={form.settings?.schoolStatus ||"SWASTA"}
-              onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, schoolStatus: e.target.value } }))}
-              className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-              <option value="SWASTA">SWASTA</option>
-              <option value="NEGERI">NEGERI</option>
-            </select>
+            <Select value={form.settings?.schoolStatus ||"SWASTA"}
+              onValueChange={v => setForm(p => ({ ...p, settings: { ...p.settings, schoolStatus: v } }))}>
+              <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <SelectValue placeholder="Pilih Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SWASTA">SWASTA</SelectItem>
+                <SelectItem value="NEGERI">NEGERI</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label>Estimasi Jumlah Siswa Saat Ini</Label>

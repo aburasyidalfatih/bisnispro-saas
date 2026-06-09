@@ -12,6 +12,13 @@ import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -98,24 +105,32 @@ export function ErrorLogTab() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Cari pesan error atau path..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1) }} className="pl-9 rounded-xl" />
         </div>
-        <select 
-          value={categoryFilter}
-          onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
-          className="h-10 px-3 py-2 rounded-xl border bg-background text-sm"
+        <Select 
+          value={categoryFilter || "all"} 
+          onValueChange={(value) => { setCategoryFilter(value === "all" ? "" : value); setPage(1); }}
         >
-          <option value="">Semua Kategori</option>
-          <option value="SYSTEM_BUG">System Bug</option>
-          <option value="USER_ERROR">User Error</option>
-        </select>
-        <select 
-          value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-          className="h-10 px-3 py-2 rounded-xl border bg-background text-sm"
+          <SelectTrigger className="h-10 w-fit sm:min-w-[160px] rounded-xl bg-background">
+            <SelectValue placeholder="Semua Kategori" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Kategori</SelectItem>
+            <SelectItem value="SYSTEM_BUG">System Bug</SelectItem>
+            <SelectItem value="USER_ERROR">User Error</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select 
+          value={statusFilter || "all"} 
+          onValueChange={(value) => { setStatusFilter(value === "all" ? "" : value); setPage(1); }}
         >
-          <option value="">Semua Status</option>
-          <option value="unresolved">Belum Selesai</option>
-          <option value="resolved">Sudah Selesai</option>
-        </select>
+          <SelectTrigger className="h-10 w-fit sm:min-w-[160px] rounded-xl bg-background">
+            <SelectValue placeholder="Semua Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Status</SelectItem>
+            <SelectItem value="unresolved">Belum Selesai</SelectItem>
+            <SelectItem value="resolved">Sudah Selesai</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <Card className="glass border-0 overflow-hidden">

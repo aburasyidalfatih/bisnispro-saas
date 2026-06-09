@@ -2,22 +2,17 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { useEffect, useState, useCallback } from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Building2, Search, Pencil, Trash2, LogIn,
-  MoreHorizontal, Key, Globe, ShieldCheck, ShieldOff, ArrowUpDown
+  MoreHorizontal, Key, Globe, ShieldCheck, ArrowUpDown
 } from "lucide-react"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Dialog, DialogContent, DialogDescription,
-  DialogFooter, DialogHeader, DialogTitle
-} from "@/components/ui/dialog"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { ServerPagination } from "@/components/shared/server-pagination"
 import { cn, getRootDomain } from "@/lib/utils"

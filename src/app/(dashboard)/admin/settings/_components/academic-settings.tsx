@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/comp
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { BookOpen, Save } from"lucide-react"
 
 interface AcademicSettingsProps {
@@ -42,20 +43,24 @@ export function AcademicSettings({
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Semester Aktif</Label>
-            <select 
+            <Select 
               value={rawSettings.academicSemester ||"Ganjil"} 
-              onChange={e => setRawSettings((p:any) => ({ ...p, academicSemester: e.target.value }))} 
-              className="flex h-9 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              onValueChange={v => setRawSettings((p:any) => ({ ...p, academicSemester: v }))} 
             >
-              <option value="Ganjil">Ganjil</option>
-              <option value="Genap">Genap</option>
-            </select>
+              <SelectTrigger className="flex h-9 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                <SelectValue placeholder="Pilih Semester" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Ganjil">Ganjil</SelectItem>
+                <SelectItem value="Genap">Genap</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-        <button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9 px-4" onClick={handleSaveOrg} disabled={savingOrg || !tenantId}>
+        <Button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9 px-4" onClick={handleSaveOrg} disabled={savingOrg || !tenantId}>
           {savingOrg ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Save className="h-3.5 w-3.5" />}
           Simpan Tahun Ajaran
-        </button>
+        </Button>
       </CardContent>
     </Card>
   )

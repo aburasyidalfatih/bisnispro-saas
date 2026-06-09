@@ -223,7 +223,7 @@ export default function JurnalPage() {
                 </div>
                 <div className="relative">
                   <Input placeholder="Contoh: Bab 1. Eksponen dan Logaritma" value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="rounded-xl bg-muted/40 pr-10" />
-                  <Button type="button" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Mulai berbicara, kami akan mengubahnya menjadi teks..."})} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
+                  <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Mulai berbicara, kami akan mengubahnya menjadi teks..."})} className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full text-muted-foreground hover:text-primary transition-colors">
                      <Mic className="h-4 w-4" />
                   </Button>
                 </div>
@@ -232,7 +232,7 @@ export default function JurnalPage() {
                 <label className="text-sm font-semibold">Catatan Khusus (Opsional)</label>
                 <div className="relative">
                   <Textarea placeholder="Ada kejadian khusus hari ini? (Siswa tidur, ribut, dll)" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="rounded-xl bg-muted/40 min-h-[80px] pr-10" />
-                  <Button type="button" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Silakan sampaikan catatan kelas Anda secara lisan..."})} className="absolute right-2 bottom-3 p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors">
+                  <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Silakan sampaikan catatan kelas Anda secara lisan..."})} className="absolute right-1 bottom-1 h-8 w-8 rounded-full text-muted-foreground hover:text-primary transition-colors">
                      <Mic className="h-4 w-4" />
                   </Button>
                 </div>
@@ -302,9 +302,9 @@ export default function JurnalPage() {
 
           <div className="md:col-span-2 pt-4 flex justify-end gap-3 sticky bottom-0 bg-background/80 backdrop-blur-md p-4 border-t z-10 -mx-4 sm:mx-0 sm:rounded-2xl sm:border sm:static">
              <Button variant="outline" className="rounded-xl px-6" onClick={() => setMode("list")} disabled={saving}>Batal</Button>
-             <button className="rounded-xl px-8" onClick={handleSubmit} disabled={saving || !formData.classroomId}>
+             <Button className="rounded-xl px-8" onClick={handleSubmit} disabled={saving || !formData.classroomId}>
                {saving ? <div className="animate-spin h-5 w-5 border-2 border-white/20 border-t-white rounded-full" /> : <><Save className="mr-2 h-4 w-4" /> Simpan Jurnal & Absensi</>}
-             </button>
+             </Button>
           </div>
         </div>
       </div>

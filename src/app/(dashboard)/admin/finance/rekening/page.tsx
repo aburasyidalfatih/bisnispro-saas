@@ -5,6 +5,7 @@ import { useSession } from"next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from"@/components/ui/dialog"
 import { Landmark, Plus, Trash2, Edit, Loader2, Building } from"lucide-react"
 import { useToast } from"@/hooks/use-toast"
@@ -67,7 +68,7 @@ export default function RekeningPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    let updated = [...banks]
+    const updated = [...banks]
     if (editIndex !== null) {
       updated[editIndex] = formData
     } else {
@@ -106,15 +107,15 @@ export default function RekeningPage() {
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Nama Bank</label>
+                <Label className="text-sm font-semibold">Nama Bank</Label>
                 <Input required value={formData.bank} onChange={e => setFormData({...formData, bank: e.target.value})} placeholder="Contoh: BCA / Mandiri / BRI" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Nomor Rekening</label>
+                <Label className="text-sm font-semibold">Nomor Rekening</Label>
                 <Input required value={formData.account} onChange={e => setFormData({...formData, account: e.target.value})} placeholder="Contoh: 1234567890" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Atas Nama</label>
+                <Label className="text-sm font-semibold">Atas Nama</Label>
                 <Input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Contoh: Yayasan Pendidikan Maju" />
               </div>
               <Button type="submit" disabled={saving} className="w-full h-12 rounded-xl text-md font-bold mt-2">

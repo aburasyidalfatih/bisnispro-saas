@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { SettingsForm } from "../../constants"
 
 import { ProviderStarsender } from "./provider-starsender"
@@ -37,18 +38,22 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
         
         <div className="mb-6 rounded-xl border bg-card p-4">
            <Label className="mb-2 block">Aktifkan Provider Pengiriman Utama</Label>
-           <select 
+           <Select 
              value={form.WA_ACTIVE_PROVIDER} 
-             onChange={e => {
-               setForm({...form, WA_ACTIVE_PROVIDER: e.target.value});
-               handleSaveBatch(['WA_ACTIVE_PROVIDER'], { WA_ACTIVE_PROVIDER: e.target.value });
+             onValueChange={value => {
+               setForm({...form, WA_ACTIVE_PROVIDER: value});
+               handleSaveBatch(['WA_ACTIVE_PROVIDER'], { WA_ACTIVE_PROVIDER: value });
              }} 
-             className="flex h-10 w-full md:w-1/3 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
            >
-             <option value="starsender">StarSender API</option>
-             <option value="meta">Meta Official API</option>
-             <option value="wavio">Wavio API</option>
-           </select>
+             <SelectTrigger className="w-full md:w-1/3 h-10 rounded-xl">
+               <SelectValue placeholder="Pilih Provider" />
+             </SelectTrigger>
+             <SelectContent>
+               <SelectItem value="starsender">StarSender API</SelectItem>
+               <SelectItem value="meta">Meta Official API</SelectItem>
+               <SelectItem value="wavio">Wavio API</SelectItem>
+             </SelectContent>
+           </Select>
            <p className="text-xs text-muted-foreground mt-2">Pilih gateway mana yang aktif untuk notifikasi otomatis platform (seperti alert pendaftaran baru).</p>
         </div>
 

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
 import { ArrowLeft, Save, Loader2, Search } from "lucide-react"
 import Link from "next/link"
@@ -243,28 +244,30 @@ export default function PostFormPage() {
             <CardContent className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <select 
-                  id="status" 
-                  {...register("status")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
-                >
-                  <option value="PENDING">🔵 Kirim untuk Direview</option>
-                  <option value="DRAFT">🟡 Simpan sebagai Draft</option>
-                </select>
+                <Select value={watch("status")} onValueChange={(val: any) => setValue("status", val, { shouldValidate: true })}>
+                  <SelectTrigger id="status" className="w-full rounded-xl h-10 hover:border-primary/50 transition-shadow">
+                    <SelectValue placeholder="Pilih status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PENDING">🔵 Kirim untuk Direview</SelectItem>
+                    <SelectItem value="DRAFT">🟡 Simpan sebagai Draft</SelectItem>
+                  </SelectContent>
+                </Select>
                 {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="type">Jenis / Layout</Label>
-                <select 
-                  id="type" 
-                  {...register("type")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-shadow hover:border-primary/50"
-                >
-                  <option value="BLOG_GURU">Standar (Blog Guru)</option>
-                  <option value="EDITORIAL">Editorial Khusus</option>
-                  <option value="PENGUMUMAN">Pengumuman Terbatas</option>
-                </select>
+                <Select value={watch("type")} onValueChange={(val: any) => setValue("type", val, { shouldValidate: true })}>
+                  <SelectTrigger id="type" className="w-full rounded-xl h-10 hover:border-primary/50 transition-shadow">
+                    <SelectValue placeholder="Pilih jenis" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="BLOG_GURU">Standar (Blog Guru)</SelectItem>
+                    <SelectItem value="EDITORIAL">Editorial Khusus</SelectItem>
+                    <SelectItem value="PENGUMUMAN">Pengumuman Terbatas</SelectItem>
+                  </SelectContent>
+                </Select>
                 {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
               </div>
 
@@ -272,16 +275,16 @@ export default function PostFormPage() {
                 <div className="flex justify-between items-center">
                   <Label htmlFor="categoryId">Kategori Artikel</Label>
                 </div>
-                <select 
-                  id="categoryId" 
-                  {...register("categoryId")} 
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-shadow hover:border-primary/50"
-                >
-                  <option value="">-- Pilih Kategori --</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
+                <Select value={watch("categoryId") || ""} onValueChange={(val: any) => setValue("categoryId", val, { shouldValidate: true })}>
+                  <SelectTrigger id="categoryId" className="w-full rounded-xl h-10 hover:border-primary/50 transition-shadow">
+                    <SelectValue placeholder="-- Pilih Kategori --" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-[10px] text-muted-foreground">Kategori dinamis yang akan tampil di web publik.</p>
                 {errors.categoryId && <p className="text-xs text-red-500">{errors.categoryId.message}</p>}
               </div>

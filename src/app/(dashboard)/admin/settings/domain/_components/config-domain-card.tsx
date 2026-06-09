@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
+import { Label } from"@/components/ui/label"
 import { Globe, AlertCircle, Save, Info } from"lucide-react"
 import { DomainData } from"./types"
 
@@ -54,7 +55,7 @@ export function ConfigDomainCard({
               className="rounded-xl font-mono"
               disabled={data?.isCustomDomainEnabled === false}
             />
-            <button
+            <Button
               className="flex items-center justify-center h-10 px-4 btn-gradient text-white border-0 rounded-xl gap-2 shrink-0"
               onClick={handleSave}
               disabled={saving || !domainInput.trim() || data?.isCustomDomainEnabled === false}
@@ -65,7 +66,7 @@ export function ConfigDomainCard({
                 <Save className="h-4 w-4" />
               )}
               Simpan
-            </button>
+            </Button>
           </div>
           <p className="text-xs text-muted-foreground">
             Masukkan domain tanpa <code className="bg-muted px-1 rounded">https://</code> atau{""}
@@ -86,6 +87,4 @@ export function ConfigDomainCard({
   )
 }
 
-function Label({ children, className }: { children: React.ReactNode, className?: string }) {
-  return <label className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className || ''}`}>{children}</label>
-}
+

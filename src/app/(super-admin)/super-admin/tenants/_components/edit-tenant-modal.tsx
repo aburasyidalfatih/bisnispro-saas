@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import {
   Dialog, DialogContent, DialogDescription,
   DialogFooter, DialogHeader, DialogTitle
@@ -91,15 +93,16 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label>Paket (Plan)</Label>
-              <select 
-                value={editForm.plan} 
-                onChange={(e) => setEditForm({...editForm, plan: e.target.value})}
-                className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm"
-              >
-                <option value="free">FREE</option>
-                <option value="lite">LITE</option>
-                <option value="pro">PRO</option>
-              </select>
+              <Select value={editForm.plan} onValueChange={(value) => setEditForm({...editForm, plan: value})}>
+                <SelectTrigger className="w-full h-10 rounded-xl">
+                  <SelectValue placeholder="Paket" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="free">FREE</SelectItem>
+                  <SelectItem value="lite">LITE</SelectItem>
+                  <SelectItem value="pro">PRO</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label>Kuota Siswa</Label>
@@ -116,15 +119,10 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
               <Label>Status Aktif</Label>
               <p className="text-[10px] text-muted-foreground">Matikan jika tenant menunggak atau suspend.</p>
             </div>
-            <button 
-              onClick={() => setEditForm({...editForm, isActive: !editForm.isActive})}
-              className={cn(
-                "w-12 h-6 rounded-full transition-all relative",
-                editForm.isActive ? "bg-primary" : "bg-muted"
-              )}
-            >
-              <div className={cn("absolute top-1 w-4 h-4 bg-white rounded-full transition-all", editForm.isActive ? "right-1" : "left-1")} />
-            </button>
+            <Switch
+              checked={editForm.isActive}
+              onCheckedChange={(checked) => setEditForm({ ...editForm, isActive: checked })}
+            />
           </div>
         </div>
         <DialogFooter>
