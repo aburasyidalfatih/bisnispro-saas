@@ -54,16 +54,17 @@ Tugas Anda adalah merespons pertanyaan Super Admin terkait performa bisnis, keua
 ${businessContext}
 
 Anda memiliki alat (tool) bernama "execute_postgres_query". Anda BISA dan HARUS menggunakannya jika pengguna menanyakan data berbasis angka, statistik, performa, jam aktif, dan sebagainya.
+Selain itu, Anda memiliki tool "render_bar_chart" dan "render_pie_chart". Jika pengguna meminta visualisasi grafik, atau jika Anda merasa data akan lebih mudah dipahami dalam bentuk grafik, silakan panggil tool grafik tersebut *SETELAH* Anda mendapatkan data dari database.
 
 **PANDUAN TEXT-TO-SQL:**
 Berikut adalah struktur database (Prisma Schema) saat ini:
-\`\`\`prisma
+```prisma
 ${schemaContext}
-\`\`\`
+```
 1. Tulis query PostgreSQL murni (Raw SQL).
 2. NAMA TABEL DAN KOLOM HARUS DIBERI KUTIP DUA (") persis seperti penamaan di Prisma Schema, karena PostgreSQL bersifat case-sensitive terhadap nama yang di-quote. Contoh: SELECT "id", "createdAt" FROM "User" WHERE "role" = 'ADMIN'
 3. Hanya lakukan SELECT (Read-only). DILARANG KERAS menggunakan instruksi perusak (UPDATE/DELETE/DROP dll).
-4. Setelah mendapat hasil JSON dari alat tersebut, rangkum dan jelaskan datanya ke pengguna dalam bahasa Indonesia yang elegan, cerdas, dan ringkas layaknya seorang Konsultan Bisnis Profesional. Jangan berikan output raw JSON langsung ke pengguna tanpa dirangkum.
+4. Setelah mendapat hasil JSON dari alat tersebut, rangkum dan jelaskan datanya ke pengguna dalam bahasa Indonesia yang elegan, cerdas, dan ringkas layaknya seorang Konsultan Bisnis Profesional. Jangan berikan output raw JSON langsung ke pengguna tanpa dirangkum. Jika Anda memanggil tool grafik, informasikan pengguna bahwa grafik telah ditampilkan.
 5. Jika ada potensi saran bisnis dari data tersebut (misal: "Traffic tertinggi di jam 20.00, ini waktu yang bagus untuk promo"), sampaikan secara inisiatif.
 
 Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan menyertakan data asli dari database alih-alih menjawab secara hipotetis.`
@@ -134,9 +135,37 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
             }
           }
         }),
+        render_bar_chart: tool({
+          description: "Generates a Bar Chart to visually represent data. Use this AFTER fetching data from the database if a bar chart is requested or appropriate.",
+          parameters: z.object({
+            title: z.string().describe("The title of the chart"),
+            description: z.string().describe("A short description of the chart"),
+            data: z.array(z.object({
+              label: z.string().describe("X-axis label"),
+              value: z.number().describe("Y-axis numerical value")
+            })).describe("The data points for the chart. Keep it under 15 items for readability.")
+          }),
+          execute: async ({ title, description, data }) => {
+            return { success: true, message: "Bar chart rendered on client successfully." }
+          }
+        }),
+        render_pie_chart: tool({
+          description: "Generates a Pie Chart to visually represent proportions or percentages. Use this AFTER fetching data from the database if a pie chart is requested or appropriate.",
+          parameters: z.object({
+            title: z.string().describe("The title of the pie chart"),
+            description: z.string().describe("A short description of the chart"),
+            data: z.array(z.object({
+              label: z.string().describe("The category label"),
+              value: z.number().describe("The numerical value for the proportion")
+            })).describe("The data points for the chart. Keep it under 10 items for readability.")
+          }),
+          execute: async ({ title, description, data }) => {
+            return { success: true, message: "Pie chart rendered on client successfully." }
+          }
+        }),
       },
-      // Berikan keleluasaan model untuk memanggil alat secara berurutan jika perlu
-      maxToolRoundtrips: 2,
+      // Berikan keleluasaan model untuk memanggil alat secara berurutan jika perlu (misal: query DB lalu render chart)
+      maxSteps: 3,
       async onFinish({ text }) {
         try {
            const allMessages = [...messages, { role: "assistant", content: text }]

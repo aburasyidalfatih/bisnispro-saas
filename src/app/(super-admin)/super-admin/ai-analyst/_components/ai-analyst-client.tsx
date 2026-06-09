@@ -13,6 +13,9 @@ import ReactMarkdown from "react-markdown"
 import { cn } from "@/lib/utils"
 
 import { useRouter } from "next/navigation"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#14b8a6', '#f43f5e', '#06b6d4', '#84cc16'];
 
 export default function AiAnalystClient({ initialSessions = [] }: { initialSessions?: any[] }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -232,33 +235,79 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                             
                             {/* Display tool invocations */}
                             {m.toolInvocations?.map((toolInvocation) => (
-                              <div key={toolInvocation.toolCallId} className={cn("mt-4 p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono w-full overflow-hidden")}>
-                                <div className="flex items-center gap-2.5">
-                                  {toolInvocation.state === 'result' ? (
-                                    <div className="h-5 w-5 rounded-md bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shrink-0">
-                                      <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                                    </div>
-                                  ) : (
-                                    <div className="h-5 w-5 rounded-md bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shrink-0">
-                                      <Loader2 className="h-3 w-3 text-blue-400 animate-spin" />
+                               <div key={toolInvocation.toolCallId} className="w-full mt-4">
+                                  {toolInvocation.toolName === 'execute_postgres_query' && (
+                                    <div className={cn("p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono overflow-hidden")}>
+                                      <div className="flex items-center gap-2.5">
+                                        {toolInvocation.state === 'result' ? (
+                                          <div className="h-5 w-5 rounded-md bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shrink-0">
+                                            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                                          </div>
+                                        ) : (
+                                          <div className="h-5 w-5 rounded-md bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shrink-0">
+                                            <Loader2 className="h-3 w-3 text-blue-400 animate-spin" />
+                                          </div>
+                                        )}
+                                        <span className={toolInvocation.state === 'result' ? 'text-[#8B949E]' : 'text-blue-400 animate-pulse'}>
+                                          {toolInvocation.state === 'result' ? '> execution_completed' : '> executing_postgres_query...'}
+                                        </span>
+                                      </div>
+                                      
+                                      {toolInvocation.state === 'result' && toolInvocation.result?.results && (
+                                        <div className="bg-[#161B22] border border-[#30363D] p-3 rounded-lg text-[11px] text-[#8B949E] flex items-start gap-2.5 ml-7">
+                                          <Database className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#8B949E]" />
+                                          <div>
+                                            <div className="font-semibold text-[#C9D1D9] mb-1">DATA_RETRIEVED_SUCCESSFULLY</div>
+                                            Total records: <span className="text-emerald-400 font-bold">{Array.isArray(toolInvocation.result.results) ? toolInvocation.result.results.length : 1}</span> rows
+                                            {toolInvocation.result.note && ` | Warning: ${toolInvocation.result.note}`}
+                                          </div>
+                                        </div>
+                                      )}
                                     </div>
                                   )}
-                                  <span className={toolInvocation.state === 'result' ? 'text-[#8B949E]' : 'text-blue-400 animate-pulse'}>
-                                    {toolInvocation.state === 'result' ? '> execution_completed' : '> executing_postgres_query...'}
-                                  </span>
-                                </div>
-                                
-                                {toolInvocation.state === 'result' && toolInvocation.result?.results && (
-                                  <div className="bg-[#161B22] border border-[#30363D] p-3 rounded-lg text-[11px] text-[#8B949E] flex items-start gap-2.5 ml-7">
-                                    <Database className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#8B949E]" />
-                                    <div>
-                                      <div className="font-semibold text-[#C9D1D9] mb-1">DATA_RETRIEVED_SUCCESSFULLY</div>
-                                      Total records: <span className="text-emerald-400 font-bold">{Array.isArray(toolInvocation.result.results) ? toolInvocation.result.results.length : 1}</span> rows
-                                      {toolInvocation.result.note && ` | Warning: ${toolInvocation.result.note}`}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
+
+                                  {toolInvocation.toolName === 'render_bar_chart' && toolInvocation.state === 'result' && (
+                                    <Card className="mt-2 border border-border/50 bg-card/50 shadow-sm overflow-hidden">
+                                      <CardHeader className="pb-2">
+                                        <CardTitle className="text-sm font-semibold">{toolInvocation.args.title}</CardTitle>
+                                        <CardDescription className="text-xs">{toolInvocation.args.description}</CardDescription>
+                                      </CardHeader>
+                                      <CardContent className="h-[250px] pt-4">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                          <BarChart data={toolInvocation.args.data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                                            <XAxis dataKey="label" fontSize={11} tickLine={false} axisLine={false} />
+                                            <YAxis fontSize={11} tickLine={false} axisLine={false} />
+                                            <RechartsTooltip cursor={{fill: 'hsl(var(--muted))'}} contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', fontSize: '12px' }} />
+                                            <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                                          </BarChart>
+                                        </ResponsiveContainer>
+                                      </CardContent>
+                                    </Card>
+                                  )}
+
+                                  {toolInvocation.toolName === 'render_pie_chart' && toolInvocation.state === 'result' && (
+                                    <Card className="mt-2 border border-border/50 bg-card/50 shadow-sm overflow-hidden">
+                                      <CardHeader className="pb-2">
+                                        <CardTitle className="text-sm font-semibold">{toolInvocation.args.title}</CardTitle>
+                                        <CardDescription className="text-xs">{toolInvocation.args.description}</CardDescription>
+                                      </CardHeader>
+                                      <CardContent className="h-[250px] pt-0">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                          <PieChart>
+                                            <Pie data={toolInvocation.args.data} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                                              {toolInvocation.args.data.map((entry: any, index: number) => (
+                                                <Cell key={\`cell-\${index}\`} fill={COLORS[index % COLORS.length]} />
+                                              ))}
+                                            </Pie>
+                                            <RechartsTooltip contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', fontSize: '12px' }} />
+                                            <Legend wrapperStyle={{ fontSize: '11px' }} />
+                                          </PieChart>
+                                        </ResponsiveContainer>
+                                      </CardContent>
+                                    </Card>
+                                  )}
+                               </div>
                             ))}
                           </div>
                       </div>
