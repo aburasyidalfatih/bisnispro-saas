@@ -204,8 +204,19 @@ function RegisterSchoolForm() {
       }
     }
 
-    const payload = { ...form, logo: uploadedLogoUrl || null }
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`
+      const parts = value.split(`; ${name}=`)
+      if (parts.length === 2) return parts.pop()?.split(';').shift()
+      return null
+    }
 
+    // Amankan kode referral: jika dikosongkan/diubah, prioritaskan dari cache sistem
+    const originalRef = typeof window !== "undefined" ? localStorage.getItem('schoolpro_ref') : null
+    const cookieRef = getCookie('schoolpro_ref')
+    const finalReferralCode = originalRef || cookieRef || form.referralCode
+
+    const payload = { ...form, referralCode: finalReferralCode, logo: uploadedLogoUrl || null }
     let data: any = null
     try {
       const res = await fetch("/api/public/register-school", {
