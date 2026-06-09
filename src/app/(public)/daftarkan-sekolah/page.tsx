@@ -260,7 +260,7 @@ function RegisterSchoolForm() {
             <CardTitle className="text-2xl font-bold">Pengajuan Terkirim!</CardTitle>
             <CardDescription className="text-base">
               Pendaftaran <strong>{form.schoolName}</strong> sedang kami tinjau. 
-              Silakan periksa kotak masuk <strong>Email</strong> Anda ({form.adminEmail}) secara berkala untuk menerima tautan akses setelah permohonan disetujui oleh admin SchoolPro.
+              Silakan periksa kotak masuk <strong>Email</strong> Anda ({form.adminEmail}) secara berkala 24 jam kedepan untuk menerima tautan akses setelah permohonan disetujui oleh admin SchoolPro.
             </CardDescription>
           </div>
           {csPhone ? (
