@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { AiTopupDialog } from "@/components/shared/ai-topup-dialog"
-
 export default function GuruDashboard() {
   const { data: session } = useSession()
   const userName = session?.user?.name || "Guru"
@@ -23,9 +21,6 @@ export default function GuruDashboard() {
   const [academicYear, setAcademicYear] = useState("2024/2025")
   const [academicSemester, setAcademicSemester] = useState("Ganjil")
   const [unreadMessages, setUnreadMessages] = useState(0)
-  
-  const [isTopupOpen, setIsTopupOpen] = useState(false)
-  const [aiData, setAiData] = useState<any>(null)
 
   const getGreeting = () => {
     const hour = currentTime ? currentTime.getHours() : new Date().getHours()
@@ -108,14 +103,6 @@ export default function GuruDashboard() {
            }
         })
         .catch(console.error)
-
-      // Fetch AI Info
-      fetch('/api/gtk/ai/info')
-        .then(r => r.json())
-        .then(d => {
-           if (!d.error) setAiData(d)
-        })
-        .catch(console.error)
     }
 
     return () => clearInterval(timer)
@@ -155,24 +142,6 @@ export default function GuruDashboard() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            {/* Token UI */}
-            {aiData && (
-              <div 
-                onClick={() => setIsTopupOpen(true)}
-                className="flex flex-col items-center sm:items-start bg-black/10 hover:bg-black/20 cursor-pointer backdrop-blur-md rounded-2xl p-4 border border-white/10 min-w-[140px] transition-all max-w-full"
-              >
-                <div className="flex items-center gap-1.5 text-amber-300 mb-1">
-                  <Coins className="h-4 w-4" />
-                  <span className="text-xs font-medium uppercase tracking-wider">
-                    Token AI Pribadi
-                  </span>
-                </div>
-                <div className="text-3xl font-bold tabular-nums tracking-tight flex items-center gap-2">
-                  {aiData.userTokens.toLocaleString("id-ID")}
-                </div>
-              </div>
-            )}
-
             {/* Clock UI */}
             <div className="flex flex-col items-center sm:items-end bg-black/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 min-w-[180px] max-w-full">
               <div className="flex items-center gap-2 text-primary-foreground/90 mb-1">
@@ -188,17 +157,6 @@ export default function GuruDashboard() {
           </div>
         </div>
       </div>
-
-      {aiData && (
-        <AiTopupDialog 
-          open={isTopupOpen}
-          onOpenChange={setIsTopupOpen}
-          userTokens={aiData.userTokens}
-          aiPackages={aiData.aiPackages}
-          paymentChannels={aiData.paymentChannels}
-          manualPayment={aiData.manualPayment}
-        />
-      )}
 
       {/* Quick Actions (App Grid Style) */}
       <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">

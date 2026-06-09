@@ -387,11 +387,11 @@ export default function GTKAttendancePage() {
             <div className="flex items-center justify-between mb-4">
               <p className="font-bold text-sm">Status Hari Ini</p>
               {todayRecord ? (
-                <Badge className={cn(STATUS_CFG[todayRecord.status]?.bg, "border text-xs")}>
+                <Badge variant="outline" className={cn(STATUS_CFG[todayRecord.status]?.bg, STATUS_CFG[todayRecord.status]?.color, "border text-xs font-bold")}>
                   {STATUS_CFG[todayRecord.status]?.label || todayRecord.status}
                 </Badge>
               ) : (
-                <Badge className="bg-slate-100 text-slate-500 border text-xs">Belum Absen</Badge>
+                <Badge variant="outline" className="bg-slate-100 text-slate-500 border-slate-200 text-xs font-bold">Belum Absen</Badge>
               )}
             </div>
 
@@ -707,7 +707,7 @@ export default function GTKAttendancePage() {
                         </div>
                         {rec.notes && <p className="text-xs text-muted-foreground italic mt-0.5 truncate">"{rec.notes}"</p>}
                       </div>
-                      <Badge className={cn(cfg.bg, cfg.color, "border text-[10px] shrink-0")}>{cfg.label}</Badge>
+                      <Badge variant="outline" className={cn(cfg.bg, cfg.color, "border text-[10px] shrink-0 font-bold")}>{cfg.label}</Badge>
                     </CardContent>
                   </Card>
                 )
