@@ -32,6 +32,7 @@ function RegisterSchoolForm() {
 
   const [captchaParams, setCaptchaParams] = useState({ a: 0, b: 0 })
   const [captchaAnswer, setCaptchaAnswer] = useState("")
+  const [isReferralLocked, setIsReferralLocked] = useState(false)
   
   const [form, setForm] = useState({
     schoolName: "",
@@ -93,6 +94,7 @@ function RegisterSchoolForm() {
     }
 
     if (activeRef) {
+      setIsReferralLocked(true)
       fetch(`/api/public/affiliate-info?ref=${activeRef}`)
         .then(res => res.json())
         .then(data => {
@@ -432,7 +434,10 @@ function RegisterSchoolForm() {
                   <div className="relative">
                     <Input 
                       value={form.referralCode || ""} 
+                      readOnly={isReferralLocked}
                       onChange={(e) => {
+                        if (isReferralLocked) return;
+                        
                         const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
                         setForm({...form, referralCode: val});
                         
@@ -450,9 +455,17 @@ function RegisterSchoolForm() {
                         }
                       }}
                       placeholder="Masukkan kode mitra jika ada" 
-                      className="rounded-xl h-11 uppercase"
+                      className={cn("rounded-xl h-11 uppercase", isReferralLocked && "bg-muted text-muted-foreground cursor-not-allowed")}
                     />
+                    {isReferralLocked && (
+                      <div className="absolute right-3 top-3">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                      </div>
+                    )}
                   </div>
+                  {isReferralLocked && (
+                    <p className="text-xs text-muted-foreground">Kode referral telah terkunci dari link undangan.</p>
+                  )}
                 </div>
               </div>
             </CardContent>
