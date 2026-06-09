@@ -5,8 +5,9 @@ import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
-import { Menu, X } from "lucide-react"
+import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 
 export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
@@ -38,17 +39,12 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
     <div className="flex h-[100dvh] overflow-hidden">
       <div className="hidden lg:block"><Sidebar /></div>
 
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50 animate-in fade-in-0 duration-200" onClick={() => setMobileOpen(false)} />
-          <div className="relative z-10 h-full w-[260px] animate-in slide-in-from-left-full duration-200 max-w-full">
-            <Sidebar />
-            <Button variant="ghost" size="icon" className="absolute top-4 right-3 h-9 w-9 rounded-xl bg-background/80 backdrop-blur-sm shadow-md lg:hidden z-20" onClick={() => setMobileOpen(false)}>
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      )}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent side="left" className="p-0 w-[260px] lg:hidden">
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          <Sidebar />
+        </SheetContent>
+      </Sheet>
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-14 sm:h-16 items-center justify-between border-b glass px-3 sm:px-4 lg:px-6">
