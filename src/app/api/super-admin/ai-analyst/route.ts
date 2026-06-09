@@ -63,9 +63,8 @@ Anda juga memiliki tool "generate_marketing_image" yang bisa membuat gambar (mis
 
 **PANDUAN TEXT-TO-SQL:**
 Berikut adalah struktur database (Prisma Schema) saat ini:
-```prisma
 ${schemaContext}
-```
+
 1. Tulis query PostgreSQL murni (Raw SQL).
 2. NAMA TABEL DAN KOLOM HARUS DIBERI KUTIP DUA (") persis seperti penamaan di Prisma Schema, karena PostgreSQL bersifat case-sensitive terhadap nama yang di-quote. Contoh: SELECT "id", "createdAt" FROM "User" WHERE "role" = 'ADMIN'
 3. Hanya lakukan SELECT (Read-only). DILARANG KERAS menggunakan instruksi perusak (UPDATE/DELETE/DROP dll).
@@ -103,7 +102,7 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
           parameters: z.object({
             query: z.string().describe("The PostgreSQL SELECT query to execute")
           }),
-          execute: async ({ query }) => {
+          execute: async ({ query }: { query: string }) => {
             const cleanQuery = query.trim()
             
             // Keamanan Kritis: Cegah SQL Injection & Operasi DML/DDL menggunakan REGEX ketat.
@@ -150,7 +149,7 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
               value: z.number().describe("Y-axis numerical value")
             })).describe("The data points for the chart. Keep it under 15 items for readability.")
           }),
-          execute: async ({ title, description, data }) => {
+          execute: async ({ title, description, data }: { title: string, description: string, data: any }) => {
             return { success: true, message: "Bar chart rendered on client successfully." }
           }
         }),
@@ -164,7 +163,7 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
               value: z.number().describe("The numerical value for the proportion")
             })).describe("The data points for the chart. Keep it under 10 items for readability.")
           }),
-          execute: async ({ title, description, data }) => {
+          execute: async ({ title, description, data }: { title: string, description: string, data: any }) => {
             return { success: true, message: "Pie chart rendered on client successfully." }
           }
         }),
@@ -174,7 +173,7 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
             prompt: z.string().describe("A highly detailed prompt for the image generation model. Make it descriptive and optimize it for a high-quality marketing asset."),
             size: z.enum(["1024x1024", "1024x1792", "1792x1024"]).default("1024x1024").describe("The dimensions of the generated image.")
           }),
-          execute: async ({ prompt, size }) => {
+          execute: async ({ prompt, size }: { prompt: string, size: "1024x1024" | "1024x1792" | "1792x1024" }) => {
             if (!openAiKey) {
               return { error: "OpenAI API Key is missing. Cannot generate image." }
             }
@@ -204,7 +203,7 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
         }),
       },
       // Berikan keleluasaan model untuk memanggil alat secara berurutan jika perlu (misal: query DB lalu render chart)
-      maxSteps: 3,
+      // maxSteps: 3, (Not supported in current AI SDK version)
       async onFinish({ text }) {
         try {
            const allMessages = [...messages, { role: "assistant", content: text }]
@@ -218,7 +217,7 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
       }
     })
 
-    return result.toDataStreamResponse({
+    return result.toTextStreamResponse({
       headers: {
         'x-session-id': currentSessionId
       }
