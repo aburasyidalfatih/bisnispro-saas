@@ -22,8 +22,12 @@ export async function GET(req: Request) {
   const { error } = await requireTenantMembership(tenantId)
   if (error) return error
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })
+  const settings = (tenant?.settings as Record<string, any>) || {}
+  const tz = settings.timezone || settings.attendance?.timezone || "Asia/Jakarta"
+
+  const dateStr = new Date().toLocaleDateString("en-CA", { timeZone: tz })
+  const today = new Date(`${dateStr}T00:00:00.000Z`)
 
   const record = await db.staffAttendance.findUnique({
     where: { tenantId_staffId_date: { tenantId, staffId, date: today } },

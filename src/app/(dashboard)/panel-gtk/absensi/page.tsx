@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { format, isToday } from "date-fns"
+import { formatInTimeZone } from "date-fns-tz"
 import { id as localeId } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 
@@ -45,6 +46,7 @@ export default function GTKAttendancePage() {
   const [geoState, setGeoState] = useState<GeoState>("idle")
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null)
   const [locationName, setLocationName] = useState("")
+  const [tz, setTz] = useState("Asia/Jakarta")
   const [checkingIn, setCheckingIn] = useState(false)
   const [checkingOut, setCheckingOut] = useState(false)
   const [notes, setNotes] = useState("")
@@ -118,6 +120,7 @@ export default function GTKAttendancePage() {
       setTodayRecord(todayData.record || null)
       setHistory(histData.data || [])
       setRequireSelfie(websiteData?.settings?.attendanceRequireSelfie || false)
+      setTz(websiteData?.settings?.timezone || websiteData?.settings?.attendance?.timezone || "Asia/Jakarta")
     } catch (err) {
       console.error(err)
     } finally {
@@ -365,15 +368,15 @@ export default function GTKAttendancePage() {
       <div className="bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 pt-10 pb-20 px-6">
         <p className="text-indigo-200 text-sm">Absensi Harian</p>
         <h1 className="text-white text-2xl font-black mt-1">{staff?.name || "Guru"}</h1>
-        <p className="text-indigo-200 text-sm">{staff?.role || "Pengajar"} · {format(now, "EEEE, d MMMM yyyy", { locale: localeId })}</p>
+        <p className="text-indigo-200 text-sm">{staff?.role || "Pengajar"} · {formatInTimeZone(now, tz, "EEEE, d MMMM yyyy", { locale: localeId })}</p>
 
         {/* Live Clock */}
         <div className="mt-4 text-center">
           <p className="text-white text-5xl font-black tracking-tight font-mono">
-            {format(now, "HH:mm")}
-            <span className="text-indigo-300 text-2xl">{format(now, ":ss")}</span>
+            {formatInTimeZone(now, tz, "HH:mm")}
+            <span className="text-indigo-300 text-2xl">{formatInTimeZone(now, tz, ":ss")}</span>
           </p>
-          <p className="text-indigo-300 text-sm mt-1">WIB</p>
+          <p className="text-indigo-300 text-sm mt-1">{tz === "Asia/Jayapura" ? "WIT" : tz === "Asia/Makassar" ? "WITA" : "WIB"}</p>
         </div>
       </div>
 
@@ -402,7 +405,7 @@ export default function GTKAttendancePage() {
                   <LogIn className={cn("h-5 w-5 mx-auto mb-1", alreadyCheckedIn ? "text-emerald-600" : "text-muted-foreground")} />
                   <p className="text-xs text-muted-foreground">Check-in</p>
                   <p className={cn("font-black text-base", alreadyCheckedIn ? "text-emerald-600" : "text-muted-foreground")}>
-                    {alreadyCheckedIn ? format(new Date(todayRecord!.checkInAt!), "HH:mm") : "--:--"}
+                    {alreadyCheckedIn ? formatInTimeZone(new Date(todayRecord!.checkInAt!), tz, "HH:mm") : "--:--"}
                   </p>
                 </div>
               </div>
@@ -424,7 +427,7 @@ export default function GTKAttendancePage() {
                   <LogOut className={cn("h-5 w-5 mx-auto mb-1", alreadyCheckedOut ? "text-indigo-600" : "text-muted-foreground")} />
                   <p className="text-xs text-muted-foreground">Check-out</p>
                   <p className={cn("font-black text-base", alreadyCheckedOut ? "text-indigo-600" : "text-muted-foreground")}>
-                    {alreadyCheckedOut ? format(new Date(todayRecord!.checkOutAt!), "HH:mm") : "--:--"}
+                    {alreadyCheckedOut ? formatInTimeZone(new Date(todayRecord!.checkOutAt!), tz, "HH:mm") : "--:--"}
                   </p>
                 </div>
               </div>
@@ -653,7 +656,7 @@ export default function GTKAttendancePage() {
         <div>
           <p className="font-bold text-sm mb-3 flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            Rekap {format(now, "MMMM yyyy", { locale: localeId })}
+            Rekap {formatInTimeZone(now, tz, "MMMM yyyy", { locale: localeId })}
           </p>
           <div className="grid grid-cols-4 gap-2">
             {Object.entries(STATUS_CFG).map(([key, cfg]) => (
@@ -689,12 +692,12 @@ export default function GTKAttendancePage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-sm">
-                          {format(new Date(rec.date), "EEEE, d MMMM", { locale: localeId })}
+                          {formatInTimeZone(new Date(rec.date), tz, "EEEE, d MMMM", { locale: localeId })}
                           {isRecToday && <span className="ml-2 text-[10px] text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-full">Hari Ini</span>}
                         </p>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
-                          {rec.checkInAt && <span className="flex items-center gap-1"><LogIn className="h-3 w-3" />{format(new Date(rec.checkInAt), "HH:mm")}</span>}
-                          {rec.checkOutAt && <span className="flex items-center gap-1"><LogOut className="h-3 w-3" />{format(new Date(rec.checkOutAt), "HH:mm")}</span>}
+                          {rec.checkInAt && <span className="flex items-center gap-1"><LogIn className="h-3 w-3" />{formatInTimeZone(new Date(rec.checkInAt), tz, "HH:mm")}</span>}
+                          {rec.checkOutAt && <span className="flex items-center gap-1"><LogOut className="h-3 w-3" />{formatInTimeZone(new Date(rec.checkOutAt), tz, "HH:mm")}</span>}
                           {rec.checkInLat && <span className="flex items-center gap-1 text-emerald-600"><MapPin className="h-3 w-3" />GPS</span>}
                           {rec.checkInPhoto && (
                             <a href={rec.checkInPhoto} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary hover:underline" onClick={e => e.stopPropagation()}>
@@ -748,8 +751,8 @@ export default function GTKAttendancePage() {
                         </Badge>
                       </div>
                       <p className="font-bold text-sm text-foreground">
-                        {format(new Date(permit.startDate), "d MMM yyyy", { locale: localeId })}
-                        {permit.startDate !== permit.endDate && ` - ${format(new Date(permit.endDate), "d MMM yyyy", { locale: localeId })}`}
+                        {formatInTimeZone(new Date(permit.startDate), tz, "d MMM yyyy", { locale: localeId })}
+                        {permit.startDate !== permit.endDate && ` - ${formatInTimeZone(new Date(permit.endDate), tz, "d MMM yyyy", { locale: localeId })}`}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{permit.reason}</p>
                       {permit.proofUrl && (

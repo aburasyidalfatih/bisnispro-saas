@@ -282,6 +282,7 @@ model Notification {
   @@index([tenantId])
   @@index([createdAt])
   @@index([tenantId, createdAt(sort: Desc)])
+  @@index([tenantId, isRead])
   @@map("notifications")
 }
 
@@ -1031,6 +1032,7 @@ model Student {
   @@index([isActive])
   @@index([createdAt])
   @@index([tenantId, createdAt(sort: Desc)])
+  @@index([tenantId, isActive])
   @@map("students")
 }
 
@@ -1326,6 +1328,7 @@ model Invoice {
   @@index([tenantId, studentId, status])
   @@index([tenantId, dueDate])
   @@index([tenantId, createdAt(sort: Desc)])
+  @@index([tenantId, status, deletedAt])
   @@map("invoices")
 }
 
