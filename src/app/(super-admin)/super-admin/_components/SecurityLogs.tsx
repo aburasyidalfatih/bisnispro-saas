@@ -145,9 +145,11 @@ export function SecurityLogs() {
                         <div className="flex items-center gap-2">
                           <span className="text-xs">{getActionRecommendation(log.attackType)}</span>
                           <Button
+                            variant="destructive"
+                            size="sm"
                             onClick={() => handleBlockIp(log.ipAddress)}
                             disabled={blockingIp === log.ipAddress}
-                            className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded transition-colors disabled:opacity-50"
+                            className="text-xs transition-colors disabled:opacity-50"
                           >
                             {blockingIp === log.ipAddress ? "Memblokir..." : "Blokir IP"}
                           </Button>

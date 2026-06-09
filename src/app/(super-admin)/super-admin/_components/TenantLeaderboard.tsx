@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Trophy, Building2, TrendingUp } from "lucide-react"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
@@ -103,9 +104,9 @@ export function TenantLeaderboard() {
                     <p className="text-sm font-semibold truncate leading-tight">{tenant.name}</p>
                     <p className="text-[10px] text-muted-foreground truncate mb-1">{city}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      <span className="text-[9px] font-medium text-blue-600 bg-blue-500/10 px-1.5 py-0.5 rounded">Konten: {tenant.content_score || 0}</span>
-                      <span className="text-[9px] font-medium text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded">Aktivitas: {tenant.activity_points || 0}</span>
-                      <span className="text-[9px] font-medium text-purple-600 bg-purple-500/10 px-1.5 py-0.5 rounded">Trafik: {(tenant as any).traffic_score || 0}</span>
+                      <Badge variant="secondary" className="text-[9px] font-medium text-blue-600 bg-blue-500/10 hover:bg-blue-500/20 px-1.5 py-0 border-transparent">Konten: {tenant.content_score || 0}</Badge>
+                      <Badge variant="secondary" className="text-[9px] font-medium text-emerald-600 bg-emerald-500/10 hover:bg-emerald-500/20 px-1.5 py-0 border-transparent">Aktivitas: {tenant.activity_points || 0}</Badge>
+                      <Badge variant="secondary" className="text-[9px] font-medium text-purple-600 bg-purple-500/10 hover:bg-purple-500/20 px-1.5 py-0 border-transparent">Trafik: {(tenant as any).traffic_score || 0}</Badge>
                     </div>
                   </div>
 

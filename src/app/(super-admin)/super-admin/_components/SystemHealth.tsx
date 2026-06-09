@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
 import { 
   Cpu, HardDrive, Server, Activity, RefreshCw, 
   Trash2, Layers, CheckCircle2, AlertCircle, Clock 
@@ -187,15 +189,11 @@ export function SystemHealth() {
                 </div>
                 <span className="text-sm font-semibold">{metrics.ram.usagePercentage.toFixed(1)}%</span>
               </div>
-              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                <div 
-                  className={cn(
-                    "h-full transition-all duration-500",
-                    metrics.ram.usagePercentage > 85 ? "bg-red-500" : metrics.ram.usagePercentage > 70 ? "bg-amber-500" : "bg-emerald-500"
-                  )}
-                  style={{ width: `${metrics.ram.usagePercentage}%` }}
-                />
-              </div>
+              <Progress 
+                value={metrics.ram.usagePercentage} 
+                className="h-2"
+                indicatorClassName={metrics.ram.usagePercentage > 85 ? "bg-red-500" : metrics.ram.usagePercentage > 70 ? "bg-amber-500" : "bg-emerald-500"}
+              />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Terpakai: {formatBytes(metrics.ram.used)}</span>
                 <span>Total: {formatBytes(metrics.ram.total)}</span>
@@ -211,15 +209,11 @@ export function SystemHealth() {
                 </div>
                 <span className="text-sm font-semibold">~{metrics.cpu.usagePercentage.toFixed(1)}%</span>
               </div>
-              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                <div 
-                  className={cn(
-                    "h-full transition-all duration-500",
-                    metrics.cpu.usagePercentage > 85 ? "bg-red-500" : metrics.cpu.usagePercentage > 70 ? "bg-amber-500" : "bg-blue-500"
-                  )}
-                  style={{ width: `${metrics.cpu.usagePercentage}%` }}
-                />
-              </div>
+              <Progress 
+                value={metrics.cpu.usagePercentage} 
+                className="h-2"
+                indicatorClassName={metrics.cpu.usagePercentage > 85 ? "bg-red-500" : metrics.cpu.usagePercentage > 70 ? "bg-amber-500" : "bg-blue-500"}
+              />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span className="truncate max-w-[150px] max-w-full" title={metrics.cpu.model}>{metrics.cpu.model}</span>
                 <span>Load: {metrics.cpu.loadAverage[0].toFixed(2)}</span>
@@ -236,15 +230,11 @@ export function SystemHealth() {
                   </div>
                   <span className="text-sm font-semibold">{metrics.disk.usagePercentage}%</span>
                 </div>
-                <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                  <div 
-                    className={cn(
-                      "h-full transition-all duration-500",
-                      metrics.disk.usagePercentage > 85 ? "bg-red-500" : metrics.disk.usagePercentage > 70 ? "bg-amber-500" : "bg-violet-500"
-                    )}
-                    style={{ width: `${metrics.disk.usagePercentage}%` }}
-                  />
-                </div>
+                <Progress 
+                  value={metrics.disk.usagePercentage} 
+                  className="h-2"
+                  indicatorClassName={metrics.disk.usagePercentage > 85 ? "bg-red-500" : metrics.disk.usagePercentage > 70 ? "bg-amber-500" : "bg-violet-500"}
+                />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Terpakai: {formatBytes(metrics.disk.used)}</span>
                   <span>Total: {formatBytes(metrics.disk.total)}</span>
@@ -354,10 +344,3 @@ export function SystemHealth() {
   )
 }
 
-function Badge({ children, className, variant }: { children: React.ReactNode, className?: string, variant?: string }) {
-  return (
-    <div className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", className)}>
-      {children}
-    </div>
-  )
-}
