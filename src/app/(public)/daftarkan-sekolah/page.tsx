@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,8 +16,10 @@ import { cn } from "@/lib/utils"
 import { RegionSelector } from "@/components/ui/region-selector"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { trackMetaEvent } from "@/components/shared/meta-pixel"
+import { useSearchParams } from "next/navigation"
 
-export default function RegisterSchoolPage() {
+function RegisterSchoolForm() {
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [isChecking, setIsChecking] = useState(false)
@@ -60,40 +62,45 @@ export default function RegisterSchoolPage() {
       b: Math.floor(Math.random() * 10) + 1,
     })
 
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search)
-      const ref = urlParams.get('ref')
-      let activeRef = ref
+    const ref = searchParams.get('ref') || searchParams.get('r')
+    let activeRef = ref
 
-      // Capture UTM parameters
-      const utmSource = urlParams.get('utm_source') || ''
-      const utmMedium = urlParams.get('utm_medium') || ''
-      const utmCampaign = urlParams.get('utm_campaign') || ''
-      const utmContent = urlParams.get('utm_content') || ''
-      const utmTerm = urlParams.get('utm_term') || ''
-      setForm(prev => ({ ...prev, utmSource, utmMedium, utmCampaign, utmContent, utmTerm }))
+    // Capture UTM parameters
+    const utmSource = searchParams.get('utm_source') || ''
+    const utmMedium = searchParams.get('utm_medium') || ''
+    const utmCampaign = searchParams.get('utm_campaign') || ''
+    const utmContent = searchParams.get('utm_content') || ''
+    const utmTerm = searchParams.get('utm_term') || ''
+    setForm(prev => ({ ...prev, utmSource, utmMedium, utmCampaign, utmContent, utmTerm }))
 
-      if (ref) {
-        setForm(prev => ({ ...prev, referralCode: ref }))
-        localStorage.setItem('schoolpro_ref', ref)
-      } else {
-        const storedRef = localStorage.getItem('schoolpro_ref')
-        if (storedRef) {
-          activeRef = storedRef
-          setForm(prev => ({ ...prev, referralCode: storedRef }))
-        }
-      }
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`
+      const parts = value.split(`; ${name}=`)
+      if (parts.length === 2) return parts.pop()?.split(';').shift()
+      return null
+    }
 
-      if (activeRef) {
-        fetch(`/api/public/affiliate-info?ref=${activeRef}`)
-          .then(res => res.json())
-          .then(data => {
-            if (data.name) setAffiliateName(data.name)
-          })
-          .catch(console.error)
+    if (ref) {
+      setForm(prev => ({ ...prev, referralCode: ref }))
+      localStorage.setItem('schoolpro_ref', ref)
+      document.cookie = `schoolpro_ref=${ref}; path=/; max-age=${30 * 24 * 60 * 60}`
+    } else {
+      const storedRef = localStorage.getItem('schoolpro_ref') || getCookie('schoolpro_ref')
+      if (storedRef) {
+        activeRef = storedRef
+        setForm(prev => ({ ...prev, referralCode: storedRef }))
       }
     }
-  }, [])
+
+    if (activeRef) {
+      fetch(`/api/public/affiliate-info?ref=${activeRef}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.name) setAffiliateName(data.name)
+        })
+        .catch(console.error)
+    }
+  }, [searchParams])
 
   // Debounced Subdomain Checker
   useEffect(() => {
@@ -624,5 +631,13 @@ export default function RegisterSchoolPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function RegisterSchoolPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <RegisterSchoolForm />
+    </Suspense>
   )
 }

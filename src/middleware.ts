@@ -354,7 +354,17 @@ export default async function middleware(request: NextRequest) {
       })
       
       redirectUrl.searchParams.set("ref", code)
-      return addSecurityHeaders(NextResponse.redirect(redirectUrl))
+      const response = NextResponse.redirect(redirectUrl)
+      response.cookies.set("schoolpro_ref", code, { path: "/", maxAge: 30 * 24 * 60 * 60 }) // 30 days
+      return addSecurityHeaders(response)
+    }
+
+    // Capture explicit ?ref= in main domain and set cookie
+    const refQuery = request.nextUrl.searchParams.get("ref") || request.nextUrl.searchParams.get("r")
+    if (refQuery) {
+      const response = NextResponse.next()
+      response.cookies.set("schoolpro_ref", refQuery, { path: "/", maxAge: 30 * 24 * 60 * 60 })
+      return addSecurityHeaders(response, "public")
     }
 
     return addSecurityHeaders(NextResponse.next(), "public")
