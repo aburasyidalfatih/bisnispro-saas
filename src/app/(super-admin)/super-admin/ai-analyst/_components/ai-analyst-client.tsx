@@ -24,7 +24,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
   const router = useRouter()
   
   const [inputValue, setInputValue] = useState("")
-  const { messages, append, isLoading, setMessages } = useChat({
+  const { messages, sendMessage, isLoading, setMessages } = useChat({
     api: "/api/super-admin/ai-analyst",
     body: { sessionId: activeSessionId },
     onResponse: (response) => {
@@ -46,12 +46,12 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
     e.preventDefault()
     if (!inputValue.trim() || isLoading) return
     
-    append({ role: "user", content: inputValue })
+    sendMessage({ role: "user", parts: [{ type: 'text', text: inputValue }] })
     setInputValue("")
   }
 
   const handleManualInput = (val: string) => {
-    append({ role: "user", content: val })
+    sendMessage({ role: "user", parts: [{ type: 'text', text: val }] })
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
