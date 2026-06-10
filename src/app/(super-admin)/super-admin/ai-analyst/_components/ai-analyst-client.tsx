@@ -23,7 +23,8 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
   const [activeSessionId, setActiveSessionId] = useState<string | null>(initialSessions.length > 0 ? initialSessions[0].id : null)
   const router = useRouter()
   
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
+  const [inputValue, setInputValue] = useState("")
+  const { messages, append, isLoading, setMessages } = useChat({
     api: "/api/super-admin/ai-analyst",
     body: { sessionId: activeSessionId },
     onResponse: (response) => {
@@ -40,6 +41,18 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
       alert("Gagal mengirim pesan: " + err.message)
     }
   })
+
+  const customHandleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!inputValue.trim() || isLoading) return
+    
+    append({ role: "user", content: inputValue })
+    setInputValue("")
+  }
+
+  const handleManualInput = (val: string) => {
+    append({ role: "user", content: val })
+  }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -178,7 +191,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8 text-left">
                         <div 
                           className="text-xs bg-background/60 backdrop-blur-sm p-4 rounded-2xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all border shadow-sm group flex flex-col gap-2"
-                          onClick={() => handleInputChange({ target: { value: "Tolong hitung perkiraan pendapatan dari tenant yang berstatus AKTIF saat ini." } } as any)}
+                          onClick={() => handleManualInput("Tolong hitung perkiraan pendapatan dari tenant yang berstatus AKTIF saat ini.")}
                         >
                           <div className="flex items-center gap-2 text-foreground font-medium">
                             <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors"><Sparkles className="h-4 w-4" /></div>
@@ -189,7 +202,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
 
                         <div 
                           className="text-xs bg-background/60 backdrop-blur-sm p-4 rounded-2xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all border shadow-sm group flex flex-col gap-2"
-                          onClick={() => handleInputChange({ target: { value: "Ada berapa tenant yang mendaftar bulan ini tapi belum membayar tagihan?" } } as any)}
+                          onClick={() => handleManualInput("Ada berapa tenant yang mendaftar bulan ini tapi belum membayar tagihan?")}
                         >
                           <div className="flex items-center gap-2 text-foreground font-medium">
                             <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors"><Building2 className="h-4 w-4" /></div>
@@ -200,7 +213,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
 
                         <div 
                           className="text-xs bg-background/60 backdrop-blur-sm p-4 rounded-2xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all border shadow-sm group flex flex-col gap-2 sm:col-span-2"
-                          onClick={() => handleInputChange({ target: { value: "Tampilkan jam berapa traffic sistem paling ramai kemarin berdasarkan data." } } as any)}
+                          onClick={() => handleManualInput("Tampilkan jam berapa traffic sistem paling ramai kemarin berdasarkan data.")}
                         >
                           <div className="flex items-center gap-2 text-foreground font-medium">
                             <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors"><History className="h-4 w-4" /></div>
@@ -214,6 +227,28 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                 ) : (
                   <div className="space-y-6">
                     {messages
+                      .map(m => {
+                        // AI SDK v5/v6 UIMessage adapter
+                        if ((m as any).parts !== undefined) {
+                          const textContent = (m as any).parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\\n');
+                          const toolInvocations = (m as any).parts.filter((p: any) => p.type.startsWith('tool-')).map((p: any) => {
+                            const toolName = p.type.replace('tool-', '');
+                            return {
+                              toolCallId: p.toolCallId || Math.random().toString(),
+                              toolName: toolName,
+                              args: p.input,
+                              result: p.output,
+                              state: p.output !== undefined ? 'result' : 'call'
+                            };
+                          });
+                          return {
+                            ...m,
+                            content: textContent,
+                            toolInvocations: toolInvocations.length > 0 ? toolInvocations : undefined
+                          };
+                        }
+                        return m;
+                      })
                       .filter(m => !(m.role === 'assistant' && !m.content && (!m.toolInvocations || m.toolInvocations.length === 0)))
                       .map((m) => (
                       <div key={m.id} className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}>
@@ -493,15 +528,15 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
             </CardContent>
             
             <CardFooter className="p-3 bg-background border-t border-border/50">
-              <form onSubmit={handleSubmit} className="flex w-full items-center space-x-2">
+              <form onSubmit={customHandleSubmit} className="flex w-full items-center space-x-2">
                 <Input 
-                  value={input} 
-                  onChange={handleInputChange} 
+                  value={inputValue} 
+                  onChange={(e) => setInputValue(e.target.value)} 
                   placeholder="Tanyakan metrik bisnis, tenant, afiliasi, atau operasional..." 
                   className="flex-1 rounded-full bg-muted/30 focus-visible:ring-primary/20"
                   disabled={isLoading}
                 />
-                <Button variant="ghost" size="icon" type="submit" disabled={isLoading || !input.trim()} className="rounded-full shrink-0 h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20">
+                <Button variant="ghost" size="icon" type="submit" disabled={isLoading || !inputValue.trim()} className="rounded-full shrink-0 h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20">
                   <Send className="h-4 w-4" />
                 </Button>
               </form>
