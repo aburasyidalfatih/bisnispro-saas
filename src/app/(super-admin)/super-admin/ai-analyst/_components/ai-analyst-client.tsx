@@ -214,6 +214,28 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                 ) : (
                   <div className="space-y-6">
                     {messages
+                      .map(m => {
+                        // AI SDK v5/v6 UIMessage adapter
+                        if ((m as any).parts !== undefined) {
+                          const textContent = (m as any).parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\\n');
+                          const toolInvocations = (m as any).parts.filter((p: any) => p.type.startsWith('tool-')).map((p: any) => {
+                            const toolName = p.type.replace('tool-', '');
+                            return {
+                              toolCallId: p.toolCallId || Math.random().toString(),
+                              toolName: toolName,
+                              args: p.input,
+                              result: p.output,
+                              state: p.output !== undefined ? 'result' : 'call'
+                            };
+                          });
+                          return {
+                            ...m,
+                            content: textContent,
+                            toolInvocations: toolInvocations.length > 0 ? toolInvocations : undefined
+                          };
+                        }
+                        return m;
+                      })
                       .filter(m => !(m.role === 'assistant' && !m.content && (!m.toolInvocations || m.toolInvocations.length === 0)))
                       .map((m) => (
                       <div key={m.id} className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}>
