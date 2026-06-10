@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database, PanelLeft, Image as ImageIcon } from "lucide-react"
+import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database, PanelLeft, Image as ImageIcon, FolderOpen, FileCode, Globe, Brain } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import ReactMarkdown from "react-markdown"
@@ -260,6 +260,122 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                                             <div className="font-semibold text-[#C9D1D9] mb-1">DATA_RETRIEVED_SUCCESSFULLY</div>
                                             Total records: <span className="text-emerald-400 font-bold">{Array.isArray(toolInvocation.result.results) ? toolInvocation.result.results.length : 1}</span> rows
                                             {toolInvocation.result.note && ` | Warning: ${toolInvocation.result.note}`}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {toolInvocation.toolName === 'save_to_memory' && (
+                                    <div className={cn("p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono overflow-hidden")}>
+                                      <div className="flex items-center gap-2.5">
+                                        {toolInvocation.state === 'result' ? (
+                                          <div className="h-5 w-5 rounded-md bg-purple-500/10 flex items-center justify-center border border-purple-500/20 shrink-0">
+                                            <CheckCircle2 className="h-3 w-3 text-purple-400" />
+                                          </div>
+                                        ) : (
+                                          <div className="h-5 w-5 rounded-md bg-purple-500/10 flex items-center justify-center border border-purple-500/20 shrink-0">
+                                            <Loader2 className="h-3 w-3 text-purple-400 animate-spin" />
+                                          </div>
+                                        )}
+                                        <span className={toolInvocation.state === 'result' ? 'text-[#8B949E]' : 'text-purple-400 animate-pulse'}>
+                                          {toolInvocation.state === 'result' ? '> long_term_memory_updated' : '> saving_to_vector_db...'}
+                                        </span>
+                                      </div>
+                                      
+                                      {toolInvocation.state === 'result' && toolInvocation.result?.success && (
+                                        <div className="bg-[#161B22] border border-[#30363D] p-3 rounded-lg text-[11px] text-[#8B949E] flex items-start gap-2.5 ml-7">
+                                          <Brain className="h-3.5 w-3.5 shrink-0 mt-0.5 text-purple-400" />
+                                          <div>
+                                            <div className="font-semibold text-[#C9D1D9] mb-1">MEMORY_COMMITTED</div>
+                                            Data tersimpan secara permanen untuk referensi di masa depan.
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {toolInvocation.toolName === 'list_directory' && (
+                                    <div className={cn("p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono overflow-hidden")}>
+                                      <div className="flex items-center gap-2.5">
+                                        {toolInvocation.state === 'result' ? (
+                                          <div className="h-5 w-5 rounded-md bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 shrink-0">
+                                            <CheckCircle2 className="h-3 w-3 text-yellow-400" />
+                                          </div>
+                                        ) : (
+                                          <div className="h-5 w-5 rounded-md bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 shrink-0">
+                                            <Loader2 className="h-3 w-3 text-yellow-400 animate-spin" />
+                                          </div>
+                                        )}
+                                        <span className={toolInvocation.state === 'result' ? 'text-[#8B949E]' : 'text-yellow-400 animate-pulse'}>
+                                          {toolInvocation.state === 'result' ? `> directory_scanned: ${toolInvocation.args.dirPath || '/'}` : `> scanning_directory: ${toolInvocation.args.dirPath || '/'}...`}
+                                        </span>
+                                      </div>
+                                      
+                                      {toolInvocation.state === 'result' && toolInvocation.result?.contents && (
+                                        <div className="bg-[#161B22] border border-[#30363D] p-3 rounded-lg text-[11px] text-[#8B949E] flex items-start gap-2.5 ml-7">
+                                          <FolderOpen className="h-3.5 w-3.5 shrink-0 mt-0.5 text-yellow-400" />
+                                          <div>
+                                            <div className="font-semibold text-[#C9D1D9] mb-1">DIR_CONTENTS</div>
+                                            Ditemukan <span className="text-yellow-400 font-bold">{toolInvocation.result.contents.length}</span> item.
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {toolInvocation.toolName === 'read_source_code' && (
+                                    <div className={cn("p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono overflow-hidden")}>
+                                      <div className="flex items-center gap-2.5">
+                                        {toolInvocation.state === 'result' ? (
+                                          <div className="h-5 w-5 rounded-md bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shrink-0">
+                                            <CheckCircle2 className="h-3 w-3 text-blue-400" />
+                                          </div>
+                                        ) : (
+                                          <div className="h-5 w-5 rounded-md bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shrink-0">
+                                            <Loader2 className="h-3 w-3 text-blue-400 animate-spin" />
+                                          </div>
+                                        )}
+                                        <span className={toolInvocation.state === 'result' ? 'text-[#8B949E]' : 'text-blue-400 animate-pulse'}>
+                                          {toolInvocation.state === 'result' ? `> file_read: ${toolInvocation.args.filePath}` : `> reading_file: ${toolInvocation.args.filePath}...`}
+                                        </span>
+                                      </div>
+                                      
+                                      {toolInvocation.state === 'result' && toolInvocation.result?.content && (
+                                        <div className="bg-[#161B22] border border-[#30363D] p-3 rounded-lg text-[11px] text-[#8B949E] flex items-start gap-2.5 ml-7">
+                                          <FileCode className="h-3.5 w-3.5 shrink-0 mt-0.5 text-blue-400" />
+                                          <div>
+                                            <div className="font-semibold text-[#C9D1D9] mb-1">FILE_CONTENTS_LOADED</div>
+                                            Ukuran: <span className="text-blue-400 font-bold">{toolInvocation.result.content.length}</span> karakter.
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {toolInvocation.toolName === 'search_web' && (
+                                    <div className={cn("p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono overflow-hidden")}>
+                                      <div className="flex items-center gap-2.5">
+                                        {toolInvocation.state === 'result' ? (
+                                          <div className="h-5 w-5 rounded-md bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 shrink-0">
+                                            <CheckCircle2 className="h-3 w-3 text-cyan-400" />
+                                          </div>
+                                        ) : (
+                                          <div className="h-5 w-5 rounded-md bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 shrink-0">
+                                            <Loader2 className="h-3 w-3 text-cyan-400 animate-spin" />
+                                          </div>
+                                        )}
+                                        <span className={toolInvocation.state === 'result' ? 'text-[#8B949E]' : 'text-cyan-400 animate-pulse'}>
+                                          {toolInvocation.state === 'result' ? `> web_search_completed: "${toolInvocation.args.query}"` : `> searching_web_for: "${toolInvocation.args.query}"...`}
+                                        </span>
+                                      </div>
+                                      
+                                      {toolInvocation.state === 'result' && toolInvocation.result?.results && (
+                                        <div className="bg-[#161B22] border border-[#30363D] p-3 rounded-lg text-[11px] text-[#8B949E] flex items-start gap-2.5 ml-7">
+                                          <Globe className="h-3.5 w-3.5 shrink-0 mt-0.5 text-cyan-400" />
+                                          <div>
+                                            <div className="font-semibold text-[#C9D1D9] mb-1">INTERNET_RESULTS</div>
+                                            Ditemukan <span className="text-cyan-400 font-bold">{toolInvocation.result.results.length}</span> sumber referensi.
                                           </div>
                                         </div>
                                       )}
