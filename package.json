@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "prisma generate && prisma db push --accept-data-loss && NEXT_MINIFIER_THREADS=1 NODE_OPTIONS='--max-old-space-size=4096' next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
+    "build": "NEXT_MINIFIER_THREADS=1 NODE_OPTIONS='--max-old-space-size=4096' next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
