@@ -328,7 +328,8 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
       }
     })
 
-    return result.toTextStreamResponse({
+    // @ts-ignore: Memaksa DataStreamResponse agar tool invocations ter-stream secara real-time
+    return result.toDataStreamResponse({
       headers: {
         'x-session-id': currentSessionId
       }
