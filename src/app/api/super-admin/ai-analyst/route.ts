@@ -328,8 +328,8 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
       }
     })
 
-    // @ts-ignore: Menggunakan toUIMessageStreamResponse untuk versi AI SDK saat ini agar tool invocations ter-stream
-    return result.toUIMessageStreamResponse({
+    // @ts-ignore: Memaksa DataStreamResponse agar tool invocations ter-stream secara real-time
+    return result.toDataStreamResponse({
       headers: {
         'x-session-id': currentSessionId
       }
