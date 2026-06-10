@@ -25,6 +25,7 @@ interface LeaderboardItem {
 
 interface AffiliateLeaderboardClientProps {
   backHref?: string
+  variant?: "full" | "top10"
 }
 
 function ScoreInfoTooltip({ iconClass }: { iconClass: string }) {
@@ -52,7 +53,7 @@ function ScoreInfoTooltip({ iconClass }: { iconClass: string }) {
   )
 }
 
-export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardClientProps) {
+export function AffiliateLeaderboardClient({ backHref, variant = "full" }: AffiliateLeaderboardClientProps) {
   const [data, setData] = useState<LeaderboardItem[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState("all") // weekly, monthly, yearly, all
@@ -208,8 +209,12 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
           {/* Full List */}
           <Card className="glass shadow-sm mt-8">
             <CardHeader className="pb-4">
-              <CardTitle>Daftar Lengkap Afiliator</CardTitle>
-              <CardDescription>Menampilkan seluruh peringkat mitra di platform beserta detail paket langganan.</CardDescription>
+              <CardTitle>{variant === "full" ? "Daftar Lengkap Afiliator" : "Top 10 Afiliator"}</CardTitle>
+              <CardDescription>
+                {variant === "full" 
+                  ? "Menampilkan seluruh peringkat mitra di platform beserta detail paket langganan."
+                  : "Menampilkan 10 peringkat mitra terbaik di platform."}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="rounded-xl border overflow-hidden">
@@ -224,26 +229,30 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                           <span>Pengajuan</span>
                         </div>
                       </TableHead>
-                      <TableHead className="px-4 py-3 font-medium text-center">
-                        <div className="flex flex-col items-center gap-1">
-                          <Badge variant="outline" className="bg-slate-100 text-[10px] h-4">Free</Badge>
-                        </div>
-                      </TableHead>
-                      <TableHead className="px-4 py-3 font-medium text-center">
-                        <div className="flex flex-col items-center gap-1">
-                          <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 text-[10px] h-4">Lite</Badge>
-                        </div>
-                      </TableHead>
-                      <TableHead className="px-4 py-3 font-medium text-center">
-                        <div className="flex flex-col items-center gap-1">
-                          <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-200 text-[10px] h-4">Pro</Badge>
-                        </div>
-                      </TableHead>
+                      {variant === "full" && (
+                        <>
+                          <TableHead className="px-4 py-3 font-medium text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Badge variant="outline" className="bg-slate-100 text-[10px] h-4">Free</Badge>
+                            </div>
+                          </TableHead>
+                          <TableHead className="px-4 py-3 font-medium text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 text-[10px] h-4">Lite</Badge>
+                            </div>
+                          </TableHead>
+                          <TableHead className="px-4 py-3 font-medium text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-200 text-[10px] h-4">Pro</Badge>
+                            </div>
+                          </TableHead>
+                        </>
+                      )}
                       <TableHead className="px-4 py-3 font-medium text-right">Skor Total</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody className="divide-y divide-border/50">
-                    {data.map((item) => (
+                    {(variant === "full" ? data : data.slice(0, 10)).map((item) => (
                       <TableRow key={item.id} className={cn("bg-background/50 hover:bg-muted/50 transition-colors", item.rank <= 3 && "bg-muted/10")}>
                         <TableCell className="px-4 py-3 text-center font-bold text-muted-foreground">
                           {item.rank}
@@ -262,15 +271,19 @@ export function AffiliateLeaderboardClient({ backHref }: AffiliateLeaderboardCli
                         <TableCell className="px-4 py-3 text-center font-medium">
                           {item.totalApplications > 0 ? item.totalApplications : <span className="text-muted-foreground/30">-</span>}
                         </TableCell>
-                        <TableCell className="px-4 py-3 text-center">
-                          {item.free > 0 ? <span className="font-semibold">{item.free}</span> : <span className="text-muted-foreground/30">-</span>}
-                        </TableCell>
-                        <TableCell className="px-4 py-3 text-center">
-                          {item.lite > 0 ? <span className="font-semibold text-blue-600">{item.lite}</span> : <span className="text-muted-foreground/30">-</span>}
-                        </TableCell>
-                        <TableCell className="px-4 py-3 text-center">
-                          {item.pro > 0 ? <span className="font-semibold text-amber-600">{item.pro}</span> : <span className="text-muted-foreground/30">-</span>}
-                        </TableCell>
+                        {variant === "full" && (
+                          <>
+                            <TableCell className="px-4 py-3 text-center">
+                              {item.free > 0 ? <span className="font-semibold">{item.free}</span> : <span className="text-muted-foreground/30">-</span>}
+                            </TableCell>
+                            <TableCell className="px-4 py-3 text-center">
+                              {item.lite > 0 ? <span className="font-semibold text-blue-600">{item.lite}</span> : <span className="text-muted-foreground/30">-</span>}
+                            </TableCell>
+                            <TableCell className="px-4 py-3 text-center">
+                              {item.pro > 0 ? <span className="font-semibold text-amber-600">{item.pro}</span> : <span className="text-muted-foreground/30">-</span>}
+                            </TableCell>
+                          </>
+                        )}
                         <TableCell className="px-4 py-3 text-right">
                           <span className="font-bold text-amber-600">{item.score.toFixed(1)}</span>
                         </TableCell>
