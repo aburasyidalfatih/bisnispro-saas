@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { streamText, tool } from "ai"
+import { streamText } from "ai"
 import { getAiAgentModel } from "@/features/ai/services/ai.service"
+import { searchMemory, saveMemory } from "@/features/ai/services/memory.service"
 import { db } from "@/lib/db"
 import fs from "fs"
 import path from "path"
@@ -53,23 +54,32 @@ export async function POST(req: Request) {
 4. Fitur Unggulan Kami: PPDB Online, E-Kantin, Ujian CBT, Presensi, dan AI Guru.
 Berikan saran strategis berbasis data yang relevan dengan konteks bisnis ini.`
 
-    const systemPrompt = `Anda adalah Asisten AI Data Copilot level C-Level (CFO/CMO/CEO virtual) untuk aplikasi SaaS bernama "SchoolPro" (Manajemen Sekolah).
-Tugas Anda adalah merespons pertanyaan Super Admin terkait performa bisnis, keuangan, pengguna, dan aktivitas sistem.
+    const systemPrompt = `Anda adalah Asisten AI Omniscient (Maha Tahu), gabungan dari Senior Data Scientist, C-Level Advisor, dan Lead Software Engineer untuk SaaS "SchoolPro".
+Tugas Anda adalah merespons pertanyaan Super Admin terkait performa bisnis, keuangan, pengguna, dan aktivitas sistem, SERTA mampu menganalisis struktur kode aplikasi itu sendiri dan meriset internet.
 ${businessContext}
 
-Anda memiliki alat (tool) bernama "execute_postgres_query". Anda BISA dan HARUS menggunakannya jika pengguna menanyakan data berbasis angka, statistik, performa, jam aktif, dan sebagainya.
-Selain itu, Anda memiliki tool "render_bar_chart" dan "render_pie_chart". Jika pengguna meminta visualisasi grafik, atau jika Anda merasa data akan lebih mudah dipahami dalam bentuk grafik, silakan panggil tool grafik tersebut *SETELAH* Anda mendapatkan data dari database.
-Anda juga memiliki tool "generate_marketing_image" yang bisa membuat gambar (misal: banner promosi, logo) menggunakan DALL-E 3. Gunakan tool ini jika pengguna meminta pembuatan aset visual atau materi promosi.
+**KAPABILITAS OMNISCIENT (MAHA TAHU):**
+1. **Analisis Data (Data Scientist):** Gunakan \`execute_postgres_query\` untuk SQL lanjutan (agregasi, tren, performa) dan \`render_bar_chart\` / \`render_pie_chart\` untuk visualisasi.
+2. **Analisis Kode (Lead Engineer):** Gunakan \`list_directory\` dan \`read_source_code\` untuk membaca langsung file proyek SchoolPro ini (Read-Only). Lakukan ini jika pengguna bertanya *bagaimana suatu fitur bekerja di balik layar* atau mencari dokumentasi teknis.
+3. **Analisis Pasar (Web Browsing):** Gunakan \`search_web\` untuk meriset tren pasar internet secara *real-time*.
+4. **Desain Grafis:** Gunakan \`generate_marketing_image\` (DALL-E 3) untuk materi promosi.
+
+**KEMAMPUAN BELAJAR MANDIRI (AUTONOMOUS LEARNING):**
+Anda dilengkapi dengan alat \`save_to_memory\` yang terhubung dengan Vector Database (Otak Kanan Anda).
+Anda WAJIB menggunakannya SECARA OTOMATIS tanpa disuruh jika:
+1. Anda menemukan *insight* statistik atau pola bisnis yang sangat krusial setelah mengeksekusi kueri database.
+2. Super Admin menetapkan aturan, preferensi pelaporan, atau strategi bisnis baru.
+Simpan wawasan tersebut ke memori agar Anda menjadi semakin cerdas di masa depan.
 
 **PANDUAN TEXT-TO-SQL:**
 Berikut adalah struktur database (Prisma Schema) saat ini:
 ${schemaContext}
 
 1. Tulis query PostgreSQL murni (Raw SQL).
-2. NAMA TABEL DAN KOLOM HARUS DIBERI KUTIP DUA (") persis seperti penamaan di Prisma Schema, karena PostgreSQL bersifat case-sensitive terhadap nama yang di-quote. Contoh: SELECT "id", "createdAt" FROM "User" WHERE "role" = 'ADMIN'
+2. NAMA TABEL DAN KOLOM HARUS DIBERI KUTIP DUA (") persis seperti penamaan di Prisma Schema. Contoh: SELECT "id", "createdAt" FROM "User" WHERE "role" = 'ADMIN'
 3. Hanya lakukan SELECT (Read-only). DILARANG KERAS menggunakan instruksi perusak (UPDATE/DELETE/DROP dll).
-4. Setelah mendapat hasil JSON dari alat tersebut, rangkum dan jelaskan datanya ke pengguna dalam bahasa Indonesia yang elegan, cerdas, dan ringkas layaknya seorang Konsultan Bisnis Profesional. Jangan berikan output raw JSON langsung ke pengguna tanpa dirangkum. Jika Anda memanggil tool grafik, informasikan pengguna bahwa grafik telah ditampilkan.
-5. Jika ada potensi saran bisnis dari data tersebut (misal: "Traffic tertinggi di jam 20.00, ini waktu yang bagus untuk promo"), sampaikan secara inisiatif.
+4. Setelah mendapat hasil JSON dari alat tersebut, rangkum dan jelaskan datanya ke pengguna layaknya seorang Data Scientist & Konsultan Bisnis Profesional yang elegan dan cerdas. 
+5. Berikan saran bisnis proaktif dari data tersebut secara inisiatif.
 
 Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan menyertakan data asli dari database alih-alih menjawab secara hipotetis.`
 
@@ -89,15 +99,25 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
       currentSessionId = newSession.id
     }
 
+    // RAG: Cari memori berdasarkan pesan terakhir pengguna
+    const lastUserMsg = messages.filter((m: any) => m.role === "user").pop()?.content || ""
+    let memoryContext = ""
+    if (lastUserMsg) {
+      const relevantMemories = await searchMemory(lastUserMsg, session.user.id)
+      if (relevantMemories.length > 0) {
+        memoryContext = `\n\n**MEMORI JANGKA PANJANG (RAG CONTEXT):**\nBerikut adalah catatan historis yang relevan dengan pertanyaan saat ini. Gunakan jika berkaitan:\n` + relevantMemories.map((m: any) => `- ${m}`).join("\n")
+      }
+    }
+
     // Generate Stream with Tools
     const result = await streamText({
       model: modelResult.model,
       messages: [
-        { role: "system", content: systemPrompt },
+        { role: "system", content: systemPrompt + memoryContext },
         ...messages
       ],
       tools: {
-        execute_postgres_query: tool({
+        execute_postgres_query: {
           description: "Execute a read-only PostgreSQL query to fetch business or system data. Always use double quotes for Table and Column names based on the Prisma schema.",
           parameters: z.object({
             query: z.string().describe("The PostgreSQL SELECT query to execute")
@@ -138,8 +158,8 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
               return { error: "Gagal menjalankan query: " + error.message }
             }
           }
-        }),
-        render_bar_chart: tool({
+        },
+        render_bar_chart: {
           description: "Generates a Bar Chart to visually represent data. Use this AFTER fetching data from the database if a bar chart is requested or appropriate.",
           parameters: z.object({
             title: z.string().describe("The title of the chart"),
@@ -152,8 +172,8 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
           execute: async ({ title, description, data }: { title: string, description: string, data: any }) => {
             return { success: true, message: "Bar chart rendered on client successfully." }
           }
-        }),
-        render_pie_chart: tool({
+        },
+        render_pie_chart: {
           description: "Generates a Pie Chart to visually represent proportions or percentages. Use this AFTER fetching data from the database if a pie chart is requested or appropriate.",
           parameters: z.object({
             title: z.string().describe("The title of the pie chart"),
@@ -166,8 +186,8 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
           execute: async ({ title, description, data }: { title: string, description: string, data: any }) => {
             return { success: true, message: "Pie chart rendered on client successfully." }
           }
-        }),
-        generate_marketing_image: tool({
+        },
+        generate_marketing_image: {
           description: "Generates a promotional or marketing image using OpenAI DALL-E 3 based on the user's prompt. Use this when the user asks to create an image, banner, or visual asset.",
           parameters: z.object({
             prompt: z.string().describe("A highly detailed prompt for the image generation model. Make it descriptive and optimize it for a high-quality marketing asset."),
@@ -200,10 +220,101 @@ Jawablah dengan bahasa Indonesia yang rapi, format Markdown, dan selalu usahakan
               return { error: "Failed to generate image: " + error.message }
             }
           }
-        }),
+        },
+        save_to_memory: {
+          description: "Simpan informasi, preferensi, atau konteks strategis ke Memori Jangka Panjang (Vector DB). Gunakan alat ini jika pengguna menginstruksikan untuk mengingat sesuatu secara eksplisit atau ada kesimpulan penting.",
+          parameters: z.object({
+            content: z.string().describe("Teks informasi yang akan disimpan ke memori.")
+          }),
+          execute: async ({ content }: { content: string }) => {
+            const res = await saveMemory(content, session.user.id)
+            if (res.success) {
+              return { success: true, message: `Memori berhasil disimpan.` }
+            }
+            return { success: false, error: res.error }
+          }
+        },
+        list_directory: {
+          description: "Melihat daftar file dan folder di dalam direktori proyek SchoolPro. Gunakan ini untuk mencari tahu struktur kode sebelum membaca file tertentu.",
+          parameters: z.object({
+            dirPath: z.string().describe("Path direktori relatif terhadap root proyek. Kosongkan ('') untuk melihat root direktori. Contoh: 'src/app', 'src/features'")
+          }),
+          execute: async ({ dirPath }: { dirPath: string }) => {
+            try {
+              const rootPath = process.cwd();
+              const targetPath = path.join(rootPath, dirPath);
+              if (!targetPath.startsWith(rootPath)) {
+                return { error: "Akses ditolak. Direktori di luar cakupan proyek." };
+              }
+              const files = fs.readdirSync(targetPath, { withFileTypes: true });
+              const result = files.map(f => (f.isDirectory() ? `[DIR]  ${f.name}` : `[FILE] ${f.name}`));
+              return { path: dirPath, contents: result };
+            } catch (error: any) {
+              return { error: "Gagal membaca direktori: " + error.message };
+            }
+          }
+        },
+        read_source_code: {
+          description: "Membaca isi file source code di dalam proyek SchoolPro. Gunakan ini untuk menganalisis bagaimana sebuah fitur, komponen, atau service bekerja di backend/frontend.",
+          parameters: z.object({
+            filePath: z.string().describe("Path file relatif terhadap root proyek. Contoh: 'src/features/tenant/services/tenant.service.ts'")
+          }),
+          execute: async ({ filePath }: { filePath: string }) => {
+            try {
+              const rootPath = process.cwd();
+              const targetPath = path.join(rootPath, filePath);
+              if (!targetPath.startsWith(rootPath)) {
+                return { error: "Akses ditolak. File di luar cakupan proyek." };
+              }
+              if (!fs.existsSync(targetPath)) {
+                return { error: "File tidak ditemukan." };
+              }
+              const stat = fs.statSync(targetPath);
+              if (stat.size > 1024 * 100) { // Limit 100KB
+                return { error: "File terlalu besar untuk dibaca langsung." };
+              }
+              const content = fs.readFileSync(targetPath, "utf-8");
+              return { filePath, content };
+            } catch (error: any) {
+              return { error: "Gagal membaca file: " + error.message };
+            }
+          }
+        },
+        search_web: {
+          description: "Mencari informasi di internet secara real-time. Gunakan ini untuk meriset kompetitor, mencari berita pendidikan, atau tren bisnis terbaru.",
+          parameters: z.object({
+            query: z.string().describe("Kata kunci pencarian yang spesifik.")
+          }),
+          execute: async ({ query }: { query: string }) => {
+            // Cek apakah ada API key Tavily di platform setting atau env
+            const tavilySetting = await db.platformSetting.findUnique({ where: { key: "TAVILY_API_KEY" } });
+            const tavilyKey = tavilySetting?.value || process.env.TAVILY_API_KEY;
+            
+            if (!tavilyKey) {
+              return { error: "TAVILY_API_KEY belum dikonfigurasi oleh Super Admin. Tolong beri tahu pengguna untuk mendaftar di tavily.com secara gratis dan memasukkan kuncinya ke tabel platform_settings atau .env agar fitur ini bisa digunakan." };
+            }
+            
+            try {
+              const response = await fetch("https://api.tavily.com/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  api_key: tavilyKey,
+                  query: query,
+                  search_depth: "basic",
+                  include_answer: true,
+                  max_results: 3
+                })
+              });
+              const data = await response.json();
+              if (data.error) return { error: data.error };
+              return { answer: data.answer, results: data.results.map((r: any) => ({ title: r.title, content: r.content, url: r.url })) };
+            } catch (error: any) {
+              return { error: "Gagal melakukan pencarian internet: " + error.message };
+            }
+          }
+        },
       },
-      // Berikan keleluasaan model untuk memanggil alat secara berurutan jika perlu (misal: query DB lalu render chart)
-      // maxSteps: 3, (Not supported in current AI SDK version)
       async onFinish({ text }) {
         try {
            const allMessages = [...messages, { role: "assistant", content: text }]
