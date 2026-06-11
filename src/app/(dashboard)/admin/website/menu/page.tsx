@@ -16,37 +16,7 @@ export default async function WebsiteMenuPage() {
   const tenantId = (session.user as any).tenants?.[0]?.id
   if (!tenantId) redirect("/login")
 
-  await runWithTenantContext(tenantId, async (tx) => {
-    const menuCount = await tx.websiteMenu.count({ where: { tenantId } })
-    if (menuCount > 0) return
 
-    // Seed default menus if empty: full hierarchical structure.
-    await tx.websiteMenu.create({ data: { tenantId, label:"Beranda", url:"/", isSystem: true, order: 0 } })
-    const profil = await tx.websiteMenu.create({ data: { tenantId, label:"Profil Sekolah", url:"/profil", isSystem: false, order: 1 } })
-    const informasi = await tx.websiteMenu.create({ data: { tenantId, label:"Informasi", url:"/berita", isSystem: false, order: 2 } })
-    const galeri = await tx.websiteMenu.create({ data: { tenantId, label:"Galeri", url:"/gallery", isSystem: false, order: 3 } })
-    await tx.websiteMenu.create({ data: { tenantId, label:"Kontak", url:"/contact", isSystem: false, order: 4 } })
-
-    await tx.websiteMenu.createMany({ data: [
-      { tenantId, label:"Profil Lembaga", url:"/profil", parentId: profil.id, order: 0 },
-      { tenantId, label:"Guru & Staf (GTK)", url:"/gtk", parentId: profil.id, order: 1 },
-      { tenantId, label:"Fasilitas Sekolah", url:"/fasilitas", parentId: profil.id, order: 2 },
-      { tenantId, label:"Program Unggulan", url:"/program", parentId: profil.id, order: 3 },
-      { tenantId, label:"Ekstrakurikuler", url:"/ekstrakurikuler", parentId: profil.id, order: 4 },
-    ]})
-
-    await tx.websiteMenu.createMany({ data: [
-      { tenantId, label:"Berita & Artikel", url:"/berita", parentId: informasi.id, order: 0 },
-      { tenantId, label:"Agenda & Acara", url:"/agenda", parentId: informasi.id, order: 1 },
-      { tenantId, label:"Pusat Unduhan", url:"/unduhan", parentId: informasi.id, order: 2 },
-    ]})
-
-    await tx.websiteMenu.createMany({ data: [
-      { tenantId, label:"Galeri Foto", url:"/gallery", parentId: galeri.id, order: 0 },
-      { tenantId, label:"Prestasi Siswa", url:"/prestasi", parentId: galeri.id, order: 1 },
-      { tenantId, label:"Alumni Success", url:"/alumni", parentId: galeri.id, order: 2 },
-    ]})
-  })
 
   return (
     <div className="space-y-6">
