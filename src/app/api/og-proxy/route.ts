@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 import sharp from "sharp"
+import { rateLimit } from "@/lib/rate-limit"
 
 export const dynamic = "force-dynamic"
+const MAX_SOURCE_IMAGE_SIZE = 5 * 1024 * 1024
 
 export async function GET(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "anonymous"
+    const { success } = await rateLimit(`og-proxy:${ip}`, 60, 60_000)
+    if (!success) {
+      return new NextResponse("Too Many Requests", { status: 429 })
+    }
+
     const { searchParams } = new URL(req.url)
     const imageUrl = searchParams.get("url")
 
@@ -34,13 +42,26 @@ export async function GET(req: NextRequest) {
     }
 
     // Fetch the original image
-    const response = await fetch(imageUrl)
+    const response = await fetch(imageUrl, { signal: AbortSignal.timeout(8_000) })
     if (!response.ok) {
       return new NextResponse("Failed to fetch image", { status: 400 })
     }
 
+    const contentType = response.headers.get("content-type") || ""
+    if (!contentType.startsWith("image/")) {
+      return new NextResponse("Invalid content type", { status: 400 })
+    }
+
+    const contentLength = Number(response.headers.get("content-length") || 0)
+    if (contentLength > MAX_SOURCE_IMAGE_SIZE) {
+      return new NextResponse("Image too large", { status: 413 })
+    }
+
     const arrayBuffer = await response.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
+    if (buffer.length > MAX_SOURCE_IMAGE_SIZE) {
+      return new NextResponse("Image too large", { status: 413 })
+    }
 
     // Convert to JPEG using sharp
     // This ensures Facebook and WhatsApp can read it (they don't fully support WebP)

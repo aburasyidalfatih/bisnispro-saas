@@ -55,9 +55,11 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   eslint: {
+    // Lint is enforced by the package prebuild script; Next's built-in lint step
+    // currently conflicts with the repo's ESLint toolchain options.
     ignoreDuringBuilds: true,
   },
   images: {

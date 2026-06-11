@@ -83,7 +83,7 @@ describe('Server Actions: Staff', () => {
 
     // Mock bcrypt import
     const mockHash = vi.fn().mockResolvedValue('hashed_password')
-    vi.doMock('bcryptjs', () => ({ hash: mockHash }))
+    vi.doMock('bcryptjs', () => ({ default: { hash: mockHash }, hash: mockHash }))
 
     db.user.create.mockResolvedValue({ id: 'user-sari', name: 'Bu Sari', email: 'sari@school.com' } as any)
     db.tenantUser.findUnique.mockResolvedValue(null)

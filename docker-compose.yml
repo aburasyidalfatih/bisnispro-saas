@@ -11,7 +11,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@pgbouncer:5432/${POSTGRES_DB:-saasmasterpro}?pgbouncer=true&connection_limit=15
       - REDIS_URL=redis://redis:6379
-      - DISABLE_WORKER=true
+      - ENABLE_EMBEDDED_WORKER=false
     volumes:
       - uploads:/app/uploads
       - ./backups:/app/backups

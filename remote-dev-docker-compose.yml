@@ -27,6 +27,7 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=redis://redis:6379
+      - ENABLE_EMBEDDED_WORKER=true
 
     volumes:
       - uploads:/app/uploads

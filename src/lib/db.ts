@@ -2,7 +2,9 @@ import { PrismaClient, Prisma } from "@prisma/client"
 import { withAccelerate } from "@prisma/extension-accelerate"
 import { logger } from "@/lib/logger"
 import * as Sentry from "@sentry/nextjs"
+import { applyTenantScopeToArgs, assertTenantId, isTenantScopedModel } from "@/lib/tenant-scope"
 export type { Prisma }
+export { applyTenantScopeToArgs, assertTenantId, isTenantScopedModel } from "@/lib/tenant-scope"
 
 const SLOW_QUERY_THRESHOLD_MS = 500
 
@@ -73,63 +75,42 @@ export const db = globalForPrisma.prisma ?? createPrismaClient()
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db as unknown as PrismaClient
 
+export async function runWithTenantContext<T>(
+  tenantId: string,
+  callback: (tx: Prisma.TransactionClient) => Promise<T>
+): Promise<T> {
+  assertTenantId(tenantId)
+
+  return db.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`
+    await tx.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`
+    return callback(tx)
+  })
+}
+
 /**
  * Creates a scoped Prisma client that automatically injects tenantId 
  * into queries for safer multi-tenant data access.
- * ENTERPRISE V3: Uses PostgreSQL Row Level Security (RLS) for absolute safety.
+ * ENTERPRISE V3: also sets PostgreSQL RLS context for every scoped query.
  */
 export function withTenant(tenantId: string) {
-  if (!tenantId) {
-    throw new Error("withTenant requires a valid tenantId")
-  }
+  assertTenantId(tenantId)
   
   return db.$extends({
     query: {
       $allModels: {
         async $allOperations({ model, operation, args, query }) {
-          // Operations that support a `where` clause
-          const whereOperations = [
-            "findUnique", "findUniqueOrThrow",
-            "findFirst", "findFirstOrThrow",
-            "findMany", "count", "aggregate", "groupBy",
-            "update", "updateMany", "delete", "deleteMany",
-            "upsert",
-          ]
-
-          // Operations that support a `data` clause (for injecting tenantId into data)
-          const dataOperations = ["create", "createMany"]
-
-          if (typeof args === 'object' && args !== null) {
-            if (whereOperations.includes(operation)) {
-              // Inject tenantId into where clause for reads and mutations that use where
-              (args as any).where = { ...(args as any).where, tenantId }
-            } else if (dataOperations.includes(operation)) {
-              // For create operations, ensure tenantId is in the data
-              if ((args as any).data && typeof (args as any).data === 'object' && !Array.isArray((args as any).data)) {
-                (args as any).data = { ...(args as any).data, tenantId }
-              }
-            }
-          }
-          
-          const isRead = [
-            "findUnique",
-            "findUniqueOrThrow",
-            "findFirst",
-            "findFirstOrThrow",
-            "findMany",
-            "count",
-            "aggregate",
-            "groupBy",
-          ].includes(operation)
-
-          if (isRead) {
+          if (!isTenantScopedModel(model)) {
             return query(args)
           }
 
-          // Interactive transaction to prevent connection pooling cross-contamination and enforce RLS
-          const [, result] = await db.$transaction([
+          const scopedArgs = applyTenantScopeToArgs(args, operation, tenantId)
+
+          // Transaction-local setting prevents connection pool cross-contamination.
+          const [, , result] = await db.$transaction([
             db.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`,
-            query(args),
+            db.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,
+            query(scopedArgs as typeof args),
           ])
           return result
         },

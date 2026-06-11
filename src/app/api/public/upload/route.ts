@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server"
 import { saveFile } from "@/features/upload/services/upload.service"
 import { logger } from "@/lib/logger"
+import { rateLimit } from "@/lib/rate-limit"
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "anonymous"
+    const { success } = await rateLimit(`public-upload:${ip}`, 10, 600_000)
+    if (!success) {
+      return NextResponse.json({ error: "Terlalu banyak upload. Coba lagi nanti." }, { status: 429 })
+    }
+
     const formData = await req.formData()
     const file = formData.get("file") as File | null
 

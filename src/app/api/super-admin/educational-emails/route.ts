@@ -53,7 +53,6 @@ const DEFAULT_CAMPAIGNS = [
   }
 ]
 
-// eslint-disable-next-line react-doctor/nextjs-no-side-effect-in-get-handler
 export async function GET(req: Request) {
   try {
     const session = await auth()

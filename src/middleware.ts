@@ -11,7 +11,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { authConfig } from "@/lib/auth.config"
 import { edgeRateLimit, tenantRateLimit } from "@/lib/edge-rate-limit"
-import { Redis } from "@upstash/redis"
+import { Redis } from "@upstash/redis/cloudflare"
 
 const { auth } = NextAuth(authConfig)
 

@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
@@ -17,19 +17,28 @@ export async function PATCH(
 
   try {
     const body = await req.json()
+    const tenantDb = withTenant(tenantId)
     
     // Verifikasi kepemilikan
-    const existing = await db.websiteMenu.findUnique({ where: { id } })
-    if (!existing || existing.tenantId !== tenantId) {
+    const existing = await tenantDb.websiteMenu.findFirst({ where: { id } })
+    if (!existing) {
       return NextResponse.json({ error: "Menu not found" }, { status: 404 })
     }
 
-    const menu = await db.websiteMenu.update({
+    const normalizedParentId = body.parentId !== undefined ? (body.parentId || null) : undefined
+    if (normalizedParentId) {
+      const parent = await tenantDb.websiteMenu.findFirst({ where: { id: normalizedParentId } })
+      if (!parent || parent.id === id) {
+        return NextResponse.json({ error: "Parent menu not found" }, { status: 404 })
+      }
+    }
+
+    const menu = await tenantDb.websiteMenu.update({
       where: { id },
       data: {
         label: body.label,
         url: body.url,
-        parentId: body.parentId !== undefined ? (body.parentId || null) : undefined,
+        parentId: normalizedParentId,
         isActive: body.isActive,
         order: body.order
       }
@@ -58,8 +67,9 @@ export async function DELETE(
   }
 
   try {
-    const existing = await db.websiteMenu.findUnique({ where: { id } })
-    if (!existing || existing.tenantId !== tenantId) {
+    const tenantDb = withTenant(tenantId)
+    const existing = await tenantDb.websiteMenu.findFirst({ where: { id } })
+    if (!existing) {
       return NextResponse.json({ error: "Menu not found" }, { status: 404 })
     }
 
@@ -67,7 +77,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Menu sistem tidak dapat dihapus" }, { status: 400 })
     }
 
-    await db.websiteMenu.delete({
+    await tenantDb.websiteMenu.delete({
       where: { id }
     })
 

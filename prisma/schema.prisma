@@ -633,6 +633,8 @@ model DripLog {
   tenant     Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, campaignId])
+  @@index([tenantId])
+  @@index([tenantId, sentAt(sort: Desc)])
   @@map("drip_logs")
 }
 
@@ -1174,6 +1176,8 @@ model WavioMessageLog {
 
   @@index([messageId])
   @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@index([status])
   @@map("wavio_message_logs")
 }
@@ -1959,6 +1963,8 @@ model TenantNotification {
   user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([tenantId, isRead])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@index([userId])
   @@index([isRead])
   @@index([createdAt])
@@ -2018,6 +2024,8 @@ model WebsiteMenu {
   tenant    Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([tenantId, parentId])
+  @@index([tenantId, order])
   @@index([parentId])
   @@map("website_menus")
 }
@@ -2072,6 +2080,9 @@ model SecurityLog {
   tenantId    String?
   createdAt   DateTime @default(now())
 
+  @@index([tenantId])
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([attackType, createdAt(sort: Desc)])
   @@index([ipAddress])
   @@index([attackType])
   @@index([createdAt])
@@ -2150,6 +2161,10 @@ model CourseEnrollment {
   lessonProgs LessonProgress[]
 
   @@unique([userId, courseId])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, enrolledAt(sort: Desc)])
+  @@index([userId, status])
   @@map("course_enrollments")
 }
 
@@ -2188,6 +2203,9 @@ model StaffPermit {
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, staffId, status])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@index([staffId])
   @@index([createdAt])
   @@map("staff_permits")
@@ -2204,6 +2222,8 @@ model AiMemory {
   updatedAt DateTime @updatedAt
 
   @@index([tenantId])
+  @@index([tenantId, userId])
+  @@index([tenantId, createdAt(sort: Desc)])
   @@index([userId])
   @@map("ai_memories")
 }

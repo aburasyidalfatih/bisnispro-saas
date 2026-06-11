@@ -28,6 +28,7 @@ src/app/scratch.ts
 *.exe
 *rclone*
 *.sql
+!prisma/migrations/**/*.sql
 
 # ==========================================
 # SECURITY: Jangan track env secrets!

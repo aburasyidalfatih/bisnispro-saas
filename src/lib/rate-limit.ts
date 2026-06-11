@@ -8,6 +8,7 @@
  */
 
 import { getRedisClient } from "@/lib/redis"
+import { logger } from "@/lib/logger"
 
 /**
  * Sliding window rate limiter.
@@ -38,8 +39,13 @@ export async function rateLimit(
     }
 
     return { success: true, remaining: limit - count }
-  } catch {
-    // Jika Redis error, allow request (fail open) agar tidak block semua user
+  } catch (error) {
+    logger.error("Rate limiter backend failed", error, { key })
+
+    if (process.env.NODE_ENV === "production") {
+      return { success: false, remaining: 0 }
+    }
+
     return { success: true, remaining: limit }
   }
 }

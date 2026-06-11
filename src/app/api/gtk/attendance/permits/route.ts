@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
@@ -30,21 +30,21 @@ export async function GET(req: Request) {
   const { error } = await requireTenantMembership(tenantId)
   if (error) return error
 
+  const tenantDb = withTenant(tenantId)
   const where: any = {
-    tenantId,
     ...(staffId ? { staffId } : {}),
     ...(status ? { status } : {}),
   }
 
   const [records, total] = await Promise.all([
-    db.staffPermit.findMany({
+    tenantDb.staffPermit.findMany({
       where,
       include: { staff: { select: { id: true, name: true, role: true, imageUrl: true } } },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * take,
       take,
     }),
-    db.staffPermit.count({ where }),
+    tenantDb.staffPermit.count({ where }),
   ])
 
   return NextResponse.json({ data: records, meta: { total, page, totalPages: Math.ceil(total / take) } })
@@ -61,7 +61,16 @@ export async function POST(req: Request) {
     const { error } = await requireTenantMembership(parsed.tenantId)
     if (error) return error
 
-    const permit = await db.staffPermit.create({
+    const staff = await db.staff.findFirst({
+      where: { id: parsed.staffId, tenantId: parsed.tenantId },
+      select: { id: true },
+    })
+    if (!staff) {
+      return NextResponse.json({ error: "Data GTK tidak ditemukan untuk tenant ini" }, { status: 404 })
+    }
+
+    const tenantDb = withTenant(parsed.tenantId)
+    const permit = await tenantDb.staffPermit.create({
       data: {
         tenantId: parsed.tenantId,
         staffId: parsed.staffId,

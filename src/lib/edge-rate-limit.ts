@@ -1,9 +1,13 @@
 import { Ratelimit } from "@upstash/ratelimit"
-import { Redis } from "@upstash/redis"
+import { Redis } from "@upstash/redis/cloudflare"
 
 /**
  * Enterprise Edge Rate Limiter (Fase 1 & Fase 3)
- * Priority: Upstash REST → Local Redis → In-Memory
+ * Priority: Upstash REST -> In-Memory
+ *
+ * Middleware runs on the Edge runtime, so it must not import TCP Redis clients
+ * such as ioredis. Node.js route handlers use src/lib/rate-limit.ts for local
+ * Redis-backed limits.
  */
 
 // Bypass jika env vars belum diset (misal di local dev)
@@ -51,51 +55,7 @@ class InMemoryRateLimit {
   }
 }
 
-/**
- * Redis-backed Rate Limiter for VPS (local Redis, shared across containers).
- * Uses simple INCR + EXPIRE (fixed window) — efficient and reliable.
- */
-class RedisLocalRateLimit {
-  private max: number
-  private windowSec: number
-  private prefix: string
-
-  constructor(max: number, windowSec: number, prefix: string) {
-    this.max = max
-    this.windowSec = windowSec
-    this.prefix = prefix
-  }
-
-  async limit(key: string) {
-    try {
-      const { getRedis } = await import("@/lib/redis")
-      const redis = getRedis()
-      if (!redis) throw new Error("Redis not available")
-
-      const redisKey = `${this.prefix}:${key}`
-      const current = await redis.incr(redisKey)
-      if (current === 1) {
-        await redis.expire(redisKey, this.windowSec)
-      }
-
-      return {
-        success: current <= this.max,
-        pending: Promise.resolve(),
-        limit: this.max,
-        remaining: Math.max(0, this.max - current),
-        reset: Date.now() + this.windowSec * 1000
-      }
-    } catch {
-      // Fallback to allow if Redis errors
-      return { success: true, pending: Promise.resolve(), limit: this.max, remaining: this.max, reset: Date.now() }
-    }
-  }
-}
-
-// Check if local Redis is configured
-const isLocalRedisConfigured = !!(process.env.REDIS_URL || process.env.REDIS_HOST)
-
-function createLimiter(upstashMax: number, upstashWindow: string, localMax: number, localWindowSec: number, prefix: string, inMemoryMax: number, inMemoryMs: number) {
+function createLimiter(upstashMax: number, upstashWindow: string, prefix: string, inMemoryMax: number, inMemoryMs: number) {
   if (isUpstashConfigured) {
     return new Ratelimit({
       redis: Redis.fromEnv(),
@@ -104,19 +64,16 @@ function createLimiter(upstashMax: number, upstashWindow: string, localMax: numb
       prefix,
     })
   }
-  if (isLocalRedisConfigured) {
-    return new RedisLocalRateLimit(localMax, localWindowSec, prefix)
-  }
   return new InMemoryRateLimit(inMemoryMax, inMemoryMs)
 }
 
 // Global API Rate Limiter (200 request / 10 detik per IP)
-export const edgeRateLimit = createLimiter(200, "10 s", 200, 10, "rl:edge", 200, 10000)
+export const edgeRateLimit = createLimiter(200, "10 s", "rl:edge", 200, 10000)
 
 // Aggressive Rate Limiter for Authentication (Brute Force Protection)
 // Max 5 login attempts per 60 seconds per IP (lebih ketat dari sebelumnya)
-export const authRateLimit = createLimiter(5, "60 s", 5, 60, "rl:auth", 5, 60000)
+export const authRateLimit = createLimiter(5, "60 s", "rl:auth", 5, 60000)
 
 // Per-Tenant Rate Limiter (1000 request / 60 detik per Tenant)
-export const tenantRateLimit = createLimiter(1000, "60 s", 1000, 60, "rl:tenant", 1000, 60000)
+export const tenantRateLimit = createLimiter(1000, "60 s", "rl:tenant", 1000, 60000)
 

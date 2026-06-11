@@ -7,14 +7,15 @@ import { GraduationCap, Play, Lock, ChevronLeft, BookOpen, Clock, CheckCircle2 }
 import Link from "next/link"
 import Image from "next/image"
 
-export default async function CourseDetailPage({ params }: { params: { slug: string } }) {
+export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const session = await auth()
   const userId = session?.user?.id
 
   if (!userId) redirect("/login")
 
   const course = await prisma.course.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: {
       author: { select: { name: true } },
       modules: {

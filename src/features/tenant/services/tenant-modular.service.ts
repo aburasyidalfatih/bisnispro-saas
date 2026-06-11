@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { db, runWithTenantContext } from "@/lib/db"
 import { unstable_cache } from "next/cache"
 import { revalidateTag } from "next/cache"
 
@@ -15,7 +15,13 @@ export async function clearTenantCache(slug: string) {
 export const getTenantLayoutData = async (slug: string) => {
   return unstable_cache(
     async () => {
-      return db.tenant.findUnique({
+      const tenant = await db.tenant.findUnique({
+        where: { slug },
+        select: { id: true },
+      })
+      if (!tenant) return null
+
+      return runWithTenantContext(tenant.id, (tx) => tx.tenant.findUnique({
         where: { slug },
         select: {
           id: true,
@@ -43,12 +49,12 @@ export const getTenantLayoutData = async (slug: string) => {
           seoDesc: true,
           heroImage: true,
           websiteMenus: { 
-            where: { isActive: true, parentId: null },
+            where: { tenantId: tenant.id, isActive: true, parentId: null },
             orderBy: { order: 'asc' },
-            include: { children: { where: { isActive: true }, orderBy: { order: 'asc' } } }
+            include: { children: { where: { tenantId: tenant.id, isActive: true }, orderBy: { order: 'asc' } } }
           },
         }
-      })
+      }))
     },
     [`tenant-layout-${slug}`],
     { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }

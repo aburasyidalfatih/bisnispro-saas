@@ -1,4 +1,9 @@
 export async function register() {
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    const { validateProductionEnv } = await import("./lib/env")
+    validateProductionEnv()
+  }
+
   // ============================================================
   // SENTRY: Initialize APM & Error Tracking
   // ============================================================
@@ -13,9 +18,8 @@ export async function register() {
   // ============================================================
   // BULLMQ WORKER: Background Job Processing
   // ============================================================
-  if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.DISABLE_WORKER !== 'true') {
-    // Jalankan BullMQ Worker otomatis di dalam proses Node.js saat server Next.js menyala!
-    // Ini menghilangkan kebutuhan akan container/service terpisah di VPS, kecuali DISABLE_WORKER diatur.
+  if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.ENABLE_EMBEDDED_WORKER === 'true') {
+    // Embedded worker is opt-in. Production should normally run the worker as a separate process/container.
     await import('./worker')
   }
 }

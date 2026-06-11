@@ -13,6 +13,9 @@ import { processLeaderboardSync } from "@/features/gamification/services/leaderb
 import { approveApplication } from "@/features/tenant/services/application.service"
 import * as Sentry from "@sentry/nextjs"
 import { Queue } from "bullmq"
+import { validateProductionEnv } from "./lib/env"
+
+validateProductionEnv()
 
 const redisOptions = {
   host: process.env.REDIS_HOST || "127.0.0.1",

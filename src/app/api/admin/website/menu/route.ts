@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
@@ -13,10 +13,11 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const menus = await db.websiteMenu.findMany({
-      where: { tenantId },
+    const tenantDb = withTenant(tenantId)
+    const menus = await tenantDb.websiteMenu.findMany({
       include: {
         children: {
+          where: { tenantId },
           orderBy: { order: "asc" }
         }
       },
@@ -50,18 +51,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Label and URL are required" }, { status: 400 })
     }
 
-    const maxOrderMenu = await db.websiteMenu.findFirst({
-      where: { tenantId, parentId: parentId || null },
+    const tenantDb = withTenant(tenantId)
+    const normalizedParentId = parentId || null
+    if (normalizedParentId) {
+      const parent = await tenantDb.websiteMenu.findFirst({ where: { id: normalizedParentId } })
+      if (!parent) {
+        return NextResponse.json({ error: "Parent menu not found" }, { status: 404 })
+      }
+    }
+
+    const maxOrderMenu = await tenantDb.websiteMenu.findFirst({
+      where: { parentId: normalizedParentId },
       orderBy: { order: "desc" }
     })
     const nextOrder = order !== undefined ? order : (maxOrderMenu ? maxOrderMenu.order + 1 : 0)
 
-    const menu = await db.websiteMenu.create({
+    const menu = await tenantDb.websiteMenu.create({
       data: {
         tenantId,
         label,
         url,
-        parentId: parentId || null,
+        parentId: normalizedParentId,
         order: nextOrder,
         isActive: isActive !== undefined ? isActive : true,
         isSystem: isSystem || false

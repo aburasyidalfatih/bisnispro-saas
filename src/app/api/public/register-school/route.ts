@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger"
 import { sendApplicationNotification, sendNewApplicationAlerts } from "@/features/tenant/services/application.service"
 import { checkWhatsAppNumber } from "@/features/notification/services/notification.service"
 import { parseBody } from "@/lib/api-utils"
+import { rateLimit } from "@/lib/rate-limit"
 import bcrypt from "bcryptjs"
 
 const registerSchoolSchema = z.object({
@@ -36,6 +37,12 @@ const registerSchoolSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "anonymous"
+    const { success } = await rateLimit(`register-school:${ip}`, 5, 600_000)
+    if (!success) {
+      return NextResponse.json({ error: "Terlalu banyak pengajuan. Coba lagi nanti." }, { status: 429 })
+    }
+
     const parsed = await parseBody(req, registerSchoolSchema)
     if (parsed.error) return parsed.error
 
