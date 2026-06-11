@@ -108,7 +108,7 @@ model Tenant {
   customTheme          CustomTheme?          @relation(fields: [customThemeId], references: [id])
   subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
   waQueueLogs          WaQueueLog[]
-  waSession            WaSession?
+  
   walletAccounts       WalletAccount[]
   walletTransactions   WalletTransaction[]
   websiteMenus         WebsiteMenu[]
@@ -1103,23 +1103,6 @@ model AffiliateWithdrawal {
   @@map("affiliate_withdrawals")
 }
 
-model WaSession {
-  id        String   @id @default(cuid())
-  tenantId  String   @unique
-  status    String   @default("DISCONNECTED")
-  qrCode    String?
-  creds     Json?
-  delayMin  Int      @default(5)
-  delayMax  Int      @default(15)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@index([tenantId])
-  @@index([createdAt])
-  @@index([tenantId, createdAt(sort: Desc)])
-  @@map("wa_sessions")
-}
 
 model Classroom {
   id                 String              @id @default(cuid())

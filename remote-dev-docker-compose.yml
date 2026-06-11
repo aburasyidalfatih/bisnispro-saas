@@ -27,7 +27,7 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=redis://redis:6379
-      - WA_GATEWAY_URL=${WA_GATEWAY_URL:-http://wa-gateway:4000}
+
     volumes:
       - uploads:/app/uploads
       - ./backups:/app/backups
@@ -79,24 +79,7 @@ services:
       - default
       - shared-proxy
 
-#  wa-gateway:
-#    profiles:
-#      - prod
-#    build:
-#      context: .
-#      dockerfile: services/wa-gateway/Dockerfile
-#    env_file:
-#      - .env
-#    environment:
-#      - DATABASE_URL=${DATABASE_URL}
-#      - WA_GATEWAY_PORT=4000
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#        required: false
-#    restart: unless-stopped
-#    networks:
-#      - default
+
 volumes:
   pgdata:
   uploads:

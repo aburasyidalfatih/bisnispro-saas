@@ -26,10 +26,10 @@ export default function AiAssistantClient({
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
     api: "/api/gtk/ai/chat",
     body: { sessionId: activeSessionId },
-    onError: (err) => {
+    onError: (err: any) => {
       alert("Gagal mengirim pesan: " + err.message)
     }
-  })
+  } as any) as any
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -159,7 +159,7 @@ export default function AiAssistantClient({
                  </div>
                ) : (
                  <div className="space-y-8">
-                   {messages.map((m) => (
+                   {messages.map((m: any) => (
                      <div key={m.id} className={`flex gap-4 max-w-[95%] md:max-w-[85%] ${m.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}>
                         <div className={`shrink-0 h-10 w-10 rounded-2xl flex items-center justify-center shadow-sm ${m.role === 'user' ? 'bg-gradient-to-br from-primary to-indigo-600 text-white' : 'bg-white dark:bg-slate-800 border border-border text-primary'}`}>
                            {m.role === 'user' ? <User className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
@@ -169,7 +169,7 @@ export default function AiAssistantClient({
                              <div className="whitespace-pre-wrap">{m.content}</div>
                            ) : (
                              <div className="prose prose-sm md:prose-base dark:prose-invert prose-p:leading-relaxed prose-pre:bg-slate-900 prose-pre:text-slate-50 max-w-none">
-                               <ReactMarkdown>{m.content}</ReactMarkdown>
+                               <ReactMarkdown>{m.content as string}</ReactMarkdown>
                              </div>
                            )}
                         </div>

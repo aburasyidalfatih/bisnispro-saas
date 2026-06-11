@@ -69,12 +69,12 @@ DB_NAME=${POSTGRES_DB:-saasmasterpro}
 
 log "Stopping app containers..."
 cd "${COMPOSE_DIR}"
-docker compose stop app wa-gateway
+docker compose stop app
 
 log "Restoring database..."
 gunzip -c "${BACKUP_FILE}" | docker compose exec -T db psql -U "${DB_USER}" -d "${DB_NAME}" --single-transaction
 
 log "Starting app containers..."
-docker compose start app wa-gateway
+docker compose start app
 
 log "✅ Restore completed! Database telah dikembalikan ke backup $(basename ${BACKUP_FILE})"

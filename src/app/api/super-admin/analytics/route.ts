@@ -373,7 +373,7 @@ const getEngagementData = unstable_cache(
     ])
 
     const [tenantsWithPpdb, tenantsWithWaGateway, tenantsWithDonasi, tenantsWithCanteen, tenantsWithCustomDomain, tenantsWithAi] = await Promise.all([
-      db.periodePpdb.groupBy({ by: ['tenantId'] }).then(r => r.length), db.waSession.count({ where: { status: "CONNECTED" } }), db.donationCampaign.groupBy({ by: ['tenantId'] }).then(r => r.length), db.canteenMerchant.groupBy({ by: ['tenantId'] }).then(r => r.length), db.tenant.count({ where: { domain: { not: null } } }), db.tenant.count({ where: { aiTokens: { gt: 0 } } }),
+      db.periodePpdb.groupBy({ by: ['tenantId'] }).then(r => r.length), Promise.resolve(0), db.donationCampaign.groupBy({ by: ['tenantId'] }).then(r => r.length), db.canteenMerchant.groupBy({ by: ['tenantId'] }).then(r => r.length), db.tenant.count({ where: { domain: { not: null } } }), db.tenant.count({ where: { aiTokens: { gt: 0 } } }),
     ])
 
     const featureAdoption = [

@@ -33,7 +33,7 @@ export default function GTKPermitsPage() {
   const { data: session } = useSession()
   const { toast } = useToast()
   
-  const tenant = session?.user?.tenants?.[0]?.tenant || session?.user?.tenants?.[0]
+  const tenant = (session?.user?.tenants?.[0] as any)?.tenant || session?.user?.tenants?.[0]
   const [staffList, setStaffList] = useState<any[]>([])
   
   const [subTab, setSubTab] = useState<"permits" | "logs">("permits")

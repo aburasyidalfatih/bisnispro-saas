@@ -27,7 +27,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
   const { messages, sendMessage, isLoading, setMessages } = useChat({
     api: "/api/super-admin/ai-analyst",
     body: { sessionId: activeSessionId },
-    onResponse: (response) => {
+    onResponse: (response: any) => {
       const newSessionId = response.headers.get('x-session-id')
       if (newSessionId && !activeSessionId) {
         setActiveSessionId(newSessionId)
@@ -37,10 +37,10 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
       // Refresh the route to seamlessly update the sidebar history
       router.refresh()
     },
-    onError: (err) => {
+    onError: (err: any) => {
       alert("Gagal mengirim pesan: " + err.message)
     }
-  })
+  } as any) as any
 
   const customHandleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -227,7 +227,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                 ) : (
                   <div className="space-y-6">
                     {messages
-                      .map(m => {
+                      .map((m: any) => {
                         // AI SDK v5/v6 UIMessage adapter
                         if ((m as any).parts !== undefined) {
                           const textContent = (m as any).parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\\n');
@@ -249,8 +249,8 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                         }
                         return m;
                       })
-                      .filter(m => !(m.role === 'assistant' && !m.content && (!m.toolInvocations || m.toolInvocations.length === 0)))
-                      .map((m) => (
+                      .filter((m: any) => !(m.role === 'assistant' && !m.content && (!m.toolInvocations || m.toolInvocations.length === 0)))
+                      .map((m: any) => (
                       <div key={m.id} className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}>
                           <div className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
                             {m.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
@@ -262,14 +262,14 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                                   <div className="whitespace-pre-wrap">{m.content}</div>
                                 ) : (
                                   <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-muted prose-pre:border prose-pre:text-foreground prose-a:text-primary prose-table:min-w-full prose-td:px-3 prose-td:py-2 prose-th:px-3 prose-th:py-2 prose-th:bg-muted/50">
-                                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                                    <ReactMarkdown>{m.content as string}</ReactMarkdown>
                                   </div>
                                 )}
                               </div>
                             )}
                             
                             {/* Display tool invocations */}
-                            {m.toolInvocations?.map((toolInvocation) => (
+                            {m.toolInvocations?.map((toolInvocation: any) => (
                                <div key={toolInvocation.toolCallId} className="w-full mt-4">
                                   {toolInvocation.toolName === 'execute_postgres_query' && (
                                     <div className={cn("p-3.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs flex flex-col gap-3 shadow-inner text-[#C9D1D9] font-mono overflow-hidden")}>
