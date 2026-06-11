@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { db, runWithTenantContext } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
@@ -12,25 +12,19 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    await db.$transaction(async (tx) => {
-      // Bypass RLS and set tenant context for all statements in this transaction
-      await tx.$executeRaw`SELECT set_config('app.bypass_rls', 'true', TRUE)`
-      await tx.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`
-      await tx.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`
-
+    await runWithTenantContext(tenantId, async (tx) => {
       // Step 1: Nullify all parentId references first to remove FK dependencies
-      await tx.$executeRaw`UPDATE "website_menus" SET "parentId" = NULL WHERE "tenantId" = ${tenantId}`
+      await tx.websiteMenu.updateMany({
+        where: { tenantId },
+        data: { parentId: null }
+      })
 
-      // Step 2: Delete all menus (no FK issues now)
-      await tx.$executeRaw`DELETE FROM "website_menus" WHERE "tenantId" = ${tenantId}`
-    })
+      // Step 2: Delete all menus
+      await tx.websiteMenu.deleteMany({
+        where: { tenantId }
+      })
 
-    // Step 3: Re-create default menus in a SEPARATE transaction (clean state)
-    await db.$transaction(async (tx) => {
-      await tx.$executeRaw`SELECT set_config('app.bypass_rls', 'true', TRUE)`
-      await tx.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`
-      await tx.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`
-
+      // Step 3: Re-create default menus
       const beranda = await tx.websiteMenu.create({ data: { tenantId, label: "Beranda", url: "/", isSystem: true, order: 0 } })
       const profil = await tx.websiteMenu.create({ data: { tenantId, label: "Profil Sekolah", url: "/profil", isSystem: false, order: 1 } })
       const informasi = await tx.websiteMenu.create({ data: { tenantId, label: "Informasi", url: "/berita", isSystem: false, order: 2 } })
