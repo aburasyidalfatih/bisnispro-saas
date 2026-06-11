@@ -16,6 +16,9 @@ import Link from "next/link"
 interface Affiliate {
   id: string
   referralCode: string
+  bankName: string | null
+  bankAccount: string | null
+  accountName: string | null
   balance: number
   isActive: boolean
   createdAt: string
@@ -235,6 +238,7 @@ export default function SuperAdminAffiliatesPage() {
                   <TableRow>
                     <TableHead className="px-4 py-3 font-medium">Mitra</TableHead>
                     <TableHead className="px-4 py-3 font-medium">Kode Ref</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Rekening</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-center">Total Sekolah</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-right">Saldo Aktif</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-right">Req. Withdraw</TableHead>
@@ -245,7 +249,7 @@ export default function SuperAdminAffiliatesPage() {
                 <TableBody>
                   {affiliates.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="px-4 py-8 text-center text-muted-foreground italic">Belum ada mitra terdaftar atau tidak ditemukan.</TableCell>
+                      <TableCell colSpan={8} className="px-4 py-8 text-center text-muted-foreground italic">Belum ada mitra terdaftar atau tidak ditemukan.</TableCell>
                     </TableRow>
                   ) : (
                     affiliates.map((aff) => {
@@ -258,6 +262,16 @@ export default function SuperAdminAffiliatesPage() {
                           </TableCell>
                           <TableCell className="px-4 py-3">
                             <Badge variant="outline" className="font-mono text-xs">{aff.referralCode}</Badge>
+                          </TableCell>
+                          <TableCell className="px-4 py-3 whitespace-nowrap">
+                            {aff.bankName || aff.bankAccount ? (
+                              <>
+                                <div className="text-sm font-medium">{aff.bankName || "-"}</div>
+                                <div className="text-xs text-muted-foreground">{aff.bankAccount || "-"} a.n {aff.accountName || "-"}</div>
+                              </>
+                            ) : (
+                              <span className="text-xs text-muted-foreground italic">Belum diatur</span>
+                            )}
                           </TableCell>
                           <TableCell className="px-4 py-3 text-center">
                             <Badge variant="secondary" className="font-medium">{aff._count?.tenantApplications || 0} Sekolah</Badge>
