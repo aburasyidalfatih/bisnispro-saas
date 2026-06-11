@@ -43,7 +43,8 @@ export function MenuBuilder() {
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch("/api/admin/website/menu")
+      // Tambahkan cache: 'no-store' agar tidak membaca dari browser/Next.js cache
+      const res = await fetch("/api/admin/website/menu", { cache: "no-store" })
       if (res.ok) {
         const data = await res.json()
         setMenus(data)

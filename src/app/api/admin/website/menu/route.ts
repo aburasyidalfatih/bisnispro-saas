@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
+export const dynamic = 'force-dynamic'
+
 // GET: Ambil semua menu website untuk tenant ini
 export async function GET(req: NextRequest) {
   const session = await auth()
