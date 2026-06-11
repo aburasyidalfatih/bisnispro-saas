@@ -67,8 +67,8 @@ export async function DELETE(
   }
 
   try {
-    const tenantDb = withTenant(tenantId)
-    const existing = await tenantDb.websiteMenu.findFirst({ where: { id } })
+    // Verify ownership first
+    const existing = await db.websiteMenu.findFirst({ where: { id, tenantId } })
     if (!existing) {
       return NextResponse.json({ error: "Menu not found" }, { status: 404 })
     }
@@ -77,8 +77,14 @@ export async function DELETE(
       return NextResponse.json({ error: "Menu sistem tidak dapat dihapus" }, { status: 400 })
     }
 
-    await tenantDb.websiteMenu.delete({
-      where: { id }
+    // Use raw SQL to delete children first, then the menu itself
+    await db.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`
+      await tx.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`
+      // Delete all children of this menu
+      await tx.$executeRaw`DELETE FROM "website_menus" WHERE "parentId" = ${id} AND "tenantId" = ${tenantId}`
+      // Delete the menu itself
+      await tx.$executeRaw`DELETE FROM "website_menus" WHERE "id" = ${id} AND "tenantId" = ${tenantId}`
     })
 
     const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
