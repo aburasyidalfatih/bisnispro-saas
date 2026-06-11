@@ -72,9 +72,9 @@ const nextConfig: NextConfig = {
     remotePatterns: ALLOWED_IMAGE_DOMAINS,
   },
   experimental: {
-    // Membatasi penggunaan memori saat kompilasi lokal/VPS, tetapi biarkan maksimal di GitHub Actions (CI)
-    cpus: process.env.CI ? 4 : 1, 
-    workerThreads: process.env.CI ? true : false,
+    // Memaksimalkan penggunaan CPU VPS (4 Cores) dengan menyisakan 1 core
+    cpus: process.env.CI ? 4 : 3, 
+    workerThreads: true,
     reactCompiler: false,
     optimizePackageImports: [
       "lucide-react",
