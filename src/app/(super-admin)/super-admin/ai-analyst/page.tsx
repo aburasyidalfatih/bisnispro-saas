@@ -10,6 +10,7 @@ export const metadata = {
 export default async function AiAnalystPage() {
   const session = await auth()
   if (!session?.user?.id) return redirect("/login")
+  if (!session.user.isSuperAdmin) return redirect("/admin")
 
   const chatSessions = await db.aiChatSession.findMany({
     where: { 

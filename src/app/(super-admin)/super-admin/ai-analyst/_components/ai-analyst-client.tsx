@@ -1,74 +1,181 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport, type UIMessage } from "ai"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Send, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database, PanelLeft, Image as ImageIcon, FolderOpen, FileCode, Globe, Brain } from "lucide-react"
+import { Bot, Send, Square, User, Sparkles, Building2, BrainCircuit, History, CheckCircle2, Loader2, Database, PanelLeft, Image as ImageIcon, FolderOpen, FileCode, Globe, Brain } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import ReactMarkdown from "react-markdown"
 import { cn } from "@/lib/utils"
 
-import { useRouter } from "next/navigation"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { useToast } from "@/hooks/use-toast"
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#14b8a6', '#f43f5e', '#06b6d4', '#84cc16'];
 
+function getMessageText(message: any) {
+  if (!message || typeof message !== "object") return ""
+  if (typeof message.content === "string") return message.content
+  if (!Array.isArray(message.parts)) return ""
+
+  const textParts: string[] = []
+  for (const part of message.parts) {
+    if (part?.type === "text") {
+      textParts.push(part.text || "")
+    }
+  }
+  return textParts.join("\n").trim()
+}
+
+function getTitleFromMessages(messages: UIMessage[]) {
+  const firstUserMessage = messages.find((message) => message.role === "user")
+  const text = getMessageText(firstUserMessage) || "Percakapan Analisis Baru"
+  return text.length > 50 ? `${text.slice(0, 50)}...` : text
+}
+
+function normalizeMessages(messages: any[]): UIMessage[] {
+  if (!Array.isArray(messages)) return []
+
+  const normalized: UIMessage[] = []
+  messages.forEach((message, index) => {
+    if (message?.role !== "user" && message?.role !== "assistant") return
+
+    if (Array.isArray(message.parts)) {
+      normalized.push({
+        ...message,
+        id: message.id || `message-${index}`,
+      } as UIMessage)
+      return
+    }
+
+    const text = getMessageText(message)
+    normalized.push({
+        id: message.id || `legacy-message-${index}`,
+        role: message.role,
+        parts: text ? [{ type: "text", text }] : [],
+      } as UIMessage)
+  })
+
+  return normalized
+}
+
 export default function AiAnalystClient({ initialSessions = [] }: { initialSessions?: any[] }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [sidebarState, setSidebarState] = useState({
+    isSidebarOpen: true,
+    isMobileSidebarOpen: false,
+  })
+  const [sessions, setSessions] = useState<any[]>(() =>
+    initialSessions.map((session) => ({ ...session, messages: normalizeMessages(session.messages) }))
+  )
   const [activeSessionId, setActiveSessionId] = useState<string | null>(initialSessions.length > 0 ? initialSessions[0].id : null)
-  const router = useRouter()
+  const activeSessionIdRef = useRef<string | null>(activeSessionId)
+  const pendingSessionIdRef = useRef<string | null>(null)
+  const { toast } = useToast()
+  const { isSidebarOpen, isMobileSidebarOpen } = sidebarState
   
   const [inputValue, setInputValue] = useState("")
-  const { messages, sendMessage, isLoading, setMessages } = useChat({
-    api: "/api/super-admin/ai-analyst",
-    body: { sessionId: activeSessionId },
-    onResponse: (response: any) => {
-      const newSessionId = response.headers.get('x-session-id')
-      if (newSessionId && !activeSessionId) {
-        setActiveSessionId(newSessionId)
+
+  useEffect(() => {
+    activeSessionIdRef.current = activeSessionId
+  }, [activeSessionId])
+
+  const transport = useMemo(() => {
+    return new DefaultChatTransport({
+      api: "/api/super-admin/ai-analyst",
+      body: () => ({ sessionId: activeSessionIdRef.current }),
+      fetch: async (input, init) => {
+        const response = await fetch(input, init)
+        const newSessionId = response.headers.get("x-session-id")
+        if (newSessionId && !activeSessionIdRef.current) {
+          pendingSessionIdRef.current = newSessionId
+        }
+        return response
+      },
+    })
+  }, [])
+
+  const { messages, sendMessage, status, setMessages, stop } = useChat({
+    id: "ai-analyst-chat",
+    transport,
+    messages: normalizeMessages(initialSessions[0]?.messages || []),
+    experimental_throttle: 80,
+    onFinish: ({ messages: finishedMessages }: { messages: UIMessage[] }) => {
+      const sessionId = activeSessionIdRef.current || pendingSessionIdRef.current
+      if (!sessionId) return
+
+      if (!activeSessionIdRef.current) {
+        activeSessionIdRef.current = sessionId
+        setActiveSessionId(sessionId)
       }
-    },
-    onFinish: () => {
-      // Refresh the route to seamlessly update the sidebar history
-      router.refresh()
+      pendingSessionIdRef.current = null
+
+      setSessions((currentSessions) => {
+        const existing = currentSessions.find((session) => session.id === sessionId)
+        const title = existing?.title || getTitleFromMessages(finishedMessages)
+        const updatedSession = {
+          id: sessionId,
+          title,
+          updatedAt: new Date().toISOString(),
+          messages: finishedMessages,
+        }
+
+        return [
+          updatedSession,
+          ...currentSessions.filter((session) => session.id !== sessionId),
+        ].slice(0, 20)
+      })
     },
     onError: (err: any) => {
-      alert("Gagal mengirim pesan: " + err.message)
+      pendingSessionIdRef.current = null
+      toast({
+        title: "Gagal mengirim pesan",
+        description: err?.message || "Terjadi kesalahan saat memproses chat.",
+        variant: "destructive",
+      })
     }
-  } as any) as any
+  })
+
+  const isBusy = status === "submitted" || status === "streaming"
 
   const customHandleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!inputValue.trim() || isLoading) return
+    const text = inputValue.trim()
+    if (!text || isBusy) return
     
-    sendMessage({ role: "user", parts: [{ type: 'text', text: inputValue }] })
+    sendMessage({ role: "user", parts: [{ type: 'text', text }] })
     setInputValue("")
   }
 
   const handleManualInput = (val: string) => {
+    if (isBusy) return
     sendMessage({ role: "user", parts: [{ type: 'text', text: val }] })
+    setSidebarState((current) => ({ ...current, isMobileSidebarOpen: false }))
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: status === "streaming" ? "auto" : "smooth" })
+  }, [messages, status])
 
   const loadSession = (session: any) => {
+    pendingSessionIdRef.current = null
+    activeSessionIdRef.current = session.id
     setActiveSessionId(session.id)
-    setMessages(session.messages)
+    setMessages(normalizeMessages(session.messages))
   }
 
   const startNewChat = () => {
+    pendingSessionIdRef.current = null
+    activeSessionIdRef.current = null
     setActiveSessionId(null)
     setMessages([])
-    setIsMobileSidebarOpen(false)
+    setSidebarState((current) => ({ ...current, isMobileSidebarOpen: false }))
   }
 
   return (
@@ -79,7 +186,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
             variant="ghost" 
             size="icon" 
             className="hidden lg:flex hover:bg-muted" 
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            onClick={() => setSidebarState((current) => ({ ...current, isSidebarOpen: !current.isSidebarOpen }))}
             title="Toggle Sidebar"
           >
             <PanelLeft className="h-5 w-5 text-muted-foreground" />
@@ -97,7 +204,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
         <Button 
           variant="outline" 
           className="lg:hidden w-full sm:w-auto shadow-sm" 
-          onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          onClick={() => setSidebarState((current) => ({ ...current, isMobileSidebarOpen: !current.isMobileSidebarOpen }))}
         >
           <History className="h-4 w-4 mr-2" />
           {isMobileSidebarOpen ? "Tutup Riwayat" : "Lihat Riwayat"}
@@ -120,15 +227,18 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
             <CardContent className="p-0 flex-1 overflow-hidden">
               <ScrollArea className="h-full w-full">
                 <div className="divide-y divide-border/50">
-                  {initialSessions.length === 0 ? (
+                  {sessions.length === 0 ? (
                     <div className="p-6 text-center text-xs text-muted-foreground">
                       Belum ada riwayat chat
                     </div>
                   ) : (
-                    initialSessions.map((s) => (
+                    sessions.map((s) => (
                       <Button 
                         key={s.id} 
-                        onClick={() => { loadSession(s); setIsMobileSidebarOpen(false); }}
+                        onClick={() => {
+                          loadSession(s)
+                          setSidebarState((current) => ({ ...current, isMobileSidebarOpen: false }))
+                        }}
                         variant="ghost"
                         className={`w-full justify-start text-left p-3 hover:bg-muted/50 rounded-none h-auto transition-colors text-sm ${activeSessionId === s.id ? 'bg-primary/5 border-l-2 border-primary' : ''}`}
                       >
@@ -230,20 +340,26 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                       .map((m: any) => {
                         // AI SDK v5/v6 UIMessage adapter
                         if ((m as any).parts !== undefined) {
-                          const textContent = (m as any).parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\\n');
-                          const toolInvocations = (m as any).parts.filter((p: any) => p.type.startsWith('tool-')).map((p: any) => {
+                          const textParts: string[] = [];
+                          const toolInvocations: any[] = [];
+                          (m as any).parts.forEach((p: any, index: number) => {
+                            if (p.type === 'text') {
+                              textParts.push(p.text);
+                              return;
+                            }
+                            if (typeof p.type !== 'string' || !p.type.startsWith('tool-')) return;
                             const toolName = p.type.replace('tool-', '');
-                            return {
-                              toolCallId: p.toolCallId || Math.random().toString(),
-                              toolName: toolName,
+                            toolInvocations.push({
+                              toolCallId: p.toolCallId || `${m.id || 'message'}-${toolName}-${index}`,
+                              toolName,
                               args: p.input,
                               result: p.output,
                               state: p.output !== undefined ? 'result' : 'call'
-                            };
+                            });
                           });
                           return {
                             ...m,
-                            content: textContent,
+                            content: textParts.join('\\n'),
                             toolInvocations: toolInvocations.length > 0 ? toolInvocations : undefined
                           };
                         }
@@ -509,7 +625,7 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                           </div>
                       </div>
                     ))}
-                    {isLoading && (
+                    {isBusy && (
                       <div className="flex gap-3 max-w-[85%]">
                           <div className="shrink-0 h-8 w-8 rounded-full flex items-center justify-center bg-muted text-foreground">
                             <Bot className="h-4 w-4" />
@@ -534,10 +650,18 @@ export default function AiAnalystClient({ initialSessions = [] }: { initialSessi
                   onChange={(e) => setInputValue(e.target.value)} 
                   placeholder="Tanyakan metrik bisnis, tenant, afiliasi, atau operasional..." 
                   className="flex-1 rounded-full bg-muted/30 focus-visible:ring-primary/20"
-                  disabled={isLoading}
+                  disabled={isBusy}
                 />
-                <Button variant="ghost" size="icon" type="submit" disabled={isLoading || !inputValue.trim()} className="rounded-full shrink-0 h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20">
-                  <Send className="h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  type={isBusy ? "button" : "submit"}
+                  disabled={!isBusy && !inputValue.trim()}
+                  onClick={isBusy ? () => stop() : undefined}
+                  className="rounded-full shrink-0 h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20"
+                  title={isBusy ? "Hentikan respons" : "Kirim pesan"}
+                >
+                  {isBusy ? <Square className="h-4 w-4" /> : <Send className="h-4 w-4" />}
                 </Button>
               </form>
             </CardFooter>
