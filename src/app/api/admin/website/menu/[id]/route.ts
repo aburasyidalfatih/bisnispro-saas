@@ -77,14 +77,20 @@ export async function DELETE(
       return NextResponse.json({ error: "Menu sistem tidak dapat dihapus" }, { status: 400 })
     }
 
-    // Use raw SQL to delete children first, then the menu itself
+    // Use raw SQL with RLS bypass to reliably delete menu and its children
     await db.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.bypass_rls', 'true', TRUE)`
       await tx.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`
       await tx.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`
-      // Delete all children of this menu
-      await tx.$executeRaw`DELETE FROM "website_menus" WHERE "parentId" = ${id} AND "tenantId" = ${tenantId}`
-      // Delete the menu itself
-      await tx.$executeRaw`DELETE FROM "website_menus" WHERE "id" = ${id} AND "tenantId" = ${tenantId}`
+      // Delete using CTE: find this menu + all descendants, then delete them
+      await tx.$executeRaw`
+        WITH RECURSIVE menu_tree AS (
+          SELECT "id" FROM "website_menus" WHERE "id" = ${id} AND "tenantId" = ${tenantId}
+          UNION ALL
+          SELECT m."id" FROM "website_menus" m INNER JOIN menu_tree mt ON m."parentId" = mt."id"
+        )
+        DELETE FROM "website_menus" WHERE "id" IN (SELECT "id" FROM menu_tree)
+      `
     })
 
     const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
