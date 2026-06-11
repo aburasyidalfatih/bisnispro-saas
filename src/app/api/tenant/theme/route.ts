@@ -42,6 +42,14 @@ export async function PUT(req: Request) {
         dataToUpdate.template = template
         dataToUpdate.customThemeId = null
       } else {
+        const customTheme = await db.customTheme.findFirst({
+          where: { id: template, isActive: true },
+          select: { id: true },
+        })
+        if (!customTheme) {
+          return NextResponse.json({ error: "Tema kustom tidak tersedia atau sedang non-aktif" }, { status: 400 })
+        }
+
         dataToUpdate.template = "custom"
         dataToUpdate.customThemeId = template
       }

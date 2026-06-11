@@ -25,6 +25,16 @@ import {
   STARTER_JS
 } from "../constants/starter-templates"
 
+function safeZipName(value: string | null | undefined, fallback: string) {
+  const normalized = (value || fallback)
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+
+  return normalized || fallback
+}
+
 export async function exportTheme(themeId: string): Promise<{ buffer: Buffer; filename: string }> {
   const zip = new JSZip()
 
@@ -67,8 +77,12 @@ export async function exportTheme(themeId: string): Promise<{ buffer: Buffer; fi
     const buffer = await zip.generateAsync({ type: "nodebuffer" })
     return {
       buffer,
-      filename: `${theme.name.replace(/\s+/g, '-').toLowerCase()}-v${theme.version}.zip`
+      filename: `${safeZipName(theme.name, "custom-theme")}-v${safeZipName(theme.version, "1.0.0")}.zip`
     }
+  }
+
+  if (themeId !== "sys-default" && themeId !== "sys-modern") {
+    throw new Error("Tema tidak ditemukan")
   }
 
   // ========================================

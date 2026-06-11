@@ -20,29 +20,40 @@ interface ThemeActionButtonsProps {
 export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCount, isActive = true }: ThemeActionButtonsProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
+  const [toggling, setToggling] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+
+  const getDownloadFilename = (disposition: string | null) => {
+    if (!disposition) return `theme-${themeId}.zip`
+
+    const encodedMatch = disposition.match(/filename\*=UTF-8''([^;]+)/i)
+    if (encodedMatch?.[1]) return decodeURIComponent(encodedMatch[1])
+
+    const quotedMatch = disposition.match(/filename="([^"]+)"/i)
+    if (quotedMatch?.[1]) return quotedMatch[1]
+
+    return `theme-${themeId}.zip`
+  }
 
   const handleExport = async () => {
     setIsExporting(true)
     try {
-      if (isSystem) {
-        // Panggil API untuk men-generate boilerplate ZIP dari tema sistem
-        const response = await fetch(`/api/super-admin/themes/export?theme=${themeId}`)
-        if (!response.ok) throw new Error("Gagal mengexport tema")
-        
-        const blob = await response.blob()
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement("a")
-        a.href = url
-        a.download = `template-${themeId}.zip`
-        document.body.appendChild(a)
-        a.click()
-        a.remove()
-      } else {
-        // Implementasi export tema kustom dari DB jika diperlukan di masa depan
-        toast({ title: "Fitur belum tersedia", description: "Export tema kustom masih dalam pengembangan." })
+      const response = await fetch(`/api/super-admin/themes/export?theme=${encodeURIComponent(themeId)}`)
+      if (!response.ok) {
+        const result = await response.json().catch(() => null)
+        throw new Error(result?.error || "Gagal mengekspor tema")
       }
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = getDownloadFilename(response.headers.get("Content-Disposition"))
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.URL.revokeObjectURL(url)
     } catch (e: any) {
       toast({ title: "Gagal", description: e.message, variant: "destructive" })
     } finally {
@@ -57,6 +68,7 @@ export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCoun
     try {
       const response = await fetch(`/api/super-admin/themes/${themeId}`, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isSystem })
       })
       
@@ -71,7 +83,6 @@ export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCoun
     }
   }
 
-  const [toggling, setToggling] = useState(false)
   const handleToggle = async (checked: boolean) => {
     setToggling(true)
     try {
@@ -120,7 +131,7 @@ export function ThemeActionButtons({ themeId, isSystem, isDeletable, tenantsCoun
               id={`toggle-${themeId}`} 
               checked={isActive} 
               onCheckedChange={handleToggle}
-              disabled={toggling}
+              disabled={toggling || tenantsCount > 0}
             />
             <Label htmlFor={`toggle-${themeId}`} className="text-xs text-muted-foreground cursor-pointer">
               {isActive ? 'Aktif' : 'Draft'}

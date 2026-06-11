@@ -4,6 +4,17 @@ import { revalidateTag } from "next/cache"
 
 const CACHE_TTL_SECONDS = 60 * 60 // 1 hour
 
+function normalizeInactiveCustomTheme<T extends { customThemeId: string | null; customTheme: any; template?: string }>(tenant: T | null): T | null {
+  if (!tenant?.customTheme || tenant.customTheme.isActive !== false) return tenant
+
+  return {
+    ...tenant,
+    customThemeId: null,
+    customTheme: null,
+    template: tenant.template === "custom" ? "default" : tenant.template,
+  }
+}
+
 export async function clearTenantCache(slug: string) {
   try {
     revalidateTag(`tenant-${slug}`)
@@ -21,7 +32,7 @@ export const getTenantLayoutData = async (slug: string) => {
       })
       if (!tenant) return null
 
-      return runWithTenantContext(tenant.id, (tx) => tx.tenant.findUnique({
+      const tenantLayout = await runWithTenantContext(tenant.id, (tx) => tx.tenant.findUnique({
         where: { slug },
         select: {
           id: true,
@@ -55,6 +66,8 @@ export const getTenantLayoutData = async (slug: string) => {
           },
         }
       }))
+
+      return normalizeInactiveCustomTheme(tenantLayout)
     },
     [`tenant-layout-${slug}`],
     { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
@@ -65,7 +78,7 @@ export const getTenantHomeData = async (slug: string) => {
   return unstable_cache(
     async () => {
       try {
-        return await db.tenant.findUnique({
+        const tenantHome = await db.tenant.findUnique({
           where: { slug },
           select: {
             id: true,
@@ -98,9 +111,10 @@ export const getTenantHomeData = async (slug: string) => {
             partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
           }
         })
+        return normalizeInactiveCustomTheme(tenantHome)
       } catch (e) {
         console.error("Fallback getTenantHomeData due to schema error:", e)
-        return await db.tenant.findUnique({
+        const tenantHome = await db.tenant.findUnique({
           where: { slug },
           select: {
             id: true,
@@ -133,6 +147,7 @@ export const getTenantHomeData = async (slug: string) => {
             partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
           }
         })
+        return normalizeInactiveCustomTheme(tenantHome)
       }
     },
     [`tenant-home-${slug}`],

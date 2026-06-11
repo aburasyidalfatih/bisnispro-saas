@@ -120,6 +120,8 @@ model Tenant {
   @@index([isActive])
   @@index([plan])
   @@index([planId])
+  @@index([template])
+  @@index([customThemeId])
   @@index([createdAt])
   
   discountCodes        DiscountCode[]
@@ -2004,6 +2006,9 @@ model CustomTheme {
   staffDetailHtml      String?
   tenants              Tenant[]
 
+  @@index([name])
+  @@index([isActive])
+  @@index([createdAt])
   @@map("custom_themes")
 }
 

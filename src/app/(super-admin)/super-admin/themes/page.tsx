@@ -8,22 +8,38 @@ import { id } from "date-fns/locale"
 import { ThemeUploadModal } from "./_components/theme-upload-modal"
 import Image from "next/image"
 import { ThemeActionButtons } from "./_components/theme-action-buttons"
+import { auth } from "@/lib/auth"
+import { redirect } from "next/navigation"
+import Link from "next/link"
 
 export default async function SuperAdminThemesPage() {
-  const dbThemes = await db.customTheme.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      _count: {
-        select: { tenants: true }
+  const session = await auth()
+  if (!session?.user) redirect("/login")
+  if (!session.user.isSuperAdmin) redirect("/admin")
+
+  const [dbThemes, defaultCount, modernCount, deletedThemesSetting] = await Promise.all([
+    db.customTheme.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
+          select: { tenants: true }
+        }
       }
+    }),
+    db.tenant.count({ where: { template: "default" } }),
+    db.tenant.count({ where: { template: "modern" } }),
+    db.platformSetting.findUnique({ where: { key: "deleted_system_themes" } }),
+  ])
+
+  let deletedThemes: string[] = []
+  if (deletedThemesSetting?.value) {
+    try {
+      const parsed = JSON.parse(deletedThemesSetting.value)
+      deletedThemes = Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : []
+    } catch {
+      deletedThemes = []
     }
-  })
-
-  const defaultCount = await db.tenant.count({ where: { template: "default" } })
-  const modernCount = await db.tenant.count({ where: { template: "modern" } })
-
-  const deletedThemesSetting = await db.platformSetting.findUnique({ where: { key: "deleted_system_themes" } })
-  const deletedThemes = deletedThemesSetting ? JSON.parse(deletedThemesSetting.value) : []
+  }
 
   const systemThemes = [
     {
@@ -66,11 +82,11 @@ export default async function SuperAdminThemesPage() {
           <p className="text-muted-foreground mt-1">Kelola tema bawaan dan tema kustom berbasis Handlebars untuk sekolah.</p>
         </div>
         <div className="flex items-center gap-2">
-          <a href="/theme-starter-kit.zip" download>
-            <Button variant="outline" className="bg-white">
+          <Button variant="outline" className="bg-white" asChild>
+            <Link href="/api/super-admin/themes/export?theme=sys-default" download>
               <Download className="mr-2 h-4 w-4" /> Export Template Standar
-            </Button>
-          </a>
+            </Link>
+          </Button>
           <ThemeUploadModal />
         </div>
       </div>

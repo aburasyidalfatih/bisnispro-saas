@@ -22,6 +22,7 @@ export async function GET(request: Request) {
       headers: {
         "Content-Type": "application/zip",
         "Content-Disposition": `attachment; filename="${filename}"`,
+        "Cache-Control": "no-store",
       }
     })
 

@@ -14,6 +14,7 @@ interface ThemeUploadModalProps {
 }
 
 export function ThemeUploadModal({ trigger }: ThemeUploadModalProps) {
+  const maxFileSize = 10 * 1024 * 1024
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [file, setFile] = useState<File | null>(null)
@@ -34,6 +35,11 @@ export function ThemeUploadModal({ trigger }: ThemeUploadModalProps) {
 
     if (!file.name.endsWith('.zip')) {
       toast({ title: "Format Tidak Valid", description: "File harus berekstensi .zip", variant: "destructive" })
+      return
+    }
+
+    if (file.size > maxFileSize) {
+      toast({ title: "File Terlalu Besar", description: "Maksimal ukuran file adalah 10MB.", variant: "destructive" })
       return
     }
 
