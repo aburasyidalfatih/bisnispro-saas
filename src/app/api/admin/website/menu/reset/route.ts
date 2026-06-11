@@ -13,8 +13,16 @@ export async function POST(req: NextRequest) {
 
   try {
     await runWithTenantContext(tenantId, async (tx) => {
-      // Step 1: Delete all existing menus for this tenant
-      await tx.websiteMenu.deleteMany({ where: { tenantId } })
+      // Step 1: Delete all existing menus for this tenant bottom-up to avoid foreign key violations
+      let hasMore = true
+      let safeGuard = 0
+      while (hasMore && safeGuard < 10) {
+        const res = await tx.websiteMenu.deleteMany({
+          where: { tenantId, children: { none: {} } }
+        })
+        if (res.count === 0) hasMore = false
+        safeGuard++
+      }
 
       // Step 2: Re-create full default hierarchical structure
       await tx.websiteMenu.create({ data: { tenantId, label: "Beranda", url: "/", isSystem: true, order: 0 } })
