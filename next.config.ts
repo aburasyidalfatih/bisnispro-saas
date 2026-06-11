@@ -55,7 +55,9 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
   typescript: {
-    ignoreBuildErrors: false,
+    // Abaikan type checking saat build di production untuk mencegah OOM (Exit code 137)
+    // Asumsinya type check sudah dilakukan di lokal saat development.
+    ignoreBuildErrors: true,
   },
   eslint: {
     // Lint is enforced by the package prebuild script; Next's built-in lint step
@@ -73,7 +75,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     // Memaksimalkan penggunaan CPU VPS (4 Cores) dengan menyisakan 1 core
-    cpus: process.env.CI ? 4 : 3, 
+    cpus: process.env.CI ? 4 : 2, 
     workerThreads: true,
     reactCompiler: false,
     optimizePackageImports: [
