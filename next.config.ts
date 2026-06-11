@@ -76,7 +76,6 @@ const nextConfig: NextConfig = {
   experimental: {
     // Memaksimalkan penggunaan CPU VPS (4 Cores) dengan menyisakan 1 core
     cpus: process.env.CI ? 4 : 2, 
-    workerThreads: true,
     reactCompiler: false,
     optimizePackageImports: [
       "lucide-react",
