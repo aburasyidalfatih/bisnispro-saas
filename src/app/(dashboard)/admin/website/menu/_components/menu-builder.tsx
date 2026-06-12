@@ -1,14 +1,14 @@
 "use client"
 
-import { useState, useEffect } from"react"
-import { Button } from"@/components/ui/button"
-import { Input } from"@/components/ui/input"
-import { Label } from"@/components/ui/label"
-import { Switch } from"@/components/ui/switch"
-import { useToast } from"@/hooks/use-toast"
-import { Plus, Trash2, Edit, Loader2, ArrowUp, ArrowDown, ChevronRight } from"lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from"@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { useToast } from "@/hooks/use-toast"
+import { Plus, Trash2, Edit, Loader2, ArrowUp, ArrowDown, MoveRight } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface MenuItem {
   id: string
@@ -31,10 +31,10 @@ export function MenuBuilder() {
   const [editingMenu, setEditingMenu] = useState<MenuItem | null>(null)
   
   const [formData, setFormData] = useState({
-    label:"",
-    url:"",
+    label: "",
+    url: "",
     isActive: true,
-    parentId:"root"
+    parentId: "root"
   })
 
   useEffect(() => {
@@ -43,7 +43,6 @@ export function MenuBuilder() {
 
   const fetchMenus = async () => {
     try {
-      // Tambahkan cache: 'no-store' agar tidak membaca dari browser/Next.js cache
       const res = await fetch("/api/admin/website/menu", { cache: "no-store" })
       if (res.ok) {
         const data = await res.json()
@@ -63,15 +62,15 @@ export function MenuBuilder() {
         label: menu.label,
         url: menu.url,
         isActive: menu.isActive,
-        parentId: menu.parentId ||"root"
+        parentId: menu.parentId || "root"
       })
     } else {
       setEditingMenu(null)
       setFormData({
-        label:"",
-        url:"/",
+        label: "",
+        url: "/",
         isActive: true,
-        parentId: parentId ||"root"
+        parentId: parentId || "root"
       })
     }
     setIsModalOpen(true)
@@ -79,7 +78,7 @@ export function MenuBuilder() {
 
   const handleSubmit = async () => {
     if (!formData.label || !formData.url) {
-      toast({ title:"Validasi Gagal", description:"Label dan URL wajib diisi.", variant:"destructive" })
+      toast({ title: "Validasi Gagal", description: "Label dan URL wajib diisi.", variant: "destructive" })
       return
     }
 
@@ -87,28 +86,28 @@ export function MenuBuilder() {
     try {
       const payload = {
         ...formData,
-        parentId: formData.parentId ==="root" ? null : formData.parentId
+        parentId: formData.parentId === "root" ? null : formData.parentId
       }
       
-      const method = editingMenu ?"PATCH" :"POST"
-      const url = editingMenu ? `/api/admin/website/menu/${editingMenu.id}` :"/api/admin/website/menu"
+      const method = editingMenu ? "PATCH" : "POST"
+      const url = editingMenu ? `/api/admin/website/menu/${editingMenu.id}` : "/api/admin/website/menu"
       
       const res = await fetch(url, {
         method,
-        headers: {"Content-Type":"application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       })
 
       if (res.ok) {
-        toast({ title:"Berhasil", description:"Menu berhasil disimpan." })
+        toast({ title: "Berhasil", description: "Menu berhasil disimpan." })
         setIsModalOpen(false)
         fetchMenus()
       } else {
         const err = await res.json()
-        toast({ title:"Gagal", description: err.error ||"Gagal menyimpan menu.", variant:"destructive" })
+        toast({ title: "Gagal", description: err.error || "Gagal menyimpan menu.", variant: "destructive" })
       }
     } catch (e) {
-      toast({ title:"Gagal", description:"Terjadi kesalahan koneksi.", variant:"destructive" })
+      toast({ title: "Gagal", description: "Terjadi kesalahan koneksi.", variant: "destructive" })
     } finally {
       setIsSaving(false)
     }
@@ -116,15 +115,15 @@ export function MenuBuilder() {
 
   const handleDelete = async (id: string, isSystem: boolean) => {
     if (isSystem) {
-      toast({ title:"Ditolak", description:"Menu sistem tidak bisa dihapus.", variant:"destructive" })
+      toast({ title: "Ditolak", description: "Menu sistem tidak bisa dihapus.", variant: "destructive" })
       return
     }
     
     if (confirm("Yakin ingin menghapus menu ini beserta sub-menunya?")) {
       try {
-        const res = await fetch(`/api/admin/website/menu/${id}`, { method:"DELETE" })
+        const res = await fetch(`/api/admin/website/menu/${id}`, { method: "DELETE" })
         if (res.ok) {
-          toast({ title:"Terhapus", description:"Menu berhasil dihapus." })
+          toast({ title: "Terhapus", description: "Menu berhasil dihapus." })
           fetchMenus()
         }
       } catch (e) {
@@ -133,147 +132,191 @@ export function MenuBuilder() {
     }
   }
 
-  const handleMove = async (item: MenuItem, direction:"up" |"down", list: MenuItem[]) => {
-    const currentIndex = list.findIndex(m => m.id === item.id)
-    if (direction ==="up" && currentIndex === 0) return
-    if (direction ==="down" && currentIndex === list.length - 1) return
+  const handleMoveRoot = async (currentIndex: number, direction: "up" | "down") => {
+    if (direction === "up" && currentIndex === 0) return
+    if (direction === "down" && currentIndex === menus.length - 1) return
 
-    const newIndex = direction ==="up" ? currentIndex - 1 : currentIndex + 1
-    const newList = [...list]
+    const newIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1
+    const newList = [...menus]
     
-    // Swap order property
     const tempOrder = newList[currentIndex].order
     newList[currentIndex].order = newList[newIndex].order
     newList[newIndex].order = tempOrder
     
-    // Swap position in array
     const temp = newList[currentIndex]
     newList[currentIndex] = newList[newIndex]
     newList[newIndex] = temp
 
-    // Update state optimistically
-    if (item.parentId) {
-      // Update child list
-      const updateChildren = (menus: MenuItem[]): MenuItem[] => {
-        return menus.map(m => {
-          if (m.id === item.parentId) {
-            return { ...m, children: newList }
-          }
-          if (m.children) {
-            return { ...m, children: updateChildren(m.children) }
-          }
-          return m
-        })
-      }
-      setMenus(updateChildren(menus))
-    } else {
-      setMenus(newList)
-    }
+    setMenus(newList)
 
-    // Persist to DB
     const updates = newList.map((m, idx) => ({
       id: m.id,
-      order: idx, // Ensure sequential order
-      parentId: item.parentId || null
+      order: idx,
+      parentId: null
     }))
     
     fetch("/api/admin/website/menu/reorder", {
-      method:"POST",
-      headers: {"Content-Type":"application/json" },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: updates })
+    })
+  }
+
+  const handleMoveChild = async (parentId: string, childIndex: number, direction: "up" | "down") => {
+    const parentMenu = menus.find(m => m.id === parentId)
+    if (!parentMenu || !parentMenu.children) return
+    
+    const childrenList = [...parentMenu.children]
+    if (direction === "up" && childIndex === 0) return
+    if (direction === "down" && childIndex === childrenList.length - 1) return
+
+    const newIndex = direction === "up" ? childIndex - 1 : childIndex + 1
+    
+    const tempOrder = childrenList[childIndex].order
+    childrenList[childIndex].order = childrenList[newIndex].order
+    childrenList[newIndex].order = tempOrder
+    
+    const temp = childrenList[childIndex]
+    childrenList[childIndex] = childrenList[newIndex]
+    childrenList[newIndex] = temp
+
+    const updatedMenus = menus.map(m => m.id === parentId ? { ...m, children: childrenList } : m)
+    setMenus(updatedMenus)
+
+    const updates = childrenList.map((m, idx) => ({
+      id: m.id,
+      order: idx,
+      parentId: parentId
+    }))
+    
+    fetch("/api/admin/website/menu/reorder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ items: updates })
     })
   }
 
   if (loading) return <div className="p-8 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
 
-  const renderMenuList = (items: MenuItem[], level = 0) => {
-    return items.map((menu, index) => (
-      <div key={menu.id} className="w-full">
-        <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-3 px-4 rounded-xl border bg-card mb-2 hover:border-primary/50 transition-colors ${level > 0 ? 'ml-8 relative before:content-[""] before:absolute before:-left-4 before:top-1/2 before:-translate-y-1/2 before:w-3 before:h-px before:bg-border' : ''}`}>
-          
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            {level === 0 && (
-              <div className="flex flex-col gap-0.5 mr-2">
-                <Button 
-                  variant="ghost" size="icon"
-                  onClick={() => handleMove(menu,"up", items)}
-                  disabled={index === 0}
-                  className="h-6 w-6 rounded-md text-muted-foreground hover:text-primary disabled:opacity-30"
-                >
-                  <ArrowUp className="h-3 w-3" />
-                </Button>
-                <Button 
-                  variant="ghost" size="icon"
-                  onClick={() => handleMove(menu,"down", items)}
-                  disabled={index === items.length - 1}
-                  className="h-6 w-6 rounded-md text-muted-foreground hover:text-primary disabled:opacity-30"
-                >
-                  <ArrowDown className="h-3 w-3" />
-                </Button>
-              </div>
-            )}
-
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm flex items-center gap-2">
-                {menu.label}
-                {!menu.isActive && <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Sembunyi</span>}
-                {menu.isSystem && <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Bawaan</span>}
-              </span>
-              <span className="text-xs text-muted-foreground font-mono">{menu.url}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0">
-            {level === 0 && (
-              <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => handleOpenModal(undefined, menu.id)}>
-                <Plus className="h-3.5 w-3.5 mr-1" /> Submenu
-              </Button>
-            )}
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50" onClick={() => handleOpenModal(menu)}>
-              <Edit className="h-4 w-4" />
-            </Button>
-            {!menu.isSystem && (
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(menu.id, menu.isSystem)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        </div>
-        
-        {/* Render children recursively */}
-        {menu.children && menu.children.length > 0 && (
-          <div className="w-full">
-            {renderMenuList(menu.children, level + 1)}
-          </div>
-        )}
-      </div>
-    ))
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-6">
-        <p className="text-sm text-muted-foreground hidden sm:block">Seret ke atas/bawah untuk mengubah urutan (Tingkat Utama).</p>
+        <p className="text-sm text-muted-foreground hidden sm:block">Atur hierarki menu website Anda (Maksimal 2 tingkat).</p>
         <Button onClick={() => handleOpenModal()} size="sm" className="w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" /> Tambah Menu Utama
         </Button>
       </div>
 
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full space-y-3">
         {menus.length === 0 ? (
           <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed">
             <p className="text-muted-foreground text-sm">Belum ada menu navigasi.</p>
           </div>
         ) : (
-          renderMenuList(menus)
+          menus.map((menu, rootIdx) => (
+            <div key={menu.id} className="w-full border rounded-xl overflow-hidden bg-white shadow-sm">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-3 px-4 bg-slate-50 border-b">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="flex flex-col gap-0.5 mr-2">
+                    <Button 
+                      variant="ghost" size="icon"
+                      onClick={() => handleMoveRoot(rootIdx, "up")}
+                      disabled={rootIdx === 0}
+                      className="h-6 w-6 rounded-md text-slate-400 hover:text-slate-800 disabled:opacity-30"
+                    >
+                      <ArrowUp className="h-3 w-3" />
+                    </Button>
+                    <Button 
+                      variant="ghost" size="icon"
+                      onClick={() => handleMoveRoot(rootIdx, "down")}
+                      disabled={rootIdx === menus.length - 1}
+                      className="h-6 w-6 rounded-md text-slate-400 hover:text-slate-800 disabled:opacity-30"
+                    >
+                      <ArrowDown className="h-3 w-3" />
+                    </Button>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-sm flex items-center gap-2 text-slate-900">
+                      {menu.label}
+                      {!menu.isActive && <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Sembunyi</span>}
+                      {menu.isSystem && <span className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">Bawaan</span>}
+                    </span>
+                    <span className="text-xs text-slate-500 font-mono">{menu.url}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0">
+                  <Button variant="outline" size="sm" className="h-8 text-xs bg-white" onClick={() => handleOpenModal(undefined, menu.id)}>
+                    <Plus className="h-3.5 w-3.5 mr-1" /> Submenu
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50" onClick={() => handleOpenModal(menu)}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  {!menu.isSystem && (
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:bg-red-50" onClick={() => handleDelete(menu.id, menu.isSystem)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {menu.children && menu.children.length > 0 && (
+                <div className="bg-white px-4 py-2 flex flex-col gap-1">
+                  {menu.children.map((child, childIdx) => (
+                    <div key={child.id} className="flex items-center justify-between py-2 px-3 hover:bg-slate-50 rounded-lg group transition-colors">
+                      <div className="flex items-center gap-3">
+                        <MoveRight className="h-4 w-4 text-slate-300" />
+                        
+                        <div className="flex flex-col gap-0 mr-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button 
+                            variant="ghost" size="icon"
+                            onClick={() => handleMoveChild(menu.id, childIdx, "up")}
+                            disabled={childIdx === 0}
+                            className="h-5 w-5 rounded text-slate-400 hover:text-slate-800 disabled:opacity-30"
+                          >
+                            <ArrowUp className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            variant="ghost" size="icon"
+                            onClick={() => handleMoveChild(menu.id, childIdx, "down")}
+                            disabled={childIdx === menu.children!.length - 1}
+                            className="h-5 w-5 rounded text-slate-400 hover:text-slate-800 disabled:opacity-30"
+                          >
+                            <ArrowDown className="h-3 w-3" />
+                          </Button>
+                        </div>
+
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                            {child.label}
+                            {!child.isActive && <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Sembunyi</span>}
+                          </span>
+                          <span className="text-[11px] text-slate-400 font-mono">{child.url}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-600 hover:bg-blue-50" onClick={() => handleOpenModal(child, menu.id)}>
+                          <Edit className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-red-600 hover:bg-red-50" onClick={() => handleDelete(child.id, child.isSystem)}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
         )}
       </div>
 
-      {/* Modal Form */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingMenu ?"Edit Menu" :"Tambah Menu"}</DialogTitle>
+            <DialogTitle>{editingMenu ? "Edit Menu" : "Tambah Menu"}</DialogTitle>
             <DialogDescription>
               Atur label dan tautan yang dituju saat menu ini diklik.
             </DialogDescription>
@@ -294,9 +337,9 @@ export function MenuBuilder() {
                 placeholder="Contoh: /profil atau https://google.com" 
                 value={formData.url}
                 onChange={e => setFormData({...formData, url: e.target.value})}
-                disabled={editingMenu?.isSystem && editingMenu?.url ==="/"}
+                disabled={editingMenu?.isSystem && editingMenu?.url === "/"}
               />
-              <p className="text-xs text-muted-foreground">Gunakan"/" untuk beranda, atau awali dengan"/" untuk halaman internal (contoh: /fasilitas).</p>
+              <p className="text-xs text-muted-foreground">Gunakan "/" untuk beranda, atau awali dengan "/" untuk halaman internal (contoh: /fasilitas).</p>
             </div>
 
             <div className="space-y-2">

@@ -29,7 +29,17 @@ export async function GET(req: NextRequest) {
     // Filter out children from the root level to prevent duplicates in the tree
     const rootMenus = menus.filter(m => m.parentId === null)
     
-    return NextResponse.json(rootMenus)
+    // Deduplikasi otomatis berdasarkan kombinasi label+url untuk mengatasi data ganda di DB
+    const uniqueRootMenus = Array.from(new Map(rootMenus.map(m => [`${m.label}-${m.url}`, m])).values());
+    
+    // Lakukan hal yang sama untuk anak-anaknya agar bersih
+    uniqueRootMenus.forEach(root => {
+      if (root.children && root.children.length > 0) {
+        root.children = Array.from(new Map(root.children.map(c => [`${c.label}-${c.url}`, c])).values());
+      }
+    });
+
+    return NextResponse.json(uniqueRootMenus)
   } catch (error) {
     console.error("[WEBSITE_MENU_GET]", error)
     return NextResponse.json({ error: "Internal Error" }, { status: 500 })
