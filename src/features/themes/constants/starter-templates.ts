@@ -79,6 +79,7 @@ export const STARTER_README = `# SchoolPro Theme Starter Kit
 | \`tenant.gallery[]\` | \`url\`, \`caption\` |
 | \`tenant.documents[]\` | \`title\`, \`fileUrl\`, \`fileSize\`, \`createdAt\` |
 | \`tenant.partnerships[]\` | \`name\`, \`logo\`, \`website\` |
+| \`tenant.websiteMenus[]\` | \`label\`, \`url\`, \`children[]\` — menu dari admin Navigasi Website |
 
 ### Variabel Lainnya
 | Variabel | Tipe | Keterangan |
@@ -110,6 +111,7 @@ export const STARTER_README = `# SchoolPro Theme Starter Kit
 | **Array** | \`length\` | \`Total: {{length users}}\` |
 | | \`limit\` | \`{{#each (limit posts 3)}}\` |
 | | \`join\` | \`{{join tags ", "}}\` |
+| **URL** | \`menuHref\` | \`{{menuHref base this.url}}\` |
 | **Format**| \`dateFormat\`| \`{{dateFormat createdAt}}\` |
 | | \`currencyFormat\`| \`{{currencyFormat price}}\` |
 
@@ -151,17 +153,27 @@ export const LAYOUT_MAIN_HBS = `<!DOCTYPE html>
             {{/if}}
           </div>
         </a>
+        {{#if tenant.websiteMenus}}
         <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
-          <a href="{{base}}" class="hover:text-indigo-600 transition-colors">Beranda</a>
-          <a href="{{base}}/profil" class="hover:text-indigo-600 transition-colors">Profil</a>
-          <a href="{{base}}/program" class="hover:text-indigo-600 transition-colors">Program</a>
-          <a href="{{base}}/gtk" class="hover:text-indigo-600 transition-colors">Guru & Staf</a>
-          <a href="{{base}}/fasilitas" class="hover:text-indigo-600 transition-colors">Fasilitas</a>
-          <a href="{{base}}/berita" class="hover:text-indigo-600 transition-colors">Berita</a>
-          <a href="{{base}}/gallery" class="hover:text-indigo-600 transition-colors">Galeri</a>
-          <a href="{{base}}/prestasi" class="hover:text-indigo-600 transition-colors">Prestasi</a>
-          <a href="{{base}}/contact" class="hover:text-indigo-600 transition-colors">Kontak</a>
+          {{#each tenant.websiteMenus}}
+            {{#if this.children}}
+            <div class="relative group py-5 -my-5">
+              <a href="{{menuHref ../base this.url}}" class="hover:text-indigo-600 transition-colors inline-flex items-center gap-1">
+                {{this.label}}
+                <span class="text-xs">▾</span>
+              </a>
+              <div class="absolute left-0 top-full hidden group-hover:block w-56 rounded-xl border border-gray-100 bg-white p-2 shadow-xl">
+                {{#each this.children}}
+                <a href="{{menuHref ../../base this.url}}" class="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">{{this.label}}</a>
+                {{/each}}
+              </div>
+            </div>
+            {{else}}
+            <a href="{{menuHref ../base this.url}}" class="hover:text-indigo-600 transition-colors">{{this.label}}</a>
+            {{/if}}
+          {{/each}}
         </div>
+        {{/if}}
         <!-- Mobile hamburger -->
         <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -169,22 +181,20 @@ export const LAYOUT_MAIN_HBS = `<!DOCTYPE html>
       </div>
       <!-- Mobile menu -->
       <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-gray-100 mt-2 pt-4">
-        <div class="flex flex-col gap-3 text-sm font-medium text-gray-600">
-          <a href="{{base}}" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Beranda</a>
-          <a href="{{base}}/profil" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Profil</a>
-          <a href="{{base}}/program" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Program</a>
-          <a href="{{base}}/gtk" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Guru & Staf</a>
-          <a href="{{base}}/fasilitas" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Fasilitas</a>
-          <a href="{{base}}/berita" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Berita</a>
-          <a href="{{base}}/pengumuman" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Pengumuman</a>
-          <a href="{{base}}/gallery" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Galeri</a>
-          <a href="{{base}}/prestasi" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Prestasi</a>
-          <a href="{{base}}/alumni" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Alumni</a>
-          <a href="{{base}}/agenda" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Agenda</a>
-          <a href="{{base}}/unduhan" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Unduhan</a>
-          <a href="{{base}}/contact" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">Kontak</a>
-          <a href="{{base}}/ppdb" class="mt-2 text-center bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-indigo-700 transition-colors">PPDB →</a>
+        {{#if tenant.websiteMenus}}
+        <div class="flex flex-col gap-2 text-sm font-medium text-gray-600">
+          {{#each tenant.websiteMenus}}
+          <a href="{{menuHref ../base this.url}}" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all">{{this.label}}</a>
+          {{#if this.children}}
+          <div class="ml-4 flex flex-col gap-1 border-l border-gray-100 pl-3">
+            {{#each this.children}}
+            <a href="{{menuHref ../../base this.url}}" class="hover:text-indigo-600 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-all text-gray-500">{{this.label}}</a>
+            {{/each}}
+          </div>
+          {{/if}}
+          {{/each}}
         </div>
+        {{/if}}
       </div>
     </div>
   </nav>
@@ -205,28 +215,25 @@ export const LAYOUT_MAIN_HBS = `<!DOCTYPE html>
             <p class="text-sm mt-3 text-gray-400">📍 {{tenant.address}}</p>
           {{/if}}
         </div>
+        {{#if tenant.websiteMenus}}
         <div>
-          <h4 class="text-white font-semibold mb-3">Menu Utama</h4>
+          <h4 class="text-white font-semibold mb-3">Menu Website</h4>
           <ul class="space-y-2 text-sm">
-            <li><a href="{{base}}/profil" class="hover:text-white transition-colors">Profil Sekolah</a></li>
-            <li><a href="{{base}}/program" class="hover:text-white transition-colors">Program Unggulan</a></li>
-            <li><a href="{{base}}/gtk" class="hover:text-white transition-colors">Guru & Staf</a></li>
-            <li><a href="{{base}}/fasilitas" class="hover:text-white transition-colors">Fasilitas</a></li>
-            <li><a href="{{base}}/gallery" class="hover:text-white transition-colors">Galeri Foto</a></li>
+            {{#each tenant.websiteMenus}}
+            <li>
+              <a href="{{menuHref ../base this.url}}" class="hover:text-white transition-colors">{{this.label}}</a>
+              {{#if this.children}}
+              <ul class="mt-2 ml-3 space-y-1.5 text-xs text-gray-500">
+                {{#each this.children}}
+                <li><a href="{{menuHref ../../base this.url}}" class="hover:text-white transition-colors">{{this.label}}</a></li>
+                {{/each}}
+              </ul>
+              {{/if}}
+            </li>
+            {{/each}}
           </ul>
         </div>
-        <div>
-          <h4 class="text-white font-semibold mb-3">Informasi</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="{{base}}/berita" class="hover:text-white transition-colors">Berita Terbaru</a></li>
-            <li><a href="{{base}}/pengumuman" class="hover:text-white transition-colors">Pengumuman</a></li>
-            <li><a href="{{base}}/agenda" class="hover:text-white transition-colors">Agenda & Event</a></li>
-            <li><a href="{{base}}/prestasi" class="hover:text-white transition-colors">Prestasi</a></li>
-            <li><a href="{{base}}/alumni" class="hover:text-white transition-colors">Alumni</a></li>
-            <li><a href="{{base}}/unduhan" class="hover:text-white transition-colors">Unduhan</a></li>
-            <li><a href="{{base}}/ppdb" class="hover:text-white transition-colors">PPDB</a></li>
-          </ul>
-        </div>
+        {{/if}}
         <div>
           <h4 class="text-white font-semibold mb-3">Kontak</h4>
           <ul class="space-y-2 text-sm">

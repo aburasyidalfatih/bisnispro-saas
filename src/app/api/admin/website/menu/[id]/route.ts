@@ -75,23 +75,34 @@ export async function DELETE(
       return NextResponse.json({ error: "Menu not found" }, { status: 404 })
     }
 
-    // Use Prisma ORM to safely delete all duplicates (based on label and url)
-    // This ensures that if there are duplicate menus hiding behind the UI deduplication,
-    // deleting one will delete all of them, making the UI reflect the action correctly.
-    const allDuplicates = await tenantDb.websiteMenu.findMany({
-      where: { label: existing.label, url: existing.url }
+    const allMenus = await tenantDb.websiteMenu.findMany({
+      select: { id: true, parentId: true },
     })
-    const duplicateIds = allDuplicates.map((d: any) => d.id)
+    const childrenByParent = new Map<string, string[]>()
 
-    // Delete all children of these duplicates
-    await tenantDb.websiteMenu.deleteMany({
-      where: { parentId: { in: duplicateIds } }
-    })
+    for (const menu of allMenus) {
+      if (!menu.parentId) continue
+      const children = childrenByParent.get(menu.parentId) ?? []
+      children.push(menu.id)
+      childrenByParent.set(menu.parentId, children)
+    }
 
-    // Delete the parents
-    await tenantDb.websiteMenu.deleteMany({
-      where: { id: { in: duplicateIds } }
-    })
+    const idsToDelete: string[] = []
+    const visited = new Set<string>()
+    const collectDescendantsFirst = (menuId: string) => {
+      if (visited.has(menuId)) return
+      visited.add(menuId)
+
+      for (const childId of childrenByParent.get(menuId) ?? []) {
+        collectDescendantsFirst(childId)
+      }
+      idsToDelete.push(menuId)
+    }
+    collectDescendantsFirst(existing.id)
+
+    for (const menuId of idsToDelete) {
+      await tenantDb.websiteMenu.delete({ where: { id: menuId } })
+    }
 
     const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
     if (tenant) await invalidatePublicTenantCache(tenant.slug)

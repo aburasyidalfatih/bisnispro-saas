@@ -76,23 +76,24 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   if (!tenant) notFound()
 
   const base = await getPublicBasePath(slug)
+  const tenantForRender = tenantLayout ? { ...tenant, ...tenantLayout } : tenant
 
-  const rawGallery = Array.isArray(tenant.gallery) ? tenant.gallery : []
+  const rawGallery = Array.isArray(tenantForRender.gallery) ? tenantForRender.gallery : []
   const gallery = rawGallery
     .map((item: any) => typeof item === "string" ? { url: item, caption: "" } : item)
     .filter((item: any) => item && typeof item === "object")
 
-  const t = tenant as any
+  const t = tenantForRender as any
   // Build stats from tenant data
   const staffCount = t._count?.staff || t.staff?.length || 0
   const programCount = t._count?.programs || t.programs?.length || 0
   const achievementCount = t._count?.achievements || t.achievements?.length || 0
 
   let establishedYear = new Date().getFullYear()
-  if ((tenant.settings as any)?.establishedYear) {
-    establishedYear = parseInt((tenant.settings as any).establishedYear, 10)
-  } else if (tenant.createdAt) {
-    establishedYear = new Date(tenant.createdAt).getFullYear()
+  if ((tenantForRender.settings as any)?.establishedYear) {
+    establishedYear = parseInt((tenantForRender.settings as any).establishedYear, 10)
+  } else if (tenantForRender.createdAt) {
+    establishedYear = new Date(tenantForRender.createdAt).getFullYear()
   }
 
   const stats = [
@@ -101,16 +102,16 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     { value: achievementCount > 0 ? `${achievementCount}+` : "0", label: "Prestasi Diraih", icon: "award" },
     { value: `${establishedYear}`, label: "Tahun Berdiri", icon: "clock" },
   ]
-  const themeProps = { tenant, base, gallery, stats }
+  const themeProps = { tenant: tenantForRender, base, gallery, stats }
 
   // Jika sekolah menggunakan Custom Theme dari Super Admin
-  if (tenant.customThemeId && t.customTheme) {
+  if (tenantForRender.customThemeId && t.customTheme) {
     const rendered = renderCustomTheme({
       templateHtml: t.customTheme.indexHtml,
       layoutHtml: t.customTheme.layoutHtml,
       customCss: t.customTheme.customCss,
       customJs: t.customTheme.customJs,
-      context: { tenant, base, gallery, stats, settings: tenant.settings || {} },
+      context: { tenant: tenantForRender, base, gallery, stats, settings: tenantForRender.settings || {} },
     })
     if (rendered) return rendered
   }
@@ -121,10 +122,10 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const educationalOrgSchema = {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
-    "name": tenantLayout?.name || tenant.name,
-    "url": `https://${tenantLayout?.domain || tenant.slug + '.' + rootDomain}`,
+    "name": tenantLayout?.name || tenantForRender.name,
+    "url": `https://${tenantLayout?.domain || tenantForRender.slug + '.' + rootDomain}`,
     "logo": tenantLayout?.logo || "https://schoolpro.id/logo-schoolpro.png",
-    "description": tenantLayout?.description || tenantLayout?.tagline || `Website resmi ${tenant.name}`,
+    "description": tenantLayout?.description || tenantLayout?.tagline || `Website resmi ${tenantForRender.name}`,
     "telephone": tenantLayout?.phone || undefined,
     "email": tenantLayout?.email || undefined,
     "address": tenantLayout?.address ? {
@@ -139,7 +140,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     ].filter(Boolean)
   };
 
-  switch (tenant.template) {
+  switch (tenantForRender.template) {
     case "default":
     default:
       return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(educationalOrgSchema) }} /><DefaultTheme {...(themeProps as any)} /></>

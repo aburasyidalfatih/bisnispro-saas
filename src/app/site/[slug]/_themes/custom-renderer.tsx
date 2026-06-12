@@ -65,6 +65,21 @@ function registerHelpers() {
     if (!Array.isArray(arr)) return arr
     return arr.join(separator)
   })
+  Handlebars.registerHelper("menuHref", (base: string, url: string) => {
+    const href = typeof url === "string" && url.trim() ? url.trim() : "/"
+    if (/^(https?:)?\/\//.test(href) || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("#")) {
+      return href
+    }
+
+    const normalizedHref = href.startsWith("/") ? href : `/${href}`
+    const normalizedBase = base && base !== "/" ? base.replace(/\/$/, "") : ""
+
+    if (normalizedHref === "/") {
+      return normalizedBase || "/"
+    }
+
+    return `${normalizedBase}${normalizedHref}`
+  })
 
   // --- Logic Helpers ---
   Handlebars.registerHelper("ifEqual", function (this: any, a: any, b: any, options: any) {

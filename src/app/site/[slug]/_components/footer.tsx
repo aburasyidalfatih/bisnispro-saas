@@ -5,13 +5,20 @@ import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
 import type { PublicTenant } from "../_themes/types"
 
+type FooterWebsiteMenu = {
+  id?: string
+  label: string
+  url: string
+  children?: FooterWebsiteMenu[]
+}
+
 interface FooterProps {
   tenant: Pick<PublicTenant, 
     'name' | 'slug' | 'tagline' | 'description' | 'phone' | 'email' | 'whatsapp' | 
     'address' | 'instagram' | 'facebook' | 'youtube' | 'settings'
   > & { 
     programs?: { name: string }[]
-    websiteMenus?: { label: string; url: string }[] 
+    websiteMenus?: FooterWebsiteMenu[]
   }
 }
 
@@ -42,6 +49,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
     ...(tenant.facebook ? [{ icon: FacebookIcon, href: `https://facebook.com/${tenant.facebook}`, label: "Facebook" }] : []),
     ...(tenant.youtube ? [{ icon: YoutubeIcon, href: `https://youtube.com/${tenant.youtube}`, label: "YouTube" }] : []),
   ]
+  const websiteMenus = Array.isArray(tenant.websiteMenus) ? tenant.websiteMenus : []
 
 
   return (
@@ -100,37 +108,41 @@ export function WebsiteFooter({ tenant }: FooterProps) {
               )}
             </div>
 
-            {/* Col 2 — Link Cepat */}
-            <div>
-              <h3 className="font-bold text-white text-sm mb-4">Link Cepat</h3>
-              <ul className="space-y-2.5">
-                {(() => {
-                  const menuLinks = (tenant as any)?.websiteMenus && Array.isArray((tenant as any).websiteMenus) && (tenant as any).websiteMenus.length > 0
-                    ? (tenant as any).websiteMenus.slice(0, 7).map((m: any) => ({ label: m.label, href: m.url === "/" ? "" : m.url }))
-                    : [
-                        { label: "Beranda", href: "" },
-                        { label: "Profil Lembaga", href: "/profil" },
-                        { label: "Guru & Staf", href: "/gtk" },
-                        { label: "Berita & Artikel", href: "/berita" },
-                        { label: "Galeri Foto", href: "/gallery" },
-                        { label: "Prestasi", href: "/prestasi" },
-                        { label: "Kontak", href: "/contact" },
-                      ];
-                  return menuLinks.map((link: any) => (
-                    <li key={link.label}>
+            {websiteMenus.length > 0 && (
+              <div>
+                <h3 className="font-bold text-white text-sm mb-4">Link Cepat</h3>
+                <ul className="space-y-2.5">
+                  {websiteMenus.map((menu) => (
+                    <li key={menu.id ?? `${menu.label}-${menu.url}`}>
                       <Link
-                        href={resolveHref(link.href)}
+                        href={resolveHref(menu.url)}
                         className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
                         style={{ color: "rgba(255,255,255,0.45)" }}
                       >
                         <span style={{ color: "hsl(var(--primary))" }}>›</span>
-                        {link.label}
+                        {menu.label}
                       </Link>
+                      {menu.children && menu.children.length > 0 && (
+                        <ul className="mt-2 ml-4 space-y-2">
+                          {menu.children.map((child) => (
+                            <li key={child.id ?? `${child.label}-${child.url}`}>
+                              <Link
+                                href={resolveHref(child.url)}
+                                className="text-[11px] transition-colors hover:text-white flex items-center gap-1.5"
+                                style={{ color: "rgba(255,255,255,0.38)" }}
+                              >
+                                <span style={{ color: "hsl(var(--primary))" }}>-</span>
+                                {child.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </li>
-                  ));
-                })()}
-              </ul>
-            </div>
+                  ))}
+                </ul>
+              </div>
+            )}
 
 
             {/* Col 4 — Kontak Kami */}
