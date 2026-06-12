@@ -67,8 +67,10 @@ export async function DELETE(
   }
 
   try {
+    const tenantDb = withTenant(tenantId)
+    
     // Verify ownership first
-    const existing = await db.websiteMenu.findFirst({ where: { id, tenantId } })
+    const existing = await tenantDb.websiteMenu.findFirst({ where: { id } })
     if (!existing) {
       return NextResponse.json({ error: "Menu not found" }, { status: 404 })
     }
