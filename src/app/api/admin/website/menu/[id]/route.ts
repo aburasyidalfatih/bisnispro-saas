@@ -1,4 +1,4 @@
-import { db, withTenant } from "@/lib/db"
+import { db, runWithTenantContext, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
@@ -67,47 +67,61 @@ export async function DELETE(
   }
 
   try {
-    const tenantDb = withTenant(tenantId)
-    
-    // Verify ownership first
-    const existing = await tenantDb.websiteMenu.findFirst({ where: { id } })
-    if (!existing) {
-      return NextResponse.json({ error: "Menu not found" }, { status: 404 })
-    }
-
-    const allMenus = await tenantDb.websiteMenu.findMany({
-      select: { id: true, parentId: true },
-    })
-    const childrenByParent = new Map<string, string[]>()
-
-    for (const menu of allMenus) {
-      if (!menu.parentId) continue
-      const children = childrenByParent.get(menu.parentId) ?? []
-      children.push(menu.id)
-      childrenByParent.set(menu.parentId, children)
-    }
-
-    const idsToDelete: string[] = []
-    const visited = new Set<string>()
-    const collectDescendantsFirst = (menuId: string) => {
-      if (visited.has(menuId)) return
-      visited.add(menuId)
-
-      for (const childId of childrenByParent.get(menuId) ?? []) {
-        collectDescendantsFirst(childId)
+    const result = await runWithTenantContext(tenantId, async (tx) => {
+      const existing = await tx.websiteMenu.findFirst({
+        where: { id, tenantId },
+        select: { id: true },
+      })
+      if (!existing) {
+        return { notFound: true, deletedCount: 0 }
       }
-      idsToDelete.push(menuId)
-    }
-    collectDescendantsFirst(existing.id)
 
-    for (const menuId of idsToDelete) {
-      await tenantDb.websiteMenu.delete({ where: { id: menuId } })
+      const allMenus = await tx.websiteMenu.findMany({
+        where: { tenantId },
+        select: { id: true, parentId: true },
+      })
+      const childrenByParent = new Map<string, string[]>()
+
+      for (const menu of allMenus) {
+        if (!menu.parentId) continue
+        const children = childrenByParent.get(menu.parentId) ?? []
+        children.push(menu.id)
+        childrenByParent.set(menu.parentId, children)
+      }
+
+      const idsToDelete: string[] = []
+      const visited = new Set<string>()
+      const collectDescendantsFirst = (menuId: string) => {
+        if (visited.has(menuId)) return
+        visited.add(menuId)
+
+        for (const childId of childrenByParent.get(menuId) ?? []) {
+          collectDescendantsFirst(childId)
+        }
+        idsToDelete.push(menuId)
+      }
+      collectDescendantsFirst(existing.id)
+
+      await tx.websiteMenu.updateMany({
+        where: { tenantId, id: { in: idsToDelete } },
+        data: { parentId: null },
+      })
+
+      const deleted = await tx.websiteMenu.deleteMany({
+        where: { tenantId, id: { in: idsToDelete } },
+      })
+
+      return { notFound: false, deletedCount: deleted.count }
+    })
+
+    if (result.notFound) {
+      return NextResponse.json({ error: "Menu not found" }, { status: 404 })
     }
 
     const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
     if (tenant) await invalidatePublicTenantCache(tenant.slug)
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, deletedCount: result.deletedCount })
   } catch (error) {
     console.error("[WEBSITE_MENU_DELETE]", error)
     return NextResponse.json({ error: "Internal Error" }, { status: 500 })
