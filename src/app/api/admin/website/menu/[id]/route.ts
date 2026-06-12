@@ -1,4 +1,4 @@
-import { db, withTenant, runWithTenantContext } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
@@ -78,21 +78,19 @@ export async function DELETE(
     // Use Prisma ORM to safely delete all duplicates (based on label and url)
     // This ensures that if there are duplicate menus hiding behind the UI deduplication,
     // deleting one will delete all of them, making the UI reflect the action correctly.
-    await runWithTenantContext(tenantId, async (tx) => {
-      const allDuplicates = await tx.websiteMenu.findMany({
-        where: { tenantId, label: existing.label, url: existing.url }
-      })
-      const duplicateIds = allDuplicates.map((d: any) => d.id)
+    const allDuplicates = await tenantDb.websiteMenu.findMany({
+      where: { label: existing.label, url: existing.url }
+    })
+    const duplicateIds = allDuplicates.map((d: any) => d.id)
 
-      // Delete all children of these duplicates
-      await tx.websiteMenu.deleteMany({
-        where: { parentId: { in: duplicateIds }, tenantId }
-      })
+    // Delete all children of these duplicates
+    await tenantDb.websiteMenu.deleteMany({
+      where: { parentId: { in: duplicateIds } }
+    })
 
-      // Delete the parents
-      await tx.websiteMenu.deleteMany({
-        where: { id: { in: duplicateIds }, tenantId }
-      })
+    // Delete the parents
+    await tenantDb.websiteMenu.deleteMany({
+      where: { id: { in: duplicateIds } }
     })
 
     const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })

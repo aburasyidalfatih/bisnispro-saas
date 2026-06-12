@@ -1,4 +1,4 @@
-import { db, runWithTenantContext } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
@@ -19,27 +19,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid data format" }, { status: 400 })
     }
 
-    await runWithTenantContext(tenantId, async (tx) => {
-      for (const item of items) {
-        if (item.parentId) {
-          const parent = await tx.websiteMenu.findFirst({
-            where: { id: item.parentId, tenantId },
-            select: { id: true },
-          })
-          if (!parent || parent.id === item.id) {
-            throw new Error("Invalid parent menu")
-          }
-        }
+    const tenantDb = withTenant(tenantId)
 
-        await tx.websiteMenu.update({
-          where: { id: item.id, tenantId },
-          data: { 
-            order: item.order,
-            parentId: item.parentId || null
-          }
+    for (const item of items) {
+      if (item.parentId) {
+        const parent = await tenantDb.websiteMenu.findFirst({
+          where: { id: item.parentId },
+          select: { id: true },
         })
+        if (!parent || parent.id === item.id) {
+          return NextResponse.json({ error: "Invalid parent menu" }, { status: 400 })
+        }
       }
-    })
+
+      await tenantDb.websiteMenu.update({
+        where: { id: item.id },
+        data: { 
+          order: item.order,
+          parentId: item.parentId || null
+        }
+      })
+    }
 
     // Invalidate public tenant cache
     const tenant = await db.tenant.findUnique({
