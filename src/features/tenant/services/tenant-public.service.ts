@@ -36,11 +36,15 @@ export async function invalidatePublicTenantCache(slug: string) {
       revalidatePath(`/site/${slug}/agenda`, "page")
       revalidatePath(`/site/${slug}/gallery`, "page")
       revalidateTag(`tenant-${slug}`)
+      revalidateTag(`tenant-layout-${slug}`)
+      revalidateTag(`tenant-home-${slug}`)
       if (tenant) {
         revalidateTag(`tenant-${tenant.id}`)
       }
       revalidateTag(`tenant-public`)
-    } catch (e) {}
+    } catch (e) {
+      console.error("Error in Next.js revalidate API:", e)
+    }
   } catch (error) {
     logger.error("Redis del error in invalidatePublicTenantCache", { error: String(error) })
   }
