@@ -21,9 +21,16 @@ export async function GET() {
       orderBy: { lastActiveAt: 'asc' }
     })
 
+    const churned90 = await db.tenant.findMany({
+      where: { retentionStatus: "CHURNED" },
+      select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
+      orderBy: { lastActiveAt: 'asc' }
+    })
+
     return NextResponse.json({
       warn30,
-      suspend60
+      suspend60,
+      churned90
     })
   } catch (error) {
     console.error("[RETENTION_HISTORY_GET]", error)

@@ -654,8 +654,13 @@ setInterval(async () => {
         }, { delay })
       }
 
-      await db.tenant.delete({
-        where: { id: tenant.id }
+      await db.tenant.update({
+        where: { id: tenant.id },
+        data: {
+          isActive: false,
+          retentionStatus: "CHURNED",
+          deletedAt: new Date()
+        }
       })
     }
 

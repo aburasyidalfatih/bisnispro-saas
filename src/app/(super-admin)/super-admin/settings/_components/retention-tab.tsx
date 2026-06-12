@@ -115,8 +115,7 @@ export function RetentionTab({ form, setForm, handleSaveBatch, saving }: Retenti
             Riwayat Tenant (Status Retensi)
           </CardTitle>
           <CardDescription>
-            Daftar tenant yang saat ini berada dalam status peringatan (30 Hari) dan ditangguhkan (60 Hari).
-            Catatan: Tenant yang sudah 90 hari akan terhapus permanen dari sistem sehingga tidak muncul di tabel ini.
+            Daftar tenant yang saat ini berada dalam status peringatan (30 Hari), ditangguhkan (60 Hari), dan telah dihapus (90 Hari).
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -132,7 +131,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 
 function RetentionHistoryTable() {
-  const [data, setData] = useState<{warn30: any[], suspend60: any[]}>({ warn30: [], suspend60: [] })
+  const [data, setData] = useState<{warn30: any[], suspend60: any[], churned90: any[]}>({ warn30: [], suspend60: [], churned90: [] })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -149,7 +148,8 @@ function RetentionHistoryTable() {
 
   const allTenants = [
     ...data.warn30.map(t => ({ ...t, phase: "30 Hari (Peringatan)" })),
-    ...data.suspend60.map(t => ({ ...t, phase: "60 Hari (Suspend)" }))
+    ...data.suspend60.map(t => ({ ...t, phase: "60 Hari (Suspend)" })),
+    ...data.churned90.map(t => ({ ...t, phase: "90 Hari (Dihapus)" }))
   ]
 
   if (allTenants.length === 0) {
@@ -169,26 +169,37 @@ function RetentionHistoryTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {allTenants.map((t, i) => (
-            <TableRow key={i}>
-              <TableCell className="font-medium">{t.name}</TableCell>
-              <TableCell className="text-muted-foreground text-sm">{t.slug}</TableCell>
-              <TableCell>
-                <div className="flex flex-col text-xs text-gray-500">
-                  <span>{t.whatsapp || t.phone || '-'}</span>
-                  <span>{t.email || '-'}</span>
+          {allTenants.map((t, i) => {
+            const isDeleted = t.phase.includes('90');
+            return (
+            <TableRow key={i} className={isDeleted ? "opacity-60 bg-gray-50" : ""}>
+              <TableCell className="font-medium">
+                <div className="flex items-center gap-2">
+                  {t.name}
+                  {isDeleted && <Badge variant="secondary" className="text-[10px]">Terhapus</Badge>}
                 </div>
               </TableCell>
-              <TableCell className="text-sm">
-                {t.lastActiveAt ? new Date(t.lastActiveAt).toLocaleDateString('id-ID') : '-'}
+              <TableCell className="text-muted-foreground text-sm">{isDeleted ? <span className="line-through text-gray-400">{t.slug}</span> : t.slug}</TableCell>
+              <TableCell>
+                {isDeleted ? (
+                  <span className="text-xs text-gray-400 italic">Dihapus</span>
+                ) : (
+                  <div className="flex flex-col text-xs text-gray-500">
+                    <span>{t.whatsapp || t.phone || '-'}</span>
+                    <span>{t.email || '-'}</span>
+                  </div>
+                )}
+              </TableCell>
+              <TableCell className="text-sm text-gray-400">
+                {isDeleted ? '-' : (t.lastActiveAt ? new Date(t.lastActiveAt).toLocaleDateString('id-ID') : '-')}
               </TableCell>
               <TableCell>
-                <Badge variant={t.phase.includes('30') ? 'outline' : 'destructive'} className={t.phase.includes('30') ? 'text-amber-600 border-amber-600' : ''}>
+                <Badge variant={t.phase.includes('30') ? 'outline' : 'destructive'} className={t.phase.includes('30') ? 'text-amber-600 border-amber-600' : (isDeleted ? 'bg-gray-800' : '')}>
                   {t.phase}
                 </Badge>
               </TableCell>
             </TableRow>
-          ))}
+          )})}
         </TableBody>
       </Table>
     </div>
