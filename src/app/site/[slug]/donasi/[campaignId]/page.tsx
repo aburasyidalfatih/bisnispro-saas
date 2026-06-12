@@ -3,8 +3,6 @@ import { notFound } from "next/navigation"
 import { DonationPublicClient } from "./_components/donation-public-client"
 import { headers } from "next/headers"
 
-export const revalidate = 60;
-
 
 interface Props {
   params: Promise<{ slug: string; campaignId: string }>

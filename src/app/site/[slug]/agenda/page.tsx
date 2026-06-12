@@ -13,8 +13,6 @@ import { format } from "date-fns"
 import { formatInTimeZone } from "date-fns-tz"
 import { id } from "date-fns/locale"
 
-export const revalidate = 60;
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();

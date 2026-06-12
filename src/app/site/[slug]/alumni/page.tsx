@@ -7,8 +7,6 @@ import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import { AlumniSubmissionForm } from "./_components/alumni-submission-form"
 
-export const revalidate = 60;
-
 
 export default async function AlumniPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

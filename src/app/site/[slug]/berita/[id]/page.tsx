@@ -16,10 +16,6 @@ import { PostViewCounter } from "./_components/view-counter"
 import { getPostViews } from "@/features/post/services/views.service"
 import { getShareCount } from "@/features/post/services/share.service"
 
-export const revalidate = 60;
-
-
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const headerList = await headers();

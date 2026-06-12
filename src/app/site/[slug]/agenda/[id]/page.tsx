@@ -19,11 +19,6 @@ import { EventViewCounter } from "./_components/view-counter"
 import { getEventViews } from "@/features/post/services/views.service"
 import DOMPurify from "isomorphic-dompurify"
 
-export const revalidate = 60;
-
-
-
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params

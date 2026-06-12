@@ -25,7 +25,6 @@ import { PartnershipsSection } from "./_components/partnerships-section"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { DefaultTheme } from "./_themes/default"
 
-export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();

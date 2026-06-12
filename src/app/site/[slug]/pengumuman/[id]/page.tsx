@@ -32,10 +32,6 @@ import Image from "next/image"
 import { ReadingProgress } from "@/app/site/[slug]/berita/[id]/_components/reading-progress"
 import { ShareButtons } from "@/app/site/[slug]/berita/[id]/_components/share-buttons"
 
-export const revalidate = 60;
-
-
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const headerList = await headers();

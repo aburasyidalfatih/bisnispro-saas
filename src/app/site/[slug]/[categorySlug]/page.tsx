@@ -4,8 +4,6 @@ import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.s
 import { db } from "@/lib/db"
 import BeritaPage from "../berita/page"
 
-export const revalidate = 60;
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string, categorySlug: string }> }) {
   const headerList = await headers();

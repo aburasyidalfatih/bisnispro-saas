@@ -10,11 +10,6 @@ import { ArrowLeft, BookOpen } from "lucide-react"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 import DOMPurify from "isomorphic-dompurify"
 
-export const revalidate = 60;
-
-
-
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params

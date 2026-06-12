@@ -6,8 +6,6 @@ import { getTenantLayoutData, getTenantGallery } from "@/features/tenant/service
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
-export const revalidate = 60;
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();

@@ -9,8 +9,6 @@ import { id as localeId } from "date-fns/locale"
 import Link from "next/link"
 import { useRouting } from "@/components/providers/routing-provider"
 
-export const revalidate = 60;
-
 
 export default function PublicPpdbPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)

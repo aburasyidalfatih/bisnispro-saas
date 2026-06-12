@@ -14,8 +14,6 @@ import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 
-export const revalidate = 60;
-
 
 function SmartPlaceholder({ title, type }: { title: string, type: string }) {
   const hash = title.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)

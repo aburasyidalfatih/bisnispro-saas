@@ -10,8 +10,6 @@ import Link from "next/link"
 import { db } from "@/lib/db"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
-export const revalidate = 60;
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();

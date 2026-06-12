@@ -11,11 +11,6 @@ import { id } from "date-fns/locale"
 import { getPublicPosts, countPublicPosts } from "@/features/tenant/services/tenant-public-queries.service"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
-export const revalidate = 60;
-
-
-
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();
