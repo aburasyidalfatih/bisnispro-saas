@@ -109,6 +109,35 @@ export async function POST(req: Request) {
         ],
       })
 
+      // Buat default website menus (syncing with reset logic)
+      const beranda = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Beranda", url: "/", isSystem: true, order: 0 } })
+      const profil = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Profil Sekolah", url: "/profil", isSystem: false, order: 1 } })
+      const informasi = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Informasi", url: "/berita", isSystem: false, order: 2 } })
+      const galeri = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Galeri", url: "/gallery", isSystem: false, order: 3 } })
+      const ppdb = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "PPDB", url: "/ppdb", isSystem: false, order: 4 } })
+      await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Kontak", url: "/contact", isSystem: false, order: 5 } })
+
+      await tx.websiteMenu.createMany({ data: [
+        { tenantId: tenant.id, label: "Profil Lembaga", url: "/profil", parentId: profil.id, order: 0 },
+        { tenantId: tenant.id, label: "Guru & Staf (GTK)", url: "/gtk", parentId: profil.id, order: 1 },
+        { tenantId: tenant.id, label: "Fasilitas Sekolah", url: "/fasilitas", parentId: profil.id, order: 2 },
+        { tenantId: tenant.id, label: "Program Unggulan", url: "/program", parentId: profil.id, order: 3 },
+        { tenantId: tenant.id, label: "Ekstrakurikuler", url: "/ekstrakurikuler", parentId: profil.id, order: 4 },
+      ]})
+
+      await tx.websiteMenu.createMany({ data: [
+        { tenantId: tenant.id, label: "Pengumuman", url: "/pengumuman", parentId: informasi.id, order: 0 },
+        { tenantId: tenant.id, label: "Berita & Artikel", url: "/berita", parentId: informasi.id, order: 1 },
+        { tenantId: tenant.id, label: "Agenda & Acara", url: "/agenda", parentId: informasi.id, order: 2 },
+        { tenantId: tenant.id, label: "Pusat Unduhan", url: "/unduhan", parentId: informasi.id, order: 3 },
+      ]})
+
+      await tx.websiteMenu.createMany({ data: [
+        { tenantId: tenant.id, label: "Galeri Foto", url: "/gallery", parentId: galeri.id, order: 0 },
+        { tenantId: tenant.id, label: "Prestasi Siswa", url: "/prestasi", parentId: galeri.id, order: 1 },
+        { tenantId: tenant.id, label: "Alumni Success", url: "/alumni", parentId: galeri.id, order: 2 },
+      ]})
+
       const { notifyAllSuperAdmins } = await import("@/features/super-admin/services/super-admin-notification.service")
       notifyAllSuperAdmins({
         title: "Pendaftar Tenant Baru",

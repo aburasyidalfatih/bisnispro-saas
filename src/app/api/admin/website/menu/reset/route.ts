@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
       const profil = await tx.websiteMenu.create({ data: { tenantId, label: "Profil Sekolah", url: "/profil", isSystem: false, order: 1 } })
       const informasi = await tx.websiteMenu.create({ data: { tenantId, label: "Informasi", url: "/berita", isSystem: false, order: 2 } })
       const galeri = await tx.websiteMenu.create({ data: { tenantId, label: "Galeri", url: "/gallery", isSystem: false, order: 3 } })
-      await tx.websiteMenu.create({ data: { tenantId, label: "Kontak", url: "/contact", isSystem: false, order: 4 } })
+      const ppdb = await tx.websiteMenu.create({ data: { tenantId, label: "PPDB", url: "/ppdb", isSystem: false, order: 4 } })
+      await tx.websiteMenu.create({ data: { tenantId, label: "Kontak", url: "/contact", isSystem: false, order: 5 } })
 
       await tx.websiteMenu.createMany({ data: [
         { tenantId, label: "Profil Lembaga", url: "/profil", parentId: profil.id, order: 0 },
@@ -40,9 +41,10 @@ export async function POST(req: NextRequest) {
       ]})
 
       await tx.websiteMenu.createMany({ data: [
-        { tenantId, label: "Berita & Artikel", url: "/berita", parentId: informasi.id, order: 0 },
-        { tenantId, label: "Agenda & Acara", url: "/agenda", parentId: informasi.id, order: 1 },
-        { tenantId, label: "Pusat Unduhan", url: "/unduhan", parentId: informasi.id, order: 2 },
+        { tenantId, label: "Pengumuman", url: "/pengumuman", parentId: informasi.id, order: 0 },
+        { tenantId, label: "Berita & Artikel", url: "/berita", parentId: informasi.id, order: 1 },
+        { tenantId, label: "Agenda & Acara", url: "/agenda", parentId: informasi.id, order: 2 },
+        { tenantId, label: "Pusat Unduhan", url: "/unduhan", parentId: informasi.id, order: 3 },
       ]})
 
       await tx.websiteMenu.createMany({ data: [
