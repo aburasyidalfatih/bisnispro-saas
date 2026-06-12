@@ -114,11 +114,6 @@ export function MenuBuilder() {
   }
 
   const handleDelete = async (id: string, isSystem: boolean) => {
-    if (isSystem) {
-      toast({ title: "Ditolak", description: "Menu sistem tidak bisa dihapus.", variant: "destructive" })
-      return
-    }
-    
     if (confirm("Yakin ingin menghapus menu ini beserta sub-menunya?")) {
       try {
         const res = await fetch(`/api/admin/website/menu/${id}`, { method: "DELETE" })
@@ -253,11 +248,9 @@ export function MenuBuilder() {
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50" onClick={() => handleOpenModal(menu)}>
                     <Edit className="h-4 w-4" />
                   </Button>
-                  {!menu.isSystem && (
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:bg-red-50" onClick={() => handleDelete(menu.id, menu.isSystem)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:bg-red-50" onClick={() => handleDelete(menu.id, menu.isSystem)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
 

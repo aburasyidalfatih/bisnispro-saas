@@ -73,20 +73,23 @@ export async function DELETE(
       return NextResponse.json({ error: "Menu not found" }, { status: 404 })
     }
 
-    if (existing.isSystem) {
-      return NextResponse.json({ error: "Menu sistem tidak dapat dihapus" }, { status: 400 })
-    }
-
-    // Use Prisma ORM to safely delete
+    // Use Prisma ORM to safely delete all duplicates (based on label and url)
+    // This ensures that if there are duplicate menus hiding behind the UI deduplication,
+    // deleting one will delete all of them, making the UI reflect the action correctly.
     await runWithTenantContext(tenantId, async (tx) => {
-      // Since max depth is 2 levels (root -> child), we can just delete children first
+      const allDuplicates = await tx.websiteMenu.findMany({
+        where: { tenantId, label: existing.label, url: existing.url }
+      })
+      const duplicateIds = allDuplicates.map((d: any) => d.id)
+
+      // Delete all children of these duplicates
       await tx.websiteMenu.deleteMany({
-        where: { parentId: id, tenantId }
+        where: { parentId: { in: duplicateIds }, tenantId }
       })
 
-      // Then delete the parent
+      // Delete the parents
       await tx.websiteMenu.deleteMany({
-        where: { id, tenantId }
+        where: { id: { in: duplicateIds }, tenantId }
       })
     })
 
