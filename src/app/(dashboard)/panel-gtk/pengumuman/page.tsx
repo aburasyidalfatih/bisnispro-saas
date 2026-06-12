@@ -18,7 +18,7 @@ export default function GuruPengumumanPage() {
   const fetchAnnouncements = () => {
     if (!tenantId) return
     setLoading(true)
-    fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN_GTK`)
+    fetch(`/api/tenant/posts?tenantId=${tenantId}&type=PENGUMUMAN_GTK`, { cache: "no-store" })
       .then(r => {
          if(!r.ok) throw new Error("Failed to fetch")
          return r.json()

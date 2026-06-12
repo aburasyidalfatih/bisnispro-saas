@@ -41,7 +41,7 @@ export default function PostsPage() {
     if (!tenantId) return
     setLoading(true)
     const url = `/api/tenant/posts?tenantId=${tenantId}${typeFilter ? `&type=${typeFilter}` :""}`
-    fetch(url)
+    fetch(url, { cache: "no-store" })
       .then(r => r.json())
       .then(d => {
         setPosts(Array.isArray(d) ? d : [])
