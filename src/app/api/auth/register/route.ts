@@ -114,8 +114,7 @@ export async function POST(req: Request) {
       const profil = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Profil Sekolah", url: "/profil", isSystem: false, order: 1 } })
       const informasi = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Informasi", url: "/berita", isSystem: false, order: 2 } })
       const galeri = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Galeri", url: "/gallery", isSystem: false, order: 3 } })
-      const ppdb = await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "PPDB", url: "/ppdb", isSystem: false, order: 4 } })
-      await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Kontak", url: "/contact", isSystem: false, order: 5 } })
+      await tx.websiteMenu.create({ data: { tenantId: tenant.id, label: "Kontak", url: "/contact", isSystem: false, order: 4 } })
 
       await tx.websiteMenu.createMany({ data: [
         { tenantId: tenant.id, label: "Profil Lembaga", url: "/profil", parentId: profil.id, order: 0 },
