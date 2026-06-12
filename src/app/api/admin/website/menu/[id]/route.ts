@@ -2,6 +2,7 @@ import { db, runWithTenantContext, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
+import { getWebsiteMenuIdentityKey, normalizeWebsiteMenuLabel } from "@/features/website-menu/menu-tree"
 
 export async function PATCH(
   req: NextRequest,
@@ -20,25 +21,42 @@ export async function PATCH(
     const tenantDb = withTenant(tenantId)
     
     // Verifikasi kepemilikan
-    const existing = await tenantDb.websiteMenu.findFirst({ where: { id } })
+    const existing = await tenantDb.websiteMenu.findFirst({ where: { id, tenantId } })
     if (!existing) {
       return NextResponse.json({ error: "Menu not found" }, { status: 404 })
     }
 
-    const normalizedParentId = body.parentId !== undefined ? (body.parentId || null) : undefined
-    if (normalizedParentId) {
-      const parent = await tenantDb.websiteMenu.findFirst({ where: { id: normalizedParentId } })
+    const nextParentId = body.parentId !== undefined ? (body.parentId || null) : existing.parentId
+    const nextLabel = body.label !== undefined ? normalizeWebsiteMenuLabel(String(body.label)) : existing.label
+    const nextUrl = body.url !== undefined ? String(body.url).trim() : existing.url
+
+    if (!nextLabel || !nextUrl) {
+      return NextResponse.json({ error: "Label and URL are required" }, { status: 400 })
+    }
+
+    if (nextParentId) {
+      const parent = await tenantDb.websiteMenu.findFirst({ where: { id: nextParentId, tenantId } })
       if (!parent || parent.id === id) {
         return NextResponse.json({ error: "Parent menu not found" }, { status: 404 })
       }
     }
 
+    const requestedKey = getWebsiteMenuIdentityKey({ label: nextLabel, url: nextUrl })
+    const duplicate = (await tenantDb.websiteMenu.findMany({
+      where: { tenantId, parentId: nextParentId },
+      select: { id: true, label: true, url: true },
+    })).find((menu) => menu.id !== id && getWebsiteMenuIdentityKey(menu) === requestedKey)
+
+    if (duplicate) {
+      return NextResponse.json({ error: "Menu dengan label dan URL yang sama sudah ada pada level ini." }, { status: 409 })
+    }
+
     const menu = await tenantDb.websiteMenu.update({
       where: { id },
       data: {
-        label: body.label,
-        url: body.url,
-        parentId: normalizedParentId,
+        label: nextLabel,
+        url: nextUrl,
+        parentId: nextParentId,
         isActive: body.isActive,
         order: body.order
       }
@@ -70,7 +88,7 @@ export async function DELETE(
     const result = await runWithTenantContext(tenantId, async (tx) => {
       const existing = await tx.websiteMenu.findFirst({
         where: { id, tenantId },
-        select: { id: true },
+        select: { id: true, parentId: true, label: true, url: true },
       })
       if (!existing) {
         return { notFound: true, deletedCount: 0 }
@@ -78,8 +96,27 @@ export async function DELETE(
 
       const allMenus = await tx.websiteMenu.findMany({
         where: { tenantId },
-        select: { id: true, parentId: true },
+        select: { id: true, parentId: true, label: true, url: true },
       })
+
+      const targetKey = getWebsiteMenuIdentityKey(existing)
+      const rootIdsToDelete = existing.parentId
+        ? (() => {
+            const parent = allMenus.find((menu) => menu.id === existing.parentId)
+            const parentGroupIds = parent
+              ? allMenus
+                .filter((menu) => menu.parentId === parent.parentId && getWebsiteMenuIdentityKey(menu) === getWebsiteMenuIdentityKey(parent))
+                .map((menu) => menu.id)
+              : [existing.parentId]
+
+            return allMenus
+              .filter((menu) => menu.parentId !== null && parentGroupIds.includes(menu.parentId) && getWebsiteMenuIdentityKey(menu) === targetKey)
+              .map((menu) => menu.id)
+          })()
+        : allMenus
+          .filter((menu) => menu.parentId === null && getWebsiteMenuIdentityKey(menu) === targetKey)
+          .map((menu) => menu.id)
+
       const childrenByParent = new Map<string, string[]>()
 
       for (const menu of allMenus) {
@@ -100,7 +137,9 @@ export async function DELETE(
         }
         idsToDelete.push(menuId)
       }
-      collectDescendantsFirst(existing.id)
+      for (const menuId of rootIdsToDelete) {
+        collectDescendantsFirst(menuId)
+      }
 
       await tx.websiteMenu.updateMany({
         where: { tenantId, id: { in: idsToDelete } },

@@ -1,6 +1,7 @@
 import { db, runWithTenantContext } from "@/lib/db"
 import { unstable_cache } from "next/cache"
 import { revalidateTag } from "next/cache"
+import { normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
 
 const CACHE_TTL_SECONDS = 60 * 60 // 1 hour
 
@@ -67,7 +68,10 @@ export const getTenantLayoutData = async (slug: string) => {
         }
       }))
 
-      return normalizeInactiveCustomTheme(tenantLayout)
+      return normalizeInactiveCustomTheme(tenantLayout ? {
+        ...tenantLayout,
+        websiteMenus: normalizeWebsiteMenuTree(tenantLayout.websiteMenus),
+      } : null)
     },
     [`tenant-layout-${slug}`],
     { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }

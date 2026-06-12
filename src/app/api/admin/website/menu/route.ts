@@ -1,9 +1,28 @@
-import { db, withTenant } from "@/lib/db"
+import { db, runWithTenantContext, withTenant } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
+import { getWebsiteMenuIdentityKey, normalizeWebsiteMenuLabel, normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
+import { removeDuplicateWebsiteMenus } from "@/features/website-menu/menu-maintenance"
 
 export const dynamic = 'force-dynamic'
+
+async function findDuplicateSibling(
+  tenantDb: ReturnType<typeof withTenant>,
+  tenantId: string,
+  parentId: string | null,
+  label: string,
+  url: string,
+  excludeId?: string
+) {
+  const requestedKey = getWebsiteMenuIdentityKey({ label, url })
+  const siblings = await tenantDb.websiteMenu.findMany({
+    where: { tenantId, parentId },
+    select: { id: true, label: true, url: true },
+  })
+
+  return siblings.find((menu) => menu.id !== excludeId && getWebsiteMenuIdentityKey(menu) === requestedKey) ?? null
+}
 
 // GET: Ambil semua menu website untuk tenant ini
 export async function GET(req: NextRequest) {
@@ -15,19 +34,22 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const tenantDb = withTenant(tenantId)
-    const menus = await tenantDb.websiteMenu.findMany({
-      where: { parentId: null },
-      include: {
-        children: {
-          where: { tenantId },
-          orderBy: { order: "asc" }
-        }
-      },
-      orderBy: { order: "asc" }
+    const menus = await runWithTenantContext(tenantId, async (tx) => {
+      await removeDuplicateWebsiteMenus(tx, tenantId)
+
+      return tx.websiteMenu.findMany({
+        where: { tenantId, parentId: null },
+        include: {
+          children: {
+            where: { tenantId },
+            orderBy: [{ order: "asc" }, { createdAt: "asc" }]
+          }
+        },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }]
+      })
     })
 
-    return NextResponse.json(menus)
+    return NextResponse.json(normalizeWebsiteMenuTree(menus))
   } catch (error) {
     console.error("[WEBSITE_MENU_GET]", error)
     return NextResponse.json({ error: "Internal Error" }, { status: 500 })
@@ -47,7 +69,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { label, url, parentId, isActive, isSystem, order } = body
 
-    if (!label || url === undefined) {
+    const normalizedLabel = typeof label === "string" ? normalizeWebsiteMenuLabel(label) : ""
+    const normalizedUrl = typeof url === "string" ? url.trim() : ""
+
+    if (!normalizedLabel || !normalizedUrl) {
       return NextResponse.json({ error: "Label and URL are required" }, { status: 400 })
     }
 
@@ -60,8 +85,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const duplicate = await findDuplicateSibling(tenantDb, tenantId, normalizedParentId, normalizedLabel, normalizedUrl)
+    if (duplicate) {
+      return NextResponse.json({ error: "Menu dengan label dan URL yang sama sudah ada pada level ini." }, { status: 409 })
+    }
+
     const maxOrderMenu = await tenantDb.websiteMenu.findFirst({
-      where: { parentId: normalizedParentId },
+      where: { tenantId, parentId: normalizedParentId },
       orderBy: { order: "desc" }
     })
     const nextOrder = order !== undefined ? order : (maxOrderMenu ? maxOrderMenu.order + 1 : 0)
@@ -69,8 +99,8 @@ export async function POST(req: NextRequest) {
     const menu = await tenantDb.websiteMenu.create({
       data: {
         tenantId,
-        label,
-        url,
+        label: normalizedLabel,
+        url: normalizedUrl,
         parentId: normalizedParentId,
         order: nextOrder,
         isActive: isActive !== undefined ? isActive : true,

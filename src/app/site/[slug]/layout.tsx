@@ -12,8 +12,8 @@ import { normalizeImageUrl } from "@/lib/utils"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
 import { PageTracker } from "@/components/shared/page-tracker"
 import { FloatingWhatsApp } from "./_components/floating-whatsapp"
-import Script from "next/script"
 import { Suspense } from "react"
+import { normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
 
 export const dynamic = "force-dynamic"
 
@@ -77,7 +77,10 @@ export default async function WebsiteLayout({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const headerList = await headers()
+  const [headerList, tenant] = await Promise.all([
+    headers(),
+    getTenantLayoutData(slug),
+  ])
   
   const hostname = headerList.get("x-hostname") || headerList.get("host") || ""
   const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
@@ -85,8 +88,6 @@ export default async function WebsiteLayout({
   const isMainDomain = hostname === rootDomain || hostname === `www.${rootDomain}` || hostname.startsWith("localhost")
   const isSubdomain = hostname.endsWith(`.${rootDomain}`) && !isMainDomain
   const isCustomDomain = !isMainDomain && !isSubdomain
-
-  const tenant = await getTenantLayoutData(slug)
 
   if (!tenant) notFound()
 
@@ -119,16 +120,16 @@ export default async function WebsiteLayout({
 
   // Fetch website menus dynamically (uncached) to bypass next.js unstable_cache replication/sync issues
   const tenantDb = withTenant(tenant.id)
-  const freshMenus = await tenantDb.websiteMenu.findMany({
-    where: { parentId: null, isActive: true },
-    orderBy: { order: "asc" },
+  const freshMenus = normalizeWebsiteMenuTree(await tenantDb.websiteMenu.findMany({
+    where: { tenantId: tenant.id, parentId: null, isActive: true },
+    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
     include: {
       children: {
-        where: { isActive: true },
-        orderBy: { order: "asc" }
+        where: { tenantId: tenant.id, isActive: true },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }]
       }
     }
-  })
+  }))
 
   const tenantWithFreshMenus = {
     ...tenant,
@@ -145,30 +146,26 @@ export default async function WebsiteLayout({
     rootDomain,
     basePath: `/site/${slug}`
   }
+  const structuredData = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": tenant.name,
+    "url": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`,
+    "logo": tenant.logo || "https://schoolpro.id/logo-schoolpro.png",
+    "telephone": tenant.phone || "",
+    "email": tenant.email || "",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": tenant.address || "",
+      "addressCountry": "ID"
+    }
+  }).replace(/</g, "\\u003c")
 
   return (
     <RoutingProvider value={routingValue}>
       <div className="min-h-screen flex flex-col overflow-x-hidden w-full max-w-[100vw]">
         {/* JSON-LD Structured Data untuk Rich Snippets */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "EducationalOrganization",
-              "name": tenant.name,
-              "url": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`,
-              "logo": tenant.logo || "https://schoolpro.id/logo-schoolpro.png",
-              "telephone": tenant.phone || "",
-              "email": tenant.email || "",
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": tenant.address || "",
-                "addressCountry": "ID"
-              }
-            })
-          }}
-        />
+        <script type="application/ld+json">{structuredData}</script>
 
         <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
         

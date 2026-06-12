@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, Search, ChevronDown, CheckCircle2, Phone, Mail, MessageCircle, Home, Building2, Info, ImageIcon, PhoneCall } from "lucide-react"
+import { Menu, X, ChevronDown, Phone, Mail, MessageCircle, Home } from "lucide-react"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
@@ -27,19 +27,24 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
 
   // Format website menus from db
   const navLinks = (tenant.websiteMenus && tenant.websiteMenus.length > 0)
-    ? tenant.websiteMenus.map((menu: any) => ({
+    ? tenant.websiteMenus.map((menu: any, menuIndex: number) => ({
+        id: menu.id ?? `${menu.label}-${menu.url}-${menuIndex}`,
         label: menu.label,
         href: menu.url === "/" ? "" : menu.url,
         icon: Home, // Fallback icon, could map dynamic icon later
         children: menu.children?.length > 0 
-          ? menu.children.map((child: any) => ({ label: child.label, href: child.url })) 
+          ? menu.children.map((child: any, childIndex: number) => ({
+              id: child.id ?? `${menu.id ?? menu.label}-${child.label}-${child.url}-${childIndex}`,
+              label: child.label,
+              href: child.url
+            }))
           : undefined
       }))
     : []
 
-  const toggleMobileAccordion = (label: string) => {
+  const toggleMobileAccordion = (id: string) => {
     setExpandedMobile(prev => 
-      prev.includes(label) ? prev.filter(item => item !== label) : [...prev, label]
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     )
   }
 
@@ -56,7 +61,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
     }
 
     document.addEventListener("mousedown", handleClick)
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
     
     return () => {
       document.removeEventListener("mousedown", handleClick)
@@ -174,13 +179,13 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                 const isActive = link.href === "" 
                   ? (pathname === resolveHref("/") || pathname === `/site/${tenant.slug}`) 
                   : pathname.startsWith(href)
-                const isOpen = openDropdown === link.label
+                const isOpen = openDropdown === link.id
 
                 return (
                   <div 
-                    key={link.label} 
+                    key={link.id}
                     className="relative group"
-                    onMouseEnter={() => setOpenDropdown(link.label)}
+                    onMouseEnter={() => setOpenDropdown(link.id)}
                     onMouseLeave={() => setOpenDropdown(null)}
                   >
                     {link.children ? (
@@ -216,7 +221,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                         <div className="bg-white rounded-2xl shadow-xl border border-border/50 overflow-hidden flex flex-col p-2 animate-in fade-in slide-in-from-top-4 duration-200">
                           {link.children.map((child: any) => (
                             <Link
-                              key={child.label}
+                              key={child.id}
                               href={resolveHref(child.href)}
                               onClick={() => setOpenDropdown(null)}
                               className="px-4 py-2.5 text-sm text-gray-600 font-semibold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
@@ -257,6 +262,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
 
             {/* Mobile toggle */}
             <button
+              type="button"
               aria-label="Toggle mobile menu"
               className="xl:hidden p-2.5 rounded-full text-gray-700 hover:bg-gray-100 transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -268,7 +274,9 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
             {mobileOpen && (
               <>
                 {/* Backdrop */}
-                <div 
+                <button
+                  type="button"
+                  aria-label="Close mobile menu"
                   className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] xl:hidden animate-in fade-in duration-300"
                   onClick={() => setMobileOpen(false)}
                 />
@@ -281,6 +289,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                       Menu Navigasi
                     </span>
                     <button
+                      type="button"
                       aria-label="Close mobile menu"
                       onClick={() => setMobileOpen(false)}
                       className="p-2 -mr-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors"
@@ -296,14 +305,15 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                       const isActive = link.href === "" 
                         ? (pathname === resolveHref("/") || pathname === `/site/${tenant.slug}`) 
                         : pathname.startsWith(href)
-                      const isExpanded = expandedMobile.includes(link.label)
+                      const isExpanded = expandedMobile.includes(link.id)
                       const Icon = link.icon
                       
                       return (
-                        <div key={link.label} className="flex flex-col">
+                        <div key={link.id} className="flex flex-col">
                           {link.children ? (
                             <button
-                              onClick={() => toggleMobileAccordion(link.label)}
+                              type="button"
+                              onClick={() => toggleMobileAccordion(link.id)}
                               className={cn(
                                 "flex items-center justify-between px-4 py-3.5 text-[15px] font-bold rounded-2xl transition-all duration-200",
                                 isActive ? "bg-primary/10 text-primary" : "text-gray-700 hover:bg-gray-50"
@@ -338,7 +348,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                               <div className="pl-[3.25rem] pr-4 py-1 flex flex-col gap-1">
                                 {link.children.map((child: any) => (
                                   <Link
-                                    key={child.label}
+                                    key={child.id}
                                     href={resolveHref(child.href)}
                                     onClick={() => setMobileOpen(false)}
                                     className="block px-4 py-2.5 text-sm font-semibold text-gray-500 hover:text-primary hover:bg-primary/5 rounded-xl transition-colors relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-gray-300 hover:before:bg-primary"
