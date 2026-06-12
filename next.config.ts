@@ -5,13 +5,8 @@ import { withSentryConfig } from "@sentry/nextjs"
  * Domain gambar yang diizinkan untuk Next.js Image Optimization.
  */
 const ALLOWED_IMAGE_DOMAINS = [
-  { protocol: "https" as const, hostname: "lh3.googleusercontent.com" },
-  { protocol: "https" as const, hostname: "avatars.githubusercontent.com" },
-  { protocol: "https" as const, hostname: "www.gravatar.com" },
-  { protocol: "https" as const, hostname: "images.unsplash.com" },
-  { protocol: "https" as const, hostname: "*.public.blob.vercel-storage.com" },
-  { protocol: "https" as const, hostname: "*.r2.dev" },
-  { protocol: "https" as const, hostname: "*.cloudflarestorage.com" },
+  { protocol: "https" as const, hostname: "**" },
+  { protocol: "http" as const, hostname: "**" },
 ]
 
 /**
@@ -65,12 +60,9 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    // Bypass Next.js Image Optimization secara global.
-    // Alasan:
-    // 1. Gambar sudah dioptimasi (WebP via Sharp) saat upload di upload.service.ts
-    // 2. Domain CDN/R2 bersifat dinamis (diset Super Admin di settings), tidak bisa di-hardcode
-    // 3. Mendukung custom domain apapun: cdn.schoolpro.id, cdn.schoolpro.my.id, dll
-    unoptimized: true,
+    // Next.js Image Optimization diaktifkan untuk meningkatkan skor LCP & Speed Index.
+    // Cache TTL diset 1 minggu untuk meminimalkan load CPU VPS (4 Cores).
+    minimumCacheTTL: 604800,
     remotePatterns: ALLOWED_IMAGE_DOMAINS,
   },
   experimental: {
