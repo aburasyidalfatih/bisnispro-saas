@@ -38,7 +38,7 @@ export function ResetMenuButton() {
           description:"Semua menu telah dikembalikan ke susunan bawaan.",
         })
         setOpen(false) // Tutup dialog setelah sukses
-        router.refresh()
+        window.location.reload() // Force hard reload so MenuBuilder (client component) refetches data
       } else {
         toast({
           title:"Gagal",
