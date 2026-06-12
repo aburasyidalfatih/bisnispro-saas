@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { db, withTenant } from "@/lib/db"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { notFound } from "next/navigation"
 import { WebsiteNavbar } from "./_components/navbar"
@@ -28,44 +28,44 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? `https://${tenant.domain}` 
     : `https://${tenant.slug}.${rootDomain}`
 
-    const ogImageBase = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
-    // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
-    const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
+  const ogImageBase = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
+  const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
 
-    const normalizedLogo = tenant.logo ? (normalizeImageUrl(tenant.logo) || tenant.logo) : null;
+  const normalizedLogo = tenant.logo ? (normalizeImageUrl(tenant.logo) || tenant.logo) : null;
 
-    return {
-      metadataBase: new URL(canonicalDomain),
+  return {
+    metadataBase: new URL(canonicalDomain),
+    title: {
+      template: `%s | ${tenant.name}`,
+      default: tenant.seoTitle || tenant.name,
+    },
+    alternates: {},
+    icons: normalizedLogo ? { 
+      icon: normalizedLogo, 
+      shortcut: normalizedLogo, 
+      apple: normalizedLogo 
+    } : undefined,
+    openGraph: {
       title: {
         template: `%s | ${tenant.name}`,
         default: tenant.seoTitle || tenant.name,
       },
-      alternates: {},
-      icons: normalizedLogo ? { 
-        icon: normalizedLogo, 
-        shortcut: normalizedLogo, 
-        apple: normalizedLogo 
-      } : undefined,
-      openGraph: {
-        title: {
-          template: `%s | ${tenant.name}`,
-          default: tenant.seoTitle || tenant.name,
-        },
-        description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
-        siteName: tenant.name,
-        images: [{ url: ogImageUrl, width: 1200, height: 630, alt: tenant.name }],
-        type: "website",
+      description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
+      siteName: tenant.name,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: tenant.name }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: {
+        template: `%s | ${tenant.name}`,
+        default: tenant.seoTitle || tenant.name,
       },
-      twitter: {
-        card: "summary_large_image",
-        title: {
-          template: `%s | ${tenant.name}`,
-          default: tenant.seoTitle || tenant.name,
-        },
-        description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
-        images: [ogImageUrl],
-      }
+      description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
+      images: [ogImageUrl],
     }
+  }
 }
 
 export default async function WebsiteLayout({
@@ -116,6 +116,24 @@ export default async function WebsiteLayout({
     notFound()
   }
 
+  // Fetch website menus dynamically (uncached) to bypass next.js unstable_cache replication/sync issues
+  const tenantDb = withTenant(tenant.id)
+  const freshMenus = await tenantDb.websiteMenu.findMany({
+    where: { parentId: null, isActive: true },
+    orderBy: { order: "asc" },
+    include: {
+      children: {
+        where: { isActive: true },
+        orderBy: { order: "asc" }
+      }
+    }
+  })
+
+  const tenantWithFreshMenus = {
+    ...tenant,
+    websiteMenus: freshMenus
+  }
+
   // Get active popup
   const activePopup = await getActivePopup(tenant.id)
 
@@ -154,12 +172,12 @@ export default async function WebsiteLayout({
         <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme */}
-        {!tenant.customThemeId && <WebsiteNavbar tenant={tenant as any} />}
+        {!tenant.customThemeId && <WebsiteNavbar tenant={tenantWithFreshMenus as any} />}
         
         <main className="flex-1">{children}</main>
         
         {/* Render Footer hanya jika tidak menggunakan Custom Theme */}
-        {!tenant.customThemeId && <WebsiteFooter tenant={tenant as any} />}
+        {!tenant.customThemeId && <WebsiteFooter tenant={tenantWithFreshMenus as any} />}
         
         {activePopup && <PopupRenderer popup={activePopup} />}
         
@@ -172,8 +190,6 @@ export default async function WebsiteLayout({
         <Suspense fallback={null}>
           <PageTracker tenantId={tenant.id} />
         </Suspense>
-        
-
       </div>
     </RoutingProvider>
   )
