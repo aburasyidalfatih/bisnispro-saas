@@ -19,10 +19,14 @@ import {
 
 export function ResetMenuButton() {
   const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
-  const handleReset = async () => {
+  const handleReset = async (e: React.MouseEvent) => {
+    e.preventDefault() // Mencegah dialog tertutup otomatis
+    if (loading) return
+    
     setLoading(true)
     try {
       const res = await fetch("/api/admin/website/menu/reset", { method:"POST" })
@@ -33,6 +37,7 @@ export function ResetMenuButton() {
           title:"✅ Menu Berhasil Direset",
           description:"Semua menu telah dikembalikan ke susunan bawaan.",
         })
+        setOpen(false) // Tutup dialog setelah sukses
         router.refresh()
       } else {
         toast({
@@ -53,7 +58,7 @@ export function ResetMenuButton() {
   }
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
           variant="outline"
@@ -80,12 +85,14 @@ export function ResetMenuButton() {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Batal</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>Batal</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleReset}
-            className="bg-orange-600 hover:bg-orange-700"
+            disabled={loading}
+            className="bg-orange-600 hover:bg-orange-700 disabled:opacity-50"
           >
-            Ya, Reset Menu
+            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            {loading ? "Mereset..." :"Ya, Reset Menu"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
