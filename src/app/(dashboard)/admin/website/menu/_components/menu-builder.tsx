@@ -120,9 +120,12 @@ export function MenuBuilder() {
         if (res.ok) {
           toast({ title: "Terhapus", description: "Menu berhasil dihapus." })
           fetchMenus()
+        } else {
+          const err = await res.json()
+          toast({ title: "Gagal", description: err.error || "Gagal menghapus menu.", variant: "destructive" })
         }
       } catch (e) {
-        console.error(e)
+        toast({ title: "Gagal", description: "Terjadi kesalahan koneksi.", variant: "destructive" })
       }
     }
   }
