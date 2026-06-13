@@ -4,7 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useEffect, useState, useMemo } from "react"
 import { useSession } from "next-auth/react"
 import { useToast } from "@/hooks/use-toast"
-import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -37,18 +36,53 @@ type StaffRecord = {
   staff: { id: string; name: string; role: string; imageUrl?: string }
 }
 
+type ExportMode = "range" | "week" | "month" | "year"
+
+function getWeekInputValue(date = new Date()) {
+  const target = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+  const dayNumber = target.getUTCDay() || 7
+  target.setUTCDate(target.getUTCDate() + 4 - dayNumber)
+  const yearStart = new Date(Date.UTC(target.getUTCFullYear(), 0, 1))
+  const weekNumber = Math.ceil((((target.getTime() - yearStart.getTime()) / 86400000) + 1) / 7)
+
+  return `${target.getUTCFullYear()}-W${String(weekNumber).padStart(2, "0")}`
+}
+
+function parseMonthStr(monthStr: string) {
+  const [year, month] = monthStr.split("-").map(Number)
+  return new Date(year, month - 1, 1)
+}
+
+function getHHMM(isoString?: string) {
+  if (!isoString) return ""
+  const d = new Date(isoString)
+  if (isNaN(d.getTime())) return ""
+  const hours = String(d.getHours()).padStart(2, "0")
+  const minutes = String(d.getMinutes()).padStart(2, "0")
+  return `${hours}:${minutes}`
+}
+
+function getExportFilename(contentDisposition: string | null) {
+  const match = contentDisposition?.match(/filename="?([^"]+)"?/)
+  return match?.[1] || `Laporan_Presensi_GTK_${format(new Date(), "yyyyMMdd")}.xlsx`
+}
+
 export default function AdminGTKAttendancePage() {
   const { data: session } = useSession()
   const { toast } = useToast()
   const tenant = session?.user?.tenants?.[0]
 
-  const searchParams = useSearchParams()
-  const tabParam = searchParams.get("tab")
-
   const activeTab: string = "monthly";
 
   
   const [staffList, setStaffList] = useState<any[]>([])
+  const [exporting, setExporting] = useState(false)
+  const [exportMode, setExportMode] = useState<ExportMode>("month")
+  const [exportFromDate, setExportFromDate] = useState(() => format(startOfMonth(new Date()), "yyyy-MM-dd"))
+  const [exportToDate, setExportToDate] = useState(() => format(new Date(), "yyyy-MM-dd"))
+  const [exportWeek, setExportWeek] = useState(() => getWeekInputValue())
+  const [exportMonth, setExportMonth] = useState(() => format(new Date(), "yyyy-MM"))
+  const [exportYear, setExportYear] = useState(() => format(new Date(), "yyyy"))
   
   // Modal State
   const [openModal, setOpenModal] = useState(false)
@@ -63,23 +97,8 @@ export default function AdminGTKAttendancePage() {
     notes: "",
   })
 
-  // Helper date parsing
-  const parseMonthStr = (monthStr: string) => {
-    const [year, month] = monthStr.split('-').map(Number)
-    return new Date(year, month - 1, 1)
-  }
-
-  const getHHMM = (isoString?: string) => {
-    if (!isoString) return ""
-    const d = new Date(isoString)
-    if (isNaN(d.getTime())) return ""
-    const hours = String(d.getHours()).padStart(2, '0')
-    const minutes = String(d.getMinutes()).padStart(2, '0')
-    return `${hours}:${minutes}`
-  }
-
   // TODAY TAB STATE
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"))
+  const [selectedDate, setSelectedDate] = useState(() => format(new Date(), "yyyy-MM-dd"))
   const [todayRecords, setTodayRecords] = useState<StaffRecord[]>([])
   const [todayLoading, setTodayLoading] = useState(false)
   const [todaySearch, setTodaySearch] = useState("")
@@ -134,7 +153,7 @@ export default function AdminGTKAttendancePage() {
 
 
   // MONTHLY TAB STATE
-  const [selectedMonth, setSelectedMonth] = useState(format(new Date(), "yyyy-MM"))
+  const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), "yyyy-MM"))
   const [monthlyRecords, setMonthlyRecords] = useState<StaffRecord[]>([])
   const [monthlyLoading, setMonthlyLoading] = useState(false)
   const [monthlySearch, setMonthlySearch] = useState("")
@@ -196,7 +215,7 @@ export default function AdminGTKAttendancePage() {
 
 
   // YEARLY TAB STATE
-  const [selectedYear, setSelectedYear] = useState(format(new Date(), "yyyy"))
+  const [selectedYear, setSelectedYear] = useState(() => format(new Date(), "yyyy"))
   const [yearlyRecords, setYearlyRecords] = useState<StaffRecord[]>([])
   const [yearlyLoading, setYearlyLoading] = useState(false)
   const [yearlySearch, setYearlySearch] = useState("")
@@ -257,8 +276,8 @@ export default function AdminGTKAttendancePage() {
 
 
   // RIWAYAT LOGS TAB STATE
-  const [logsFromDate, setLogsFromDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"))
-  const [logsToDate, setLogsToDate] = useState(format(new Date(), "yyyy-MM-dd"))
+  const [logsFromDate, setLogsFromDate] = useState(() => format(startOfMonth(new Date()), "yyyy-MM-dd"))
+  const [logsToDate, setLogsToDate] = useState(() => format(new Date(), "yyyy-MM-dd"))
   const [logsRecords, setLogsRecords] = useState<StaffRecord[]>([])
   const [logsLoading, setLogsLoading] = useState(false)
   const [logsPage, setLogsPage] = useState(1)
@@ -376,85 +395,53 @@ export default function AdminGTKAttendancePage() {
     }
   }
 
-  // EXPORT CSV DYNAMIC
-  const downloadCSV = (headers: string[], rows: any[][], filename: string) => {
-    const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n")
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.setAttribute("href", url)
-    link.setAttribute("download", filename)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+  const handleExportExcel = async () => {
+    if (!tenant) {
+      return toast({ title: "Tenant belum siap", variant: "destructive" })
+    }
 
-  const handleExportCSV = () => {
-    if (activeTab === "today") {
-      const headers = ["Nama Guru/Staf", "Jabatan", "Tanggal", "Status", "Jam Masuk", "Jam Pulang", "GPS Lokasi", "Catatan"]
-      const rows = filteredTodayStaffList.map(item => {
-        const rec = item.record
-        const timeIn = rec?.checkInAt ? format(new Date(rec.checkInAt), "HH:mm") : "-"
-        const timeOut = rec?.checkOutAt ? format(new Date(rec.checkOutAt), "HH:mm") : "-"
-        const gps = rec?.checkInLat && rec?.checkInLng ? `${rec.checkInLat};${rec.checkInLng}` : "-"
-        const statusLabel = STATUS_CFG[item.status]?.label || "-"
-        return [
-          `"${item.staff.name}"`,
-          `"${item.staff.role || "-"}"`,
-          `"${format(new Date(selectedDate), "yyyy-MM-dd")}"`,
-          `"${statusLabel}"`,
-          `"${timeIn}"`,
-          `"${timeOut}"`,
-          `"${gps}"`,
-          `"${rec?.notes || "-"}"`
-        ]
+    if (exportMode === "range" && exportFromDate > exportToDate) {
+      return toast({ title: "Rentang tanggal tidak valid", description: "Tanggal mulai tidak boleh melebihi tanggal akhir.", variant: "destructive" })
+    }
+
+    setExporting(true)
+    try {
+      const params = new URLSearchParams({
+        tenantId: tenant.id,
+        mode: exportMode,
       })
-      downloadCSV(headers, rows, `Laporan_Harian_GTK_${selectedDate}.csv`)
-    } else if (activeTab === "monthly") {
-      const headers = ["Nama Guru/Staf", "Jabatan", "Hadir", "Izin", "Sakit", "Alpha", "Total Absensi", "Kehadiran %"]
-      const rows = filteredMonthlySummary.map(s => [
-        `"${s.name}"`,
-        `"${s.role || "-"}"`,
-        s.hadir,
-        s.izin,
-        s.sakit,
-        s.alpha,
-        s.total,
-        `"${s.percentage}%"`
-      ])
-      downloadCSV(headers, rows, `Rekap_Bulanan_GTK_${selectedMonth}.csv`)
-    } else if (activeTab === "yearly") {
-      const headers = ["Nama Guru/Staf", "Jabatan", "Hadir", "Izin", "Sakit", "Alpha", "Total Absensi", "Kehadiran %"]
-      const rows = filteredYearlySummary.map(s => [
-        `"${s.name}"`,
-        `"${s.role || "-"}"`,
-        s.hadir,
-        s.izin,
-        s.sakit,
-        s.alpha,
-        s.total,
-        `"${s.percentage}%"`
-      ])
-      downloadCSV(headers, rows, `Rekap_Tahunan_GTK_${selectedYear}.csv`)
-    } else if (activeTab === "logs") {
-      const headers = ["Tanggal", "Nama Guru/Staf", "Jabatan", "Status", "Jam Masuk", "Jam Pulang", "GPS Lokasi", "Catatan"]
-      const rows = filteredLogs.map(r => {
-        const timeIn = r.checkInAt ? format(new Date(r.checkInAt), "HH:mm") : "-"
-        const timeOut = r.checkOutAt ? format(new Date(r.checkOutAt), "HH:mm") : "-"
-        const gps = r.checkInLat && r.checkInLng ? `${r.checkInLat};${r.checkInLng}` : "-"
-        const statusLabel = STATUS_CFG[r.status]?.label || "-"
-        return [
-          `"${format(new Date(r.date), "yyyy-MM-dd")}"`,
-          `"${r.staff?.name}"`,
-          `"${r.staff?.role || "-"}"`,
-          `"${statusLabel}"`,
-          `"${timeIn}"`,
-          `"${timeOut}"`,
-          `"${gps}"`,
-          `"${r.notes || "-"}"`
-        ]
-      })
-      downloadCSV(headers, rows, `Riwayat_Log_GTK_${logsFromDate}_to_${logsToDate}.csv`)
+
+      if (exportMode === "range") {
+        params.set("from", exportFromDate)
+        params.set("to", exportToDate)
+      } else if (exportMode === "week") {
+        params.set("week", exportWeek)
+      } else if (exportMode === "month") {
+        params.set("month", exportMonth)
+      } else {
+        params.set("year", exportYear)
+      }
+
+      const res = await fetch(`/api/gtk/attendance/export?${params.toString()}`)
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ error: "Export gagal" }))
+        throw new Error(error.error || "Export gagal")
+      }
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = getExportFilename(res.headers.get("Content-Disposition"))
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      toast({ title: "Export berhasil", description: "File Excel presensi GTK berhasil diunduh." })
+    } catch (err: any) {
+      toast({ title: "Gagal export Excel", description: err.message || "Terjadi kesalahan saat membuat file.", variant: "destructive" })
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -467,8 +454,9 @@ export default function AdminGTKAttendancePage() {
           <p className="text-sm text-muted-foreground">Monitor, koreksi, dan rekap absensi karyawan profesional.</p>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <Button variant="outline" className="rounded-xl gap-2 shadow-sm font-semibold" onClick={handleExportCSV}>
-            <Download className="h-4 w-4" /> Export CSV
+          <Button variant="outline" className="rounded-xl gap-2 shadow-sm font-semibold" onClick={handleExportExcel} disabled={exporting}>
+            {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Ekspor Excel
           </Button>
           <Button variant="default" className="rounded-xl gap-2 font-semibold shadow-sm" onClick={() => {
             if (staffList.length > 0) {
@@ -511,6 +499,97 @@ export default function AdminGTKAttendancePage() {
         })}
       </div>
 
+      <Card className="glass border-0 shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex flex-col lg:flex-row lg:items-end gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 flex-1">
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Filter className="h-3.5 w-3.5" /> Periode Export
+                </Label>
+                <Select value={exportMode} onValueChange={(value) => setExportMode(value as ExportMode)}>
+                  <SelectTrigger className="rounded-xl h-10 text-xs bg-white/70 dark:bg-zinc-950/60">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="range">Rentang Tanggal</SelectItem>
+                    <SelectItem value="week">Minggu</SelectItem>
+                    <SelectItem value="month">Bulan</SelectItem>
+                    <SelectItem value="year">Tahun</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {exportMode === "range" && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Dari</Label>
+                    <Input
+                      type="date"
+                      value={exportFromDate}
+                      onChange={(e) => setExportFromDate(e.target.value)}
+                      className="rounded-xl h-10 text-xs bg-white/70 dark:bg-zinc-950/60"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sampai</Label>
+                    <Input
+                      type="date"
+                      value={exportToDate}
+                      onChange={(e) => setExportToDate(e.target.value)}
+                      className="rounded-xl h-10 text-xs bg-white/70 dark:bg-zinc-950/60"
+                    />
+                  </div>
+                </>
+              )}
+
+              {exportMode === "week" && (
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Minggu</Label>
+                  <Input
+                    type="week"
+                    value={exportWeek}
+                    onChange={(e) => setExportWeek(e.target.value)}
+                    className="rounded-xl h-10 text-xs bg-white/70 dark:bg-zinc-950/60"
+                  />
+                </div>
+              )}
+
+              {exportMode === "month" && (
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Bulan</Label>
+                  <Input
+                    type="month"
+                    value={exportMonth}
+                    onChange={(e) => setExportMonth(e.target.value)}
+                    className="rounded-xl h-10 text-xs bg-white/70 dark:bg-zinc-950/60"
+                  />
+                </div>
+              )}
+
+              {exportMode === "year" && (
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Tahun</Label>
+                  <Input
+                    type="number"
+                    min="2000"
+                    max="2100"
+                    value={exportYear}
+                    onChange={(e) => setExportYear(e.target.value)}
+                    className="rounded-xl h-10 text-xs bg-white/70 dark:bg-zinc-950/60"
+                  />
+                </div>
+              )}
+            </div>
+
+            <Button type="button" className="rounded-xl gap-2 font-semibold lg:w-auto" onClick={handleExportExcel} disabled={exporting}>
+              {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              Ekspor Excel
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {activeTab === "today" ? (
@@ -520,10 +599,10 @@ export default function AdminGTKAttendancePage() {
               { label: "Hadir", value: todayStats.hadir, icon: CheckCircle, color: "text-emerald-600", badge: "bg-emerald-500/10 text-emerald-600 border-emerald-200" },
               { label: "Izin / Sakit", value: todayStats.izinSakit, icon: Clock, color: "text-blue-600", badge: "bg-blue-500/10 text-blue-600 border-blue-200" },
               { label: "Belum Absen", value: todayStats.belumAbsen, icon: XCircle, color: "text-zinc-500", badge: "bg-zinc-500/10 text-zinc-500 border-zinc-200" },
-            ].map((card, i) => {
+            ].map((card) => {
               const Icon = card.icon
               return (
-                <Card key={i} className="glass border-0 shadow-sm">
+                <Card key={card.label} className="glass border-0 shadow-sm">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border", card.badge)}>
                       <Icon className="h-5 w-5" />
@@ -544,10 +623,10 @@ export default function AdminGTKAttendancePage() {
               { label: "Izin (Bulan Ini)", value: monthlyRecords.filter(r => r.status === "IZIN").length, icon: Clock, color: "text-blue-600", badge: "bg-blue-500/10 text-blue-600 border-blue-200" },
               { label: "Sakit (Bulan Ini)", value: monthlyRecords.filter(r => r.status === "SAKIT").length, icon: Minus, color: "text-amber-600", badge: "bg-amber-500/10 text-amber-600 border-amber-200" },
               { label: "Alpha (Bulan Ini)", value: monthlyRecords.filter(r => r.status === "ALPHA").length, icon: XCircle, color: "text-red-600", badge: "bg-red-500/10 text-red-600 border-red-200" },
-            ].map((card, i) => {
+            ].map((card) => {
               const Icon = card.icon
               return (
-                <Card key={i} className="glass border-0 shadow-sm">
+                <Card key={card.label} className="glass border-0 shadow-sm">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border", card.badge)}>
                       <Icon className="h-5 w-5" />
@@ -568,10 +647,10 @@ export default function AdminGTKAttendancePage() {
               { label: "Izin (Tahun Ini)", value: yearlyRecords.filter(r => r.status === "IZIN").length, icon: Clock, color: "text-blue-600", badge: "bg-blue-500/10 text-blue-600 border-blue-200" },
               { label: "Sakit (Tahun Ini)", value: yearlyRecords.filter(r => r.status === "SAKIT").length, icon: Minus, color: "text-amber-600", badge: "bg-amber-500/10 text-amber-600 border-amber-200" },
               { label: "Alpha (Tahun Ini)", value: yearlyRecords.filter(r => r.status === "ALPHA").length, icon: XCircle, color: "text-red-600", badge: "bg-red-500/10 text-red-600 border-red-200" },
-            ].map((card, i) => {
+            ].map((card) => {
               const Icon = card.icon
               return (
-                <Card key={i} className="glass border-0 shadow-sm">
+                <Card key={card.label} className="glass border-0 shadow-sm">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border", card.badge)}>
                       <Icon className="h-5 w-5" />
@@ -592,10 +671,10 @@ export default function AdminGTKAttendancePage() {
               { label: "Hadir", value: logsRecords.filter(r => r.status === "HADIR").length, icon: CheckCircle, color: "text-emerald-600", badge: "bg-emerald-500/10 text-emerald-600 border-emerald-200" },
               { label: "Izin / Sakit", value: logsRecords.filter(r => r.status === "IZIN" || r.status === "SAKIT").length, icon: Clock, color: "text-blue-600", badge: "bg-blue-500/10 text-blue-600 border-blue-200" },
               { label: "Alpha", value: logsRecords.filter(r => r.status === "ALPHA").length, icon: XCircle, color: "text-red-600", badge: "bg-red-500/10 text-red-600 border-red-200" },
-            ].map((card, i) => {
+            ].map((card) => {
               const Icon = card.icon
               return (
-                <Card key={i} className="glass border-0 shadow-sm">
+                <Card key={card.label} className="glass border-0 shadow-sm">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border", card.badge)}>
                       <Icon className="h-5 w-5" />
@@ -1080,7 +1159,12 @@ export default function AdminGTKAttendancePage() {
       {openModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setOpenModal(false)} />
+          <button
+            type="button"
+            aria-label="Tutup modal koreksi absensi"
+            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            onClick={() => setOpenModal(false)}
+          />
           
           {/* Modal Container */}
           <div className="relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-full max-w-md p-6 overflow-hidden flex flex-col gap-4 animate-in fade-in zoom-in duration-200">
