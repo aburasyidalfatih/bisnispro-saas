@@ -64,6 +64,7 @@ export async function GET(
   return new NextResponse(fileBuffer, {
     headers: {
       "Content-Type": mimeType,
+      "Content-Length": fileBuffer.length.toString(),
       "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable",
       "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
       "X-Content-Type-Options": "nosniff"
