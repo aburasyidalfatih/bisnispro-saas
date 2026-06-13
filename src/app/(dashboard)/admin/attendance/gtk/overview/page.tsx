@@ -497,85 +497,95 @@ export default function AdminGTKAttendancePage() {
 
       <Card className="glass border-0 shadow-sm overflow-hidden">
         <CardContent className="p-3 sm:p-4">
-          <div className="flex flex-col gap-3 xl:flex-row xl:items-end">
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-              <div className="space-y-1.5 sm:w-56">
-                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 leading-none">
-                  <Filter className="h-3.5 w-3.5" /> Periode Ekspor
-                </Label>
-                <Select value={exportMode} onValueChange={(value) => setExportMode(value as ExportMode)}>
-                  <SelectTrigger className="rounded-xl h-10 text-xs bg-white/80 dark:bg-zinc-950/60">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="range">Rentang Tanggal</SelectItem>
-                    <SelectItem value="week">Minggu</SelectItem>
-                    <SelectItem value="month">Bulan</SelectItem>
-                    <SelectItem value="year">Tahun</SelectItem>
-                  </SelectContent>
-                </Select>
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center lg:flex-1">
+              <div className="flex h-10 items-center gap-2 rounded-xl border border-border/70 bg-white/70 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground dark:bg-zinc-950/60 md:w-44">
+                <Filter className="h-3.5 w-3.5 shrink-0" />
+                <span>Periode Ekspor</span>
               </div>
 
-              {exportMode === "range" && (
-                <>
-                  <div className="space-y-1.5 sm:w-44">
-                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground leading-none">Dari</Label>
+              <div className={cn(
+                "grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:items-center lg:w-auto",
+                exportMode === "range" ? "lg:grid-cols-[180px_160px_160px]" :
+                exportMode === "year" ? "lg:grid-cols-[180px_120px]" :
+                "lg:grid-cols-[180px_220px]"
+              )}>
+                <div>
+                  <Label className="sr-only">Jenis periode ekspor</Label>
+                  <Select value={exportMode} onValueChange={(value) => setExportMode(value as ExportMode)}>
+                    <SelectTrigger className="h-10 rounded-xl bg-white/80 text-xs dark:bg-zinc-950/60">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="range">Rentang Tanggal</SelectItem>
+                      <SelectItem value="week">Minggu</SelectItem>
+                      <SelectItem value="month">Bulan</SelectItem>
+                      <SelectItem value="year">Tahun</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {exportMode === "range" && (
+                  <>
+                    <div>
+                      <Label className="sr-only">Tanggal mulai ekspor</Label>
+                      <Input
+                        type="date"
+                        value={exportFromDate}
+                        onChange={(e) => setExportFromDate(e.target.value)}
+                        className="h-10 rounded-xl bg-white/80 text-xs dark:bg-zinc-950/60"
+                      />
+                    </div>
+                    <div>
+                      <Label className="sr-only">Tanggal akhir ekspor</Label>
+                      <Input
+                        type="date"
+                        value={exportToDate}
+                        onChange={(e) => setExportToDate(e.target.value)}
+                        className="h-10 rounded-xl bg-white/80 text-xs dark:bg-zinc-950/60"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {exportMode === "week" && (
+                  <div>
+                    <Label className="sr-only">Minggu ekspor</Label>
                     <Input
-                      type="date"
-                      value={exportFromDate}
-                      onChange={(e) => setExportFromDate(e.target.value)}
-                      className="rounded-xl h-10 text-xs bg-white/80 dark:bg-zinc-950/60"
+                      type="week"
+                      value={exportWeek}
+                      onChange={(e) => setExportWeek(e.target.value)}
+                      className="h-10 rounded-xl bg-white/80 text-xs dark:bg-zinc-950/60"
                     />
                   </div>
-                  <div className="space-y-1.5 sm:w-44">
-                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground leading-none">Sampai</Label>
+                )}
+
+                {exportMode === "month" && (
+                  <div>
+                    <Label className="sr-only">Bulan ekspor</Label>
                     <Input
-                      type="date"
-                      value={exportToDate}
-                      onChange={(e) => setExportToDate(e.target.value)}
-                      className="rounded-xl h-10 text-xs bg-white/80 dark:bg-zinc-950/60"
+                      type="month"
+                      value={exportMonth}
+                      onChange={(e) => setExportMonth(e.target.value)}
+                      className="h-10 rounded-xl bg-white/80 text-xs dark:bg-zinc-950/60"
                     />
                   </div>
-                </>
-              )}
+                )}
 
-              {exportMode === "week" && (
-                <div className="space-y-1.5 sm:w-56">
-                  <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground leading-none">Minggu</Label>
-                  <Input
-                    type="week"
-                    value={exportWeek}
-                    onChange={(e) => setExportWeek(e.target.value)}
-                    className="rounded-xl h-10 text-xs bg-white/80 dark:bg-zinc-950/60"
-                  />
-                </div>
-              )}
-
-              {exportMode === "month" && (
-                <div className="space-y-1.5 sm:w-56">
-                  <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground leading-none">Bulan</Label>
-                  <Input
-                    type="month"
-                    value={exportMonth}
-                    onChange={(e) => setExportMonth(e.target.value)}
-                    className="rounded-xl h-10 text-xs bg-white/80 dark:bg-zinc-950/60"
-                  />
-                </div>
-              )}
-
-              {exportMode === "year" && (
-                <div className="space-y-1.5 sm:w-36">
-                  <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground leading-none">Tahun</Label>
-                  <Input
-                    type="number"
-                    min="2000"
-                    max="2100"
-                    value={exportYear}
-                    onChange={(e) => setExportYear(e.target.value)}
-                    className="rounded-xl h-10 text-xs bg-white/80 dark:bg-zinc-950/60"
-                  />
-                </div>
-              )}
+                {exportMode === "year" && (
+                  <div>
+                    <Label className="sr-only">Tahun ekspor</Label>
+                    <Input
+                      type="number"
+                      min="2000"
+                      max="2100"
+                      value={exportYear}
+                      onChange={(e) => setExportYear(e.target.value)}
+                      className="h-10 rounded-xl bg-white/80 text-xs dark:bg-zinc-950/60"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             <Button type="button" className="h-10 rounded-xl gap-2 font-semibold w-full sm:w-auto shrink-0" onClick={handleExportExcel} disabled={exporting}>
