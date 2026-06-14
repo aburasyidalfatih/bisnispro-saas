@@ -4,6 +4,7 @@ import { MapPin, Phone, Mail, MessageCircle } from "lucide-react"
 import { ContactForm } from "./contact-form"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { formatSocialUrl } from "@/lib/utils"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 
 
@@ -169,26 +170,32 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
             )}
 
             {/* Social Media */}
-            {(tenant.instagram || tenant.facebook || tenant.youtube) && (
+            {(tenant.instagram || tenant.facebook || tenant.youtube || tenant.tiktok) && (
               <div>
                 <h3 className="font-semibold text-sm mb-3">Media Sosial</h3>
                 <div className="flex gap-3 flex-wrap">
                   {tenant.instagram && (
-                    <a href={`https://instagram.com/${tenant.instagram}`} target="_blank" rel="noopener"
+                    <a href={formatSocialUrl(tenant.instagram, 'instagram')} target="_blank" rel="noopener"
                       className="flex items-center gap-2 px-4 py-2 rounded-xl border hover:bg-muted/50 transition-colors text-sm">
-                      📷 @{tenant.instagram}
+                      📷 Instagram
                     </a>
                   )}
                   {tenant.facebook && (
-                    <a href={`https://facebook.com/${tenant.facebook}`} target="_blank" rel="noopener"
+                    <a href={formatSocialUrl(tenant.facebook, 'facebook')} target="_blank" rel="noopener"
                       className="flex items-center gap-2 px-4 py-2 rounded-xl border hover:bg-muted/50 transition-colors text-sm">
-                      📘 {tenant.facebook}
+                      📘 Facebook
                     </a>
                   )}
                   {tenant.youtube && (
-                    <a href={`https://youtube.com/${tenant.youtube}`} target="_blank" rel="noopener"
+                    <a href={formatSocialUrl(tenant.youtube, 'youtube')} target="_blank" rel="noopener"
                       className="flex items-center gap-2 px-4 py-2 rounded-xl border hover:bg-muted/50 transition-colors text-sm">
-                      ▶️ {tenant.youtube}
+                      ▶️ YouTube
+                    </a>
+                  )}
+                  {tenant.tiktok && (
+                    <a href={formatSocialUrl(tenant.tiktok, 'tiktok')} target="_blank" rel="noopener"
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl border hover:bg-muted/50 transition-colors text-sm">
+                      🎵 TikTok
                     </a>
                   )}
                 </div>

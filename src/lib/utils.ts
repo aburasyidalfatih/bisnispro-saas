@@ -119,3 +119,26 @@ export function extractYouTubeId(url?: string | null): string | null {
   const match = url.match(/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/)
   return match ? match[1] : null
 }
+
+export function formatSocialUrl(url: string | null | undefined, platform: 'facebook' | 'instagram' | 'youtube' | 'tiktok'): string {
+  if (!url) return "#"
+  let cleaned = url.trim()
+  if (cleaned.startsWith("http://") || cleaned.startsWith("https://")) return cleaned
+
+  const domains = {
+    facebook: 'facebook.com',
+    instagram: 'instagram.com',
+    youtube: 'youtube.com',
+    tiktok: 'tiktok.com'
+  }
+  const domain = domains[platform]
+  
+  if (cleaned.includes(domain)) return `https://${cleaned.replace(/^(https?:\/\/)?(www\.)?/, '')}`
+
+  cleaned = cleaned.replace(/^@/, '')
+  
+  if (platform === 'tiktok') {
+    return `https://tiktok.com/@${cleaned}`
+  }
+  return `https://${domain}/${cleaned}`
+}
