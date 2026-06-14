@@ -43,6 +43,7 @@ export default function EditAchievementPage() {
     description:"",
     date:"",
     level:"LOKAL",
+    customLevel:"",
     imageUrl:""
   })
 
@@ -65,7 +66,8 @@ export default function EditAchievementPage() {
               title: d.title ||"",
               description: d.description ||"",
               date: d.date ? new Date(d.date).toISOString().split('T')[0] :"",
-              level: d.level ||"LOKAL",
+              level: ["LOKAL","KABUPATEN","PROVINSI","NASIONAL","INTERNASIONAL"].includes(d.level || "LOKAL") ? (d.level || "LOKAL") : "LAINNYA",
+              customLevel: ["LOKAL","KABUPATEN","PROVINSI","NASIONAL","INTERNASIONAL"].includes(d.level || "LOKAL") ? "" : (d.level || ""),
               imageUrl: d.imageUrl ||""
             })
             if (d.imageUrl) setPreviewUrl(normalizeImageUrl(d.imageUrl) || null)
@@ -125,7 +127,7 @@ export default function EditAchievementPage() {
         title: formData.title,
         description: formData.description,
         date: new Date(formData.date).toISOString(),
-        level: formData.level,
+        level: formData.level === "LAINNYA" ? formData.customLevel : formData.level,
         imageUrl: finalImageUrl,
       })
 
@@ -273,8 +275,17 @@ export default function EditAchievementPage() {
                     <SelectItem value="PROVINSI">Tingkat Provinsi</SelectItem>
                     <SelectItem value="NASIONAL">Tingkat Nasional</SelectItem>
                     <SelectItem value="INTERNASIONAL">Tingkat Internasional</SelectItem>
+                    <SelectItem value="LAINNYA">Lainnya (Isi Sendiri)</SelectItem>
                   </SelectContent>
                 </Select>
+                {formData.level === "LAINNYA" && (
+                  <Input 
+                    value={formData.customLevel || ""} 
+                    onChange={e => setFormData({...formData, customLevel: e.target.value})} 
+                    placeholder="Masukkan tingkat prestasi..." 
+                    className="mt-2 rounded-xl"
+                  />
+                )}
               </div>
             </div>
 

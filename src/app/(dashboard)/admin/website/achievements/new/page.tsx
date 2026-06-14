@@ -36,7 +36,8 @@ export default function NewAchievementPage() {
     title:"",
     description:"",
     date: new Date().toISOString().split('T')[0],
-    level:"LOKAL"
+    level:"LOKAL",
+    customLevel: ""
   })
 
   // AI State
@@ -92,7 +93,7 @@ export default function NewAchievementPage() {
         title: formData.title,
         description: formData.description,
         date: new Date(formData.date).toISOString(),
-        level: formData.level,
+        level: formData.level === "LAINNYA" ? formData.customLevel : formData.level,
         imageUrl: imageUrl,
       })
 
@@ -238,8 +239,17 @@ export default function NewAchievementPage() {
                     <SelectItem value="PROVINSI">Tingkat Provinsi</SelectItem>
                     <SelectItem value="NASIONAL">Tingkat Nasional</SelectItem>
                     <SelectItem value="INTERNASIONAL">Tingkat Internasional</SelectItem>
+                    <SelectItem value="LAINNYA">Lainnya (Isi Sendiri)</SelectItem>
                   </SelectContent>
                 </Select>
+                {formData.level === "LAINNYA" && (
+                  <Input 
+                    value={formData.customLevel || ""} 
+                    onChange={e => setFormData({...formData, customLevel: e.target.value})} 
+                    placeholder="Masukkan tingkat prestasi..." 
+                    className="mt-2 rounded-xl"
+                  />
+                )}
               </div>
             </div>
 
