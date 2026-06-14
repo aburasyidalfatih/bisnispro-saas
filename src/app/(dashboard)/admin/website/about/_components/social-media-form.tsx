@@ -49,6 +49,20 @@ export function SocialMediaForm({ form, setForm }: SocialMediaFormProps) {
               <Input value={form.tiktok} onChange={(e) => setForm(p => ({ ...p, tiktok: e.target.value }))} placeholder="username" className="rounded-xl" />
             </div>
           </div>
+          <div className="space-y-2">
+            <Label>▶️ YouTube</Label>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground shrink-0">@</span>
+              <Input value={form.youtube} onChange={(e) => setForm(p => ({ ...p, youtube: e.target.value }))} placeholder="channel" className="rounded-xl" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>✈️ Telegram</Label>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground shrink-0">@</span>
+              <Input value={form.telegram} onChange={(e) => setForm(p => ({ ...p, telegram: e.target.value }))} placeholder="username" className="rounded-xl" />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

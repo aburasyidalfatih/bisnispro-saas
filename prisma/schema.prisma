@@ -34,6 +34,7 @@ model Tenant {
   facebook             String?
   youtube              String?
   tiktok               String?
+  telegram             String?
   services             Json?
   heroImage            String?
   gallery              Json?

@@ -24,6 +24,7 @@ const websiteSchema = z.object({
   facebook: z.string().max(100).optional().nullable(),
   youtube: z.string().max(100).optional().nullable(),
   tiktok: z.string().max(100).optional().nullable(),
+  telegram: z.string().max(100).optional().nullable(),
   // Konten JSON
   gallery: z.array(z.any()).optional().nullable(),
   settings: z.record(z.any()).optional().nullable(),

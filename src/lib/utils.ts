@@ -120,7 +120,7 @@ export function extractYouTubeId(url?: string | null): string | null {
   return match ? match[1] : null
 }
 
-export function formatSocialUrl(url: string | null | undefined, platform: 'facebook' | 'instagram' | 'youtube' | 'tiktok'): string {
+export function formatSocialUrl(url: string | null | undefined, platform: 'facebook' | 'instagram' | 'youtube' | 'tiktok' | 'telegram'): string {
   if (!url) return "#"
   let cleaned = url.trim()
   if (cleaned.startsWith("http://") || cleaned.startsWith("https://")) return cleaned
@@ -129,7 +129,8 @@ export function formatSocialUrl(url: string | null | undefined, platform: 'faceb
     facebook: 'facebook.com',
     instagram: 'instagram.com',
     youtube: 'youtube.com',
-    tiktok: 'tiktok.com'
+    tiktok: 'tiktok.com',
+    telegram: 't.me'
   }
   const domain = domains[platform]
   

@@ -170,7 +170,7 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
             )}
 
             {/* Social Media */}
-            {(tenant.instagram || tenant.facebook || tenant.youtube || tenant.tiktok) && (
+            {(tenant.instagram || tenant.facebook || tenant.youtube || tenant.tiktok || tenant.telegram) && (
               <div>
                 <h3 className="font-semibold text-sm mb-3">Media Sosial</h3>
                 <div className="flex gap-3 flex-wrap">
@@ -196,6 +196,12 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
                     <a href={formatSocialUrl(tenant.tiktok, 'tiktok')} target="_blank" rel="noopener"
                       className="flex items-center gap-2 px-4 py-2 rounded-xl border hover:bg-muted/50 transition-colors text-sm">
                       🎵 TikTok
+                    </a>
+                  )}
+                  {tenant.telegram && (
+                    <a href={formatSocialUrl(tenant.telegram, 'telegram')} target="_blank" rel="noopener"
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl border hover:bg-muted/50 transition-colors text-sm">
+                      ✈️ Telegram
                     </a>
                   )}
                 </div>

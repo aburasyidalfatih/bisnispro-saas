@@ -15,6 +15,7 @@ export interface AboutFormState {
   facebook: string
   youtube: string
   tiktok: string
+  telegram: string
   settings: any
 }
 

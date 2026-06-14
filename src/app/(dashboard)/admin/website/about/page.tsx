@@ -35,7 +35,7 @@ export default function WebsiteAboutPage() {
     name:"", logo:"", tagline:"", description:"", about:"",
     seoTitle:"", seoDesc:"",
     address:"", phone:"", email:"", website:"",
-    whatsapp:"", instagram:"", facebook:"", youtube:"", tiktok:"",
+    whatsapp:"", instagram:"", facebook:"", youtube:"", tiktok:"", telegram:"",
     settings: {} as any,
   })
 
@@ -74,7 +74,7 @@ export default function WebsiteAboutPage() {
           address: d.address ||"", phone: d.phone ||"", email: d.email ||"",
           website: d.website ||"", whatsapp: d.whatsapp ||"",
           instagram: d.instagram ||"", facebook: d.facebook ||"",
-          youtube: d.youtube ||"", tiktok: d.tiktok ||"",
+          youtube: d.youtube ||"", tiktok: d.tiktok ||"", telegram: d.telegram ||"",
           settings: d.settings || {},
         })
         setLogoPreview(d.logo ||"")
