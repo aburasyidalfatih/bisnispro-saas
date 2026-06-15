@@ -91,8 +91,17 @@ export async function saveFile(
       const maxStorage = tenant?.subscriptionPlan?.maxStorage || (tenant?.plan === "free" ? 100 : 1024)
 
       if (maxStorage > 0) {
-        // fileUpload removed from Prisma schema
-        const currentUsageBytes = 0
+        const [fileUploadGroup, documentGroup] = await Promise.all([
+          db.fileUpload.aggregate({
+            where: { tenantId },
+            _sum: { size: true }
+          }),
+          db.document.aggregate({
+            where: { tenantId },
+            _sum: { size: true }
+          })
+        ]);
+        const currentUsageBytes = (fileUploadGroup._sum.size || 0) + (documentGroup._sum.size || 0);
         const maxStorageBytes = maxStorage * 1024 * 1024
         
         if (currentUsageBytes + file.size > maxStorageBytes) {
@@ -240,8 +249,15 @@ export async function saveFile(
       publicUrl = `/api/files/${relativeToUpload}`
     }
 
-    // db.fileUpload removed from Prisma schema
-    // await db.fileUpload.create({ ... })
+    await db.fileUpload.create({
+      data: {
+        tenantId: tenantId || null,
+        name: file.name,
+        path: finalFilePath,
+        mimeType: mimeType,
+        size: buffer.length
+      }
+    });
 
     return {
       success: true,
@@ -285,6 +301,12 @@ export async function deleteFile(filePath: string): Promise<{ success: boolean; 
             Bucket: s3Config.S3_BUCKET,
             Key: s3Key,
           }))
+          
+          await db.fileUpload.deleteMany({
+            where: {
+              path: { endsWith: s3Key }
+            }
+          }).catch(e => logger.error("Failed to delete fileUpload record for S3", e))
         }
       }
       return { success: true }
@@ -305,6 +327,13 @@ export async function deleteFile(filePath: string): Promise<{ success: boolean; 
     if (fs.existsSync(resolvedPath)) {
       fs.unlinkSync(resolvedPath)
     }
+
+    await db.fileUpload.deleteMany({
+      where: {
+        path: { endsWith: filePath }
+      }
+    }).catch(e => logger.error("Failed to delete fileUpload record", e))
+
     return { success: true }
   } catch (error) {
     logger.error("File deletion failed", error)
