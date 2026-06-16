@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, ChevronDown, Phone, Mail, MessageCircle, Home } from "lucide-react"
+import { Menu, X, ChevronDown, Phone, Mail, MessageCircle, Home, Building, ImageIcon, Info, Users, BookOpen, Star, FileText } from "lucide-react"
 import { cn, normalizeImageUrl, formatSocialUrl } from "@/lib/utils"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
@@ -25,13 +25,27 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
   const { resolveHref } = useRouting()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  function getMenuIcon(label: string, url: string) {
+    const l = (label || "").toLowerCase();
+    const u = (url || "").toLowerCase();
+    if (l.includes("beranda") || u === "/") return Home;
+    if (l.includes("profil") || l.includes("tentang") || u.includes("profil")) return Building;
+    if (l.includes("galeri") || u.includes("galeri")) return ImageIcon;
+    if (l.includes("informasi") || l.includes("berita") || u.includes("informasi") || l.includes("pengumuman")) return Info;
+    if (l.includes("kontak") || u.includes("kontak")) return Phone;
+    if (l.includes("guru") || l.includes("siswa")) return Users;
+    if (l.includes("fasilitas")) return Star;
+    if (l.includes("akademik") || l.includes("kurikulum") || l.includes("artikel")) return BookOpen;
+    return FileText;
+  }
+
   // Format website menus from db
   const navLinks = (tenant.websiteMenus && tenant.websiteMenus.length > 0)
     ? tenant.websiteMenus.map((menu: any, menuIndex: number) => ({
         id: menu.id ?? `${menu.label}-${menu.url}-${menuIndex}`,
         label: menu.label,
         href: menu.url === "/" ? "" : menu.url,
-        icon: Home, // Fallback icon, could map dynamic icon later
+        icon: getMenuIcon(menu.label, menu.url),
         children: menu.children?.length > 0 
           ? menu.children.map((child: any, childIndex: number) => ({
               id: child.id ?? `${menu.id ?? menu.label}-${child.label}-${child.url}-${childIndex}`,
