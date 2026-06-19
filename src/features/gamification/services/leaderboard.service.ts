@@ -47,7 +47,7 @@ export async function processLeaderboardSync() {
     const achievementPoints = (tenant._count.achievements || 0) * 20
     
     const galleryItems = Array.isArray(tenant.gallery) ? tenant.gallery.length : 0
-    const galleryPoints = galleryItems * 5
+    const galleryPoints = galleryItems * 2
 
     const contentScore = postPoints + staffPoints + facilityPoints + eventPoints + achievementPoints + galleryPoints
     
