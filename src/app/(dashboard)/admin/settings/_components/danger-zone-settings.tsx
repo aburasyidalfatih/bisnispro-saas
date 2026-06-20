@@ -33,12 +33,12 @@ export function DangerZoneSettings({ tenantId }: DangerZoneSettingsProps) {
       })
 
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Website dan akun Anda telah dihapus secara permanen." })
-        // Logout user completely and redirect to login
-        await signOut({ callbackUrl: "/login" })
+        toast({ title: "Berhasil", description: "Website Anda telah dihapus secara permanen." })
+        // Redirect back to dashboard or home, don't sign out since account remains
+        window.location.href = "/dashboard"
       } else {
         const data = await res.json().catch(() => ({}))
-        toast({ title: "Gagal", description: data.error || "Gagal menghapus akun", variant: "destructive" })
+        toast({ title: "Gagal", description: data.error || "Gagal menghapus website", variant: "destructive" })
         setIsDeleting(false)
       }
     } catch (error) {
@@ -62,7 +62,7 @@ export function DangerZoneSettings({ tenantId }: DangerZoneSettingsProps) {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-red-700/80 dark:text-red-300 mb-4">
-          Penghapusan website akan melenyapkan <strong>seluruh data sekolah</strong> (berita, galeri, fasilitas, guru, tagihan, dll) beserta <strong>akun pribadi Anda</strong> secara permanen. Tindakan ini tidak dapat dibatalkan.
+          Penghapusan website akan melenyapkan <strong>seluruh data sekolah</strong> (berita, galeri, fasilitas, guru, tagihan, dll) secara permanen. Akun Anda akan tetap ada, namun website ini tidak dapat dikembalikan.
         </p>
 
         <Dialog open={open} onOpenChange={(val) => {
@@ -72,7 +72,7 @@ export function DangerZoneSettings({ tenantId }: DangerZoneSettingsProps) {
           <DialogTrigger asChild>
             <Button variant="destructive" className="w-full sm:w-auto flex items-center gap-2 rounded-xl">
               <Trash2 className="h-4 w-4" />
-              Hapus Website & Akun
+              Hapus Website
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md border-red-200 dark:border-red-900">
@@ -82,7 +82,7 @@ export function DangerZoneSettings({ tenantId }: DangerZoneSettingsProps) {
                 Hapus Permanen?
               </DialogTitle>
               <DialogDescription>
-                Tindakan ini <strong>tidak dapat dibatalkan</strong>. Ini akan secara permanen menghapus data lembaga dan akun pribadi Anda dari peladen kami.
+                Tindakan ini <strong>tidak dapat dibatalkan</strong>. Ini akan secara permanen menghapus data lembaga dari peladen kami.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-4">
