@@ -14,22 +14,32 @@ export async function processLeaderboardSync() {
   })
   const oldRankMap = Object.fromEntries(oldRanks.map(r => [r.tenantId, { rank: r.rank, totalScore: r.totalScore }]))
 
-  // ============================================================
-  // Step 2: Hitung skor baru
-  // ============================================================
+  // Ambil poin artikel secara spesifik menggunakan agregasi SUM
+  const postPointsAgg = await db.post.groupBy({
+    by: ['tenantId'],
+    _sum: { points: true },
+    where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear }, isEligibleForPoints: true }
+  });
+  const postPointsMap = Object.fromEntries(postPointsAgg.map(p => [p.tenantId, p._sum.points || 0]));
+
   const tenants = await db.tenant.findMany({
     where: { isActive: true },
     select: {
       id: true,
       name: true,
+      logo: true,
+      heroImage: true,
+      about: true,
+      tagline: true,
       _count: {
         select: {
-          posts: { where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear } } },
+          posts: { where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear }, isEligibleForPoints: true } },
           staff: { where: { createdAt: { gte: startOfYear } } },
           facilities: { where: { createdAt: { gte: startOfYear } } },
           events: { where: { createdAt: { gte: startOfYear } } },
           achievements: { where: { createdAt: { gte: startOfYear } } },
-          internalMessages: { where: { receiverId: null, createdAt: { gte: startOfYear } } }
+          internalMessages: { where: { receiverId: null, createdAt: { gte: startOfYear } } },
+          pageViews: { where: { createdAt: { gte: startOfYear } } }
         }
       },
       gallery: true,
@@ -40,7 +50,7 @@ export async function processLeaderboardSync() {
   const scores = []
 
   for (const tenant of tenants) {
-    const postPoints = (tenant._count.posts || 0) * 20
+    const postPoints = postPointsMap[tenant.id] || 0
     const staffPoints = (tenant._count.staff || 0) * 10
     const facilityPoints = (tenant._count.facilities || 0) * 15
     const eventPoints = (tenant._count.events || 0) * 15
@@ -49,10 +59,16 @@ export async function processLeaderboardSync() {
     const galleryItems = Array.isArray(tenant.gallery) ? tenant.gallery.length : 0
     const galleryPoints = galleryItems * 2
 
-    const contentScore = postPoints + staffPoints + facilityPoints + eventPoints + achievementPoints + galleryPoints
+    // Profile Completion Bonus
+    let profileBonus = 0
+    if (tenant.logo && tenant.heroImage && tenant.about && tenant.tagline) {
+      profileBonus = 1000
+    }
+
+    const contentScore = postPoints + staffPoints + facilityPoints + eventPoints + achievementPoints + galleryPoints + profileBonus
     
-    // Pertahankan traffic score yang ada, atau mulai dari 0
-    const trafficScore = tenant.tenantScore?.trafficScore || 0
+    // Traffic Score dari PageViews asli (1 Poin per Kunjungan)
+    const trafficScore = (tenant._count.pageViews || 0) * 1
     
     // Aktivitas: pengumuman internal
     const announcementPoints = (tenant._count.internalMessages || 0) * 2

@@ -37,17 +37,19 @@ export async function GET(req: Request) {
           })
           const detailMap = Object.fromEntries(detailedScores.map(s => [s.tenantId, s]))
 
-          const leaderboard = tenantIds.map((id, index) => ({
-            id: detailMap[id]?.tenantId || id,
-            tenantId: id,
-            totalScore: scoreMap[id],
-            contentScore: detailMap[id]?.contentScore || 0,
-            trafficScore: detailMap[id]?.trafficScore || 0,
-            activityScore: detailMap[id]?.activityScore || 0,
-            rank: index + 1,
-            lastCalculated: detailMap[id]?.lastCalculated || null,
-            tenant: tenantMap[id] || { id, name: "Unknown", logo: null, slug: "" }
-          }))
+          const leaderboard = tenantIds
+            .filter(id => tenantMap[id]) // Filter out tenants that no longer exist in DB
+            .map((id, index) => ({
+              id: detailMap[id]?.tenantId || id,
+              tenantId: id,
+              totalScore: scoreMap[id],
+              contentScore: detailMap[id]?.contentScore || 0,
+              trafficScore: detailMap[id]?.trafficScore || 0,
+              activityScore: detailMap[id]?.activityScore || 0,
+              rank: index + 1,
+              lastCalculated: detailMap[id]?.lastCalculated || null,
+              tenant: tenantMap[id]
+            }))
 
           return NextResponse.json(leaderboard)
         }

@@ -72,12 +72,47 @@ export async function createPost(params: {
     finalStatus = "PENDING"
   }
 
+  // --- ANTI-SPAM LOGIC ---
+  const startOfDay = new Date()
+  startOfDay.setHours(0, 0, 0, 0)
+  const todayPostCount = await tenantDb.post.count({
+    where: { 
+      tenantId, 
+      createdAt: { gte: startOfDay },
+      isEligibleForPoints: true 
+    }
+  })
+
+  const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '')
+  const contentText = stripHtml(data.content || "").trim()
+  
+  // Hitung jumlah kata (word count)
+  const wordCount = contentText.split(/\s+/).filter(word => word.length > 0).length
+
+  let isEligible = true
+  if (contentText.length < 50) isEligible = false
+  if (todayPostCount >= 5) isEligible = false
+
+  // Dinamis Poin Berdasarkan Panjang Kata
+  let postPoints = ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5
+  if (["EDITORIAL", "BLOG_GURU"].includes(data.type as string)) {
+    if (wordCount > 300) {
+      postPoints = 50
+    } else if (wordCount >= 150) {
+      postPoints = 20
+    } else {
+      postPoints = 10
+    }
+  }
+
   const post = await tenantDb.post.create({
     data: {
       ...data,
       tenantId,
       authorId: userId,
-      status: finalStatus
+      status: finalStatus,
+      isEligibleForPoints: isEligible,
+      points: postPoints
     } as any
   })
 
@@ -112,18 +147,20 @@ export async function createPost(params: {
     }
   }
 
-  // TRIGGER GAMIFICATION (Direct DB call)
-  try {
-    const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
-    await addGamificationPoints({
-      tenantId,
-      userId,
-      type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
-      points: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5,
-      description: `Membuat postingan: ${data.title}`
-    })
-  } catch (error) {
-    console.error("Failed to trigger gamification event", error)
+  // TRIGGER GAMIFICATION (Direct DB call) - HANYA JIKA ELIGIBLE
+  if (isEligible && finalStatus === "PUBLISHED") {
+    try {
+      const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
+      await addGamificationPoints({
+        tenantId,
+        userId,
+        type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
+        points: postPoints,
+        description: `Membuat postingan: ${data.title}`
+      })
+    } catch (error) {
+      console.error("Failed to trigger gamification event", error)
+    }
   }
 
   // Audit Log

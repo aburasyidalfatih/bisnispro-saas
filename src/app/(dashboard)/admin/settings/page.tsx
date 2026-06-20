@@ -7,9 +7,9 @@ import { toast } from"@/hooks/use-toast"
 import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
 
 import { ProfileSettings } from"./_components/profile-settings"
-import { AcademicSettings } from"./_components/academic-settings"
 import { IntegrationSettings } from"./_components/integration-settings"
 import { NotificationSettings } from"./_components/notification-settings"
+import { DangerZoneSettings } from "./_components/danger-zone-settings"
 
 export default function SettingsGeneralPage() {
   const { data: session, status, update: updateSession } = useSession()
@@ -212,14 +212,6 @@ export default function SettingsGeneralPage() {
 
         {isAdminRole && (
           <>
-            <AcademicSettings
-              rawSettings={rawSettings}
-              setRawSettings={setRawSettings}
-              savingOrg={savingOrg}
-              tenantId={tenantId}
-              handleSaveOrg={handleSaveOrg}
-            />
-
             <IntegrationSettings
               session={session}
               orgForm={orgForm}
@@ -238,6 +230,11 @@ export default function SettingsGeneralPage() {
           notifPrefs={notifPrefs}
           toggleNotif={toggleNotif}
         />
+
+        {/* Zona Bahaya */}
+        {isAdminRole && (
+          <DangerZoneSettings tenantId={tenantId} />
+        )}
       </div>
     </div>
   )

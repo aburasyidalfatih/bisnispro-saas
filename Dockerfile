@@ -9,10 +9,12 @@ COPY package.json package-lock.json ./
 COPY prisma ./prisma
 
 # Install dependencies menggunakan lockfile yang baru
-RUN npm install --legacy-peer-deps --no-audit --no-fund
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps --no-audit --no-fund
 
 # Install sharp for Linux (diperlukan untuk image processing)
-RUN npm install --os=linux --cpu=x64 sharp --legacy-peer-deps
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --os=linux --cpu=x64 sharp --legacy-peer-deps
 
 # Generate Prisma client
 RUN npx prisma generate
@@ -47,7 +49,8 @@ ENV SENTRY_PROJECT=${SENTRY_PROJECT}
 ENV NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN}
 
 
-RUN npx next build
+RUN --mount=type=cache,target=/app/.next/cache \
+    npx next build
 
 # --- Production ---
 FROM base AS runner
