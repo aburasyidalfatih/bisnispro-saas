@@ -43,6 +43,17 @@ export async function POST(req: Request) {
       })
     })
 
+    // 3. Remove the tenant from Redis Leaderboard Cache if exists
+    try {
+      const { getRedis } = await import("@/lib/redis")
+      const redis = getRedis()
+      if (redis) {
+        await redis.zrem("leaderboard:global", tenantId)
+      }
+    } catch (e) {
+      console.error("Failed to remove tenant from redis cache", e)
+    }
+
     return NextResponse.json({ success: true, message: "Account and website deleted successfully" })
   } catch (error: any) {
     console.error("Delete account error:", error)
