@@ -158,6 +158,33 @@ export function IdentityForm({
               placeholder="Misal: 500" className="rounded-xl" />
           </div>
         </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 mt-4">
+          <div className="space-y-2">
+            <Label>Tahun Ajaran Aktif</Label>
+            <Input 
+              value={form.settings?.academicYear || ""} 
+              onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, academicYear: e.target.value } }))}
+              placeholder="Contoh: 2024/2025" 
+              className="rounded-xl" 
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Semester Aktif</Label>
+            <Select 
+              value={form.settings?.academicSemester || "Ganjil"} 
+              onValueChange={v => setForm(p => ({ ...p, settings: { ...p.settings, academicSemester: v } }))} 
+            >
+              <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <SelectValue placeholder="Pilih Semester" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Ganjil">Ganjil</SelectItem>
+                <SelectItem value="Genap">Genap</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )

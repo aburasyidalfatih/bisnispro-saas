@@ -7,7 +7,6 @@ import { toast } from"@/hooks/use-toast"
 import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
 
 import { ProfileSettings } from"./_components/profile-settings"
-import { AcademicSettings } from"./_components/academic-settings"
 import { IntegrationSettings } from"./_components/integration-settings"
 import { NotificationSettings } from"./_components/notification-settings"
 
@@ -212,14 +211,6 @@ export default function SettingsGeneralPage() {
 
         {isAdminRole && (
           <>
-            <AcademicSettings
-              rawSettings={rawSettings}
-              setRawSettings={setRawSettings}
-              savingOrg={savingOrg}
-              tenantId={tenantId}
-              handleSaveOrg={handleSaveOrg}
-            />
-
             <IntegrationSettings
               session={session}
               orgForm={orgForm}
