@@ -10,6 +10,7 @@ import { ProfileSettings } from"./_components/profile-settings"
 import { IntegrationSettings } from"./_components/integration-settings"
 import { NotificationSettings } from"./_components/notification-settings"
 import { DangerZoneSettings } from "./_components/danger-zone-settings"
+import { SocialShareSettings } from "./_components/social-share-settings"
 
 export default function SettingsGeneralPage() {
   const { data: session, status, update: updateSession } = useSession()
@@ -222,6 +223,8 @@ export default function SettingsGeneralPage() {
               tenantId={tenantId}
               handleSaveOrg={handleSaveOrg}
             />
+
+            <SocialShareSettings tenantId={tenantId} plan={currentTenant?.plan || "free"} />
           </>
         )}
 

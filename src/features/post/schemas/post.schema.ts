@@ -10,5 +10,6 @@ export const postSchema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED", "PENDING", "REJECTED"]),
   categoryId: z.string().nullable().optional().transform(v => !v ? null : v),
   seoTitle: z.string().max(60, "SEO Title maksimal 60 karakter").nullable().optional().transform(v => !v ? null : v),
-  seoDesc: z.string().max(160, "SEO Description maksimal 160 karakter").nullable().optional().transform(v => !v ? null : v)
+  seoDesc: z.string().max(160, "SEO Description maksimal 160 karakter").nullable().optional().transform(v => !v ? null : v),
+  autoShare: z.boolean().optional().default(true)
 })

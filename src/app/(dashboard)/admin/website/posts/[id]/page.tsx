@@ -12,6 +12,7 @@ import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Textarea } from"@/components/ui/textarea"
+import { Switch } from"@/components/ui/switch"
 import { toast } from"@/hooks/use-toast"
 import { ArrowLeft, Save, Loader2, Search, Sparkles, Wand2 } from"lucide-react"
 import {
@@ -67,7 +68,8 @@ export default function PostFormPage() {
       categoryId:"",
       content:"",
       seoTitle:"",
-      seoDesc:""
+      seoDesc:"",
+      autoShare: true
     }
   })
 
@@ -316,6 +318,19 @@ export default function PostFormPage() {
                 </Select>
                 {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
               </div>
+
+              {watch("status") === "PUBLISHED" && (
+                <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm bg-background">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Auto Share Sosmed</Label>
+                    <p className="text-xs text-muted-foreground">Bagikan ke Facebook, Twitter, dll otomatis (Paket Lite/Pro).</p>
+                  </div>
+                  <Switch
+                    checked={watch("autoShare")}
+                    onCheckedChange={(c) => setValue("autoShare", c)}
+                  />
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="type">Jenis / Layout</Label>

@@ -117,7 +117,7 @@ export async function createPost(params: {
   })
 
   // Invalidate cache and Auto-Indexing
-  const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true, domain: true, settings: true } })
+  const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { slug: true, domain: true, settings: true, plan: true } })
   if (tenant) {
     await invalidatePublicTenantCache(tenant.slug)
     try {
@@ -144,6 +144,17 @@ export async function createPost(params: {
         import("@/lib/seo/indexnow.service").then(m => m.submitToIndexNow(host, [postUrl])),
         import("@/lib/seo/google-indexing.service").then(m => m.submitToGoogleIndexing(postUrl, "URL_UPDATED", googleIndexingCreds))
       ]).catch(e => console.error("Auto-Indexing failed", e))
+      
+      // [AUTO-SHARE] Trigger Social Media Sharing for Lite & Pro packages
+      if (tenant.plan === "lite" || tenant.plan === "pro") {
+        const isInternal = ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"].includes(data.type as string)
+        // Check if data.autoShare is explicitly false (from frontend toggle)
+        if (!isInternal && data.autoShare !== false) {
+          import("@/features/social/services/social-queue.service")
+            .then(m => m.addSocialShareJob(tenantId, post.id))
+            .catch(e => console.error("Failed to enqueue social share", e))
+        }
+      }
     }
   }
 

@@ -11,6 +11,7 @@ import { syncPostViewsToDatabase, syncEventViewsToDatabase } from "@/features/po
 import { syncShareCountsToDatabase } from "@/features/post/services/share.service"
 import { processLeaderboardSync } from "@/features/gamification/services/leaderboard.service"
 import { approveApplication } from "@/features/tenant/services/application.service"
+import { SocialShareService } from "@/features/social/services/social-share.service"
 import * as Sentry from "@sentry/nextjs"
 import { Queue } from "bullmq"
 import { validateProductionEnv } from "./lib/env"
@@ -355,9 +356,88 @@ const cbtWorker = new Worker(
 )
 
 // ============================================================
+// 7. Social Share Worker
+// ============================================================
+const socialShareWorker = new Worker(
+  "social-share-queue",
+  async (job: Job) => {
+    const { tenantId, postId } = job.data
+    console.log(`[social-share-queue] Processing share for post ${postId} (tenant ${tenantId})...`)
+
+    try {
+      const post = await db.post.findUnique({
+        where: { id: postId },
+        include: { tenant: true }
+      })
+      if (!post) throw new Error("Post not found")
+
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      const host = post.tenant.domain || `${post.tenant.slug}.${rootDomain}`
+      const isPengumuman = post.type?.includes("PENGUMUMAN")
+      const postUrl = `https://${host}/${isPengumuman ? 'pengumuman' : 'berita'}/${post.slug}`
+      const imageUrl = post.featuredImage || ""
+      const message = `${post.title}\n\nBaca selengkapnya:\n${postUrl}`
+
+      const credentials = await db.socialMediaCredential.findMany({
+        where: { tenantId, isActive: true }
+      })
+
+      const results = await Promise.allSettled(
+        credentials.map(async (cred) => {
+          if (cred.platform === "TELEGRAM") {
+            if (!cred.externalId) throw new Error("Missing Telegram Chat ID")
+            return SocialShareService.shareToTelegram(cred.accessToken, cred.externalId, message)
+          } else if (cred.platform === "FACEBOOK") {
+            if (!cred.externalId) throw new Error("Missing Facebook Page ID")
+            return SocialShareService.shareToFacebook(cred.externalId, cred.accessToken, post.title, postUrl)
+          } else if (cred.platform === "TWITTER") {
+            if (!cred.refreshToken) throw new Error("Missing Twitter Token Secret")
+            // Re-using columns: accessToken = User Token, refreshToken = User Secret, externalId = API Key, etc.
+            // For simplicity, we assume accessToken = user token, refreshToken = user secret, and we need App Keys.
+            // App keys should be from tenant settings or platform settings.
+            // Actually, we can store JSON in externalId if needed. For now, assuming platform settings has keys.
+            const settings = await db.platformSetting.findMany({
+              where: { key: { in: ['TWITTER_API_KEY', 'TWITTER_API_SECRET'] } }
+            })
+            const apiKey = settings.find(s => s.key === 'TWITTER_API_KEY')?.value || ""
+            const apiSecret = settings.find(s => s.key === 'TWITTER_API_SECRET')?.value || ""
+            return SocialShareService.shareToTwitter(cred.accessToken, cred.refreshToken || "", message, apiKey, apiSecret)
+          } else if (cred.platform === "INSTAGRAM") {
+            if (!cred.externalId) throw new Error("Missing Instagram User ID")
+            return SocialShareService.shareToInstagram(cred.externalId, cred.accessToken, imageUrl, message)
+          } else if (cred.platform === "THREADS") {
+            if (!cred.externalId) throw new Error("Missing Threads User ID")
+            return SocialShareService.shareToThreads(cred.externalId, cred.accessToken, message)
+          }
+        })
+      )
+
+      const failures = results.filter(r => r.status === "rejected")
+      if (failures.length > 0) {
+        console.error(`[social-share-queue] Failed shares:`, failures)
+        await db.errorLog.create({
+          data: {
+            tenantId,
+            category: "SOCIAL_SHARE_FAILED",
+            message: `Failed to share post ${postId} to ${failures.length} platforms`,
+            metadata: failures.map((f: any) => f.reason?.message || f.reason),
+          }
+        })
+      }
+
+      return { success: true, processed: credentials.length, failed: failures.length }
+    } catch (error: any) {
+      console.error(`[social-share-queue] Critical error:`, error.message)
+      throw error
+    }
+  },
+  { connection, concurrency: 5 }
+)
+
+// ============================================================
 // ENTERPRISE: Global Error & Dead-Letter Handling
 // ============================================================
-const workers = [waWorker, importWorker, billingWorker, gamificationWorker, emailWorker, cbtWorker]
+const workers = [waWorker, importWorker, billingWorker, gamificationWorker, emailWorker, cbtWorker, socialShareWorker]
 
 workers.forEach((w) => {
   // Log + Sentry on every failure
@@ -396,7 +476,7 @@ workers.forEach((w) => {
 })
 
 console.log("✅ All BullMQ Workers are running and listening to queues!")
-console.log("   Queues: wa-queue, import-queue, billing-queue, gamification-queue, email-queue")
+console.log("   Queues: wa-queue, import-queue, billing-queue, gamification-queue, email-queue, social-share-queue")
 console.log("   Features: retry (3x exponential), dead-letter logging, Sentry reporting")
 
 // ============================================================
