@@ -9,6 +9,7 @@ import { useTenantBranding } from"@/components/providers/tenant-branding-provide
 import { ProfileSettings } from"./_components/profile-settings"
 import { IntegrationSettings } from"./_components/integration-settings"
 import { NotificationSettings } from"./_components/notification-settings"
+import { DangerZoneSettings } from "./_components/danger-zone-settings"
 
 export default function SettingsGeneralPage() {
   const { data: session, status, update: updateSession } = useSession()
@@ -229,6 +230,11 @@ export default function SettingsGeneralPage() {
           notifPrefs={notifPrefs}
           toggleNotif={toggleNotif}
         />
+
+        {/* Zona Bahaya */}
+        {isAdminRole && (
+          <DangerZoneSettings tenantId={tenantId} />
+        )}
       </div>
     </div>
   )
