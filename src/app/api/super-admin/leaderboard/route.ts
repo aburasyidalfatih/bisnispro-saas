@@ -37,7 +37,9 @@ export async function GET() {
           })
           const detailMap = Object.fromEntries(detailedScores.map(s => [s.tenantId, s]))
 
-          const result = tenantIds.map((id, index) => ({
+          const result = tenantIds
+            .filter(id => tenantMap[id]) // Filter out orphaned Redis entries
+            .map((id, index) => ({
             id,
             name: tenantMap[id]?.name || "Unknown",
             slug: tenantMap[id]?.slug || "",
