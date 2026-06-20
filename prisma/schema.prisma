@@ -108,6 +108,7 @@ model Tenant {
   customTheme          CustomTheme?          @relation(fields: [customThemeId], references: [id])
   subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
   waQueueLogs          WaQueueLog[]
+  socialMediaCredentials SocialMediaCredential[]
   
   walletAccounts       WalletAccount[]
   walletTransactions   WalletTransaction[]
@@ -2232,4 +2233,20 @@ model AiMemory {
   @@index([tenantId, createdAt(sort: Desc)])
   @@index([userId])
   @@map("ai_memories")
+}
+
+model SocialMediaCredential {
+  id           String   @id @default(cuid())
+  tenantId     String
+  platform     String
+  accessToken  String
+  refreshToken String?
+  externalId   String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, platform])
+  @@map("social_media_credentials")
 }
