@@ -116,12 +116,19 @@ export default function LeaderboardPage() {
                   <div>
                     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">📝 Konten Website</h4>
                     <ul className="space-y-1.5 list-disc list-inside text-sm text-foreground">
-                      <li>Berita & Artikel: <span className="font-bold text-primary">+20 Pts</span></li>
+                      <li>Berita & Artikel: <span className="font-bold text-primary">10 - 50 Pts</span> <span className="text-muted-foreground text-xs">(Sesuai Panjang)</span></li>
+                      <li>Kelengkapan Profil: <span className="font-bold text-primary">+1.000 Pts</span> <span className="text-muted-foreground text-xs">(Bonus Instan)</span></li>
                       <li>Data Prestasi: <span className="font-bold text-primary">+20 Pts</span></li>
                       <li>Agenda/Event: <span className="font-bold text-primary">+15 Pts</span></li>
                       <li>Data Fasilitas: <span className="font-bold text-primary">+15 Pts</span></li>
                       <li>Profil Guru (GTK): <span className="font-bold text-primary">+10 Pts</span></li>
                       <li>Foto Galeri: <span className="font-bold text-primary">+5 Pts</span></li>
+                    </ul>
+                  </div>
+                  <div className="border-t pt-3">
+                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">📈 Kunjungan Publik</h4>
+                    <ul className="space-y-1.5 list-disc list-inside text-sm text-foreground">
+                      <li>Tampilan Halaman Asli: <span className="font-bold text-primary">+1 Pts / Kunjungan</span></li>
                     </ul>
                   </div>
                   <div className="border-t pt-3">
