@@ -24,7 +24,7 @@ export async function processLeaderboardSync() {
       name: true,
       _count: {
         select: {
-          posts: { where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear } } },
+          posts: { where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear }, isEligibleForPoints: true } },
           staff: { where: { createdAt: { gte: startOfYear } } },
           facilities: { where: { createdAt: { gte: startOfYear } } },
           events: { where: { createdAt: { gte: startOfYear } } },

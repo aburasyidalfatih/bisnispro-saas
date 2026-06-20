@@ -72,12 +72,31 @@ export async function createPost(params: {
     finalStatus = "PENDING"
   }
 
+  // --- ANTI-SPAM LOGIC ---
+  const startOfDay = new Date()
+  startOfDay.setHours(0, 0, 0, 0)
+  const todayPostCount = await tenantDb.post.count({
+    where: { 
+      tenantId, 
+      createdAt: { gte: startOfDay },
+      isEligibleForPoints: true 
+    }
+  })
+
+  const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '')
+  const contentText = stripHtml(data.content || "").trim()
+  
+  let isEligible = true
+  if (contentText.length < 50) isEligible = false
+  if (todayPostCount >= 5) isEligible = false
+
   const post = await tenantDb.post.create({
     data: {
       ...data,
       tenantId,
       authorId: userId,
-      status: finalStatus
+      status: finalStatus,
+      isEligibleForPoints: isEligible
     } as any
   })
 
@@ -110,20 +129,23 @@ export async function createPost(params: {
         import("@/lib/seo/google-indexing.service").then(m => m.submitToGoogleIndexing(postUrl, "URL_UPDATED", googleIndexingCreds))
       ]).catch(e => console.error("Auto-Indexing failed", e))
     }
+    }
   }
 
-  // TRIGGER GAMIFICATION (Direct DB call)
-  try {
-    const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
-    await addGamificationPoints({
-      tenantId,
-      userId,
-      type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
-      points: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5,
-      description: `Membuat postingan: ${data.title}`
-    })
-  } catch (error) {
-    console.error("Failed to trigger gamification event", error)
+  // TRIGGER GAMIFICATION (Direct DB call) - HANYA JIKA ELIGIBLE
+  if (isEligible && finalStatus === "PUBLISHED") {
+    try {
+      const { addGamificationPoints } = await import("@/features/gamification/services/gamification.service")
+      await addGamificationPoints({
+        tenantId,
+        userId,
+        type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
+        points: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5,
+        description: `Membuat postingan: ${data.title}`
+      })
+    } catch (error) {
+      console.error("Failed to trigger gamification event", error)
+    }
   }
 
   // Audit Log
