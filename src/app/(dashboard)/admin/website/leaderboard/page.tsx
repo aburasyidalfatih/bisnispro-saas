@@ -104,7 +104,7 @@ export default function LeaderboardPage() {
           <div className="absolute top-4 right-4 z-20">
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-indigo-200 hover:text-white transition-colors">
+                <Button variant="ghost" size="icon" className="text-indigo-200 hover:text-white transition-colors animate-pulse">
                   <Info className="h-5 w-5" />
                 </Button>
               </DialogTrigger>
