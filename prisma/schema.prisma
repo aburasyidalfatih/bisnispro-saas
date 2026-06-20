@@ -507,6 +507,7 @@ model Post {
   deletedAt     DateTime?
   viewCount           Int       @default(0)
   shareCount          Int       @default(0)
+  points              Int       @default(20)
   isEligibleForPoints Boolean   @default(true)
   author              User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   category      Category? @relation(fields: [categoryId], references: [id])

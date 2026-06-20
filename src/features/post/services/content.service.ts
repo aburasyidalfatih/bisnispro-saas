@@ -86,9 +86,24 @@ export async function createPost(params: {
   const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '')
   const contentText = stripHtml(data.content || "").trim()
   
+  // Hitung jumlah kata (word count)
+  const wordCount = contentText.split(/\s+/).filter(word => word.length > 0).length
+
   let isEligible = true
   if (contentText.length < 50) isEligible = false
   if (todayPostCount >= 5) isEligible = false
+
+  // Dinamis Poin Berdasarkan Panjang Kata
+  let postPoints = ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5
+  if (["EDITORIAL", "BLOG_GURU"].includes(data.type as string)) {
+    if (wordCount > 300) {
+      postPoints = 50
+    } else if (wordCount >= 150) {
+      postPoints = 20
+    } else {
+      postPoints = 10
+    }
+  }
 
   const post = await tenantDb.post.create({
     data: {
@@ -96,7 +111,8 @@ export async function createPost(params: {
       tenantId,
       authorId: userId,
       status: finalStatus,
-      isEligibleForPoints: isEligible
+      isEligibleForPoints: isEligible,
+      points: postPoints
     } as any
   })
 
@@ -140,7 +156,7 @@ export async function createPost(params: {
         tenantId,
         userId,
         type: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? "ARTIKEL" : "PENGUMUMAN",
-        points: ["EDITORIAL", "BLOG_GURU"].includes(data.type as string) ? 20 : 5,
+        points: postPoints,
         description: `Membuat postingan: ${data.title}`
       })
     } catch (error) {
