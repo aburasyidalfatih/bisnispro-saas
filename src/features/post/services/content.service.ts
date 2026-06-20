@@ -145,7 +145,6 @@ export async function createPost(params: {
         import("@/lib/seo/google-indexing.service").then(m => m.submitToGoogleIndexing(postUrl, "URL_UPDATED", googleIndexingCreds))
       ]).catch(e => console.error("Auto-Indexing failed", e))
     }
-    }
   }
 
   // TRIGGER GAMIFICATION (Direct DB call) - HANYA JIKA ELIGIBLE
