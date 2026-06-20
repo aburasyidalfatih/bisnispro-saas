@@ -38,9 +38,12 @@ export async function POST(req: Request) {
       })
 
       // 2. Delete the user's account entirely to remove their personal data
-      await tx.user.delete({
-        where: { id: session.user.id }
-      })
+      // PERBAIKAN: Jangan hapus akun jika yang mengeklik adalah Super Admin!
+      if (!session.user.isSuperAdmin) {
+        await tx.user.delete({
+          where: { id: session.user.id }
+        })
+      }
     })
 
     // 3. Remove the tenant from Redis Leaderboard Cache if exists
