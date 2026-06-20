@@ -47,6 +47,14 @@ const nextConfig: NextConfig = {
     })(),
   },
   output: "standalone",
+  outputFileTracingExcludes: {
+    // Exclude large or unnecessary files from being copied to the standalone output
+    "/(.*)": [
+      "node_modules/@swc/core-linux-x64-gnu",
+      "node_modules/@swc/core-linux-x64-musl",
+      "node_modules/@esbuild/linux-x64",
+    ],
+  },
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
   typescript: {
@@ -111,8 +119,13 @@ export default withSentryConfig(nextConfig, {
   // Upload source maps for better stack traces (only when auth token set)
   widenClientFileUpload: true,
 
+  // Disable all telemetry
+  telemetry: false,
+
   // Source maps configuration
   sourcemaps: {
+    // Only generate sourcemaps if auth token is present (saves MASSIVE build time)
+    disable: !process.env.SENTRY_AUTH_TOKEN,
     deleteSourcemapsAfterUpload: true,
   },
 
