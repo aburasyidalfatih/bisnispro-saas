@@ -6,7 +6,6 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [vector]
 }
 
 model Tenant {
@@ -2224,7 +2223,6 @@ model AiMemory {
   tenantId  String?
   userId    String?
   content   String
-  embedding Unsupported("vector(1536)")
   metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

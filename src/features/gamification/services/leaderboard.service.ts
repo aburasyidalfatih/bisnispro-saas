@@ -14,13 +14,21 @@ export async function processLeaderboardSync() {
   })
   const oldRankMap = Object.fromEntries(oldRanks.map(r => [r.tenantId, { rank: r.rank, totalScore: r.totalScore }]))
 
-  // Ambil poin artikel secara spesifik menggunakan agregasi SUM
   const postPointsAgg = await db.post.groupBy({
     by: ['tenantId'],
     _sum: { points: true },
     where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear }, isEligibleForPoints: true }
   });
   const postPointsMap = Object.fromEntries(postPointsAgg.map(p => [p.tenantId, p._sum.points || 0]));
+
+  // Ambil data Traffic (Unique Visitors per Tenant berdasarkan ipHash atau sessionId)
+  const trafficAgg = await db.$queryRaw<Array<{ tenantId: string, uniqueVisits: number | bigint }>>`
+    SELECT "tenantId", COUNT(DISTINCT COALESCE("ipHash", "sessionId")) as "uniqueVisits"
+    FROM "page_views"
+    WHERE "createdAt" >= ${startOfYear}
+    GROUP BY "tenantId"
+  `;
+  const trafficMap = Object.fromEntries(trafficAgg.map(t => [t.tenantId, Number(t.uniqueVisits) || 0]));
 
   const tenants = await db.tenant.findMany({
     where: { isActive: true },
@@ -38,8 +46,8 @@ export async function processLeaderboardSync() {
           facilities: { where: { createdAt: { gte: startOfYear } } },
           events: { where: { createdAt: { gte: startOfYear } } },
           achievements: { where: { createdAt: { gte: startOfYear } } },
-          internalMessages: { where: { receiverId: null, createdAt: { gte: startOfYear } } },
-          pageViews: { where: { createdAt: { gte: startOfYear } } }
+          achievements: { where: { createdAt: { gte: startOfYear } } },
+          internalMessages: { where: { receiverId: null, createdAt: { gte: startOfYear } } }
         }
       },
       gallery: true,
@@ -51,13 +59,20 @@ export async function processLeaderboardSync() {
 
   for (const tenant of tenants) {
     const postPoints = postPointsMap[tenant.id] || 0
-    const staffPoints = (tenant._count.staff || 0) * 10
-    const facilityPoints = (tenant._count.facilities || 0) * 15
-    const eventPoints = (tenant._count.events || 0) * 15
-    const achievementPoints = (tenant._count.achievements || 0) * 20
+    
+    // ANTI-SPAM CAPS: Maksimal dihitung 50 entitas untuk mencegah spamming
+    const staffCount = Math.min(tenant._count.staff || 0, 50)
+    const facilityCount = Math.min(tenant._count.facilities || 0, 50)
+    const eventCount = Math.min(tenant._count.events || 0, 50)
+    const achievementCount = Math.min(tenant._count.achievements || 0, 50)
+
+    const staffPoints = staffCount * 10
+    const facilityPoints = facilityCount * 15
+    const eventPoints = eventCount * 15
+    const achievementPoints = achievementCount * 20
     
     const galleryItems = Array.isArray(tenant.gallery) ? tenant.gallery.length : 0
-    const galleryPoints = galleryItems * 2
+    const galleryPoints = Math.min(galleryItems, 100) * 5 // Max 100 foto galeri
 
     // Profile Completion Bonus
     let profileBonus = 0
@@ -67,8 +82,8 @@ export async function processLeaderboardSync() {
 
     const contentScore = postPoints + staffPoints + facilityPoints + eventPoints + achievementPoints + galleryPoints + profileBonus
     
-    // Traffic Score dari PageViews asli (1 Poin per Kunjungan)
-    const trafficScore = (tenant._count.pageViews || 0) * 1
+    // Traffic Score berdasarkan Unique Visitors (1 Poin per Pengunjung Unik)
+    const trafficScore = (trafficMap[tenant.id] || 0) * 1
     
     // Aktivitas: pengumuman internal
     const announcementPoints = (tenant._count.internalMessages || 0) * 2

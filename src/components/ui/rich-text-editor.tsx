@@ -5,6 +5,8 @@ import StarterKit from "@tiptap/starter-kit"
 import Link from "@tiptap/extension-link"
 import Image from "@tiptap/extension-image"
 import TextAlign from "@tiptap/extension-text-align"
+import { Color } from "@tiptap/extension-color"
+import TextStyle from "@tiptap/extension-text-style"
 import { 
   Bold, 
   Italic, 
@@ -51,6 +53,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
+      TextStyle,
+      Color,
     ],
     content: value,
     immediatelyRender: false,
@@ -143,6 +147,17 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         >
           <Heading3 className="h-4 w-4" />
         </ToggleButton>
+        <div className="w-[1px] h-6 bg-border mx-1 self-center" />
+        <div className="flex items-center gap-1">
+          <input
+            type="color"
+            onInput={(e) => editor.chain().focus().setColor(e.currentTarget.value).run()}
+            value={editor.getAttributes('textStyle').color || '#000000'}
+            className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
+            aria-label="Text color"
+            title="Warna Teks"
+          />
+        </div>
         <div className="w-[1px] h-6 bg-border mx-1 self-center" />
         <ToggleButton
           isActive={editor.isActive('bold')}
