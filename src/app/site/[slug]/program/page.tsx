@@ -63,8 +63,8 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}
       <PageHeader
-        title={tenant.settings?.labels?.programs?.sectionTitle || "Program Unggulan"}
-        description={tenant.settings?.labels?.programs?.sectionSubtitle || "Membangun keunggulan akademik melalui program yang terintegrasi dan inovatif."}
+        title={(tenant.settings as any)?.labels?.programs?.sectionTitle || "Program Unggulan"}
+        description={(tenant.settings as any)?.labels?.programs?.sectionSubtitle || "Membangun keunggulan akademik melalui program yang terintegrasi dan inovatif."}
         breadcrumbs={[
           { label: "Profil Sekolah" },
           { label: "Program Unggulan" }

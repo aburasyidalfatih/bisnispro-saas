@@ -86,8 +86,8 @@ export default async function PengumumanPage({
     <div className="bg-background min-h-screen pb-12">
       {/* ── HERO SECTION ── */}
       <PageHeader
-        title={tenant.settings?.labels?.pengumuman?.sectionTitle || "Papan Pengumuman"}
-        description={<>{tenant.settings?.labels?.pengumuman?.sectionSubtitle || `Informasi penting dan pengumuman resmi dari ${tenant.name}.`}</>}
+        title={(tenant.settings as any)?.labels?.pengumuman?.sectionTitle || "Papan Pengumuman"}
+        description={<>{(tenant.settings as any)?.labels?.pengumuman?.sectionSubtitle || `Informasi penting dan pengumuman resmi dari ${tenant.name}.`}</>}
         breadcrumbs={[
           { label: "Informasi" },
           { label: "Pengumuman" }

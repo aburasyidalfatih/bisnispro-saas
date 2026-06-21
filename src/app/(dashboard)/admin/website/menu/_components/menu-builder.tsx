@@ -9,11 +9,13 @@ import { useToast } from "@/hooks/use-toast"
 import { Plus, Trash2, Edit, Loader2, ArrowUp, ArrowDown, MoveRight } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { IconPicker } from "@/components/ui/icon-picker"
 
 interface MenuItem {
   id: string
   label: string
   url: string
+  icon?: string | null
   order: number
   isActive: boolean
   isSystem: boolean
@@ -33,6 +35,7 @@ export function MenuBuilder() {
   const [formData, setFormData] = useState({
     label: "",
     url: "",
+    icon: "none",
     isActive: true,
     parentId: "root"
   })
@@ -61,6 +64,7 @@ export function MenuBuilder() {
       setFormData({
         label: menu.label,
         url: menu.url,
+        icon: menu.icon || "none",
         isActive: menu.isActive,
         parentId: menu.parentId || "root"
       })
@@ -69,6 +73,7 @@ export function MenuBuilder() {
       setFormData({
         label: "",
         url: "/",
+        icon: "none",
         isActive: true,
         parentId: parentId || "root"
       })
@@ -86,6 +91,7 @@ export function MenuBuilder() {
     try {
       const payload = {
         ...formData,
+        icon: formData.icon === "none" ? null : formData.icon,
         parentId: formData.parentId === "root" ? null : formData.parentId
       }
       
@@ -355,6 +361,14 @@ export function MenuBuilder() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Ikon Menu (Opsional)</Label>
+              <IconPicker 
+                value={formData.icon} 
+                onChange={(v) => setFormData({...formData, icon: v})} 
+              />
             </div>
 
             <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/50 mt-2">

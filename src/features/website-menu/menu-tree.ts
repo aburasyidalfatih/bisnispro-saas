@@ -2,6 +2,7 @@ export type WebsiteMenuTreeItem = {
   id: string
   label: string
   url: string
+  icon?: string | null
   order: number
   parentId?: string | null
   createdAt?: Date | string | number | null

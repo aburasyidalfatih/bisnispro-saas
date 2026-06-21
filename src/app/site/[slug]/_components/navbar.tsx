@@ -8,6 +8,7 @@ import { cn, normalizeImageUrl, formatSocialUrl } from "@/lib/utils"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
 import type { PublicTenant } from "../_themes/types"
+import { ICONS, IconName } from "@/components/ui/icon-picker"
 
 interface NavbarProps {
   tenant: Pick<PublicTenant, 
@@ -25,7 +26,10 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
   const { resolveHref } = useRouting()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  function getMenuIcon(label: string, url: string) {
+  function getMenuIcon(label: string, url: string, customIcon?: string | null) {
+    if (customIcon && ICONS[customIcon as IconName]) {
+      return ICONS[customIcon as IconName]
+    }
     const l = (label || "").toLowerCase();
     const u = (url || "").toLowerCase();
     if (l.includes("beranda") || u === "/") return Home;
@@ -45,12 +49,13 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
         id: menu.id ?? `${menu.label}-${menu.url}-${menuIndex}`,
         label: menu.label,
         href: menu.url === "/" ? "" : menu.url,
-        icon: getMenuIcon(menu.label, menu.url),
+        icon: getMenuIcon(menu.label, menu.url, menu.icon),
         children: menu.children?.length > 0 
           ? menu.children.map((child: any, childIndex: number) => ({
               id: child.id ?? `${menu.id ?? menu.label}-${child.label}-${child.url}-${childIndex}`,
               label: child.label,
-              href: child.url
+              href: child.url,
+              icon: getMenuIcon(child.label, child.url, child.icon)
             }))
           : undefined
       }))

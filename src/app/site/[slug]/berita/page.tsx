@@ -115,8 +115,8 @@ export default async function BeritaPage({
 
 
   const activeCategoryName = categoryFilter ? activeCategories.find(c => c.slug === categoryFilter)?.name : null
-  const pageTitle = activeCategoryName ? `Kategori: ${activeCategoryName}` : (typeFilter === 'PENGUMUMAN' ? (tenant.settings?.labels?.pengumuman?.sectionTitle || "Pengumuman Terbaru") : (tenant.settings?.labels?.news?.sectionTitle || "Artikel & Berita Terbaru"))
-  const pageDesc = typeFilter === 'PENGUMUMAN' ? (tenant.settings?.labels?.pengumuman?.sectionSubtitle || "Informasi resmi dan edaran penting dari sekolah.") : (tenant.settings?.labels?.news?.sectionSubtitle || `Ikuti informasi terkini mengenai kegiatan, prestasi, dan pengumuman di ${tenant.name}.`)
+  const pageTitle = activeCategoryName ? `Kategori: ${activeCategoryName}` : (typeFilter === 'PENGUMUMAN' ? ((tenant.settings as any)?.labels?.pengumuman?.sectionTitle || "Pengumuman Terbaru") : ((tenant.settings as any)?.labels?.news?.sectionTitle || "Artikel & Berita Terbaru"))
+  const pageDesc = typeFilter === 'PENGUMUMAN' ? ((tenant.settings as any)?.labels?.pengumuman?.sectionSubtitle || "Informasi resmi dan edaran penting dari sekolah.") : ((tenant.settings as any)?.labels?.news?.sectionSubtitle || `Ikuti informasi terkini mengenai kegiatan, prestasi, dan pengumuman di ${tenant.name}.`)
   const breadcrumbLabel = typeFilter === 'PENGUMUMAN' ? "Pengumuman" : "Berita"
 
   return (

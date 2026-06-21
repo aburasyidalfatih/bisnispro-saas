@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { label, url, parentId, isActive, isSystem, order } = body
+    const { label, url, parentId, isActive, isSystem, order, icon } = body
 
     const normalizedLabel = typeof label === "string" ? normalizeWebsiteMenuLabel(label) : ""
     const normalizedUrl = typeof url === "string" ? url.trim() : ""
@@ -101,6 +101,7 @@ export async function POST(req: NextRequest) {
         tenantId,
         label: normalizedLabel,
         url: normalizedUrl,
+        icon: icon || null,
         parentId: normalizedParentId,
         order: nextOrder,
         isActive: isActive !== undefined ? isActive : true,

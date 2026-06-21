@@ -56,6 +56,7 @@ export async function PATCH(
       data: {
         label: nextLabel,
         url: nextUrl,
+        icon: body.icon !== undefined ? body.icon : undefined,
         parentId: nextParentId,
         isActive: body.isActive,
         order: body.order

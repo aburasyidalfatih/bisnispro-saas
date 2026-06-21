@@ -99,8 +99,8 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}
       <PageHeader
-        title={tenant.settings?.labels?.facilities?.sectionTitle || "Fasilitas Sekolah"}
-        description={tenant.settings?.labels?.facilities?.sectionSubtitle || "Sarana dan prasarana pendukung pendidikan berkualitas untuk kenyamanan seluruh siswa."}
+        title={(tenant.settings as any)?.labels?.facilities?.sectionTitle || "Fasilitas Sekolah"}
+        description={(tenant.settings as any)?.labels?.facilities?.sectionSubtitle || "Sarana dan prasarana pendukung pendidikan berkualitas untuk kenyamanan seluruh siswa."}
         breadcrumbs={[
           { label: "Profil Sekolah" },
           { label: "Lingkungan Belajar" }

@@ -35,8 +35,8 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}
       <PageHeader
-        title={tenant.settings?.labels?.alumni?.sectionTitle || "Jejak Langkah Alumni"}
-        description={tenant.settings?.labels?.alumni?.sectionSubtitle || "Melihat kontribusi dan kesuksesan para lulusan kami yang kini telah berkiprah di berbagai bidang dan institusi ternama."}
+        title={(tenant.settings as any)?.labels?.alumni?.sectionTitle || "Jejak Langkah Alumni"}
+        description={(tenant.settings as any)?.labels?.alumni?.sectionSubtitle || "Melihat kontribusi dan kesuksesan para lulusan kami yang kini telah berkiprah di berbagai bidang dan institusi ternama."}
         breadcrumbs={[
           { label: "Galeri & Alumni" },
           { label: "Alumni Success Stories" }
