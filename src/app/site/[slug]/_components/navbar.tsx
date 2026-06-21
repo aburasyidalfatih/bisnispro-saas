@@ -256,17 +256,6 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
 
             {/* Right: Search + CTA */}
             <div className="hidden lg:flex items-center gap-3 shrink-0">
-              {/* Secondary CTA: WhatsApp */}
-              <a
-                href={tenant.whatsapp ? `https://wa.me/${tenant.whatsapp}` : "#"}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-primary bg-white border-2 border-primary hover:bg-primary/5 rounded-full transition-colors"
-              >
-                <MessageCircle className="h-4 w-4" />
-                WhatsApp
-              </a>
-              
               {/* Primary CTA: Login */}
               <Link
                 href="/login"
@@ -391,15 +380,6 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
 
                   {/* Sticky Footer CTA */}
                   <div className="absolute bottom-0 left-0 right-0 p-5 bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] flex flex-col gap-3">
-                    <a
-                      href={tenant.whatsapp ? `https://wa.me/${tenant.whatsapp}` : "#"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-bold text-primary bg-white border-2 border-primary rounded-xl transition-colors hover:bg-primary/5"
-                    >
-                      <MessageCircle className="h-5 w-5" />
-                      Hubungi via WhatsApp
-                    </a>
                     <Link
                       href="/login"
                       onClick={() => setMobileOpen(false)}
