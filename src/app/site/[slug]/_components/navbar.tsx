@@ -326,7 +326,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                               )}
                             >
                               <div className="flex items-center gap-3">
-                                <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-gray-400")} />
+                                {Icon && <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-gray-400")} />}
                                 <span>{link.label}</span>
                               </div>
                               <ChevronDown className={cn("h-4 w-4 text-gray-400 transition-transform duration-300", isExpanded && "rotate-180")} />
@@ -340,7 +340,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                                 isActive ? "bg-primary/10 text-primary border-l-4 border-primary pl-3" : "text-gray-700 hover:bg-gray-50"
                               )}
                             >
-                              <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-gray-400")} />
+                              {Icon && <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-gray-400")} />}
                               <span>{link.label}</span>
                             </Link>
                           )}
