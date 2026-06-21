@@ -213,6 +213,77 @@ export function SocialShareSettings({ tenantId, plan }: { tenantId: string | nul
           </div>
         </div>
 
+        {/* INSTAGRAM */}
+        <div className="space-y-4 border-b pb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <Share2 className="w-5 h-5 text-pink-600" />
+            <h3 className="font-semibold">Instagram</h3>
+          </div>
+          <div className="grid gap-3">
+            <div>
+              <Label>Instagram User ID</Label>
+              <Input 
+                value={forms.INSTAGRAM.externalId} 
+                onChange={e => setForms(prev => ({...prev, INSTAGRAM: {...prev.INSTAGRAM, externalId: e.target.value}}))} 
+                placeholder="178414..." 
+              />
+            </div>
+            <div>
+              <Label>Access Token</Label>
+              <Input 
+                value={forms.INSTAGRAM.accessToken} 
+                onChange={e => setForms(prev => ({...prev, INSTAGRAM: {...prev.INSTAGRAM, accessToken: e.target.value}}))} 
+                placeholder="EAA..." 
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  checked={forms.INSTAGRAM.isActive} 
+                  onCheckedChange={c => setForms(prev => ({...prev, INSTAGRAM: {...prev.INSTAGRAM, isActive: c}}))} 
+                />
+                <Label>Aktif</Label>
+              </div>
+              <Button size="sm" onClick={() => handleSave("INSTAGRAM")} disabled={saving || !forms.INSTAGRAM.accessToken}>Simpan</Button>
+            </div>
+          </div>
+        </div>
+
+        {/* THREADS */}
+        <div className="space-y-4 border-b pb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <Share2 className="w-5 h-5 text-black dark:text-white" />
+            <h3 className="font-semibold">Threads</h3>
+          </div>
+          <div className="grid gap-3">
+            <div>
+              <Label>Threads User ID</Label>
+              <Input 
+                value={forms.THREADS.externalId} 
+                onChange={e => setForms(prev => ({...prev, THREADS: {...prev.THREADS, externalId: e.target.value}}))} 
+                placeholder="User ID" 
+              />
+            </div>
+            <div>
+              <Label>Access Token</Label>
+              <Input 
+                value={forms.THREADS.accessToken} 
+                onChange={e => setForms(prev => ({...prev, THREADS: {...prev.THREADS, accessToken: e.target.value}}))} 
+                placeholder="THG..." 
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  checked={forms.THREADS.isActive} 
+                  onCheckedChange={c => setForms(prev => ({...prev, THREADS: {...prev.THREADS, isActive: c}}))} 
+                />
+                <Label>Aktif</Label>
+              </div>
+              <Button size="sm" onClick={() => handleSave("THREADS")} disabled={saving || !forms.THREADS.accessToken}>Simpan</Button>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )
