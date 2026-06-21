@@ -1,19 +1,20 @@
 import { Queue } from "bullmq";
 
-const redisOptions = {
-  host: process.env.REDIS_HOST || "127.0.0.1",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-  password: process.env.REDIS_PASSWORD || undefined,
-};
+// Cleaned up variables
+import { redisConnection } from "@/lib/queue/redis";
 
-const connection = process.env.REDIS_URL
-  ? { url: process.env.REDIS_URL } // simplified for bullmq connection init if needed, usually we pass ioredis instance
-  : redisOptions;
+const isBuildPhase = process.env.npm_lifecycle_event === "build" || process.env.NEXT_PHASE?.includes("build");
 
-// We use ioredis in the worker, but for adding jobs, passing connection options is fine.
-export const socialQueue = new Queue("social-share-queue", {
-  connection: process.env.REDIS_URL ? { url: process.env.REDIS_URL } : redisOptions as any,
-});
+export const socialQueue = isBuildPhase 
+  ? { add: async () => {}, name: "social-share-queue" } as unknown as Queue
+  : new Queue("social-share-queue", {
+      connection: redisConnection,
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { type: "exponential", delay: 5000 },
+        removeOnComplete: true,
+      }
+    });
 
 export async function addSocialShareJob(tenantId: string, postId: string) {
   await socialQueue.add("share-post", { tenantId, postId }, {

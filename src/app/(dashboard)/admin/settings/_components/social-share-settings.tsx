@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
-import { Share2, Facebook, Twitter, Instagram, Send, MessageCircle } from "lucide-react"
+import { Share2, Send } from "lucide-react"
 
 export function SocialShareSettings({ tenantId, plan }: { tenantId: string | null, plan: string }) {
   const [credentials, setCredentials] = useState<any[]>([])
@@ -146,7 +146,7 @@ export function SocialShareSettings({ tenantId, plan }: { tenantId: string | nul
         {/* FACEBOOK */}
         <div className="space-y-4 border-b pb-6">
           <div className="flex items-center gap-2 mb-2">
-            <Facebook className="w-5 h-5 text-blue-600" />
+            <Share2 className="w-5 h-5 text-blue-600" />
             <h3 className="font-semibold">Facebook Page</h3>
           </div>
           <div className="grid gap-3">
@@ -182,7 +182,7 @@ export function SocialShareSettings({ tenantId, plan }: { tenantId: string | nul
         {/* TWITTER */}
         <div className="space-y-4 border-b pb-6">
           <div className="flex items-center gap-2 mb-2">
-            <Twitter className="w-5 h-5 text-sky-500" />
+            <Share2 className="w-5 h-5 text-blue-400" />
             <h3 className="font-semibold">Twitter (X)</h3>
           </div>
           <div className="grid gap-3">
