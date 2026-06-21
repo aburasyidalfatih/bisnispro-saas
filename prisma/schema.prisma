@@ -599,6 +599,7 @@ model Achievement {
   description String?
   date        DateTime
   level       String   @default("LOKAL")
+  type        String   @default("SISWA") // "SISWA", "GURU", "SEKOLAH"
   imageUrl    String?
   order       Int      @default(0)
   createdAt   DateTime @default(now())
@@ -607,6 +608,7 @@ model Achievement {
 
   @@unique([tenantId, slug])
   @@index([tenantId])
+  @@index([type])
   @@index([createdAt])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("achievements")

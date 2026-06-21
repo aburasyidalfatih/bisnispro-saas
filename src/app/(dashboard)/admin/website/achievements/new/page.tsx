@@ -37,6 +37,7 @@ export default function NewAchievementPage() {
     description:"",
     date: new Date().toISOString().split('T')[0],
     level:"LOKAL",
+    type: "SISWA",
     customLevel: ""
   })
 
@@ -94,6 +95,7 @@ export default function NewAchievementPage() {
         description: formData.description,
         date: new Date(formData.date).toISOString(),
         level: formData.level === "LAINNYA" ? formData.customLevel : formData.level,
+        type: formData.type,
         imageUrl: imageUrl,
       })
 
@@ -225,6 +227,20 @@ export default function NewAchievementPage() {
                   onChange={e => setFormData({...formData, date: e.target.value})} 
                   className="rounded-xl"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="type">Kategori Prestasi</Label>
+                <Select value={formData.type} onValueChange={val => setFormData({...formData, type: val})}>
+                  <SelectTrigger id="type" className="w-full rounded-xl h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SISWA">Prestasi Siswa</SelectItem>
+                    <SelectItem value="GURU">Prestasi Guru/Staf</SelectItem>
+                    <SelectItem value="SEKOLAH">Prestasi Sekolah (Institusi)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">

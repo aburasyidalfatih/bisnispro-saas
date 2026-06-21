@@ -7,6 +7,7 @@ import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Textarea } from"@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from"@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon, Users, Sparkles, Wand2, Loader2 as Loader2Icon } from"lucide-react"
 import Link from"next/link"
@@ -301,13 +302,24 @@ export default function NewStaffPage() {
               </div>
               <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="education">Riwayat Akademik / Pendidikan Terakhir</Label>
-                <Input 
-                  id="education" 
-                  value={formData.education} 
-                  onChange={e => setFormData({...formData, education: e.target.value})} 
-                  placeholder="Contoh: S1 Pendidikan Matematika - Universitas ABC" 
-                  className="rounded-xl"
-                />
+                <Select value={formData.education} onValueChange={val => setFormData({...formData, education: val})}>
+                  <SelectTrigger id="education" className="w-full rounded-xl h-10">
+                    <SelectValue placeholder="Pilih pendidikan terakhir" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SD">SD / Sederajat</SelectItem>
+                    <SelectItem value="SMP">SMP / Sederajat</SelectItem>
+                    <SelectItem value="SMA">SMA / SMK / Sederajat</SelectItem>
+                    <SelectItem value="D1">Diploma 1 (D1)</SelectItem>
+                    <SelectItem value="D2">Diploma 2 (D2)</SelectItem>
+                    <SelectItem value="D3">Diploma 3 (D3)</SelectItem>
+                    <SelectItem value="D4">Diploma 4 (D4)</SelectItem>
+                    <SelectItem value="S1">Strata 1 (S1)</SelectItem>
+                    <SelectItem value="S2">Strata 2 (S2)</SelectItem>
+                    <SelectItem value="S3">Strata 3 (S3)</SelectItem>
+                    <SelectItem value="Lainnya">Lainnya</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

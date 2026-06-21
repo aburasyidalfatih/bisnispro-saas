@@ -2,11 +2,10 @@ import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 
 
-
-
 import Link from "next/link"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
 import parse from "html-react-parser"
+import { db } from "@/lib/db"
 import { renderCustomTheme } from "./_themes/custom-renderer"
 import { HeroSlider } from "./_components/hero-slider"
 import { StatsBar } from "./_components/stats-bar"
@@ -100,11 +99,28 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   if (t.settings?.customStats && Array.isArray(t.settings.customStats) && t.settings.customStats.length > 0) {
     stats = t.settings.customStats
   } else {
+    // Calculate real stats from database based on user requirements
+    const siswaAchievementsCount = await db.achievement.count({
+      where: { tenantId: tenantForRender.id, type: "SISWA" }
+    })
+    const guruAchievementsCount = await db.achievement.count({
+      where: { tenantId: tenantForRender.id, type: "GURU" }
+    })
+    const s1s2StaffCount = await db.staff.count({
+      where: { 
+        tenantId: tenantForRender.id, 
+        education: { in: ["S1", "S2", "S3"] } 
+      }
+    })
+    const totalStaffCount = await db.staff.count({
+      where: { tenantId: tenantForRender.id }
+    })
+
     stats = [
-      { value: staffCount > 0 ? `${staffCount}+` : "0", label: "Tenaga Pendidik", icon: "Users" },
-      { value: programCount > 0 ? `${programCount}` : "0", label: "Program Unggulan", icon: "BookOpen" },
-      { value: achievementCount > 0 ? `${achievementCount}+` : "0", label: "Prestasi Diraih", icon: "Trophy" },
-      { value: `${establishedYear}`, label: "Tahun Berdiri", icon: "Building" },
+      { value: siswaAchievementsCount > 0 ? `${siswaAchievementsCount}+` : "0", label: "Prestasi Siswa", icon: "Trophy" },
+      { value: guruAchievementsCount > 0 ? `${guruAchievementsCount}+` : "0", label: "Prestasi Guru & Staf", icon: "Award" },
+      { value: s1s2StaffCount > 0 ? `${s1s2StaffCount}` : "0", label: "Guru Lulusan S1/S2", icon: "GraduationCap" },
+      { value: totalStaffCount > 0 ? `${totalStaffCount}` : "0", label: "Total Guru & Staf", icon: "Users" },
     ]
   }
   const themeProps = { tenant: tenantForRender, base, gallery, stats }

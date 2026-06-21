@@ -19,6 +19,7 @@ interface Achievement {
   description: string | null
   date: Date
   level: string
+  type: string
   imageUrl: string | null
   createdAt: Date
 }
@@ -70,6 +71,15 @@ export default function AchievementsPage() {
       case"NASIONAL": return"Tingkat Nasional"
       case"INTERNASIONAL": return"Tingkat Internasional"
       default: return level
+    }
+  }
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case "SISWA": return "Prestasi Siswa"
+      case "GURU": return "Prestasi Guru/Staf"
+      case "SEKOLAH": return "Prestasi Sekolah"
+      default: return type
     }
   }
 
@@ -192,9 +202,12 @@ export default function AchievementsPage() {
                     </div>
                   </div>
                   <CardContent className="p-4">
-                    <div className="mb-2">
+                    <div className="mb-2 flex flex-wrap gap-1">
                       <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-[10px] font-medium text-primary ring-1 ring-inset ring-primary/20">
                         {getLevelLabel(achievement.level)}
+                      </span>
+                      <span className="inline-flex items-center rounded-md bg-violet-500/10 px-2 py-1 text-[10px] font-medium text-violet-700 ring-1 ring-inset ring-violet-500/20">
+                        {getTypeLabel(achievement.type)}
                       </span>
                     </div>
                     <h3 className="font-semibold truncate">{achievement.title}</h3>
