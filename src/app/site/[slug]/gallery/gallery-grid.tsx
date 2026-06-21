@@ -48,7 +48,7 @@ export function GalleryGrid({ items }: Props) {
                 width={600}
                 height={450}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700" 
+                className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700 zoomable" 
               />
             ) : (
               <Image 
@@ -57,7 +57,7 @@ export function GalleryGrid({ items }: Props) {
                 width={600}
                 height={600}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700" 
+                className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700 zoomable" 
               />
             )}
             {item.type === "video" && (

@@ -14,6 +14,7 @@ import { PageTracker } from "@/components/shared/page-tracker"
 import { FloatingWhatsApp } from "./_components/floating-whatsapp"
 import { Suspense } from "react"
 import { normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
+import { MediumZoomSetup } from "@/components/ui/medium-zoom-setup"
 
 export const dynamic = "force-dynamic"
 
@@ -178,6 +179,8 @@ export default async function WebsiteLayout({
         {!tenant.customThemeId && <WebsiteFooter tenant={tenantWithFreshMenus as any} />}
         
         {activePopup && <PopupRenderer popup={activePopup} />}
+        
+        <MediumZoomSetup />
         
         {/* Floating WhatsApp Widget */}
         {tenant.whatsapp && !tenant.customThemeId && (
