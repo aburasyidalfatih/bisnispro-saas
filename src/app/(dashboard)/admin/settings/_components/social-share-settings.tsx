@@ -22,8 +22,11 @@ export function SocialShareSettings({ tenantId, plan }: { tenantId: string | nul
     THREADS: { externalId: "", accessToken: "", isActive: true },
   })
 
+  const [isLockedFeature, setIsLockedFeature] = useState<boolean>(plan === "free" || !plan)
+
   useEffect(() => {
     if (!tenantId) return
+    // Fetch credentials
     fetch(`/api/admin/settings/social`)
       .then(res => res.json())
       .then(data => {
@@ -42,10 +45,22 @@ export function SocialShareSettings({ tenantId, plan }: { tenantId: string | nul
           })
           setForms(newForms)
         }
+      })
+      .catch(() => {})
+
+    // Check feature access dynamically
+    fetch(`/api/public/free-plan-access?plan=${plan || "free"}`)
+      .then(res => res.json())
+      .then(data => {
+        const planAccess = data._plan_access || {}
+        // Default to locked if not explicitly true in the feature access
+        if (planAccess.auto_share_social !== undefined) {
+          setIsLockedFeature(!planAccess.auto_share_social)
+        }
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [tenantId])
+  }, [tenantId, plan])
 
   const handleSave = async (platform: string) => {
     setSaving(true)
@@ -73,9 +88,7 @@ export function SocialShareSettings({ tenantId, plan }: { tenantId: string | nul
     }
   }
 
-  const isLocked = plan === "free" || !plan
-
-  if (isLocked) {
+  if (isLockedFeature) {
     return (
       <Card>
         <CardHeader>
