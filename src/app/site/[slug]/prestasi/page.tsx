@@ -4,11 +4,11 @@ import { Trophy, Calendar, Medal, Award, Star } from "lucide-react"
 import { getTenantLayoutData, getTenantAchievements } from "@/features/tenant/services/tenant-modular.service"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn } from "@/lib/utils"
-import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import { PrestasiList } from "./prestasi-list"
 
 
 export default async function PrestasiPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -47,77 +47,7 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
 
       {/* ── MAIN CONTENT ── */}
       <section className="py-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {achievements.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {achievements.map((item: any, index: number) => (
-              <Link 
-                href={`${base}/prestasi/${item.slug || item.id}`}
-                key={item.id} 
-                className="group relative flex flex-col bg-white rounded-[2rem] overflow-hidden border border-border shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
-              >
-                {/* Image & Badge */}
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  {(!item.imageUrl || item.imageUrl.trim() === "" || item.imageUrl === "null") ? (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
-                      <Trophy className="h-20 w-20 text-white/20" />
-                    </div>
-                  ) : (
-                    <OptimizedImage
-                      src={item.imageUrl}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  )}
-                  <div className="absolute top-4 left-4 bg-primary text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
-                    {item.level || "NASIONAL"}
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-                  
-                  <div className="absolute bottom-6 left-6 right-6 text-white">
-                     <div className="flex items-center gap-2 mb-2 opacity-80 text-[10px] font-bold">
-                        <Calendar className="h-3 w-3" />
-                        {item.date ? format(new Date(item.date), "dd MMMM yyyy", { locale: id }) : "Baru-baru ini"}
-                     </div>
-                     <h3 className="text-xl font-bold leading-tight line-clamp-2">
-                        {item.title}
-                     </h3>
-                  </div>
-                </div>
-                
-                {/* Content Details */}
-                <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-white to-muted/20">
-                  <p className="text-muted-foreground text-sm line-clamp-2 mt-auto">
-                    {item.description ? item.description.replace(/<[^>]*>?/gm, '') : "Pencapaian luar biasa yang diraih oleh siswa kami melalui dedikasi dan kerja keras yang tinggi."}
-                  </p>
-                  
-                  <div className="flex items-center justify-between">
-                     <div className="flex -space-x-2">
-                        {[1, 2, 3].map((i) => (
-                           <div key={i} className="h-8 w-8 rounded-full border-2 border-white bg-muted flex items-center justify-center overflow-hidden">
-                              <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                           </div>
-                        ))}
-                     </div>
-                     <div className="text-primary font-bold text-xs flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Detail Prestasi <Award className="h-4 w-4" />
-                     </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-24 bg-muted/20 rounded-[3rem] border border-dashed border-border flex flex-col items-center">
-            <div className="bg-primary/10 h-24 w-24 rounded-full flex items-center justify-center mb-6">
-              <Trophy className="h-12 w-12 text-primary animate-pulse" />
-            </div>
-            <h3 className="text-2xl font-bold">Terus Berproses Menuju Juara</h3>
-            <p className="text-muted-foreground mt-3 max-w-md mx-auto text-lg leading-relaxed">
-              Daftar prestasi sedang dalam proses pembaruan. Nantikan kabar gembira dari siswa-siswi terbaik kami segera!
-            </p>
-          </div>
-        )}
+        <PrestasiList achievements={achievements} base={base} />
       </section>
 
       {/* ── MOTIVATIONAL FOOTER ── */}
