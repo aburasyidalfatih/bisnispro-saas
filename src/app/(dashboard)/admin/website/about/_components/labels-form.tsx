@@ -148,7 +148,156 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  className="rounded-xl h-9" 
                />
              </div>
-          </TabsContent>
+           </TabsContent>
+
+           <TabsContent value="facilities" className="space-y-4 outline-none">
+             <div className="grid md:grid-cols-2 gap-4">
+               <div className="space-y-1.5">
+                 <Label>Judul Bagian</Label>
+                 <Input 
+                   value={labels?.facilities?.sectionTitle || ""} 
+                   onChange={e => updateLabel("facilities", "sectionTitle", e.target.value)}
+                   placeholder="Fasilitas Sekolah" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+             <div className="space-y-1.5">
+               <Label>Deskripsi Singkat</Label>
+               <Input 
+                 value={labels?.facilities?.sectionSubtitle || ""} 
+                 onChange={e => updateLabel("facilities", "sectionSubtitle", e.target.value)}
+                 placeholder="Sarana dan prasarana pendukung pendidikan berkualitas untuk kenyamanan seluruh siswa." 
+                 className="rounded-xl h-9" 
+               />
+             </div>
+           </TabsContent>
+
+           <TabsContent value="extracurriculars" className="space-y-4 outline-none">
+             <div className="grid md:grid-cols-2 gap-4">
+               <div className="space-y-1.5">
+                 <Label>Judul Bagian</Label>
+                 <Input 
+                   value={labels?.extracurriculars?.sectionTitle || ""} 
+                   onChange={e => updateLabel("extracurriculars", "sectionTitle", e.target.value)}
+                   placeholder="Ekstrakurikuler" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+             <div className="space-y-1.5">
+               <Label>Deskripsi Singkat</Label>
+               <Input 
+                 value={labels?.extracurriculars?.sectionSubtitle || ""} 
+                 onChange={e => updateLabel("extracurriculars", "sectionSubtitle", e.target.value)}
+                 placeholder="Wadah bagi siswa untuk mengeksplorasi minat, mengasah kepemimpinan, dan membangun kerjasama." 
+                 className="rounded-xl h-9" 
+               />
+             </div>
+           </TabsContent>
+
+           <TabsContent value="news" className="space-y-4 outline-none">
+             <div className="grid md:grid-cols-2 gap-4">
+               <div className="space-y-1.5">
+                 <Label>Judul Bagian Berita</Label>
+                 <Input 
+                   value={labels?.news?.sectionTitle || ""} 
+                   onChange={e => updateLabel("news", "sectionTitle", e.target.value)}
+                   placeholder="Artikel & Berita Terbaru" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Deskripsi Berita</Label>
+                 <Input 
+                   value={labels?.news?.sectionSubtitle || ""} 
+                   onChange={e => updateLabel("news", "sectionSubtitle", e.target.value)}
+                   placeholder="Ikuti informasi terkini mengenai kegiatan, prestasi, dan pengumuman sekolah." 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+             <div className="grid md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+               <div className="space-y-1.5">
+                 <Label>Judul Bagian Prestasi</Label>
+                 <Input 
+                   value={labels?.achievements?.sectionTitle || ""} 
+                   onChange={e => updateLabel("achievements", "sectionTitle", e.target.value)}
+                   placeholder="Prestasi Membanggakan" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Deskripsi Prestasi</Label>
+                 <Input 
+                   value={labels?.achievements?.sectionSubtitle || ""} 
+                   onChange={e => updateLabel("achievements", "sectionSubtitle", e.target.value)}
+                   placeholder="Apresiasi atas dedikasi dan kerja keras siswa-siswi." 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+             <div className="grid md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+               <div className="space-y-1.5">
+                 <Label>Judul Bagian Agenda</Label>
+                 <Input 
+                   value={labels?.agenda?.sectionTitle || ""} 
+                   onChange={e => updateLabel("agenda", "sectionTitle", e.target.value)}
+                   placeholder="Agenda Sekolah" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Deskripsi Agenda</Label>
+                 <Input 
+                   value={labels?.agenda?.sectionSubtitle || ""} 
+                   onChange={e => updateLabel("agenda", "sectionSubtitle", e.target.value)}
+                   placeholder="Jadwal kegiatan akademik dan non-akademik di waktu mendatang." 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+             <div className="grid md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+               <div className="space-y-1.5">
+                 <Label>Judul Bagian Alumni</Label>
+                 <Input 
+                   value={labels?.alumni?.sectionTitle || ""} 
+                   onChange={e => updateLabel("alumni", "sectionTitle", e.target.value)}
+                   placeholder="Jejak Alumni" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Deskripsi Alumni</Label>
+                 <Input 
+                   value={labels?.alumni?.sectionSubtitle || ""} 
+                   onChange={e => updateLabel("alumni", "sectionSubtitle", e.target.value)}
+                   placeholder="Kisah inspiratif para lulusan yang telah berkiprah di masyarakat." 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+             <div className="grid md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+               <div className="space-y-1.5">
+                 <Label>Judul Pengumuman</Label>
+                 <Input 
+                   value={labels?.pengumuman?.sectionTitle || ""} 
+                   onChange={e => updateLabel("pengumuman", "sectionTitle", e.target.value)}
+                   placeholder="Papan Pengumuman" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Deskripsi Pengumuman</Label>
+                 <Input 
+                   value={labels?.pengumuman?.sectionSubtitle || ""} 
+                   onChange={e => updateLabel("pengumuman", "sectionSubtitle", e.target.value)}
+                   placeholder="Informasi resmi dan edaran penting dari sekolah." 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+           </TabsContent>
 
           <TabsContent value="gallery" className="space-y-4 outline-none">
              <div className="grid md:grid-cols-2 gap-4">
