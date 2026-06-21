@@ -74,8 +74,8 @@ export async function saveFile(
   try {
     let storageWarningResult: { message: string; usagePercent: number } | undefined
 
-    if (file.type.startsWith("image/") && file.size > 2 * 1024 * 1024) {
-      return { success: false, error: "gambar harus kurang dari 2 mb" }
+    if (file.type.startsWith("image/") && file.size > 5 * 1024 * 1024) {
+      return { success: false, error: "Ukuran gambar harus kurang dari 5 MB" }
     }
 
     if (file.size > MAX_FILE_SIZE) {
