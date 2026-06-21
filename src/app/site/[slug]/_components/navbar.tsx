@@ -190,6 +190,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                   ? (pathname === resolveHref("/") || pathname === `/site/${tenant.slug}`) 
                   : pathname.startsWith(href)
                 const isOpen = openDropdown === link.id
+                const Icon = link.icon
 
                 return (
                   <div 
@@ -202,26 +203,28 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                       <Link
                         href={href}
                         className={cn(
-                          "flex items-center gap-1 px-4 py-2.5 text-sm font-bold rounded-full transition-all duration-200",
+                          "flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold rounded-full transition-all duration-200",
                           isActive || isOpen
                             ? "bg-primary/10 text-primary"
                             : "text-gray-600 hover:text-primary hover:bg-primary/5"
                         )}
                       >
-                        {link.label}
+                        {Icon && <Icon className="h-4 w-4 shrink-0" />}
+                        <span>{link.label}</span>
                         <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-300", isOpen && "rotate-180")} />
                       </Link>
                     ) : (
                       <Link
                         href={href}
                         className={cn(
-                          "flex items-center px-4 py-2.5 text-sm font-bold rounded-full transition-all duration-200",
+                          "flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold rounded-full transition-all duration-200",
                           isActive
                             ? "bg-primary/10 text-primary"
                             : "text-gray-600 hover:text-primary hover:bg-primary/5"
                         )}
                       >
-                        {link.label}
+                        {Icon && <Icon className="h-4 w-4 shrink-0" />}
+                        <span>{link.label}</span>
                       </Link>
                     )}
 
