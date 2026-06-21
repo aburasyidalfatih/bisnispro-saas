@@ -10,7 +10,7 @@ import {
   Wallet, Store, Heart, FileText, Megaphone, MessageSquare,
   CreditCard, BrainCircuit, Mail, ClipboardList, User,
   BarChart3, ToggleLeft, ToggleRight, CheckCircle2, Loader2,
-  Zap, Crown, Sparkles,
+  Zap, Crown, Sparkles, Share2,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -45,6 +45,7 @@ const FEATURE_LIST: FeatureItem[] = [
   { key: "whatsapp_gateway", label: "WhatsApp Gateway", description: "Kirim notifikasi otomatis via WhatsApp.", icon: MessageSquare, category: "Komunikasi" },
   { key: "broadcast_wa", label: "Broadcast WA", description: "Kirim pesan massal ke orang tua dan guru.", icon: Megaphone, category: "Komunikasi" },
   { key: "email_smtp", label: "Email SMTP", description: "Konfigurasi pengiriman email dari server sendiri.", icon: Mail, category: "Komunikasi" },
+  { key: "auto_share_social", label: "Auto Share Sosial Media", description: "Bagikan artikel otomatis ke Telegram, Facebook, X, IG, & Threads.", icon: Share2, category: "Komunikasi" },
   
   // Fitur Lanjutan
   { key: "academy", label: "Academy (LMS)", description: "Katalog kelas dan sistem pembelajaran tenant.", icon: GraduationCap, category: "Fitur Lanjutan" },
