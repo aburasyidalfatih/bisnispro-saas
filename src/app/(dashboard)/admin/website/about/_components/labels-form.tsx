@@ -54,6 +54,9 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
             <TabsTrigger value="hero">Utama (Hero)</TabsTrigger>
             <TabsTrigger value="programs">Program</TabsTrigger>
             <TabsTrigger value="staff">Pengajar</TabsTrigger>
+            <TabsTrigger value="facilities">Fasilitas</TabsTrigger>
+            <TabsTrigger value="extracurriculars">Ekskul</TabsTrigger>
+            <TabsTrigger value="news">Berita & Info</TabsTrigger>
             <TabsTrigger value="gallery">Galeri</TabsTrigger>
             <TabsTrigger value="other">Lainnya</TabsTrigger>
           </TabsList>

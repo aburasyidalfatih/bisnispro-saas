@@ -42,8 +42,8 @@ export default async function EkstrakurikulerPage({ params }: { params: Promise<
  <div className="bg-background min-h-screen pb-12">
  {/* ── HERO SECTION ── */}
  <PageHeader
-        title="Ekstrakurikuler"
-        description="Wadah bagi siswa untuk mengeksplorasi minat, mengasah kepemimpinan, dan membangun kerjasama tim di luar jam kelas."
+        title={tenant.settings?.labels?.extracurriculars?.sectionTitle || "Ekstrakurikuler"}
+        description={tenant.settings?.labels?.extracurriculars?.sectionSubtitle || "Wadah bagi siswa untuk mengeksplorasi minat, mengasah kepemimpinan, dan membangun kerjasama tim di luar jam kelas."}
         breadcrumbs={[
           { label: "Profil Sekolah" },
           { label: "Ekstrakurikuler" }

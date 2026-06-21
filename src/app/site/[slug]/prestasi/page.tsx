@@ -37,8 +37,8 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}
       <PageHeader
-        title="Prestasi & Penghargaan"
-        description="Membanggakan dan Inspiratif. Catatan perjalanan siswa dan institusi dalam meraih keunggulan di berbagai bidang."
+        title={tenant.settings?.labels?.achievements?.sectionTitle || "Prestasi & Penghargaan"}
+        description={tenant.settings?.labels?.achievements?.sectionSubtitle || "Membanggakan dan Inspiratif. Catatan perjalanan siswa dan institusi dalam meraih keunggulan di berbagai bidang."}
         breadcrumbs={[
           { label: "Galeri & Alumni" },
           { label: "School Hall of Fame" }

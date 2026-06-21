@@ -78,8 +78,8 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}
       <PageHeader
-        title="Guru & Tenaga Kependidikan"
-        description="Mengenal lebih dekat para pendidik dan profesional yang membimbing putra-putri Anda menuju masa depan cemerlang."
+        title={tenant.settings?.labels?.staff?.sectionTitle || "Guru & Tenaga Kependidikan"}
+        description={tenant.settings?.labels?.staff?.sectionSubtitle || "Mengenal lebih dekat para pendidik dan profesional yang membimbing putra-putri Anda menuju masa depan cemerlang."}
         breadcrumbs={[
           { label: "Profil Sekolah" },
           { label: "SDM Unggul" }

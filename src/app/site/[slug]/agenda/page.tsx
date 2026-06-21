@@ -66,8 +66,8 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
     <div className="bg-background min-h-screen pb-12">
       {/* ── HERO SECTION ── */}
       <PageHeader
-        title="Agenda & Acara Sekolah"
-        description={<>Jadwal kegiatan akademik, hari besar, dan acara menarik lainnya di {tenant.name}.</>}
+        title={tenant.settings?.labels?.agenda?.sectionTitle || "Agenda & Acara Sekolah"}
+        description={<>{tenant.settings?.labels?.agenda?.sectionSubtitle || `Jadwal kegiatan akademik, hari besar, dan acara menarik lainnya di ${tenant.name}.`}</>}
         breadcrumbs={[
           { label: "Informasi" },
           { label: "Informasi Acara" }
