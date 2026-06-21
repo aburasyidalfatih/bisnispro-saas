@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react"
 import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
-import { Bell, Moon, Sun, LogOut, User, Search, Home, ChevronRight, UserPlus } from "lucide-react"
+import { Bell, Moon, Sun, LogOut, User, Search, Home, ChevronRight, UserPlus, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -16,11 +16,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
+import { useState } from "react"
 import { TenantSwitcher } from "@/components/shared/tenant-switcher"
 import { NotificationBell } from "@/components/shared/notification-bell"
 import { MessageIndicator } from "@/components/shared/message-indicator"
 import { AiTokenBadge } from "@/components/shared/ai-token-badge"
 import { useRealtimeNotification } from "@/hooks/use-realtime-notification"
+import { FeedbackModal } from "./feedback-modal"
 
 interface HeaderProps {
   onMenuClick?: () => void
@@ -150,6 +152,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
 
   // Aktivasi real-time notifications via SSE untuk Admin / Super Admin
   useRealtimeNotification()
@@ -229,6 +232,18 @@ export function Header({ onMenuClick }: HeaderProps) {
                 Profil
               </Link>
             </DropdownMenuItem>
+            
+            {/* Hanya tampilkan Kirim Feedback jika bukan super-admin yang sedang melihat halaman admin */}
+            {!isSuperAdminPanel && (
+              <DropdownMenuItem 
+                onClick={() => setIsFeedbackModalOpen(true)}
+                className="flex items-center gap-2 rounded-lg cursor-pointer"
+              >
+                <MessageSquare className="h-4 w-4" />
+                Kirim Feedback
+              </DropdownMenuItem>
+            )}
+
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={async () => {
@@ -242,6 +257,11 @@ export function Header({ onMenuClick }: HeaderProps) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <FeedbackModal 
+          isOpen={isFeedbackModalOpen} 
+          onClose={() => setIsFeedbackModalOpen(false)} 
+        />
       </div>
     </>
   )

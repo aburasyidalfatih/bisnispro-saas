@@ -46,7 +46,6 @@ export async function processLeaderboardSync() {
           facilities: { where: { createdAt: { gte: startOfYear } } },
           events: { where: { createdAt: { gte: startOfYear } } },
           achievements: { where: { createdAt: { gte: startOfYear } } },
-          achievements: { where: { createdAt: { gte: startOfYear } } },
           internalMessages: { where: { receiverId: null, createdAt: { gte: startOfYear } } }
         }
       },

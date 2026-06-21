@@ -15,7 +15,7 @@ type FooterWebsiteMenu = {
 interface FooterProps {
   tenant: Pick<PublicTenant, 
     'name' | 'slug' | 'tagline' | 'description' | 'phone' | 'email' | 'whatsapp' | 
-    'address' | 'instagram' | 'facebook' | 'youtube' | 'tiktok' | 'telegram' | 'settings'
+    'address' | 'instagram' | 'facebook' | 'youtube' | 'tiktok' | 'settings'
   > & { 
     programs?: { name: string }[]
     websiteMenus?: FooterWebsiteMenu[]
@@ -63,7 +63,6 @@ export function WebsiteFooter({ tenant }: FooterProps) {
     ...(tenant.facebook ? [{ icon: FacebookIcon, href: formatSocialUrl(tenant.facebook, 'facebook'), label: "Facebook" }] : []),
     ...(tenant.youtube ? [{ icon: YoutubeIcon, href: formatSocialUrl(tenant.youtube, 'youtube'), label: "YouTube" }] : []),
     ...(tenant.tiktok ? [{ icon: TiktokIcon, href: formatSocialUrl(tenant.tiktok, 'tiktok'), label: "TikTok" }] : []),
-    ...(tenant.telegram ? [{ icon: TelegramIcon, href: formatSocialUrl(tenant.telegram, 'telegram'), label: "Telegram" }] : []),
   ]
   const websiteMenus = Array.isArray(tenant.websiteMenus) ? tenant.websiteMenus : []
 

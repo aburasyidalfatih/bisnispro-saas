@@ -477,6 +477,11 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
           href: "/super-admin/themes",
           icon: Palette,
         },
+        {
+          label: "Feedback Laporan",
+          href: "/super-admin/feedback",
+          icon: MessageSquare,
+        },
       ],
     },
     {

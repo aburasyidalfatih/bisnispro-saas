@@ -115,6 +115,7 @@ model Tenant {
   websiteMenus         WebsiteMenu[]
   pageViews            PageView[]
   errorLogs            ErrorLog[]
+  systemFeedbacks      SystemFeedback[]
   courseEnrollments    CourseEnrollment[]
   staffPermits         StaffPermit[]
 
@@ -184,6 +185,7 @@ model User {
   aiTokens             Int                   @default(0)
   aiChatSessions       AiChatSession[]
   errorLogs            ErrorLog[]
+  systemFeedbacks      SystemFeedback[]
   coursesCreated       Course[]              @relation("CourseAuthor")
   courseEnrollments    CourseEnrollment[]
 
@@ -1841,6 +1843,28 @@ model CbtExam {
   @@index([createdAt])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("cbt_exams")
+}
+
+model SystemFeedback {
+  id          String   @id @default(cuid())
+  tenantId    String?
+  userId      String
+  type        String   // "BUG_REPORT", "FEATURE_REQUEST", "TESTIMONIAL"
+  message     String
+  status      String   @default("PENDING") // "PENDING", "REVIEWED", "RESOLVED"
+  attachment  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("system_feedbacks")
 }
 
 model CbtSession {
