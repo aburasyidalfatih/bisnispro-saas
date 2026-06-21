@@ -15,7 +15,7 @@ export function NotificationSettings({
   isAdminRole, notifPrefs, toggleNotif
 }: NotificationSettingsProps) {
   return (
-    <Card className={`glass border-0 ${isAdminRole ?"lg:col-span-2" :""}`}>
+    <Card className="glass border-0">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -35,7 +35,7 @@ export function NotificationSettings({
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Toggle channels */}
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-3 grid-cols-1">
           {[
             { key:"inapp", name:"In-App", desc:"Notifikasi di dalam aplikasi", icon: Bell, hint: null },
             { key:"email", name:"Email", desc:"Dikirim ke email akun Anda", icon: Mail, hint:"Butuh konfigurasi SMTP" },
