@@ -96,12 +96,17 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     establishedYear = new Date(tenantForRender.createdAt).getFullYear()
   }
 
-  const stats = [
-    { value: staffCount > 0 ? `${staffCount}+` : "0", label: "Tenaga Pendidik", icon: "users" },
-    { value: programCount > 0 ? `${programCount}` : "0", label: "Program Unggulan", icon: "book" },
-    { value: achievementCount > 0 ? `${achievementCount}+` : "0", label: "Prestasi Diraih", icon: "award" },
-    { value: `${establishedYear}`, label: "Tahun Berdiri", icon: "clock" },
-  ]
+  let stats = []
+  if (t.settings?.customStats && Array.isArray(t.settings.customStats) && t.settings.customStats.length > 0) {
+    stats = t.settings.customStats
+  } else {
+    stats = [
+      { value: staffCount > 0 ? `${staffCount}+` : "0", label: "Tenaga Pendidik", icon: "Users" },
+      { value: programCount > 0 ? `${programCount}` : "0", label: "Program Unggulan", icon: "BookOpen" },
+      { value: achievementCount > 0 ? `${achievementCount}+` : "0", label: "Prestasi Diraih", icon: "Trophy" },
+      { value: `${establishedYear}`, label: "Tahun Berdiri", icon: "Building" },
+    ]
+  }
   const themeProps = { tenant: tenantForRender, base, gallery, stats }
 
   // Jika sekolah menggunakan Custom Theme dari Super Admin

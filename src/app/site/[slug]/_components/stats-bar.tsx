@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { DynamicIcon } from "@/components/ui/icon-picker"
 
 interface Stat { value: string; label: string; icon: string }
 
@@ -85,6 +86,12 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
           >
              {/* Hover shine effect */}
              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+             
+             {stat.icon && (
+               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white relative z-10 backdrop-blur-md border border-white/20 shadow-inner">
+                 <DynamicIcon name={stat.icon} className="h-6 w-6" />
+               </div>
+             )}
              
              <p className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-md relative z-10 flex items-center justify-center">
                <AnimatedCounter value={stat.value} label={stat.label} />
