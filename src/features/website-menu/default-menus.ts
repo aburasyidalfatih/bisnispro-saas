@@ -42,7 +42,8 @@ export const DEFAULT_WEBSITE_MENU_TREE: DefaultWebsiteMenuItem[] = [
     children: [
       { label: "Galeri Foto", url: "/gallery", order: 0 },
       { label: "Prestasi Siswa", url: "/prestasi", order: 1 },
-      { label: "Alumni Success", url: "/alumni", order: 2 },
+      { label: "Prestasi Guru", url: "/prestasi", order: 2 },
+      { label: "Alumni Success", url: "/alumni", order: 3 },
     ],
   },
   { label: "Kontak", url: "/contact", order: 4 },
