@@ -105,9 +105,12 @@ export async function createPost(params: {
     }
   }
 
+  // Extract autoShare so it doesn't get passed to Prisma
+  const { autoShare, ...postData } = data
+
   const post = await tenantDb.post.create({
     data: {
-      ...data,
+      ...postData,
       tenantId,
       authorId: userId,
       status: finalStatus,
@@ -148,8 +151,8 @@ export async function createPost(params: {
       // [AUTO-SHARE] Trigger Social Media Sharing for Lite & Pro packages
       if (tenant.plan === "lite" || tenant.plan === "pro") {
         const isInternal = ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"].includes(data.type as string)
-        // Check if data.autoShare is explicitly false (from frontend toggle)
-        if (!isInternal && data.autoShare !== false) {
+        // Check if autoShare is explicitly false (from frontend toggle)
+        if (!isInternal && autoShare !== false) {
           import("@/features/social/services/social-queue.service")
             .then(m => m.addSocialShareJob(tenantId, post.id))
             .catch(e => console.error("Failed to enqueue social share", e))
