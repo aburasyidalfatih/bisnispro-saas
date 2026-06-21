@@ -13,8 +13,8 @@ function AnimatedCounter({ value, label }: { value: string; label?: string }) {
   const numValue = numericMatch ? parseInt(numericMatch[0], 10) : 0
   const suffix = value.replace(/\d/g, "")
   
-  const isYear = label?.toLowerCase().includes("tahun")
-  const formatNum = (n: number) => Intl.NumberFormat("id-ID", { useGrouping: !isYear }).format(n)
+  // Use grouping: false as requested by user to remove dot separators
+  const formatNum = (n: number) => Intl.NumberFormat("id-ID", { useGrouping: false }).format(n)
 
   const [displayValue, setDisplayValue] = useState(numValue === 0 ? value : `0${suffix}`)
 
