@@ -229,16 +229,20 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                     {link.children && isOpen && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-56 z-50">
                         <div className="bg-white rounded-2xl shadow-xl border border-border/50 overflow-hidden flex flex-col p-2 animate-in fade-in slide-in-from-top-4 duration-200">
-                          {link.children.map((child: any) => (
-                            <Link
-                              key={child.id}
-                              href={resolveHref(child.href)}
-                              onClick={() => setOpenDropdown(null)}
-                              className="px-4 py-2.5 text-sm text-gray-600 font-semibold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
-                            >
-                              {child.label}
-                            </Link>
-                          ))}
+                          {link.children.map((child: any) => {
+                            const ChildIcon = child.icon
+                            return (
+                              <Link
+                                key={child.id}
+                                href={resolveHref(child.href)}
+                                onClick={() => setOpenDropdown(null)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 font-semibold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                              >
+                                {ChildIcon && <ChildIcon className="h-4 w-4 shrink-0 opacity-70" />}
+                                <span>{child.label}</span>
+                              </Link>
+                            )
+                          })}
                         </div>
                       </div>
                     )}
@@ -356,16 +360,24 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                               isExpanded ? "max-h-[400px] opacity-100 mt-1" : "max-h-0 opacity-0"
                             )}>
                               <div className="pl-[3.25rem] pr-4 py-1 flex flex-col gap-1">
-                                {link.children.map((child: any) => (
-                                  <Link
-                                    key={child.id}
-                                    href={resolveHref(child.href)}
-                                    onClick={() => setMobileOpen(false)}
-                                    className="block px-4 py-2.5 text-sm font-semibold text-gray-500 hover:text-primary hover:bg-primary/5 rounded-xl transition-colors relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-gray-300 hover:before:bg-primary"
-                                  >
-                                    {child.label}
-                                  </Link>
-                                ))}
+                                {link.children.map((child: any) => {
+                                  const ChildIcon = child.icon
+                                  return (
+                                    <Link
+                                      key={child.id}
+                                      href={resolveHref(child.href)}
+                                      onClick={() => setMobileOpen(false)}
+                                      className={cn(
+                                        "flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-gray-500 hover:text-primary hover:bg-primary/5 rounded-xl transition-colors relative",
+                                        !ChildIcon && "before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-gray-300 hover:before:bg-primary",
+                                        ChildIcon && "-ml-4"
+                                      )}
+                                    >
+                                      {ChildIcon && <ChildIcon className="h-4 w-4 shrink-0 text-gray-400" />}
+                                      <span>{child.label}</span>
+                                    </Link>
+                                  )
+                                })}
                               </div>
                             </div>
                           )}
