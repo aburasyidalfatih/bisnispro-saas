@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { CheckCircle, Send } from "lucide-react"
 
 interface Props {
@@ -12,6 +12,15 @@ export function ContactForm({ slug }: Props) {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState("")
+  
+  const [num1, setNum1] = useState(0)
+  const [num2, setNum2] = useState(0)
+  const [captchaAnswer, setCaptchaAnswer] = useState("")
+
+  useEffect(() => {
+    setNum1(Math.floor(Math.random() * 10) + 1)
+    setNum2(Math.floor(Math.random() * 10) + 1)
+  }, [])
 
   const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(p => ({ ...p, [field]: e.target.value }))
@@ -22,6 +31,19 @@ export function ContactForm({ slug }: Props) {
 
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
       setError("Nama, email, dan pesan wajib diisi.")
+      return
+    }
+
+    if (!captchaAnswer.trim()) {
+      setError("Silakan jawab pertanyaan keamanan.")
+      return
+    }
+
+    if (parseInt(captchaAnswer) !== num1 + num2) {
+      setError("Jawaban matematika salah. Silakan coba lagi.")
+      setNum1(Math.floor(Math.random() * 10) + 1)
+      setNum2(Math.floor(Math.random() * 10) + 1)
+      setCaptchaAnswer("")
       return
     }
 
@@ -36,6 +58,7 @@ export function ContactForm({ slug }: Props) {
       if (res.ok) {
         setSent(true)
         setForm({ name: "", email: "", phone: "", subject: "", message: "" })
+        setCaptchaAnswer("")
       } else {
         setError(data.error || "Terjadi kesalahan. Coba lagi.")
       }
@@ -102,6 +125,12 @@ export function ContactForm({ slug }: Props) {
           <textarea rows={5} value={form.message} onChange={set("message")}
             placeholder="Tulis pesan Anda di sini..."
             className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Berapa hasil dari {num1} + {num2}? <span className="text-destructive">*</span></label>
+          <input type="number" value={captchaAnswer} onChange={e => setCaptchaAnswer(e.target.value)}
+            placeholder="Jawaban"
+            className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
         </div>
 
         {error && (

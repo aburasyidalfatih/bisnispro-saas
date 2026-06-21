@@ -204,14 +204,22 @@ export default function AdminMessagesPage() {
     if (!tenantId) return
     setSubmissions(p => p.map(s => s.id === id ? { ...s, isRead: true } : s))
     setUnread(p => Math.max(0, p - 1))
-    await fetch(`/api/tenant/contact-submissions?id=${id}&tenantId=${tenantId}`, { method:"PUT" })
+    await fetch(`/api/tenant/contact-submissions`, { 
+      method:"PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenantId, id })
+    })
   }
 
   const markAllRead = async () => {
     if (!tenantId) return
     setSubmissions(p => p.map(s => ({ ...s, isRead: true })))
     setUnread(0)
-    await fetch(`/api/tenant/contact-submissions?tenantId=${tenantId}&action=markAllRead`, { method:"PUT" })
+    await fetch(`/api/tenant/contact-submissions`, { 
+      method:"PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenantId, all: true })
+    })
   }
 
   const deleteSubmission = async (id: string) => {
@@ -219,7 +227,11 @@ export default function AdminMessagesPage() {
     const s = submissions.find(s => s.id === id)
     setSubmissions(p => p.filter(s => s.id !== id))
     if (s && !s.isRead) setUnread(p => Math.max(0, p - 1))
-    const res = await fetch(`/api/tenant/contact-submissions?id=${id}&tenantId=${tenantId}`, { method:"DELETE" })
+    const res = await fetch(`/api/tenant/contact-submissions`, { 
+      method:"DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenantId, id })
+    })
     if (res.ok) toast({ title:"Berhasil", description:"Pesan dihapus." })
   }
 
