@@ -7,6 +7,7 @@ import { SchoolsMarquee } from "./_components/schools-marquee"
 import { SolutionsSection } from "./_components/solutions-section"
 import { FeaturesSection } from "./_components/features-section"
 import { CtaSection } from "./_components/cta-section"
+import { TestimonialsSection } from "./_components/testimonials-section"
 import { LandingFooter } from "./_components/landing-footer"
 
 export const dynamic = "force-dynamic";
@@ -38,6 +39,25 @@ export default async function LandingPage() {
     orderBy: { createdAt: "desc" },
   })
 
+  const testimonials = await db.systemFeedback.findMany({
+    where: { 
+      type: "TESTIMONIAL", 
+      status: "RESOLVED",
+      tenantId: { not: null }
+    },
+    include: {
+      tenant: { select: { name: true, logo: true } },
+      user: { 
+        select: { 
+          name: true, 
+          tenants: { select: { role: true }, take: 1 } 
+        } 
+      }
+    },
+    orderBy: { createdAt: "desc" },
+    take: 9
+  })
+
   return (
     <div className="min-h-screen bg-mesh">
       <FloatingWhatsApp supportNumbers={supportWaNumbers} />
@@ -52,6 +72,8 @@ export default async function LandingPage() {
       <SolutionsSection />
       
       <FeaturesSection />
+      
+      <TestimonialsSection testimonials={testimonials} />
       
       <CtaSection />
       
