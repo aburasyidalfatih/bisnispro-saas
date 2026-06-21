@@ -133,7 +133,7 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
           icon: ImageIcon,
           children: [
             { label: "Galeri Foto", href: `${basePath}/website/gallery`, icon: ImageIcon },
-            { label: "Prestasi Siswa", href: `${basePath}/website/achievements`, icon: Award },
+            { label: "Prestasi", href: `${basePath}/website/achievements`, icon: Award },
             { label: "Alumni Success", href: `${basePath}/website/alumni`, icon: GraduationCap },
           ],
         },

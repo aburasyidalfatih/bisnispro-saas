@@ -203,7 +203,7 @@ export default function WebsiteOverviewPage() {
       href: `${base}/gtk`,
     },
     {
-      label:"Prestasi Siswa",
+      label:"Prestasi",
       desc:"Penghargaan dan piala yang diraih oleh siswa.",
       value: data?._count?.achievements ? `${data._count.achievements} prestasi` :"Belum ada",
       icon: <Award className="h-5 w-5" />,
