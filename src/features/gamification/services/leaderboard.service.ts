@@ -58,7 +58,8 @@ export async function processLeaderboardSync() {
   const scores = []
 
   for (const tenant of tenants) {
-    const postPoints = postPointsMap[tenant.id] || 0
+    // ANTI-SPAM CAPS: Maksimal poin dari artikel/berita dibatasi 1000 poin per tahun
+    const postPoints = Math.min(postPointsMap[tenant.id] || 0, 1000)
     
     // ANTI-SPAM CAPS: Maksimal dihitung 50 entitas untuk mencegah spamming
     const staffCount = Math.min(tenant._count.staff || 0, 50)
@@ -88,8 +89,9 @@ export async function processLeaderboardSync() {
     // Traffic Score berdasarkan Unique Visitors (1 Poin per Pengunjung Unik)
     const trafficScore = (trafficMap[tenant.id] || 0) * 1
     
-    // Aktivitas: pengumuman internal
-    const announcementPoints = (tenant._count.internalMessages || 0) * 2
+    // Aktivitas: pengumuman internal dibatasi maksimal 250 pesan (500 poin maksimal)
+    const internalMessagesCount = Math.min(tenant._count.internalMessages || 0, 250)
+    const announcementPoints = internalMessagesCount * 2
     
     const activityScore = announcementPoints
 
