@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Wallet, PlusCircle } from "lucide-react"
 import { EmptyState } from "@/components/ui/empty-state"
+import { ClaimStudentModal } from "./claim-student-modal"
 
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
@@ -65,7 +66,14 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
              </div>
           </div>
           <div className="flex gap-2">
-             <Link href="/ortu/tagihan" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-primary-foreground relative backdrop-blur-sm">
+             {userRole === "orangtua" && (
+                <ClaimStudentModal>
+                  <Button variant="outline" size="icon" className="h-10 w-10 rounded-full bg-white/10 border-0 text-primary-foreground hover:bg-white/20 hover:text-white transition-colors" aria-label="Tautkan Anak">
+                    <PlusCircle className="h-5 w-5" />
+                  </Button>
+                </ClaimStudentModal>
+             )}
+             <Link href="/ortu/tagihan" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-primary-foreground relative backdrop-blur-sm hover:bg-white/20 transition-colors">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-2 right-2 h-2 w-2 bg-destructive rounded-full border border-primary"></span>
              </Link>
@@ -183,9 +191,18 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                title={userRole === "siswa" ? "Data Belum Terhubung" : "Belum Ada Data Anak"}
                description={userRole === "siswa" ? "Akun Anda belum terhubung dengan data siswa. Silakan hubungi admin sekolah." : "Silakan hubungi admin sekolah untuk menghubungkan akun Anda dengan data siswa."}
                action={
-                 <Button className="rounded-xl font-semibold text-xs px-5 h-10" onClick={() => window.location.reload()}>
-                   Segarkan Halaman
-                 </Button>
+                 <div className="flex items-center gap-3 mt-2">
+                   <Button variant="outline" className="rounded-xl font-semibold text-xs px-5 h-10" onClick={() => window.location.reload()}>
+                     Segarkan
+                   </Button>
+                   {userRole === "orangtua" && (
+                     <ClaimStudentModal>
+                       <Button className="rounded-xl font-semibold text-xs px-5 h-10 gap-2">
+                         <PlusCircle className="h-4 w-4" /> Tautkan Data Anak
+                       </Button>
+                     </ClaimStudentModal>
+                   )}
+                 </div>
                }
              />
            )}
