@@ -86,31 +86,52 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
     let discountPercentage = 0
     let validDiscountId: string | null = null
 
+    // Cek diskon carry-over (perpanjangan sebelum jatuh tempo)
+    let autoApplyDiscount = false
+    let autoDiscountCode: any = null
+    
+    if (!discountCodeStr && tenant.expiresAt && new Date(tenant.expiresAt) > new Date()) {
+      const lastPaidPayment = await db.payment.findFirst({
+        where: { tenantId, status: "paid", plan: planSlug },
+        orderBy: { paidAt: "desc" },
+        include: { discountCode: true }
+      })
+      if (lastPaidPayment?.discountCode) {
+        autoApplyDiscount = true
+        autoDiscountCode = lastPaidPayment.discountCode
+      }
+    }
+
     // Validasi kupon (read-only, belum increment)
-    if (discountCodeStr) {
+    if (discountCodeStr || autoApplyDiscount) {
+      const codeToSearch = discountCodeStr ? discountCodeStr.toUpperCase() : autoDiscountCode?.code
       const discount = await db.discountCode.findUnique({
-        where: { code: discountCodeStr.toUpperCase() }
+        where: { code: codeToSearch }
       })
       
-      if (
-        discount && 
-        discount.isActive && 
-        (!discount.maxUses || discount.usedCount < discount.maxUses) &&
-        (!discount.expiresAt || new Date(discount.expiresAt) > new Date())
-      ) {
-        if (discount.type === "CASHBACK" && discount.linkedTenantId && discount.linkedTenantId !== tenantId) {
-          throw new Error("Kode kupon ini sudah terikat ke sekolah lain")
+      if (discount) {
+        const isAutoCarryOver = autoApplyDiscount && !discountCodeStr
+        const isValid = isAutoCarryOver || (
+          discount.isActive && 
+          (!discount.maxUses || discount.usedCount < discount.maxUses) &&
+          (!discount.expiresAt || new Date(discount.expiresAt) > new Date())
+        )
+
+        if (isValid) {
+          if (discount.type === "CASHBACK" && discount.linkedTenantId && discount.linkedTenantId !== tenantId) {
+            if (!isAutoCarryOver) throw new Error("Kode kupon ini sudah terikat ke sekolah lain")
+          } else {
+            if (discount.type === "CASHBACK") {
+              discountPercentage = 0
+              discountAmount = 0
+            } else {
+              discountPercentage = discount.percentage
+              discountAmount = Math.round(subTotal * (discountPercentage / 100))
+            }
+            amount = subTotal - discountAmount
+            validDiscountId = discount.id
+          }
         }
-        
-        if (discount.type === "CASHBACK") {
-          discountPercentage = 0
-          discountAmount = 0
-        } else {
-          discountPercentage = discount.percentage
-          discountAmount = Math.round(subTotal * (discountPercentage / 100))
-        }
-        amount = subTotal - discountAmount
-        validDiscountId = discount.id
       }
     }
 
