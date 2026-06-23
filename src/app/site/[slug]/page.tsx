@@ -138,32 +138,11 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   }
 
   // Router Tema Bawaan React
-  
-  // SEO EducationalOrganization Schema
-  const educationalOrgSchema = {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    "name": tenantLayout?.name || tenantForRender.name,
-    "url": `https://${tenantLayout?.domain || tenantForRender.slug + '.' + rootDomain}`,
-    "logo": tenantLayout?.logo || "https://schoolpro.id/logo-schoolpro.png",
-    "description": tenantLayout?.description || tenantLayout?.tagline || `Website resmi ${tenantForRender.name}`,
-    "telephone": tenantLayout?.phone || undefined,
-    "email": tenantLayout?.email || undefined,
-    "address": tenantLayout?.address ? {
-      "@type": "PostalAddress",
-      "streetAddress": tenantLayout.address
-    } : undefined,
-    "sameAs": [
-      tenantLayout?.facebook?.startsWith('http') ? tenantLayout.facebook : (tenantLayout?.facebook ? `https://${tenantLayout.facebook}` : undefined),
-      tenantLayout?.instagram?.startsWith('http') ? tenantLayout.instagram : (tenantLayout?.instagram ? `https://${tenantLayout.instagram}` : undefined),
-      tenantLayout?.youtube?.startsWith('http') ? tenantLayout.youtube : (tenantLayout?.youtube ? `https://${tenantLayout.youtube}` : undefined),
-      tenantLayout?.tiktok?.startsWith('http') ? tenantLayout.tiktok : (tenantLayout?.tiktok ? `https://${tenantLayout.tiktok}` : undefined)
-    ].filter(Boolean)
-  };
+  // JSON-LD EducationalOrganization Schema moved to layout.tsx to avoid duplication
 
   switch (tenantForRender.template) {
     case "default":
     default:
-      return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(educationalOrgSchema) }} /><DefaultTheme {...(themeProps as any)} /></>
+      return <DefaultTheme {...(themeProps as any)} />
   }
 }

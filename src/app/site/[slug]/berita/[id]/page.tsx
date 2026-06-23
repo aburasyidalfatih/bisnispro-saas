@@ -151,12 +151,14 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
               "@type": "Person",
               "name": post.author?.name || "Admin"
             },
-            "publisher": {
+              "publisher": {
               "@type": "Organization",
               "name": tenant.name,
               "logo": {
                 "@type": "ImageObject",
-                "url": tenant.logo || "https://schoolpro.id/logo-schoolpro.png"
+                "url": tenant.logo || "https://schoolpro.id/logo-schoolpro.png",
+                "width": 512,
+                "height": 512
               }
             },
             "url": `https://${tenant.domain || tenant.slug + '.' + rootDomain}/berita/${post.slug}`
