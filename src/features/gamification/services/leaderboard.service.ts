@@ -93,14 +93,18 @@ export async function processLeaderboardSync() {
     const internalMessagesCount = Math.min(tenant._count.internalMessages || 0, 250)
     const announcementPoints = internalMessagesCount * 2
     
-    const activityScore = announcementPoints
+    // Gabungkan poin pengumuman ke dalam konten agar tidak menimpa activityScore (yang diisi oleh fitur Login Harian)
+    const finalContentScore = contentScore + announcementPoints
+    
+    // Ambil activityScore yang sudah ada di DB (yang berisi poin Login Harian, Share Sosmed, dll)
+    const activityScore = tenant.tenantScore?.activityScore || 0
 
-    const totalScore = contentScore + trafficScore + activityScore
+    const totalScore = finalContentScore + trafficScore + activityScore
 
     scores.push({
       tenantId: tenant.id,
       tenantName: tenant.name,
-      contentScore,
+      contentScore: finalContentScore,
       trafficScore,
       activityScore,
       totalScore,
@@ -120,7 +124,8 @@ export async function processLeaderboardSync() {
       where: { tenantId: score.tenantId },
       update: {
         contentScore: score.contentScore,
-        activityScore: score.activityScore,
+        trafficScore: score.trafficScore,
+        // Kita TIDAK menimpa activityScore di update, agar poin login harian tidak ter-reset
         totalScore: score.totalScore,
         rank: rank,
         lastCalculated: new Date()
