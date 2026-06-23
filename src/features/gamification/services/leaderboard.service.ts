@@ -39,6 +39,7 @@ export async function processLeaderboardSync() {
       heroImage: true,
       about: true,
       tagline: true,
+      domain: true,
       _count: {
         select: {
           posts: { where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear }, isEligibleForPoints: true } },
@@ -79,7 +80,10 @@ export async function processLeaderboardSync() {
       profileBonus = 1000
     }
 
-    const contentScore = postPoints + staffPoints + facilityPoints + eventPoints + achievementPoints + galleryPoints + profileBonus
+    // Custom Domain Bonus
+    const customDomainBonus = tenant.domain ? 2000 : 0
+
+    const contentScore = postPoints + staffPoints + facilityPoints + eventPoints + achievementPoints + galleryPoints + profileBonus + customDomainBonus
     
     // Traffic Score berdasarkan Unique Visitors (1 Poin per Pengunjung Unik)
     const trafficScore = (trafficMap[tenant.id] || 0) * 1
