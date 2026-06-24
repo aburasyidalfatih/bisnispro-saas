@@ -12,6 +12,8 @@ import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Textarea } from"@/components/ui/textarea"
+import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
+import { Controller } from "react-hook-form"
 import { toast } from"@/hooks/use-toast"
 import { ArrowLeft, Save, Loader2, Sparkles, Wand2 } from"lucide-react"
 import Link from"next/link"
@@ -37,7 +39,7 @@ export default function EventFormPage() {
 
   const isNew = params.id ==="new"
 
-  const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, getValues, control, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(eventSchema),
   })
 
@@ -217,11 +219,18 @@ export default function EventFormPage() {
                   <Sparkles className="h-3 w-3" /> Buat Deskripsi AI
                 </Button>
               </div>
-              <Textarea 
-                id="description" 
-                {...register("description")} 
-                className="rounded-xl min-h-[150px] resize-y text-sm" 
-                placeholder="Tuliskan detail lengkap tentang acara ini..." 
+              <Controller
+                control={control}
+                name="description"
+                render={({ field }) => (
+                  <div className="rounded-xl overflow-hidden border border-input">
+                    <RichTextEditor 
+                      value={field.value || ""} 
+                      onChange={field.onChange} 
+                      placeholder="Tuliskan detail lengkap tentang acara ini..." 
+                    />
+                  </div>
+                )}
               />
               {errors.description && <p className="text-xs text-red-500">{errors.description.message}</p>}
             </div>

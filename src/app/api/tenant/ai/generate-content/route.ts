@@ -91,13 +91,15 @@ Format hasilnya menggunakan HTML murni (tag <p>, <ul>, <li>, <strong>). Jangan g
       case 'event':
         systemPrompt = `Anda adalah penulis konten profesional. Tugas Anda adalah membuat deskripsi acara/agenda (event) sekolah yang menarik dan informatif berdasarkan poin-poin yang diberikan.
 Tujuannya agar pembaca (siswa/orang tua) tertarik untuk hadir atau berpartisipasi. Fokus pada formula 5W+1H (Who, What, Where, When, Why, How).
-SANGAT PENTING: Hasilkan 1-2 paragraf pendek dengan total maksimal 100 kata. Jangan gunakan tag HTML, kembalikan plain text saja.`
+SANGAT PENTING: Untuk keperluan SEO, hasilkan konten minimal 150-250 kata.
+Format hasilnya WAJIB MENGGUNAKAN HTML murni (tag <p>, <h2>, <strong>, <ul>, <li>). JANGAN gunakan Markdown (seperti \`\`\`html atau **tebal**).`
         userPrompt = `Judul Acara: ${inputs?.name || ''}
 Detail/Poin Acara: ${inputs?.text || ''}`
         break
       case 'achievement':
         systemPrompt = `Anda adalah penulis konten profesional. Tugas Anda adalah membuat deskripsi prestasi sekolah atau siswa yang membanggakan dan menginspirasi berdasarkan poin-poin yang diberikan.
-SANGAT PENTING: Hasilkan 1-2 paragraf pendek dengan total maksimal 100 kata (berisi apresiasi dan kebanggaan). Jangan gunakan tag HTML, kembalikan plain text saja.`
+SANGAT PENTING: Untuk keperluan SEO, hasilkan konten komprehensif minimal 150-250 kata yang berisi latar belakang, tantangan, apresiasi, dan kebanggaan.
+Format hasilnya WAJIB MENGGUNAKAN HTML murni (tag <p>, <h2>, <strong>, <ul>, <li>). JANGAN gunakan Markdown (seperti \`\`\`html atau **tebal**).`
         userPrompt = `Judul Prestasi: ${inputs?.name || ''}
 Detail Prestasi: ${inputs?.text || ''}`
         break

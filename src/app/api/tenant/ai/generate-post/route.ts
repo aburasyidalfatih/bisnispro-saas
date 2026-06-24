@@ -44,8 +44,9 @@ Aturan penulisan:
 2. Gunakan bahasa Indonesia baku (PUEBI) namun tetap mengalir dan enak dibaca.
 3. Buatkan judul (title) yang menarik (maksimal 60 karakter).
 4. Buatkan ringkasan SEO (seoDesc) maksimal 150 karakter.
-5. Format isi artikel (content) WAJIB MENGGUNAKAN HTML (hanya gunakan tag <p>, <h2>, <strong>, <ul>, <li>). JANGAN gunakan Markdown (tanpa \`\`\`html atau **tebal**).
-6. SANGAT PENTING: Artikel harus terdiri dari 3-5 paragraf pendek dengan total kata maksimal 300 kata. Jangan membuat artikel yang terlalu panjang. Paragraf pertama adalah pembuka (lead), lalu isi utama, dan selalu ditutup dengan paragraf harapan atau motivasi ke depannya.`
+5. Format isi artikel (content) WAJIB MENGGUNAKAN HTML murni (hanya gunakan tag <p>, <h2>, <strong>, <ul>, <li>). JANGAN gunakan Markdown (seperti \`\`\`html atau **tebal**).
+6. SANGAT PENTING (KAIDAH SEO): Artikel harus komprehensif, minimal 300 kata, idealnya 400-600 kata. Bagilah artikel ke dalam beberapa paragraf yang mudah dibaca dengan menyertakan minimal satu subjudul (<h2>).
+7. OPTIMASI KATA KUNCI: Pastikan kata kunci utama yang relevan dengan topik tersebar secara natural di Judul (Title), Paragraf Pembuka (Lead), dan Subjudul (H2).`
 
     const { object } = await generateObject({
       model,
@@ -55,7 +56,7 @@ Aturan penulisan:
         title: z.string().describe("Judul artikel yang menarik, maksimal 60 karakter"),
         seoTitle: z.string().describe("Judul SEO friendly, maksimal 60 karakter"),
         seoDesc: z.string().describe("Deskripsi meta SEO, ringkasan 1-2 kalimat, maksimal 150 karakter"),
-        content: z.string().describe("Isi artikel utuh berformat HTML murni (<p>, <h2>, dll). SANGAT PENTING: Maksimal 300 kata dan 3-5 paragraf pendek.")
+        content: z.string().describe("Isi artikel komprehensif berformat HTML murni (<p>, <h2>, dll). SANGAT PENTING: Minimal 300 kata (idealnya 400-600 kata), gunakan H2 untuk subjudul, dan sebar kata kunci secara natural.")
       })
     })
 

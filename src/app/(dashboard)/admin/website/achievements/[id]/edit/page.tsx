@@ -7,6 +7,7 @@ import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from"@/hooks/use-toast"
 import { ArrowLeft, Save, ImageIcon, Sparkles, Wand2, Loader2 as Loader2Icon } from"lucide-react"
@@ -313,13 +314,13 @@ export default function EditAchievementPage() {
                   <Sparkles className="h-3 w-3" /> Buat Deskripsi AI
                 </Button>
               </div>
-              <Textarea 
-                id="description" 
-                value={formData.description} 
-                onChange={e => setFormData({...formData, description: e.target.value})} 
-                placeholder="Penjelasan detail tentang kompetisi atau penghargaan tersebut..."
-                className="rounded-xl resize-none h-24"
-              />
+              <div className="rounded-xl overflow-hidden border border-input">
+                <RichTextEditor 
+                  value={formData.description} 
+                  onChange={val => setFormData({...formData, description: val})} 
+                  placeholder="Penjelasan detail tentang kompetisi atau penghargaan tersebut..."
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
