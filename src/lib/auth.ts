@@ -301,14 +301,17 @@ export const authOptions: NextAuthConfig = {
                 data: { userId: existing.id, referralCode },
               })
               
+              const settings = await db.platformSetting.findUnique({ where: { key: "AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE" } })
+              const defaultCashbackPct = settings ? parseInt(settings.value) : 20;
+
               // Auto-generate Cashback Coupon
               await db.discountCode.create({
                 data: {
                   code: referralCode,
                   description: `Kupon Cashback Otomatis untuk ${existing.name || 'User'}`,
                   type: "CASHBACK",
-                  cashbackAmount: 400000,
-                  percentage: 0,
+                  cashbackAmount: 0,
+                  percentage: defaultCashbackPct,
                   affiliateId: newAffiliate.id,
                   isActive: true
                 }
