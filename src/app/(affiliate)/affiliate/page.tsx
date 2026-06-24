@@ -45,7 +45,7 @@ export default async function AffiliateDashboardPage() {
   const referralLink = `${process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"}/${displayCode}`
 
   const cashbackCoupon = affiliate.discountCodes?.find(c => c.type === "CASHBACK" && c.isActive)
-  const cashbackValueText = cashbackCoupon ? (cashbackCoupon.cashbackAmount > 0 ? `Rp ${cashbackCoupon.cashbackAmount.toLocaleString()}` : `${cashbackCoupon.percentage}%`) : 'menarik'
+  const cashbackValueText = cashbackCoupon ? `${cashbackCoupon.percentage}%` : 'menarik'
 
   return (
     <div className="space-y-8">
@@ -99,7 +99,7 @@ export default async function AffiliateDashboardPage() {
                     <div className="flex justify-between items-center">
                       <span className="font-mono font-bold text-lg">{coupon.code}</span>
                       <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-                        {coupon.cashbackAmount > 0 ? `CB Rp ${coupon.cashbackAmount.toLocaleString()}` : `${coupon.percentage}% CB`}
+                        {coupon.percentage}% CB
                       </span>
                     </div>
                     {coupon.linkedTenantId ? (

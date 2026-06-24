@@ -151,7 +151,7 @@ export function CheckoutDialog({
                 </p>
                 {appliedDiscount.type === "CASHBACK" && (
                   <div className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-1.5 rounded-md border border-emerald-100 font-medium ml-4 mt-0.5">
-                    💰 Cashback senilai {appliedDiscount.cashbackAmount ? `Rp ${appliedDiscount.cashbackAmount.toLocaleString('id-ID')}` : `${appliedDiscount.percentage}%`} akan masuk ke saldo komisi.
+                    💰 Cashback senilai {appliedDiscount.percentage}% akan masuk ke saldo komisi.
                   </div>
                 )}
                 {(appliedDiscount.bonusMonths ?? 0) > 0 && (
