@@ -119,22 +119,24 @@ export async function POST(req: Request) {
         })
       )
 
-      // 3. Berikan Komisi ke Afiliasi (20%) jika tenant mendaftar via referal
-      if (payment.tenant.affiliateId) {
-        const settingsDoc = await db.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
-        const commissionPct = settingsDoc ? parseInt(settingsDoc.value) / 100 : 0.20;
-        
-        let cashbackAmount = 0;
-        if (payment.discountCode && payment.discountCode.type === "CASHBACK") {
-          if (payment.discountCode.cashbackAmount > 0) {
-            cashbackAmount = payment.discountCode.cashbackAmount;
-          } else if (payment.discountCode.percentage > 0) {
-            cashbackAmount = Math.round(payment.amount * (payment.discountCode.percentage / 100));
-          }
+      // 3. Berikan Komisi ke Afiliasi jika ada (Referal & Cashback)
+      const settingsDoc = await db.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
+      const commissionPct = settingsDoc ? parseInt(settingsDoc.value) / 100 : 0.20;
+      
+      let cashbackAmount = 0;
+      if (payment.discountCode && payment.discountCode.type === "CASHBACK") {
+        if (payment.discountCode.cashbackAmount > 0) {
+          cashbackAmount = payment.discountCode.cashbackAmount;
+        } else if (payment.discountCode.percentage > 0) {
+          cashbackAmount = Math.round(payment.amount * (payment.discountCode.percentage / 100));
         }
-        
-        const netAmountForCommission = Math.max(0, payment.amount - cashbackAmount);
-        const commissionAmount = Math.round(netAmountForCommission * commissionPct);
+      }
+      
+      const netAmountForCommission = Math.max(0, payment.amount - cashbackAmount);
+      const commissionAmount = Math.round(netAmountForCommission * commissionPct);
+      
+      // 3a. Berikan komisi referal (jika ada)
+      if (payment.tenant.affiliateId && payment.tenant.affiliateId !== payment.discountCode?.affiliateId && commissionAmount > 0) {
         transactionOperations.push(
           db.affiliateCommission.create({
             data: {
@@ -155,6 +157,43 @@ export async function POST(req: Request) {
             }
           })
         )
+      }
+      
+      // 3b. Berikan komisi cashback (jika ada)
+      if (payment.discountCode && payment.discountCode.type === "CASHBACK" && cashbackAmount > 0) {
+        const cashbackAffiliateId = payment.discountCode.affiliateId || payment.tenant.affiliateId;
+        if (cashbackAffiliateId) {
+          transactionOperations.push(
+            db.affiliateCommission.create({
+              data: {
+                affiliateId: cashbackAffiliateId,
+                tenantId: payment.tenantId,
+                paymentId: payment.id,
+                amount: cashbackAmount,
+                status: "PAID"
+              }
+            })
+          )
+          transactionOperations.push(
+            db.affiliateProfile.update({
+              where: { id: cashbackAffiliateId },
+              data: {
+                balance: { increment: cashbackAmount },
+                totalEarnings: { increment: cashbackAmount }
+              }
+            })
+          )
+        }
+        
+        // Kunci kode cashback
+        if (!payment.discountCode.linkedTenantId) {
+          transactionOperations.push(
+            db.discountCode.update({
+              where: { id: payment.discountCode.id },
+              data: { linkedTenantId: payment.tenantId }
+            })
+          )
+        }
       }
     }
 
