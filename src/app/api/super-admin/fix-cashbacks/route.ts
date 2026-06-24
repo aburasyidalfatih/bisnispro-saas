@@ -110,5 +110,21 @@ export async function GET(req: Request) {
     }
   }
 
-  return NextResponse.json({ success: true, fixed, message: "Sinkronisasi selesai. " + fixed + " komisi cashback berhasil diperbaiki." })
+  // Perbaiki maxUses untuk kupon cashback lama yang masih null
+  const updatedCoupons = await db.discountCode.updateMany({
+    where: { 
+      type: "CASHBACK",
+      maxUses: null
+    },
+    data: {
+      maxUses: 1
+    }
+  });
+
+  return NextResponse.json({ 
+    success: true, 
+    fixed_commissions: fixed, 
+    fixed_coupons: updatedCoupons.count,
+    message: `Sinkronisasi selesai. ${fixed} komisi cashback diperbaiki. ${updatedCoupons.count} kupon cashback lama diset max 1 kali pakai.` 
+  })
 }
