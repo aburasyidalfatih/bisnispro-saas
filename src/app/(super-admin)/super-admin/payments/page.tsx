@@ -31,6 +31,7 @@ interface Payment {
   paidAt: string | null
   metadata: any
   tenant: { name: string; slug: string }
+  discountCode?: { code: string; type: string } | null
 }
 
 interface Stats {
@@ -222,6 +223,7 @@ export default function PaymentsPage() {
                   <TableHead className="text-left py-3 px-2">Paket</TableHead>
                   <TableHead className="text-left py-3 px-2">Nominal</TableHead>
                   <TableHead className="text-left py-3 px-2">Siswa</TableHead>
+                  <TableHead className="text-left py-3 px-2">Kupon</TableHead>
                   <TableHead className="text-left py-3 px-2">Status</TableHead>
                   <TableHead className="text-left py-3 px-2">Tanggal</TableHead>
                   <TableHead className="text-right py-3 px-2">Aksi</TableHead>
@@ -230,7 +232,7 @@ export default function PaymentsPage() {
               <TableBody>
                 {filteredPayments.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="py-20 text-center text-muted-foreground italic">
+                    <TableCell colSpan={9} className="py-20 text-center text-muted-foreground italic">
                       Tidak ada transaksi ditemukan.
                     </TableCell>
                   </TableRow>
@@ -253,6 +255,18 @@ export default function PaymentsPage() {
                           <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}</span>
                           {p.method && <Badge variant="outline" className="text-[9px] uppercase px-1.5 py-0.5 rounded-sm w-fit bg-muted/50">{p.method}</Badge>}
                         </div>
+                      </TableCell>
+                      <TableCell className="py-4 px-2">
+                        {p.discountCode ? (
+                          <div className="flex flex-col gap-1 items-start">
+                            <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 rounded-md">
+                              {p.discountCode.code}
+                            </Badge>
+                            <span className="text-[9px] text-muted-foreground uppercase">{p.discountCode.type}</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
                       </TableCell>
                       <TableCell className="py-4 px-2">{getStatusBadge(p.status)}</TableCell>
                       <TableCell className="py-4 px-2 text-xs text-muted-foreground">
@@ -332,6 +346,14 @@ export default function PaymentsPage() {
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <span className="uppercase font-bold text-[10px] tracking-wider">{p.plan}</span>
                         <span>·</span>
+                        {p.discountCode && (
+                          <>
+                            <Badge variant="outline" className="font-mono text-[9px] px-1 py-0 rounded-sm">
+                              {p.discountCode.code}
+                            </Badge>
+                            <span>·</span>
+                          </>
+                        )}
                         <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}</span>
                         <span>·</span>
                         <span>{new Date(p.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</span>

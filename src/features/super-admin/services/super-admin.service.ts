@@ -273,6 +273,9 @@ export async function getPaymentsForSuperAdmin(params: {
       include: {
         tenant: {
           select: { name: true, slug: true }
+        },
+        discountCode: {
+          select: { code: true, type: true }
         }
       },
       orderBy: { createdAt: "desc" },
