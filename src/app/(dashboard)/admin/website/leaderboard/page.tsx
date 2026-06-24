@@ -22,6 +22,7 @@ interface LeaderboardEntry {
     name: string
     logo: string | null
     slug: string
+    domain?: string | null
   }
 }
 
@@ -244,8 +245,8 @@ export default function LeaderboardPage() {
                     {entry.tenant.name}
                     {isMe && <span className="ml-2 text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full align-middle">ANDA</span>}
                   </h3>
-                  <a href={`http://${entry.tenant.slug}.schoolpro.id`} target="_blank" rel="noopener" className="text-xs text-muted-foreground hover:underline truncate block">
-                    {entry.tenant.slug}.schoolpro.id
+                  <a href={entry.tenant.domain ? `https://${entry.tenant.domain}` : `http://${entry.tenant.slug}.schoolpro.id`} target="_blank" rel="noopener" className="text-xs text-muted-foreground hover:underline truncate block">
+                    {entry.tenant.domain || `${entry.tenant.slug}.schoolpro.id`}
                   </a>
                 </div>
 

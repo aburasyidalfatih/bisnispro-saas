@@ -27,7 +27,7 @@ export async function GET() {
 
           const tenants = await db.tenant.findMany({
             where: { id: { in: tenantIds } },
-            select: { id: true, name: true, slug: true, logo: true, address: true }
+            select: { id: true, name: true, slug: true, logo: true, address: true, domain: true }
           })
           const tenantMap = Object.fromEntries(tenants.map(t => [t.id, t]))
 
@@ -45,6 +45,7 @@ export async function GET() {
             slug: tenantMap[id]?.slug || "",
             logo: tenantMap[id]?.logo || null,
             address: tenantMap[id]?.address || null,
+            domain: tenantMap[id]?.domain || null,
             activity_score: scoreMap[id],
             content_score: detailMap[id]?.contentScore || 0,
             activity_points: detailMap[id]?.activityScore || 0,
@@ -73,6 +74,7 @@ export async function GET() {
             slug: true,
             logo: true,
             address: true,
+            domain: true,
           }
         }
       }
@@ -85,6 +87,7 @@ export async function GET() {
       slug: entry.tenant.slug,
       logo: entry.tenant.logo,
       address: entry.tenant.address,
+      domain: entry.tenant.domain,
       activity_score: entry.totalScore,
       content_score: entry.contentScore,
       activity_points: entry.activityScore,

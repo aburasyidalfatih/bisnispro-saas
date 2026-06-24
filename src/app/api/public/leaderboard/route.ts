@@ -25,7 +25,7 @@ export async function GET(req: Request) {
           // Fetch tenant details from DB (just names/logos, very light query)
           const tenants = await db.tenant.findMany({
             where: { id: { in: tenantIds } },
-            select: { id: true, name: true, logo: true, slug: true }
+            select: { id: true, name: true, logo: true, slug: true, domain: true }
           })
 
           const tenantMap = Object.fromEntries(tenants.map(t => [t.id, t]))
@@ -67,7 +67,8 @@ export async function GET(req: Request) {
             id: true,
             name: true,
             logo: true,
-            slug: true
+            slug: true,
+            domain: true
           }
         }
       }
