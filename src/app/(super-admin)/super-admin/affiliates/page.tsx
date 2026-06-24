@@ -161,6 +161,12 @@ export default function SuperAdminAffiliatesPage() {
               Antrian Penarikan Dana
             </Button>
           </Link>
+          <Link href="/super-admin/affiliates/commissions">
+            <Button variant="outline" className="rounded-xl gap-2 border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100 text-emerald-700 shadow-sm">
+              <Wallet className="h-4 w-4" />
+              Riwayat Komisi
+            </Button>
+          </Link>
         </div>
       </div>
 
