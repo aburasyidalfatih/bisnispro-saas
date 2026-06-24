@@ -21,10 +21,17 @@ interface Commission {
     user: { name: string; email: string }
   }
   tenant: { name: string; slug: string }
-  payment: {
+  payment?: {
     reference: string
-    discountCode: { code: string; type: string; affiliateId: string | null } | null
-  }
+    amount: number
+    discountCode?: {
+      code: string
+      type: string
+      affiliateId: string | null
+      cashbackAmount: number
+      percentage: number
+    } | null
+  } | null
 }
 
 export default function SuperAdminCommissionsPage() {
@@ -60,10 +67,21 @@ export default function SuperAdminCommissionsPage() {
   }, [fetchCommissions])
 
   const getTypeBadge = (c: Commission) => {
-    // Determine if it's cashback or referral
-    // Based on the new logic, if the affiliate matches the discountCode affiliateId and type is CASHBACK
-    // it was a CASHBACK commission. Otherwise, REFERRAL.
-    const isCashback = c.payment?.discountCode?.type === "CASHBACK" && c.payment?.discountCode?.affiliateId === c.affiliate.id
+    let isCashback = false;
+    if (c.payment?.discountCode?.type === "CASHBACK") {
+      const dc = c.payment.discountCode;
+      let expectedCashback = 0;
+      if (dc.cashbackAmount && dc.cashbackAmount > 0) {
+        expectedCashback = dc.cashbackAmount;
+      } else if (dc.percentage && dc.percentage > 0) {
+        expectedCashback = Math.round(c.payment.amount * (dc.percentage / 100));
+      }
+      // If the commission amount matches the calculated cashback amount, it's a CASHBACK commission
+      if (c.amount === expectedCashback) {
+        isCashback = true;
+      }
+    }
+
     if (isCashback) {
       return <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-200">CASHBACK</Badge>
     }

@@ -24,7 +24,7 @@ export async function GET(req: Request) {
   for (const payment of payments) {
     const discountCode = payment.discountCode;
     if (discountCode && discountCode.type === "CASHBACK") {
-      const affiliateId = discountCode.affiliateId;
+      const affiliateId = discountCode.affiliateId || payment.tenant.affiliateId;
       
       if (affiliateId) {
         // Cek apakah komisi cashback sudah diberikan

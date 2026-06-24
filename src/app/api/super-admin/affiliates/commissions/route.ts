@@ -34,8 +34,12 @@ export async function GET(req: Request) {
           },
           tenant: { select: { name: true, slug: true } },
           payment: {
-            include: {
-              discountCode: true
+            select: {
+              reference: true,
+              amount: true,
+              discountCode: {
+                select: { code: true, type: true, affiliateId: true, cashbackAmount: true, percentage: true }
+              }
             }
           }
         },
