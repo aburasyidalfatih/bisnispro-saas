@@ -64,6 +64,41 @@ export async function GET(req: Request) {
             fixed++;
           }
         }
+
+        // Hapus komisi referal ganda jika afiliator mereferensikan dirinya sendiri
+        if (payment.tenant.affiliateId === affiliateId) {
+          // Cari semua komisi untuk payment ini dan afiliator ini
+          const allComms = await db.affiliateCommission.findMany({
+            where: {
+              paymentId: payment.id,
+              affiliateId: affiliateId,
+            }
+          });
+
+          // Jika ada lebih dari 1 komisi, hapus yang nominalnya BUKAN cashbackAmount
+          if (allComms.length > 1) {
+            let expectedCashback = 0;
+            if (discountCode.cashbackAmount > 0) {
+              expectedCashback = discountCode.cashbackAmount;
+            } else if (discountCode.percentage > 0) {
+              expectedCashback = Math.round(payment.amount * (discountCode.percentage / 100));
+            }
+
+            for (const comm of allComms) {
+              if (comm.amount !== expectedCashback) {
+                // Ini adalah komisi referal yang salah, hapus!
+                await db.affiliateCommission.delete({ where: { id: comm.id } });
+                await db.affiliateProfile.update({
+                  where: { id: affiliateId },
+                  data: {
+                    balance: { decrement: comm.amount },
+                    totalEarnings: { decrement: comm.amount }
+                  }
+                });
+              }
+            }
+          }
+        }
       }
       
       if (!discountCode.linkedTenantId) {

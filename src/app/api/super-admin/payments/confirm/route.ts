@@ -135,8 +135,14 @@ export async function POST(req: Request) {
       const netAmountForCommission = Math.max(0, payment.amount - cashbackAmount);
       const commissionAmount = Math.round(netAmountForCommission * commissionPct);
       
-      // 3a. Berikan komisi referal (jika ada)
-      if (payment.tenant.affiliateId && payment.tenant.affiliateId !== payment.discountCode?.affiliateId && commissionAmount > 0) {
+      // 3a. Tentukan siapa penerima cashback
+      let cashbackAffiliateId: string | null = null;
+      if (payment.discountCode && payment.discountCode.type === "CASHBACK") {
+        cashbackAffiliateId = payment.discountCode.affiliateId || payment.tenant.affiliateId || null;
+      }
+      
+      // 3b. Berikan komisi referal (jika ada dan BUKAN orang yang sama dengan penerima cashback)
+      if (payment.tenant.affiliateId && payment.tenant.affiliateId !== cashbackAffiliateId && commissionAmount > 0) {
         transactionOperations.push(
           db.affiliateCommission.create({
             data: {
@@ -159,9 +165,8 @@ export async function POST(req: Request) {
         )
       }
       
-      // 3b. Berikan komisi cashback (jika ada)
+      // 3c. Berikan komisi cashback (jika ada)
       if (payment.discountCode && payment.discountCode.type === "CASHBACK" && cashbackAmount > 0) {
-        const cashbackAffiliateId = payment.discountCode.affiliateId || payment.tenant.affiliateId;
         if (cashbackAffiliateId) {
           transactionOperations.push(
             db.affiliateCommission.create({
