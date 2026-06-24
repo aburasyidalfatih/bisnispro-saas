@@ -123,7 +123,18 @@ export async function POST(req: Request) {
       if (payment.tenant.affiliateId) {
         const settingsDoc = await db.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
         const commissionPct = settingsDoc ? parseInt(settingsDoc.value) / 100 : 0.20;
-        const commissionAmount = payment.amount * commissionPct
+        
+        let cashbackAmount = 0;
+        if (payment.discountCode && payment.discountCode.type === "CASHBACK") {
+          if (payment.discountCode.cashbackAmount > 0) {
+            cashbackAmount = payment.discountCode.cashbackAmount;
+          } else if (payment.discountCode.percentage > 0) {
+            cashbackAmount = Math.round(payment.amount * (payment.discountCode.percentage / 100));
+          }
+        }
+        
+        const netAmountForCommission = Math.max(0, payment.amount - cashbackAmount);
+        const commissionAmount = Math.round(netAmountForCommission * commissionPct);
         transactionOperations.push(
           db.affiliateCommission.create({
             data: {

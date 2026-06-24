@@ -467,7 +467,6 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
           const originalAffiliateId = tenant?.affiliateId;
           const settingsDoc = await db.platformSetting.findUnique({ where: { key: "AFFILIATE_COMMISSION_PERCENTAGE" } })
           const commissionPct = settingsDoc ? parseInt(settingsDoc.value) / 100 : 0.20;
-          const originalCommissionAmount = Math.round(payment.amount * commissionPct);
           
           let cashbackAffiliateId: string | null = null;
           let cashbackAmount = 0;
@@ -497,6 +496,10 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
               }
             }
           }
+
+          // Hitung komisi referal dari harga setelah dikurangi cashback (jika ada cashback)
+          const netAmountForCommission = Math.max(0, payment.amount - cashbackAmount);
+          const originalCommissionAmount = Math.round(netAmountForCommission * commissionPct);
 
           // Array to store commissions to process
           const commissionsToProcess: { affiliateId: string, amount: number, type: string }[] = [];
