@@ -68,12 +68,13 @@ function createPrismaClient(): PrismaClient {
     })
   }
 
-  return client.$extends(withAccelerate()) as unknown as PrismaClient
+  return client
 }
 
-export const db = globalForPrisma.prisma ?? createPrismaClient()
+export const baseDb = globalForPrisma.prisma ?? createPrismaClient()
+export const db = baseDb.$extends(withAccelerate()) as unknown as PrismaClient
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db as unknown as PrismaClient
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = baseDb as unknown as PrismaClient
 
 export async function runWithTenantContext<T>(
   tenantId: string,
@@ -96,7 +97,7 @@ export async function runWithTenantContext<T>(
 export function withTenant(tenantId: string) {
   assertTenantId(tenantId)
   
-  return db.$extends({
+  const scopedClient = baseDb.$extends({
     query: {
       $allModels: {
         async $allOperations({ model, operation, args, query }) {
@@ -107,9 +108,9 @@ export function withTenant(tenantId: string) {
           const scopedArgs = applyTenantScopeToArgs(args, operation, tenantId)
 
           // Transaction-local setting prevents connection pool cross-contamination.
-          const [, , result] = await db.$transaction([
-            db.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`,
-            db.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,
+          const [, , result] = await baseDb.$transaction([
+            baseDb.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, TRUE)`,
+            baseDb.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,
             query(scopedArgs as typeof args),
           ])
           return result
@@ -117,4 +118,6 @@ export function withTenant(tenantId: string) {
       },
     },
   })
+
+  return scopedClient.$extends(withAccelerate()) as unknown as typeof db
 }
