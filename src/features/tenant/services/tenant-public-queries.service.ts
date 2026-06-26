@@ -5,7 +5,21 @@ export const getPublicPosts = async (tenantId: string, page: number, perPage: nu
   return unstable_cache(
     async () => {
       // FORCE tenantId injection to prevent cross-tenant leakage
-      const safeWhere = { ...whereClause, tenantId }
+      // Read-time Evaluation: Show PUBLISHED or (SCHEDULED and past publishedAt)
+      const isStatusExplicit = whereClause.status !== undefined
+      let safeWhere = { ...whereClause, tenantId }
+      
+      if (!isStatusExplicit || safeWhere.status === "PUBLISHED") {
+        delete safeWhere.status
+        safeWhere = {
+          ...safeWhere,
+          OR: [
+            { status: "PUBLISHED" },
+            { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+          ]
+        }
+      }
+
       return db.post.findMany({
         where: safeWhere,
         orderBy: { createdAt: 'desc' },
@@ -26,7 +40,19 @@ export const countPublicPosts = async (tenantId: string, whereClause: any) => {
   return unstable_cache(
     async () => {
       // FORCE tenantId injection
-      const safeWhere = { ...whereClause, tenantId }
+      const isStatusExplicit = whereClause.status !== undefined
+      let safeWhere = { ...whereClause, tenantId }
+      
+      if (!isStatusExplicit || safeWhere.status === "PUBLISHED") {
+        delete safeWhere.status
+        safeWhere = {
+          ...safeWhere,
+          OR: [
+            { status: "PUBLISHED" },
+            { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+          ]
+        }
+      }
       return db.post.count({ where: safeWhere })
     },
     ['public-posts-count', tenantId, JSON.stringify(whereClause)],
@@ -42,7 +68,10 @@ export const getPublicActiveCategories = async (tenantId: string, excludedTypes:
           tenantId,
           posts: {
             some: {
-              status: 'PUBLISHED',
+              OR: [
+                { status: 'PUBLISHED' },
+                { status: 'SCHEDULED', publishedAt: { lte: new Date() } }
+              ],
               type: { notIn: excludedTypes }
             }
           }
@@ -87,7 +116,13 @@ export const getPublicSitemapData = async (tenantId: string) => {
     async () => {
       const [posts, achievements, programs, facilities, extracurriculars, events] = await Promise.all([
         db.post.findMany({
-          where: { tenantId, status: "PUBLISHED" },
+          where: { 
+            tenantId, 
+            OR: [
+              { status: "PUBLISHED" },
+              { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+            ]
+          },
           select: { id: true, slug: true, type: true, updatedAt: true, createdAt: true }
         }),
         db.achievement.findMany({

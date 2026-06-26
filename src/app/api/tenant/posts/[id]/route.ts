@@ -55,6 +55,17 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
   }
 
+  // SCHEDULED PLAN VALIDATION
+  if (data.status === "SCHEDULED") {
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } })
+    if (!tenant || tenant.plan === "free") {
+      return NextResponse.json({ error: "Fitur jadwal posting hanya tersedia untuk paket Lite dan Pro" }, { status: 403 })
+    }
+    if (!data.publishedAt) {
+      return NextResponse.json({ error: "Tanggal tayang harus diisi untuk postingan yang dijadwalkan" }, { status: 400 })
+    }
+  }
+
   const post = await db.post.updateMany({
     where: { id, tenantId },
     data

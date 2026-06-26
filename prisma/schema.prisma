@@ -504,6 +504,7 @@ model Post {
   status        String    @default("PUBLISHED")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
   seoDesc       String?
   seoTitle      String?
   categoryId    String?

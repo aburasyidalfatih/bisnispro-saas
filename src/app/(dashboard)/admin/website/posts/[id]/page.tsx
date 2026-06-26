@@ -111,6 +111,13 @@ export default function PostFormPage() {
         setValue("categoryId", d.categoryId ||"")
         setValue("seoTitle", d.seoTitle ||"")
         setValue("seoDesc", d.seoDesc ||"")
+        if (d.publishedAt) {
+          const date = new Date(d.publishedAt)
+          // Format as YYYY-MM-DDThh:mm for datetime-local input
+          const offset = date.getTimezoneOffset()
+          const localDate = new Date(date.getTime() - (offset*60*1000))
+          setValue("publishedAt", localDate.toISOString().slice(0, 16))
+        }
         setInitialLoading(false)
       })
       .catch(() => {
@@ -314,10 +321,26 @@ export default function PostFormPage() {
                     <SelectItem value="PENDING">🔵 Menunggu Review (Draf Guru)</SelectItem>
                     <SelectItem value="REJECTED">🔴 Tolak / Perlu Revisi</SelectItem>
                     <SelectItem value="DRAFT">🟡 Simpan sebagai Draft</SelectItem>
+                    <SelectItem value="SCHEDULED" disabled={branding.plan === "free"}>
+                      📅 Jadwalkan Tayang {branding.plan === "free" ? "(Khusus Lite/Pro)" : ""}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
               </div>
+
+              {watch("status") === "SCHEDULED" && (
+                <div className="space-y-2">
+                  <Label htmlFor="publishedAt">Tanggal & Waktu Tayang</Label>
+                  <Input 
+                    type="datetime-local" 
+                    id="publishedAt" 
+                    {...register("publishedAt")} 
+                    className="w-full"
+                  />
+                  {errors.publishedAt && <p className="text-xs text-red-500">{errors.publishedAt.message}</p>}
+                </div>
+              )}
 
               {watch("status") === "PUBLISHED" && (
                 <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm bg-background">

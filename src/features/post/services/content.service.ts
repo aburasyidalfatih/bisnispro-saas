@@ -68,8 +68,19 @@ export async function createPost(params: {
 
   // Guru tidak bisa mempublikasikan langsung (wajib approval)
   let finalStatus = data.status || "PUBLISHED"
-  if (userRole === "guru") {
+  if (userRole === "guru" && finalStatus !== "SCHEDULED") {
     finalStatus = "PENDING"
+  }
+
+  // --- SCHEDULED PLAN VALIDATION ---
+  if (finalStatus === "SCHEDULED") {
+    const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } })
+    if (!tenant || tenant.plan === "free") {
+      throw new Error("Fitur jadwal posting hanya tersedia untuk paket Lite dan Pro")
+    }
+    if (!data.publishedAt) {
+      throw new Error("Tanggal tayang harus diisi untuk postingan yang dijadwalkan")
+    }
   }
 
   // --- ANTI-SPAM LOGIC ---
