@@ -171,20 +171,32 @@ export default async function WebsiteLayout({
         <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme */}
-        {!tenant.customThemeId && <WebsiteNavbar tenant={tenantWithFreshMenus as any} />}
+        {!tenant.customThemeId && (
+          <div className="print:hidden">
+            <WebsiteNavbar tenant={tenantWithFreshMenus as any} />
+          </div>
+        )}
         
         <main className="flex-1">{children}</main>
         
         {/* Render Footer hanya jika tidak menggunakan Custom Theme */}
-        {!tenant.customThemeId && <WebsiteFooter tenant={tenantWithFreshMenus as any} />}
+        {!tenant.customThemeId && (
+          <div className="print:hidden">
+            <WebsiteFooter tenant={tenantWithFreshMenus as any} />
+          </div>
+        )}
         
-        {activePopup && <PopupRenderer popup={activePopup} />}
+        <div className="print:hidden">
+          {activePopup && <PopupRenderer popup={activePopup} />}
+        </div>
         
         <MediumZoomSetup />
         
         {/* Floating WhatsApp Widget */}
         {tenant.whatsapp && !tenant.customThemeId && (
-          <FloatingWhatsApp whatsappNumber={tenant.whatsapp} message={`Halo Admin ${tenant.name}, saya ingin bertanya mengenai info di website.`} />
+          <div className="print:hidden">
+            <FloatingWhatsApp whatsappNumber={tenant.whatsapp} message={`Halo Admin ${tenant.name}, saya ingin bertanya mengenai info di website.`} />
+          </div>
         )}
 
         <PwaInstaller tenantName={tenant.name} tenantLogo={normalizeImageUrl(tenant.logo) || tenant.logo} />

@@ -103,7 +103,9 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
   return (
     <div className="bg-background min-h-screen pt-4 md:pt-12 pb-24 font-sans text-foreground">
-      <ReadingProgress />
+      <div className="print:hidden">
+        <ReadingProgress />
+      </div>
 
       {/* JSON-LD for BreadcrumbList */}
       <script
@@ -171,7 +173,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link 
             href={`${base}/berita`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors print:hidden"
           >
              <ArrowLeft className="h-4 w-4" /> Kembali
           </Link>
@@ -236,7 +238,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16 print:hidden">
           <h3 className="text-xl font-bold mb-6">Berita Lainnya</h3>
           <div className="grid gap-6 md:grid-cols-3">
             {relatedPosts.map((related: any) => (
