@@ -466,6 +466,37 @@ export const authOptions: NextAuthConfig = {
             // Ignore cookie read errors in edge cases
           }
         }
+
+        // --- ACTIVE TENANT RESOLUTION (UX Session Leak Fix) ---
+        try {
+          const { headers } = await import("next/headers")
+          const headersList = await headers()
+          let hostname = headersList.get("x-forwarded-host") || headersList.get("host") || ""
+          hostname = hostname.split(':')[0]
+          
+          const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+          
+          if (hostname !== "localhost" && hostname !== rootDomain && hostname !== `www.${rootDomain}`) {
+            let activeSlug = null
+            if (hostname.endsWith(`.${rootDomain}`)) {
+              activeSlug = hostname.replace(`.${rootDomain}`, "").split(".")[0]
+            } else {
+              // Custom domain: Check x-tenant-slug header if set by middleware
+              activeSlug = headersList.get("x-tenant-slug")
+            }
+
+            if (activeSlug && session.user.tenants.length > 1) {
+              const activeIndex = session.user.tenants.findIndex(t => t.slug === activeSlug);
+              if (activeIndex > 0) {
+                const activeTenant = session.user.tenants[activeIndex];
+                session.user.tenants.splice(activeIndex, 1);
+                session.user.tenants.unshift(activeTenant);
+              }
+            }
+          }
+        } catch (e) {
+          // Ignore headers read error
+        }
       }
       return session
     },

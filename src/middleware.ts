@@ -404,7 +404,13 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/affiliate") ||
       pathname.startsWith("/super-admin")
     ) {
-      const response = NextResponse.next()
+      const requestHeaders = new Headers(request.headers)
+      requestHeaders.set("x-tenant-slug", subdomain)
+      const response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      })
       response.headers.set("x-tenant-slug", subdomain)
       return addSecurityHeaders(response, "protected")
     }
@@ -447,7 +453,13 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/affiliate") ||
       pathname.startsWith("/super-admin")
     ) {
-      const response = NextResponse.next()
+      const requestHeaders = new Headers(request.headers)
+      requestHeaders.set("x-tenant-slug", slug)
+      const response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      })
       response.headers.set("x-tenant-slug", slug)
       response.headers.set("x-custom-domain", hostname)
       response.headers.set("x-hostname", hostname)
