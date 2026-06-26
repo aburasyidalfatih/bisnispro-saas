@@ -26,6 +26,7 @@ interface FeatureItem {
 const FEATURE_LIST: FeatureItem[] = [
   // Konten & Website
   { key: "website_content", label: "Konten Website", description: "Beranda, slider, artikel, galeri, profil sekolah, popup, dll.", icon: Globe, category: "Konten & Website" },
+  { key: "scheduled_posts", label: "Jadwalkan Postingan", description: "Atur tanggal rilis artikel & berita di masa depan.", icon: CalendarCheck, category: "Konten & Website" },
   { key: "dashboard_analytics", label: "Dashboard & Analytics", description: "Akses ke dashboard utama dan grafik analitik.", icon: BarChart3, category: "Konten & Website" },
   
   // Data & Manajemen

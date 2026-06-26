@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth"
 const DEFAULT_PLAN_FEATURES: Record<string, Record<string, boolean>> = {
   free: {
     website_content: true,
+    scheduled_posts: false,
     dashboard_analytics: true,
     data_master: true,
     ppdb: false,
@@ -28,6 +29,7 @@ const DEFAULT_PLAN_FEATURES: Record<string, Record<string, boolean>> = {
   },
   lite: {
     website_content: true,
+    scheduled_posts: true,
     dashboard_analytics: true,
     data_master: true,
     ppdb: true,
@@ -50,6 +52,7 @@ const DEFAULT_PLAN_FEATURES: Record<string, Record<string, boolean>> = {
   },
   pro: {
     website_content: true,
+    scheduled_posts: true,
     dashboard_analytics: true,
     data_master: true,
     ppdb: true,
