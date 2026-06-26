@@ -1,1 +1,0 @@
-import * as React from 'react'; import { renderHook } from '@testing-library/react'; import { useChat } from '@ai-sdk/react'; console.log(Object.keys((useChat as any)({ api: '/api/test' })));
