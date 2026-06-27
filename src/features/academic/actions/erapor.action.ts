@@ -3,10 +3,38 @@
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
+import { auth } from "@/lib/auth"
 import { 
   learningObjectiveSchema, FormativeScoreInput, SummativeScoreInput, LearningObjectiveInput,
   formativeScoreSchema, summativeScoreSchema
 } from "../schemas/erapor.schema"
+
+export async function getUserStaffContext(tenantId: string) {
+  const session = await auth()
+  if (!session?.user) return null
+
+  // If superadmin, they act as admin
+  if (session.user.isSuperAdmin) return { isAdmin: true, staffId: null }
+
+  const tu = await db.tenantUser.findUnique({
+    where: { tenantId_userId: { tenantId, userId: session.user.id } }
+  })
+
+  if (!tu) return null
+
+  if (tu.role === 'admin' || tu.role === 'owner' || tu.role === 'operator') {
+    return { isAdmin: true, staffId: null }
+  }
+
+  if (tu.role === 'guru') {
+    const staff = await db.staff.findFirst({
+      where: { tenantId, userId: session.user.id }
+    })
+    return { isAdmin: false, staffId: staff?.id || null }
+  }
+
+  return { isAdmin: false, staffId: null }
+}
 
 export async function createLearningObjective(tenantId: string, data: LearningObjectiveInput) {
   try {

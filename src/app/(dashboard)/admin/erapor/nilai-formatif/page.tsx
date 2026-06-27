@@ -2,6 +2,7 @@ import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { getTenantId } from "@/lib/auth/get-tenant-id"
 import { db } from "@/lib/db"
 import { FormatifClient } from "./formatif-client"
+import { getUserStaffContext } from "@/features/academic/actions/erapor.action"
 
 export const metadata = {
   title: "Nilai Formatif - E-Rapor",
@@ -10,16 +11,33 @@ export const metadata = {
 export default async function FormatifPage() {
   const tenantId = await getTenantId()
   await requireTenantAccess(tenantId)
+  
+  const ctx = await getUserStaffContext(tenantId)
+  if (!ctx) return <div>Akses Ditolak</div>
 
-  const classrooms = await db.classroom.findMany({
-    where: { tenantId },
-    orderBy: { name: 'asc' }
-  })
+  let classrooms = []
+  let subjects = []
 
-  const subjects = await db.subject.findMany({
-    where: { tenantId },
-    orderBy: { name: 'asc' }
-  })
+  if (ctx.isAdmin || !ctx.staffId) {
+    classrooms = await db.classroom.findMany({ where: { tenantId }, orderBy: { name: 'asc' } })
+    subjects = await db.subject.findMany({ where: { tenantId }, orderBy: { name: 'asc' } })
+  } else {
+    // If it's a teacher, we get unique classrooms and subjects from their schedule
+    const schedules = await db.schedule.findMany({
+      where: { tenantId, staffId: ctx.staffId },
+      include: { classroom: true, subject: true }
+    })
+    
+    // Extract unique classrooms
+    const cMap = new Map()
+    schedules.forEach(s => cMap.set(s.classroomId, s.classroom))
+    classrooms = Array.from(cMap.values()).sort((a: any, b: any) => a.name.localeCompare(b.name))
+    
+    // Extract unique subjects
+    const sMap = new Map()
+    schedules.forEach(s => sMap.set(s.subjectId, s.subject))
+    subjects = Array.from(sMap.values()).sort((a: any, b: any) => a.name.localeCompare(b.name))
+  }
 
   // Get TPs to populate dropdowns
   const learningObjectives = await db.learningObjective.findMany({
