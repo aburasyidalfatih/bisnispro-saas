@@ -75,33 +75,22 @@ export async function saveSummativeScore(tenantId: string, data: SummativeScoreI
     await requireTenantAccess(tenantId)
     const parsed = summativeScoreSchema.parse(data)
     
-    // We don't have a composite unique constraint on summative score yet, 
-    // so we'll just find the first matching one or create.
-    const existing = await db.summativeScore.findFirst({
+    const score = await db.summativeScore.upsert({
       where: {
-        tenantId,
-        studentId: parsed.studentId,
-        subjectId: parsed.subjectId,
-        type: parsed.type,
-        semester: parsed.semester,
-        year: parsed.year
+        studentId_subjectId_type_semester_year: {
+          studentId: parsed.studentId,
+          subjectId: parsed.subjectId,
+          type: parsed.type,
+          semester: parsed.semester,
+          year: parsed.year,
+        }
+      },
+      update: { score: parsed.score },
+      create: {
+        ...parsed,
+        tenantId
       }
     })
-
-    let score;
-    if (existing) {
-      score = await db.summativeScore.update({
-        where: { id: existing.id },
-        data: { score: parsed.score }
-      })
-    } else {
-      score = await db.summativeScore.create({
-        data: {
-          ...parsed,
-          tenantId
-        }
-      })
-    }
     
     revalidatePath("/admin/academic/rapor/nilai-sumatif")
     return { success: true, data: score }

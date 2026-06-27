@@ -2312,6 +2312,7 @@ model LearningObjective {
 
   formativeScores FormativeScore[]
 
+  @@unique([subjectId, code, semester, year])
   @@map("learning_objectives")
 }
 
@@ -2346,6 +2347,7 @@ model SummativeScore {
   subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([studentId, subjectId, type, semester, year])
   @@map("summative_scores")
 }
 
@@ -2441,5 +2443,6 @@ model P5StudentScore {
   project P5Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   student Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
+  @@unique([projectId, studentId, dimension, element, subElement])
   @@map("p5_student_scores")
 }
