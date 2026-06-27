@@ -98,3 +98,19 @@ export async function saveSummativeScore(tenantId: string, data: SummativeScoreI
     return { error: error.message || "Failed to save summative score" }
   }
 }
+
+export async function getStudentsByClassroom(tenantId: string, classroomId: string) {
+  await requireTenantAccess(tenantId)
+  
+  return await db.student.findMany({
+    where: { 
+      tenantId,
+      classroomId 
+    },
+    include: {
+      formativeScores: true,
+      summativeScores: true,
+    },
+    orderBy: { fullName: 'asc' }
+  })
+}

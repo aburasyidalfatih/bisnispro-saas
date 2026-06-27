@@ -163,7 +163,17 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             icon: GraduationCap,
             children: [
               { label: "Jadwal Pelajaran", href: `${basePath}/schedules`, icon: Calendar },
-              { label: "E-Rapor", href: `${basePath}/grades`, icon: FileText },
+              { 
+                label: "E-Rapor Kurmer", 
+                href: `${basePath}/erapor/tp`, 
+                icon: FileText,
+                children: [
+                  { label: "Tujuan Pembelajaran", href: `${basePath}/erapor/tp`, icon: Tag },
+                  { label: "Nilai Formatif", href: `${basePath}/erapor/nilai-formatif`, icon: FileText },
+                  { label: "Nilai Sumatif", href: `${basePath}/erapor/nilai-sumatif`, icon: Award },
+                  { label: "Cetak Rapor", href: `${basePath}/erapor/cetak`, icon: Download },
+                ]
+              },
               { label: "Catatan Perilaku (BK)", href: `${basePath}/discipline`, icon: ShieldCheck },
             ],
           }
