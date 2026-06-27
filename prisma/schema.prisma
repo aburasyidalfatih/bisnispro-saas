@@ -4,120 +4,127 @@ generator client {
 }
 
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Tenant {
-  id                   String                @id @default(cuid())
-  name                 String
-  slug                 String                @unique
-  domain               String?               @unique
-  logo                 String?
-  description          String?
-  plan                 String                @default("free")
-  theme                String                @default("aurora")
-  isActive             Boolean               @default(true)
-  lastActiveAt         DateTime              @default(now())
-  retentionStatus      String                @default("ACTIVE")
-  deletedAt            DateTime?
-  settings             Json?
-  tagline              String?
-  about                String?
-  address              String?
-  phone                String?
-  email                String?
-  website              String?
-  whatsapp             String?
-  instagram            String?
-  facebook             String?
-  youtube              String?
-  tiktok               String?
-  telegram             String?
-  services             Json?
-  heroImage            String?
-  gallery              Json?
-  galleryImages        TenantGallery[]
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
-  affiliateId          String?
-  expiresAt            DateTime?
-  planId               String?
-  seoDesc              String?
-  seoTitle             String?
-  studentQuota         Int                   @default(0)
-  googleClientId       String?
-  googleClientSecret   String?
-  aiTokens             Int                   @default(0)
-  aiAddonTokens        Int                   @default(0)
-  template             String                @default("default")
-  customThemeId        String?
-  achievements         Achievement[]
-  affiliateCommissions AffiliateCommission[]
-  aiUsageLogs          AiUsageLog[]
-  alumni               Alumni[]
-  attendancePermits    AttendancePermit[]
-  attendanceRecords    AttendanceRecord[]
-  attendanceSessions   AttendanceSession[]
-  auditLogs            AuditLog[]
-  billingTypes         BillingType[]
-  canteenMerchants     CanteenMerchant[]
-  canteenOrders        CanteenOrder[]
-  canteenProducts      CanteenProduct[]
-  canteenWithdrawals   CanteenWithdrawal[]
-  cashflows            Cashflow[]
-  categories           Category[]
-  cbtExams             CbtExam[]
-  cbtQuestionBanks     CbtQuestionBank[]
-  classrooms           Classroom[]
-  contactSubmissions   ContactSubmission[]
-  disciplineRecords    DisciplineRecord[]
-  documents            Document[]
-  donationCampaigns    DonationCampaign[]
-  donations            Donation[]
-  dripLogs             DripLog[]
-  events               Event[]
-  extracurriculars     Extracurricular[]
-  facilities           Facility[]
-  grades               Grade[]
-  installments         Installment[]
-  internalMessages     InternalMessage[]
-  invitations          Invitation[]
-  invoicePayments      InvoicePayment[]
-  invoices             Invoice[]
-  notifications        Notification[]
-  partnerships         Partnership[]
-  payments             Payment[]
-  pendaftarPpdb        PendaftarPpdb[]
-  periodePpdb          PeriodePpdb[]
-  popups               Popup[]
-  posts                Post[]
-  programs             Program[]
-  rekening             Rekening[]
-  schedules            Schedule[]
-  sliders              Slider[]
-  staff                Staff[]
-  staffAttendances     StaffAttendance[]
-  students             Student[]
-  subjects             Subject[]
-  subscriptions        Subscription[]
-  teacherJournals      TeacherJournal[]
-  TenantNotification   TenantNotification[]
-  tenantScore          TenantScore?
-  users                TenantUser[]
-  customTheme          CustomTheme?          @relation(fields: [customThemeId], references: [id])
-  subscriptionPlan     SubscriptionPlan?     @relation(fields: [planId], references: [id])
-  waQueueLogs          WaQueueLog[]
+  id                     String                  @id @default(cuid())
+  name                   String
+  slug                   String                  @unique
+  domain                 String?                 @unique
+  logo                   String?
+  description            String?
+  plan                   String                  @default("free")
+  theme                  String                  @default("aurora")
+  isActive               Boolean                 @default(true)
+  lastActiveAt           DateTime                @default(now())
+  retentionStatus        String                  @default("ACTIVE")
+  deletedAt              DateTime?
+  settings               Json?
+  tagline                String?
+  about                  String?
+  address                String?
+  phone                  String?
+  email                  String?
+  website                String?
+  whatsapp               String?
+  instagram              String?
+  facebook               String?
+  youtube                String?
+  tiktok                 String?
+  telegram               String?
+  services               Json?
+  heroImage              String?
+  gallery                Json?
+  galleryImages          TenantGallery[]
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  affiliateId            String?
+  expiresAt              DateTime?
+  planId                 String?
+  seoDesc                String?
+  seoTitle               String?
+  studentQuota           Int                     @default(0)
+  googleClientId         String?
+  googleClientSecret     String?
+  aiTokens               Int                     @default(0)
+  aiAddonTokens          Int                     @default(0)
+  template               String                  @default("default")
+  customThemeId          String?
+  achievements           Achievement[]
+  affiliateCommissions   AffiliateCommission[]
+  aiUsageLogs            AiUsageLog[]
+  alumni                 Alumni[]
+  attendancePermits      AttendancePermit[]
+  attendanceRecords      AttendanceRecord[]
+  attendanceSessions     AttendanceSession[]
+  auditLogs              AuditLog[]
+  billingTypes           BillingType[]
+  canteenMerchants       CanteenMerchant[]
+  canteenOrders          CanteenOrder[]
+  canteenProducts        CanteenProduct[]
+  canteenWithdrawals     CanteenWithdrawal[]
+  cashflows              Cashflow[]
+  categories             Category[]
+  cbtExams               CbtExam[]
+  cbtQuestionBanks       CbtQuestionBank[]
+  classrooms             Classroom[]
+  contactSubmissions     ContactSubmission[]
+  disciplineRecords      DisciplineRecord[]
+  documents              Document[]
+  donationCampaigns      DonationCampaign[]
+  donations              Donation[]
+  dripLogs               DripLog[]
+  events                 Event[]
+  extracurriculars       Extracurricular[]
+  facilities             Facility[]
+  grades                 Grade[]
+  installments           Installment[]
+  internalMessages       InternalMessage[]
+  invitations            Invitation[]
+  invoicePayments        InvoicePayment[]
+  invoices               Invoice[]
+  notifications          Notification[]
+  partnerships           Partnership[]
+  payments               Payment[]
+  pendaftarPpdb          PendaftarPpdb[]
+  periodePpdb            PeriodePpdb[]
+  popups                 Popup[]
+  posts                  Post[]
+  programs               Program[]
+  rekening               Rekening[]
+  schedules              Schedule[]
+  sliders                Slider[]
+  staff                  Staff[]
+  staffAttendances       StaffAttendance[]
+  students               Student[]
+  subjects               Subject[]
+  subscriptions          Subscription[]
+  teacherJournals        TeacherJournal[]
+  TenantNotification     TenantNotification[]
+  tenantScore            TenantScore?
+  users                  TenantUser[]
+  customTheme            CustomTheme?            @relation(fields: [customThemeId], references: [id])
+  subscriptionPlan       SubscriptionPlan?       @relation(fields: [planId], references: [id])
+  waQueueLogs            WaQueueLog[]
   socialMediaCredentials SocialMediaCredential[]
-  
-  walletAccounts       WalletAccount[]
-  walletTransactions   WalletTransaction[]
-  websiteMenus         WebsiteMenu[]
-  pageViews            PageView[]
-  errorLogs            ErrorLog[]
-  systemFeedbacks      SystemFeedback[]
-  courseEnrollments    CourseEnrollment[]
-  staffPermits         StaffPermit[]
+
+  walletAccounts     WalletAccount[]
+  walletTransactions WalletTransaction[]
+  websiteMenus       WebsiteMenu[]
+  pageViews          PageView[]
+  errorLogs          ErrorLog[]
+  systemFeedbacks    SystemFeedback[]
+  courseEnrollments  CourseEnrollment[]
+  staffPermits       StaffPermit[]
+
+  discountCodes      DiscountCode[]
+  learningObjectives LearningObjective[]
+  formativeScores    FormativeScore[]
+  summativeScores    SummativeScore[]
+  reportCards        ReportCard[]
+  p5Projects         P5Project[]
 
   @@index([isActive])
   @@index([plan])
@@ -125,8 +132,6 @@ model Tenant {
   @@index([template])
   @@index([customThemeId])
   @@index([createdAt])
-  
-  discountCodes        DiscountCode[]
   @@map("tenants")
 }
 
@@ -305,28 +310,28 @@ model NotificationSetting {
 }
 
 model Payment {
-  id                  String               @id @default(cuid())
-  tenantId            String
-  reference           String               @unique
-  amount              Int
-  method              String?
-  status              String               @default("pending")
-  plan                String
-  tripayRef           String?
-  paidAt              DateTime?
-  expiredAt           DateTime?
-  metadata            Json?
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  planId              String?
-  discountCodeId      String?
-  deletedAt           DateTime?
+  id                   String                @id @default(cuid())
+  tenantId             String
+  reference            String                @unique
+  amount               Int
+  method               String?
+  status               String                @default("pending")
+  plan                 String
+  tripayRef            String?
+  paidAt               DateTime?
+  expiredAt            DateTime?
+  metadata             Json?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  planId               String?
+  discountCodeId       String?
+  deletedAt            DateTime?
   affiliateCommissions AffiliateCommission[]
-  discountCode        DiscountCode?        @relation(fields: [discountCodeId], references: [id])
-  tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  subscription        Subscription?
-  courseId            String?
-  course              Course?              @relation(fields: [courseId], references: [id])
+  discountCode         DiscountCode?         @relation(fields: [discountCodeId], references: [id])
+  tenant               Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscription         Subscription?
+  courseId             String?
+  course               Course?               @relation(fields: [courseId], references: [id])
 
   @@index([tenantId])
   @@index([status])
@@ -338,25 +343,25 @@ model Payment {
 }
 
 model DiscountCode {
-  id             String            @id @default(cuid())
-  code           String            @unique
+  id             String    @id @default(cuid())
+  code           String    @unique
   description    String?
-  type           String            @default("DISCOUNT") // "DISCOUNT" atau "CASHBACK"
-  percentage     Float             @default(0)
-  cashbackAmount Int               @default(0)
-  isActive       Boolean           @default(true)
+  type           String    @default("DISCOUNT") // "DISCOUNT" atau "CASHBACK"
+  percentage     Float     @default(0)
+  cashbackAmount Int       @default(0)
+  isActive       Boolean   @default(true)
   maxUses        Int?
-  usedCount      Int               @default(0)
+  usedCount      Int       @default(0)
   expiresAt      DateTime?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  bonusMonths    Int               @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  bonusMonths    Int       @default(0)
   affiliateId    String?
   linkedTenantId String?
-  
-  payments       Payment[]
-  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id])
-  linkedTenant   Tenant?           @relation(fields: [linkedTenantId], references: [id])
+
+  payments     Payment[]
+  affiliate    AffiliateProfile? @relation(fields: [affiliateId], references: [id])
+  linkedTenant Tenant?           @relation(fields: [linkedTenantId], references: [id])
 
   @@index([createdAt])
   @@index([affiliateId])
@@ -390,19 +395,19 @@ model AuditLog {
 }
 
 model ErrorLog {
-  id        String   @id @default(cuid())
-  tenantId  String?
-  userId    String?
-  category  String   @default("SYSTEM_BUG")
-  message   String
-  stack     String?
-  path      String?
-  method    String?
-  metadata  Json?
-  isResolved Boolean @default(false)
-  createdAt DateTime @default(now())
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  tenantId   String?
+  userId     String?
+  category   String   @default("SYSTEM_BUG")
+  message    String
+  stack      String?
+  path       String?
+  method     String?
+  metadata   Json?
+  isResolved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  tenant     Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([userId])
@@ -456,33 +461,33 @@ model PlatformSetting {
 }
 
 model TenantApplication {
-  id            String            @id @default(cuid())
-  schoolName    String
-  schoolSlug    String            @unique
-  adminName     String
-  adminEmail    String
-  adminPhone    String
-  adminPosition String?
-  address       String?
-  status        String            @default("PENDING")
-  adminMessage  String?
+  id             String            @id @default(cuid())
+  schoolName     String
+  schoolSlug     String            @unique
+  adminName      String
+  adminEmail     String
+  adminPhone     String
+  adminPosition  String?
+  address        String?
+  status         String            @default("PENDING")
+  adminMessage   String?
   hashedPassword String?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  npsn          String?
-  province      String?
-  regency       String?
-  schoolStatus  String?           @default("SWASTA")
-  logo          String?
-  studentCount  Int               @default(0)
-  affiliateId   String?
-  emailOpenedAt DateTime?
-  utmSource     String?
-  utmMedium     String?
-  utmCampaign   String?
-  utmContent    String?
-  utmTerm       String?
-  affiliate     AffiliateProfile? @relation(fields: [affiliateId], references: [id])
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  npsn           String?
+  province       String?
+  regency        String?
+  schoolStatus   String?           @default("SWASTA")
+  logo           String?
+  studentCount   Int               @default(0)
+  affiliateId    String?
+  emailOpenedAt  DateTime?
+  utmSource      String?
+  utmMedium      String?
+  utmCampaign    String?
+  utmContent     String?
+  utmTerm        String?
+  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 
   @@index([status])
   @@index([createdAt])
@@ -492,30 +497,30 @@ model TenantApplication {
 }
 
 model Post {
-  id            String    @id @default(cuid())
-  tenantId      String
-  authorId      String
-  title         String
-  slug          String
-  content       String
-  featuredImage String?
-  imageAlt      String?
-  type          String    @default("BLOG_GURU")
-  status        String    @default("PUBLISHED")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  publishedAt   DateTime?
-  seoDesc       String?
-  seoTitle      String?
-  categoryId    String?
-  deletedAt     DateTime?
+  id                  String    @id @default(cuid())
+  tenantId            String
+  authorId            String
+  title               String
+  slug                String
+  content             String
+  featuredImage       String?
+  imageAlt            String?
+  type                String    @default("BLOG_GURU")
+  status              String    @default("PUBLISHED")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  publishedAt         DateTime?
+  seoDesc             String?
+  seoTitle            String?
+  categoryId          String?
+  deletedAt           DateTime?
   viewCount           Int       @default(0)
   shareCount          Int       @default(0)
   points              Int       @default(20)
   isEligibleForPoints Boolean   @default(true)
   author              User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  category      Category? @relation(fields: [categoryId], references: [id])
-  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  category            Category? @relation(fields: [categoryId], references: [id])
+  tenant              Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
   @@index([tenantId])
@@ -672,19 +677,20 @@ model Facility {
 }
 
 model Extracurricular {
-  id              String   @id @default(cuid())
-  tenantId        String
-  name            String
-  slug            String
-  description     String?
-  schedule        String?
-  imageUrl        String?
-  contactPerson   String?
-  registrationUrl String?
-  sortOrder       Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id                         String                      @id @default(cuid())
+  tenantId                   String
+  name                       String
+  slug                       String
+  description                String?
+  schedule                   String?
+  imageUrl                   String?
+  contactPerson              String?
+  registrationUrl            String?
+  sortOrder                  Int                         @default(0)
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+  tenant                     Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  reportCardExtracurriculars ReportCardExtracurricular[]
 
   @@unique([tenantId, slug])
   @@index([tenantId])
@@ -1040,6 +1046,10 @@ model Student {
   tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user              User?              @relation(fields: [userId], references: [id])
   walletAccount     WalletAccount?
+  formativeScores   FormativeScore[]
+  summativeScores   SummativeScore[]
+  reportCards       ReportCard[]
+  p5StudentScores   P5StudentScore[]
 
   @@index([tenantId])
   @@index([userId])
@@ -1115,7 +1125,6 @@ model AffiliateWithdrawal {
   @@map("affiliate_withdrawals")
 }
 
-
 model Classroom {
   id                 String              @id @default(cuid())
   tenantId           String
@@ -1133,6 +1142,7 @@ model Classroom {
   schedules          Schedule[]
   students           Student[]
   journals           TeacherJournal[]
+  reportCards        ReportCard[]
 
   @@index([tenantId])
   @@index([createdAt])
@@ -1627,18 +1637,21 @@ model Donation {
 }
 
 model Subject {
-  id          String           @id @default(cuid())
-  tenantId    String
-  name        String
-  code        String?
-  description String?
-  isActive    Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  grades      Grade[]
-  schedules   Schedule[]
-  tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  journals    TeacherJournal[]
+  id                 String              @id @default(cuid())
+  tenantId           String
+  name               String
+  code               String?
+  description        String?
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  grades             Grade[]
+  schedules          Schedule[]
+  tenant             Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  journals           TeacherJournal[]
+  learningObjectives LearningObjective[]
+  summativeScores    SummativeScore[]
+  reportCardSubjects ReportCardSubject[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -1849,18 +1862,18 @@ model CbtExam {
 }
 
 model SystemFeedback {
-  id          String   @id @default(cuid())
-  tenantId    String?
-  userId      String
-  type        String   // "BUG_REPORT", "FEATURE_REQUEST", "TESTIMONIAL"
-  message     String
-  status      String   @default("PENDING") // "PENDING", "REVIEWED", "RESOLVED"
-  attachment  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  tenantId   String?
+  userId     String
+  type       String // "BUG_REPORT", "FEATURE_REQUEST", "TESTIMONIAL"
+  message    String
+  status     String   @default("PENDING") // "PENDING", "REVIEWED", "RESOLVED"
+  attachment String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  tenant      Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([userId])
@@ -2105,15 +2118,15 @@ model AdBudget {
 }
 
 model SecurityLog {
-  id          String   @id @default(cuid())
-  ipAddress   String
-  path        String
-  payload     String?  @db.Text
-  attackType  String   // "SQLi", "XSS", "LFI", dll
-  severity    String   @default("HIGH") // "HIGH", "CRITICAL"
-  userAgent   String?  @db.Text
-  tenantId    String?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  ipAddress  String
+  path       String
+  payload    String?  @db.Text
+  attackType String // "SQLi", "XSS", "LFI", dll
+  severity   String   @default("HIGH") // "HIGH", "CRITICAL"
+  userAgent  String?  @db.Text
+  tenantId   String?
+  createdAt  DateTime @default(now())
 
   @@index([tenantId])
   @@index([tenantId, createdAt(sort: Desc)])
@@ -2125,74 +2138,76 @@ model SecurityLog {
 }
 
 model BannedIp {
-  id          String   @id @default(cuid())
-  ipAddress   String   @unique
-  reason      String
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  ipAddress String   @unique
+  reason    String
+  createdAt DateTime @default(now())
 
   @@index([ipAddress])
   @@map("banned_ips")
 }
 
-
 model Course {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
-  slug        String    @unique
-  description String?   @db.Text
+  slug        String   @unique
+  description String?  @db.Text
   thumbnail   String?
-  price       Int       @default(0)
-  isPublished Boolean   @default(false)
+  price       Int      @default(0)
+  isPublished Boolean  @default(false)
   authorId    String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   modules     CourseModule[]
   enrollments CourseEnrollment[]
   payments    Payment[]
 
-  author      User      @relation("CourseAuthor", fields: [authorId], references: [id])
+  author User @relation("CourseAuthor", fields: [authorId], references: [id])
+
   @@map("courses")
 }
 
 model CourseModule {
-  id          String    @id @default(cuid())
-  courseId    String
-  title       String
-  sortOrder   Int       @default(0)
-  
-  lessons     CourseLesson[]
-  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  id        String @id @default(cuid())
+  courseId  String
+  title     String
+  sortOrder Int    @default(0)
+
+  lessons CourseLesson[]
+  course  Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
   @@map("course_modules")
 }
 
 model CourseLesson {
-  id          String    @id @default(cuid())
-  moduleId    String
-  title       String
-  content     String?   @db.Text
-  videoUrl    String?
-  duration    Int       @default(0)
-  isPreview   Boolean   @default(false)
-  sortOrder   Int       @default(0)
+  id        String  @id @default(cuid())
+  moduleId  String
+  title     String
+  content   String? @db.Text
+  videoUrl  String?
+  duration  Int     @default(0)
+  isPreview Boolean @default(false)
+  sortOrder Int     @default(0)
 
-  progress    LessonProgress[]
-  module      CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
+  module   CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
   @@map("course_lessons")
 }
 
 model CourseEnrollment {
-  id          String    @id @default(cuid())
-  userId      String
-  tenantId    String?
-  courseId    String
-  status      String    @default("ACTIVE")
-  progress    Float     @default(0)
-  enrolledAt  DateTime  @default(now())
-  
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  tenant      Tenant?   @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  id         String   @id @default(cuid())
+  userId     String
+  tenantId   String?
+  courseId   String
+  status     String   @default("ACTIVE")
+  progress   Float    @default(0)
+  enrolledAt DateTime @default(now())
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tenant      Tenant?          @relation(fields: [tenantId], references: [id], onDelete: SetNull)
   lessonProgs LessonProgress[]
 
   @@unique([userId, courseId])
@@ -2210,8 +2225,8 @@ model LessonProgress {
   isCompleted  Boolean   @default(false)
   completedAt  DateTime?
 
-  enrollment   CourseEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  lesson       CourseLesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  enrollment CourseEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson     CourseLesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([enrollmentId, lessonId])
   @@map("lesson_progress")
@@ -2276,4 +2291,155 @@ model SocialMediaCredential {
 
   @@unique([tenantId, platform])
   @@map("social_media_credentials")
+}
+
+// ==========================================
+// E-RAPOR & KURIKULUM MERDEKA MODELS
+// ==========================================
+
+model LearningObjective {
+  id          String   @id @default(cuid())
+  tenantId    String
+  subjectId   String
+  code        String
+  description String
+  semester    Int
+  year        Int
+  createdAt   DateTime @default(now())
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  formativeScores FormativeScore[]
+
+  @@map("learning_objectives")
+}
+
+model FormativeScore {
+  id          String   @id @default(cuid())
+  tenantId    String
+  studentId   String
+  objectiveId String
+  score       Float
+  createdAt   DateTime @default(now())
+
+  student   Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  objective LearningObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, objectiveId])
+  @@map("formative_scores")
+}
+
+model SummativeScore {
+  id        String   @id @default(cuid())
+  tenantId  String
+  studentId String
+  subjectId String
+  type      String
+  score     Float
+  semester  Int
+  year      Int
+  createdAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("summative_scores")
+}
+
+model ReportCard {
+  id          String   @id @default(cuid())
+  tenantId    String
+  studentId   String
+  classroomId String
+  semester    Int
+  year        Int
+  sick        Int      @default(0)
+  excused     Int      @default(0)
+  unexcused   Int      @default(0)
+  notes       String?
+  isPromoted  Boolean?
+
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classroom Classroom @relation(fields: [classroomId], references: [id])
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  subjects         ReportCardSubject[]
+  extracurriculars ReportCardExtracurricular[]
+  achievements     ReportCardAchievement[]
+
+  @@unique([studentId, semester, year])
+  @@map("report_cards")
+}
+
+model ReportCardSubject {
+  id           String  @id @default(cuid())
+  reportCardId String
+  subjectId    String
+  finalScore   Float
+  description  String?
+
+  reportCard ReportCard @relation(fields: [reportCardId], references: [id], onDelete: Cascade)
+  subject    Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([reportCardId, subjectId])
+  @@map("report_card_subjects")
+}
+
+model ReportCardExtracurricular {
+  id                String  @id @default(cuid())
+  reportCardId      String
+  extracurricularId String
+  predicate         String
+  description       String?
+
+  reportCard      ReportCard      @relation(fields: [reportCardId], references: [id], onDelete: Cascade)
+  extracurricular Extracurricular @relation(fields: [extracurricularId], references: [id], onDelete: Cascade)
+
+  @@unique([reportCardId, extracurricularId])
+  @@map("report_card_extracurriculars")
+}
+
+model ReportCardAchievement {
+  id           String  @id @default(cuid())
+  reportCardId String
+  name         String
+  description  String?
+  level        String?
+
+  reportCard ReportCard @relation(fields: [reportCardId], references: [id], onDelete: Cascade)
+
+  @@map("report_card_achievements")
+}
+
+model P5Project {
+  id          String @id @default(cuid())
+  tenantId    String
+  theme       String
+  name        String
+  description String
+  phase       String
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  scores P5StudentScore[]
+
+  @@map("p5_projects")
+}
+
+model P5StudentScore {
+  id         String  @id @default(cuid())
+  projectId  String
+  studentId  String
+  dimension  String
+  element    String
+  subElement String
+  predicate  String
+  notes      String?
+
+  project P5Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  student Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("p5_student_scores")
 }
