@@ -7,10 +7,11 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { getStudentsByClassroom } from "@/features/academic/actions/erapor.action"
-import { toast } from "sonner"
+import { useToast } from "@/hooks/use-toast"
 import { Printer, Loader2 } from "lucide-react"
 
 export function CetakClient({ tenantId, classrooms }: any) {
+  const { toast } = useToast()
   const [classroomId, setClassroomId] = useState("")
   const [semester, setSemester] = useState("1")
   const [year, setYear] = useState(new Date().getFullYear().toString())
@@ -20,7 +21,7 @@ export function CetakClient({ tenantId, classrooms }: any) {
 
   async function loadStudents() {
     if (!classroomId) {
-      return toast.error("Silakan pilih Kelas terlebih dahulu.")
+      return toast({ title: "Gagal", description: "Silakan pilih Kelas terlebih dahulu.", variant: "destructive" })
     }
     setLoadingStudents(true)
     const res = await getStudentsByClassroom(tenantId, classroomId)
@@ -29,7 +30,7 @@ export function CetakClient({ tenantId, classrooms }: any) {
   }
 
   function handlePrint(studentId: string) {
-    toast.info("Fitur cetak PDF sedang dalam pengembangan Tahap 4 (Generator Rapor Diknas).")
+    toast({ title: "Info", description: "Fitur cetak PDF sedang dalam pengembangan Tahap 4 (Generator Rapor Diknas)." })
   }
 
   return (

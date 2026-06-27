@@ -8,9 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { createLearningObjective } from "@/features/academic/actions/erapor.action"
-import { toast } from "sonner"
+import { useToast } from "@/hooks/use-toast"
 
 export function TpClient({ tenantId, subjects, initialObjectives }: any) {
+  const { toast } = useToast()
   const [selectedSubject, setSelectedSubject] = useState<string>("all")
   const [loading, setLoading] = useState(false)
   
@@ -26,7 +27,7 @@ export function TpClient({ tenantId, subjects, initialObjectives }: any) {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!formSubjectId) return toast.error("Silakan pilih mata pelajaran")
+    if (!formSubjectId) return toast({ title: "Gagal", description: "Silakan pilih mata pelajaran", variant: "destructive" })
     
     setLoading(true)
     const res = await createLearningObjective(tenantId, {
@@ -39,9 +40,9 @@ export function TpClient({ tenantId, subjects, initialObjectives }: any) {
     
     setLoading(false)
     if (res.error) {
-      toast.error(res.error)
+      toast({ title: "Gagal", description: res.error, variant: "destructive" })
     } else {
-      toast.success("Tujuan Pembelajaran berhasil ditambahkan")
+      toast({ title: "Berhasil", description: "Tujuan Pembelajaran berhasil ditambahkan" })
       setCode("")
       setDescription("")
     }

@@ -1,5 +1,5 @@
 import { requireTenantAccess } from "@/lib/guards/tenant-guard"
-import { getTenantId } from "@/lib/auth/get-tenant-id"
+import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { SumatifClient } from "./sumatif-client"
 import { getUserStaffContext } from "@/features/academic/actions/erapor.action"
@@ -9,7 +9,10 @@ export const metadata = {
 }
 
 export default async function SumatifPage() {
-  const tenantId = await getTenantId()
+  const session = await auth()
+  const tenantId = session?.user?.tenants?.[0]?.id
+  if (!tenantId) return <div>Tenant tidak ditemukan</div>
+  
   await requireTenantAccess(tenantId)
 
   const ctx = await getUserStaffContext(tenantId)

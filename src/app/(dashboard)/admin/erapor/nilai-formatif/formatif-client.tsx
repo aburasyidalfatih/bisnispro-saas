@@ -8,9 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { getStudentsByClassroom, saveFormativeScore } from "@/features/academic/actions/erapor.action"
-import { toast } from "sonner"
+import { useToast } from "@/hooks/use-toast"
 
 export function FormatifClient({ tenantId, classrooms, subjects, learningObjectives }: any) {
+  const { toast } = useToast()
   const [classroomId, setClassroomId] = useState("")
   const [subjectId, setSubjectId] = useState("")
   const [objectiveId, setObjectiveId] = useState("")
@@ -22,7 +23,7 @@ export function FormatifClient({ tenantId, classrooms, subjects, learningObjecti
 
   async function loadStudents() {
     if (!classroomId || !objectiveId) {
-      toast.error("Silakan pilih Kelas, Mata Pelajaran, dan TP terlebih dahulu.")
+      toast({ title: "Gagal", description: "Silakan pilih Kelas, Mata Pelajaran, dan TP terlebih dahulu.", variant: "destructive" })
       return
     }
     setLoadingStudents(true)
@@ -42,9 +43,9 @@ export function FormatifClient({ tenantId, classrooms, subjects, learningObjecti
     })
 
     if (res.error) {
-      toast.error(res.error)
+      toast({ title: "Gagal", description: res.error, variant: "destructive" })
     } else {
-      toast.success("Tersimpan")
+      toast({ title: "Berhasil", description: "Tersimpan" })
     }
   }
 
