@@ -239,6 +239,12 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: `*⚠️ INVOICE KEDALUWARSA*\n\nInvoice dari tenant {{tenantName}} telah kedaluwarsa dan gagal dibayar.\n\nReference: {{reference}}\nNominal: Rp {{amount}}\n\nMohon tim sales mem-follow up sekolah ini.`,
   WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN: "true",
   EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN: "true",
+  WA_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE: `*✅ Pencairan Dana Berhasil!*\n\nHalo {{affiliateName}},\nPermintaan pencairan dana afiliasi Anda telah disetujui.\n\n💰 Nominal: Rp {{amount}}\n🏦 Bank: {{bankName}}\n🔢 No. Rek: {{bankAccount}}\n👤 A.N: {{accountName}}`,
+  WA_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE: "true",
+  EMAIL_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE: "true",
+  WA_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE: `*❌ Pencairan Dana Ditolak*\n\nHalo {{affiliateName}},\nPermintaan pencairan dana sebesar Rp {{amount}} ditolak oleh admin.\n\nCatatan: {{notes}}\n\nDana telah dikembalikan ke saldo Anda.`,
+  WA_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE: "true",
+  EMAIL_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE: "true",
 
   // Billing Templates
   WA_TEMPLATE_INVOICE_CREATED: `*Invoice {{invoiceType}} - SchoolPro*\n\nHalo,\n\nInvoice untuk {{invoiceType}} {{tenantName}} telah dibuat:\n\n📋 No. Invoice: {{reference}}\n💰 Total: Rp {{amount}}\n⏰ Batas Bayar: {{expiredAt}}\n\nSilakan transfer ke:\n🏦 {{bankName}}\n💳 {{bankNumber}}\n📛 a.n. {{bankAccountName}}\n\nSetelah transfer, hubungi admin via WA {{adminWA}} untuk konfirmasi.\n\nTerima kasih! 🙏`,
@@ -268,6 +274,8 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   WAVIO_TEMPLATE_PAYMENT_CONFIRMED: "billing_payment_confirmed",
   WAVIO_TEMPLATE_AFFILIATE_COMMISSION: "billing_affiliate_commission",
   WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER: "billing_subscription_reminder",
+  WAVIO_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE: "affiliate_withdrawal_approved",
+  WAVIO_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE: "affiliate_withdrawal_rejected",
   
   // Payment
   TRIPAY_API_KEY: "",

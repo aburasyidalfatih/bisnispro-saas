@@ -30,7 +30,15 @@ export default function SuperAdminSettingsPage() {
     fetch("/api/super-admin/settings")
       .then((r) => r.json())
       .then((data) => {
-        setForm((prev) => ({ ...prev, ...data }))
+        // Hapus nilai string "undefined" agar tergantikan dengan nilai default
+        const sanitizedData = { ...data }
+        Object.keys(sanitizedData).forEach(key => {
+          if (sanitizedData[key] === "undefined") {
+            delete sanitizedData[key]
+          }
+        })
+        
+        setForm((prev) => ({ ...prev, ...sanitizedData }))
         if (data.SUPPORT_WA_NUMBERS) {
           try { 
             const parsed = JSON.parse(data.SUPPORT_WA_NUMBERS)
