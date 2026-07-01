@@ -140,6 +140,16 @@ export function TemplateWavio({ form, setForm }: Props) {
             <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_invoice_expired" className="rounded-xl" />
             <WavioTemplateHelper text={`*INVOICE KEDALUWARSA (EXPIRED)*\n\nInvoice {{1}} milik tenant {{2}} senilai {{3}} telah melewati batas waktu dan dibatalkan otomatis oleh sistem.`} />
           </div>
+          <div className="space-y-2">
+            <Label className="text-emerald-600 font-bold">14. Pencairan Dana Disetujui → Afiliasi</Label>
+            <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE} onChange={e => setForm({...form, WAVIO_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE: e.target.value})} placeholder="affiliate_withdrawal_approved" className="rounded-xl" />
+            <WavioTemplateHelper text={`*PENCAIRAN DANA BERHASIL*\n\nHalo {{1}},\nPermintaan pencairan dana sebesar {{2}} telah berhasil ditransfer ke rekening {{3}} ({{4}} - a/n {{5}}).`} />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-rose-600 font-bold">15. Pencairan Dana Ditolak → Afiliasi</Label>
+            <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE} onChange={e => setForm({...form, WAVIO_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE: e.target.value})} placeholder="affiliate_withdrawal_rejected" className="rounded-xl" />
+            <WavioTemplateHelper text={`*PENCAIRAN DANA DITOLAK*\n\nHalo {{1}},\nPermintaan pencairan dana sebesar {{2}} DITOLAK oleh admin dengan catatan:\n{{3}}\n\nDana Anda telah dikembalikan ke saldo akun.`} />
+          </div>
         </div>
       </div>
     </>

@@ -22,6 +22,14 @@ export type BillingSettingsDTO = {
   emailEnableAffiliateCommission: boolean
   emailEnableSubscriptionReminder: boolean
 
+  tplWithdrawalApprovedAffiliate: string
+  enableWithdrawalApprovedAffiliate: boolean
+  emailEnableWithdrawalApprovedAffiliate: boolean
+
+  tplWithdrawalRejectedAffiliate: string
+  enableWithdrawalRejectedAffiliate: boolean
+  emailEnableWithdrawalRejectedAffiliate: boolean
+
   // Super Admin Alerts
   tplPaymentSuccessSuperAdmin: string
   enablePaymentSuccessSuperAdmin: boolean
@@ -43,6 +51,8 @@ export type BillingSettingsDTO = {
   wavioTplPaymentSuccessSuperAdmin: string
   wavioTplWithdrawalRequestSuperAdmin: string
   wavioTplInvoiceExpiredSuperAdmin: string
+  wavioTplWithdrawalApprovedAffiliate: string
+  wavioTplWithdrawalRejectedAffiliate: string
 }
 
 export type SubscriptionReminderResultDTO = {
@@ -66,11 +76,14 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     "WA_ENABLE_AFFILIATE_COMMISSION", "WA_ENABLE_SUBSCRIPTION_REMINDER",
     "EMAIL_ENABLE_INVOICE_CREATED", "EMAIL_ENABLE_PAYMENT_CONFIRMED",
     "EMAIL_ENABLE_AFFILIATE_COMMISSION", "EMAIL_ENABLE_SUBSCRIPTION_REMINDER",
+    "WA_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE", "WA_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE", "EMAIL_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE",
+    "WA_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE", "WA_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE", "EMAIL_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE",
     "WA_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN", "WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN", "EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN",
     "WA_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN", "WA_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN", "EMAIL_ENABLE_WITHDRAWAL_REQUEST_SUPERADMIN",
     "WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN", "WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN", "EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN",
     "WAVIO_TEMPLATE_INVOICE_CREATED", "WAVIO_TEMPLATE_PAYMENT_CONFIRMED", "WAVIO_TEMPLATE_AFFILIATE_COMMISSION", "WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER",
-    "WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN", "WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN", "WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN"
+    "WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN", "WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN", "WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN",
+    "WAVIO_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE", "WAVIO_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE"
   ]
   const settings = await db.platformSetting.findMany({ where: { key: { in: keys } } })
   const map: Record<string, string> = {}
@@ -96,6 +109,14 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     emailEnableAffiliateCommission: map.EMAIL_ENABLE_AFFILIATE_COMMISSION !== "false",
     emailEnableSubscriptionReminder: map.EMAIL_ENABLE_SUBSCRIPTION_REMINDER !== "false",
 
+    tplWithdrawalApprovedAffiliate: map.WA_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE || "",
+    enableWithdrawalApprovedAffiliate: map.WA_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE !== "false",
+    emailEnableWithdrawalApprovedAffiliate: map.EMAIL_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE !== "false",
+
+    tplWithdrawalRejectedAffiliate: map.WA_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE || "",
+    enableWithdrawalRejectedAffiliate: map.WA_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE !== "false",
+    emailEnableWithdrawalRejectedAffiliate: map.EMAIL_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE !== "false",
+
     tplPaymentSuccessSuperAdmin: map.WA_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN || "",
     enablePaymentSuccessSuperAdmin: map.WA_ENABLE_PAYMENT_SUCCESS_SUPERADMIN !== "false",
     emailEnablePaymentSuccessSuperAdmin: map.EMAIL_ENABLE_PAYMENT_SUCCESS_SUPERADMIN !== "false",
@@ -112,9 +133,11 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
     wavioTplPaymentConfirmed: map.WAVIO_TEMPLATE_PAYMENT_CONFIRMED || "billing_payment_confirmed",
     wavioTplAffiliateCommission: map.WAVIO_TEMPLATE_AFFILIATE_COMMISSION || "billing_affiliate_commission",
     wavioTplSubscriptionReminder: map.WAVIO_TEMPLATE_SUBSCRIPTION_REMINDER || "billing_subscription_reminder",
-    wavioTplPaymentSuccessSuperAdmin: map.WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN || "superadmin_alert_payment_success",
-    wavioTplWithdrawalRequestSuperAdmin: map.WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN || "superadmin_alert_withdrawal_request",
-    wavioTplInvoiceExpiredSuperAdmin: map.WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN || "superadmin_alert_invoice_expired",
+    wavioTplPaymentSuccessSuperAdmin: map.WAVIO_TEMPLATE_PAYMENT_SUCCESS_SUPERADMIN || "",
+    wavioTplWithdrawalRequestSuperAdmin: map.WAVIO_TEMPLATE_WITHDRAWAL_REQUEST_SUPERADMIN || "",
+    wavioTplInvoiceExpiredSuperAdmin: map.WAVIO_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN || "",
+    wavioTplWithdrawalApprovedAffiliate: map.WAVIO_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE || "",
+    wavioTplWithdrawalRejectedAffiliate: map.WAVIO_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE || "",
   }
 }
 
@@ -846,7 +869,17 @@ export async function notifyAffiliateWithdrawalApproved(withdrawalId: string): P
     // Asumsikan kita punya settingan ini, jika tidak fallback ke template default.
     // Jika cfg tidak punya properti enableAffiliateCommission (atau custom), kita tetap kirim ke email/WA jika ada
     
-    const waMessage = `*✅ Pencairan Dana Berhasil! - ${cfg.platformName}*
+    const templateVars = {
+      affiliateName: withdrawal.affiliate.user.name || "Mitra",
+      amount: formatCurrency(withdrawal.amount),
+      bankName: withdrawal.bankName || "-",
+      bankAccount: withdrawal.bankAccount || "-",
+      accountName: withdrawal.accountName || "-"
+    }
+
+    const waMessage = cfg.tplWithdrawalApprovedAffiliate
+      ? renderTemplate(cfg.tplWithdrawalApprovedAffiliate, templateVars)
+      : `*✅ Pencairan Dana Berhasil! - ${cfg.platformName}*
 
 Halo ${withdrawal.affiliate.user.name},
 
@@ -876,10 +909,17 @@ Terima kasih atas kerja sama Anda bersama ${cfg.platformName}! 🤝`
         </div>
       </div>`
 
-    if (withdrawal.affiliate.user.phone) {
-      sendWhatsApp(withdrawal.affiliate.user.phone, waMessage).catch(() => {})
+    if (withdrawal.affiliate.user.phone && cfg.enableWithdrawalApprovedAffiliate) {
+      const wavioVars = {
+        "1": templateVars.affiliateName,
+        "2": templateVars.amount,
+        "3": templateVars.bankName,
+        "4": templateVars.bankAccount,
+        "5": templateVars.accountName
+      }
+      sendWhatsApp(withdrawal.affiliate.user.phone, waMessage, undefined, { name: cfg.wavioTplWithdrawalApprovedAffiliate, variables: wavioVars }).catch(() => {})
     }
-    if (withdrawal.affiliate.user.email) {
+    if (withdrawal.affiliate.user.email && cfg.emailEnableWithdrawalApprovedAffiliate) {
       sendEmail(withdrawal.affiliate.user.email, `✅ Pencairan Dana Berhasil - Rp ${formatCurrency(withdrawal.amount)}`, emailHtml).catch(() => {})
     }
 
@@ -901,8 +941,16 @@ export async function notifyAffiliateWithdrawalRejected(withdrawalId: string): P
     if (!withdrawal) return
 
     const cfg = await getBillingSettings()
+
+    const templateVars = {
+      affiliateName: withdrawal.affiliate.user.name || "Mitra",
+      amount: formatCurrency(withdrawal.amount),
+      notes: withdrawal.notes || "Silakan hubungi admin untuk informasi lebih lanjut."
+    }
     
-    const waMessage = `*❌ Pencairan Dana Ditolak - ${cfg.platformName}*
+    const waMessage = cfg.tplWithdrawalRejectedAffiliate
+      ? renderTemplate(cfg.tplWithdrawalRejectedAffiliate, templateVars)
+      : `*❌ Pencairan Dana Ditolak - ${cfg.platformName}*
 
 Halo ${withdrawal.affiliate.user.name},
 
@@ -927,10 +975,15 @@ Terima kasih.`
         </div>
       </div>`
 
-    if (withdrawal.affiliate.user.phone) {
-      sendWhatsApp(withdrawal.affiliate.user.phone, waMessage).catch(() => {})
+    if (withdrawal.affiliate.user.phone && cfg.enableWithdrawalRejectedAffiliate) {
+      const wavioVars = {
+        "1": templateVars.affiliateName,
+        "2": templateVars.amount,
+        "3": templateVars.notes
+      }
+      sendWhatsApp(withdrawal.affiliate.user.phone, waMessage, undefined, { name: cfg.wavioTplWithdrawalRejectedAffiliate, variables: wavioVars }).catch(() => {})
     }
-    if (withdrawal.affiliate.user.email) {
+    if (withdrawal.affiliate.user.email && cfg.emailEnableWithdrawalRejectedAffiliate) {
       sendEmail(withdrawal.affiliate.user.email, `❌ Pencairan Dana Ditolak - Rp ${formatCurrency(withdrawal.amount)}`, emailHtml).catch(() => {})
     }
 

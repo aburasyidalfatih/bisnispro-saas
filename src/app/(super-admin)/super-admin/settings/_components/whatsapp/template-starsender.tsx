@@ -160,6 +160,26 @@ export function TemplateStarsender({ form, setForm }: Props) {
             </div>
             <Textarea value={form.WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_INVOICE_EXPIRED_SUPERADMIN: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_INVOICE_EXPIRED_SUPERADMIN !== "true" && form.EMAIL_ENABLE_INVOICE_EXPIRED_SUPERADMIN !== "true"} />
           </div>
+          <div className="space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+              <Label className="text-emerald-600 font-bold">14. Pencairan Dana Disetujui → Afiliasi</Label>
+              <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE: checked ? "true" : "false"})} /></div>
+                <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE: checked ? "true" : "false"})} /></div>
+              </div>
+            </div>
+            <Textarea value={form.WA_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE} onChange={e => setForm({...form, WA_TEMPLATE_WITHDRAWAL_APPROVED_AFFILIATE: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE !== "true" && form.EMAIL_ENABLE_WITHDRAWAL_APPROVED_AFFILIATE !== "true"} />
+          </div>
+          <div className="space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+              <Label className="text-rose-600 font-bold">15. Pencairan Dana Ditolak → Afiliasi</Label>
+              <div className="flex items-center gap-4 mt-1 sm:mt-0">
+                <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">WA</span><Switch checked={form.WA_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE === "true"} onCheckedChange={(checked) => setForm({...form, WA_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE: checked ? "true" : "false"})} /></div>
+                <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE: checked ? "true" : "false"})} /></div>
+              </div>
+            </div>
+            <Textarea value={form.WA_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE} onChange={e => setForm({...form, WA_TEMPLATE_WITHDRAWAL_REJECTED_AFFILIATE: e.target.value})} className="min-h-[120px] text-xs font-mono" disabled={form.WA_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE !== "true" && form.EMAIL_ENABLE_WITHDRAWAL_REJECTED_AFFILIATE !== "true"} />
+          </div>
         </div>
       </div>
     </div>
