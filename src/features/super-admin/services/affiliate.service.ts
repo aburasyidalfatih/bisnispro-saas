@@ -52,6 +52,11 @@ export async function getAffiliatesForSuperAdmin(params: {
     where: { status: "PENDING" }
   })
 
+  const paidWdAgg = await db.affiliateWithdrawal.aggregate({
+    _sum: { amount: true },
+    where: { status: "PAID" }
+  })
+
   return {
     affiliates,
     total,
@@ -61,7 +66,8 @@ export async function getAffiliatesForSuperAdmin(params: {
     stats: {
       totalAffiliates,
       totalBalance: balanceAgg._sum.balance || 0,
-      totalWithdrawalsPending: pendingWdAgg._sum.amount || 0
+      totalWithdrawalsPending: pendingWdAgg._sum.amount || 0,
+      totalWithdrawalsPaid: paidWdAgg._sum.amount || 0
     }
   }
 }

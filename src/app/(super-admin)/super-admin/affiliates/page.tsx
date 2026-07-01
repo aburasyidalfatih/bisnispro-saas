@@ -31,12 +31,13 @@ interface Stats {
   totalAffiliates: number
   totalBalance: number
   totalWithdrawalsPending: number
+  totalWithdrawalsPaid: number
 }
 
 export default function SuperAdminAffiliatesPage() {
   const [data, setData] = useState<{ affiliates: Affiliate[], stats: Stats, totalPages: number }>({ 
     affiliates: [], 
-    stats: { totalAffiliates: 0, totalBalance: 0, totalWithdrawalsPending: 0 },
+    stats: { totalAffiliates: 0, totalBalance: 0, totalWithdrawalsPending: 0, totalWithdrawalsPaid: 0 },
     totalPages: 1
   })
   const [loading, setLoading] = useState(true)
@@ -170,7 +171,7 @@ export default function SuperAdminAffiliatesPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="glass">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Mitra</CardTitle>
@@ -199,6 +200,17 @@ export default function SuperAdminAffiliatesPage() {
           <CardContent>
             <div className="text-2xl font-bold text-amber-600">Rp {data.stats.totalWithdrawalsPending.toLocaleString('id-ID')}</div>
             <p className="text-xs text-amber-600/70 mt-1">Total antrian dana belum cair</p>
+          </CardContent>
+        </Card>
+
+        <Card className="glass border-emerald-500/20 bg-emerald-500/5">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-emerald-700">Total Komisi Cair</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-emerald-600">Rp {data.stats.totalWithdrawalsPaid.toLocaleString('id-ID')}</div>
+            <p className="text-xs text-emerald-600/70 mt-1">Dana komisi berhasil ditransfer</p>
           </CardContent>
         </Card>
       </div>
