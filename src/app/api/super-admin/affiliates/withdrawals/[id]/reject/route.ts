@@ -42,6 +42,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       })
     ])
 
+    // Notify Affiliate
+    import("@/features/finance/services/billing-notification.service")
+      .then(({ notifyAffiliateWithdrawalRejected }) => {
+        notifyAffiliateWithdrawalRejected(id).catch(() => {})
+      })
+      .catch(() => {})
+
     return NextResponse.json({
       success: true,
       message: "Permintaan penarikan berhasil ditolak",

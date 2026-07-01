@@ -35,6 +35,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       }
     })
 
+    // Notify Affiliate
+    import("@/features/finance/services/billing-notification.service")
+      .then(({ notifyAffiliateWithdrawalApproved }) => {
+        notifyAffiliateWithdrawalApproved(id).catch(() => {})
+      })
+      .catch(() => {})
+
     return NextResponse.json({
       success: true,
       message: "Penarikan berhasil disetujui dan saldo dipotong",

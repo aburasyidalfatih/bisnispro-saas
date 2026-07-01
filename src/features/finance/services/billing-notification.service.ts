@@ -829,3 +829,113 @@ export async function notifySuperAdminInvoiceExpired(paymentId: string): Promise
     logger.error("Billing notification: notifySuperAdminInvoiceExpired failed", err, { paymentId })
   }
 }
+
+// ============================================================
+// 10. NOTIFIKASI WITHDRAWAL AFILIASI DISETUJUI → AFILIASI
+// ============================================================
+export async function notifyAffiliateWithdrawalApproved(withdrawalId: string): Promise<void> {
+  try {
+    const withdrawal = await db.affiliateWithdrawal.findUnique({
+      where: { id: withdrawalId },
+      include: { affiliate: { include: { user: true } } }
+    })
+    if (!withdrawal) return
+
+    const cfg = await getBillingSettings()
+    
+    // Asumsikan kita punya settingan ini, jika tidak fallback ke template default.
+    // Jika cfg tidak punya properti enableAffiliateCommission (atau custom), kita tetap kirim ke email/WA jika ada
+    
+    const waMessage = `*✅ Pencairan Dana Berhasil! - ${cfg.platformName}*
+
+Halo ${withdrawal.affiliate.user.name},
+
+Permintaan pencairan dana afiliasi Anda telah **disetujui** dan dana telah ditransfer ke rekening Anda.
+
+💰 *Nominal:* Rp ${formatCurrency(withdrawal.amount)}
+🏦 *Bank:* ${withdrawal.bankName || "-"}
+🔢 *No. Rek:* ${withdrawal.bankAccount || "-"}
+👤 *A.N:* ${withdrawal.accountName || "-"}
+
+Terima kasih atas kerja sama Anda bersama ${cfg.platformName}! 🤝`
+
+    const emailHtml = `
+      <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
+          <h2 style="margin: 0;">✅ Pencairan Dana Berhasil!</h2>
+        </div>
+        <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
+          <p>Halo <strong>${withdrawal.affiliate.user.name}</strong>,</p>
+          <p>Kabar baik! Permintaan pencairan dana afiliasi Anda telah diproses dan dana telah dikirimkan ke rekening Anda.</p>
+          <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr><td style="padding: 8px 0; color: #64748b;">Nominal</td><td style="padding: 8px 0; font-weight: 600; color: #059669;">Rp ${formatCurrency(withdrawal.amount)}</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748b;">Bank</td><td style="padding: 8px 0; font-weight: 600;">${withdrawal.bankName || "-"}</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748b;">No. Rekening</td><td style="padding: 8px 0; font-weight: 600;">${withdrawal.bankAccount || "-"}</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748b;">Atas Nama</td><td style="padding: 8px 0; font-weight: 600;">${withdrawal.accountName || "-"}</td></tr>
+          </table>
+        </div>
+      </div>`
+
+    if (withdrawal.affiliate.user.phone) {
+      sendWhatsApp(withdrawal.affiliate.user.phone, waMessage).catch(() => {})
+    }
+    if (withdrawal.affiliate.user.email) {
+      sendEmail(withdrawal.affiliate.user.email, `✅ Pencairan Dana Berhasil - Rp ${formatCurrency(withdrawal.amount)}`, emailHtml).catch(() => {})
+    }
+
+    logger.info("Billing notification: notifyAffiliateWithdrawalApproved sent", { withdrawalId })
+  } catch (err) {
+    logger.error("Billing notification: notifyAffiliateWithdrawalApproved failed", err, { withdrawalId })
+  }
+}
+
+// ============================================================
+// 11. NOTIFIKASI WITHDRAWAL AFILIASI DITOLAK → AFILIASI
+// ============================================================
+export async function notifyAffiliateWithdrawalRejected(withdrawalId: string): Promise<void> {
+  try {
+    const withdrawal = await db.affiliateWithdrawal.findUnique({
+      where: { id: withdrawalId },
+      include: { affiliate: { include: { user: true } } }
+    })
+    if (!withdrawal) return
+
+    const cfg = await getBillingSettings()
+    
+    const waMessage = `*❌ Pencairan Dana Ditolak - ${cfg.platformName}*
+
+Halo ${withdrawal.affiliate.user.name},
+
+Mohon maaf, permintaan pencairan dana afiliasi Anda sebesar Rp ${formatCurrency(withdrawal.amount)} **ditolak** oleh admin.
+
+*Catatan:* ${withdrawal.notes || "Silakan hubungi admin untuk informasi lebih lanjut."}
+
+Dana telah **dikembalikan** ke saldo afiliasi Anda. Anda dapat mengajukan penarikan kembali dengan informasi rekening yang valid.
+
+Terima kasih.`
+
+    const emailHtml = `
+      <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #ef4444, #dc2626); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
+          <h2 style="margin: 0;">❌ Pencairan Dana Ditolak</h2>
+        </div>
+        <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
+          <p>Halo <strong>${withdrawal.affiliate.user.name}</strong>,</p>
+          <p>Mohon maaf, permintaan pencairan dana afiliasi Anda sebesar <strong>Rp ${formatCurrency(withdrawal.amount)}</strong> ditolak oleh admin.</p>
+          <p style="background: #fee2e2; padding: 12px; border-radius: 8px; color: #991b1b; font-size: 14px; font-weight: 500;">Catatan Admin: ${withdrawal.notes || "Silakan hubungi admin untuk informasi lebih lanjut."}</p>
+          <p>Dana tersebut telah <strong>dikembalikan</strong> utuh ke saldo afiliasi Anda.</p>
+        </div>
+      </div>`
+
+    if (withdrawal.affiliate.user.phone) {
+      sendWhatsApp(withdrawal.affiliate.user.phone, waMessage).catch(() => {})
+    }
+    if (withdrawal.affiliate.user.email) {
+      sendEmail(withdrawal.affiliate.user.email, `❌ Pencairan Dana Ditolak - Rp ${formatCurrency(withdrawal.amount)}`, emailHtml).catch(() => {})
+    }
+
+    logger.info("Billing notification: notifyAffiliateWithdrawalRejected sent", { withdrawalId })
+  } catch (err) {
+    logger.error("Billing notification: notifyAffiliateWithdrawalRejected failed", err, { withdrawalId })
+  }
+}
