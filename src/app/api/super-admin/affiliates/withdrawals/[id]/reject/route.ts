@@ -25,14 +25,22 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const { notes } = await req.json().catch(() => ({}))
 
-    await db.affiliateWithdrawal.update({
-      where: { id: id },
-      data: {
-        status: "FAILED", // or REJECTED depending on your enums, I'll use FAILED to match payment conventions
-        notes: notes || "Ditolak oleh Super Admin",
-        processedAt: new Date(),
-      }
-    })
+    await db.$transaction([
+      db.affiliateWithdrawal.update({
+        where: { id: id },
+        data: {
+          status: "FAILED", // or REJECTED depending on your enums, I'll use FAILED to match payment conventions
+          notes: notes || "Ditolak oleh Super Admin",
+          processedAt: new Date(),
+        }
+      }),
+      db.affiliateProfile.update({
+        where: { id: withdrawal.affiliateId },
+        data: {
+          balance: { increment: withdrawal.amount }
+        }
+      })
+    ])
 
     return NextResponse.json({
       success: true,

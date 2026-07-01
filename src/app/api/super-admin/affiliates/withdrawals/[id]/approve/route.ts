@@ -24,29 +24,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Hanya penarikan dengan status PENDING yang bisa disetujui" }, { status: 400 })
     }
 
-    if (withdrawal.affiliate.balance < withdrawal.amount) {
-      return NextResponse.json({ error: "Saldo afiliasi tidak mencukupi untuk penarikan ini" }, { status: 400 })
-    }
-
     const { receiptUrl } = await req.json().catch(() => ({}))
 
-    // DB Transaction
-    await db.$transaction([
-      db.affiliateWithdrawal.update({
-        where: { id: id },
-        data: {
-          status: "PAID",
-          processedAt: new Date(),
-          receiptUrl: receiptUrl || null
-        }
-      }),
-      db.affiliateProfile.update({
-        where: { id: withdrawal.affiliateId },
-        data: {
-          balance: { decrement: withdrawal.amount }
-        }
-      })
-    ])
+    await db.affiliateWithdrawal.update({
+      where: { id: id },
+      data: {
+        status: "PAID",
+        processedAt: new Date(),
+        receiptUrl: receiptUrl || null
+      }
+    })
 
     return NextResponse.json({
       success: true,
