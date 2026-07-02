@@ -116,16 +116,14 @@ export function ShareButtons({ url, title, postId, tenantId, initialShares = 0 }
       </button>
 
       {/* Tombol Simpan ke PDF / Print */}
-      <div className="ml-auto flex items-center border-l pl-4 border-border">
-        <button
-          onClick={() => window.print()}
-          className="h-10 px-4 rounded-full bg-red-500/10 text-red-600 flex items-center justify-center gap-2 font-medium text-sm hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-105"
-          aria-label="Simpan PDF / Cetak"
-        >
-          <Printer className="h-4 w-4" />
-          <span className="hidden sm:inline">Simpan PDF</span>
-        </button>
-      </div>
+      <button
+        onClick={() => window.print()}
+        className="h-10 w-10 sm:w-auto px-0 sm:px-4 rounded-full bg-red-500/10 text-red-600 flex items-center justify-center gap-2 font-medium text-sm hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-105"
+        aria-label="Simpan PDF / Cetak"
+      >
+        <Printer className="h-4 w-4" />
+        <span className="hidden sm:inline">Simpan PDF</span>
+      </button>
     </div>
   )
 }
