@@ -115,6 +115,21 @@ export const getTenantHomeData = async (slug: string) => {
             partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
           }
         })
+        
+        if (tenantHome) {
+          const pengumuman = await db.post.findMany({
+            where: { tenantId: tenantHome.id, status: "PUBLISHED", type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] } },
+            orderBy: { createdAt: 'desc' },
+            take: 4,
+            include: { author: { select: { name: true, avatar: true } } }
+          });
+          const existingIds = new Set(tenantHome.posts.map(p => p.id));
+          const missing = pengumuman.filter(a => !existingIds.has(a.id));
+          if (missing.length > 0) {
+            tenantHome.posts = [...tenantHome.posts, ...missing];
+          }
+        }
+
         return normalizeInactiveCustomTheme(tenantHome)
       } catch (e) {
         console.error("Fallback getTenantHomeData due to schema error:", e)
@@ -151,6 +166,21 @@ export const getTenantHomeData = async (slug: string) => {
             partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
           }
         })
+        
+        if (tenantHome) {
+          const pengumuman = await db.post.findMany({
+            where: { tenantId: tenantHome.id, status: "PUBLISHED", type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] } },
+            orderBy: { createdAt: 'desc' },
+            take: 4,
+            include: { author: { select: { name: true, avatar: true } } }
+          });
+          const existingIds = new Set(tenantHome.posts.map(p => p.id));
+          const missing = pengumuman.filter(a => !existingIds.has(a.id));
+          if (missing.length > 0) {
+            tenantHome.posts = [...tenantHome.posts, ...missing];
+          }
+        }
+
         return normalizeInactiveCustomTheme(tenantHome)
       }
     },
