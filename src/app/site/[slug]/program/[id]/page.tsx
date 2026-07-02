@@ -99,7 +99,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
 
       <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
         {program.imageUrl ? (
-          <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
+          <div className="w-full aspect-video relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image 
               src={normalizeImageUrl(program.imageUrl) || program.imageUrl} 
               alt={program.name} 

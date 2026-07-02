@@ -65,7 +65,7 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
            {/* Main Content */}
            <div className="lg:col-span-2">
               {facility.imageUrl ? (
-                <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-10 shadow-sm border border-border/50 bg-muted">
+                <div className="w-full aspect-video relative rounded-3xl overflow-hidden mb-10 shadow-sm border border-border/50 bg-muted">
                    <Image 
                     src={normalizeImageUrl(facility.imageUrl) || facility.imageUrl} 
                     alt={facility.name} 

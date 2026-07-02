@@ -72,7 +72,7 @@ export default async function AchievementDetailPage({ params }: { params: Promis
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
         {achievement.imageUrl ? (
-          <div className="w-full aspect-video md:aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
+          <div className="w-full aspect-video relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image 
               src={normalizeImageUrl(achievement.imageUrl) || achievement.imageUrl} 
               alt={achievement.title} 
