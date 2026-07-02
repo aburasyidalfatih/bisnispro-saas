@@ -76,7 +76,7 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
                   />
                 </div>
               ) : (
-                <div className="w-full aspect-[21/9] bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl flex items-center justify-center mb-10 border border-primary/10">
+                <div className="w-full aspect-video bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl flex items-center justify-center mb-10 border border-primary/10">
                   <Building2 className="h-16 w-16 text-primary/20" />
                 </div>
               )}

@@ -196,7 +196,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
                   const thumbnailUrl = isVideo && videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : (normalizeImageUrl(item.url) || item.url);
 
                   return (
-                    <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-[4/3] relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
+                    <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-video relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
                       <NextImage src={thumbnailUrl || '/placeholder.png'} alt={item.imageAlt || item.caption || `Galeri ${i + 1}`}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"

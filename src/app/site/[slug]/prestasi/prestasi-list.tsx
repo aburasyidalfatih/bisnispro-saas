@@ -70,7 +70,7 @@ export function PrestasiList({ achievements, base }: { achievements: any[], base
                   className="group relative flex flex-col bg-white rounded-[2rem] overflow-hidden border border-border shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                 >
                   {/* Image & Badge */}
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="relative aspect-video overflow-hidden">
                     {(!item.imageUrl || item.imageUrl.trim() === "" || item.imageUrl === "null") ? (
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
                         <Trophy className="h-20 w-20 text-white/20" />

@@ -82,7 +82,7 @@ export default async function AchievementDetailPage({ params }: { params: Promis
             />
           </div>
         ) : (
-          <div className="w-full aspect-[21/9] bg-gradient-to-br from-amber-500/5 to-amber-500/10 rounded-3xl flex items-center justify-center mb-12 border border-amber-500/10">
+          <div className="w-full aspect-video bg-gradient-to-br from-amber-500/5 to-amber-500/10 rounded-3xl flex items-center justify-center mb-12 border border-amber-500/10">
             <Trophy className="h-16 w-16 text-amber-500/20" />
           </div>
         )}
