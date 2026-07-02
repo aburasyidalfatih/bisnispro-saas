@@ -103,7 +103,7 @@ const waWorker = new Worker(
         while (retries > 0) {
           const updateRes = await db.waQueueLog.updateMany({
             where: { id: waQueueLogId },
-            data: { status: "SENT", sentAt: new Date() },
+            data: { status: "SENT", sentAt: new Date(), error: null },
           });
           if (updateRes.count > 0) break;
           // If 0 rows updated, wait and retry (row might not be fully visible yet)

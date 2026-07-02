@@ -200,12 +200,14 @@ export function startWaWorker() {
 }
 
 export async function processWaQueueCron() {
-  const oneMinuteAgo = new Date(Date.now() - 60 * 1000)
+  // Pesan WA bisa tertunda lama jika antreannya panjang (delay broadcast bisa berjam-jam).
+  // Jangan tandai PENDING sebagai FAILED terlalu cepat. Tunggu 6 jam.
+  const timeoutDate = new Date(Date.now() - 6 * 60 * 60 * 1000)
 
   const pendingMessages = await db.waQueueLog.findMany({
     where: {
       status: "PENDING",
-      createdAt: { lt: oneMinuteAgo }
+      createdAt: { lt: timeoutDate }
     },
     orderBy: { createdAt: "asc" },
     take: 10,
