@@ -39,9 +39,9 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     tenantId: z.string().min(1),
   }).and(postSchema)
 
-  const parsed = await parseBody(req, schema)
+  const parsed = await parseBody(req, schema as any)
   if (parsed.error) return parsed.error
-  const { tenantId, autoShare, ...data } = parsed.data
+  const { tenantId, autoShare, ...data } = parsed.data as any
 
   // Verifikasi peran
   const isSuperAdmin = session.user.isSuperAdmin

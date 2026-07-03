@@ -60,7 +60,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
         className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-6 pb-8 -mx-4 px-4 sm:mx-0 sm:px-0"
       >
         {testimonials.map((t) => {
-          const tenantUrl = t.tenant?.customDomain ? `https://${t.tenant.customDomain}` : `https://${t.tenant?.slug}.schoolpro.id`;
+          const tenantUrl = t.tenant?.domain ? `https://${t.tenant.domain}` : `https://${t.tenant?.slug}.schoolpro.id`;
           
           return (
             <div 

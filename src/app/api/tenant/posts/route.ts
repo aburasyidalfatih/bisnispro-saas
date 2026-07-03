@@ -31,9 +31,9 @@ export async function POST(req: Request) {
     tenantId: z.string().min(1),
   }).and(postSchema)
 
-  const parsed = await parseBody(req, schema)
+  const parsed = await parseBody(req, schema as any)
   if (parsed.error) return parsed.error
-  const { tenantId, ...data } = parsed.data
+  const { tenantId, ...data } = parsed.data as any
 
   try {
     const { createPost } = await import("@/features/post/services/content.service")
