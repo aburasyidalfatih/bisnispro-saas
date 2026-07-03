@@ -46,7 +46,7 @@ export default async function LandingPage() {
       tenantId: { not: null }
     },
     include: {
-      tenant: { select: { name: true, logo: true } },
+      tenant: { select: { name: true, logo: true, slug: true, customDomain: true } },
       user: { 
         select: { 
           name: true, 
