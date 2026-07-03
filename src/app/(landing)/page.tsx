@@ -73,7 +73,7 @@ export default async function LandingPage() {
       
       <FeaturesSection />
       
-      <TestimonialsSection testimonials={testimonials} />
+      <TestimonialsSection testimonials={JSON.parse(JSON.stringify(testimonials))} />
       
       <CtaSection />
       
