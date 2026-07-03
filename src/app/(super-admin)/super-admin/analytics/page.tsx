@@ -33,7 +33,7 @@ export default function AnalyticsPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-8">
-        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
+        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
           <TabsList className="inline-flex w-max sm:w-auto h-auto gap-2 bg-transparent sm:bg-muted p-0 sm:p-1">
             <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">Overview</TabsTrigger>
             <TabsTrigger value="growth" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border sm:border-0 rounded-xl sm:rounded-md py-2 sm:py-1.5 px-4">Growth</TabsTrigger>

@@ -57,7 +57,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
 
       <div 
         ref={scrollRef}
-        className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-6 pb-8 -mx-4 px-4 sm:mx-0 sm:px-0"
+        className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-6 pb-8 -mx-4 px-4 sm:mx-0 sm:px-0"
       >
         {testimonials.map((t) => {
           const tenantUrl = t.tenant?.domain ? `https://${t.tenant.domain}` : `https://${t.tenant?.slug}.schoolpro.id`;
