@@ -139,6 +139,6 @@ export async function getStudentsByClassroom(tenantId: string, classroomId: stri
       formativeScores: true,
       summativeScores: true,
     },
-    orderBy: { fullName: 'asc' }
+    orderBy: { name: 'asc' }
   })
 }

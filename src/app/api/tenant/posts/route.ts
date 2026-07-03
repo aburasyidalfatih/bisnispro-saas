@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       tenantId,
       userId: session.user.id,
       isSuperAdmin: session.user.isSuperAdmin,
-      data
+      data: data as any
     })
     return NextResponse.json({ message: "Artikel berhasil dibuat", post })
   } catch (error: any) {

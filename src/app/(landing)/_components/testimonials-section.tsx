@@ -1,7 +1,7 @@
 "use client"
 import { MessageSquareQuote, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react"
 import { useRef } from "react"
-import Link from "next/link"
+
 
 export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -70,6 +70,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
               <MessageSquareQuote className="absolute top-6 right-6 h-8 w-8 text-primary/10" />
               <div className="flex items-center gap-4 mb-5">
                 {t.tenant?.logo ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={t.tenant.logo} alt="Logo" className="w-12 h-12 rounded-full object-cover border shrink-0" />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">

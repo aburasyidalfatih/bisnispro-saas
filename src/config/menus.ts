@@ -66,7 +66,13 @@ export interface MenuItem {
   href: string
   icon: LucideIcon
   badge?: number | string
-  children?: { label: string; href: string; icon: LucideIcon; badge?: number | string }[]
+  children?: { 
+    label: string; 
+    href: string; 
+    icon: LucideIcon; 
+    badge?: number | string;
+    children?: { label: string; href: string; icon: LucideIcon; badge?: number | string }[] 
+  }[]
 }
 
 export interface MenuSection {
