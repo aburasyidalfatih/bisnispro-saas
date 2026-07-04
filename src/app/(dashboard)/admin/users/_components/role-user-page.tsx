@@ -417,15 +417,23 @@ export function RoleUserPage({ userRole }: RoleUserPageProps) {
                                 <LogIn className="h-4 w-4" /> Login Sebagai
                               </DropdownMenuItem>
                             )}
-                            <DropdownMenuItem className="gap-2 rounded-lg cursor-pointer" onClick={() => setEditUser(u)}>
-                              <Pencil className="h-4 w-4" /> {u.role === "guru" ? "Edit Akun Login" : "Edit"}
-                            </DropdownMenuItem>
-                            {u.role === "guru" && u.staffId && (
-                              <DropdownMenuItem asChild className="gap-2 rounded-lg cursor-pointer">
-                                <Link href={`/admin/website/gtk/${u.staffId}/edit`}>
-                                  <Users className="h-4 w-4" /> Edit Profil Website
-                                </Link>
+                            {u.role !== "guru" && (
+                              <DropdownMenuItem className="gap-2 rounded-lg cursor-pointer" onClick={() => setEditUser(u)}>
+                                <Pencil className="h-4 w-4" /> Edit
                               </DropdownMenuItem>
+                            )}
+                            {u.role === "guru" && (
+                              u.staffId ? (
+                                <DropdownMenuItem asChild className="gap-2 rounded-lg cursor-pointer">
+                                  <Link href={`/admin/website/gtk/${u.staffId}/edit`}>
+                                    <Pencil className="h-4 w-4" /> Edit Profil & Akun
+                                  </Link>
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem className="gap-2 rounded-lg cursor-pointer" onClick={() => setEditUser(u)}>
+                                  <Pencil className="h-4 w-4" /> Edit Akun Login
+                                </DropdownMenuItem>
+                              )
                             )}
                             <DropdownMenuSeparator />
                             <ConfirmDialog
