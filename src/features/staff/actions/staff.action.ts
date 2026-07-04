@@ -208,28 +208,35 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
 }
 
 export async function deleteStaff(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  try {
+    await requireTenantAccess(tenantId)
 
-  // Ambil data staff sebelum dihapus untuk cek role
-  const staffToDelete = await db.staff.findUnique({ where: { id, tenantId }, select: { role: true } })
-  
-  await db.staff.delete({
-    where: { id, tenantId }
-  })
+    // Ambil data staff sebelum dihapus untuk cek role
+    const staffToDelete = await db.staff.findUnique({ where: { id, tenantId }, select: { role: true } })
+    
+    await db.staff.delete({
+      where: { id, tenantId }
+    })
 
-  // Clear principal settings logic removed to prevent unintended side effects on website settings
-  
-  const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
-  if (tenant) {
-    const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
-    await invalidatePublicTenantCache(tenant.slug)
-    revalidatePath(`/site/${tenant.slug}/gtk`, "page")
-    revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
-    revalidatePath("/gtk", "page")
-    revalidatePath("/", "layout");
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
+    if (tenant) {
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+      await invalidatePublicTenantCache(tenant.slug)
+      revalidatePath(`/site/${tenant.slug}/gtk`, "page")
+      revalidatePath(`/site/${tenant.slug}`, "page"); await clearTenantCache(tenant.slug);
+      revalidatePath("/gtk", "page")
+      revalidatePath("/", "layout");
+    }
+    
+    revalidatePath("/(dashboard)/admin/website/gtk", "page")
+    return { success: true }
+  } catch (error: any) {
+    console.error("[deleteStaff] Error:", error)
+    if (error.code === 'P2003') {
+      return { error: "Data ini tidak dapat dihapus karena masih terhubung dengan data lain (misalnya data ujian CBT)." }
+    }
+    return { error: error.message || "Terjadi kesalahan saat menghapus data." }
   }
-  
-  revalidatePath("/(dashboard)/admin/website/gtk", "page")
 }
 
 export async function updateStaffOrder(tenantId: string, orderedIds: string[]) {

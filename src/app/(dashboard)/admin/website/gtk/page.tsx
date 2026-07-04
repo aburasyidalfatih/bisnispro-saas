@@ -53,7 +53,11 @@ export default function StaffPage() {
   const handleDelete = async (id: string) => {
     if (!tenantId) return
     try {
-      await deleteStaff(id, tenantId)
+      const res = await deleteStaff(id, tenantId)
+      if (res && res.error) {
+        toast({ title: "Gagal", description: res.error, variant: "destructive" })
+        return
+      }
       toast({ title:"Data GTK dihapus" })
       loadStaff()
     } catch (err: any) {
