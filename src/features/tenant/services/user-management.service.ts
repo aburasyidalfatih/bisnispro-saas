@@ -124,6 +124,35 @@ export async function addUserToTenant(params: {
     data: { tenantId, userId: user.id, role },
   })
 
+  // JIKA role === "guru", otomatis buat profil Staff (GTK)
+  if (role === "guru") {
+    const existingStaff = await tenantDb.staff.findFirst({
+      where: { tenantId, userId: user.id }
+    })
+    
+    if (!existingStaff) {
+      // Ambil sortOrder terakhir
+      const lastStaff = await tenantDb.staff.findFirst({
+        where: { tenantId },
+        orderBy: { sortOrder: 'desc' },
+        select: { sortOrder: true }
+      })
+      const nextOrder = lastStaff ? lastStaff.sortOrder + 1 : 0
+      
+      await tenantDb.staff.create({
+        data: {
+          tenantId,
+          userId: user.id,
+          name,
+          email,
+          phone: phone || null,
+          role: "Guru",
+          sortOrder: nextOrder,
+        }
+      })
+    }
+  }
+
   // Audit trail
   await tenantDb.auditLog.create({
     data: {
@@ -199,6 +228,19 @@ export async function editTenantUser(params: {
     where: { id: targetTu.userId },
     data: updateData
   })
+
+  // Sinkronkan ke Staff jika role adalah guru
+  if (targetTu.role === "guru") {
+    const existingStaff = await tenantDb.staff.findFirst({
+      where: { tenantId: targetTu.tenantId, userId: targetTu.userId }
+    })
+    if (existingStaff) {
+      await tenantDb.staff.update({
+        where: { id: existingStaff.id },
+        data: { name, email, phone: phone || null }
+      })
+    }
+  }
 
   // Audit trail
   await tenantDb.auditLog.create({
