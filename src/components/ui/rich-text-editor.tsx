@@ -22,8 +22,13 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  AlignJustify
+  AlignJustify,
+  Image as ImageIcon,
+  Loader2
 } from "lucide-react"
+import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
+import { toast } from "@/hooks/use-toast"
+import { useRef, useState } from "react"
 
 interface RichTextEditorProps {
   value: string
@@ -32,6 +37,89 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
+  const { branding } = useTenantBranding()
+  const tenantId = branding.id
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isUploading, setIsUploading] = useState(false)
+
+  const compressImage = async (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = document.createElement("img")
+      img.src = URL.createObjectURL(file)
+      img.onload = () => {
+        const canvas = document.createElement("canvas")
+        const MAX_SIZE = 1920
+        let { width, height } = img
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height = Math.round(height * (MAX_SIZE / width))
+            width = MAX_SIZE
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width = Math.round(width * (MAX_SIZE / height))
+            height = MAX_SIZE
+          }
+        }
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext("2d")
+        if (!ctx) return resolve(file)
+        ctx.drawImage(img, 0, 0, width, height)
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return resolve(file)
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
+              type: "image/webp",
+              lastModified: Date.now(),
+            })
+            resolve(compressedFile)
+          },
+          "image/webp",
+          0.8
+        )
+      }
+      img.onerror = () => resolve(file)
+    })
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !tenantId) return
+    
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: "File terlalu besar", description: "Ukuran maksimal 10 MB", variant: "destructive" })
+      return
+    }
+
+    try {
+      setIsUploading(true)
+      const compressedFile = await compressImage(file)
+      
+      const fd = new FormData()
+      fd.append("file", compressedFile)
+      fd.append("tenantId", tenantId)
+      fd.append("subDir", "post_content")
+      
+      const res = await fetch(`/api/upload`, {
+        method: "POST",
+        body: fd
+      })
+      const data = await res.json()
+      
+      if (res.ok && data.url) {
+        editor?.chain().focus().setImage({ src: data.url }).run()
+      } else {
+        toast({ title: "Gagal upload", description: data.error || "Gagal upload gambar", variant: "destructive" })
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Terjadi kesalahan upload", variant: "destructive" })
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+  }
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -187,6 +275,29 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         >
           <LinkIcon className="h-4 w-4" />
         </ToggleButton>
+        
+        {/* IMAGE UPLOAD BUTTON */}
+        <input 
+          type="file" 
+          accept="image/*" 
+          className="hidden" 
+          ref={fileInputRef} 
+          onChange={handleImageUpload} 
+        />
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault()
+            fileInputRef.current?.click()
+          }}
+          disabled={isUploading || !tenantId}
+          aria-label="Upload Image"
+          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors disabled:opacity-50 flex items-center justify-center"
+          title="Sisipkan Gambar (Upload & Compress)"
+        >
+          {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
+        </button>
+
         <div className="w-[1px] h-6 bg-border mx-1 self-center" />
         <ToggleButton
           isActive={editor.isActive({ textAlign: 'left' })}
