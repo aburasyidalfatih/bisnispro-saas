@@ -87,4 +87,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["sh", "-c", "if [ \"$ENABLE_EMBEDDED_WORKER\" = \"true\" ]; then echo 'Starting embedded background worker...'; npx tsx src/worker.ts & fi; echo 'Starting Next.js server...'; exec node server.js"]
+CMD ["sh", "-c", "echo 'Pushing DB schema...'; npx prisma db push && if [ \"$ENABLE_EMBEDDED_WORKER\" = \"true\" ]; then echo 'Starting embedded background worker...'; npx tsx src/worker.ts & fi; echo 'Starting Next.js server...'; exec node server.js"]
