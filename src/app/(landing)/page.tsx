@@ -10,7 +10,7 @@ import { CtaSection } from "./_components/cta-section"
 import { TestimonialsSection } from "./_components/testimonials-section"
 import { LandingFooter } from "./_components/landing-footer"
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Cache halaman selama 60 detik agar tidak membebani database setiap kali di-refresh
 
 export default async function LandingPage() {
   const settings = await db.platformSetting.findMany({
@@ -37,6 +37,7 @@ export default async function LandingPage() {
     where: { isActive: true },
     select: { id: true, name: true, address: true, logo: true },
     orderBy: { createdAt: "desc" },
+    take: 20, // Batasi untuk mencegah browser crash & memory leak
   })
 
   const testimonials = await db.systemFeedback.findMany({
