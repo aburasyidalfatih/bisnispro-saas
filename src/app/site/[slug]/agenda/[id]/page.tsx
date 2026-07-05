@@ -151,10 +151,10 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
           </div>
         </div>
 
-        <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
+        <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed prose-p:my-2 prose-li:my-0 prose-ul:my-2 prose-ol:my-2">
           <h3 className="text-xl font-bold text-foreground mb-4">Deskripsi Kegiatan</h3>
           {event.description ? (
-            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.description) }} />
+            <div className="whitespace-pre-wrap prose prose-slate max-w-none prose-p:my-2 prose-li:my-0 prose-ul:my-2 prose-ol:my-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.description) }} />
           ) : (
             <p className="italic">Tidak ada deskripsi detail untuk agenda ini.</p>
           )}

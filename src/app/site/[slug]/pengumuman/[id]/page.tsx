@@ -214,7 +214,7 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
 
         {/* Content */}
         <div
-          className="prose prose-lg prose-blue max-w-none mx-auto prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-blue-600 hover:prose-a:text-blue-700 prose-img:rounded-3xl prose-img:shadow-md mt-10 md:mt-16"
+          className="prose prose-lg prose-blue max-w-none mx-auto prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:my-2 prose-li:my-0 prose-ul:my-2 prose-ol:my-2 prose-a:text-blue-600 hover:prose-a:text-blue-700 prose-img:rounded-3xl prose-img:shadow-md mt-10 md:mt-16"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }}
         />
 

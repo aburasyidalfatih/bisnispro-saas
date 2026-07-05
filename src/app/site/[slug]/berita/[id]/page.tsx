@@ -215,7 +215,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
         {/* Content */}
         <div
-          className="prose prose-lg prose-primary max-w-none mx-auto prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl prose-img:shadow-md mt-10 md:mt-16"
+          className="prose prose-lg prose-primary max-w-none mx-auto prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:my-2 prose-li:my-0 prose-ul:my-2 prose-ol:my-2 prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl prose-img:shadow-md mt-10 md:mt-16"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }}
         />
 

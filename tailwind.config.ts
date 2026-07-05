@@ -100,6 +100,48 @@ const config: Config = {
         'float-slow': 'float 8s ease-in-out infinite',
         'float-delayed': 'float 7s ease-in-out 2s infinite',
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            p: {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            li: {
+              marginTop: '0.25em',
+              marginBottom: '0.25em',
+            },
+            'ul > li': {
+              marginTop: '0.125em',
+              marginBottom: '0.125em',
+            },
+            'ol > li': {
+              marginTop: '0.125em',
+              marginBottom: '0.125em',
+            },
+            ul: {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            ol: {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            h1: {
+              marginTop: '1.25em',
+              marginBottom: '0.5em',
+            },
+            h2: {
+              marginTop: '1.25em',
+              marginBottom: '0.5em',
+            },
+            h3: {
+              marginTop: '1em',
+              marginBottom: '0.5em',
+            },
+          },
+        },
+      },
     },
   },
   plugins: [tailwindcssAnimate, typography],
