@@ -27,7 +27,8 @@ export async function POST(req: Request) {
     // Detect source from referrer if UTM not provided
     const detectedSource = source || detectSourceFromReferrer(referrer || "")
 
-    await db.pageView.create({
+    // Fire and forget (Background tracking to prevent blocking the response)
+    db.pageView.create({
       data: {
         tenantId,
         path,
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
         ipHash,
         sessionId: sessionId || null,
       }
-    })
+    }).catch(error => console.error("Background track pageview error:", error))
 
     return NextResponse.json({ ok: true })
   } catch (error) {
