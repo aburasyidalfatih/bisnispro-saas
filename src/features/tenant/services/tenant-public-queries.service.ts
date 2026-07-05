@@ -13,9 +13,14 @@ export const getPublicPosts = async (tenantId: string, page: number, perPage: nu
         delete safeWhere.status
         safeWhere = {
           ...safeWhere,
-          OR: [
-            { status: "PUBLISHED" },
-            { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+          AND: [
+            ...(safeWhere.AND || []),
+            {
+              OR: [
+                { status: "PUBLISHED" },
+                { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+              ]
+            }
           ]
         }
       }
@@ -47,9 +52,14 @@ export const countPublicPosts = async (tenantId: string, whereClause: any) => {
         delete safeWhere.status
         safeWhere = {
           ...safeWhere,
-          OR: [
-            { status: "PUBLISHED" },
-            { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+          AND: [
+            ...(safeWhere.AND || []),
+            {
+              OR: [
+                { status: "PUBLISHED" },
+                { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+              ]
+            }
           ]
         }
       }
