@@ -4,8 +4,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ShieldAlert, Shield, AlertTriangle, ShieldCheck } from "lucide-react"
+import { ShieldAlert, Shield, AlertTriangle, ShieldCheck, List, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 interface SecurityLog {
   id: string
@@ -17,9 +18,15 @@ interface SecurityLog {
   createdAt: string
 }
 
+interface BannedIp {
+  ipAddress: string
+  reason: string
+  createdAt: string
+}
+
 export function SecurityLogs() {
   const [logs, setLogs] = useState<SecurityLog[]>([])
-  const [bannedIps, setBannedIps] = useState<string[]>([])
+  const [bannedIps, setBannedIps] = useState<BannedIp[]>([])
   const [loading, setLoading] = useState(true)
   const [blockingIp, setBlockingIp] = useState<string | null>(null)
 
@@ -47,12 +54,25 @@ export function SecurityLogs() {
         body: JSON.stringify({ ipAddress, reason: "Manual blokir dari dashboard" })
       })
       if (res.ok) {
-        setBannedIps((prev) => [...prev, ipAddress])
+        setBannedIps((prev) => [...prev, { ipAddress, reason: "Manual blokir dari dashboard", createdAt: new Date().toISOString() }])
       }
     } catch (error) {
       console.error(error)
     } finally {
       setBlockingIp(null)
+    }
+  }
+
+  const handleUnblockIp = async (ipAddress: string) => {
+    if (!confirm(`Anda yakin ingin membuka blokir IP ${ipAddress}?`)) return
+    
+    try {
+      const res = await fetch(`/api/super-admin/banned-ips?ip=${ipAddress}`, { method: "DELETE" })
+      if (res.ok) {
+        setBannedIps((prev) => prev.filter(b => b.ipAddress !== ipAddress))
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -80,10 +100,12 @@ export function SecurityLogs() {
     }
   }
 
+  const isBanned = (ip: string) => bannedIps.some(b => b.ipAddress === ip)
+
   return (
     <Card className="glass border-0">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <CardTitle className="flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-red-500" />
@@ -91,9 +113,57 @@ export function SecurityLogs() {
             </CardTitle>
             <CardDescription>Pemantauan upaya peretasan dan anomali secara real-time</CardDescription>
           </div>
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            <ShieldCheck className="w-3 h-3 mr-1" /> WAF Aktif
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="bg-white/50 dark:bg-black/50">
+                  <List className="w-4 h-4 mr-2" />
+                  Lihat Daftar Banned IP ({bannedIps.length})
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Daftar IP Terblokir</DialogTitle>
+                </DialogHeader>
+                <div className="mt-4">
+                  {bannedIps.length === 0 ? (
+                    <p className="text-center text-muted-foreground text-sm py-8">Tidak ada IP yang terblokir saat ini.</p>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>IP Address</TableHead>
+                          <TableHead>Alasan</TableHead>
+                          <TableHead>Waktu Blokir</TableHead>
+                          <TableHead className="text-right">Aksi</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {bannedIps.map((b) => (
+                          <TableRow key={b.ipAddress}>
+                            <TableCell className="font-mono text-xs">{b.ipAddress}</TableCell>
+                            <TableCell className="text-xs">{b.reason}</TableCell>
+                            <TableCell className="text-xs">
+                              {new Date(b.createdAt).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" })}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleUnblockIp(b.ipAddress)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+              <ShieldCheck className="w-3 h-3 mr-1" /> WAF Aktif
+            </Badge>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -139,7 +209,7 @@ export function SecurityLogs() {
                     </TableCell>
                     <TableCell className="px-4 py-3">{getSeverityBadge(log.severity)}</TableCell>
                     <TableCell className="px-4 py-3 text-muted-foreground">
-                      {bannedIps.includes(log.ipAddress) ? (
+                      {isBanned(log.ipAddress) ? (
                         <Badge variant="destructive" className="bg-red-800 text-white">IP TERBLOKIR</Badge>
                       ) : (
                         <div className="flex items-center gap-2">

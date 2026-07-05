@@ -44,13 +44,36 @@ export async function GET(req: Request) {
     }
 
     const bannedIps = await db.bannedIp.findMany({
-      select: { ipAddress: true }
+      orderBy: { createdAt: 'desc' }
     })
 
-    const ipList = bannedIps.map(b => b.ipAddress)
-    return NextResponse.json(ipList)
+    return NextResponse.json(bannedIps)
   } catch (error) {
     console.error("[BANNED_IPS_GET]", error)
+    return new NextResponse("Internal Error", { status: 500 })
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await auth()
+    if (!session?.user?.isSuperAdmin) {
+      return new NextResponse("Unauthorized", { status: 403 })
+    }
+
+    const url = new URL(req.url)
+    const ipAddress = url.searchParams.get("ip")
+    if (!ipAddress) return new NextResponse("IP required", { status: 400 })
+
+    await db.bannedIp.delete({ where: { ipAddress } })
+
+    if (redis) {
+      await redis.del(`banned_ip:${ipAddress}`)
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("[BANNED_IPS_DELETE]", error)
     return new NextResponse("Internal Error", { status: 500 })
   }
 }
