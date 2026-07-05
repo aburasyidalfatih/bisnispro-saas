@@ -176,10 +176,20 @@ export default async function WebsiteLayout({
             {(tenant.settings as any)?.marqueeText?.trim() && (
               <div className="bg-primary text-primary-foreground text-sm py-2 overflow-hidden flex whitespace-nowrap">
                 <div className="animate-marquee inline-block px-4 min-w-full text-center">
-                  {(tenant.settings as any).marqueeText}
+                  {((tenant.settings as any).marqueeText as string).split('\n').map((text, i, arr) => (
+                    <span key={i}>
+                      {text.trim()}
+                      {i < arr.length - 1 && text.trim() && <span className="mx-4 text-primary-foreground/50">✦</span>}
+                    </span>
+                  ))}
                 </div>
                 <div className="animate-marquee inline-block px-4 min-w-full text-center" aria-hidden="true">
-                  {(tenant.settings as any).marqueeText}
+                  {((tenant.settings as any).marqueeText as string).split('\n').map((text, i, arr) => (
+                    <span key={i}>
+                      {text.trim()}
+                      {i < arr.length - 1 && text.trim() && <span className="mx-4 text-primary-foreground/50">✦</span>}
+                    </span>
+                  ))}
                 </div>
               </div>
             )}
