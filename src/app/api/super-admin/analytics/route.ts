@@ -357,16 +357,42 @@ const getEngagementData = unstable_cache(
       visitorBrowsers = browsersAgg.map(g => ({ name: g.browser || "unknown", views: g._count.id }))
 
       if (trafficTenantsAgg.length > 0) {
-        const tNames = await db.tenant.findMany({ where: { id: { in: trafficTenantsAgg.map(t => t.tenantId) } }, select: { id: true, name: true } })
+        const tNames = await db.tenant.findMany({ where: { id: { in: trafficTenantsAgg.map(t => t.tenantId).filter(Boolean) as string[] } }, select: { id: true, name: true } })
         const tnMap = new Map(tNames.map(t => [t.id, t.name]))
-        topTrafficTenants = trafficTenantsAgg.map(g => ({ name: tnMap.get(g.tenantId) || 'Unknown', views: g._count.id }))
+        topTrafficTenants = trafficTenantsAgg.map(g => ({ name: tnMap.get(g.tenantId!) || 'Unknown', views: g._count.id }))
       }
 
-      const uniqueRows = await db.pageView.findMany({ where: { createdAt: { gte: thirtyDaysAgo } }, select: { sessionId: true, ipHash: true, createdAt: true } })
-      uniqueVisitors = new Set(uniqueRows.map(pv => pv.sessionId || pv.ipHash)).size
-      todayUniqueVisitors = new Set(uniqueRows.filter(pv => pv.createdAt >= startOfToday).map(pv => pv.sessionId || pv.ipHash)).size
-      visitorTrend7Days = buildDailyTrendWithVisitors(uniqueRows.filter(pv => pv.createdAt >= sevenDaysAgo), 7)
-    } catch (e) {}
+      // Optimize Unique Visitors logic to prevent Out Of Memory
+      const [uniqueSessions30Days, uniqueSessionsToday] = await Promise.all([
+        db.pageView.groupBy({ by: ['sessionId', 'ipHash'], where: { createdAt: { gte: thirtyDaysAgo } } }),
+        db.pageView.groupBy({ by: ['sessionId', 'ipHash'], where: { createdAt: { gte: startOfToday } } })
+      ])
+      uniqueVisitors = uniqueSessions30Days.length
+      todayUniqueVisitors = uniqueSessionsToday.length
+
+      // Optimize Trend 7 Days logic to prevent Out Of Memory
+      const trendPromises = []
+      for (let i = 6; i >= 0; i--) {
+        const startOfDay = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
+        startOfDay.setHours(0,0,0,0)
+        const endOfDay = new Date(startOfDay)
+        endOfDay.setHours(23,59,59,999)
+        trendPromises.push(
+          Promise.all([
+            db.pageView.count({ where: { createdAt: { gte: startOfDay, lte: endOfDay } } }),
+            db.pageView.groupBy({ by: ['sessionId', 'ipHash'], where: { createdAt: { gte: startOfDay, lte: endOfDay } } }).then(res => res.length)
+          ]).then(([views, visitors]) => ({
+            date: startOfDay.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }),
+            views,
+            visitors
+          }))
+        )
+      }
+      visitorTrend7Days = await Promise.all(trendPromises)
+
+    } catch (e) {
+      console.error("Error fetching engagement pageviews:", e)
+    }
 
     const [activeRecently, inactive30Days, inactive60Days, inactive90Days, retentionActive, retentionAtRisk, retentionChurned, expiredNotRenewed] = await Promise.all([
       db.tenant.count({ where: { isActive: true, lastActiveAt: { gte: thirtyDaysAgo } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: thirtyDaysAgo, gte: sixtyDaysAgoDate } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: sixtyDaysAgoDate, gte: ninetyDaysAgoDate } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: ninetyDaysAgoDate } } }), db.tenant.count({ where: { retentionStatus: "ACTIVE" } }), db.tenant.count({ where: { retentionStatus: "AT_RISK" } }), db.tenant.count({ where: { retentionStatus: "CHURNED" } }), db.subscription.count({ where: { status: "EXPIRED", endDate: { lt: now } } }),
@@ -400,11 +426,36 @@ const getTenantsData = unstable_cache(
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-    const allTenants = await db.tenant.findMany({ select: { id: true, name: true, plan: true, isActive: true, lastActiveAt: true }, orderBy: { lastActiveAt: 'desc' }, take: 20 })
-    const tenantLoginCounts = await db.auditLog.groupBy({ by: ['tenantId'], where: { action: "USER_LOGIN", createdAt: { gte: startOfMonth }, tenantId: { in: allTenants.map(t => t.id) } }, _count: { id: true } })
-    const tenantLoginMap = new Map(tenantLoginCounts.map(l => [l.tenantId, l._count.id]))
+    // Changed from take 20 to take 50 to match UI text
+    const allTenants = await db.tenant.findMany({ select: { id: true, name: true, plan: true, isActive: true, lastActiveAt: true }, orderBy: { lastActiveAt: 'desc' }, take: 50 })
+    
+    if (allTenants.length === 0) return { tenantActivity: [] }
 
-    const tenantActivity = allTenants.map(t => ({ id: t.id, name: t.name, plan: t.plan, studentCount: 0, staffCount: 0, postCount: 0, loginCount: tenantLoginMap.get(t.id) || 0, lastActiveAt: t.lastActiveAt, isActive: t.isActive }))
+    const tenantIds = allTenants.map(t => t.id)
+    
+    const [tenantLoginCounts, studentCounts, staffCounts, postCounts] = await Promise.all([
+      db.auditLog.groupBy({ by: ['tenantId'], where: { action: "USER_LOGIN", createdAt: { gte: startOfMonth }, tenantId: { in: tenantIds } }, _count: { id: true } }),
+      db.student.groupBy({ by: ['tenantId'], where: { tenantId: { in: tenantIds }, isActive: true, deletedAt: null }, _count: { id: true } }),
+      db.staff.groupBy({ by: ['tenantId'], where: { tenantId: { in: tenantIds }, deletedAt: null }, _count: { id: true } }),
+      db.post.groupBy({ by: ['tenantId'], where: { tenantId: { in: tenantIds }, status: "PUBLISHED", deletedAt: null }, _count: { id: true } })
+    ])
+
+    const tenantLoginMap = new Map(tenantLoginCounts.filter(l => l.tenantId).map(l => [l.tenantId, l._count.id]))
+    const studentCountMap = new Map(studentCounts.filter(s => s.tenantId).map(s => [s.tenantId, s._count.id]))
+    const staffCountMap = new Map(staffCounts.filter(s => s.tenantId).map(s => [s.tenantId, s._count.id]))
+    const postCountMap = new Map(postCounts.filter(p => p.tenantId).map(p => [p.tenantId, p._count.id]))
+
+    const tenantActivity = allTenants.map(t => ({ 
+      id: t.id, 
+      name: t.name, 
+      plan: t.plan, 
+      studentCount: studentCountMap.get(t.id) || 0, 
+      staffCount: staffCountMap.get(t.id) || 0, 
+      postCount: postCountMap.get(t.id) || 0, 
+      loginCount: tenantLoginMap.get(t.id) || 0, 
+      lastActiveAt: t.lastActiveAt, 
+      isActive: t.isActive 
+    }))
 
     return {
       tenantActivity,
