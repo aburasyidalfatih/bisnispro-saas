@@ -28,7 +28,23 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    logger.warn(`[WAF] Blocked ${attackType} from ${ipAddress} on ${path}`);
+    // 2. OTOMATIS BLOKIR IP (WAF Auto-Ban)
+    if (ipAddress && ipAddress !== "Unknown" && ipAddress !== "127.0.0.1" && !ipAddress.startsWith("::1")) {
+      await db.bannedIp.upsert({
+        where: { ipAddress },
+        update: { reason: `Auto-banned oleh WAF karena serangan ${attackType}` },
+        create: { ipAddress, reason: `Auto-banned oleh WAF karena serangan ${attackType}` },
+      });
+
+      // Simpan ke Edge Redis untuk pemblokiran instan
+      const { Redis } = await import("@upstash/redis");
+      const redis = process.env.UPSTASH_REDIS_REST_URL ? Redis.fromEnv() : null;
+      if (redis) {
+        await redis.set(`banned_ip:${ipAddress}`, "true");
+      }
+    }
+
+    logger.warn(`[WAF] Blocked and Banned ${attackType} from ${ipAddress} on ${path}`);
 
     // 2. Notifikasi ke Super Admin (Ambil dari PlatformSettings)
     const platformSettings = await db.platformSetting.findMany({
