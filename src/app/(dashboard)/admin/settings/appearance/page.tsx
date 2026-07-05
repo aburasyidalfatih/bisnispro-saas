@@ -416,19 +416,6 @@ export default function AppearancePage() {
               </div>
             </div>
           </div>
-
-          <div className="mt-8 space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/50">
-            <div className="space-y-1">
-              <h4 className="text-sm font-bold flex items-center gap-2 text-foreground"><Monitor className="h-4 w-4 text-muted-foreground" /> Teks Berjalan (Marquee)</h4>
-              <p className="text-xs text-muted-foreground">Teks berjalan yang muncul di bagian paling atas website publik sekolah.</p>
-            </div>
-            <Input 
-              placeholder="Selamat datang di website resmi sekolah kami..." 
-              value={dynamicSettings.marqueeText || ""} 
-              onChange={(e) => setDynamicSettings(p => ({ ...p, marqueeText: e.target.value }))}
-              className="h-11 bg-background border-border/50"
-            />
-          </div>
         </CardContent>
       </Card>
 

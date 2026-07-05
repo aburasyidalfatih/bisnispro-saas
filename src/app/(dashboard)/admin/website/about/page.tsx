@@ -276,6 +276,7 @@ export default function WebsiteAboutPage() {
             <TabsTrigger value="principal" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Sambutan Utama</TabsTrigger>
             <TabsTrigger value="stats" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Statistik Bar</TabsTrigger>
             <TabsTrigger value="labels" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Teks & Label</TabsTrigger>
+            <TabsTrigger value="marquee" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Teks Berjalan</TabsTrigger>
             <TabsTrigger value="seo" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">SEO & Meta</TabsTrigger>
           </TabsList>
         </div>
@@ -316,6 +317,25 @@ export default function WebsiteAboutPage() {
 
         <TabsContent value="labels" className="outline-none">
           <LabelsForm form={form} setForm={setForm} />
+        </TabsContent>
+
+        <TabsContent value="marquee" className="outline-none">
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-lg font-bold">Teks Berjalan (Marquee)</h2>
+              <p className="text-sm text-muted-foreground">Teks berjalan yang muncul di bagian paling atas website publik sekolah.</p>
+            </div>
+            <div className="space-y-2 max-w-2xl">
+              <label className="text-sm font-medium">Teks Pengumuman</label>
+              <textarea
+                placeholder="Kosongkan jika tidak ingin menampilkan teks berjalan..."
+                value={form.settings?.marqueeText || ""}
+                onChange={(e) => setForm({ ...form, settings: { ...form.settings, marqueeText: e.target.value } })}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <p className="text-[11px] text-muted-foreground">Jika diisi, teks akan berjalan dari kanan ke kiri di halaman pengunjung. Jika dikosongkan, area teks berjalan akan disembunyikan secara otomatis.</p>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="seo" className="mt-0 outline-none">
