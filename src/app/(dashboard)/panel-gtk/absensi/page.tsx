@@ -316,13 +316,22 @@ export default function GTKAttendancePage() {
 
   // Check-out
   const handleCheckOut = async () => {
-    if (!todayRecord) return
+    if (!staff || !tenant || !todayRecord) return
+    if (geoState !== "success" || !coords) {
+      toast({ title: "Aktifkan GPS terlebih dahulu", variant: "destructive" })
+      return
+    }
     setCheckingOut(true)
     try {
       const res = await fetch(`/api/gtk/attendance/${todayRecord.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenantId: tenant?.id, notes }),
+        body: JSON.stringify({ 
+          tenantId: tenant?.id, 
+          notes,
+          checkOutLat: coords.lat,
+          checkOutLng: coords.lng
+        }),
       })
       if (!res.ok) throw new Error((await res.json()).error)
       toast({ title: "✅ Check-out berhasil!" })
