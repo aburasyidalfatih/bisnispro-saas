@@ -23,21 +23,21 @@ export async function POST(req: Request) {
     let recipients: { name: string; email?: string | null; phone?: string | null; schoolName?: string; userId?: string; tenantId?: string }[] = []
 
     if (target === "all_tenants") {
-      const tenants = await db.tenant.findMany({
-        where: { isActive: true },
-        include: { users: { include: { user: true } } }
+      const owners = await db.tenantUser.findMany({
+        where: { role: "owner", tenant: { isActive: true } },
+        include: { user: true, tenant: true }
       })
       
-      tenants.forEach(tenant => {
-        const owner = tenant.users.find(u => u.role === "owner")?.user
+      owners.forEach(tu => {
+        const owner = tu.user
         if (owner) {
           recipients.push({
             name: owner.name || "Admin",
             email: owner.email,
             phone: owner.phone,
-            schoolName: tenant.name,
+            schoolName: tu.tenant.name,
             userId: owner.id,
-            tenantId: tenant.id
+            tenantId: tu.tenant.id
           })
         }
       })
@@ -55,20 +55,21 @@ export async function POST(req: Request) {
     }
     else if (target === "free_tenants" || target === "pro_tenants") {
       const plan = target === "free_tenants" ? "free" : "pro"
-      const tenants = await db.tenant.findMany({
-        where: { plan, isActive: true },
-        include: { users: { include: { user: true } } }
+      const owners = await db.tenantUser.findMany({
+        where: { role: "owner", tenant: { plan, isActive: true } },
+        include: { user: true, tenant: true }
       })
-      tenants.forEach(tenant => {
-        const owner = tenant.users.find(u => u.role === "owner")?.user
+      
+      owners.forEach(tu => {
+        const owner = tu.user
         if (owner) {
           recipients.push({
             name: owner.name || "Admin",
             email: owner.email,
             phone: owner.phone,
-            schoolName: tenant.name,
+            schoolName: tu.tenant.name,
             userId: owner.id,
-            tenantId: tenant.id
+            tenantId: tu.tenant.id
           })
         }
       })
