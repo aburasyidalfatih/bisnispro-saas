@@ -38,8 +38,8 @@ export default function AppearancePage() {
   const [availableCustomThemes, setAvailableCustomThemes] = useState<any[]>([])
   
   // Dynamic Theme Settings
-  const [dynamicSettings, setDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"" })
-  const [dbDynamicSettings, setDbDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"" })
+  const [dynamicSettings, setDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"", marqueeText:"" })
+  const [dbDynamicSettings, setDbDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"", marqueeText:"" })
 
   const isImpersonating = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
   const canChangeTheme = isImpersonating || session?.user?.tenants?.some((t: any) => 
@@ -49,7 +49,8 @@ export default function AppearancePage() {
   const hasTemplateChanged = selectedTemplate !== dbTemplate
   const hasSettingsChanged = dynamicSettings.primaryColor !== dbDynamicSettings.primaryColor || 
                              dynamicSettings.secondaryColor !== dbDynamicSettings.secondaryColor || 
-                             dynamicSettings.fontFamily !== dbDynamicSettings.fontFamily
+                             dynamicSettings.fontFamily !== dbDynamicSettings.fontFamily ||
+                             dynamicSettings.marqueeText !== dbDynamicSettings.marqueeText
 
   // Fetch template + plan langsung dari database (bukan dari JWT session yang bisa stale)
   useEffect(() => {
@@ -72,6 +73,7 @@ export default function AppearancePage() {
             primaryColor: data.settings.primaryColor ||"",
             secondaryColor: data.settings.secondaryColor ||"",
             fontFamily: data.settings.fontFamily ||"inter",
+            marqueeText: data.settings.marqueeText ||"",
           }
           setDynamicSettings(s)
           setDbDynamicSettings(s)
@@ -413,6 +415,19 @@ export default function AppearancePage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="mt-8 space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/50">
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold flex items-center gap-2 text-foreground"><Monitor className="h-4 w-4 text-muted-foreground" /> Teks Berjalan (Marquee)</h4>
+              <p className="text-xs text-muted-foreground">Teks berjalan yang muncul di bagian paling atas website publik sekolah.</p>
+            </div>
+            <Input 
+              placeholder="Selamat datang di website resmi sekolah kami..." 
+              value={dynamicSettings.marqueeText || ""} 
+              onChange={(e) => setDynamicSettings(p => ({ ...p, marqueeText: e.target.value }))}
+              className="h-11 bg-background border-border/50"
+            />
           </div>
         </CardContent>
       </Card>
