@@ -307,10 +307,26 @@ export default function PengumumanFormPage() {
                     <SelectItem value="PENDING">🔵 Menunggu Review (Draf Guru)</SelectItem>
                     <SelectItem value="REJECTED">🔴 Tolak / Perlu Revisi</SelectItem>
                     <SelectItem value="DRAFT">🟡 Simpan sebagai Draft</SelectItem>
+                    <SelectItem value="SCHEDULED" disabled={branding.plan === "free"}>
+                      📅 Jadwalkan Tayang {branding.plan === "free" ? "(Khusus Lite/Pro)" : ""}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
               </div>
+
+              {watch("status") === "SCHEDULED" && (
+                <div className="space-y-2">
+                  <Label htmlFor="publishedAt">Tanggal & Waktu Tayang</Label>
+                  <Input 
+                    type="datetime-local" 
+                    id="publishedAt" 
+                    {...register("publishedAt")} 
+                    className="w-full rounded-xl"
+                  />
+                  {errors.publishedAt && <p className="text-xs text-red-500">{errors.publishedAt.message}</p>}
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="type">Jenis / Layout</Label>

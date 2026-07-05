@@ -13,4 +13,6 @@ export const eventSchema = z.object({
     required_error: "Tanggal selesai wajib diisi",
     invalid_type_error: "Format tanggal tidak valid",
   }),
+  status: z.string().default("PUBLISHED"),
+  publishedAt: z.coerce.date().nullable().optional(),
 })

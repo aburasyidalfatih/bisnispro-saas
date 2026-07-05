@@ -25,6 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from"@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 
 type FormData = z.infer<typeof eventSchema>
 
@@ -39,7 +40,7 @@ export default function EventFormPage() {
 
   const isNew = params.id ==="new"
 
-  const { register, handleSubmit, setValue, getValues, control, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, getValues, control, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(eventSchema),
   })
 
@@ -118,6 +119,10 @@ export default function EventFormPage() {
         // Let's cast as any for the form values to populate correctly
         setValue("startDate", formatDateTime(d.startDate) as any)
         setValue("endDate", formatDateTime(d.endDate) as any)
+        setValue("status", d.status || "PUBLISHED")
+        if (d.publishedAt) {
+          setValue("publishedAt", formatDateTime(d.publishedAt) as any)
+        }
         
         setInitialLoading(false)
       })
@@ -233,6 +238,40 @@ export default function EventFormPage() {
                 )}
               />
               {errors.description && <p className="text-xs text-red-500">{errors.description.message}</p>}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select value={watch("status") || "PUBLISHED"} onValueChange={v => setValue("status", v as any, { shouldValidate: true })}>
+                  <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm transition-shadow hover:border-primary/50">
+                    <SelectValue placeholder="Pilih Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PUBLISHED">🟢 Publikasikan Langsung</SelectItem>
+                    <SelectItem value="PENDING">🔵 Menunggu Review (Draf Guru)</SelectItem>
+                    <SelectItem value="REJECTED">🔴 Tolak / Perlu Revisi</SelectItem>
+                    <SelectItem value="DRAFT">🟡 Simpan sebagai Draft</SelectItem>
+                    <SelectItem value="SCHEDULED" disabled={branding.plan === "free"}>
+                      📅 Jadwalkan Tayang {branding.plan === "free" ? "(Khusus Lite/Pro)" : ""}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
+              </div>
+
+              {watch("status") === "SCHEDULED" && (
+                <div className="space-y-2">
+                  <Label htmlFor="publishedAt">Tanggal & Waktu Tayang</Label>
+                  <Input 
+                    type="datetime-local" 
+                    id="publishedAt" 
+                    {...register("publishedAt")} 
+                    className="rounded-xl w-full"
+                  />
+                  {errors.publishedAt && <p className="text-xs text-red-500">{errors.publishedAt.message}</p>}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

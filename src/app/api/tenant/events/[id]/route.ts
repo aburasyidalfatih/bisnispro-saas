@@ -48,6 +48,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
   }
 
+  if (data.status === "SCHEDULED") {
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } })
+    if (!tenant || tenant.plan === "free") {
+      return NextResponse.json({ error: "Fitur jadwal tayang hanya tersedia untuk paket Lite dan Pro" }, { status: 403 })
+    }
+    if (!data.publishedAt) {
+      return NextResponse.json({ error: "Tanggal tayang harus diisi untuk acara yang dijadwalkan" }, { status: 400 })
+    }
+  }
+
   const event = await db.event.updateMany({
     where: { id, tenantId },
     data

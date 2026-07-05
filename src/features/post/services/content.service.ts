@@ -235,6 +235,18 @@ export async function createEvent(params: {
   }
 
   const slug = await generateUniqueSlug(tenantDb.event, tenantId, data.title || "event")
+  
+  // --- SCHEDULED PLAN VALIDATION ---
+  if (data.status === "SCHEDULED") {
+    const tenant = await tenantDb.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } })
+    if (!tenant || tenant.plan === "free") {
+      throw new Error("Fitur jadwal posting hanya tersedia untuk paket Lite dan Pro")
+    }
+    if (!data.publishedAt) {
+      throw new Error("Tanggal tayang harus diisi untuk postingan yang dijadwalkan")
+    }
+  }
+
   const event = await tenantDb.event.create({
     data: { ...data, slug, tenantId } as any
   })

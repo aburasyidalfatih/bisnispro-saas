@@ -89,7 +89,13 @@ export const getPublicEvents = async (tenantId: string) => {
   return unstable_cache(
     async () => {
       return db.event.findMany({
-        where: { tenantId },
+        where: { 
+          tenantId,
+          OR: [
+            { status: "PUBLISHED" },
+            { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+          ]
+        },
         orderBy: { startDate: 'desc' }
       })
     },
@@ -142,7 +148,13 @@ export const getPublicSitemapData = async (tenantId: string) => {
           select: { id: true, slug: true, updatedAt: true, createdAt: true }
         }),
         db.event.findMany({
-          where: { tenantId },
+          where: { 
+            tenantId,
+            OR: [
+              { status: "PUBLISHED" },
+              { status: "SCHEDULED", publishedAt: { lte: new Date() } }
+            ]
+          },
           select: { id: true, slug: true, updatedAt: true, createdAt: true }
         })
       ]);

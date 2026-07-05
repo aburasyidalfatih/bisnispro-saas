@@ -588,6 +588,8 @@ model Event {
   contactPerson String?
   startDate     DateTime
   endDate       DateTime
+  status        String   @default("PUBLISHED")
+  publishedAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   viewCount     Int      @default(0)
@@ -596,6 +598,7 @@ model Event {
   @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([startDate])
+  @@index([status])
   @@index([createdAt])
   @@index([tenantId, createdAt(sort: Desc)])
   @@map("events")
