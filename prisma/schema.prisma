@@ -193,6 +193,8 @@ model User {
   systemFeedbacks      SystemFeedback[]
   coursesCreated       Course[]              @relation("CourseAuthor")
   courseEnrollments    CourseEnrollment[]
+  postComments         PostComment[]
+  postInteractions     PostInteraction[]
 
   @@index([isActive])
   @@index([isSuperAdmin])
@@ -497,7 +499,7 @@ model TenantApplication {
 }
 
 model Post {
-  id                  String    @id @default(cuid())
+  id                  String            @id @default(cuid())
   tenantId            String
   authorId            String
   title               String
@@ -505,22 +507,24 @@ model Post {
   content             String
   featuredImage       String?
   imageAlt            String?
-  type                String    @default("BLOG_GURU")
-  status              String    @default("PUBLISHED")
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  type                String            @default("BLOG_GURU")
+  status              String            @default("PUBLISHED")
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
   publishedAt         DateTime?
   seoDesc             String?
   seoTitle            String?
   categoryId          String?
   deletedAt           DateTime?
-  viewCount           Int       @default(0)
-  shareCount          Int       @default(0)
-  points              Int       @default(20)
-  isEligibleForPoints Boolean   @default(true)
-  author              User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  category            Category? @relation(fields: [categoryId], references: [id])
-  tenant              Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  viewCount           Int               @default(0)
+  shareCount          Int               @default(0)
+  points              Int               @default(20)
+  isEligibleForPoints Boolean           @default(true)
+  author              User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category            Category?         @relation(fields: [categoryId], references: [id])
+  tenant              Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  comments            PostComment[]
+  interactions        PostInteraction[]
 
   @@unique([tenantId, slug])
   @@index([tenantId])
@@ -2445,4 +2449,38 @@ model P5StudentScore {
 
   @@unique([projectId, studentId, dimension, element, subElement])
   @@map("p5_student_scores")
+}
+
+model PostComment {
+  id         String   @id @default(cuid())
+  postId     String
+  authorId   String?
+  name       String? // Untuk user tamu
+  email      String?
+  content    String
+  isApproved Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  post   Post  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([postId])
+  @@index([createdAt])
+  @@map("post_comments")
+}
+
+model PostInteraction {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String?
+  type      String   @default("LIKE") // LIKE, LOVE, etc.
+  createdAt DateTime @default(now())
+
+  post Post  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId, type])
+  @@index([postId])
+  @@map("post_interactions")
 }

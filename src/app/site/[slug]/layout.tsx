@@ -172,7 +172,15 @@ export default async function WebsiteLayout({
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme */}
         {!tenant.customThemeId && (
-          <div className="print:hidden">
+          <div className="print:hidden flex flex-col">
+            <div className="bg-primary text-primary-foreground text-sm py-2 overflow-hidden flex whitespace-nowrap">
+              <div className="animate-marquee inline-block px-4">
+                {(tenant.settings as any)?.marqueeText || `Selamat datang di website resmi ${tenant.name}`}
+              </div>
+              <div className="animate-marquee inline-block px-4" aria-hidden="true">
+                {(tenant.settings as any)?.marqueeText || `Selamat datang di website resmi ${tenant.name}`}
+              </div>
+            </div>
             <WebsiteNavbar tenant={tenantWithFreshMenus as any} />
           </div>
         )}

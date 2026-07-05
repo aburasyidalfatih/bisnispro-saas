@@ -151,7 +151,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         <div className="flex items-center gap-1">
           <input
             type="color"
-            onInput={(e) => editor.chain().focus().setColor(e.currentTarget.value).run()}
+            onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
             value={editor.getAttributes('textStyle').color || '#000000'}
             className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
             aria-label="Text color"

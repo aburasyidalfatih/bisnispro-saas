@@ -76,6 +76,30 @@ export async function POST(req: Request) {
   const settings = (tenant?.settings as Record<string, any>) || {}
   const tz = settings.timezone || settings.attendance?.timezone || "Asia/Jakarta"
 
+  // 1. Validasi Koordinat Jarak (Haversine Formula)
+  const attSettings = settings.attendance || {}
+  const schoolLat = attSettings.schoolLat ? parseFloat(attSettings.schoolLat) : null
+  const schoolLng = attSettings.schoolLng ? parseFloat(attSettings.schoolLng) : null
+  const radius = attSettings.radiusGps ? parseInt(attSettings.radiusGps) : 0
+
+  if (schoolLat && schoolLng && radius > 0 && checkInLat && checkInLng) {
+    const R = 6371e3; // Radius bumi dalam meter
+    const dLat = (checkInLat - schoolLat) * Math.PI / 180;
+    const dLon = (checkInLng - schoolLng) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(schoolLat * Math.PI / 180) * Math.cos(checkInLat * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distanceInMeters = R * c;
+
+    if (distanceInMeters > radius) {
+      return NextResponse.json({ 
+        error: `Posisi Anda terlalu jauh dari lokasi sekolah. Jarak Anda: ${Math.round(distanceInMeters)} meter (Maksimal: ${radius} meter).`
+      }, { status: 400 })
+    }
+  }
+
   const dateStr = new Date().toLocaleDateString("en-CA", { timeZone: tz })
   const today = new Date(`${dateStr}T00:00:00.000Z`)
 

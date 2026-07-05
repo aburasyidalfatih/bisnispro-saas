@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema, type LoginInput } from "@/features/auth/schemas/auth.schema"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
 import { LogIn } from "lucide-react"
 
@@ -152,7 +153,7 @@ export default function LoginPage({
                 <Label htmlFor="password">Password</Label>
                 <Link href="/forgot-password" className="text-xs text-primary hover:underline">Lupa password?</Link>
               </div>
-              <Input id="password" type="password" placeholder="••••••••" className="h-11 rounded-xl bg-background/50" {...register("password")} />
+              <PasswordInput id="password" placeholder="••••••••" className="h-11 rounded-xl bg-background/50" {...register("password")} />
               {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
             </div>
 
