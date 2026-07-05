@@ -175,7 +175,10 @@ export default async function WebsiteLayout({
           <div className="print:hidden flex flex-col">
             {(tenant.settings as any)?.marqueeText?.trim() && (
               <div className="bg-primary text-primary-foreground text-sm py-2 overflow-hidden flex whitespace-nowrap">
-                <div className="animate-marquee inline-block px-4 min-w-full text-center">
+                <div 
+                  className="animate-marquee inline-block px-4 min-w-full text-center"
+                  style={{ animationDuration: (tenant.settings as any).marqueeSpeed || "25s" }}
+                >
                   {((tenant.settings as any).marqueeText as string).split('\n').map((text, i, arr) => (
                     <span key={i}>
                       {text.trim()}
@@ -183,7 +186,10 @@ export default async function WebsiteLayout({
                     </span>
                   ))}
                 </div>
-                <div className="animate-marquee inline-block px-4 min-w-full text-center" aria-hidden="true">
+                <div 
+                  className="animate-marquee inline-block px-4 min-w-full text-center" aria-hidden="true"
+                  style={{ animationDuration: (tenant.settings as any).marqueeSpeed || "25s" }}
+                >
                   {((tenant.settings as any).marqueeText as string).split('\n').map((text, i, arr) => (
                     <span key={i}>
                       {text.trim()}

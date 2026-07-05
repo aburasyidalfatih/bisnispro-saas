@@ -335,6 +335,21 @@ export default function WebsiteAboutPage() {
               />
               <p className="text-[11px] text-muted-foreground">Jika diisi, teks akan berjalan dari kanan ke kiri di halaman pengunjung. Jika dikosongkan, area teks berjalan akan disembunyikan secara otomatis.</p>
             </div>
+            
+            <div className="space-y-2 max-w-[250px]">
+              <label className="text-sm font-medium">Kecepatan Berjalan</label>
+              <select
+                value={form.settings?.marqueeSpeed || "25s"}
+                onChange={(e) => setForm({ ...form, settings: { ...form.settings, marqueeSpeed: e.target.value } })}
+                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="40s">Sangat Lambat (40s)</option>
+                <option value="30s">Lambat (30s)</option>
+                <option value="25s">Normal (25s)</option>
+                <option value="15s">Cepat (15s)</option>
+                <option value="10s">Sangat Cepat (10s)</option>
+              </select>
+            </div>
           </div>
         </TabsContent>
 
