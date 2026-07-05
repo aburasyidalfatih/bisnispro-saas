@@ -8,6 +8,8 @@ const checkOutSchema = z.object({
   tenantId: z.string(),
   status: z.enum(["HADIR", "IZIN", "SAKIT", "ALPHA"]).optional(),
   notes: z.string().optional(),
+  checkOutLat: z.number().optional(),
+  checkOutLng: z.number().optional(),
 })
 
 /**
@@ -28,6 +30,38 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const { error } = await requireTenantMembership(oldRecord.tenantId)
   if (error) return error
+
+  const { checkOutLat, checkOutLng } = parsed.data
+  
+  const tenant = await db.tenant.findUnique({ where: { id: oldRecord.tenantId }, select: { settings: true } })
+  const settings = (tenant?.settings as Record<string, any>) || {}
+  const attSettings = settings.attendance || {}
+  const schoolLat = attSettings.schoolLat ? parseFloat(attSettings.schoolLat) : null
+  const schoolLng = attSettings.schoolLng ? parseFloat(attSettings.schoolLng) : null
+  const radius = attSettings.radiusGps ? parseInt(attSettings.radiusGps) : 0
+
+  if (schoolLat && schoolLng && radius > 0) {
+    if (!checkOutLat || !checkOutLng) {
+      return NextResponse.json({ 
+        error: `Akses ditolak: Absensi ini mewajibkan data lokasi GPS yang valid untuk check-out.`
+      }, { status: 400 })
+    }
+    const R = 6371e3;
+    const dLat = (checkOutLat - schoolLat) * Math.PI / 180;
+    const dLon = (checkOutLng - schoolLng) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(schoolLat * Math.PI / 180) * Math.cos(checkOutLat * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distanceInMeters = R * c;
+
+    if (distanceInMeters > radius) {
+      return NextResponse.json({ 
+        error: `Posisi Anda terlalu jauh dari lokasi sekolah untuk check-out. Jarak Anda: ${Math.round(distanceInMeters)} meter.`
+      }, { status: 400 })
+    }
+  }
 
   const record = await db.staffAttendance.update({
     where: { id },

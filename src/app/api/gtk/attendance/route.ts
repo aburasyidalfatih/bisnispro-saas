@@ -82,7 +82,12 @@ export async function POST(req: Request) {
   const schoolLng = attSettings.schoolLng ? parseFloat(attSettings.schoolLng) : null
   const radius = attSettings.radiusGps ? parseInt(attSettings.radiusGps) : 0
 
-  if (schoolLat && schoolLng && radius > 0 && checkInLat && checkInLng) {
+  if (schoolLat && schoolLng && radius > 0) {
+    if (!checkInLat || !checkInLng) {
+      return NextResponse.json({ 
+        error: `Akses ditolak: Absensi ini mewajibkan data lokasi GPS yang valid.`
+      }, { status: 400 })
+    }
     const R = 6371e3; // Radius bumi dalam meter
     const dLat = (checkInLat - schoolLat) * Math.PI / 180;
     const dLon = (checkInLng - schoolLng) * Math.PI / 180;
