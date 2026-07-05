@@ -55,7 +55,7 @@ const nextConfig: NextConfig = {
       "node_modules/@esbuild/linux-x64",
     ],
   },
-  serverExternalPackages: ["@prisma/client", "bcryptjs"],
+  serverExternalPackages: ["@prisma/client", "bcryptjs", "pdfkit"],
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
   typescript: {
     // Abaikan type checking saat build di production untuk mencegah OOM (Exit code 137)

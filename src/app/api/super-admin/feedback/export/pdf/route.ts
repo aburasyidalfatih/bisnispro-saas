@@ -46,7 +46,9 @@ export async function POST(req: Request) {
       
       doc.fontSize(11).fillColor("black").font("Helvetica")
       doc.text("Pesan:")
-      doc.font("Helvetica-Oblique").text(item.message, { width: 535, align: "justify" })
+      // Remove non-ascii characters (emojis, etc) to prevent pdfkit winansi encoding error
+      const safeMessage = item.message.replace(/[^\x00-\x7F]/g, "")
+      doc.font("Helvetica-Oblique").text(safeMessage, { width: 535, align: "justify" })
       
       doc.moveDown(1)
     })
