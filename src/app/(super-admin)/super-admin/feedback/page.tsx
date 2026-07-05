@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { formatDistanceToNow } from "date-fns"
 import { id } from "date-fns/locale"
 import { SystemFeedbackStatusAction } from "./_components/status-action"
+import { ExportFeedbackButton } from "./_components/export-button"
 
 export const metadata: Metadata = {
   title: "Feedback Laporan | Super Admin",
@@ -39,11 +40,14 @@ export default async function FeedbackPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Daftar Laporan</CardTitle>
-          <CardDescription>
-            Menampilkan seluruh masukan dari tenant. Anda dapat mengubah statusnya untuk memudahkan pelacakan (tracking).
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div>
+            <CardTitle>Daftar Laporan</CardTitle>
+            <CardDescription className="mt-1">
+              Menampilkan seluruh masukan dari tenant. Anda dapat mengubah statusnya untuk memudahkan pelacakan (tracking).
+            </CardDescription>
+          </div>
+          <ExportFeedbackButton data={feedbacks} />
         </CardHeader>
         <CardContent>
           <Table>
