@@ -9,11 +9,25 @@ export const metadata = {
   title: "School TV Display | SchoolPro",
 }
 
+function getTvUrl(slug: string) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"
+  try {
+    const url = new URL(appUrl)
+    if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
+      return `${url.protocol}//${slug}.localhost:${url.port || '3000'}/tv`
+    }
+    return `${url.protocol}//${slug}.${url.hostname.replace(/^www\./, "")}/tv`
+  } catch {
+    return `https://${slug}.schoolpro.id/tv`
+  }
+}
+
 export default async function SchoolTvSettingsPage() {
   const session = await auth()
   const tenant = session?.user?.tenants?.[0]
   if (!tenant) return redirect("/login")
   
+  const tvUrl = getTvUrl(tenant.slug)
   const isPremium = ["pro", "lite", "premium"].includes(tenant.plan?.toLowerCase() || "")
 
   if (!isPremium) {
@@ -68,10 +82,10 @@ export default async function SchoolTvSettingsPage() {
             </div>
             
             <div className="bg-muted p-3 rounded-lg w-full flex items-center justify-center border font-mono text-sm overflow-hidden text-ellipsis whitespace-nowrap">
-              {process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"}/site/{tenant.slug}/tv
+              {tvUrl}
             </div>
 
-            <Link href={`/site/${tenant.slug}/tv`} target="_blank" className="w-full">
+            <Link href={tvUrl} target="_blank" className="w-full">
               <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" size="lg">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Buka TV Display Sekarang
