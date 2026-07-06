@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { Clock, Calendar, Users, MapPin, Loader2, BookOpen, UserCircle, QrCode } from "lucide-react"
+import { Clock, Calendar, Users, MapPin, Loader2, BookOpen, UserCircle, QrCode, Maximize, Minimize } from "lucide-react"
 import QRCode from "react-qr-code"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
@@ -16,6 +16,22 @@ export default function SchoolTvPage() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [now, setNow] = useState(new Date())
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  // Fullscreen Logic
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => console.error(err))
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen()
+    }
+  }
+
+  useEffect(() => {
+    const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener("fullscreenchange", handleFsChange)
+    return () => document.removeEventListener("fullscreenchange", handleFsChange)
+  }, [])
 
   // Clock tick
   useEffect(() => {
@@ -99,6 +115,13 @@ export default function SchoolTvPage() {
             {format(now, "HH:mm")}
             <span className="text-2xl text-emerald-400 ml-1">{format(now, "ss")}</span>
           </div>
+          <button 
+            onClick={toggleFullscreen}
+            className="ml-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors border border-white/10 group"
+            title="Toggle Fullscreen"
+          >
+            {isFullscreen ? <Minimize className="h-5 w-5 group-hover:scale-110 transition-transform" /> : <Maximize className="h-5 w-5 group-hover:scale-110 transition-transform" />}
+          </button>
         </div>
       </header>
 
