@@ -99,6 +99,37 @@ export default function SchoolTvPage() {
     return () => clearInterval(interval)
   }, [slug]) // Intentionally not depending on 'now' to avoid fetching every second
 
+  // Pagination for Active Schedules (Maximum 12 classes per page: 4 columns, 3 rows)
+  const tz = data?.tenant?.settings?.timezone || "Asia/Jakarta"
+  const tzTimeStr = formatInTimeZone(now, tz, "HH:mm")
+  const [tzH, tzM] = tzTimeStr.split(':').map(Number)
+  const currentMins = tzH * 60 + tzM
+
+  const activeSchedules = data?.schedules
+    ? data.schedules.filter((s: any) => {
+        if (!s.startTime || !s.endTime) return false
+        const [startH, startM] = s.startTime.split(':').map(Number)
+        const [endH, endM] = s.endTime.split(':').map(Number)
+        const startMins = startH * 60 + startM
+        const endMins = endH * 60 + endM
+        return currentMins >= startMins && currentMins <= endMins
+      })
+    : []
+
+  const itemsPerPage = 12
+  const totalPages = Math.ceil(activeSchedules.length / itemsPerPage)
+
+  useEffect(() => {
+    if (totalPages <= 1) {
+      setActivePageIndex(0)
+      return
+    }
+    const interval = setInterval(() => {
+      setActivePageIndex(prev => (prev + 1) % totalPages)
+    }, 10000) // Switch page every 10 seconds
+    return () => clearInterval(interval)
+  }, [totalPages])
+
   if (error) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white px-4 text-center">
@@ -128,22 +159,6 @@ export default function SchoolTvPage() {
     )
   }
 
-  const tz = data?.tenant?.settings?.timezone || "Asia/Jakarta"
-
-  // Filter Active & Upcoming Schedules
-  const tzTimeStr = formatInTimeZone(now, tz, "HH:mm")
-  const [tzH, tzM] = tzTimeStr.split(':').map(Number)
-  const currentMins = tzH * 60 + tzM
-  
-  const activeSchedules = data.schedules.filter((s: any) => {
-    if (!s.startTime || !s.endTime) return false
-    const [startH, startM] = s.startTime.split(':').map(Number)
-    const [endH, endM] = s.endTime.split(':').map(Number)
-    const startMins = startH * 60 + startM
-    const endMins = endH * 60 + endM
-    return currentMins >= startMins && currentMins <= endMins
-  })
-
   const upcomingSchedules = data.schedules.filter((s: any) => {
     if (!s.startTime || !s.endTime) return false
     const [startH, startM] = s.startTime.split(':').map(Number)
@@ -155,21 +170,6 @@ export default function SchoolTvPage() {
   const activePiket = (data.piket || []).filter((p: any) => {
     return isTimeActive(p.time || "", currentMins)
   })
-
-  // Pagination for Active Schedules (Maximum 12 classes per page: 4 columns, 3 rows)
-  const itemsPerPage = 12
-  const totalPages = Math.ceil(activeSchedules.length / itemsPerPage)
-
-  useEffect(() => {
-    if (totalPages <= 1) {
-      setActivePageIndex(0)
-      return
-    }
-    const interval = setInterval(() => {
-      setActivePageIndex(prev => (prev + 1) % totalPages)
-    }, 10000) // Switch page every 10 seconds
-    return () => clearInterval(interval)
-  }, [totalPages])
 
   const pagedActiveSchedules = activeSchedules.slice(
     activePageIndex * itemsPerPage,
