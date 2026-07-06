@@ -59,6 +59,21 @@ export default async function SchoolTvSettingsPage() {
     )
   }
 
+  const staff = await db.staff.findMany({
+    where: {
+      tenantId: tenant.id,
+      deletedAt: null
+    },
+    select: {
+      id: true,
+      name: true,
+      role: true
+    },
+    orderBy: {
+      name: 'asc'
+    }
+  })
+
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -77,6 +92,7 @@ export default async function SchoolTvSettingsPage() {
         initialSettings={tenantDbData?.settings || {}}
         tenantSlug={tenant.slug}
         tvUrl={tvUrl}
+        staffList={staff}
       />
     </div>
   )

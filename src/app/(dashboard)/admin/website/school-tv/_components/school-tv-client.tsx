@@ -33,9 +33,10 @@ interface SchoolTvClientProps {
   initialSettings: any
   tenantSlug: string
   tvUrl: string
+  staffList?: { id: string; name: string; role: string | null }[]
 }
 
-export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl }: SchoolTvClientProps) {
+export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, staffList = [] }: SchoolTvClientProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [activeDay, setActiveDay] = useState("1") // Default to Senin
@@ -49,15 +50,18 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl }: S
 
   // Form states for adding new slot
   const [newTime, setNewTime] = useState("")
-  const [newNames, setNewNames] = useState("")
+  const [selectedStaff, setSelectedStaff] = useState<string[]>([])
+  const [staffSearch, setStaffSearch] = useState("")
+  const [showDropdown, setShowDropdown] = useState(false)
 
   // Add a slot to active day
   const handleAddSlot = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newTime.trim() || !newNames.trim()) {
+    const namesString = selectedStaff.join(", ")
+    if (!newTime.trim() || !namesString) {
       toast({
         title: "Gagal",
-        description: "Jam piket dan nama guru wajib diisi.",
+        description: "Jam piket dan guru piket wajib diisi.",
         variant: "destructive"
       })
       return
@@ -66,7 +70,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl }: S
     const newSlot: PiketSlot = {
       id: Math.random().toString(36).substring(2, 9),
       time: newTime.trim(),
-      names: newNames.trim()
+      names: namesString
     }
 
     setPiketSettings(prev => ({
@@ -75,7 +79,8 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl }: S
     }))
 
     setNewTime("")
-    setNewNames("")
+    setSelectedStaff([])
+    setStaffSearch("")
     
     toast({
       title: "Slot Ditambahkan",
@@ -205,7 +210,8 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl }: S
                     onClick={() => {
                       setActiveDay(day.value)
                       setNewTime("")
-                      setNewNames("")
+                      setSelectedStaff([])
+                      setStaffSearch("")
                     }}
                     className={`flex-1 min-w-[70px] text-center py-2 px-3 text-xs font-semibold rounded-lg transition-all ${
                       activeDay === day.value
@@ -277,16 +283,85 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl }: S
                   </div>
                   
                   <div className="space-y-2 sm:col-span-2 flex gap-3 items-end">
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor="names" className="text-xs font-semibold text-slate-600">Nama Guru / Petugas Piket</Label>
-                      <Input
-                        id="names"
-                        placeholder="Contoh: Ust. Riko, Ustadzah Erna"
-                        value={newNames}
-                        onChange={e => setNewNames(e.target.value)}
-                        className="bg-white h-10 border-slate-300 focus-visible:ring-blue-500"
-                      />
+                    <div className="flex-1 space-y-2 relative">
+                      <Label className="text-xs font-semibold text-slate-600">Nama Guru / Petugas Piket</Label>
+                      
+                      {/* Selected Badges */}
+                      {selectedStaff.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-2 p-2 bg-slate-100 rounded-lg border border-slate-200">
+                          {selectedStaff.map(name => (
+                            <span key={name} className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-md">
+                              {name}
+                              <button
+                                type="button"
+                                onClick={() => setSelectedStaff(prev => prev.filter(n => n !== name))}
+                                className="hover:text-blue-900 font-bold ml-0.5"
+                              >
+                                &times;
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="relative">
+                        <Input
+                          placeholder={selectedStaff.length > 0 ? "Pilih guru lainnya..." : "Cari & pilih guru piket..."}
+                          value={staffSearch}
+                          onChange={e => {
+                            setStaffSearch(e.target.value)
+                            setShowDropdown(true)
+                          }}
+                          onFocus={() => setShowDropdown(true)}
+                          className="bg-white h-10 border-slate-300 focus-visible:ring-blue-500"
+                        />
+                        
+                        {/* Dropdown list */}
+                        {showDropdown && (staffSearch || (staffList || []).length > 0) && (
+                          <>
+                            {/* Backdrop to close dropdown */}
+                            <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
+                            
+                            <div className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 divide-y divide-slate-100">
+                              {((staffList || []).filter(s => s.name.toLowerCase().includes(staffSearch.toLowerCase())).length === 0) ? (
+                                <div className="p-3 text-sm text-slate-500 text-center">Tidak ada nama guru yang cocok</div>
+                              ) : (
+                                (staffList || [])
+                                  .filter(s => s.name.toLowerCase().includes(staffSearch.toLowerCase()))
+                                  .map(s => {
+                                    const isSelected = selectedStaff.includes(s.name)
+                                    return (
+                                      <button
+                                        key={s.id}
+                                        type="button"
+                                        onClick={() => {
+                                          if (isSelected) {
+                                            setSelectedStaff(prev => prev.filter(n => n !== s.name))
+                                          } else {
+                                            setSelectedStaff(prev => [...prev, s.name])
+                                          }
+                                          setStaffSearch("")
+                                          setShowDropdown(false)
+                                        }}
+                                        className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center justify-between ${
+                                          isSelected ? "bg-blue-50/50 text-blue-600 font-medium" : "text-slate-700"
+                                        }`}
+                                      >
+                                        <div>
+                                          <p className="font-medium">{s.name}</p>
+                                          <p className="text-xs text-slate-400">{s.role || "Staf/Guru"}</p>
+                                        </div>
+                                        {isSelected && <span className="text-blue-600 font-bold">✓</span>}
+                                      </button>
+                                    )
+                                  })
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
+
                     <Button 
                       type="submit"
                       className="bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 h-10 px-4"

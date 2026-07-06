@@ -8,6 +8,33 @@ import { Clock, Calendar, Users, MapPin, Loader2, BookOpen, UserCircle, QrCode, 
 import QRCode from "react-qr-code"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { formatInTimeZone } from "date-fns-tz"
+
+function isTimeActive(timeRange: string, currentMins: number): boolean {
+  try {
+    if (!timeRange) return true
+    if (timeRange.toLowerCase().includes("hari ini")) return true
+    
+    // Replace dots with colons, strip spaces
+    const cleanRange = timeRange.replace(/\./g, ":").replace(/\s+/g, "")
+    // Split by dash or word "sd" or "s/d"
+    const parts = cleanRange.split(/[-–—]|s\/d|sd/i)
+    if (parts.length < 2) return true
+    
+    const [startStr, endStr] = parts
+    const [startH, startM] = startStr.split(":").map(Number)
+    const [endH, endM] = endStr.split(":").map(Number)
+    
+    if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) return true
+    
+    const startMins = startH * 60 + startM
+    const endMins = endH * 60 + endM
+    
+    return currentMins >= startMins && currentMins <= endMins
+  } catch {
+    return true
+  }
+}
 
 export default function SchoolTvPage() {
   const params = useParams()
@@ -43,7 +70,9 @@ export default function SchoolTvPage() {
   // Fetch Data
   const fetchData = async () => {
     try {
-      const dayOfWeek = now.getDay()
+      const activeTz = data?.tenant?.settings?.timezone || "Asia/Jakarta"
+      const dayOfWeekStr = formatInTimeZone(now, activeTz, "i")
+      const dayOfWeek = dayOfWeekStr === "7" ? 0 : parseInt(dayOfWeekStr)
       const res = await fetch(`/api/tv/data?slug=${slug}&day=${dayOfWeek}`)
       if (res.ok) {
         const json = await res.json()
@@ -98,8 +127,12 @@ export default function SchoolTvPage() {
     )
   }
 
+  const tz = data?.tenant?.settings?.timezone || "Asia/Jakarta"
+
   // Filter Active & Upcoming Schedules
-  const currentMins = now.getHours() * 60 + now.getMinutes()
+  const tzTimeStr = formatInTimeZone(now, tz, "HH:mm")
+  const [tzH, tzM] = tzTimeStr.split(':').map(Number)
+  const currentMins = tzH * 60 + tzM
   
   const activeSchedules = data.schedules.filter((s: any) => {
     if (!s.startTime || !s.endTime) return false
@@ -115,6 +148,11 @@ export default function SchoolTvPage() {
     const [startH, startM] = s.startTime.split(':').map(Number)
     const startMins = startH * 60 + startM
     return startMins > currentMins
+  })
+
+  // Filter active guru piket based on timezone time
+  const activePiket = (data.piket || []).filter((p: any) => {
+    return isTimeActive(p.time || "", currentMins)
   })
 
   // Sort teachers: active first, then standby
@@ -159,13 +197,13 @@ export default function SchoolTvPage() {
         <div className="flex items-center gap-6 bg-black/30 px-6 py-3 rounded-2xl border border-white/5">
           <div className="text-right">
             <p className="text-lg font-medium text-slate-300">
-              {format(now, "EEEE, dd MMMM yyyy", { locale: id })}
+              {formatInTimeZone(now, tz, "EEEE, dd MMMM yyyy", { locale: id })}
             </p>
           </div>
           <div className="h-10 w-px bg-white/10"></div>
           <div className="text-5xl font-black tabular-nums tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">
-            {format(now, "HH:mm")}
-            <span className="text-2xl text-emerald-400 ml-1">{format(now, "ss")}</span>
+            {formatInTimeZone(now, tz, "HH:mm")}
+            <span className="text-2xl text-emerald-400 ml-1">{formatInTimeZone(now, tz, "ss")}</span>
           </div>
           <button 
             onClick={toggleFullscreen}
@@ -282,7 +320,7 @@ export default function SchoolTvPage() {
                <Users className="h-5 w-5 text-blue-400" /> Guru Piket Hari Ini
              </h3>
               <div className="space-y-4">
-                {data.piket?.length > 0 ? data.piket.map((p: any, i: number) => (
+                {activePiket.length > 0 ? activePiket.map((p: any, i: number) => (
                   <div key={i} className="flex flex-col gap-1.5 bg-black/40 p-4 rounded-2xl border border-white/5 shadow-inner">
                     <div className="flex items-center justify-between">
                       <span className="px-3 py-1 text-[10px] font-bold bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20 uppercase tracking-widest">
@@ -292,7 +330,7 @@ export default function SchoolTvPage() {
                     <p className="font-bold text-slate-200 text-lg leading-snug whitespace-pre-wrap">{p.names}</p>
                   </div>
                 )) : (
-                  <p className="text-sm text-slate-400 text-center py-4">Belum ada data guru piket.</p>
+                  <p className="text-sm text-slate-400 text-center py-4">Tidak ada guru piket aktif saat ini.</p>
                 )}
               </div>
           </div>
@@ -357,7 +395,7 @@ export default function SchoolTvPage() {
           {/* Marquee Animation */}
           <div className="whitespace-nowrap animate-marquee flex items-center text-xl font-medium text-white tracking-wide">
             {(() => {
-              const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Cerdas Kami"}! Mari bersama-sama mewujudkan pendidikan berkualitas yang berkarakter. \n Mohon jaga kebersihan dan ketertiban di lingkungan sekolah. \n Guru piket hari ini: ${data.piket?.map((p:any) => `${p.names} (${p.time})`).join(" | ") || "-"}`
+              const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Cerdas Kami"}! Mari bersama-sama mewujudkan pendidikan berkualitas yang berkarakter. \n Mohon jaga kebersihan dan ketertiban di lingkungan sekolah. \n Guru piket saat ini: ${activePiket?.map((p:any) => `${p.names} (${p.time})`).join(" | ") || "-"}`
               const marqueeItems = rawMarquee.split('\n').map((item: string) => item.trim()).filter(Boolean)
               return (
                 <>

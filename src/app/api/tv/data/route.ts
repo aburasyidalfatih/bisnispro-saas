@@ -5,7 +5,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
     const slug = searchParams.get("slug")
-    const dayOfWeek = parseInt(searchParams.get("day") || "1")
+    const dayParam = searchParams.get("day")
 
     if (!slug) {
       return NextResponse.json({ error: "Missing slug" }, { status: 400 })
@@ -18,6 +18,16 @@ export async function GET(req: Request) {
 
     if (!tenant) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 })
+    }
+
+    let dayOfWeek: number
+    if (dayParam) {
+      dayOfWeek = parseInt(dayParam)
+    } else {
+      const settings = (tenant.settings as Record<string, any>) || {}
+      const timeZone = settings.timezone || "Asia/Jakarta"
+      const tzDate = new Date(new Date().toLocaleString("en-US", { timeZone }))
+      dayOfWeek = tzDate.getDay()
     }
 
     // Get schedules for today
