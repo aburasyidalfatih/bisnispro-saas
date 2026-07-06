@@ -114,7 +114,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
   return (
     <section 
-      className="relative w-full overflow-hidden min-h-[35dvh] sm:min-h-[40dvh] md:min-h-[75dvh] lg:min-h-[85vh]"
+      className="relative w-full overflow-hidden min-h-[40dvh] sm:min-h-[45dvh] md:min-h-[75dvh] lg:min-h-[85vh]"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEndHandler}
@@ -145,7 +145,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
       </div>
 
       {/* ── Text + CTA content ── */}
-      <div className="relative z-30 flex items-center min-h-[35dvh] sm:min-h-[40dvh] md:min-h-[75dvh] lg:min-h-[85vh] pb-16 md:pb-24">
+      <div className="relative z-30 flex items-center min-h-[40dvh] sm:min-h-[45dvh] md:min-h-[75dvh] lg:min-h-[85vh] pb-16 md:pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-12 sm:py-20 md:py-24">
           {/* key forces remount → re-trigger CSS animations */}
           <div key={textKey}>
