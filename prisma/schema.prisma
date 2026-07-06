@@ -1671,16 +1671,18 @@ model Schedule {
   id          String    @id @default(cuid())
   tenantId    String
   classroomId String
-  subjectId   String
-  staffId     String
+  subjectId   String?
+  staffId     String?
+  isBreak     Boolean   @default(false)
+  breakName   String?
   dayOfWeek   Int
   startTime   String
   endTime     String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-  staff       Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
-  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  staff       Staff?    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  subject     Subject?  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])

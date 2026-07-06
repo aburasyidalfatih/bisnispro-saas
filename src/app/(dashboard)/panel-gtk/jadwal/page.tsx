@@ -133,33 +133,37 @@ export default function JadwalPage() {
                   </div>
 
                   {/* Content Card */}
-                  <Card className={cn("glass border-0 shadow-sm flex-1 overflow-hidden transition-all duration-300", isActive ? "bg-emerald-500/5 shadow-emerald-500/10 ring-1 ring-emerald-500/30 scale-[1.01]" : "group-hover:shadow-md")}>
+                  <Card className={cn("glass border-0 shadow-sm flex-1 overflow-hidden transition-all duration-300", isActive && !schedule.isBreak ? "bg-emerald-500/5 shadow-emerald-500/10 ring-1 ring-emerald-500/30 scale-[1.01]" : schedule.isBreak ? "bg-amber-500/10 ring-1 ring-amber-500/20" : "group-hover:shadow-md")}>
                     <CardContent className="p-4 sm:p-5">
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                        <div>
+                        <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className={cn("text-xs font-bold px-2 py-0.5 rounded-md flex items-center gap-1", isActive ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-primary/10 text-primary")}>
-                              <BookOpen className="h-3 w-3" /> {schedule.subject.name}
+                            <span className={cn("text-xs font-bold px-2 py-0.5 rounded-md flex items-center gap-1", schedule.isBreak ? "bg-amber-500/20 text-amber-700 dark:text-amber-400" : isActive ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-primary/10 text-primary")}>
+                              <BookOpen className="h-3 w-3" /> {schedule.isBreak ? "Istirahat" : schedule.subject?.name}
                             </span>
                             {isActive && (
-                              <span className="text-[10px] font-black uppercase tracking-wider text-white bg-emerald-500 px-2 py-0.5 rounded-full animate-pulse shadow-sm">
-                                Sedang Berlangsung
+                              <span className={cn("text-[10px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded-full animate-pulse shadow-sm", schedule.isBreak ? "bg-amber-500" : "bg-emerald-500")}>
+                                {schedule.isBreak ? "Waktu Istirahat" : "Sedang Berlangsung"}
                               </span>
                             )}
                           </div>
-                          <h3 className="font-bold text-lg leading-tight">Kelas {schedule.classroom.name}</h3>
+                          <h3 className={cn("font-bold text-lg leading-tight", schedule.isBreak ? "text-amber-700/90 dark:text-amber-500/90" : "")}>
+                            {schedule.isBreak ? schedule.breakName || "Istirahat" : `Kelas ${schedule.classroom?.name}`}
+                          </h3>
                           
                           <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-muted-foreground font-medium">
-                            <span className="flex items-center gap-1.5">
-                              <Users className="h-4 w-4" /> Tingkat {schedule.classroom.level || '-'}
-                            </span>
+                            {!schedule.isBreak && (
+                              <span className="flex items-center gap-1.5">
+                                <Users className="h-4 w-4" /> Tingkat {schedule.classroom?.level || '-'}
+                              </span>
+                            )}
                             <span className="flex items-center gap-1.5">
                               <Clock className="h-4 w-4" /> {schedule.startTime} - {schedule.endTime}
                             </span>
                           </div>
                         </div>
 
-                        {(activeDay === currentDayOfWeek && !isPast) && (
+                        {(activeDay === currentDayOfWeek && !isPast && !schedule.isBreak) && (
                           <div className="shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
                             <Link href="/panel-gtk/jurnal">
                               <Button className={cn("w-full rounded-xl shadow-md transition-all", isActive ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/30 hover:scale-105 animate-pulse" : "shadow-primary/20 hover:scale-105")}>

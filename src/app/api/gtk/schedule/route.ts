@@ -24,7 +24,7 @@ export async function GET(req: Request) {
       return new NextResponse("Staff profile not found", { status: 404 })
     }
 
-    const schedules = await db.schedule.findMany({
+    const mySchedules = await db.schedule.findMany({
       where: {
         tenantId,
         staffId: staff.id
@@ -32,14 +32,38 @@ export async function GET(req: Request) {
       include: {
         classroom: { select: { name: true, level: true } },
         subject: { select: { name: true, code: true } }
-      },
-      orderBy: [
-        { dayOfWeek: 'asc' },
-        { startTime: 'asc' }
-      ]
+      }
     })
 
-    return NextResponse.json({ schedules, staffId: staff.id })
+    const classroomIds = Array.from(new Set(mySchedules.map(s => s.classroomId)))
+
+    const breakSchedules = await db.schedule.findMany({
+      where: {
+        tenantId,
+        isBreak: true,
+        classroomId: { in: classroomIds }
+      },
+      include: {
+        classroom: { select: { name: true, level: true } }
+      }
+    })
+
+    // Deduplicate breaks with same name, day, and time
+    const uniqueBreaks = breakSchedules.reduce((acc, curr) => {
+      const key = `${curr.dayOfWeek}-${curr.startTime}-${curr.endTime}-${curr.breakName}`
+      if (!acc.has(key)) acc.set(key, curr)
+      return acc
+    }, new Map()).values()
+
+    const allSchedules = [...mySchedules, ...Array.from(uniqueBreaks)]
+    
+    // Sort
+    allSchedules.sort((a, b) => {
+      if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek
+      return a.startTime.localeCompare(b.startTime)
+    })
+
+    return NextResponse.json({ schedules: allSchedules, staffId: staff.id })
 
   } catch (error) {
     console.error("[GTK_SCHEDULE_GET]", error)

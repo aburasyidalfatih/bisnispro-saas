@@ -16,6 +16,7 @@ const DAYS = ["","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
 
 interface Schedule {
   id: string; dayOfWeek: number; startTime: string; endTime: string
+  isBreak: boolean; breakName: string | null
   subject: { id: string; name: string; code: string | null }
   classroom: { id: string; name: string; level: string | null }
   staff: { id: string; name: string }
@@ -34,7 +35,7 @@ export default function SchedulesPage() {
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [form, setForm] = useState({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30" })
+  const [form, setForm] = useState({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30", isBreak: false, breakName:"" })
 
   useEffect(() => {
     if (!tenant) return
@@ -64,7 +65,9 @@ export default function SchedulesPage() {
   }
 
   const handleAdd = async () => {
-    if (!tenant || !form.subjectId || !form.staffId || !form.dayOfWeek || !selectedClass) return
+    if (!tenant || !form.dayOfWeek || !selectedClass) return
+    if (!form.isBreak && (!form.subjectId || !form.staffId)) return
+    if (form.isBreak && !form.breakName) return
     setSaving(true)
     try {
       const res = await fetch("/api/schedules", {
@@ -75,6 +78,7 @@ export default function SchedulesPage() {
           subjectId: form.subjectId, staffId: form.staffId,
           dayOfWeek: Number(form.dayOfWeek),
           startTime: form.startTime, endTime: form.endTime,
+          isBreak: form.isBreak, breakName: form.breakName
         }),
       })
       
@@ -85,7 +89,7 @@ export default function SchedulesPage() {
       }
       
       toast({ title:"Jadwal ditambahkan" })
-      setForm({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30" })
+      setForm({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30", isBreak: false, breakName:"" })
       setShowForm(false)
       await loadSchedules(selectedClass)
     } catch (error: any) {
@@ -162,7 +166,11 @@ export default function SchedulesPage() {
         for (let day = 1; day <= 6; day++) {
           const classInSlot = schedules.find(s => s.dayOfWeek === day && `${s.startTime} - ${s.endTime}` === timeLabel)
           if (classInSlot) {
-            rowData[String(day)] = `${classInSlot.subject.name}\n(${classInSlot.staff.name})`
+            if (classInSlot.isBreak) {
+              rowData[String(day)] = classInSlot.breakName || "Istirahat"
+            } else {
+              rowData[String(day)] = `${classInSlot.subject?.name || "-"}\n(${classInSlot.staff?.name || "-"})`
+            }
             rowHeight = 45 // taller if content exists
           } else {
             rowData[String(day)] = "-"
@@ -272,23 +280,46 @@ export default function SchedulesPage() {
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Mata Pelajaran</Label>
-                <Select value={form.subjectId} onValueChange={v => setForm(f => ({ ...f, subjectId: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Pilih mapel" /></SelectTrigger>
-                  <SelectContent>{subjects.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <Label>Guru Pengampu</Label>
-                <Select value={form.staffId} onValueChange={v => setForm(f => ({ ...f, staffId: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Pilih guru" /></SelectTrigger>
-                  <SelectContent>{staff.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
-                </Select>
+              {!form.isBreak ? (
+                <>
+                  <div className="space-y-2">
+                    <Label>Mata Pelajaran</Label>
+                    <Select value={form.subjectId} onValueChange={v => setForm(f => ({ ...f, subjectId: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Pilih mapel" /></SelectTrigger>
+                      <SelectContent>{subjects.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label>Guru Pengampu</Label>
+                    <Select value={form.staffId} onValueChange={v => setForm(f => ({ ...f, staffId: v }))}>
+                      <SelectTrigger><SelectValue placeholder="Pilih guru" /></SelectTrigger>
+                      <SelectContent>{staff.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-2 sm:col-span-3">
+                  <Label>Nama Istirahat</Label>
+                  <Input 
+                    placeholder="Contoh: Istirahat, Sholat Dhuha..." 
+                    value={form.breakName} 
+                    onChange={e => setForm(f => ({ ...f, breakName: e.target.value }))}
+                  />
+                </div>
+              )}
+              <div className="sm:col-span-3 flex items-center gap-2 mt-2 bg-amber-500/10 text-amber-900 dark:text-amber-500 p-3 rounded-lg border border-amber-500/20">
+                <input 
+                  type="checkbox" 
+                  id="isBreak"
+                  checked={form.isBreak}
+                  onChange={e => setForm(f => ({ ...f, isBreak: e.target.checked }))}
+                  className="h-4 w-4 rounded border-amber-500/50 text-amber-600 focus:ring-amber-600"
+                />
+                <Label htmlFor="isBreak" className="font-semibold cursor-pointer">Ini adalah waktu istirahat (bukan mata pelajaran)</Label>
               </div>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleAdd} disabled={saving || !form.subjectId || !form.staffId || !form.dayOfWeek} className="btn-gradient flex items-center justify-center h-10 px-4">
+              <Button onClick={handleAdd} disabled={saving} className="btn-gradient flex items-center justify-center h-10 px-4">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Simpan Jadwal
               </Button>
@@ -328,11 +359,13 @@ export default function SchedulesPage() {
                 {items.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-4">Tidak ada jadwal</p>
                 ) : items.map(s => (
-                  <div key={s.id} className="flex items-start justify-between gap-2 rounded-xl bg-muted/40 px-3 py-2 group/item">
+                  <div key={s.id} className={cn("flex items-start justify-between gap-2 rounded-xl px-3 py-2 group/item", s.isBreak ? "bg-amber-500/10 border border-amber-500/20" : "bg-muted/40")}>
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold text-foreground truncate">{s.subject.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{s.staff.name}</p>
-                      <p className="text-[11px] text-primary font-mono">{s.startTime} – {s.endTime}</p>
+                      <p className={cn("text-xs font-semibold truncate", s.isBreak ? "text-amber-700 dark:text-amber-500" : "text-foreground")}>
+                        {s.isBreak ? s.breakName : s.subject?.name}
+                      </p>
+                      {!s.isBreak && <p className="text-[11px] text-muted-foreground">{s.staff?.name}</p>}
+                      <p className={cn("text-[11px] font-mono", s.isBreak ? "text-amber-600/80" : "text-primary")}>{s.startTime} – {s.endTime}</p>
                     </div>
                     <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0 rounded-lg text-destructive hover:text-destructive opacity-0 group-hover/item:opacity-100 transition-opacity"
                       onClick={() => setDeleteId(s.id)}>

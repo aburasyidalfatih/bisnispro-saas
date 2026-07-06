@@ -174,28 +174,29 @@ export default function GuruDashboard() {
 
       {/* Live Teaching Indicator */}
       {activeSchedule && (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/30 p-5 shadow-lg shadow-emerald-500/10 animate-in fade-in zoom-in duration-500">
-          <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)]"></div>
+        <div className={cn("relative overflow-hidden rounded-2xl border p-5 shadow-lg animate-in fade-in zoom-in duration-500", activeSchedule.isBreak ? "bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/30 shadow-amber-500/10" : "bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border-emerald-500/30 shadow-emerald-500/10")}>
+          <div className={cn("absolute top-0 left-0 w-1 h-full", activeSchedule.isBreak ? "bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.8)]" : "bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)]")}></div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="relative h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping"></div>
-                <BookOpen className="h-6 w-6 text-emerald-600 dark:text-emerald-400 relative z-10" />
+              <div className={cn("relative h-12 w-12 rounded-full flex items-center justify-center shrink-0", activeSchedule.isBreak ? "bg-amber-500/20" : "bg-emerald-500/20")}>
+                <div className={cn("absolute inset-0 rounded-full animate-ping", activeSchedule.isBreak ? "bg-amber-500/20" : "bg-emerald-500/20")}></div>
+                <BookOpen className={cn("h-6 w-6 relative z-10", activeSchedule.isBreak ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400")} />
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">
-                    Sedang Berlangsung
+                  <span className={cn("text-[10px] sm:text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full", activeSchedule.isBreak ? "text-amber-600 dark:text-amber-400 bg-amber-500/20" : "text-emerald-600 dark:text-emerald-400 bg-emerald-500/20")}>
+                    {activeSchedule.isBreak ? "Waktu Istirahat" : "Sedang Berlangsung"}
                   </span>
                   <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
                     {activeSchedule.startTime} - {activeSchedule.endTime}
                   </span>
                 </div>
                 <h3 className="font-extrabold text-lg text-foreground leading-tight">
-                  {activeSchedule.subject?.name || "Mata Pelajaran"} di Kelas {activeSchedule.classroom?.name || "-"}
+                  {activeSchedule.isBreak ? activeSchedule.breakName : `${activeSchedule.subject?.name || "Mata Pelajaran"} di Kelas ${activeSchedule.classroom?.name || "-"}`}
                 </h3>
               </div>
             </div>
+            {!activeSchedule.isBreak && (
             <div className="w-full sm:w-auto shrink-0">
               <Link href="/panel-gtk/jurnal">
                 <Button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-500/20 group">
@@ -205,6 +206,7 @@ export default function GuruDashboard() {
                 </Button>
               </Link>
             </div>
+            )}
           </div>
         </div>
       )}
@@ -345,6 +347,25 @@ export default function GuruDashboard() {
                 ) : (
                   scheduleToday.map((schedule, idx) => {
                     const isActive = activeSchedule?.id === schedule.id
+                    if (schedule.isBreak) {
+                      return (
+                        <div key={schedule.id || idx} className={cn("p-4 sm:p-5 flex items-start gap-4 transition-colors group", isActive ? "bg-amber-500/10" : "bg-amber-500/5 hover:bg-amber-500/10")}>
+                          <div className={cn("flex flex-col items-center justify-center border rounded-xl py-2 px-3 min-w-[90px] transition-colors", isActive ? "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/30" : "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400")}>
+                            <span className="text-xs font-bold">{schedule.startTime || "00:00"}</span>
+                            <span className="text-[10px] opacity-70">s/d</span>
+                            <span className="text-xs font-bold">{schedule.endTime || "00:00"}</span>
+                          </div>
+                          
+                          <div className="flex-1 min-w-0 flex items-center h-full">
+                            <h4 className={cn("font-bold text-base sm:text-lg truncate", isActive ? "text-amber-600 dark:text-amber-400" : "text-amber-700/80 dark:text-amber-500/80")}>
+                              {schedule.breakName || "Istirahat"}
+                            </h4>
+                            {isActive && <span className="relative flex h-2 w-2 ml-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span></span>}
+                          </div>
+                        </div>
+                      )
+                    }
+
                     return (
                       <div key={schedule.id || idx} className={cn("p-4 sm:p-5 flex items-start gap-4 transition-colors group", isActive ? "bg-emerald-500/5 hover:bg-emerald-500/10" : "hover:bg-muted/20")}>
                         <div className={cn("flex flex-col items-center justify-center border rounded-xl py-2 px-3 min-w-[90px] transition-colors", isActive ? "bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/30" : "bg-primary/5 border-primary/10 group-hover:bg-primary group-hover:text-primary-foreground")}>

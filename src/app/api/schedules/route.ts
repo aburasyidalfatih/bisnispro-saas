@@ -36,35 +36,46 @@ export async function POST(req: Request) {
     const session = await auth()
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     const body = await req.json()
-    const { tenantId, classroomId, subjectId, staffId, dayOfWeek, startTime, endTime } = body
-    if (!tenantId || !classroomId || !subjectId || !staffId || !dayOfWeek || !startTime || !endTime) {
-      return NextResponse.json({ error: "Semua field wajib diisi" }, { status: 400 })
+    const { tenantId, classroomId, subjectId, staffId, dayOfWeek, startTime, endTime, isBreak, breakName } = body
+    if (!tenantId || !classroomId || !dayOfWeek || !startTime || !endTime) {
+      return NextResponse.json({ error: "Semua field waktu dan hari wajib diisi" }, { status: 400 })
+    }
+    if (!isBreak && (!subjectId || !staffId)) {
+      return NextResponse.json({ error: "Guru dan Mata Pelajaran wajib dipilih" }, { status: 400 })
     }
 
-    // Deteksi bentrok jadwal (Clash Detection)
-    // Cek apakah guru sudah punya jadwal di hari yang sama dengan rentang waktu yang tumpang tindih
-    const clash = await db.schedule.findFirst({
-      where: {
-        tenantId,
-        staffId,
-        dayOfWeek: Number(dayOfWeek),
-        startTime: { lt: endTime },
-        endTime: { gt: startTime }
-      },
-      include: {
-        classroom: { select: { name: true } }
-      }
-    })
+    // Deteksi bentrok jadwal (Clash Detection) hanya jika bukan istirahat
+    if (!isBreak) {
+      const clash = await db.schedule.findFirst({
+        where: {
+          tenantId,
+          staffId,
+          dayOfWeek: Number(dayOfWeek),
+          startTime: { lt: endTime },
+          endTime: { gt: startTime }
+        },
+        include: {
+          classroom: { select: { name: true } }
+        }
+      })
 
-    if (clash) {
-      return NextResponse.json(
-        { error: `Guru ini sudah memiliki jadwal di kelas ${clash.classroom.name} pada pukul ${clash.startTime} - ${clash.endTime}` }, 
-        { status: 400 }
-      )
+      if (clash) {
+        return NextResponse.json(
+          { error: `Guru ini sudah memiliki jadwal di kelas ${clash.classroom.name} pada pukul ${clash.startTime} - ${clash.endTime}` }, 
+          { status: 400 }
+        )
+      }
     }
 
     const schedule = await db.schedule.create({
-      data: { tenantId, classroomId, subjectId, staffId, dayOfWeek: Number(dayOfWeek), startTime, endTime },
+      data: { 
+        tenantId, classroomId, 
+        subjectId: isBreak ? null : subjectId, 
+        staffId: isBreak ? null : staffId, 
+        isBreak: isBreak || false,
+        breakName: isBreak ? breakName : null,
+        dayOfWeek: Number(dayOfWeek), startTime, endTime 
+      },
       include: {
         subject: { select: { id: true, name: true, code: true } },
         classroom: { select: { id: true, name: true } },
