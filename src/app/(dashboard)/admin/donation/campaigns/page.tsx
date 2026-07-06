@@ -27,9 +27,22 @@ export default function DonationCampaignsPage() {
 
   const fetchCampaigns = async () => {
     if (!tenant) return
-    const res = await fetch(`/api/donation/campaigns?tenantId=${tenant.id}`)
-    setCampaigns(await res.json())
-    setLoading(false)
+    try {
+      const res = await fetch(`/api/donation/campaigns?tenantId=${tenant.id}`)
+      if (res.ok) {
+        const data = await res.json()
+        setCampaigns(Array.isArray(data) ? data : [])
+      } else {
+        const err = await res.json().catch(() => ({}))
+        toast({ title: "Gagal memuat kampanye", description: err.error || "Server error", variant: "destructive" })
+        setCampaigns([])
+      }
+    } catch (e: any) {
+      toast({ title: "Gagal memuat kampanye", description: e.message || "Connection error", variant: "destructive" })
+      setCampaigns([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { fetchCampaigns() }, [tenant])
