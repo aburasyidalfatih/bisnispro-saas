@@ -31,7 +31,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
           <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full">
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
-                <CalendarDays className="h-6 w-6 text-emerald-600" />
+                <CalendarDays className="h-6 w-6 text-primary" />
                 <h3 className="font-bold text-lg">Agenda</h3>
               </div>
               <Link href={`${basePath}/agenda`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
@@ -42,16 +42,16 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
             <div className="space-y-6 flex-1">
               {agenda.length > 0 ? agenda.map((item, idx) => (
                 <Link key={idx} href={`${basePath}/agenda/${item.slug || item.id}`} className="flex gap-4 group cursor-pointer">
-                  <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
-                    <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
+                  <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-primary/30 group-hover:bg-primary/5 transition-colors h-fit">
+                    <span className="text-2xl font-black text-foreground group-hover:text-primary leading-none mb-1">
                       {format(new Date(item.startDate), "dd")}
                     </span>
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider group-hover:text-emerald-600">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider group-hover:text-primary/80">
                       {format(new Date(item.startDate), "MMM", { locale: idLocale })}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-sm mb-2 group-hover:text-emerald-700 transition-colors line-clamp-2">
+                    <h4 className="font-semibold text-sm mb-2 group-hover:text-primary transition-colors line-clamp-2">
                       {item.title}
                     </h4>
                     <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground font-medium">
@@ -80,7 +80,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
           <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full">
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
-                <Megaphone className="h-6 w-6 text-emerald-600" />
+                <Megaphone className="h-6 w-6 text-primary" />
                 <h3 className="font-bold text-lg">Pengumuman</h3>
               </div>
               <Link href={`${basePath}/pengumuman`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
@@ -90,16 +90,16 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
             
             <div className="space-y-6 flex-1">
               {pengumuman.length > 0 ? pengumuman.map((item, idx) => {
-                const badgeColors = ["bg-blue-600", "bg-amber-600", "bg-emerald-600", "bg-purple-600"];
+                const badgeColors = ["bg-blue-600", "bg-amber-600", "bg-primary", "bg-purple-600"];
                 const badgeColor = badgeColors[idx % badgeColors.length];
                 
                 return (
                   <Link key={idx} href={`${basePath}/pengumuman/${item.slug || item.id}`} className="flex gap-4 group cursor-pointer">
-                    <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
-                      <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
+                    <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-primary/30 group-hover:bg-primary/5 transition-colors h-fit">
+                      <span className="text-2xl font-black text-foreground group-hover:text-primary leading-none mb-1">
                         {format(new Date(item.createdAt), "dd")}
                       </span>
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider group-hover:text-emerald-600">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider group-hover:text-primary/80">
                         {format(new Date(item.createdAt), "MMM", { locale: idLocale })}
                       </span>
                     </div>
@@ -107,7 +107,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
                       <span className={`text-[9px] font-bold text-white px-2 py-0.5 rounded uppercase w-fit mb-1.5 ${badgeColor}`}>
                         {item.category?.name || item.type || "INFO"}
                       </span>
-                      <h4 className="font-semibold text-sm mb-1 group-hover:text-emerald-700 transition-colors line-clamp-2">
+                      <h4 className="font-semibold text-sm mb-1 group-hover:text-primary transition-colors line-clamp-2">
                         {item.title}
                       </h4>
                       <p className="text-[11px] text-muted-foreground line-clamp-1">
@@ -128,7 +128,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
           <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full">
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
-                <Newspaper className="h-6 w-6 text-emerald-600" />
+                <Newspaper className="h-6 w-6 text-primary" />
                 <h3 className="font-bold text-lg">Artikel</h3>
               </div>
               <Link href={`${basePath}/berita`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
