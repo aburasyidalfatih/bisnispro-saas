@@ -19,6 +19,13 @@ export default function JadwalPage() {
   
   const currentDayOfWeek = new Date().getDay() || 7 // 1-7
   const [activeDay, setActiveDay] = useState(currentDayOfWeek)
+  const [currentTime, setCurrentTime] = useState<Date | null>(null)
+
+  useEffect(() => {
+    setCurrentTime(new Date())
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     if (!tenantId) return
@@ -99,26 +106,46 @@ export default function JadwalPage() {
             <div className="absolute left-[59px] sm:left-[79px] top-4 bottom-4 w-px bg-border/50"></div>
             
             <div className="space-y-6">
-              {grouped.find(g => g.dayIndex === activeDay)?.items.map((schedule, idx) => (
-                <div key={schedule.id} className="relative flex items-start gap-4 sm:gap-6 group">
+              {grouped.find(g => g.dayIndex === activeDay)?.items.map((schedule, idx) => {
+                let isActive = false
+                let isPast = false
+                if (activeDay === currentDayOfWeek && currentTime && schedule.startTime && schedule.endTime) {
+                  const currentMins = currentTime.getHours() * 60 + currentTime.getMinutes()
+                  const [startH, startM] = schedule.startTime.split(':').map(Number)
+                  const [endH, endM] = schedule.endTime.split(':').map(Number)
+                  const startMins = startH * 60 + startM
+                  const endMins = endH * 60 + endM
+                  if (currentMins >= startMins && currentMins <= endMins) isActive = true
+                  if (currentMins > endMins) isPast = true
+                }
+
+                return (
+                <div key={schedule.id} className={cn("relative flex items-start gap-4 sm:gap-6 group transition-all duration-500", isPast ? "opacity-50 grayscale-[0.5] hover:opacity-100" : "")}>
                   {/* Time Badge */}
-                  <div className="flex flex-col items-end w-[44px] sm:w-[56px] shrink-0 pt-2">
+                  <div className={cn("flex flex-col items-end w-[44px] sm:w-[56px] shrink-0 pt-2", isActive ? "text-emerald-600 dark:text-emerald-400" : "")}>
                     <span className="text-sm sm:text-base font-black leading-none">{schedule.startTime}</span>
                     <span className="text-[10px] text-muted-foreground mt-1">{schedule.endTime}</span>
                   </div>
 
                   {/* Timeline Dot */}
-                  <div className="relative z-10 w-4 h-4 rounded-full bg-background border-4 border-primary mt-3 shrink-0 shadow-sm shadow-primary/20 group-hover:scale-125 transition-transform duration-300"></div>
+                  <div className={cn("relative z-10 w-4 h-4 rounded-full bg-background border-4 mt-3 shrink-0 shadow-sm transition-all duration-300", isActive ? "border-emerald-500 shadow-emerald-500/50 scale-125" : "border-primary shadow-primary/20 group-hover:scale-125")}>
+                    {isActive && <span className="absolute inset-0 rounded-full bg-emerald-500/40 animate-ping -m-1"></span>}
+                  </div>
 
                   {/* Content Card */}
-                  <Card className="glass border-0 shadow-sm flex-1 overflow-hidden group-hover:shadow-md transition-shadow">
+                  <Card className={cn("glass border-0 shadow-sm flex-1 overflow-hidden transition-all duration-300", isActive ? "bg-emerald-500/5 shadow-emerald-500/10 ring-1 ring-emerald-500/30 scale-[1.01]" : "group-hover:shadow-md")}>
                     <CardContent className="p-4 sm:p-5">
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <span className={cn("text-xs font-bold px-2 py-0.5 rounded-md flex items-center gap-1", isActive ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-primary/10 text-primary")}>
                               <BookOpen className="h-3 w-3" /> {schedule.subject.name}
                             </span>
+                            {isActive && (
+                              <span className="text-[10px] font-black uppercase tracking-wider text-white bg-emerald-500 px-2 py-0.5 rounded-full animate-pulse shadow-sm">
+                                Sedang Berlangsung
+                              </span>
+                            )}
                           </div>
                           <h3 className="font-bold text-lg leading-tight">Kelas {schedule.classroom.name}</h3>
                           
@@ -132,10 +159,10 @@ export default function JadwalPage() {
                           </div>
                         </div>
 
-                        {activeDay === currentDayOfWeek && (
-                          <div className="shrink-0 w-full sm:w-auto">
+                        {(activeDay === currentDayOfWeek && !isPast) && (
+                          <div className="shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
                             <Link href="/panel-gtk/jurnal">
-                              <Button className="w-full rounded-xl shadow-md shadow-primary/20 hover:scale-105 transition-transform">
+                              <Button className={cn("w-full rounded-xl shadow-md transition-all", isActive ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/30 hover:scale-105 animate-pulse" : "shadow-primary/20 hover:scale-105")}>
                                 Isi Jurnal & Absen
                               </Button>
                             </Link>
@@ -145,7 +172,8 @@ export default function JadwalPage() {
                     </CardContent>
                   </Card>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}

@@ -55,6 +55,20 @@ export default function GuruDashboard() {
   }
   const scheduleProgress = calculateProgress()
 
+  const getActiveSchedule = () => {
+    if (!currentTime || scheduleToday.length === 0) return null
+    const currentMins = currentTime.getHours() * 60 + currentTime.getMinutes()
+    return scheduleToday.find(s => {
+      if (!s.startTime || !s.endTime) return false
+      const [startH, startM] = s.startTime.split(':').map(Number)
+      const [endH, endM] = s.endTime.split(':').map(Number)
+      const startMins = startH * 60 + startM
+      const endMins = endH * 60 + endM
+      return currentMins >= startMins && currentMins <= endMins
+    })
+  }
+  const activeSchedule = getActiveSchedule()
+
   useEffect(() => {
     setCurrentTime(new Date())
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -157,6 +171,43 @@ export default function GuruDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Live Teaching Indicator */}
+      {activeSchedule && (
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/30 p-5 shadow-lg shadow-emerald-500/10 animate-in fade-in zoom-in duration-500">
+          <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)]"></div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="relative h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping"></div>
+                <BookOpen className="h-6 w-6 text-emerald-600 dark:text-emerald-400 relative z-10" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">
+                    Sedang Berlangsung
+                  </span>
+                  <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+                    {activeSchedule.startTime} - {activeSchedule.endTime}
+                  </span>
+                </div>
+                <h3 className="font-extrabold text-lg text-foreground leading-tight">
+                  {activeSchedule.subject?.name || "Mata Pelajaran"} di Kelas {activeSchedule.classroom?.name || "-"}
+                </h3>
+              </div>
+            </div>
+            <div className="w-full sm:w-auto shrink-0">
+              <Link href="/panel-gtk/jurnal">
+                <Button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-500/20 group">
+                  <PenTool className="h-4 w-4 mr-2" />
+                  Isi Jurnal Kelas Ini
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions (App Grid Style) */}
       <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
@@ -292,31 +343,37 @@ export default function GuruDashboard() {
                     <p className="text-xs text-muted-foreground mt-1">Anda tidak memiliki jadwal mengajar hari ini.</p>
                   </div>
                 ) : (
-                  scheduleToday.map((schedule, idx) => (
-                    <div key={schedule.id || idx} className="p-4 sm:p-5 flex items-start gap-4 hover:bg-muted/20 transition-colors group">
-                      <div className="flex flex-col items-center justify-center bg-primary/5 border border-primary/10 rounded-xl py-2 px-3 min-w-[90px] group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <span className="text-xs font-bold">{schedule.startTime || "00:00"}</span>
-                        <span className="text-[10px] opacity-70">s/d</span>
-                        <span className="text-xs font-bold">{schedule.endTime || "00:00"}</span>
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-base sm:text-lg truncate">{schedule.subject?.name || "Mata Pelajaran"}</h4>
-                        <div className="flex flex-wrap items-center gap-3 mt-2 text-xs font-medium text-muted-foreground">
-                          <span className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md text-foreground">
-                            <Users className="h-3 w-3" /> {schedule.classroom?.name || "-"}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3" /> {schedule.roomId || "Ruang Kelas"}
-                          </span>
+                  scheduleToday.map((schedule, idx) => {
+                    const isActive = activeSchedule?.id === schedule.id
+                    return (
+                      <div key={schedule.id || idx} className={cn("p-4 sm:p-5 flex items-start gap-4 transition-colors group", isActive ? "bg-emerald-500/5 hover:bg-emerald-500/10" : "hover:bg-muted/20")}>
+                        <div className={cn("flex flex-col items-center justify-center border rounded-xl py-2 px-3 min-w-[90px] transition-colors", isActive ? "bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/30" : "bg-primary/5 border-primary/10 group-hover:bg-primary group-hover:text-primary-foreground")}>
+                          <span className="text-xs font-bold">{schedule.startTime || "00:00"}</span>
+                          <span className="text-[10px] opacity-70">s/d</span>
+                          <span className="text-xs font-bold">{schedule.endTime || "00:00"}</span>
                         </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-base sm:text-lg truncate">{schedule.subject?.name || "Mata Pelajaran"}</h4>
+                            {isActive && <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs font-medium text-muted-foreground">
+                            <span className={cn("flex items-center gap-1 px-2 py-1 rounded-md", isActive ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-muted text-foreground")}>
+                              <Users className="h-3 w-3" /> {schedule.classroom?.name || "-"}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-3 w-3" /> {schedule.roomId || "Ruang Kelas"}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8 text-muted-foreground group-hover:text-primary rounded-full">
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
                       </div>
-                      
-                      <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8 text-muted-foreground group-hover:text-primary rounded-full">
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))
+                    )
+                  })
                 )}
               </div>
             </CardContent>

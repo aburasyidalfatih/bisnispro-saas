@@ -41,6 +41,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Semua field wajib diisi" }, { status: 400 })
     }
 
+    // Deteksi bentrok jadwal (Clash Detection)
+    // Cek apakah guru sudah punya jadwal di hari yang sama dengan rentang waktu yang tumpang tindih
+    const clash = await db.schedule.findFirst({
+      where: {
+        tenantId,
+        staffId,
+        dayOfWeek: Number(dayOfWeek),
+        startTime: { lt: endTime },
+        endTime: { gt: startTime }
+      },
+      include: {
+        classroom: { select: { name: true } }
+      }
+    })
+
+    if (clash) {
+      return NextResponse.json(
+        { error: `Guru ini sudah memiliki jadwal di kelas ${clash.classroom.name} pada pukul ${clash.startTime} - ${clash.endTime}` }, 
+        { status: 400 }
+      )
+    }
+
     const schedule = await db.schedule.create({
       data: { tenantId, classroomId, subjectId, staffId, dayOfWeek: Number(dayOfWeek), startTime, endTime },
       include: {

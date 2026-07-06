@@ -6,16 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/components/ui/select"
 import { Label } from"@/components/ui/label"
+import { Input } from"@/components/ui/input"
 import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 import { toast } from"@/hooks/use-toast"
 import { Calendar, Clock, Plus, Trash2, Loader2, BookOpen, Users, GraduationCap } from"lucide-react"
 import { cn } from"@/lib/utils"
 
 const DAYS = ["","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
-const HOURS = Array.from({ length: 14 }, (_, i) => {
-  const h = i + 6
-  return { value: `${String(h).padStart(2,"0")}:00`, label: `${String(h).padStart(2,"0")}:00` }
-})
 
 interface Schedule {
   id: string; dayOfWeek: number; startTime: string; endTime: string
@@ -80,13 +77,19 @@ export default function SchedulesPage() {
           startTime: form.startTime, endTime: form.endTime,
         }),
       })
-      if (!res.ok) throw new Error()
+      
+      const data = await res.json()
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Terjadi kesalahan saat menyimpan jadwal")
+      }
+      
       toast({ title:"Jadwal ditambahkan" })
       setForm({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30" })
       setShowForm(false)
       await loadSchedules(selectedClass)
-    } catch {
-      toast({ title:"Gagal", description:"Tidak bisa menambahkan jadwal", variant:"destructive" })
+    } catch (error: any) {
+      toast({ title:"Gagal Menyimpan", description: error.message, variant:"destructive" })
     }
     setSaving(false)
   }
@@ -156,17 +159,21 @@ export default function SchedulesPage() {
               </div>
               <div className="space-y-2">
                 <Label>Jam Mulai</Label>
-                <Select value={form.startTime} onValueChange={v => setForm(f => ({ ...f, startTime: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{HOURS.map(h => <SelectItem key={h.value} value={h.value}>{h.label}</SelectItem>)}</SelectContent>
-                </Select>
+                <Input 
+                  type="time" 
+                  value={form.startTime} 
+                  onChange={e => setForm(f => ({ ...f, startTime: e.target.value }))}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label>Jam Selesai</Label>
-                <Select value={form.endTime} onValueChange={v => setForm(f => ({ ...f, endTime: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{HOURS.map(h => <SelectItem key={h.value} value={h.value}>{h.label}</SelectItem>)}</SelectContent>
-                </Select>
+                <Input 
+                  type="time" 
+                  value={form.endTime} 
+                  onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label>Mata Pelajaran</Label>
