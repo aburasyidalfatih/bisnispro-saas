@@ -91,7 +91,7 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
                </div>
              )}
              
-             <p className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground mb-2 relative z-10 flex items-center justify-center tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">
+             <p className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground mb-2 relative z-10 flex items-center justify-center tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70 pb-2 pt-1">
                <AnimatedCounter value={stat.value} label={stat.label} />
              </p>
              <p className="text-[10px] sm:text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest relative z-10 group-hover:text-primary transition-colors">
