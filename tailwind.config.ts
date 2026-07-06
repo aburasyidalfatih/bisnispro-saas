@@ -90,6 +90,9 @@ const config: Config = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-20px)' },
         },
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

@@ -67,36 +67,34 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
   if (!stats || stats.length === 0) return null
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-20 md:-mt-24 mb-16">
-      <div 
-        className="grid grid-cols-2 lg:grid-cols-4 overflow-hidden rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl relative"
-        style={{ background: "linear-gradient(135deg, hsl(var(--primary)/0.95) 0%, hsl(var(--primary)/0.8) 100%)" }}
-      >
-        {/* Subtle inner glow */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none" />
-
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-16 md:-mt-20 mb-20">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
         {stats.map((stat, i) => (
           <div
             key={i}
-            className={`flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center relative group overflow-hidden ${
-              i < stats.length - 1 ? "lg:border-r border-white/10" : ""
-            } ${i % 2 === 0 ? "border-r lg:border-r-0 border-white/10" : ""} ${
-              i < 2 ? "border-b lg:border-b-0 border-white/10" : ""
-            }`}
+            className="group relative flex flex-col items-center justify-center p-6 sm:p-8 text-center rounded-[2rem] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 bg-background/70 backdrop-blur-2xl border border-white/50 dark:border-white/10"
           >
-             {/* Hover shine effect */}
-             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
-             
-             {stat.icon && (
-               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white relative z-10 backdrop-blur-md border border-white/20 shadow-inner">
-                 <DynamicIcon name={stat.icon} className="h-6 w-6" />
+            {/* Ambient Background Glow */}
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-primary/30 to-primary/0 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700 pointer-events-none" />
+            
+            {/* Card inner glass effect */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-white/40 dark:from-white/10 dark:to-white/0 rounded-[2rem] pointer-events-none" />
+            
+            {/* Crisp inner border for 3D feel */}
+            <div className="absolute inset-px rounded-[31px] bg-gradient-to-b from-white/60 to-transparent dark:from-white/20 dark:to-transparent pointer-events-none opacity-50" />
+            
+            {stat.icon && (
+               <div className="mb-5 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground relative z-10 shadow-lg shadow-primary/30 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 overflow-hidden">
+                 <DynamicIcon name={stat.icon} className="h-6 w-6 sm:h-7 sm:w-7 relative z-10" />
+                 {/* Diagonal shine across icon */}
+                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
                </div>
              )}
              
-             <p className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-md relative z-10 flex items-center justify-center">
+             <p className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground mb-2 relative z-10 flex items-center justify-center tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">
                <AnimatedCounter value={stat.value} label={stat.label} />
              </p>
-             <p className="text-[10px] sm:text-xs md:text-sm font-bold text-white/80 uppercase tracking-widest relative z-10">
+             <p className="text-[10px] sm:text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest relative z-10 group-hover:text-primary transition-colors">
                {stat.label}
              </p>
           </div>
