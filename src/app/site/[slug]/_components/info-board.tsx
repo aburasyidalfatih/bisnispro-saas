@@ -147,21 +147,22 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
                         fill
                         sizes="80px"
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-emerald-50">
-                        <Newspaper className="h-5 w-5 text-emerald-200" />
+                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                        <Newspaper className="h-5 w-5 text-primary/30" />
                       </div>
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-sm mb-1.5 group-hover:text-emerald-700 transition-colors line-clamp-2 leading-snug">
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <h4 className="font-semibold text-sm mb-1.5 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                       {item.title}
                     </h4>
-                    <p className="text-[11px] text-muted-foreground font-medium">
-                      {format(new Date(item.createdAt), "dd MMM yyyy", { locale: idLocale })}
-                    </p>
+                    <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                      <span>{format(new Date(item.createdAt), "dd MMM yyyy", { locale: idLocale })}</span>
+                      <span className="w-1 h-1 rounded-full bg-border"></span>
+                      <span className="text-primary/70">{item.category?.name || "BERITA"}</span>
+                    </div>
                   </div>
                 </Link>
               )) : (
