@@ -317,6 +317,7 @@ const cbtWorker = new Worker(
       let earned = 0
 
       // 3. Score the answers
+      const updatePromises = []
       for (const studentAns of session.answers) {
         const q = questions.find(q => q.id === studentAns.questionId)
         if (!q) continue
@@ -331,12 +332,16 @@ const cbtWorker = new Worker(
           }
         }
 
-        // Update answer in DB
-        await db.cbtAnswer.update({
-          where: { id: studentAns.id },
-          data: { isCorrect, points: isCorrect ? q.points : 0 }
-        })
+        // Push update to transaction batch
+        updatePromises.push(
+          db.cbtAnswer.update({
+            where: { id: studentAns.id },
+            data: { isCorrect, points: isCorrect ? q.points : 0 }
+          })
+        )
       }
+
+      await db.$transaction(updatePromises)
 
       const finalScore = (earned / totalPoints) * 100
 
