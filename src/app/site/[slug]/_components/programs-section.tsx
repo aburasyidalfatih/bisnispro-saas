@@ -1,8 +1,5 @@
-"use client"
-
 import Link from "next/link"
 import { ArrowRight, BookOpen, GraduationCap } from "lucide-react"
-import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
@@ -16,6 +13,7 @@ interface Program {
 
 interface ProgramsSectionProps {
   programs: Program[]
+  basePath?: string
 }
 
 const ACCENT_COLORS = [
@@ -27,8 +25,7 @@ const ACCENT_COLORS = [
   { bg: "from-cyan-500/10 to-sky-500/10", border: "hover:border-cyan-300", icon: "text-cyan-600", badge: "bg-cyan-100 text-cyan-700" },
 ]
 
-export function ProgramsSection({ programs, labels }: ProgramsSectionProps & { labels?: any }) {
-  const { resolveHref } = useRouting()
+export function ProgramsSection({ programs, labels, basePath = "" }: ProgramsSectionProps & { labels?: any }) {
 
   if (!programs || programs.length === 0) return null
 
@@ -56,7 +53,7 @@ export function ProgramsSection({ programs, labels }: ProgramsSectionProps & { l
               {l.sectionSubtitle || "Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja."}
             </p>
           </div>
-          <Link href={resolveHref("/program")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+          <Link href={`${basePath}/program`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
             {l.buttonText || "Lihat Semua"} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -69,7 +66,7 @@ export function ProgramsSection({ programs, labels }: ProgramsSectionProps & { l
             return (
               <Link
                 key={program.id}
-                href={resolveHref(`/program/${program.slug || program.id}`)}
+                href={`${basePath}/program/${program.slug || program.id}`}
                 className={`group relative rounded-2xl border bg-background overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${color.border}`}
               >
                 {/* Image / Gradient Header */}

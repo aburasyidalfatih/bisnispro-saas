@@ -1,8 +1,5 @@
-"use client"
-
 import Link from "next/link"
-import { ArrowRight, Users } from "lucide-react"
-import { useRouting } from "@/components/providers/routing-provider"
+import { ArrowRight, Users, GraduationCap } from "lucide-react"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
@@ -16,10 +13,10 @@ interface StaffMember {
 
 interface StaffHighlightProps {
   staff: StaffMember[]
+  basePath?: string
 }
 
-export function StaffHighlight({ staff, labels }: StaffHighlightProps & { labels?: any }) {
-  const { resolveHref } = useRouting()
+export function StaffHighlight({ staff, labels, basePath = "" }: StaffHighlightProps & { labels?: any }) {
 
   if (!staff || staff.length === 0) return null
 
@@ -43,7 +40,7 @@ export function StaffHighlight({ staff, labels }: StaffHighlightProps & { labels
               {l.sectionSubtitle || "Tim pengajar profesional dan berdedikasi yang siap membimbing siswa menuju kesuksesan."}
             </p>
           </div>
-          <Link href={resolveHref("/gtk")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+          <Link href={`${basePath}/gtk`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
             {l.buttonText || "Lihat Semua"} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

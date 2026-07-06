@@ -1,20 +1,17 @@
-"use client"
-
 import Link from "next/link"
 import { CalendarDays, Megaphone, Newspaper, ArrowRight, MapPin, Clock } from "lucide-react"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
-import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
 interface InfoBoardProps {
   events: any[]
   posts: any[]
+  basePath: string
 }
 
-export function InfoBoard({ events, posts }: InfoBoardProps) {
-  const { resolveHref } = useRouting()
+export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
 
   // Agenda Kegiatan (Events)
   const agenda = (events || []).slice(0, 4)
@@ -37,14 +34,14 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
                 <CalendarDays className="h-6 w-6 text-emerald-600" />
                 <h3 className="font-bold text-lg">Agenda</h3>
               </div>
-              <Link href={resolveHref("/agenda")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+              <Link href={`${basePath}/agenda`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
             
             <div className="space-y-6 flex-1">
               {agenda.length > 0 ? agenda.map((item, idx) => (
-                <Link key={idx} href={resolveHref(`/agenda/${item.slug || item.id}`)} className="flex gap-4 group cursor-pointer">
+                <Link key={idx} href={`${basePath}/agenda/${item.slug || item.id}`} className="flex gap-4 group cursor-pointer">
                   <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
                     <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
                       {format(new Date(item.startDate), "dd")}
@@ -86,7 +83,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
                 <Megaphone className="h-6 w-6 text-emerald-600" />
                 <h3 className="font-bold text-lg">Pengumuman</h3>
               </div>
-              <Link href={resolveHref("/pengumuman")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+              <Link href={`${basePath}/pengumuman`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
@@ -97,7 +94,7 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
                 const badgeColor = badgeColors[idx % badgeColors.length];
                 
                 return (
-                  <Link key={idx} href={resolveHref(`/pengumuman/${item.slug}`)} className="flex gap-4 group cursor-pointer">
+                  <Link key={idx} href={`${basePath}/pengumuman/${item.slug || item.id}`} className="flex gap-4 group cursor-pointer">
                     <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors h-fit">
                       <span className="text-2xl font-black text-foreground group-hover:text-emerald-700 leading-none mb-1">
                         {format(new Date(item.createdAt), "dd")}
@@ -134,14 +131,14 @@ export function InfoBoard({ events, posts }: InfoBoardProps) {
                 <Newspaper className="h-6 w-6 text-emerald-600" />
                 <h3 className="font-bold text-lg">Artikel</h3>
               </div>
-              <Link href={resolveHref("/berita")} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+              <Link href={`${basePath}/berita`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
             
             <div className="space-y-6 flex-1">
               {artikel.length > 0 ? artikel.map((item, idx) => (
-                <Link key={idx} href={resolveHref(`/berita/${item.slug}`)} className="flex gap-4 group cursor-pointer">
+                <Link key={idx} href={`${basePath}/berita/${item.slug || item.id}`} className="flex gap-4 group cursor-pointer">
                   <div className="relative w-24 aspect-video rounded-xl overflow-hidden shrink-0 border bg-muted">
                     {normalizeImageUrl(item.featuredImage) ? (
                       <Image 

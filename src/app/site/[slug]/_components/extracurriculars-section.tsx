@@ -1,8 +1,5 @@
-"use client"
-
 import Link from "next/link"
-import { ArrowRight, Palette } from "lucide-react"
-import { useRouting } from "@/components/providers/routing-provider"
+import { ArrowRight, Activity, Music, Palette, BookOpen, Trophy } from "lucide-react"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
@@ -17,12 +14,12 @@ interface Extracurricular {
 
 interface ExtracurricularsSectionProps {
   extracurriculars: Extracurricular[]
+  basePath?: string
 }
 
 const EMOJI_FALLBACKS = ["⚽", "🎨", "🎵", "🏸", "📚", "🤖", "🎭", "🏊", "🎯", "🌿", "💻", "📷"]
 
-export function ExtracurricularsSection({ extracurriculars, labels }: ExtracurricularsSectionProps & { labels?: any }) {
-  const { resolveHref } = useRouting()
+export function ExtracurricularsSection({ extracurriculars, labels, basePath = "" }: ExtracurricularsSectionProps & { labels?: any }) {
 
   if (!extracurriculars || extracurriculars.length === 0) return null
 
@@ -47,7 +44,7 @@ export function ExtracurricularsSection({ extracurriculars, labels }: Extracurri
               Wadah pengembangan minat, bakat, dan kreativitas siswa di luar kegiatan akademik.
             </p>
           </div>
-          <Link href={resolveHref("/ekstrakurikuler")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+          <Link href={`${basePath}/ekstrakurikuler`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
             Lihat Semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -56,7 +53,7 @@ export function ExtracurricularsSection({ extracurriculars, labels }: Extracurri
           {displayed.map((ekskul, idx) => (
             <Link
               key={ekskul.id}
-              href={resolveHref(`/ekstrakurikuler/${ekskul.slug || ekskul.id}`)}
+              href={`${basePath}/ekstrakurikuler/${ekskul.slug || ekskul.id}`}
               className="group relative bg-background rounded-2xl border p-5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-purple-200"
             >
               <div className="relative mx-auto w-16 h-16 rounded-2xl overflow-hidden mb-4 shadow-sm border bg-muted/50 flex items-center justify-center">

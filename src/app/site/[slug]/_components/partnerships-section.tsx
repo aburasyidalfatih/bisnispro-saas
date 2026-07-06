@@ -18,22 +18,23 @@ const PartnerImage = ({ src, alt }: { src: string | null | undefined, alt: strin
   const finalSrc = error || !src ? "https://schoolpro.id/logo-schoolpro.png" : src
 
   return (
-    <img src={finalSrc}
+    <Image 
+      src={finalSrc}
       alt={alt}
-      loading="lazy"
-      decoding="async"
-      className="absolute inset-0 w-full h-full object-contain"
+      fill
+      className="object-contain"
       onError={() => setError(true)}
+      sizes="(max-width: 768px) 120px, 160px"
     />
   )
 }
 
-export function PartnershipsSection({ partnerships }: { partnerships: Partnership[] }) {
+export function PartnershipsSection({ partnerships, labels, basePath = "" }: { partnerships: Partnership[], labels?: any, basePath?: string }) {
   if (!partnerships || partnerships.length === 0) return null
 
   // Duplicate the array enough times to guarantee the track width is larger than any screen width
   // This is critical for the seamless CSS marquee math to work (Track Width >= Screen Width)
-  const displayPartners = Array.from({ length: Math.max(10, Math.ceil(24 / partnerships.length)) }).flatMap(() => partnerships)
+  const displayPartners = Array.from({ length: Math.max(4, Math.ceil(12 / partnerships.length)) }).flatMap(() => partnerships)
 
   return (
     <section className="py-12 md:py-20 bg-muted/20 border-y border-border/50 overflow-hidden">

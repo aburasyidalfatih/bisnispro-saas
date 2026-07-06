@@ -116,7 +116,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
             {/* Right: Info Board (Agenda, Pengumuman, Berita stacked) */}
             <div className="space-y-0">
-              <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
+              <InfoBoard events={tenant.events || []} posts={tenant.posts || []} basePath={base} />
             </div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
           4. PROGRAM UNGGULAN
       ══════════════════════════════════════════════════════════════ */}
       <ScrollReveal>
-        <ProgramsSection programs={tenant.programs || []} />
+        <ProgramsSection programs={tenant.programs || []} basePath={base} />
       </ScrollReveal>
 
 
@@ -136,7 +136,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       {(tenant.facilities?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
           <div className="bg-card py-10 mt-8">
-            <FacilitiesSection facilities={tenant.facilities || []} />
+            <FacilitiesSection facilities={tenant.facilities || []} basePath={base} />
           </div>
         </ScrollReveal>
       )}
@@ -146,7 +146,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.achievements?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <AchievementsSection achievements={achievements} />
+          <AchievementsSection achievements={achievements} basePath={base} />
         </ScrollReveal>
       )}
 
@@ -156,7 +156,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       {(tenant.extracurriculars?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.2}>
           <div className="bg-card py-10">
-            <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} />
+            <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} basePath={base} />
           </div>
         </ScrollReveal>
       )}
@@ -166,7 +166,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.staff?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <StaffHighlight staff={staff} />
+          <StaffHighlight staff={staff} basePath={base} />
         </ScrollReveal>
       )}
 
@@ -234,7 +234,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
             <div className="grid gap-8">
               {/* Alumni Testimonial */}
               <div>
-                <AlumniTestimonials alumni={alumni} />
+                <AlumniTestimonials alumni={alumni} basePath={base} />
               </div>
             </div>
           </div>
@@ -247,7 +247,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       {(tenant.partnerships?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
           <div className="bg-card py-8">
-            <PartnershipsSection partnerships={partnerships} />
+            <PartnershipsSection partnerships={partnerships} basePath={base} />
           </div>
         </ScrollReveal>
       )}

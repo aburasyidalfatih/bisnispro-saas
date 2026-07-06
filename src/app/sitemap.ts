@@ -3,7 +3,7 @@ import { headers } from "next/headers"
 import { db } from "@/lib/db"
 import { resolveDomainToSlug } from "@/features/tenant/services/domain.service"
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 export const revalidate = 3600 // Edge Caching ISR (1 jam)
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -178,7 +178,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic routes: Berita & Pengumuman
   const posts = await db.post.findMany({
     where: { tenantId: tenant.id, status: "PUBLISHED" },
-    select: { id: true, slug: true, type: true, updatedAt: true, createdAt: true }
+    select: { id: true, slug: true, type: true, updatedAt: true, createdAt: true },
+    take: 500
   })
   if (posts.length > 0) {
     posts.forEach((post) => {
@@ -196,7 +197,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic routes: Prestasi
   const achievements = await db.achievement.findMany({
     where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+    select: { id: true, slug: true, updatedAt: true, createdAt: true },
+    take: 500
   })
   if (achievements.length > 0) {
     achievements.forEach((achievement) => {
@@ -212,7 +214,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic routes: Program
   const programs = await db.program.findMany({
     where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+    select: { id: true, slug: true, updatedAt: true, createdAt: true },
+    take: 500
   })
   if (programs.length > 0) {
     programs.forEach((program) => {
@@ -228,7 +231,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic routes: Agenda
   const events = await db.event.findMany({
     where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+    select: { id: true, slug: true, updatedAt: true, createdAt: true },
+    take: 500
   })
   if (events.length > 0) {
     events.forEach((event) => {
@@ -244,7 +248,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic routes: Fasilitas
   const facilities = await db.facility.findMany({
     where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true }
+    select: { id: true, slug: true, updatedAt: true, createdAt: true },
+    take: 500
   })
   if (facilities.length > 0) {
     facilities.forEach((facility) => {
@@ -260,7 +265,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic routes: GTK (Staff)
   const staff = await db.staff.findMany({
     where: { tenantId: tenant.id },
-    select: { id: true, name: true, updatedAt: true, createdAt: true }
+    select: { id: true, name: true, updatedAt: true, createdAt: true },
+    take: 500
   })
   if (staff.length > 0) {
     staff.forEach((s) => {

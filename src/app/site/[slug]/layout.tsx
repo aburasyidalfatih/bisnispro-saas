@@ -17,7 +17,7 @@ import { normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
 import { MediumZoomSetup } from "@/components/ui/medium-zoom-setup"
 import { unstable_cache } from "next/cache"
 
-export const dynamic = "force-dynamic"
+// export const dynamic = "force-dynamic" // Removed to allow caching/ISR
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -56,8 +56,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       },
       description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
       siteName: tenant.name,
+      locale: "id_ID",
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: tenant.name }],
       type: "website",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
     },
     twitter: {
       card: "summary_large_image",
@@ -157,19 +169,44 @@ export default async function WebsiteLayout({
     rootDomain,
     basePath: `/site/${slug}`
   }
+  const canonicalUrl = `https://${tenant.domain || tenant.slug + '.' + rootDomain}`
   const structuredData = JSON.stringify({
     "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    "name": tenant.name,
-    "url": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`,
-    "logo": tenant.logo || "https://schoolpro.id/logo-schoolpro.png",
-    "telephone": tenant.phone || "",
-    "email": tenant.email || "",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": tenant.address || "",
-      "addressCountry": "ID"
-    }
+    "@graph": [
+      {
+        "@type": "EducationalOrganization",
+        "@id": `${canonicalUrl}/#organization`,
+        "name": tenant.name,
+        "url": canonicalUrl,
+        "logo": tenant.logo ? (normalizeImageUrl(tenant.logo) || tenant.logo) : "https://schoolpro.id/logo-schoolpro.png",
+        "telephone": tenant.phone || "",
+        "email": tenant.email || "",
+        "sameAs": [
+          (tenant.settings as any)?.social?.facebook || "",
+          (tenant.settings as any)?.social?.instagram || "",
+          (tenant.settings as any)?.social?.youtube || ""
+        ].filter(Boolean),
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": tenant.address || "",
+          "addressCountry": "ID"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${canonicalUrl}/#website`,
+        "url": canonicalUrl,
+        "name": tenant.name,
+        "publisher": {
+          "@id": `${canonicalUrl}/#organization`
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": `${canonicalUrl}/search?q={search_term_string}`,
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
   }).replace(/</g, "\\u003c")
 
   return (

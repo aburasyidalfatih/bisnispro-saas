@@ -44,9 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     manifest: `/api/tenant/manifest?slug=${slug}`,
-    alternates: {
-      canonical: "/",
-    },
+    alternates: {},
     openGraph: {
       title,
       description,

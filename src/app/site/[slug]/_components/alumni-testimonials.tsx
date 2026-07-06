@@ -1,9 +1,7 @@
 "use client"
-
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Quote, GraduationCap, ArrowRight } from "lucide-react"
-import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
@@ -19,6 +17,8 @@ interface AlumniMember {
 
 interface AlumniTestimonialsProps {
   alumni: AlumniMember[]
+  basePath?: string
+  labels?: Record<string, string>
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -28,10 +28,11 @@ const STATUS_LABELS: Record<string, string> = {
   LAINNYA: "Lainnya",
 }
 
-export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
+export function AlumniTestimonials({ alumni, labels, basePath = "" }: AlumniTestimonialsProps) {
   // Only show alumni who have testimonials
   const withTestimonials = alumni.filter((a) => a.testimonial && a.testimonial.trim().length > 0)
   
+  const statusLabels = { ...STATUS_LABELS, ...labels }
 
   const [current, setCurrent] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -60,7 +61,7 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
 
   const person = withTestimonials[current]
 
-  const { resolveHref } = useRouting()
+
 
   if (withTestimonials.length === 0) return null
 
@@ -84,7 +85,7 @@ export function AlumniTestimonials({ alumni }: AlumniTestimonialsProps) {
               Cerita dan pengalaman alumni kami setelah menempuh pendidikan di sini.
             </p>
           </div>
-          <Link href={resolveHref("/alumni")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+          <Link href={`${basePath}/alumni`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
             Lihat Semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

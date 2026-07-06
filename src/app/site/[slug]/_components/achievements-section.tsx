@@ -1,10 +1,7 @@
-"use client"
-
 import Link from "next/link"
-import { ArrowRight, Trophy, Medal, Star, Globe } from "lucide-react"
+import { ArrowRight, Trophy, Medal, Star, Globe, Award } from "lucide-react"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
-import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
@@ -20,6 +17,7 @@ interface Achievement {
 
 interface AchievementsSectionProps {
   achievements: Achievement[]
+  basePath?: string
 }
 
 const LEVEL_CONFIG: Record<string, { icon: typeof Trophy; color: string; bg: string; label: string }> = {
@@ -27,15 +25,14 @@ const LEVEL_CONFIG: Record<string, { icon: typeof Trophy; color: string; bg: str
   NASIONAL: { icon: Star, color: "text-rose-500", bg: "bg-gradient-to-br from-rose-50 to-pink-50 border-rose-200", label: "Nasional" },
   PROVINSI: { icon: Medal, color: "text-blue-500", bg: "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200", label: "Provinsi" },
   KABUPATEN: { icon: Trophy, color: "text-emerald-500", bg: "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200", label: "Kabupaten/Kota" },
-  LOKAL: { icon: Trophy, color: "text-purple-500", bg: "bg-gradient-to-br from-purple-50 to-fuchsia-50 border-purple-200", label: "Lokal" },
+  LOKAL: { icon: Award, color: "text-purple-500", bg: "bg-gradient-to-br from-purple-50 to-fuchsia-50 border-purple-200", label: "Lokal" },
 }
 
 function getLevelConfig(level: string) {
   return LEVEL_CONFIG[level.toUpperCase()] || LEVEL_CONFIG.LOKAL
 }
 
-export function AchievementsSection({ achievements, labels }: AchievementsSectionProps & { labels?: any }) {
-  const { resolveHref } = useRouting()
+export function AchievementsSection({ achievements, labels, basePath = "" }: AchievementsSectionProps & { labels?: any }) {
 
   if (!achievements || achievements.length === 0) return null
 
@@ -60,7 +57,7 @@ export function AchievementsSection({ achievements, labels }: AchievementsSectio
               Deretan pencapaian siswa dan sekolah kami di berbagai kompetisi dan ajang bergengsi.
             </p>
           </div>
-          <Link href={resolveHref("/prestasi")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+          <Link href={`${basePath}/prestasi`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
             Lihat Semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -73,7 +70,7 @@ export function AchievementsSection({ achievements, labels }: AchievementsSectio
             return (
               <Link
                 key={achievement.id}
-                href={resolveHref(`/prestasi/${achievement.slug || achievement.id}`)}
+                href={`${basePath}/prestasi/${achievement.slug || achievement.id}`}
                 className={`group rounded-2xl border p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${config.bg}`}
               >
                 <div className="flex items-start gap-4">

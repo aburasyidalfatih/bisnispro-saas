@@ -2,8 +2,10 @@ import Link from "next/link"
 import NextImage from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, GraduationCap, Building, Award, TreePine, CheckCircle2 } from "lucide-react"
-import { HeroSlider } from "../../_components/hero-slider"
-import { StatsBar } from "../../_components/stats-bar"
+import dynamic from "next/dynamic"
+
+const HeroSlider = dynamic(() => import("../../_components/hero-slider").then(mod => mod.HeroSlider), { ssr: true })
+const StatsBar = dynamic(() => import("../../_components/stats-bar").then(mod => mod.StatsBar), { ssr: true })
 import { PrincipalWelcome } from "../../_components/principal-welcome"
 import { InfoBoard } from "../../_components/info-board"
 import { ProgramsSection } from "../../_components/programs-section"
@@ -89,32 +91,32 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ── 4. Info Board (Agenda, Pengumuman, Artikel) ── */}
-      <InfoBoard events={tenant.events || []} posts={tenant.posts || []} />
+      <InfoBoard events={tenant.events || []} posts={tenant.posts || []} basePath={base} />
 
       {/* ── 6. Program Keahlian ── */}
       <ScrollReveal>
-        <ProgramsSection programs={tenant.programs || []} labels={labels} />
+        <ProgramsSection programs={tenant.programs || []} labels={labels} basePath={base} />
       </ScrollReveal>
 
 
       {/* ── 7. Prestasi ── */}
       <ScrollReveal delay={0.1}>
-        <AchievementsSection achievements={achievements} labels={labels} />
+        <AchievementsSection achievements={achievements} labels={labels} basePath={base} />
       </ScrollReveal>
 
       {/* ── 8. Fasilitas Sekolah ── */}
       <ScrollReveal delay={0.1}>
-        <FacilitiesSection facilities={tenant.facilities || []} labels={labels} />
+        <FacilitiesSection facilities={tenant.facilities || []} labels={labels} basePath={base} />
       </ScrollReveal>
 
       {/* ── 9. Ekstrakurikuler ── */}
       <ScrollReveal delay={0.2}>
-        <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} labels={labels} />
+        <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} labels={labels} basePath={base} />
       </ScrollReveal>
 
       {/* ── 10. Guru & Staff Highlight ── */}
       <ScrollReveal delay={0.1}>
-        <StaffHighlight staff={staff} labels={labels} />
+        <StaffHighlight staff={staff} labels={labels} basePath={base} />
       </ScrollReveal>
 
       {/* ── 11. Galeri ── */}
@@ -176,13 +178,13 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 12. Testimonial Alumni ── */}
       <ScrollReveal>
-        <AlumniTestimonials alumni={alumni} />
+        <AlumniTestimonials alumni={alumni} labels={labels} basePath={base} />
       </ScrollReveal>
 
 
       {/* ── 13. Kerjasama Lembaga ── */}
       <ScrollReveal delay={0.1}>
-        <PartnershipsSection partnerships={partnerships} />
+        <PartnershipsSection partnerships={partnerships} labels={labels} basePath={base} />
       </ScrollReveal>
 
       {/* ── 13. Kontak CTA ── */}

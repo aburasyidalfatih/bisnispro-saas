@@ -90,9 +90,29 @@ export async function cacheDomainSlug(domain: string, slug: string): Promise<voi
 }
 
 
+export async function getCachedDomainSlug(domain: string): Promise<string | null> {
+  const redis = await getRedisClient()
+  return redis.get(`${CACHE_PREFIX}${domain}`)
+}
+
 export async function invalidateDomainCache(domain: string): Promise<void> {
   const redis = await getRedisClient()
   await redis.del(`${CACHE_PREFIX}${domain}`)
+}
+
+export async function cacheSlugDomain(slug: string, domain: string): Promise<void> {
+  const redis = await getRedisClient()
+  await redis.set(`smp:slug-domain:${slug}`, domain, CACHE_TTL_SECONDS)
+}
+
+export async function getCachedSlugDomain(slug: string): Promise<string | null> {
+  const redis = await getRedisClient()
+  return redis.get(`smp:slug-domain:${slug}`)
+}
+
+export async function invalidateSlugCache(slug: string): Promise<void> {
+  const redis = await getRedisClient()
+  await redis.del(`smp:slug-domain:${slug}`)
 }
 
 

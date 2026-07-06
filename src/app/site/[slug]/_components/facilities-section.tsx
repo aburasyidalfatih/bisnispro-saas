@@ -1,8 +1,5 @@
-"use client"
-
 import Link from "next/link"
-import { ArrowRight, Building2 } from "lucide-react"
-import { useRouting } from "@/components/providers/routing-provider"
+import { ArrowRight, Building, CheckCircle2, Building2 } from "lucide-react"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
@@ -16,10 +13,10 @@ interface Facility {
 
 interface FacilitiesSectionProps {
   facilities: Facility[]
+  basePath?: string
 }
 
-export function FacilitiesSection({ facilities, labels }: FacilitiesSectionProps & { labels?: any }) {
-  const { resolveHref } = useRouting()
+export function FacilitiesSection({ facilities, labels, basePath = "" }: FacilitiesSectionProps & { labels?: any }) {
 
   if (!facilities || facilities.length === 0) return null
 
@@ -42,7 +39,7 @@ export function FacilitiesSection({ facilities, labels }: FacilitiesSectionProps
               Fasilitas modern dan lengkap untuk mendukung proses belajar mengajar yang optimal.
             </p>
           </div>
-          <Link href={resolveHref("/fasilitas")} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
+          <Link href={`${basePath}/fasilitas`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
             Lihat Semua <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -65,7 +62,7 @@ export function FacilitiesSection({ facilities, labels }: FacilitiesSectionProps
             return (
               <Link
                 key={facility.id}
-                href={resolveHref(`/fasilitas/${facility.slug || facility.id}`)}
+                href={`${basePath}/fasilitas/${facility.slug || facility.id}`}
                 className={`group relative rounded-[2rem] overflow-hidden border border-border/40 bg-muted/30 transition-all duration-700 hover:shadow-2xl hover:-translate-y-1.5 ${spanClass}`}
               >
                 {facility.imageUrl ? (
