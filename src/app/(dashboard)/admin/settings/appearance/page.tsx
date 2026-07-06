@@ -15,14 +15,14 @@ import { cn } from"@/lib/utils"
 import { toast } from"@/hooks/use-toast"
 
 const themeGradients: Record<string, string> = {
-  corporate: "linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%)", // Blue-500 to Blue-900
-  ocean: "linear-gradient(135deg, #06b6d4 0%, #0f766e 100%)", // Cyan-500 to Teal-700
-  emerald: "linear-gradient(135deg, #10b981 0%, #047857 100%)", // Emerald-500 to Emerald-700
-  sunset: "linear-gradient(135deg, #f59e0b 0%, #be123c 100%)", // Amber-500 to Rose-700
-  aurora: "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)", // Violet-500 to Violet-700
-  cyberpunk: "linear-gradient(135deg, #2dd4bf 0%, #c026d3 100%)", // Teal-400 to Fuchsia-600
-  midnight: "linear-gradient(135deg, #1e293b 0%, #312e81 100%)", // Slate-800 to Indigo-900
-  hologram: "linear-gradient(135deg, #38bdf8 0%, #e879f9 100%)", // Light Blue-400 to Fuchsia-400
+  corporate: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%)", // Royal Blue
+  ocean: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0f766e 100%)", // Ocean Cyan-Teal
+  emerald: "linear-gradient(135deg, #34d399 0%, #10b981 50%, #047857 100%)", // Vibrant Mint-Forest
+  sunset: "linear-gradient(135deg, #f97316 0%, #ef4444 50%, #be123c 100%)", // Peach-Crimson
+  aurora: "linear-gradient(135deg, #a855f7 0%, #8b5cf6 50%, #6d28d9 100%)", // Lavender-Violet
+  cyberpunk: "linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #d946ef 100%)", // Neon Cyan-Pink
+  midnight: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)", // Deep Space-Indigo
+  hologram: "linear-gradient(135deg, #38bdf8 0%, #818cf8 33%, #c084fc 66%, #e879f9 100%)", // Iridescent Pearl-Pink
 }
 
 export default function AppearancePage() {
