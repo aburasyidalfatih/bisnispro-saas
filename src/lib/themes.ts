@@ -63,6 +63,34 @@ export const themes: ThemeConfig[] = [
     preview: "🪩",
     category: "futuristic",
   },
+  {
+    id: "graphite",
+    name: "Graphite",
+    description: "Monokromatik minimalis bergaya pro untuk institusi modern",
+    preview: "",
+    category: "formal",
+  },
+  {
+    id: "ruby",
+    name: "Ruby",
+    description: "Mewah dan berani, nuansa merah anggur yang sangat elegan",
+    preview: "💎",
+    category: "creative",
+  },
+  {
+    id: "gold",
+    name: "Prestige Gold",
+    description: "Eksklusif dan elit, memancarkan aura kemewahan tingkat internasional",
+    preview: "👑",
+    category: "formal",
+  },
+  {
+    id: "neon",
+    name: "Neon Matrix",
+    description: "Bahasa visual hacker dengan lime green murni, sempurna untuk IT",
+    preview: "⚡",
+    category: "futuristic",
+  }
 ]
 
 export const defaultThemeId = "aurora"

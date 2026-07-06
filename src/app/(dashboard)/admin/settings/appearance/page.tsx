@@ -18,15 +18,15 @@ const themeGradients: Record<string, string> = {
   corporate: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%)", // Royal Blue
   ocean: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0f766e 100%)", // Ocean Cyan-Teal
   emerald: "linear-gradient(135deg, #34d399 0%, #10b981 50%, #047857 100%)", // Vibrant Mint-Forest
-  sunset: "linear-gradient(135deg, #f97316 0%, #ef4444 50%, #be123c 100%)", // Peach-Crimson
-  aurora: "linear-gradient(135deg, #a855f7 0%, #8b5cf6 50%, #6d28d9 100%)", // Lavender-Violet
-  cyberpunk: "linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #d946ef 100%)", // Neon Cyan-Pink
-  midnight: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)", // Deep Space-Indigo
-  hologram: "linear-gradient(135deg, #38bdf8 0%, #818cf8 33%, #c084fc 66%, #e879f9 100%)", // Iridescent Pearl-Pink
-  graphite: "linear-gradient(135deg, #9ca3af 0%, #4b5563 50%, #111827 100%)", // Minimalist Grey
-  ruby: "linear-gradient(135deg, #f43f5e 0%, #e11d48 50%, #881337 100%)", // Crimson Red
-  gold: "linear-gradient(135deg, #fde047 0%, #eab308 50%, #854d0e 100%)", // Premium Gold
-  neon: "linear-gradient(135deg, #a3e635 0%, #65a30d 50%, #3f6212 100%)", // Matrix Green
+  sunset: "linear-gradient(135deg, hsl(25, 95%, 53%) 0%, hsl(0, 84%, 60%) 50%, hsl(340, 82%, 40%) 100%)",
+  aurora: "linear-gradient(135deg, hsl(271, 91%, 65%) 0%, hsl(262, 83%, 58%) 50%, hsl(264, 69%, 50%) 100%)",
+  cyberpunk: "linear-gradient(135deg, hsl(188, 86%, 53%) 0%, hsl(262, 83%, 58%) 50%, hsl(292, 84%, 61%) 100%)",
+  midnight: "linear-gradient(135deg, hsl(222, 47%, 11%) 0%, hsl(242, 47%, 20%) 50%, hsl(242, 47%, 34%) 100%)",
+  hologram: "linear-gradient(135deg, hsl(199, 92%, 60%) 0%, hsl(235, 86%, 65%) 33%, hsl(272, 72%, 65%) 66%, hsl(292, 84%, 61%) 100%)",
+  graphite: "linear-gradient(135deg, hsl(215, 15%, 60%) 0%, hsl(215, 15%, 40%) 50%, hsl(215, 15%, 15%) 100%)",
+  ruby: "linear-gradient(135deg, hsl(346, 87%, 60%) 0%, hsl(343, 82%, 44%) 50%, hsl(338, 70%, 30%) 100%)",
+  gold: "linear-gradient(135deg, hsl(53, 98%, 64%) 0%, hsl(43, 96%, 40%) 50%, hsl(35, 92%, 25%) 100%)",
+  neon: "linear-gradient(135deg, hsl(75, 82%, 60%) 0%, hsl(84, 81%, 44%) 50%, hsl(142, 71%, 29%) 100%)"
 }
 
 export default function AppearancePage() {
@@ -124,8 +124,9 @@ export default function AppearancePage() {
         setDbTemplate(result.template || selectedTemplate)
         setDbPlan(dbPlan) 
         setDbDynamicSettings(dynamicSettings)
+        saveColorTheme(previewTheme)
         toast({ title:"Pengaturan Tersimpan ✨", description: `Tema website berhasil diperbarui ke preferensi terbaru Anda.` })
-        window.location.reload()
+        setTimeout(() => window.location.reload(), 500)
       } else {
         const d = await res.json().catch(() => ({}))
         toast({ title:"Gagal menyimpan", description: d.error ||"Terjadi kesalahan.", variant:"destructive" })
