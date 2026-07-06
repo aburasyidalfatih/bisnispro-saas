@@ -1,4 +1,4 @@
-import { currentTenant } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import { MonitorSmartphone, ExternalLink, QrCode, PlayCircle, Settings, Users, BookOpen, Crown, ArrowRight } from "lucide-react"
@@ -10,7 +10,8 @@ export const metadata = {
 }
 
 export default async function SchoolTvSettingsPage() {
-  const tenant = await currentTenant()
+  const session = await auth()
+  const tenant = session?.user?.tenants?.[0]
   if (!tenant) return redirect("/login")
   
   const isPremium = ["pro", "lite", "premium"].includes(tenant.plan?.toLowerCase() || "")

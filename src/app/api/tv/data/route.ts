@@ -41,13 +41,13 @@ export async function GET(req: Request) {
     })
 
     // Get "Guru Piket" (For now, just get 2 staff members who don't have schedule right now, or just random)
-    const staffCount = await db.staff.count({ where: { tenantId: tenant.id, isActive: true } })
+    const staffCount = await db.staff.count({ where: { tenantId: tenant.id } })
     const skip = Math.max(0, Math.floor(Math.random() * (staffCount - 2)))
     const piket = await db.staff.findMany({
-      where: { tenantId: tenant.id, isActive: true },
+      where: { tenantId: tenant.id },
       take: 2,
       skip: skip,
-      select: { name: true, position: true, imageUrl: true }
+      select: { name: true, role: true, imageUrl: true }
     })
 
     return NextResponse.json({
