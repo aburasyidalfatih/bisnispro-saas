@@ -231,25 +231,20 @@ export default function SchoolTvPage() {
              <h3 className="text-xl font-bold mb-5 flex items-center gap-2">
                <Users className="h-5 w-5 text-blue-400" /> Guru Piket Hari Ini
              </h3>
-             <div className="space-y-4">
-               {data.piket?.length > 0 ? data.piket.map((p: any, i: number) => (
-                 <div key={i} className="flex items-center gap-4 bg-black/40 p-3 rounded-2xl border border-white/5">
-                   {p.imageUrl ? (
-                     <img src={p.imageUrl} alt={p.name} className="h-14 w-14 rounded-full object-cover border-2 border-slate-700" />
-                   ) : (
-                     <div className="h-14 w-14 rounded-full bg-slate-800 flex items-center justify-center border-2 border-slate-700">
-                       <UserCircle className="h-8 w-8 text-slate-400" />
-                     </div>
-                   )}
-                   <div>
-                     <p className="font-bold text-slate-200 line-clamp-1">{p.name}</p>
-                     <p className="text-xs text-blue-400 font-medium">{p.position || "Guru Piket"}</p>
-                   </div>
-                 </div>
-               )) : (
-                 <p className="text-sm text-slate-400 text-center py-4">Belum ada data guru piket.</p>
-               )}
-             </div>
+              <div className="space-y-4">
+                {data.piket?.length > 0 ? data.piket.map((p: any, i: number) => (
+                  <div key={i} className="flex flex-col gap-1.5 bg-black/40 p-4 rounded-2xl border border-white/5 shadow-inner">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 text-[10px] font-bold bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20 uppercase tracking-widest">
+                        {p.time}
+                      </span>
+                    </div>
+                    <p className="font-bold text-slate-200 text-lg leading-snug whitespace-pre-wrap">{p.names}</p>
+                  </div>
+                )) : (
+                  <p className="text-sm text-slate-400 text-center py-4">Belum ada data guru piket.</p>
+                )}
+              </div>
           </div>
 
           {/* QR Code Donation Widget */}
@@ -284,7 +279,7 @@ export default function SchoolTvPage() {
           {/* Marquee Animation */}
           <div className="whitespace-nowrap animate-marquee flex items-center text-xl font-medium text-white tracking-wide">
             {(() => {
-              const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Cerdas Kami"}! Mari bersama-sama mewujudkan pendidikan berkualitas yang berkarakter. \n Mohon jaga kebersihan dan ketertiban di lingkungan sekolah. \n Guru piket hari ini: ${data.piket?.map((p:any) => p.name).join(", ") || "-"}`
+              const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Cerdas Kami"}! Mari bersama-sama mewujudkan pendidikan berkualitas yang berkarakter. \n Mohon jaga kebersihan dan ketertiban di lingkungan sekolah. \n Guru piket hari ini: ${data.piket?.map((p:any) => `${p.names} (${p.time})`).join(" | ") || "-"}`
               const marqueeItems = rawMarquee.split('\n').map((item: string) => item.trim()).filter(Boolean)
               return (
                 <>

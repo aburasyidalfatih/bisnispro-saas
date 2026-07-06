@@ -40,15 +40,28 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'desc' }
     })
 
-    // Get "Guru Piket" (For now, just get 2 staff members who don't have schedule right now, or just random)
-    const staffCount = await db.staff.count({ where: { tenantId: tenant.id } })
-    const skip = Math.max(0, Math.floor(Math.random() * (staffCount - 2)))
-    const piket = await db.staff.findMany({
-      where: { tenantId: tenant.id },
-      take: 2,
-      skip: skip,
-      select: { name: true, role: true, imageUrl: true }
-    })
+    // Get "Guru Piket" from settings if configured
+    let piket = []
+    const settings = (tenant.settings as Record<string, any>) || {}
+    
+    if (settings.piketSettings && settings.piketSettings[dayOfWeek]) {
+      piket = settings.piketSettings[dayOfWeek]
+    } else {
+      // Fallback: get 2 random staff members
+      const staffCount = await db.staff.count({ where: { tenantId: tenant.id } })
+      const skip = Math.max(0, Math.floor(Math.random() * (staffCount - 2)))
+      const randomStaff = await db.staff.findMany({
+        where: { tenantId: tenant.id },
+        take: 2,
+        skip: skip,
+        select: { name: true, role: true }
+      })
+      piket = randomStaff.map(s => ({
+        id: s.name,
+        time: "Hari Ini",
+        names: `${s.name} (${s.role || "Guru"})`
+      }))
+    }
 
     return NextResponse.json({
       tenant: {
