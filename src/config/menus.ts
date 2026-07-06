@@ -143,10 +143,11 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             { label: "Alumni Success", href: `${basePath}/website/alumni`, icon: GraduationCap },
           ],
         },
+        ...(has("school_tv") ? [{
           label: "School TV",
           href: `${basePath}/website/school-tv`,
           icon: MonitorSmartphone,
-        },
+        }] : []),
       ],
     }] : []),
     {
