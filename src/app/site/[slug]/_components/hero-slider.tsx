@@ -114,7 +114,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
   return (
     <section 
-      className="relative w-full overflow-hidden min-h-[45dvh] sm:min-h-[50dvh] md:min-h-[85dvh] lg:min-h-[90vh]"
+      className="relative w-full overflow-hidden min-h-[35dvh] sm:min-h-[40dvh] md:min-h-[75dvh] lg:min-h-[85vh]"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEndHandler}
@@ -145,7 +145,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
       </div>
 
       {/* ── Text + CTA content ── */}
-      <div className="relative z-30 flex items-center min-h-[45dvh] sm:min-h-[50dvh] md:min-h-[85dvh] lg:min-h-[90vh] pb-24 md:pb-32">
+      <div className="relative z-30 flex items-center min-h-[35dvh] sm:min-h-[40dvh] md:min-h-[75dvh] lg:min-h-[85vh] pb-16 md:pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-12 sm:py-20 md:py-24">
           {/* key forces remount → re-trigger CSS animations */}
           <div key={textKey}>
@@ -244,7 +244,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
       {/* ── Dot Indicators ── */}
       {!isSingle && (
-        <div className="absolute bottom-28 md:bottom-32 lg:bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2.5">
+        <div className="absolute bottom-20 md:bottom-28 lg:bottom-24 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2.5">
           {slides.map((_, i) => (
             <button
               key={i}
