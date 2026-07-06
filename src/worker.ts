@@ -480,9 +480,24 @@ console.log("   Queues: wa-queue, import-queue, billing-queue, gamification-queu
 console.log("   Features: retry (3x exponential), dead-letter logging, Sentry reporting")
 
 // ============================================================
-// CRON / INTERVAL JOBS
+// CRON / INTERVAL JOBS (WITH REDIS LOCK)
 // ============================================================
-setInterval(async () => {
+async function runWithLock(jobName: string, intervalMs: number, fn: () => Promise<void>) {
+  setInterval(async () => {
+    const lockKey = `cron:lock:${jobName}`
+    // Expire lock slightly before next run
+    const acquired = await connection.set(lockKey, "1", "PX", Math.max(intervalMs - 5000, 1000), "NX")
+    if (acquired) {
+      try {
+        await fn()
+      } catch (err) {
+        console.error(`[cron] Error in ${jobName}`, err)
+      }
+    }
+  }, intervalMs)
+}
+
+runWithLock("syncViews", 10 * 60 * 1000, async () => {
   try {
     const p = await syncPostViewsToDatabase()
     const e = await syncEventViewsToDatabase()
@@ -493,12 +508,12 @@ setInterval(async () => {
   } catch (error) {
     console.error("[cron] Failed to sync", error)
   }
-}, 10 * 60 * 1000) // 10 minutes
+}) // 10 minutes
 
 // ============================================================
 // AUTO CLEANUP ERROR LOGS (older than 30 days)
 // ============================================================
-setInterval(async () => {
+runWithLock("errorLogCleanup", 24 * 60 * 60 * 1000, async () => {
   console.log("[cron] Running Error Log Cleanup...")
   try {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
@@ -513,12 +528,12 @@ setInterval(async () => {
   } catch (error) {
     console.error("[cron] Failed Error Log Cleanup", error)
   }
-}, 24 * 60 * 60 * 1000) // Runs every 24 hours
+}) // Runs every 24 hours
 
 // ============================================================
 // AUTO APPROVE APPLICATIONS (24H)
 // ============================================================
-setInterval(async () => {
+runWithLock("autoApproveApps", 30 * 60 * 1000, async () => {
   try {
     const setting = await db.platformSetting.findUnique({
       where: { key: 'AUTO_APPROVE_APPLICATIONS_24H' }
@@ -553,12 +568,12 @@ setInterval(async () => {
   } catch (error) {
     console.error("[cron] Failed Auto-Approve Application check", error)
   }
-}, 30 * 60 * 1000) // Runs every 30 minutes
+}) // Runs every 30 minutes
 
 // ============================================================
 // LEADERBOARD RECALCULATION & SYNC
 // ============================================================
-setInterval(async () => {
+runWithLock("leaderboardSync", 3 * 60 * 60 * 1000, async () => {
   console.log("[cron] Running Leaderboard Sync...")
   try {
     const result = await processLeaderboardSync()
@@ -566,13 +581,13 @@ setInterval(async () => {
   } catch (error) {
     console.error("[cron] Failed to sync leaderboard", error)
   }
-}, 3 * 60 * 60 * 1000) // 3 hours
+}) // 3 hours
 
 
 // ============================================================
 // TENANT LIFECYCLE MANAGEMENT (RETENTION & CLEANUP)
 // ============================================================
-setInterval(async () => {
+runWithLock("tenantLifecycle", 6 * 60 * 60 * 1000, async () => {
   console.log("[cron] Running Tenant Lifecycle Management check...")
   try {
     const now = new Date()
@@ -594,6 +609,7 @@ setInterval(async () => {
     // 1. Fase 1: Peringatan 30 Hari (Re-engagement)
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
     
+    // PAGINATION FIX: Limit to 100 tenants per run to prevent OOM
     const warnTenants = await db.tenant.findMany({
       where: {
         isActive: true,
@@ -601,7 +617,8 @@ setInterval(async () => {
         lastActiveAt: {
           lte: thirtyDaysAgo
         }
-      }
+      },
+      take: 100
     })
 
     for (const tenant of warnTenants) {
@@ -658,7 +675,8 @@ setInterval(async () => {
         isActive: true,
         retentionStatus: "WARN_30",
         lastActiveAt: { lte: sixtyDaysAgo }
-      }
+      },
+      take: 100
     })
 
     for (const tenant of suspendTenants) {
@@ -704,7 +722,8 @@ setInterval(async () => {
         retentionStatus: "SUSPENDED_60",
         lastActiveAt: { lte: ninetyDaysAgoDelete },
         deletedAt: null
-      }
+      },
+      take: 100
     })
 
     for (const tenant of deleteTenants) {
@@ -747,4 +766,4 @@ setInterval(async () => {
   } catch (error) {
     console.error("[cron] Failed Tenant Lifecycle check", error)
   }
-}, 6 * 60 * 60 * 1000) // Runs once every 6 hours
+}) // Runs once every 6 hours

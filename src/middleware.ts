@@ -29,10 +29,10 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
       if (cached) return cached as string
     }
 
-    // Edge-Safe: Fetch from local Node.js API instead of importing database TCP Sockets directly
-    const port = process.env.PORT || "3000"
+    // Edge-Safe: Fetch from absolute URL or local Node.js API
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `http://127.0.0.1:${process.env.PORT || "3000"}`
     const res = await fetch(
-      `http://127.0.0.1:${port}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
+      `${baseUrl}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
       {
         headers: {
           "x-internal-secret": INTERNAL_SECRET,
@@ -64,9 +64,9 @@ async function getCustomDomainForSlug(slug: string, requestUrl: string): Promise
       if (cached) return cached as string
     }
 
-    const port = process.env.PORT || "3000"
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `http://127.0.0.1:${process.env.PORT || "3000"}`
     const res = await fetch(
-      `http://127.0.0.1:${port}/api/internal/slug-lookup?slug=${encodeURIComponent(slug)}`,
+      `${baseUrl}/api/internal/slug-lookup?slug=${encodeURIComponent(slug)}`,
       {
         headers: {
           "x-internal-secret": INTERNAL_SECRET,
@@ -172,9 +172,9 @@ export default async function middleware(request: NextRequest) {
   else if (lfiPattern.test(payloadString)) attackType = "LFI/Path Traversal"
 
   if (attackType) {
-    const port = process.env.PORT || "3000"
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `http://127.0.0.1:${process.env.PORT || "3000"}`
     const userAgent = request.headers.get("user-agent") || ""
-    fetch(`http://127.0.0.1:${port}/api/internal/security-alert`, {
+    fetch(`${baseUrl}/api/internal/security-alert`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -490,8 +490,8 @@ export const config = {
      * 1. /api (API routes)
      * 2. /_next (Next.js internals)
      * 3. /static (inside /public)
-     * 4. all root files (favicon.ico, sitemap.xml, robots.txt, etc.)
+     * 4. common static assets (images, fonts, etc), BUT allow .xml and .txt for sitemaps/robots
      */
-    "/((?!_next|static|[\\w-]+\\.\\w+).*)",
+    "/((?!_next|static|[^/]+\\.(?:png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|css|js)).*)",
   ],
 }

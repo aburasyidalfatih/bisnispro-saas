@@ -142,11 +142,39 @@ export async function processLeaderboardSync() {
     })
   })
 
-  await db.$transaction(updatePromises)
+  // BATCH TRANSACTIONS: process in chunks of 100 to avoid DB locks
+  const chunkSize = 100
+  for (let i = 0; i < updatePromises.length; i += chunkSize) {
+    const chunk = updatePromises.slice(i, i + chunkSize)
+    await db.$transaction(chunk)
+  }
 
   // ============================================================
   // Step 4: Deteksi perubahan peringkat & kirim notifikasi
   // ============================================================
+  const allAffectedTenantIds = scores
+    .filter((s, i) => {
+      const old = oldRankMap[s.tenantId]
+      return old && old.rank > 0 && old.rank !== i + 1
+    })
+    .map((s) => s.tenantId)
+
+  let adminMap: Record<string, string[]> = {}
+  if (allAffectedTenantIds.length > 0) {
+    const allAdmins = await db.tenantUser.findMany({
+      where: { tenantId: { in: allAffectedTenantIds }, role: { in: ["owner", "admin"] } },
+      select: { tenantId: true, userId: true }
+    })
+    
+    adminMap = allAdmins.reduce((acc, curr) => {
+      if (!acc[curr.tenantId]) acc[curr.tenantId] = []
+      acc[curr.tenantId].push(curr.userId)
+      return acc
+    }, {} as Record<string, string[]>)
+  }
+
+  const allNotifications = []
+
   for (let i = 0; i < scores.length; i++) {
     const newRank = i + 1
     const score = scores[i]
@@ -183,31 +211,41 @@ export async function processLeaderboardSync() {
 
     // Buat notifikasi untuk semua admin/owner tenant ini
     try {
-      const admins = await db.tenantUser.findMany({
-        where: { tenantId: score.tenantId, role: { in: ["owner", "admin"] } },
-        select: { userId: true }
-      })
-
-      for (const admin of admins) {
-        await db.notification.create({
-          data: {
+      const adminUserIds = adminMap[score.tenantId] || []
+      if (adminUserIds.length > 0) {
+        for (const userId of adminUserIds) {
+          allNotifications.push({
             tenantId: score.tenantId,
-            userId: admin.userId,
+            userId: userId,
             title,
             message,
             type,
             channel: "inapp",
-          }
-        })
+          })
 
-        // Kirim via SSE realtime
-        publishEvent(`user-notif:${admin.userId}`, {
-          type: "NEW_NOTIFICATION",
-          notification: { title, message, type, isRead: false },
-        }).catch(() => {})
+          // Kirim via SSE realtime
+          publishEvent(`user-notif:${userId}`, {
+            type: "NEW_NOTIFICATION",
+            notification: { title, message, type, isRead: false },
+          }).catch(() => {})
+        }
       }
     } catch (e) {
       console.error(`[LEADERBOARD] Failed to notify tenant ${score.tenantId}`, e)
+    }
+  }
+
+  if (allNotifications.length > 0) {
+    try {
+      // Chunk creation to avoid large payloads
+      const chunkSize = 1000
+      for (let i = 0; i < allNotifications.length; i += chunkSize) {
+        await db.notification.createMany({
+          data: allNotifications.slice(i, i + chunkSize)
+        })
+      }
+    } catch (e) {
+      console.error("[LEADERBOARD] Failed to createMany notifications", e)
     }
   }
 

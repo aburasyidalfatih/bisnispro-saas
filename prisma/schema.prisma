@@ -2103,6 +2103,7 @@ model PageView {
 
   @@index([tenantId])
   @@index([createdAt])
+  @@index([createdAt, tenantId])
   @@index([tenantId, createdAt(sort: Desc)])
   @@index([tenantId, source])
   @@index([tenantId, path])
