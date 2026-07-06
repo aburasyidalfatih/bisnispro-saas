@@ -10,7 +10,7 @@ const donateSchema = z.object({
   donorName: z.string().min(1),
   donorEmail: z.string().email().optional(),
   amount: z.number().min(1000),
-  method: z.enum(["WALLET", "TRIPAY"]),
+  method: z.enum(["WALLET", "TRIPAY", "MANUAL"]),
   message: z.string().optional(),
   isAnonymous: z.boolean().default(false),
   paymentChannel: z.string().optional(), // Untuk TRIPAY
@@ -99,6 +99,25 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Donasi berhasil dikirim!", method: "WALLET" })
   }
 
+  // === DONASI VIA MANUAL ===
+  if (method === "MANUAL") {
+    const donation = await db.donation.create({
+      data: {
+        campaignId,
+        tenantId,
+        userId: session?.user?.id,
+        donorName: isAnonymous ? "Hamba Allah" : donorName,
+        donorEmail,
+        amount,
+        method: "MANUAL",
+        isAnonymous,
+        message,
+        status: "PENDING",
+      },
+    })
+    return NextResponse.json({ message: "Donasi manual berhasil dicatat", donationId: donation.id })
+  }
+
   // === DONASI VIA TRIPAY ===
   if (!paymentChannel) return NextResponse.json({ error: "Pilih metode pembayaran" }, { status: 400 })
 
@@ -119,9 +138,9 @@ export async function POST(req: Request) {
     data: {
       campaignId,
       tenantId,
+      userId: session?.user?.id,
       donorName: isAnonymous ? "Hamba Allah" : donorName,
       donorEmail,
-      userId: session?.user?.id,
       amount,
       method: "TRIPAY",
       reference: tripayResult.data.reference,

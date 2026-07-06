@@ -9,6 +9,8 @@ const campaignSchema = z.object({
   title: z.string().min(3),
   description: z.string().optional(),
   imageUrl: z.string().optional(),
+  qrisUrl: z.string().optional(),
+  bankInfo: z.string().optional(),
   targetAmount: z.number().min(1),
   startDate: z.string(),
   endDate: z.string().optional(),

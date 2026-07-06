@@ -13,6 +13,7 @@ import { ArrowLeft, Loader2, Heart } from"lucide-react"
 import Link from"next/link"
 import dynamic from"next/dynamic"
 import { Textarea } from "@/components/ui/textarea"
+import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
 
 export default function CreateCampaignPage() {
   const { data: session } = useSession()
@@ -24,6 +25,8 @@ export default function CreateCampaignPage() {
     title:"",
     description:"",
     imageUrl:"",
+    qrisUrl:"",
+    bankInfo:"",
     targetAmount: 0,
     startDate: new Date().toISOString().split("T")[0],
     endDate:"",
@@ -114,7 +117,30 @@ export default function CreateCampaignPage() {
               placeholder={autoSlug ||"pembangunan-masjid"}
               className="rounded-xl font-mono text-sm"
             />
-            <p className="text-xs text-muted-foreground">Akses publik: /donasi/{form.slug || autoSlug ||"slug-kampanye"}</p>
+            <p className="text-xs text-muted-foreground">Akses publik: /donasi/{form.slug || autoSlug ||"slug-campaign"}</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>QRIS Sekolah (Unggah Gambar Barcode)</Label>
+            {tenant && (
+              <ImageUploadDirect
+                tenantId={tenant.id}
+                value={form.qrisUrl}
+                onChange={url => setForm(f => ({ ...f, qrisUrl: url }))}
+                subDir="donations"
+                hint="Upload file gambar QRIS sekolah"
+              />
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Informasi Rekening Bank (Manual)</Label>
+            <Textarea
+              value={form.bankInfo}
+              onChange={e => setForm(f => ({ ...f, bankInfo: e.target.value }))}
+              placeholder="Contoh: Transfer ke BSI 123-456-7890 a.n. Masjid Sekolah"
+              className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm min-h-[80px] resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+            />
           </div>
 
           <div className="flex items-center justify-between p-4 rounded-xl bg-rose-500/5 border border-rose-500/10">

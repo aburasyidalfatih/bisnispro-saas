@@ -10,9 +10,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     where: { id, deletedAt: null, ...(tenantId ? { tenantId } : {}) },
     include: {
       donations: {
-        where: { status: "PAID" },
-        orderBy: { paidAt: "desc" },
-        take: 20,
+        orderBy: { createdAt: "desc" },
       },
     },
   })

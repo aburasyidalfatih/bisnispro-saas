@@ -18,6 +18,8 @@ const QUICK_AMOUNTS = [10000, 25000, 50000, 100000, 250000, 500000]
 
 interface Campaign {
   id: string; title: string; description?: string | null; imageUrl?: string | null
+  qrisUrl?: string | null
+  bankInfo?: string | null
   targetAmount: number; collectedAmount: number; endDate?: Date | string | null
   tenant: { id: string; name: string; logo?: string | null; slug: string }
   donations: {
@@ -54,8 +56,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
           donorName: form.isAnonymous ? "Hamba Allah" : form.donorName,
           donorEmail: form.donorEmail || undefined,
           amount,
-          method: "TRIPAY",
-          paymentChannel: form.paymentChannel,
+          method: "MANUAL",
           message: form.message || undefined,
           isAnonymous: form.isAnonymous,
         }),
@@ -63,12 +64,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
 
-      if (data.checkoutUrl) {
-        setCheckoutUrl(data.checkoutUrl)
-        setStep("payment")
-      } else {
-        setStep("success")
-      }
+      setStep("payment")
     } catch (err: any) {
       toast({ title: "Gagal memproses donasi", description: err.message, variant: "destructive" })
     } finally {
@@ -91,18 +87,48 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
     )
   }
 
-  if (step === "payment" && checkoutUrl) {
+  if (step === "payment") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-5">
-        <div className="max-w-md w-full text-center space-y-5">
+      <div className="min-h-screen flex items-center justify-center p-5 bg-gradient-to-b from-rose-50/30 to-white">
+        <div className="max-w-md w-full bg-white rounded-2xl border border-gray-100 p-6 shadow-xl text-center space-y-6">
           <h1 className="text-2xl font-bold">Selesaikan Pembayaran</h1>
-          <p className="text-muted-foreground">Anda akan diarahkan ke halaman pembayaran untuk melanjutkan donasi Rp {amount.toLocaleString("id-ID")}.</p>
-          <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
-            <Button className="w-full h-14 rounded-2xl text-lg font-bold">
-              Lanjutkan Pembayaran →
+          <p className="text-sm text-muted-foreground">
+            Silakan lakukan transfer sebesar <strong className="text-rose-600 text-lg">Rp {amount.toLocaleString("id-ID")}</strong> menggunakan metode di bawah ini:
+          </p>
+
+          {campaign.qrisUrl && (
+            <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-gray-200 flex flex-col items-center gap-2">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Scan QRIS</span>
+              <div className="relative w-48 h-48 bg-white border rounded-lg p-2 overflow-hidden flex items-center justify-center">
+                <img src={normalizeImageUrl(campaign.qrisUrl) || campaign.qrisUrl} alt="QRIS Sekolah" className="object-contain max-h-full max-w-full" />
+              </div>
+              <p className="text-[10px] text-muted-foreground">Bisa discan dengan aplikasi m-banking atau e-wallet apa saja</p>
+            </div>
+          )}
+
+          {campaign.bankInfo && (
+            <div className="bg-slate-50 p-4 rounded-xl border border-gray-200 text-left space-y-2">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest block text-center">Transfer Bank</span>
+              <p className="text-sm text-foreground font-mono bg-white px-3 py-2 rounded border break-all whitespace-pre-wrap">
+                {campaign.bankInfo}
+              </p>
+            </div>
+          )}
+
+          {!campaign.qrisUrl && !campaign.bankInfo && (
+            <div className="bg-slate-50 p-4 rounded-xl border text-center text-muted-foreground text-sm">
+              Silakan hubungi pihak sekolah untuk informasi rekening donasi.
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Button onClick={() => setStep("success")} className="w-full h-14 rounded-xl text-base font-bold bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md">
+              Saya Sudah Melakukan Pembayaran
             </Button>
-          </a>
-          <button onClick={() => setStep("form")} className="text-sm text-muted-foreground underline">← Kembali</button>
+            <button onClick={() => setStep("form")} className="text-xs text-muted-foreground underline block mx-auto">
+              ← Ubah Nominal / Data
+            </button>
+          </div>
         </div>
       </div>
     )

@@ -1597,6 +1597,8 @@ model DonationCampaign {
   title           String
   description     String?
   imageUrl        String?
+  qrisUrl         String?
+  bankInfo        String?
   targetAmount    Float
   collectedAmount Float      @default(0)
   startDate       DateTime
