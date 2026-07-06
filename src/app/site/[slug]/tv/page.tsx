@@ -15,6 +15,7 @@ export default function SchoolTvPage() {
 
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [now, setNow] = useState(new Date())
   const [isFullscreen, setIsFullscreen] = useState(false)
 
@@ -47,9 +48,14 @@ export default function SchoolTvPage() {
       if (res.ok) {
         const json = await res.json()
         setData(json)
+        setError(null)
+      } else {
+        const errJson = await res.json().catch(() => ({}))
+        setError(errJson.error || `Server error (${res.status})`)
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e)
+      setError(e.message || "Connection error")
     } finally {
       setLoading(false)
     }
@@ -62,6 +68,26 @@ export default function SchoolTvPage() {
     const interval = setInterval(fetchData, 60000) // refresh every 1 minute
     return () => clearInterval(interval)
   }, [slug]) // Intentionally not depending on 'now' to avoid fetching every second
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white px-4 text-center">
+        <div className="h-16 w-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4 border border-red-500/20">
+          <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold mb-2">Gagal Memuat Layar TV Sekolah</h2>
+        <p className="text-slate-400 max-w-md mb-6 text-sm">{error}</p>
+        <button 
+          onClick={() => { setLoading(true); setError(null); fetchData(); }}
+          className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl border border-white/10 transition-colors font-medium text-sm"
+        >
+          Coba Lagi
+        </button>
+      </div>
+    )
+  }
 
   if (loading || !data) {
     return (
