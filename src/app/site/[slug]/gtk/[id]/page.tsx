@@ -218,7 +218,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                        </div>
                     </li>
                     <li className="flex items-start gap-4">
-                       <div className="h-12 w-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0"><GraduationCap className="h-5 w-5" /></div>
+                       <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0"><GraduationCap className="h-5 w-5" /></div>
                        <div>
                           <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Pendidikan</p>
                           <p className="font-bold text-slate-800 text-base">{staff.education || "S1 Pendidikan"}</p>
