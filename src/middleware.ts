@@ -417,7 +417,14 @@ export default async function middleware(request: NextRequest) {
     // Rewrite ke website sekolah
     const url = request.nextUrl.clone()
     url.pathname = `/site/${subdomain}${pathname}`
-    const response = NextResponse.rewrite(url)
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set("x-pathname", pathname)
+    requestHeaders.set("x-tenant-slug", subdomain)
+    const response = NextResponse.rewrite(url, {
+      request: {
+        headers: requestHeaders,
+      },
+    })
     response.headers.set("x-tenant-slug", subdomain)
     response.headers.set("x-hostname", hostname)
     response.headers.set("x-root-domain", rootDomain)
@@ -468,7 +475,14 @@ export default async function middleware(request: NextRequest) {
 
     const url = request.nextUrl.clone()
     url.pathname = `/site/${slug}${pathname}`
-    const response = NextResponse.rewrite(url)
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set("x-pathname", pathname)
+    requestHeaders.set("x-tenant-slug", slug)
+    const response = NextResponse.rewrite(url, {
+      request: {
+        headers: requestHeaders,
+      },
+    })
     response.headers.set("x-tenant-slug", slug)
     response.headers.set("x-custom-domain", hostname)
     response.headers.set("x-hostname", hostname)

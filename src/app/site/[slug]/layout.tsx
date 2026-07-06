@@ -98,6 +98,8 @@ export default async function WebsiteLayout({
   
   const hostname = headerList.get("x-hostname") || headerList.get("host") || ""
   const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const pathname = headerList.get("x-pathname") || ""
+  const isTvPage = pathname.endsWith("/tv") || pathname.includes("/tv?")
   
   const isMainDomain = hostname === rootDomain || hostname === `www.${rootDomain}` || hostname.startsWith("localhost")
   const isSubdomain = hostname.endsWith(`.${rootDomain}`) && !isMainDomain
@@ -217,8 +219,8 @@ export default async function WebsiteLayout({
 
         <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
         
-        {/* Render Navbar hanya jika tidak menggunakan Custom Theme */}
-        {!tenant.customThemeId && (
+        {/* Render Navbar hanya jika tidak menggunakan Custom Theme dan bukan halaman TV */}
+        {!isTvPage && !tenant.customThemeId && (
           <div className="print:hidden flex flex-col">
             {(tenant.settings as any)?.marqueeText?.trim() && (
               <div className="bg-primary text-primary-foreground text-sm py-2 overflow-hidden flex whitespace-nowrap">
@@ -252,21 +254,21 @@ export default async function WebsiteLayout({
         
         <main className="flex-1">{children}</main>
         
-        {/* Render Footer hanya jika tidak menggunakan Custom Theme */}
-        {!tenant.customThemeId && (
+        {/* Render Footer hanya jika tidak menggunakan Custom Theme dan bukan halaman TV */}
+        {!isTvPage && !tenant.customThemeId && (
           <div className="print:hidden">
             <WebsiteFooter tenant={tenantWithFreshMenus as any} />
           </div>
         )}
         
         <div className="print:hidden">
-          {activePopup && <PopupRenderer popup={activePopup} />}
+          {!isTvPage && activePopup && <PopupRenderer popup={activePopup} />}
         </div>
         
         <MediumZoomSetup />
         
         {/* Floating WhatsApp Widget */}
-        {tenant.whatsapp && !tenant.customThemeId && (
+        {!isTvPage && tenant.whatsapp && !tenant.customThemeId && (
           <div className="print:hidden">
             <FloatingWhatsApp whatsappNumber={tenant.whatsapp} message={`Halo Admin ${tenant.name}, saya ingin bertanya mengenai info di website.`} />
           </div>
