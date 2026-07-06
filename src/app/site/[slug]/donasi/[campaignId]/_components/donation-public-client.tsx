@@ -80,8 +80,11 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
             <CheckCircle className="h-12 w-12 text-emerald-600" />
           </div>
           <h1 className="text-3xl font-black">Terima Kasih! 🎉</h1>
-          <p className="text-muted-foreground">Donasi Anda sebesar <strong>Rp {amount.toLocaleString("id-ID")}</strong> untuk <strong>{campaign.title}</strong> telah berhasil.</p>
-          <p className="text-sm text-muted-foreground">Semoga menjadi amal jariyah yang terus mengalir.</p>
+          <p className="text-muted-foreground">Konfirmasi donasi Anda sebesar <strong>Rp {amount.toLocaleString("id-ID")}</strong> untuk <strong>{campaign.title}</strong> telah kami terima.</p>
+          <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200/50 px-4 py-3 rounded-xl max-w-sm mx-auto font-medium">
+            Status donasi saat ini sedang diverifikasi oleh pihak sekolah. Nominal donasi terkumpul akan bertambah setelah pembayaran Anda disetujui admin.
+          </p>
+          <p className="text-xs text-muted-foreground">Semoga menjadi amal jariyah yang terus mengalir.</p>
         </div>
       </div>
     )

@@ -113,7 +113,7 @@ export default function CampaignDetailPage({ params }: Props) {
           tenantId: tenant.id,
           ...form,
           targetAmount: Number(form.targetAmount),
-          startDate: new Date(form.startDate),
+          startDate: form.startDate ? new Date(form.startDate) : undefined,
           endDate: form.endDate ? new Date(form.endDate) : null,
         }),
       })

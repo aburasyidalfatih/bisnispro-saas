@@ -28,7 +28,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     where: { id },
     data: {
       ...data,
-      endDate: data.endDate ? new Date(data.endDate) : undefined,
+      startDate: data.startDate ? new Date(data.startDate) : undefined,
+      endDate: data.endDate ? new Date(data.endDate) : (data.endDate === null ? null : undefined),
     },
   })
   return NextResponse.json(campaign)
