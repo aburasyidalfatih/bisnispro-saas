@@ -15,7 +15,7 @@ interface LogOptions {
 /**
  * Logs an error to the database.
  */
-export async function logAppError(
+async function logAppError(
   category: ErrorCategory,
   message: string,
   error: any = null,
@@ -76,12 +76,6 @@ export async function logAppError(
     console.error("[ERROR_LOGGER_FAILED]", e)
   }
 }
-
-/**
- * Use this for system crashes, database failures, unhandled exceptions.
- */
-export const logSystemError = (message: string, error?: any, options?: LogOptions) => 
-  logAppError("SYSTEM_BUG", message, error, options)
 
 /**
  * Use this for bad requests, validation errors, wrong passwords, etc.

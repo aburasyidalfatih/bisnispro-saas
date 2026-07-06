@@ -56,7 +56,7 @@ function sanitizeDirName(name: string): string {
   return name.replace(/[^a-zA-Z0-9_-]/g, "")
 }
 
-export function ensureUploadDir(subDir?: string) {
+function ensureUploadDir(subDir?: string) {
   const safeSub = subDir ? sanitizeDirName(subDir) : ""
   const dir = safeSub ? path.join(UPLOAD_DIR, safeSub) : UPLOAD_DIR
   if (!fs.existsSync(dir)) {
