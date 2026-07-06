@@ -10,7 +10,7 @@ import {
   Wallet, Store, Heart, FileText, Megaphone, MessageSquare,
   CreditCard, BrainCircuit, Mail, ClipboardList, User,
   BarChart3, ToggleLeft, ToggleRight, CheckCircle2, Loader2,
-  Zap, Crown, Sparkles, Share2,
+  Zap, Crown, Sparkles, Share2, MonitorSmartphone,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
