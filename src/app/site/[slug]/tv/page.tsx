@@ -45,6 +45,7 @@ export default function SchoolTvPage() {
   const [error, setError] = useState<string | null>(null)
   const [now, setNow] = useState(new Date())
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [activePageIndex, setActivePageIndex] = useState(0)
 
   // Fullscreen Logic
   const toggleFullscreen = () => {
@@ -155,6 +156,26 @@ export default function SchoolTvPage() {
     return isTimeActive(p.time || "", currentMins)
   })
 
+  // Pagination for Active Schedules (Maximum 12 classes per page: 4 columns, 3 rows)
+  const itemsPerPage = 12
+  const totalPages = Math.ceil(activeSchedules.length / itemsPerPage)
+
+  useEffect(() => {
+    if (totalPages <= 1) {
+      setActivePageIndex(0)
+      return
+    }
+    const interval = setInterval(() => {
+      setActivePageIndex(prev => (prev + 1) % totalPages)
+    }, 10000) // Switch page every 10 seconds
+    return () => clearInterval(interval)
+  }, [totalPages])
+
+  const pagedActiveSchedules = activeSchedules.slice(
+    activePageIndex * itemsPerPage,
+    (activePageIndex + 1) * itemsPerPage
+  )
+
   // Sort teachers: active first, then standby
   const staffStatuses = (data.allStaff || [])
     .map((staff: any) => {
@@ -228,11 +249,16 @@ export default function SchoolTvPage() {
               <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
             </div>
             <h2 className="text-2xl font-bold uppercase tracking-widest text-slate-200">Sedang Berlangsung</h2>
+            {totalPages > 1 && (
+              <span className="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold uppercase tracking-wider animate-pulse ml-2">
+                Halaman {activePageIndex + 1} dari {totalPages}
+              </span>
+            )}
           </div>
 
           <div className="flex-1 overflow-hidden relative min-h-[300px]">
             <div className="absolute inset-0 overflow-y-auto pb-10 hide-scrollbar scroll-smooth">
-              {activeSchedules.length === 0 ? (
+              {pagedActiveSchedules.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-slate-500 bg-white/5 rounded-3xl border border-white/10 p-12">
                   <Clock className="h-24 w-24 mb-6 opacity-20" />
                   <p className="text-3xl font-semibold">Tidak ada kelas yang berlangsung saat ini</p>
@@ -240,11 +266,11 @@ export default function SchoolTvPage() {
               ) : (
                 <div className={cn(
                   "grid gap-4 pb-4",
-                  activeSchedules.length <= 6
+                  pagedActiveSchedules.length <= 6
                     ? "grid-cols-2 xl:grid-cols-3"
-                    : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+                    : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                 )}>
-                  {activeSchedules.map((s: any, i: number) => {
+                  {pagedActiveSchedules.map((s: any, i: number) => {
                     const isCompact = activeSchedules.length > 6
                     return (
                       <div 
@@ -298,7 +324,7 @@ export default function SchoolTvPage() {
             </div>
             
             {/* Scroll Indicator Gradient */}
-            {activeSchedules.length > 6 && (
+            {totalPages <= 1 && activeSchedules.length > 6 && (
               <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none"></div>
             )}
           </div>
