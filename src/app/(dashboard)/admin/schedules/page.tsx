@@ -9,7 +9,7 @@ import { Label } from"@/components/ui/label"
 import { Input } from"@/components/ui/input"
 import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 import { toast } from"@/hooks/use-toast"
-import { Calendar, Clock, Plus, Trash2, Loader2, BookOpen, Users, GraduationCap } from"lucide-react"
+import { Calendar, Clock, Plus, Trash2, Loader2, BookOpen, Users, GraduationCap, Download } from"lucide-react"
 import { cn } from"@/lib/utils"
 
 const DAYS = ["","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
@@ -102,6 +102,98 @@ export default function SchedulesPage() {
     if (selectedClass) await loadSchedules(selectedClass)
   }
 
+  const exportToExcel = async () => {
+    if (!selectedClass || schedules.length === 0) {
+      toast({ title: "Gagal", description: "Tidak ada jadwal untuk kelas ini.", variant: "destructive" })
+      return
+    }
+
+    try {
+      const ExcelJS = (await import("exceljs")).default
+      const workbook = new ExcelJS.Workbook()
+      const sheet = workbook.addWorksheet("Jadwal Pelajaran")
+      
+      const className = classrooms.find(c => c.id === selectedClass)?.name || "Kelas"
+      
+      // Setup styles & columns
+      sheet.columns = [
+        { header: "", key: "time", width: 18 },
+        { header: "", key: "1", width: 22 },
+        { header: "", key: "2", width: 22 },
+        { header: "", key: "3", width: 22 },
+        { header: "", key: "4", width: 22 },
+        { header: "", key: "5", width: 22 },
+        { header: "", key: "6", width: 22 },
+      ]
+
+      // Headers
+      sheet.mergeCells('A1:G1')
+      const titleCell = sheet.getCell('A1')
+      titleCell.value = "JADWAL PELAJARAN"
+      titleCell.font = { bold: true, size: 14 }
+      titleCell.alignment = { horizontal: 'center', vertical: 'middle' }
+      
+      sheet.mergeCells('A2:G2')
+      const subtitleCell = sheet.getCell('A2')
+      subtitleCell.value = `Kelas: ${className}`
+      subtitleCell.font = { bold: true, size: 12 }
+      subtitleCell.alignment = { horizontal: 'center', vertical: 'middle' }
+
+      sheet.addRow([])
+
+      // Table Headers
+      const headerRow = sheet.addRow(["Jam & Waktu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"])
+      headerRow.font = { bold: true }
+      headerRow.alignment = { horizontal: 'center', vertical: 'middle' }
+      headerRow.eachCell(cell => {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0E0E0' } }
+        cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } }
+      })
+
+      // Get unique time slots and sort them
+      const timeSlots = Array.from(new Set(schedules.map(s => `${s.startTime} - ${s.endTime}`)))
+        .sort((a, b) => a.localeCompare(b))
+
+      // Fill data
+      timeSlots.forEach(timeLabel => {
+        const rowData: any = { time: timeLabel }
+        let rowHeight = 30
+        
+        for (let day = 1; day <= 6; day++) {
+          const classInSlot = schedules.find(s => s.dayOfWeek === day && `${s.startTime} - ${s.endTime}` === timeLabel)
+          if (classInSlot) {
+            rowData[String(day)] = `${classInSlot.subject.name}\n(${classInSlot.staff.name})`
+            rowHeight = 45 // taller if content exists
+          } else {
+            rowData[String(day)] = "-"
+          }
+        }
+        
+        const row = sheet.addRow(rowData)
+        row.height = rowHeight
+        row.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
+        row.eachCell(cell => {
+          cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } }
+        })
+      })
+
+      // Generate and Download
+      const buffer = await workbook.xlsx.writeBuffer()
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Jadwal_${className.replace(/\s+/g, '_')}.xlsx`
+      a.click()
+      URL.revokeObjectURL(url)
+      
+      toast({ title: "Berhasil", description: "File Excel berhasil diunduh" })
+    } catch (e) {
+      console.error(e)
+      toast({ title: "Gagal", description: "Terjadi kesalahan saat membuat Excel", variant: "destructive" })
+    }
+  }
+
   // Group by day
   const byDay = DAYS.slice(1).map((day, idx) => ({
     day, idx: idx + 1,
@@ -116,9 +208,14 @@ export default function SchedulesPage() {
           <p className="text-muted-foreground">Kelola roster jadwal per kelas</p>
         </div>
         {selectedClass && (
-          <Button className="gap-2 btn-gradient flex items-center justify-center h-10 px-4" onClick={() => setShowForm(true)}>
-            <Plus className="h-4 w-4" /> Tambah Slot
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="gap-2 h-10 px-4 font-semibold text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 border-emerald-200" onClick={exportToExcel}>
+              <Download className="h-4 w-4" /> Export Excel
+            </Button>
+            <Button className="gap-2 btn-gradient flex items-center justify-center h-10 px-4" onClick={() => setShowForm(true)}>
+              <Plus className="h-4 w-4" /> Tambah Slot
+            </Button>
+          </div>
         )}
       </div>
 
