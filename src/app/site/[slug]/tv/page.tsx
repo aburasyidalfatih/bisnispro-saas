@@ -238,43 +238,61 @@ export default function SchoolTvPage() {
                   <p className="text-3xl font-semibold">Tidak ada kelas yang berlangsung saat ini</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 xl:grid-cols-3 gap-5 pb-4">
-                  {activeSchedules.map((s: any, i: number) => (
-                    <div key={i} className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl border border-slate-700 p-6 shadow-xl relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${i * 100}ms` }}>
-                      <div className="absolute top-0 right-0 p-4">
-                         <span className="text-xs font-black bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full uppercase tracking-wider">
-                           {s.startTime} - {s.endTime}
-                         </span>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
-                          <span className="text-lg font-black text-primary">{s.classroom.name}</span>
+                <div className={cn(
+                  "grid gap-4 pb-4",
+                  activeSchedules.length <= 6
+                    ? "grid-cols-2 xl:grid-cols-3"
+                    : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+                )}>
+                  {activeSchedules.map((s: any, i: number) => {
+                    const isCompact = activeSchedules.length > 6
+                    return (
+                      <div 
+                        key={i} 
+                        className={cn(
+                          "bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 shadow-xl relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4",
+                          isCompact ? "p-4" : "p-6"
+                        )} 
+                        style={{ animationDelay: `${i * 100}ms` }}
+                      >
+                        <div className="absolute top-0 right-0 p-3">
+                           <span className={cn(
+                             "font-black bg-emerald-500/20 text-emerald-400 rounded-full uppercase tracking-wider",
+                             isCompact ? "text-[10px] px-2 py-0.5" : "text-xs px-3 py-1"
+                           )}>
+                             {s.startTime} - {s.endTime}
+                           </span>
                         </div>
-                        <div className="pr-20">
-                          <h3 className="font-bold text-xl text-white leading-tight line-clamp-2">
-                            {s.subject?.name || s.breakName || "Mata Pelajaran"}
-                          </h3>
+                        
+                        <div className={cn("flex items-center gap-3", isCompact ? "mb-2" : "mb-4")}>
+                          <div className={cn("rounded-xl bg-primary/20 flex items-center justify-center shrink-0", isCompact ? "h-10 w-10" : "h-12 w-12")}>
+                            <span className={cn("font-black text-primary", isCompact ? "text-sm" : "text-lg")}>{s.classroom.name}</span>
+                          </div>
+                          <div className={isCompact ? "pr-14" : "pr-20"}>
+                            <h3 className={cn("font-bold text-white leading-tight line-clamp-2", isCompact ? "text-base" : "text-xl")}>
+                              {s.subject?.name || s.breakName || "Mata Pelajaran"}
+                            </h3>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="mt-auto pt-4 border-t border-slate-700/50 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {s.staff?.imageUrl ? (
-                            <img src={s.staff.imageUrl} alt={s.staff.name} className="h-10 w-10 rounded-full object-cover border border-slate-600" />
-                          ) : (
-                            <div className="h-10 w-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
-                              <UserCircle className="h-6 w-6 text-slate-400" />
+                        <div className={cn("mt-auto border-t border-slate-700/50 flex items-center justify-between", isCompact ? "pt-2" : "pt-4")}>
+                          <div className="flex items-center gap-2">
+                            {s.staff?.imageUrl ? (
+                              <img src={s.staff.imageUrl} alt={s.staff.name} className={cn("rounded-full object-cover border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")} />
+                            ) : (
+                              <div className={cn("rounded-full bg-slate-700 flex items-center justify-center border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")}>
+                                <UserCircle className={cn("text-slate-400", isCompact ? "h-5 w-5" : "h-6 w-6")} />
+                              </div>
+                            )}
+                            <div className="truncate max-w-[120px] sm:max-w-[180px]">
+                              <p className="text-xs font-semibold text-slate-300 truncate">{s.staff?.name || "-"}</p>
+                              <p className="text-[10px] text-slate-500">Guru Pengampu</p>
                             </div>
-                          )}
-                          <div>
-                            <p className="text-sm font-semibold text-slate-300">{s.staff?.name || "-"}</p>
-                            <p className="text-xs text-slate-500">Guru Pengampu</p>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
