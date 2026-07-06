@@ -23,6 +23,10 @@ const themeGradients: Record<string, string> = {
   cyberpunk: "linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #d946ef 100%)", // Neon Cyan-Pink
   midnight: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)", // Deep Space-Indigo
   hologram: "linear-gradient(135deg, #38bdf8 0%, #818cf8 33%, #c084fc 66%, #e879f9 100%)", // Iridescent Pearl-Pink
+  graphite: "linear-gradient(135deg, #9ca3af 0%, #4b5563 50%, #111827 100%)", // Minimalist Grey
+  ruby: "linear-gradient(135deg, #f43f5e 0%, #e11d48 50%, #881337 100%)", // Crimson Red
+  gold: "linear-gradient(135deg, #fde047 0%, #eab308 50%, #854d0e 100%)", // Premium Gold
+  neon: "linear-gradient(135deg, #a3e635 0%, #65a30d 50%, #3f6212 100%)", // Matrix Green
 }
 
 export default function AppearancePage() {
