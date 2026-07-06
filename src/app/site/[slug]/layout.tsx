@@ -15,6 +15,7 @@ import { FloatingWhatsApp } from "./_components/floating-whatsapp"
 import { Suspense } from "react"
 import { normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
 import { MediumZoomSetup } from "@/components/ui/medium-zoom-setup"
+import { unstable_cache } from "next/cache"
 
 export const dynamic = "force-dynamic"
 
@@ -119,18 +120,27 @@ export default async function WebsiteLayout({
     notFound()
   }
 
-  // Fetch website menus dynamically (uncached) to bypass next.js unstable_cache replication/sync issues
+  // Fetch website menus using unstable_cache to avoid heavy DB hits on every page load
   const tenantDb = withTenant(tenant.id)
-  const freshMenus = normalizeWebsiteMenuTree(await tenantDb.websiteMenu.findMany({
-    where: { tenantId: tenant.id, parentId: null, isActive: true },
-    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-    include: {
-      children: {
-        where: { tenantId: tenant.id, isActive: true },
-        orderBy: [{ order: "asc" }, { createdAt: "asc" }]
-      }
-    }
-  }))
+  const getCachedMenus = unstable_cache(
+    async (id: string) => {
+      const menus = await tenantDb.websiteMenu.findMany({
+        where: { tenantId: id, parentId: null, isActive: true },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        include: {
+          children: {
+            where: { tenantId: id, isActive: true },
+            orderBy: [{ order: "asc" }, { createdAt: "asc" }]
+          }
+        }
+      })
+      return normalizeWebsiteMenuTree(menus)
+    },
+    [`tenant-menus-${tenant.id}`],
+    { tags: [`tenant-${tenant.slug}`, `tenant-menus-${tenant.id}`], revalidate: 3600 }
+  )
+
+  const freshMenus = await getCachedMenus(tenant.id)
 
   const tenantWithFreshMenus = {
     ...tenant,

@@ -1,6 +1,6 @@
 import { headers } from "next/headers"
 import { notFound } from "next/navigation"
-
+import { unstable_cache } from "next/cache"
 
 import Link from "next/link"
 import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon } from "lucide-react"
@@ -100,21 +100,23 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     stats = t.settings.customStats
   } else {
     // Calculate real stats from database based on user requirements
-    const siswaAchievementsCount = await db.achievement.count({
-      where: { tenantId: tenantForRender.id, type: "SISWA" }
-    })
-    const guruAchievementsCount = await db.achievement.count({
-      where: { tenantId: tenantForRender.id, type: "GURU" }
-    })
-    const s1s2StaffCount = await db.staff.count({
-      where: { 
-        tenantId: tenantForRender.id, 
-        education: { in: ["S1", "S2", "S3"] } 
-      }
-    })
-    const totalStaffCount = await db.staff.count({
-      where: { tenantId: tenantForRender.id }
-    })
+    const getCachedStats = unstable_cache(
+      async (tenantId: string) => {
+        const siswa = await db.achievement.count({ where: { tenantId, type: "SISWA" } })
+        const guru = await db.achievement.count({ where: { tenantId, type: "GURU" } })
+        const s1s2 = await db.staff.count({ where: { tenantId, education: { in: ["S1", "S2", "S3"] } } })
+        const total = await db.staff.count({ where: { tenantId } })
+        return { siswa, guru, s1s2, total }
+      },
+      [`tenant-stats-${tenantForRender.id}`],
+      { tags: [`tenant-${tenantForRender.slug}`, `tenant-${tenantForRender.slug}-stats`], revalidate: 3600 }
+    )
+
+    const cachedCounts = await getCachedStats(tenantForRender.id)
+    const siswaAchievementsCount = cachedCounts.siswa
+    const guruAchievementsCount = cachedCounts.guru
+    const s1s2StaffCount = cachedCounts.s1s2
+    const totalStaffCount = cachedCounts.total
 
     stats = [
       { value: siswaAchievementsCount > 0 ? `${siswaAchievementsCount}+` : "0", label: "Prestasi Siswa", icon: "Trophy" },

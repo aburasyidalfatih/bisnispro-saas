@@ -4,7 +4,7 @@ import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { popupSchema } from "@/features/popup/schemas/popup.schema"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, unstable_cache } from "next/cache"
 
 
 
@@ -17,12 +17,18 @@ export async function getPopups(tenantId: string) {
   })
 }
 
-export async function getActivePopup(tenantId: string) {
-  // Public access logic (no tenant check needed for website frontend)
-  return await db.popup.findFirst({
-    where: { tenantId, isActive: true },
-    orderBy: { updatedAt: 'desc' },
-  })
+export const getActivePopup = async (tenantId: string) => {
+  const getCachedPopup = unstable_cache(
+    async (id: string) => {
+      return await db.popup.findFirst({
+        where: { tenantId: id, isActive: true },
+        orderBy: { updatedAt: 'desc' },
+      })
+    },
+    [`active-popup-${tenantId}`],
+    { tags: [`tenant-${tenantId}`, `tenant-popup-${tenantId}`], revalidate: 3600 }
+  )
+  return getCachedPopup(tenantId)
 }
 
 export async function getPopupById(id: string, tenantId: string) {
