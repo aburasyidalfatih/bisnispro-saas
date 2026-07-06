@@ -98,7 +98,7 @@ export default function SchoolTvPage() {
     )
   }
 
-  // Filter Active Schedules
+  // Filter Active & Upcoming Schedules
   const currentMins = now.getHours() * 60 + now.getMinutes()
   
   const activeSchedules = data.schedules.filter((s: any) => {
@@ -109,6 +109,32 @@ export default function SchoolTvPage() {
     const endMins = endH * 60 + endM
     return currentMins >= startMins && currentMins <= endMins
   })
+
+  const upcomingSchedules = data.schedules.filter((s: any) => {
+    if (!s.startTime || !s.endTime) return false
+    const [startH, startM] = s.startTime.split(':').map(Number)
+    const startMins = startH * 60 + startM
+    return startMins > currentMins
+  })
+
+  // Sort teachers: active first, then standby
+  const staffStatuses = (data.allStaff || [])
+    .map((staff: any) => {
+      const activeLesson = activeSchedules.find((s: any) => s.staffId === staff.id)
+      return {
+        id: staff.id,
+        name: staff.name,
+        role: staff.role,
+        isTeaching: !!activeLesson,
+        classroomName: activeLesson?.classroom?.name,
+        subjectName: activeLesson?.subject?.name || activeLesson?.breakName
+      }
+    })
+    .sort((a: any, b: any) => {
+      if (a.isTeaching && !b.isTeaching) return -1
+      if (!a.isTeaching && b.isTeaching) return 1
+      return a.name.localeCompare(b.name)
+    })
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-emerald-500/30">
@@ -166,7 +192,7 @@ export default function SchoolTvPage() {
             <h2 className="text-2xl font-bold uppercase tracking-widest text-slate-200">Sedang Berlangsung</h2>
           </div>
 
-          <div className="flex-1 overflow-hidden relative">
+          <div className="flex-1 overflow-hidden relative min-h-[300px]">
             <div className="absolute inset-0 overflow-y-auto pb-10 hide-scrollbar scroll-smooth">
               {activeSchedules.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-slate-500 bg-white/5 rounded-3xl border border-white/10 p-12">
@@ -174,7 +200,7 @@ export default function SchoolTvPage() {
                   <p className="text-3xl font-semibold">Tidak ada kelas yang berlangsung saat ini</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 xl:grid-cols-3 gap-5 pb-8">
+                <div className="grid grid-cols-2 xl:grid-cols-3 gap-5 pb-4">
                   {activeSchedules.map((s: any, i: number) => (
                     <div key={i} className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl border border-slate-700 p-6 shadow-xl relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${i * 100}ms` }}>
                       <div className="absolute top-0 right-0 p-4">
@@ -220,6 +246,30 @@ export default function SchoolTvPage() {
               <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none"></div>
             )}
           </div>
+
+          {/* Section 2: Upcoming Schedules */}
+          {upcomingSchedules.length > 0 && (
+            <div className="mt-6 border-t border-white/5 pt-6 shrink-0">
+              <div className="flex items-center gap-2 mb-4">
+                <Clock className="h-5 w-5 text-blue-400" />
+                <h2 className="text-xl font-bold uppercase tracking-widest text-slate-200">Sesi Selanjutnya</h2>
+              </div>
+              <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+                {upcomingSchedules.slice(0, 4).map((s: any, i: number) => (
+                  <div key={i} className="bg-slate-900/60 rounded-2xl border border-white/5 p-4 flex flex-col justify-between hover:border-blue-500/30 transition-all duration-300">
+                    <span className="text-[10px] font-bold bg-blue-500/10 text-blue-400 self-start px-2 py-0.5 rounded-full border border-blue-500/20 uppercase tracking-widest">
+                      Mulai {s.startTime}
+                    </span>
+                    <div className="my-2">
+                      <h4 className="font-extrabold text-sm text-white line-clamp-1">{s.classroom.name}</h4>
+                      <p className="text-xs text-slate-400 line-clamp-1">{s.subject?.name || s.breakName || "Mata Pelajaran"}</p>
+                    </div>
+                    <span className="text-[10px] text-emerald-400 font-medium truncate">{s.staff?.name || "-"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Sidebar Widgets */}
@@ -246,6 +296,34 @@ export default function SchoolTvPage() {
                 )}
               </div>
           </div>
+
+          {/* Teacher Status Widget */}
+          {staffStatuses.length > 0 && (
+            <div className="bg-slate-900/80 backdrop-blur-md rounded-3xl border border-white/10 p-5 shadow-2xl flex flex-col min-h-[220px] max-h-[300px]">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-100 shrink-0">
+                <Users className="h-5 w-5 text-indigo-400" /> Status Mengajar Guru
+              </h3>
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1 hide-scrollbar">
+                {staffStatuses.map((s: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between p-2.5 rounded-xl bg-black/30 border border-white/5 text-xs">
+                    <div className="flex flex-col gap-0.5 truncate pr-2">
+                      <span className="font-bold text-slate-200 truncate">{s.name}</span>
+                      <span className="text-[10px] text-slate-500 truncate">{s.role || "Pendidik"}</span>
+                    </div>
+                    {s.isTeaching ? (
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold tracking-wide shrink-0">
+                        {s.classroomName}
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-white/5 font-semibold shrink-0">
+                        Standby
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* QR Code Donation Widget */}
           {data.donation && (
