@@ -55,6 +55,7 @@ export async function GET(req: Request) {
         id: tenant.id,
         name: tenant.name,
         logo: tenant.logo,
+        settings: tenant.settings,
       },
       schedules,
       donation,

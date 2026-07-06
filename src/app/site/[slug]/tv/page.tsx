@@ -283,19 +283,28 @@ export default function SchoolTvPage() {
         <div className="flex-1 overflow-hidden relative flex items-center h-full">
           {/* Marquee Animation */}
           <div className="whitespace-nowrap animate-marquee flex items-center text-xl font-medium text-white tracking-wide">
-            <span className="mx-8">Selamat Datang di {data.tenant?.name || "Sistem Cerdas Kami"}! Mari bersama-sama mewujudkan pendidikan berkualitas yang berkarakter.</span>
-            <span className="mx-8">•</span>
-            <span className="mx-8">Mohon jaga kebersihan dan ketertiban di lingkungan sekolah.</span>
-            <span className="mx-8">•</span>
-            <span className="mx-8">Guru piket hari ini: {data.piket?.map((p:any) => p.name).join(", ")}.</span>
-            
-            {/* Duplicate for seamless looping */}
-            <span className="mx-8">•</span>
-            <span className="mx-8">Selamat Datang di {data.tenant?.name || "Sistem Cerdas Kami"}! Mari bersama-sama mewujudkan pendidikan berkualitas yang berkarakter.</span>
-            <span className="mx-8">•</span>
-            <span className="mx-8">Mohon jaga kebersihan dan ketertiban di lingkungan sekolah.</span>
-            <span className="mx-8">•</span>
-            <span className="mx-8">Guru piket hari ini: {data.piket?.map((p:any) => p.name).join(", ")}.</span>
+            {(() => {
+              const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Cerdas Kami"}! Mari bersama-sama mewujudkan pendidikan berkualitas yang berkarakter. \n Mohon jaga kebersihan dan ketertiban di lingkungan sekolah. \n Guru piket hari ini: ${data.piket?.map((p:any) => p.name).join(", ") || "-"}`
+              const marqueeItems = rawMarquee.split('\n').map((item: string) => item.trim()).filter(Boolean)
+              return (
+                <>
+                  {marqueeItems.map((text: string, idx: number) => (
+                    <span key={`m1-${idx}`} className="mx-8">
+                      {text}
+                      {idx < marqueeItems.length - 1 && <span className="ml-16 text-emerald-300">•</span>}
+                    </span>
+                  ))}
+                  {marqueeItems.length > 0 && <span className="mx-8 text-emerald-300">•</span>}
+                  {/* Duplicate for seamless looping */}
+                  {marqueeItems.map((text: string, idx: number) => (
+                    <span key={`m2-${idx}`} className="mx-8">
+                      {text}
+                      {idx < marqueeItems.length - 1 && <span className="ml-16 text-emerald-300">•</span>}
+                    </span>
+                  ))}
+                </>
+              )
+            })()}
           </div>
         </div>
       </footer>
