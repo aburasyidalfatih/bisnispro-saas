@@ -38,10 +38,6 @@ export default async function SchoolTvSettingsPage() {
   const allPlans = setting?.value ? JSON.parse(setting.value) : {}
   const planAccess = allPlans[plan] || {}
 
-  if (!planAccess.school_tv) {
-    return redirect("/admin")
-  }
-
   const isPremium = ["pro", "lite", "premium"].includes(plan)
 
   const tenantDbData = await db.tenant.findUnique({
@@ -49,7 +45,7 @@ export default async function SchoolTvSettingsPage() {
     select: { settings: true }
   })
 
-  if (!isPremium) {
+  if (!isPremium || !planAccess.school_tv) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 pt-12 text-center">
         <div className="h-24 w-24 rounded-full bg-amber-500/10 flex items-center justify-center mb-6 border-4 border-amber-500/20">
