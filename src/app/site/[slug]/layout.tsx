@@ -221,9 +221,9 @@ export default async function WebsiteLayout({
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme dan bukan halaman TV */}
         {!isTvPage && !tenant.customThemeId && (
-          <div className="print:hidden flex flex-col">
+          <div className="print:hidden flex flex-col w-full max-w-full">
             {(tenant.settings as any)?.marqueeText?.trim() && (
-              <div className="bg-primary text-primary-foreground text-sm py-2 overflow-hidden flex whitespace-nowrap">
+              <div className="bg-primary text-primary-foreground text-sm py-2 overflow-hidden flex whitespace-nowrap w-full max-w-full">
                 <div 
                   className="animate-marquee inline-block px-4 min-w-full text-center"
                   style={{ animationDuration: (tenant.settings as any).marqueeSpeed || "25s" }}
