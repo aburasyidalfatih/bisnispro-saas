@@ -68,35 +68,37 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-16 md:-mt-20 mb-20">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
         {stats.map((stat, i) => (
           <div
             key={i}
-            className="group relative flex flex-col items-center justify-center p-6 sm:p-8 text-center rounded-[2rem] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 bg-background/70 backdrop-blur-2xl border border-white/50 dark:border-white/10"
+            className="group relative flex flex-row sm:flex-col items-center justify-start sm:justify-center p-3.5 sm:p-8 text-left sm:text-center rounded-2xl sm:rounded-[2rem] gap-3 sm:gap-0 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 bg-background/70 backdrop-blur-2xl border border-white/50 dark:border-white/10"
           >
             {/* Ambient Background Glow */}
             <div className="absolute -inset-0.5 bg-gradient-to-br from-primary/30 to-primary/0 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700 pointer-events-none" />
             
             {/* Card inner glass effect */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-white/40 dark:from-white/10 dark:to-white/0 rounded-[2rem] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-white/40 dark:from-white/10 dark:to-white/0 rounded-2xl sm:rounded-[2rem] pointer-events-none" />
             
             {/* Crisp inner border for 3D feel */}
-            <div className="absolute inset-px rounded-[31px] bg-gradient-to-b from-white/60 to-transparent dark:from-white/20 dark:to-transparent pointer-events-none opacity-50" />
+            <div className="absolute inset-px rounded-[15px] sm:rounded-[31px] bg-gradient-to-b from-white/60 to-transparent dark:from-white/20 dark:to-transparent pointer-events-none opacity-50" />
             
             {stat.icon && (
-               <div className="mb-5 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground relative z-10 shadow-lg shadow-primary/30 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 overflow-hidden">
-                 <DynamicIcon name={stat.icon} className="h-6 w-6 sm:h-7 sm:w-7 relative z-10" />
+               <div className="flex h-11 w-11 sm:h-16 sm:w-16 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground relative z-10 shadow-lg shadow-primary/30 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 overflow-hidden shrink-0 sm:mb-5">
+                 <DynamicIcon name={stat.icon} className="h-5 w-5 sm:h-7 sm:w-7 relative z-10" />
                  {/* Diagonal shine across icon */}
                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
                </div>
              )}
              
-             <p className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground mb-2 relative z-10 flex items-center justify-center tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70 pb-2 pt-1">
-               <AnimatedCounter value={stat.value} label={stat.label} />
-             </p>
-             <p className="text-[10px] sm:text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest relative z-10 group-hover:text-primary transition-colors">
-               {stat.label}
-             </p>
+             <div className="flex flex-col relative z-10 sm:items-center min-w-0">
+               <p className="text-xl sm:text-5xl md:text-6xl font-black text-foreground sm:mb-2 flex items-center tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70 pb-0.5 sm:pb-2 pt-0.5 sm:pt-1">
+                 <AnimatedCounter value={stat.value} label={stat.label} />
+               </p>
+               <p className="text-[9px] sm:text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wider sm:tracking-widest group-hover:text-primary transition-colors leading-tight truncate sm:normal-case">
+                 {stat.label}
+               </p>
+             </div>
           </div>
         ))}
       </div>
