@@ -20,6 +20,18 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 })
     }
 
+    // Check feature access
+    const plan = tenant.plan?.toLowerCase() || "free"
+    const setting = await db.platformSetting.findUnique({
+      where: { key: "PLAN_FEATURE_ACCESS" }
+    })
+    const allPlans = setting?.value ? JSON.parse(setting.value) : {}
+    const planAccess = allPlans[plan] || {}
+
+    if (!planAccess.school_tv) {
+      return NextResponse.json({ error: "Feature School TV tidak aktif untuk tenant ini" }, { status: 403 })
+    }
+
     let dayOfWeek: number
     if (dayParam) {
       dayOfWeek = parseInt(dayParam)

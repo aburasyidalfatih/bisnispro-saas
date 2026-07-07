@@ -29,7 +29,20 @@ export default async function SchoolTvSettingsPage() {
   if (!tenant) return redirect("/login")
   
   const tvUrl = getTvUrl(tenant.slug)
-  const isPremium = ["pro", "lite", "premium"].includes(tenant.plan?.toLowerCase() || "")
+  
+  // Check feature access
+  const plan = tenant.plan?.toLowerCase() || "free"
+  const setting = await db.platformSetting.findUnique({
+    where: { key: "PLAN_FEATURE_ACCESS" }
+  })
+  const allPlans = setting?.value ? JSON.parse(setting.value) : {}
+  const planAccess = allPlans[plan] || {}
+
+  if (!planAccess.school_tv) {
+    return redirect("/admin")
+  }
+
+  const isPremium = ["pro", "lite", "premium"].includes(plan)
 
   const tenantDbData = await db.tenant.findUnique({
     where: { id: tenant.id },
