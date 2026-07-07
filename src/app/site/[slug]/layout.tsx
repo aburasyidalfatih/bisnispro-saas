@@ -225,7 +225,7 @@ export default async function WebsiteLayout({
             {(tenant.settings as any)?.marqueeText?.trim() && (
               <div className="bg-primary text-primary-foreground text-sm py-2 overflow-hidden flex whitespace-nowrap w-full max-w-full">
                 <div 
-                  className="animate-marquee inline-block px-4 min-w-full text-center"
+                  className="animate-marquee inline-block px-4 min-w-full text-center shrink-0"
                   style={{ animationDuration: (tenant.settings as any).marqueeSpeed || "25s" }}
                 >
                   {((tenant.settings as any).marqueeText as string).split('\n').map((text, i, arr) => (
@@ -236,7 +236,7 @@ export default async function WebsiteLayout({
                   ))}
                 </div>
                 <div 
-                  className="animate-marquee inline-block px-4 min-w-full text-center" aria-hidden="true"
+                  className="animate-marquee inline-block px-4 min-w-full text-center shrink-0" aria-hidden="true"
                   style={{ animationDuration: (tenant.settings as any).marqueeSpeed || "25s" }}
                 >
                   {((tenant.settings as any).marqueeText as string).split('\n').map((text, i, arr) => (
