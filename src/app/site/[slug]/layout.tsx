@@ -252,7 +252,7 @@ export default async function WebsiteLayout({
           </div>
         )}
         
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 w-full max-w-full overflow-x-hidden">{children}</main>
         
         {/* Render Footer hanya jika tidak menggunakan Custom Theme dan bukan halaman TV */}
         {!isTvPage && !tenant.customThemeId && (
