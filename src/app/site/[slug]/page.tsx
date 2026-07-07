@@ -23,6 +23,8 @@ import { AlumniTestimonials } from "./_components/alumni-testimonials"
 import { PartnershipsSection } from "./_components/partnerships-section"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { DefaultTheme } from "./_themes/default"
+import { ModernTheme } from "./_themes/modern"
+
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -141,6 +143,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   // JSON-LD EducationalOrganization Schema moved to layout.tsx to avoid duplication
 
   switch (tenantForRender.template) {
+    case "modern":
+      return <ModernTheme {...(themeProps as any)} />
     case "default":
     default:
       return <DefaultTheme {...(themeProps as any)} />

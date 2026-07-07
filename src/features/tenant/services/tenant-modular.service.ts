@@ -6,14 +6,19 @@ import { normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
 const CACHE_TTL_SECONDS = 60 * 60 // 1 hour
 
 function normalizeInactiveCustomTheme<T extends { customThemeId: string | null; customTheme: any; template?: string }>(tenant: T | null): T | null {
-  if (!tenant?.customTheme || tenant.customTheme.isActive !== false) return tenant
+  if (!tenant) return null
 
-  return {
-    ...tenant,
-    customThemeId: null,
-    customTheme: null,
-    template: tenant.template === "custom" ? "default" : tenant.template,
+  // Jika customThemeId terisi, tapi data customTheme tidak ditemukan (null/dihapus) atau statusnya non-aktif (isActive === false)
+  if (tenant.customThemeId && (!tenant.customTheme || tenant.customTheme.isActive === false)) {
+    return {
+      ...tenant,
+      customThemeId: null,
+      customTheme: null,
+      template: tenant.template === "custom" ? "default" : tenant.template,
+    }
   }
+
+  return tenant
 }
 
 export async function clearTenantCache(slug: string) {
