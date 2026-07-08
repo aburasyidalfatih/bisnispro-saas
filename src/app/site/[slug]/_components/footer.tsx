@@ -99,7 +99,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                   <p className="font-extrabold text-sm text-white leading-tight">{tenant.name}</p>
                 </div>
               </div>
-              <p className="text-xs leading-relaxed mb-5" style={{ color: "rgba(255,255,255,0.45)" }}>
+              <p className="text-xs leading-relaxed mb-5" style={{ color: "rgba(255,255,255,0.7)" }}>
                 {tenant.description || tenant.tagline || `${tenant.name} berkomitmen memberikan layanan terbaik dan profesional untuk memenuhi kebutuhan Anda.`}
               </p>
               {/* Social icons — proper SVG icons */}
@@ -131,7 +131,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                       <Link
                         href={resolveHref(menu.url)}
                         className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
-                        style={{ color: "rgba(255,255,255,0.45)" }}
+                        style={{ color: "rgba(255,255,255,0.7)" }}
                       >
                         <span style={{ color: "hsl(var(--primary))" }}>›</span>
                         {menu.label}
@@ -166,7 +166,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                 {tenant.address && (
                   <li className="flex items-start gap-2.5">
                     <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: "hsl(var(--primary))" }} />
-                    <span className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
+                    <span className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>
                       {tenant.address}
                     </span>
                   </li>
@@ -176,7 +176,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                     <a
                       href={`tel:${tenant.phone}`}
                       className="flex items-center gap-2.5 text-xs transition-colors hover:text-white"
-                      style={{ color: "rgba(255,255,255,0.45)" }}
+                      style={{ color: "rgba(255,255,255,0.7)" }}
                     >
                       <Phone className="h-3.5 w-3.5 shrink-0" style={{ color: "hsl(var(--primary))" }} />
                       {tenant.phone}
@@ -188,7 +188,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                     <a
                       href={`mailto:${tenant.email}`}
                       className="flex items-center gap-2.5 text-xs transition-colors hover:text-white"
-                      style={{ color: "rgba(255,255,255,0.45)" }}
+                      style={{ color: "rgba(255,255,255,0.7)" }}
                     >
                       <Mail className="h-3.5 w-3.5 shrink-0" style={{ color: "hsl(var(--primary))" }} />
                       {tenant.email}
@@ -197,7 +197,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
                 )}
                 <li className="flex items-start gap-2.5">
                   <Clock className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: "hsl(var(--primary))" }} />
-                  <div className="text-xs whitespace-pre-line" style={{ color: "rgba(255,255,255,0.45)" }}>
+                  <div className="text-xs whitespace-pre-line" style={{ color: "rgba(255,255,255,0.7)" }}>
                     {((tenant.settings as any)?.operationalHours) || "Senin - Jumat: 07.00 - 16.00\nSabtu: 07.00 - 12.00"}
                   </div>
                 </li>
@@ -231,15 +231,15 @@ export function WebsiteFooter({ tenant }: FooterProps) {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.5)" }}>
               &copy; {year} {tenant.name}. All rights reserved. <span className="ml-2">Powered by <a href="https://schoolpro.id" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SchoolPro.id</a> v1.0.5 {process.env.NEXT_PUBLIC_APP_VERSION ? `(rev: ${process.env.NEXT_PUBLIC_APP_VERSION.substring(0, 7)})` : ""}</span>
             </p>
             <div className="flex gap-4">
-              <Link href={resolveHref("/contact")} className="text-[11px] transition-colors hover:text-white/60" style={{ color: "rgba(255,255,255,0.3)" }}>
+              <Link href={resolveHref("/contact")} className="text-[11px] transition-colors hover:text-white/60" style={{ color: "rgba(255,255,255,0.5)" }}>
                 Kebijakan Privasi
               </Link>
               <span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
-              <Link href={resolveHref("/contact")} className="text-[11px] transition-colors hover:text-white/60" style={{ color: "rgba(255,255,255,0.3)" }}>
+              <Link href={resolveHref("/contact")} className="text-[11px] transition-colors hover:text-white/60" style={{ color: "rgba(255,255,255,0.5)" }}>
                 Syarat & Ketentuan
               </Link>
             </div>

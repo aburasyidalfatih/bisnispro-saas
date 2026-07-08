@@ -50,6 +50,7 @@ export function PopupRenderer({ popup }: PopupProps) {
         <div className="bg-background rounded-3xl overflow-hidden border shadow-2xl relative">
           <button 
             onClick={handleClose}
+            aria-label="Tutup popup"
             className="absolute top-4 right-4 z-20 h-8 w-8 rounded-full bg-black/20 text-white backdrop-blur-md flex items-center justify-center hover:bg-black/40 transition-colors"
           >
             <X className="h-4 w-4" />

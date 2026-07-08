@@ -12,15 +12,16 @@ import { StatsBar } from "./_components/stats-bar"
 import { getTenantHomeData, getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { PrincipalWelcome } from "./_components/principal-welcome"
-import { InfoBoard } from "./_components/info-board"
-import { ProgramsSection } from "./_components/programs-section"
-import { AchievementsSection } from "./_components/achievements-section"
+import dynamic from "next/dynamic"
 
-import { FacilitiesSection } from "./_components/facilities-section"
-import { ExtracurricularsSection } from "./_components/extracurriculars-section"
-import { StaffHighlight } from "./_components/staff-highlight"
-import { AlumniTestimonials } from "./_components/alumni-testimonials"
-import { PartnershipsSection } from "./_components/partnerships-section"
+const InfoBoard = dynamic(() => import("./_components/info-board").then((mod) => mod.InfoBoard))
+const ProgramsSection = dynamic(() => import("./_components/programs-section").then((mod) => mod.ProgramsSection))
+const AchievementsSection = dynamic(() => import("./_components/achievements-section").then((mod) => mod.AchievementsSection))
+const FacilitiesSection = dynamic(() => import("./_components/facilities-section").then((mod) => mod.FacilitiesSection))
+const ExtracurricularsSection = dynamic(() => import("./_components/extracurriculars-section").then((mod) => mod.ExtracurricularsSection))
+const StaffHighlight = dynamic(() => import("./_components/staff-highlight").then((mod) => mod.StaffHighlight))
+const AlumniTestimonials = dynamic(() => import("./_components/alumni-testimonials").then((mod) => mod.AlumniTestimonials))
+const PartnershipsSection = dynamic(() => import("./_components/partnerships-section").then((mod) => mod.PartnershipsSection))
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { DefaultTheme } from "./_themes/default"
 import { ModernTheme } from "./_themes/modern"
