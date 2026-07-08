@@ -67,12 +67,12 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
   if (!stats || stats.length === 0) return null
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-16 md:-mt-20 mb-20">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-16 md:-mt-20 mb-4 md:mb-8">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
         {stats.map((stat, i) => (
           <div
             key={i}
-            className="group relative flex flex-row sm:flex-col items-center justify-start sm:justify-center p-3.5 sm:p-8 text-left sm:text-center rounded-2xl sm:rounded-[2rem] gap-3 sm:gap-0 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 bg-background/70 backdrop-blur-2xl border border-white/50 dark:border-white/10"
+            className="group relative flex flex-row sm:flex-col items-center justify-start sm:justify-center p-3.5 sm:p-8 text-left sm:text-center rounded-2xl sm:rounded-[2rem] gap-3 sm:gap-0 transition-all duration-500 hover:-translate-y-2 shadow-md hover:shadow-2xl hover:shadow-primary/20 bg-background border border-border/50 dark:border-white/10"
           >
             {/* Ambient Background Glow */}
             <div className="absolute -inset-0.5 bg-gradient-to-br from-primary/30 to-primary/0 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700 pointer-events-none" />
