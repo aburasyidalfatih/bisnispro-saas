@@ -130,6 +130,7 @@ export default function GuruDashboard() {
     { label: "Jurnal", icon: BookOpen, color: "text-indigo-500", bg: "bg-indigo-500/10", href: "/panel-gtk/jurnal" },
     { label: "Bank Soal", icon: FileText, color: "text-pink-500", bg: "bg-pink-500/10", href: "/panel-gtk/cbt/bank-soal" },
     { label: "Buku Poin", icon: AlertCircle, color: "text-purple-500", bg: "bg-purple-500/10", href: "/panel-gtk/poin" },
+    { label: "Tulis Artikel", icon: PenTool, color: "text-orange-500", bg: "bg-orange-500/10", href: "/panel-gtk/posts" },
     { label: "Pesan", icon: MessageSquare, color: "text-cyan-500", bg: "bg-cyan-500/10", href: "/panel-gtk/messages", badge: unreadMessages > 0 ? unreadMessages.toString() : undefined, isNotif: true },
     { label: "AI Assistant", icon: Sparkles, color: "text-indigo-400", bg: "bg-indigo-500/10", href: "/panel-gtk/ai" },
   ]
