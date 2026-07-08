@@ -328,11 +328,20 @@ function SlideBackground({ slide, isPriority }: { slide: Slide, isPriority?: boo
           }}
         />
       )}
+      {/* Theme color tint overlay */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.15) 100%)",
+            "linear-gradient(to right, hsl(var(--primary)/0.65) 0%, hsl(var(--primary)/0.3) 50%, transparent 100%)",
+        }}
+      />
+      {/* Subtle black overlay to ensure text readability on bright themes */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)",
         }}
       />
     </div>
