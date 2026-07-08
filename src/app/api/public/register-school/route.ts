@@ -182,6 +182,14 @@ export async function POST(req: Request) {
       `
       await sendEmail(adminEmail, "Verifikasi Email Pendaftaran Sekolah", emailHtml).catch((e: any) => logger.error("Failed sending verify email", e))
       
+      // Kirim WA Notifikasi Instant
+      const { sendWhatsApp, getWaConfig } = require("@/features/notification/services/notification.service")
+      const waConfig = await getWaConfig()
+      if (waConfig) {
+        const waMessage = `Halo ${adminName},\n\nPendaftaran website sekolah *${schoolName}* berhasil diterima.\n\nSilahkan cek kotak masuk (inbox) atau folder spam pada email Anda (*${adminEmail}*) sekarang untuk melakukan verifikasi dan mengaktifkan akses Anda.\n\nTerima kasih.`
+        await sendWhatsApp(adminPhone, waMessage).catch((e: any) => logger.error("Failed sending verify WA", e))
+      }
+
       // Kirim alert ke SuperAdmin agar tahu ada pendaftaran (opsional, tapi baik untuk logging)
       await sendNewApplicationAlerts(application.id, affiliateId)
     } else {
