@@ -67,7 +67,7 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
   if (!stats || stats.length === 0) return null
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-16 md:-mt-20 mb-4 md:mb-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-10 sm:-mt-16 lg:-mt-20 mb-4 md:mb-8">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
         {stats.map((stat, i) => (
           <div
