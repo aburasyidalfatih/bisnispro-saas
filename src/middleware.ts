@@ -103,9 +103,12 @@ function addSecurityHeaders(response: NextResponse, routeType: "public" | "prote
     response.headers.set("X-Robots-Tag", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1")
     // Enable CDN Edge Caching: Cache at edge for 60 seconds, serve stale while revalidating for up to 5 minutes
     response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300")
-  } else if (routeType === "protected" || routeType === "static") {
+  } else if (routeType === "protected") {
     response.headers.set("X-Robots-Tag", "noindex, nofollow")
     response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+  } else if (routeType === "static") {
+    // Cache static assets aggressively (1 year)
+    response.headers.set("Cache-Control", "public, max-age=31536000, immutable")
   }
 
   return response
