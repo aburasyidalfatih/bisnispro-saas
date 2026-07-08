@@ -12,36 +12,31 @@ import { ConfirmProvider } from "@/components/providers/confirm-provider"
 
 import { Inter, Plus_Jakarta_Sans, Playfair_Display, Outfit } from "next/font/google"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
-const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" })
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" })
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" })
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" })
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta", display: "swap" })
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" })
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" })
 
 import { db } from "@/lib/db"
 import { normalizeImageUrl } from "@/lib/utils"
 
 export async function generateMetadata(): Promise<Metadata> {
-  // Periksa apakah Super Admin memblokir indexing (Dev Mode)
   let blockIndexing = false
-  try {
-    const setting = await db.platformSetting.findUnique({
-      where: { key: "block_search_indexing" }
-    })
-    if (setting && setting.value === "true") {
-      blockIndexing = true
-    }
-  } catch (error) {
-    // Abaikan error DB
-  }
-
   let platformLogo = "/logo-schoolpro.png"
+
   try {
-    const logoSetting = await db.platformSetting.findUnique({
-      where: { key: "app_logo" }
+    const settings = await db.platformSetting.findMany({
+      where: { key: { in: ["block_search_indexing", "app_logo"] } }
     })
-    if (logoSetting && logoSetting.value) {
-      platformLogo = normalizeImageUrl(logoSetting.value) || logoSetting.value
-    }
+    
+    settings.forEach(setting => {
+      if (setting.key === "block_search_indexing" && setting.value === "true") {
+        blockIndexing = true
+      }
+      if (setting.key === "app_logo" && setting.value) {
+        platformLogo = normalizeImageUrl(setting.value) || setting.value
+      }
+    })
   } catch (error) {
     // Abaikan error DB
   }

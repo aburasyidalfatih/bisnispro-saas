@@ -32,13 +32,7 @@ export async function clearTenantCache(slug: string) {
 export const getTenantLayoutData = async (slug: string) => {
   return unstable_cache(
     async () => {
-      const tenant = await db.tenant.findUnique({
-        where: { slug },
-        select: { id: true },
-      })
-      if (!tenant) return null
-
-      const tenantLayout = await runWithTenantContext(tenant.id, (tx) => tx.tenant.findUnique({
+      const tenantLayout = await db.tenant.findUnique({
         where: { slug },
         select: {
           id: true,
@@ -66,12 +60,12 @@ export const getTenantLayoutData = async (slug: string) => {
           seoDesc: true,
           heroImage: true,
           websiteMenus: { 
-            where: { tenantId: tenant.id, isActive: true, parentId: null },
+            where: { isActive: true, parentId: null },
             orderBy: { order: 'asc' },
-            include: { children: { where: { tenantId: tenant.id, isActive: true }, orderBy: { order: 'asc' } } }
+            include: { children: { where: { isActive: true }, orderBy: { order: 'asc' } } }
           },
         }
-      }))
+      })
 
       return normalizeInactiveCustomTheme(tenantLayout ? {
         ...tenantLayout,
