@@ -34,25 +34,15 @@ export async function getTenantsForSuperAdmin(params: {
     const total = tenantIds.length
 
     // Get storage usage for these tenants
-    const [fileUploadGroups, documentGroups] = await Promise.all([
-      db.fileUpload.groupBy({
-        by: ['tenantId'],
-        where: { tenantId: { in: tenantIds, not: null } },
-        _sum: { size: true }
-      }),
-      db.document.groupBy({
-        by: ['tenantId'],
-        where: { tenantId: { in: tenantIds } },
-        _sum: { size: true }
-      })
-    ]);
+    const fileUploadGroups = await db.fileUpload.groupBy({
+      by: ['tenantId'],
+      where: { tenantId: { in: tenantIds, not: null } },
+      _sum: { size: true }
+    });
     
     const storageMap = new Map()
     tenantIds.forEach(id => storageMap.set(id, 0)) // Init with 0
     fileUploadGroups.forEach(g => {
-      if (g.tenantId) storageMap.set(g.tenantId, (storageMap.get(g.tenantId) || 0) + (g._sum.size || 0))
-    })
-    documentGroups.forEach(g => {
       if (g.tenantId) storageMap.set(g.tenantId, (storageMap.get(g.tenantId) || 0) + (g._sum.size || 0))
     })
 
@@ -121,24 +111,14 @@ export async function getTenantsForSuperAdmin(params: {
   ])
 
   const tenantIds = data.map(t => t.id)
-  const [fileUploadGroups, documentGroups] = await Promise.all([
-    db.fileUpload.groupBy({
-      by: ['tenantId'],
-      where: { tenantId: { in: tenantIds, not: null } },
-      _sum: { size: true }
-    }),
-    db.document.groupBy({
-      by: ['tenantId'],
-      where: { tenantId: { in: tenantIds } },
-      _sum: { size: true }
-    })
-  ]);
+  const fileUploadGroups = await db.fileUpload.groupBy({
+    by: ['tenantId'],
+    where: { tenantId: { in: tenantIds, not: null } },
+    _sum: { size: true }
+  });
   
   const storageMap = new Map()
   fileUploadGroups.forEach(g => {
-    if (g.tenantId) storageMap.set(g.tenantId, (storageMap.get(g.tenantId) || 0) + (g._sum.size || 0))
-  })
-  documentGroups.forEach(g => {
     if (g.tenantId) storageMap.set(g.tenantId, (storageMap.get(g.tenantId) || 0) + (g._sum.size || 0))
   })
 

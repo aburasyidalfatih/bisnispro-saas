@@ -91,17 +91,11 @@ export async function saveFile(
       const maxStorage = tenant?.subscriptionPlan?.maxStorage || (tenant?.plan === "free" ? 100 : 1024)
 
       if (maxStorage > 0) {
-        const [fileUploadGroup, documentGroup] = await Promise.all([
-          db.fileUpload.aggregate({
-            where: { tenantId },
-            _sum: { size: true }
-          }),
-          db.document.aggregate({
-            where: { tenantId },
-            _sum: { size: true }
-          })
-        ]);
-        const currentUsageBytes = (fileUploadGroup._sum.size || 0) + (documentGroup._sum.size || 0);
+        const fileUploadGroup = await db.fileUpload.aggregate({
+          where: { tenantId },
+          _sum: { size: true }
+        });
+        const currentUsageBytes = fileUploadGroup._sum.size || 0;
         const maxStorageBytes = maxStorage * 1024 * 1024
         
         if (currentUsageBytes + file.size > maxStorageBytes) {
