@@ -272,7 +272,7 @@ function RegisterSchoolForm() {
             <Button 
               className="w-full rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white border-0" 
               onClick={() => {
-                const text = encodeURIComponent(`halo admin saya sudah isi formulir pengajuan website untuk sekolah saya ${form.schoolName}`)
+                const text = encodeURIComponent(`halo admin saya sudah isi formulir pengajuan website untuk sekolah saya ${form.schoolName} dengan email ${form.adminEmail}`)
                 const phoneStr = csPhone.startsWith('0') ? '62' + csPhone.substring(1) : csPhone
                 window.open(`https://wa.me/${phoneStr}?text=${text}`, '_blank')
                 window.location.href = "/"
