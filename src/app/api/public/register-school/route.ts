@@ -140,8 +140,55 @@ export async function POST(req: Request) {
     })
 
     // Kirim notifikasi WA status PENDING
-    await sendApplicationNotification(application.id)
-    await sendNewApplicationAlerts(application.id, affiliateId)
+    // Cek apakah Auto Approve Instant aktif
+    const instantApproveSetting = await db.platformSetting.findUnique({ where: { key: "AUTO_APPROVE_APPLICATIONS_INSTANT" } })
+    const isInstant = instantApproveSetting?.value === "true"
+
+    if (isInstant) {
+      // 1. Generate Token
+      const crypto = require("crypto")
+      const token = crypto.randomBytes(32).toString("hex")
+      
+      // 2. Simpan di Redis (Expired dalam 24 Jam)
+      const { getRedisClient } = require("@/lib/redis")
+      const redis = await getRedisClient()
+      await redis.set(`verification:school:${token}`, application.id, 86400)
+
+      // 3. Kirim Email Verifikasi
+      const { sendEmail } = require("@/features/notification/services/notification.service")
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      const verifyUrl = `https://${rootDomain}/api/public/verify-email?token=${token}`
+      const platformName = process.env.NEXT_PUBLIC_APP_NAME || "SchoolPro"
+      
+      const emailHtml = `
+        <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 24px; border-radius: 12px 12px 0 0; color: white; text-align: center;">
+            <h2 style="margin: 0;">Verifikasi Email Anda</h2>
+            <p style="margin: 4px 0 0; opacity: 0.9;">Untuk mengaktifkan website sekolah Anda</p>
+          </div>
+          <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6; text-align: center;">
+            <p>Halo <strong>${adminName}</strong>,</p>
+            <p>Terima kasih telah mendaftarkan <strong>${schoolName}</strong> di ${platformName}.</p>
+            <p>Satu langkah lagi! Silakan klik tombol di bawah ini untuk memverifikasi alamat email Anda. Setelah email terverifikasi, subdomain sekolah Anda akan <strong>langsung aktif</strong> seketika.</p>
+            <div style="margin: 32px 0;">
+              <a href="${verifyUrl}" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Verifikasi & Aktifkan Sekolah</a>
+            </div>
+            <p style="font-size: 13px; color: #64748b;">Link verifikasi ini akan kadaluarsa dalam 24 jam.<br>Jika tombol tidak berfungsi, salin dan tempel URL berikut di browser Anda:<br><span style="word-break: break-all; color: #3b82f6;">${verifyUrl}</span></p>
+          </div>
+          <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
+            ${platformName} — Platform Edukasi Terintegrasi
+          </div>
+        </div>
+      `
+      await sendEmail(adminEmail, "Verifikasi Email Pendaftaran Sekolah", emailHtml).catch((e: any) => logger.error("Failed sending verify email", e))
+      
+      // Kirim alert ke SuperAdmin agar tahu ada pendaftaran (opsional, tapi baik untuk logging)
+      await sendNewApplicationAlerts(application.id, affiliateId)
+    } else {
+      // Alur normal (Pending Approval manual / 24h cron)
+      await sendApplicationNotification(application.id)
+      await sendNewApplicationAlerts(application.id, affiliateId)
+    }
 
     // Ambil nomor CS dari pengaturan platform
     let csPhone = ""

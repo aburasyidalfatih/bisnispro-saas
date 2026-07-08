@@ -19,6 +19,7 @@ export default function SuperAdminApplicationsPage() {
   const [loading, setLoading] = useState(true)
   const [isWaDisabled, setIsWaDisabled] = useState(false)
   const [isAutoApprove24h, setIsAutoApprove24h] = useState(false)
+  const [isAutoApproveInstant, setIsAutoApproveInstant] = useState(false)
   
   // Modal states
   const [selectedApp, setSelectedApp] = useState<Application | null>(null)
@@ -73,6 +74,7 @@ export default function SuperAdminApplicationsPage() {
       .then(data => {
         setIsWaDisabled(data.DISABLE_WA_NOTIFICATION === "true")
         setIsAutoApprove24h(data.AUTO_APPROVE_APPLICATIONS_24H === "true")
+        setIsAutoApproveInstant(data.AUTO_APPROVE_APPLICATIONS_INSTANT === "true")
       })
       .catch(console.error)
   }
@@ -102,23 +104,42 @@ export default function SuperAdminApplicationsPage() {
     }
   }
 
-  const toggleAutoApprove = async () => {
-    const newValue = !isAutoApprove24h
-    setIsAutoApprove24h(newValue) // optimistic update
+  const toggleAutoApprove = async (type: '24h' | 'instant') => {
+    const is24h = type === '24h';
+    const newValue = is24h ? !isAutoApprove24h : !isAutoApproveInstant;
+    
+    // Optimistic update - if turning one on, turn the other off
+    if (is24h) {
+      setIsAutoApprove24h(newValue);
+      if (newValue) setIsAutoApproveInstant(false);
+    } else {
+      setIsAutoApproveInstant(newValue);
+      if (newValue) setIsAutoApprove24h(false);
+    }
+    
     try {
+      const payload: Record<string, string> = {};
+      if (is24h) {
+        payload.AUTO_APPROVE_APPLICATIONS_24H = newValue ? "true" : "false";
+        if (newValue) payload.AUTO_APPROVE_APPLICATIONS_INSTANT = "false";
+      } else {
+        payload.AUTO_APPROVE_APPLICATIONS_INSTANT = newValue ? "true" : "false";
+        if (newValue) payload.AUTO_APPROVE_APPLICATIONS_24H = "false";
+      }
+      
       const res = await fetch("/api/super-admin/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ AUTO_APPROVE_APPLICATIONS_24H: newValue ? "true" : "false" })
+        body: JSON.stringify(payload)
       })
       if (!res.ok) {
-        setIsAutoApprove24h(!newValue)
+        fetchSettings(); // revert
         toast({ title: "Gagal", description: "Gagal menyimpan pengaturan Auto Approve", variant: "destructive" })
       } else {
-        toast({ title: "Berhasil", description: newValue ? "Fitur Auto Approve 24 Jam diaktifkan." : "Fitur Auto Approve 24 Jam dinonaktifkan." })
+        toast({ title: "Berhasil", description: `Pengaturan Auto Approve ${type === '24h' ? '24 Jam' : 'Instan'} diperbarui.` })
       }
     } catch {
-      setIsAutoApprove24h(!newValue)
+      fetchSettings(); // revert
     }
   }
 
@@ -295,11 +316,21 @@ export default function SuperAdminApplicationsPage() {
               variant={isAutoApprove24h ? "outline" : "secondary"} 
               size="sm" 
               className={cn("h-7 rounded-full text-[10px] px-3 gap-1.5 transition-all", isAutoApprove24h && "border-blue-200 text-blue-600 hover:text-blue-700 hover:bg-blue-50 bg-blue-50/50")}
-              onClick={toggleAutoApprove}
+              onClick={() => toggleAutoApprove('24h')}
               title="Setujui otomatis setelah 24 jam"
             >
               <CheckCircle className="h-3 w-3" />
               {isAutoApprove24h ? "Auto Approve (24h) On" : "Auto Approve (24h) Off"}
+            </Button>
+            <Button 
+              variant={isAutoApproveInstant ? "outline" : "secondary"} 
+              size="sm" 
+              className={cn("h-7 rounded-full text-[10px] px-3 gap-1.5 transition-all", isAutoApproveInstant && "border-purple-200 text-purple-600 hover:text-purple-700 hover:bg-purple-50 bg-purple-50/50")}
+              onClick={() => toggleAutoApprove('instant')}
+              title="Setujui otomatis seketika dengan verifikasi email"
+            >
+              <CheckCircle className="h-3 w-3" />
+              {isAutoApproveInstant ? "Auto Approve (Instant) On" : "Auto Approve (Instant) Off"}
             </Button>
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">Validasi dan tinjau pendaftaran tenant dari sekolah.</p>
