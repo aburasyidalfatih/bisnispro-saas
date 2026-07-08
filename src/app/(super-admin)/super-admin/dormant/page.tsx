@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Moon, MessageCircle, ExternalLink, RefreshCw } from "lucide-react"
+import { Moon, MessageCircle, ExternalLink, RefreshCw, Mail } from "lucide-react"
 
 interface DormantTenant {
   id: string
@@ -136,14 +136,28 @@ export default function DormantSchoolsPage() {
                         })}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button 
-                          size="sm" 
-                          className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2"
-                          onClick={() => handleFollowUp(t)}
-                        >
-                          <MessageCircle className="h-4 w-4" />
-                          Follow Up WA
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button 
+                            size="sm" 
+                            className="bg-blue-500 hover:bg-blue-600 text-white gap-2"
+                            onClick={() => {
+                              const subject = encodeURIComponent("Bantuan Setup Website Sekolah - SchoolPro");
+                              const body = encodeURIComponent(`Halo Admin ${t.name},\n\nKami dari tim Support SchoolPro melihat bahwa website sekolah Anda (https://${t.slug}.schoolpro.id) sudah berhasil diaktifkan, namun sepertinya Anda belum pernah melakukan login untuk mengkonfigurasi sistem Anda.\n\nApakah ada kendala yang bisa kami bantu? Anda bisa membalas email ini untuk berkonsultasi dengan kami.\n\nTerima kasih,\nTim Support SchoolPro`);
+                              window.location.href = `mailto:${t.email}?subject=${subject}&body=${body}`;
+                            }}
+                          >
+                            <Mail className="h-4 w-4" />
+                            Email
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2"
+                            onClick={() => handleFollowUp(t)}
+                          >
+                            <MessageCircle className="h-4 w-4" />
+                            WA
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
