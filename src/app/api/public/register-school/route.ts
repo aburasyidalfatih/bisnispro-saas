@@ -79,14 +79,28 @@ export async function POST(req: Request) {
     })
     
     if (existingApp) {
-      if (existingApp.schoolSlug === schoolSlug) {
-        return NextResponse.json({ error: "Subdomain sudah diajukan sebelumnya" }, { status: 400 })
-      }
-      if (existingApp.npsn === npsn) {
-        return NextResponse.json({ error: "Sekolah dengan NPSN ini sudah terdaftar" }, { status: 400 })
-      }
-      if (existingApp.adminEmail === adminEmail) {
-        return NextResponse.json({ error: "Email ini sedang dalam proses pengajuan sekolah lain" }, { status: 400 })
+      // Cek apakah pengajuan PENDING sudah kedaluwarsa (>24 jam) saat mode instan aktif
+      const instantApproveSetting = await db.platformSetting.findUnique({ where: { key: "AUTO_APPROVE_APPLICATIONS_INSTANT" } })
+      const isInstant = instantApproveSetting?.value === "true"
+      
+      const isExpiredPending = 
+        existingApp.status === "PENDING" && 
+        isInstant && 
+        (new Date().getTime() - new Date(existingApp.createdAt).getTime() > 24 * 60 * 60 * 1000)
+
+      if (isExpiredPending) {
+        // Hapus pengajuan lama yang kedaluwarsa (garbage collection)
+        await db.tenantApplication.delete({ where: { id: existingApp.id } })
+      } else {
+        if (existingApp.schoolSlug === schoolSlug) {
+          return NextResponse.json({ error: "Subdomain sudah diajukan sebelumnya" }, { status: 400 })
+        }
+        if (existingApp.npsn === npsn) {
+          return NextResponse.json({ error: "Sekolah dengan NPSN ini sudah terdaftar" }, { status: 400 })
+        }
+        if (existingApp.adminEmail === adminEmail) {
+          return NextResponse.json({ error: "Email ini sedang dalam proses pengajuan sekolah lain" }, { status: 400 })
+        }
       }
     }
 
