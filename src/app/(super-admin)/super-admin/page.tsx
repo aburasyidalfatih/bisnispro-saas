@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Building2, Users, CreditCard, Activity, TrendingUp, FileText, LogIn } from "lucide-react"
+import { Building2, Users, CreditCard, Activity, TrendingUp, FileText, LogIn, Moon } from "lucide-react"
 import Link from "next/link"
 import { SystemHealth } from "./_components/SystemHealth"
 import { TenantMap } from "./_components/TenantMap"
@@ -17,6 +17,7 @@ interface Stats {
   recentPayments: number
   applicationCount: number
   loginHariIni: number
+  dormantCount: number
 }
 
 export default function SuperAdminDashboard() {
@@ -37,7 +38,7 @@ export default function SuperAdminDashboard() {
     { label: "Total Pengguna", value: stats?.userCount ?? "—", icon: Users, gradient: "from-emerald-500/10 to-teal-500/10", iconColor: "text-emerald-600 dark:text-emerald-400", href: "/super-admin/users" },
     { label: "Tenant Aktif", value: stats?.activeTenants ?? "—", icon: Activity, gradient: "from-violet-500/10 to-purple-500/10", iconColor: "text-violet-600 dark:text-violet-400", href: "/super-admin/tenants" },
     { label: "Total Pengajuan", value: stats?.applicationCount ?? "—", icon: FileText, gradient: "from-rose-500/10 to-pink-500/10", iconColor: "text-rose-600 dark:text-rose-400", href: "/super-admin/applications" },
-    { label: "Login Hari Ini", value: stats?.loginHariIni ?? "—", icon: LogIn, gradient: "from-indigo-500/10 to-blue-500/10", iconColor: "text-indigo-600 dark:text-indigo-400", href: "#" },
+    { label: "Sekolah Belum Login", value: stats?.dormantCount ?? "—", icon: Moon, gradient: "from-orange-500/10 to-red-500/10", iconColor: "text-orange-600 dark:text-orange-400", href: "/super-admin/dormant" },
   ]
 
   return (

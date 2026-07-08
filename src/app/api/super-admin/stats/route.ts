@@ -26,7 +26,7 @@ export async function GET() {
   const startOfToday = new Date()
   startOfToday.setHours(0, 0, 0, 0)
 
-  const [tenantCount, userCount, activeTenants, totalRevenue, recentPayments, pendingPayments, applicationCount, loginHariIni] = await Promise.all([
+  const [tenantCount, userCount, activeTenants, totalRevenue, recentPayments, pendingPayments, applicationCount, loginHariIni, dormantCount] = await Promise.all([
     db.tenant.count(),
     db.user.count({ where: { isSuperAdmin: false } }),
     db.tenant.count({ where: { isActive: true } }),
@@ -35,6 +35,7 @@ export async function GET() {
     db.payment.count({ where: { status: "pending" } }),
     db.tenantApplication.count(),
     db.auditLog.count({ where: { action: "USER_LOGIN", createdAt: { gte: startOfToday } } }),
+    db.tenant.count({ where: { auditLogs: { none: { action: { contains: "login", mode: "insensitive" } } } } })
   ])
 
   const result = {
@@ -46,6 +47,7 @@ export async function GET() {
     pendingPayments,
     applicationCount,
     loginHariIni,
+    dormantCount,
   }
 
   if (redis) {
