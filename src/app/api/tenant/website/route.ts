@@ -29,8 +29,8 @@ const websiteSchema = z.object({
   gallery: z.array(z.any()).optional().nullable(),
   settings: z.record(z.any()).optional().nullable(),
   // SEO
-  seoTitle: z.string().max(70).optional().nullable(),
-  seoDesc: z.string().max(160).optional().nullable(),
+  seoTitle: z.string().max(100).optional().nullable(),
+  seoDesc: z.string().max(500).optional().nullable(),
   // Google Auth
   googleClientId: z.string().optional().nullable(),
   googleClientSecret: z.string().optional().nullable(),
