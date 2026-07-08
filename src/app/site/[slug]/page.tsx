@@ -70,8 +70,10 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
   const { slug } = await params
 
-  const tenant = await getTenantHomeData(slug)
-  const tenantLayout = await getTenantLayoutData(slug)
+  const [tenant, tenantLayout] = await Promise.all([
+    getTenantHomeData(slug),
+    getTenantLayoutData(slug)
+  ])
 
   if (!tenant) notFound()
 
