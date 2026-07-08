@@ -161,6 +161,11 @@ function RegisterSchoolForm() {
       return
     }
 
+    const confirmMsg = `Pastikan email Anda (${form.adminEmail}) aktif dan bisa diakses, karena verifikasi akan dikirim ke email ini.\n\nLanjutkan pendaftaran?`
+    if (!window.confirm(confirmMsg)) {
+      return
+    }
+
     setLoading(true)
 
     if (!logoFile) {
@@ -239,7 +244,7 @@ function RegisterSchoolForm() {
         if (data.csPhone) setCsPhone(data.csPhone)
         setSubmitted(true)
         trackMetaEvent('Lead')
-        toast({ title: "Berhasil!", description: "Pengajuan sekolah telah kami terima." })
+        toast({ title: "Berhasil!", description: `Pendaftaran website sekolah berhasil dikirim, silahkan cek email Anda ${form.adminEmail} sekarang.` })
       } else {
         toast({ title: "Gagal", description: data.error || "Terjadi kesalahan server", variant: "destructive" })
       }
@@ -257,10 +262,10 @@ function RegisterSchoolForm() {
             <CheckCircle2 className="h-12 w-12 text-emerald-500" />
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold">Pengajuan Terkirim!</CardTitle>
+            <CardTitle className="text-2xl font-bold">Pendaftaran Terkirim!</CardTitle>
             <CardDescription className="text-base">
-              Pendaftaran <strong>{form.schoolName}</strong> sedang kami tinjau. 
-              Silakan periksa kotak masuk <strong>Email</strong> Anda ({form.adminEmail}) secara berkala 24 jam kedepan untuk menerima tautan akses setelah permohonan disetujui oleh admin SchoolPro.
+              Pendaftaran website sekolah <strong>{form.schoolName}</strong> berhasil dikirim. <br/><br/>
+              Silahkan cek email Anda <strong>{form.adminEmail}</strong> sekarang untuk melakukan verifikasi dan mengaktifkan akses.
             </CardDescription>
           </div>
           {csPhone ? (
