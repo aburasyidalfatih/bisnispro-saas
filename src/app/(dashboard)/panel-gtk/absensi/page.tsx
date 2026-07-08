@@ -444,7 +444,7 @@ export default function GTKAttendancePage() {
 
             {/* Lokasi GPS */}
             <div className="space-y-3">
-              {!alreadyCheckedIn && (
+              {!alreadyCheckedOut && (
                 <Button
                   variant="outline"
                   className={cn("w-full rounded-xl gap-2", geoState === "success" && "border-emerald-400 text-emerald-600")}
