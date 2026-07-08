@@ -28,7 +28,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
         <div className="grid lg:grid-cols-3 gap-8">
           
           {/* Column 1: Agenda Kegiatan */}
-          <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full">
+          <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full min-w-0">
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
                 <CalendarDays className="h-6 w-6 text-primary" />
@@ -60,7 +60,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
                         {format(new Date(item.startDate), "HH:mm")} WIB
                       </div>
                       {item.location && (
-                        <div className="flex items-center gap-1 truncate max-w-full">
+                        <div className="flex items-center gap-1 min-w-0 flex-1">
                           <MapPin className="h-3 w-3 shrink-0" />
                           <span className="truncate">{item.location}</span>
                         </div>
@@ -77,7 +77,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
           </div>
 
           {/* Column 2: Pengumuman Terbaru */}
-          <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full">
+          <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full min-w-0">
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
                 <Megaphone className="h-6 w-6 text-primary" />
@@ -107,10 +107,10 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
                       <span className={`text-[9px] font-bold text-white px-2 py-0.5 rounded uppercase w-fit mb-1.5 ${badgeColor}`}>
                         {item.category?.name || item.type || "INFO"}
                       </span>
-                      <h4 className="font-semibold text-sm mb-1 group-hover:text-primary transition-colors line-clamp-2">
+                      <h4 className="font-semibold text-sm mb-1 group-hover:text-primary transition-colors line-clamp-2 break-words">
                         {item.title}
                       </h4>
-                      <p className="text-[11px] text-muted-foreground line-clamp-1">
+                      <p className="text-[11px] text-muted-foreground line-clamp-1 break-words">
                         {item.excerpt || item.content?.replace(/<[^>]*>?/gm, '').substring(0, 50) || "Silakan baca selengkapnya..."}
                       </p>
                     </div>
@@ -125,7 +125,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
           </div>
 
           {/* Column 3: Artikel & Berita */}
-          <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full">
+          <div className="bg-background rounded-[2rem] p-6 md:p-8 border shadow-sm flex flex-col h-full min-w-0">
             <div className="flex items-center justify-between mb-8 pb-4 border-b">
               <div className="flex items-center gap-3">
                 <Newspaper className="h-6 w-6 text-primary" />
@@ -155,7 +155,7 @@ export function InfoBoard({ events, posts, basePath }: InfoBoardProps) {
                     )}
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <h4 className="font-semibold text-sm mb-1.5 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                    <h4 className="font-semibold text-sm mb-1.5 group-hover:text-primary transition-colors line-clamp-2 leading-snug break-words">
                       {item.title}
                     </h4>
                     <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
