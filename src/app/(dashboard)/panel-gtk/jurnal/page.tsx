@@ -12,6 +12,8 @@ import { id as localeId } from "date-fns/locale"
 import { Calendar, Users, BookOpen, Clock, ChevronLeft, Plus, CheckCircle2, UserX, UserMinus, AlertCircle, Save, Mic } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
+import { hasFeature, PlanType } from "@/lib/subscription"
+import { LockedFeature } from "@/components/locked-feature"
 
 type Metadata = {
   classrooms: any[]
@@ -21,8 +23,9 @@ type Metadata = {
 }
 
 export default function JurnalPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const tenantId = session?.user?.tenants?.[0]?.id
+  const tenantPlan = session?.user?.tenants?.[0]?.plan
 
   const [mode, setMode] = useState<"list" | "create">("list")
   const [loading, setLoading] = useState(true)
@@ -161,6 +164,10 @@ export default function JurnalPage() {
   }
 
   if (loading && !metadata) return <div className="skeleton h-96 rounded-3xl" />
+
+  if (status !== "loading" && session && !hasFeature(tenantPlan, PlanType.LITE)) {
+    return <LockedFeature featureName="Jurnal Guru" requiredPlan={PlanType.LITE} />
+  }
 
   if (mode === "create") {
     return (

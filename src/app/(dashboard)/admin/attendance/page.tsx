@@ -1,46 +1,32 @@
-import { auth } from"@/lib/auth"
-import { db } from"@/lib/db"
-import { redirect } from"next/navigation"
-import { Card, CardContent } from"@/components/ui/card"
-import { Users, GraduationCap, FileCheck, CalendarCheck, ArrowRight, Activity, Clock } from"lucide-react"
-import Link from"next/link"
-import { format } from"date-fns"
-import { id } from"date-fns/locale"
+import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
+import { redirect } from "next/navigation"
+import { Card, CardContent } from "@/components/ui/card"
+import { Users, GraduationCap, FileCheck, CalendarCheck, ArrowRight, Activity, Clock, Lock } from "lucide-react"
+import Link from "next/link"
+import { format } from "date-fns"
+import { id } from "date-fns/locale"
+import { hasFeature, PlanType } from "@/lib/subscription"
+import { LockedFeature } from "@/components/locked-feature"
 
 export default async function AttendanceOverviewPage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
   const tenant = session.user.tenants?.[0]
   const tenantId = tenant?.id
+  const tenantPlan = tenant?.plan || "free"
   if (!tenantId) redirect("/admin")
 
-  // Check plan feature access
-  const plan = tenant?.plan || "free"
-  const setting = await db.platformSetting.findUnique({
-    where: { key: "PLAN_FEATURE_ACCESS" }
-  })
-  const allPlans = setting?.value ? JSON.parse(setting.value) : {}
-  const planAccess = allPlans[plan] || {}
-
-  const hasTeacher = !!planAccess.kehadiran_guru
-  const hasStudent = !!planAccess.kehadiran_siswa
-
-  if (hasTeacher && !hasStudent) {
-    redirect("/admin/attendance/gtk/overview")
-  }
-  if (!hasTeacher && hasStudent) {
-    redirect("/admin/attendance/students/overview")
-  }
-  if (!hasTeacher && !hasStudent) {
-    redirect("/admin")
+  if (!hasFeature(tenantPlan, PlanType.PRO)) {
+    return <LockedFeature featureName="Manajemen Absensi" requiredPlan={PlanType.PRO} />
   }
 
-  const todayStr = format(new Date(),"yyyy-MM-dd")
+  const todayStr = format(new Date(), "yyyy-MM-dd")
 
   // Fetch quick stats
   // 1. Pending Permits
   const pendingPermitsCount = await db.attendancePermit.count({
-    where: { tenantId, status:"PENDING" }
+    where: { tenantId, status: "PENDING" }
   })
 
   // 2. Student Attendance Today
@@ -59,14 +45,14 @@ export default async function AttendanceOverviewPage() {
 
   // 3. GTK Attendance Today
   const totalGtk = await db.tenantUser.count({
-    where: { tenantId, role:"guru" }
+    where: { tenantId, role: "guru" }
   })
 
   const gtkAttendanceToday = await db.staffAttendance.count({
     where: { 
       tenantId, 
       date: new Date(todayStr),
-      status:"HADIR"
+      status: "HADIR"
     }
   })
 
@@ -77,7 +63,7 @@ export default async function AttendanceOverviewPage() {
     <div className="space-y-6 pb-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold tracking-tight">Overview Kehadiran & Presensi</h1>
-        <p className="text-muted-foreground text-sm">Ringkasan data absensi siswa dan guru untuk hari ini: {format(new Date(),"EEEE, dd MMMM yyyy", { locale: id })}.</p>
+        <p className="text-muted-foreground text-sm">Ringkasan data absensi siswa dan guru untuk hari ini: {format(new Date(), "EEEE, dd MMMM yyyy", { locale: id })}.</p>
       </div>
 
       {/* Stats Cards */}
