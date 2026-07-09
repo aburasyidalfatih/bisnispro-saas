@@ -72,6 +72,12 @@ export default function RetentionPage() {
     return <div className="space-y-4">{[1,2,3].map(i => <div key={i} className="skeleton h-32 rounded-2xl" />)}</div>
   }
 
+  const combinedRetentionData = [
+    ...(retentionData?.warn30 || []).map((t: any) => ({ ...t, status: '30 Hari (Peringatan)', badge: 'bg-primary' })),
+    ...(retentionData?.suspend60 || []).map((t: any) => ({ ...t, status: '60 Hari (Suspend)', badge: 'bg-amber-500' })),
+    ...(retentionData?.churned90 || []).map((t: any) => ({ ...t, status: '90 Hari (Dihapus)', badge: 'bg-red-500' }))
+  ]
+
   return (
     <div className="space-y-6 pb-10">
       <div className="flex justify-between items-center">
@@ -193,7 +199,7 @@ export default function RetentionPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {(!retentionData?.warn30?.length && !retentionData?.suspend60?.length && !retentionData?.churned90?.length) ? (
+                  {combinedRetentionData.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
                         Belum ada data sekolah dormant di kategori 30, 60, 90 hari.
@@ -201,11 +207,7 @@ export default function RetentionPage() {
                     </TableRow>
                   ) : (
                     <>
-                      {[
-                        ...(retentionData?.warn30 || []).map((t: any) => ({ ...t, status: '30 Hari (Peringatan)', badge: 'bg-primary' })),
-                        ...(retentionData?.suspend60 || []).map((t: any) => ({ ...t, status: '60 Hari (Suspend)', badge: 'bg-amber-500' })),
-                        ...(retentionData?.churned90 || []).map((t: any) => ({ ...t, status: '90 Hari (Dihapus)', badge: 'bg-red-500' }))
-                      ].map((tenant) => (
+                      {combinedRetentionData.map((tenant: any) => (
                         <TableRow key={tenant.id}>
                           <TableCell className="pl-6">
                             <div className="font-medium text-slate-900">{tenant.name}</div>
