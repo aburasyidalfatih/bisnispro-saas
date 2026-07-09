@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Moon, MessageCircle, ExternalLink, RefreshCw, Mail, Trash2, Send } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
-import { toast } from "sonner"
+import { useToast } from "@/hooks/use-toast"
 
 interface DormantTenant {
   id: string
@@ -21,6 +21,7 @@ interface DormantTenant {
 }
 
 export default function DormantSchoolsPage() {
+  const { toast } = useToast()
   const [tenants, setTenants] = useState<DormantTenant[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTenants, setSelectedTenants] = useState<string[]>([])
@@ -69,10 +70,10 @@ export default function DormantSchoolsPage() {
         body: JSON.stringify({ type, tenantIds: selectedTenants })
       })
       if (!res.ok) throw new Error("Gagal mengirim notifikasi")
-      toast.success(`Berhasil memproses notifikasi massal (${type.toUpperCase()})!`)
+      toast({ title: `Berhasil memproses notifikasi massal (${type.toUpperCase()})!` })
       setSelectedTenants([])
     } catch (e: any) {
-      toast.error(e.message || "Gagal memproses")
+      toast({ title: e.message || "Gagal memproses", variant: "destructive" })
     } finally {
       setIsProcessing(false)
     }
@@ -87,9 +88,9 @@ export default function DormantSchoolsPage() {
         body: JSON.stringify({ type, tenantIds: [tenantId] })
       })
       if (!res.ok) throw new Error("Gagal mengirim notifikasi")
-      toast.success(`Berhasil memproses notifikasi (${type.toUpperCase()})!`)
+      toast({ title: `Berhasil memproses notifikasi (${type.toUpperCase()})!` })
     } catch (e: any) {
-      toast.error(e.message || "Gagal memproses")
+      toast({ title: e.message || "Gagal memproses", variant: "destructive" })
     } finally {
       setIsProcessing(false)
     }
@@ -107,11 +108,11 @@ export default function DormantSchoolsPage() {
         body: JSON.stringify({ tenantIds: selectedTenants })
       })
       if (!res.ok) throw new Error("Gagal menghapus tenant")
-      toast.success("Berhasil menghapus tenant terpilih!")
+      toast({ title: "Berhasil menghapus tenant terpilih!" })
       setSelectedTenants([])
       fetchTenants()
     } catch (e: any) {
-      toast.error(e.message || "Gagal menghapus")
+      toast({ title: e.message || "Gagal menghapus", variant: "destructive" })
     } finally {
       setIsProcessing(false)
     }
