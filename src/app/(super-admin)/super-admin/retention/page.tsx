@@ -44,6 +44,7 @@ export default function RetentionPage() {
         })
         setForm((prev) => ({ ...prev, ...sanitizedData }))
         setLoading(false)
+      })
       .catch(() => setLoading(false))
 
     fetch("/api/super-admin/retention-history")
