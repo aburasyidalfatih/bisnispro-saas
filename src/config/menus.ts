@@ -54,6 +54,7 @@ import {
   Zap,
   Bug,
   Clock,
+  Moon,
   type LucideIcon,
 } from "lucide-react"
 import { cn, normalizeImageUrl } from "@/lib/utils"
@@ -484,6 +485,7 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
             { label: "Paket Token AI", href: "/super-admin/tenants/ai-packages", icon: Zap },
             { label: "Kode Diskon", href: "/super-admin/tenants/discounts", icon: Tag },
             { label: "Pengajuan Sekolah", href: "/super-admin/applications", icon: FileText },
+            { label: "Sekolah Dormant", href: "/super-admin/dormant", icon: Moon },
           ],
         },
         {

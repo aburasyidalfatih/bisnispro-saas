@@ -5,7 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Moon, MessageCircle, ExternalLink, RefreshCw, Mail } from "lucide-react"
+import { Moon, MessageCircle, ExternalLink, RefreshCw, Mail, Trash2, Send } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { toast } from "sonner"
 
 interface DormantTenant {
   id: string
@@ -21,6 +23,8 @@ interface DormantTenant {
 export default function DormantSchoolsPage() {
   const [tenants, setTenants] = useState<DormantTenant[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedTenants, setSelectedTenants] = useState<string[]>([])
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const fetchTenants = () => {
     setLoading(true)
@@ -46,13 +50,69 @@ export default function DormantSchoolsPage() {
       return
     }
     
-    // Format nomor telepon ke 62
     if (phoneStr.startsWith('0')) {
       phoneStr = '62' + phoneStr.substring(1)
     }
 
     const text = encodeURIComponent(`Halo Admin ${tenant.name},\n\nKami dari tim Support SchoolPro melihat bahwa website sekolah Anda (https://${tenant.slug}.schoolpro.id) sudah berhasil diaktifkan, namun sepertinya Anda belum pernah melakukan login untuk mengkonfigurasi sistem Anda.\n\nApakah ada kendala yang bisa kami bantu?`)
     window.open(`https://wa.me/${phoneStr}?text=${text}`, '_blank')
+  }
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedTenants(tenants.map(t => t.id))
+    } else {
+      setSelectedTenants([])
+    }
+  }
+
+  const handleSelectOne = (checked: boolean, id: string) => {
+    if (checked) {
+      setSelectedTenants(prev => [...prev, id])
+    } else {
+      setSelectedTenants(prev => prev.filter(tId => tId !== id))
+    }
+  }
+
+  const handleBulkNotify = async (type: "wa" | "email") => {
+    if (selectedTenants.length === 0) return
+    setIsProcessing(true)
+    try {
+      const res = await fetch("/api/super-admin/dormant/bulk-notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, tenantIds: selectedTenants })
+      })
+      if (!res.ok) throw new Error("Gagal mengirim notifikasi")
+      toast.success(`Berhasil memproses notifikasi massal (${type.toUpperCase()})!`)
+      setSelectedTenants([])
+    } catch (e: any) {
+      toast.error(e.message || "Gagal memproses")
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedTenants.length === 0) return
+    if (!confirm("Apakah Anda yakin ingin MENGHAPUS secara permanen semua sekolah yang dipilih? Data tidak dapat dipulihkan!")) return
+    
+    setIsProcessing(true)
+    try {
+      const res = await fetch("/api/super-admin/dormant/bulk-delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantIds: selectedTenants })
+      })
+      if (!res.ok) throw new Error("Gagal menghapus tenant")
+      toast.success("Berhasil menghapus tenant terpilih!")
+      setSelectedTenants([])
+      fetchTenants()
+    } catch (e: any) {
+      toast.error(e.message || "Gagal menghapus")
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -72,19 +132,69 @@ export default function DormantSchoolsPage() {
 
       <Card className="glass border-0">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Moon className="h-5 w-5 text-orange-500" />
-            Daftar Sekolah Dormant
-          </CardTitle>
-          <CardDescription>
-            Lakukan follow-up agar sekolah segera memanfaatkan fitur SchoolPro.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Moon className="h-5 w-5 text-orange-500" />
+                Daftar Sekolah Dormant
+              </CardTitle>
+              <CardDescription>
+                Lakukan follow-up agar sekolah segera memanfaatkan fitur SchoolPro.
+              </CardDescription>
+            </div>
+            
+            {/* BULK ACTION BAR */}
+            {selectedTenants.length > 0 && (
+              <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-lg border animate-in fade-in zoom-in-95">
+                <span className="text-sm font-medium mr-2 px-2 text-muted-foreground">
+                  {selectedTenants.length} terpilih
+                </span>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  onClick={() => handleBulkNotify("email")}
+                  disabled={isProcessing}
+                >
+                  <Mail className="h-4 w-4" />
+                  Kirim Email Massal
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="gap-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                  onClick={() => handleBulkNotify("wa")}
+                  disabled={isProcessing}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Kirim WA Massal
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="destructive"
+                  className="gap-2"
+                  onClick={handleBulkDelete}
+                  disabled={isProcessing}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Hapus Massal
+                </Button>
+              </div>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border bg-background/50 overflow-hidden">
             <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow>
+                  <TableHead className="w-12 text-center">
+                    <Checkbox 
+                      checked={tenants.length > 0 && selectedTenants.length === tenants.length}
+                      onCheckedChange={handleSelectAll}
+                      aria-label="Pilih Semua"
+                    />
+                  </TableHead>
                   <TableHead>Nama Sekolah</TableHead>
                   <TableHead>Subdomain</TableHead>
                   <TableHead>Kontak</TableHead>
@@ -95,19 +205,26 @@ export default function DormantSchoolsPage() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
+                    <TableCell colSpan={6} className="h-24 text-center">
                       <RefreshCw className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
                     </TableCell>
                   </TableRow>
                 ) : tenants.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                       Tidak ada sekolah dormant saat ini. Hebat!
                     </TableCell>
                   </TableRow>
                 ) : (
                   tenants.map((t) => (
-                    <TableRow key={t.id}>
+                    <TableRow key={t.id} className={selectedTenants.includes(t.id) ? "bg-muted/30" : ""}>
+                      <TableCell className="text-center">
+                        <Checkbox 
+                          checked={selectedTenants.includes(t.id)}
+                          onCheckedChange={(checked) => handleSelectOne(checked as boolean, t.id)}
+                          aria-label={`Pilih ${t.name}`}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">
                         {t.name}
                         {!t.isActive && (
