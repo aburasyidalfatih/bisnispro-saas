@@ -37,7 +37,7 @@ export default function AttendanceSessionsPage() {
       fetch(`/api/classrooms?tenantId=${tenant.id}`).then(r => r.json()),
     ]).then(([sessData, classData]) => {
       setSessions(sessData.data || [])
-      setClassrooms(classData || [])
+      setClassrooms(Array.isArray(classData) ? classData : [])
     }).catch(console.error).finally(() => setLoading(false))
   }, [tenant])
 

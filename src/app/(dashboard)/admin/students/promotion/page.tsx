@@ -34,7 +34,7 @@ export default function PromotionPage() {
     if (!tenantId) return
     fetch(`/api/classrooms?tenantId=${tenantId}`)
       .then(res => res.json())
-      .then(data => setClassrooms(data))
+      .then(data => setClassrooms(Array.isArray(data) ? data : []))
       .catch(console.error)
   }, [tenantId])
 

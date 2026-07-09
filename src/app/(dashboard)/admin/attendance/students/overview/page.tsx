@@ -32,7 +32,7 @@ export default function AttendanceDashboardPage() {
       fetch(`/api/attendance/permits?tenantId=${tenant.id}&status=PENDING`).then(r => r.json()),
     ]).then(([sessData, classData, permitsData]) => {
       setSessions(sessData.data || [])
-      setClassrooms(classData || [])
+      setClassrooms(Array.isArray(classData) ? classData : [])
       setPendingPermits(Array.isArray(permitsData) ? permitsData.length : 0)
     }).catch(console.error).finally(() => setLoading(false))
   }, [tenant])

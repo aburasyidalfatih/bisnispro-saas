@@ -97,7 +97,7 @@ export default function StudentsPage() {
   useEffect(() => {
     if (!tenant) return
     fetch(`/api/classrooms?tenantId=${tenant.id}`)
-      .then(r => r.json()).then(setClassrooms).catch(console.error)
+      .then(r => r.json()).then(data => setClassrooms(Array.isArray(data) ? data : [])).catch(console.error)
   }, [tenant])
 
   useEffect(() => { fetchStudents() }, [tenant, page, classFilter])

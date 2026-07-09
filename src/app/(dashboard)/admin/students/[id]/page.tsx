@@ -52,7 +52,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
         guardianName: studentData.guardianName ||"",
         classroomId: studentData.classroomId ||"",
       })
-      setClassrooms(classData || [])
+      setClassrooms(Array.isArray(classData) ? classData : [])
     }).catch(console.error).finally(() => setLoading(false))
   }, [id, tenant])
 

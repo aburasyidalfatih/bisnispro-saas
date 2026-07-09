@@ -48,7 +48,7 @@ export default function AddStudentManualPage() {
     if (!tenantId) return
     fetch(`/api/classrooms?tenantId=${tenantId}`)
       .then(r => r.json())
-      .then(setClassrooms)
+      .then(data => setClassrooms(Array.isArray(data) ? data : []))
       .catch(() => {})
   }, [tenantId])
 

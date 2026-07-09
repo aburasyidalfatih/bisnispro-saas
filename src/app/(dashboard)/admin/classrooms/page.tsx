@@ -34,7 +34,8 @@ export default function ClassroomsPage() {
       fetch(`/api/classrooms?tenantId=${tenant.id}`),
       fetch(`/api/gtk/staff?tenantId=${tenant.id}`)
     ])
-    setClassrooms(await resClass.json())
+    const classData = await resClass.json()
+    setClassrooms(Array.isArray(classData) ? classData : [])
     const staffData = await resStaff.json()
     setStaffList(staffData.staff || [])
     setLoading(false)
