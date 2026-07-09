@@ -44,7 +44,7 @@ export default function SchedulesPage() {
       fetch(`/api/subjects?tenantId=${tenant.id}`).then(r => r.json()),
       fetch(`/api/gtk/staff?tenantId=${tenant.id}`).then(r => r.json()).catch(() => ({ staff: [] })),
     ]).then(([cls, subj, stf]) => {
-      setClassrooms(cls.classrooms || [])
+      setClassrooms(Array.isArray(cls) ? cls : cls.classrooms || [])
       setSubjects(subj.subjects || [])
       setStaff(stf.staff || [])
     })

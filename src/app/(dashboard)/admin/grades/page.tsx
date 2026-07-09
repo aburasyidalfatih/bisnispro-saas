@@ -41,7 +41,7 @@ export default function AdminGradesPage() {
       fetch(`/api/classrooms?tenantId=${tenant.id}`).then(r => r.json()),
       fetch(`/api/subjects?tenantId=${tenant.id}`).then(r => r.json()),
     ]).then(([cls, subj]) => {
-      setClassrooms(cls.classrooms || [])
+      setClassrooms(Array.isArray(cls) ? cls : cls.classrooms || [])
       setSubjects(subj.subjects || [])
     })
   }, [tenant?.id])
