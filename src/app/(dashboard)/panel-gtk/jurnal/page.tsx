@@ -222,23 +222,23 @@ export default function JurnalPage() {
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold">Materi / Topik Bahasan</label>
+                  <label className="text-sm font-semibold">Materi & Tujuan Pembelajaran (TP)</label>
                   <div className="flex gap-2">
                      <Button type="button" onClick={() => setFormData(p => ({...p, topic: "Melanjutkan materi sebelumnya"}))} className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors">Lanjut Materi</Button>
                      <Button type="button" onClick={() => setFormData(p => ({...p, topic: "Ulangan Harian"}))} className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors">Ulangan</Button>
                   </div>
                 </div>
                 <div className="relative">
-                  <Input placeholder="Contoh: Bab 1. Eksponen dan Logaritma" value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="rounded-xl bg-muted/40 pr-10" />
+                  <Input placeholder="Contoh: Eksponen (Siswa dapat mengidentifikasi sifat-sifat eksponen)" value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="rounded-xl bg-muted/40 pr-10" />
                   <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Mulai berbicara, kami akan mengubahnya menjadi teks..."})} className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full text-muted-foreground hover:text-primary transition-colors">
                      <Mic className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <label className="text-sm font-semibold">Catatan Khusus (Opsional)</label>
+                <label className="text-sm font-semibold">Refleksi Guru & Catatan Tambahan (Opsional)</label>
                 <div className="relative">
-                  <Textarea placeholder="Ada kejadian khusus hari ini? (Siswa tidur, ribut, dll)" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="rounded-xl bg-muted/40 min-h-[80px] pr-10" />
+                  <Textarea placeholder="Tuliskan refleksi pembelajaran hari ini, hambatan siswa, atau tindak lanjut..." value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="rounded-xl bg-muted/40 min-h-[80px] pr-10" />
                   <Button type="button" variant="ghost" size="icon" onClick={() => toast({ title: "🎙️ Fitur Dikte Suara Aktif", description: "Silakan sampaikan catatan kelas Anda secara lisan..."})} className="absolute right-1 bottom-1 h-8 w-8 rounded-full text-muted-foreground hover:text-primary transition-colors">
                      <Mic className="h-4 w-4" />
                   </Button>
