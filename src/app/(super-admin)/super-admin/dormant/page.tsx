@@ -139,7 +139,7 @@ export default function DormantSchoolsPage() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Moon className="h-5 w-5 text-orange-500" />
-                Daftar Sekolah Dormant
+                Daftar Sekolah Dormant ({tenants.length})
               </CardTitle>
               <CardDescription>
                 Lakukan follow-up agar sekolah segera memanfaatkan fitur SchoolPro.
