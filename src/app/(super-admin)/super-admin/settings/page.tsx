@@ -14,7 +14,6 @@ import { GoogleTab } from "./_components/google-tab"
 import { GoogleContactsTab } from "./_components/google-contacts-tab"
 import { AiTab } from "./_components/ai-tab"
 import { BackupTab } from "./_components/backup-tab"
-import { RetentionTab } from "./_components/retention-tab"
 
 // Import Constants
 import { DEFAULT_SETTINGS_FORM, type SettingsForm } from "./constants"
@@ -91,7 +90,6 @@ export default function SuperAdminSettingsPage() {
             <TabsTrigger value="google-contacts" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Google Contacts</TabsTrigger>
             <TabsTrigger value="ai" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Kecerdasan Buatan (AI)</TabsTrigger>
             <TabsTrigger value="backup" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">🔒 Backup DB</TabsTrigger>
-            <TabsTrigger value="retention" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Retensi Tenant</TabsTrigger>
           </TabsList>
         </div>
 
@@ -131,9 +129,7 @@ export default function SuperAdminSettingsPage() {
           <BackupTab />
         </TabsContent>
 
-        <TabsContent value="retention" className="outline-none">
-          <RetentionTab form={form} setForm={setForm} handleSaveBatch={handleSaveBatch} saving={saving} />
-        </TabsContent>
+
       </Tabs>
     </div>
   )

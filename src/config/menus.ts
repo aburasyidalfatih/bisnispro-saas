@@ -486,6 +486,7 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
             { label: "Kode Diskon", href: "/super-admin/tenants/discounts", icon: Tag },
             { label: "Pengajuan Sekolah", href: "/super-admin/applications", icon: FileText },
             { label: "Sekolah Dormant", href: "/super-admin/dormant", icon: Moon },
+            { label: "Retensi Tenant", href: "/super-admin/retention", icon: Megaphone },
           ],
         },
         {
