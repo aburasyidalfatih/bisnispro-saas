@@ -43,21 +43,6 @@ export default function DormantSchoolsPage() {
     fetchTenants()
   }, [])
 
-  const handleFollowUp = (tenant: DormantTenant) => {
-    let phoneStr = tenant.whatsapp || tenant.phone || ""
-    if (!phoneStr) {
-      alert("Tidak ada nomor kontak untuk sekolah ini.")
-      return
-    }
-    
-    if (phoneStr.startsWith('0')) {
-      phoneStr = '62' + phoneStr.substring(1)
-    }
-
-    const text = encodeURIComponent(`Halo Admin ${tenant.name},\n\nKami dari tim Support SchoolPro melihat bahwa website sekolah Anda (https://${tenant.slug}.schoolpro.id) sudah berhasil diaktifkan, namun sepertinya Anda belum pernah melakukan login untuk mengkonfigurasi sistem Anda.\n\nApakah ada kendala yang bisa kami bantu?`)
-    window.open(`https://wa.me/${phoneStr}?text=${text}`, '_blank')
-  }
-
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedTenants(tenants.map(t => t.id))
@@ -86,6 +71,23 @@ export default function DormantSchoolsPage() {
       if (!res.ok) throw new Error("Gagal mengirim notifikasi")
       toast.success(`Berhasil memproses notifikasi massal (${type.toUpperCase()})!`)
       setSelectedTenants([])
+    } catch (e: any) {
+      toast.error(e.message || "Gagal memproses")
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleNotifySingle = async (type: "wa" | "email", tenantId: string) => {
+    setIsProcessing(true)
+    try {
+      const res = await fetch("/api/super-admin/dormant/bulk-notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, tenantIds: [tenantId] })
+      })
+      if (!res.ok) throw new Error("Gagal mengirim notifikasi")
+      toast.success(`Berhasil memproses notifikasi (${type.toUpperCase()})!`)
     } catch (e: any) {
       toast.error(e.message || "Gagal memproses")
     } finally {
@@ -257,11 +259,8 @@ export default function DormantSchoolsPage() {
                           <Button 
                             size="sm" 
                             className="bg-blue-500 hover:bg-blue-600 text-white gap-2"
-                            onClick={() => {
-                              const subject = encodeURIComponent("Bantuan Setup Website Sekolah - SchoolPro");
-                              const body = encodeURIComponent(`Halo Admin ${t.name},\n\nKami dari tim Support SchoolPro melihat bahwa website sekolah Anda (https://${t.slug}.schoolpro.id) sudah berhasil diaktifkan, namun sepertinya Anda belum pernah melakukan login untuk mengkonfigurasi sistem Anda.\n\nApakah ada kendala yang bisa kami bantu? Anda bisa membalas email ini untuk berkonsultasi dengan kami.\n\nTerima kasih,\nTim Support SchoolPro`);
-                              window.location.href = `mailto:${t.email}?subject=${subject}&body=${body}`;
-                            }}
+                            onClick={() => handleNotifySingle("email", t.id)}
+                            disabled={isProcessing}
                           >
                             <Mail className="h-4 w-4" />
                             Email
@@ -269,7 +268,8 @@ export default function DormantSchoolsPage() {
                           <Button 
                             size="sm" 
                             className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2"
-                            onClick={() => handleFollowUp(t)}
+                            onClick={() => handleNotifySingle("wa", t.id)}
+                            disabled={isProcessing}
                           >
                             <MessageCircle className="h-4 w-4" />
                             WA
