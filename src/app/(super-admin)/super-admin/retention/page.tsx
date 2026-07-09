@@ -8,21 +8,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Megaphone, Save, RefreshCw } from "lucide-react"
+import { DEFAULT_SETTINGS_FORM } from "../settings/constants"
 
 export default function RetentionPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   
   const [form, setForm] = useState({
-    RETENTION_30_EMAIL_SUBJECT: "",
-    RETENTION_30_EMAIL_BODY: "",
-    RETENTION_30_WA: "",
-    RETENTION_60_EMAIL_SUBJECT: "",
-    RETENTION_60_EMAIL_BODY: "",
-    RETENTION_60_WA: "",
-    RETENTION_90_EMAIL_SUBJECT: "",
-    RETENTION_90_EMAIL_BODY: "",
-    RETENTION_90_WA: "",
+    RETENTION_30_EMAIL_SUBJECT: DEFAULT_SETTINGS_FORM.RETENTION_30_EMAIL_SUBJECT,
+    RETENTION_30_EMAIL_BODY: DEFAULT_SETTINGS_FORM.RETENTION_30_EMAIL_BODY,
+    RETENTION_30_WA: DEFAULT_SETTINGS_FORM.RETENTION_30_WA,
+    RETENTION_60_EMAIL_SUBJECT: DEFAULT_SETTINGS_FORM.RETENTION_60_EMAIL_SUBJECT,
+    RETENTION_60_EMAIL_BODY: DEFAULT_SETTINGS_FORM.RETENTION_60_EMAIL_BODY,
+    RETENTION_60_WA: DEFAULT_SETTINGS_FORM.RETENTION_60_WA,
+    RETENTION_90_EMAIL_SUBJECT: DEFAULT_SETTINGS_FORM.RETENTION_90_EMAIL_SUBJECT,
+    RETENTION_90_EMAIL_BODY: DEFAULT_SETTINGS_FORM.RETENTION_90_EMAIL_BODY,
+    RETENTION_90_WA: DEFAULT_SETTINGS_FORM.RETENTION_90_WA,
   })
 
   useEffect(() => {
@@ -32,7 +33,7 @@ export default function RetentionPage() {
         const sanitizedData = { ...data }
         Object.keys(sanitizedData).forEach(key => {
           if (sanitizedData[key] === "undefined" || sanitizedData[key] === null) {
-            sanitizedData[key] = ""
+            delete sanitizedData[key]
           }
         })
         setForm((prev) => ({ ...prev, ...sanitizedData }))
