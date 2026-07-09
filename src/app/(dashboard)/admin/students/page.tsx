@@ -182,7 +182,7 @@ export default function StudentsPage() {
           <Link href="/admin/students/print-cards">
             <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex border-indigo-200 text-indigo-700 hover:bg-indigo-50"><Printer className="h-4 w-4" /> Cetak ID Card (QR)</Button>
           </Link>
-          <Link href="/admin/students/classrooms">
+          <Link href="/admin/classrooms">
             <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex"><BookOpen className="h-4 w-4" /> Kelas</Button>
           </Link>
           <Link href="/admin/students/import">

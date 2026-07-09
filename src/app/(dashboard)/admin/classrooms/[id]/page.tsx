@@ -47,7 +47,7 @@ export default function ClassroomDetailPage({ params }: { params: Promise<{ id: 
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <Link href="/admin/students/classrooms">
+        <Link href="/admin/classrooms">
           <Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="h-5 w-5" /></Button>
         </Link>
         <div className="flex-1">

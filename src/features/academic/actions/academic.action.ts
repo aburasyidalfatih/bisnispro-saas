@@ -94,7 +94,7 @@ export async function deleteClassroom(id: string, tenantId: string) {
     where: { id, tenantId: parsedTenantId }
   })
 
-  revalidatePath('/admin/students/classrooms')
+  revalidatePath('/admin/classrooms')
   return { success: true }
 }
 

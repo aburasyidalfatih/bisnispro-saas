@@ -232,7 +232,7 @@ export default function ClassroomsPage() {
                     <p className="text-xs text-muted-foreground mb-3">Wali: {c.waliKelas.name}</p>
                   )}
 
-                  <Link href={`/admin/students/classrooms/${c.id}`}>
+                  <Link href={`/admin/classrooms/${c.id}`}>
                     <Button variant="outline" className="w-full rounded-xl text-xs h-8 gap-1">
                       Lihat Siswa <ChevronRight className="h-3.5 w-3.5" />
                     </Button>

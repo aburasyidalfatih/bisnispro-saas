@@ -261,7 +261,7 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             { label: "Data Guru", href: `${basePath}/users/guru`, icon: Users },
             { label: "Data Siswa", href: `${basePath}/students`, icon: GraduationCap },
             { label: "Data Orang Tua", href: `${basePath}/users/orangtua`, icon: Users },
-            { label: "Manajemen Kelas", href: `${basePath}/students/classrooms`, icon: BookOpen },
+            { label: "Manajemen Kelas", href: `${basePath}/classrooms`, icon: BookOpen },
             { label: "Mata Pelajaran", href: `${basePath}/subjects`, icon: BookOpen },
           ],
         }] : []),

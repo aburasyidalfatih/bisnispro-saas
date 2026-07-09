@@ -83,7 +83,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             allowedPaths.push(
               "/admin/users",
               "/admin/students",
-              "/admin/students/classrooms",
+              "/admin/classrooms",
               "/admin/subjects"
             )
           }
