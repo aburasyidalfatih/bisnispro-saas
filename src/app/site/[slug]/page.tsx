@@ -44,13 +44,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   return {
-    title,
     description,
     keywords: [tenant.name, tenant.slug, "Website Resmi", "Sekolah", "Pendidikan", tenant.address || "Indonesia"].filter(Boolean),
     manifest: `/api/tenant/manifest?slug=${slug}`,
     alternates: {},
     openGraph: {
-      title,
       description,
       url: `https://${tenant.domain || tenant.slug + '.' + rootDomain}`,
       siteName: tenant.name,
@@ -59,7 +57,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: "summary_large_image",
-      title,
       description,
       images: [imageUrl],
     },
