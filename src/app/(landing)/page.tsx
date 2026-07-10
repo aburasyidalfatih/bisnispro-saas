@@ -40,6 +40,10 @@ export default async function LandingPage() {
     take: 20, // Batasi untuk mencegah browser crash & memory leak
   })
 
+  const totalTenants = await db.tenant.count({
+    where: { isActive: true }
+  })
+
   const testimonials = await db.systemFeedback.findMany({
     where: { 
       type: "TESTIMONIAL", 
@@ -68,7 +72,7 @@ export default async function LandingPage() {
       
       <HeroSection />
       
-      <SchoolsMarquee activeTenants={activeTenants} />
+      <SchoolsMarquee activeTenants={activeTenants} totalTenants={totalTenants} />
       
       <SolutionsSection />
       

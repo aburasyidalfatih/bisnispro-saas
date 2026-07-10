@@ -4,16 +4,19 @@ import { normalizeImageUrl } from "@/lib/utils"
 
 interface SchoolsMarqueeProps {
   activeTenants: any[]
+  totalTenants?: number
 }
 
-export function SchoolsMarquee({ activeTenants }: SchoolsMarqueeProps) {
+export function SchoolsMarquee({ activeTenants, totalTenants }: SchoolsMarqueeProps) {
   if (activeTenants.length === 0) return null
+
+  const displayCount = totalTenants && totalTenants > activeTenants.length ? totalTenants : activeTenants.length
 
   return (
     <section className="py-8 md:py-10 border-y bg-muted/30 overflow-hidden">
       <div className="container mx-auto px-4 mb-6 text-center">
-        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-          Dipercaya oleh inovator pendidikan di seluruh Indonesia
+        <p className="text-base md:text-lg font-bold text-foreground/90 uppercase tracking-[0.2em]">
+          Dipercaya oleh <span className="text-primary font-black px-1">{displayCount}</span> inovator pendidikan di seluruh Indonesia
         </p>
       </div>
       {/* Marquee Container */}
