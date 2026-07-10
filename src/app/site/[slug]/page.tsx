@@ -46,6 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title,
     description,
+    keywords: [tenant.name, tenant.slug, "Website Resmi", "Sekolah", "Pendidikan", tenant.address || "Indonesia"].filter(Boolean),
     manifest: `/api/tenant/manifest?slug=${slug}`,
     alternates: {},
     openGraph: {
