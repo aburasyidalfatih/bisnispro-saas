@@ -1083,3 +1083,12 @@ html[data-font="outfit"] body { font-family: var(--font-outfit), sans-serif; }
 .ProseMirror.resize-cursor {
   cursor: col-resize;
 }
+
+/* Fix table overflow on mobile for prose content */
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
