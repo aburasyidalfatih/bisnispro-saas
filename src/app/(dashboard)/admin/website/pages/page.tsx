@@ -147,6 +147,7 @@ export default function CustomPagesPage() {
 
   if (isFormOpen) {
     return (
+      <>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => setIsFormOpen(false)} className="rounded-full">
@@ -278,7 +279,7 @@ export default function CustomPagesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+      </>
     )
   }
 
