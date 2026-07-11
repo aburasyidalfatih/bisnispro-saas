@@ -6,10 +6,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Plus, Edit2, Trash2, Globe, FileText, ArrowLeft, Loader2, Save } from "lucide-react"
+import { Plus, Edit2, Trash2, Globe, FileText, ArrowLeft, Loader2, Save, Sparkles, Bot } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
+import { useSession } from "next-auth/react"
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function CustomPagesPage() {
   const [pages, setPages] = useState<any[]>([])
@@ -18,6 +22,15 @@ export default function CustomPagesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [form, setForm] = useState({ title: "", slug: "", content: "", isPublished: true })
   const [saving, setSaving] = useState(false)
+
+  const { data: session } = useSession()
+  const tenantId = (session?.user as any)?.tenants?.[0]?.id
+
+  // AI State
+  const [aiModalOpen, setAiModalOpen] = useState(false)
+  const [aiTopic, setAiTopic] = useState("")
+  const [aiTone, setAiTone] = useState("pengumuman")
+  const [aiLoading, setAiLoading] = useState(false)
 
   const fetchPages = async () => {
     setLoading(true)
@@ -98,6 +111,40 @@ export default function CustomPagesPage() {
     }
   }
 
+  const handleGenerateAI = async () => {
+    if (!aiTopic.trim()) {
+      toast({ title: "Topik kosong", description: "Silakan masukkan poin-poin halaman terlebih dahulu.", variant: "destructive" })
+      return
+    }
+
+    setAiLoading(true)
+    try {
+      const res = await fetch("/api/tenant/ai/generate-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantId, topic: aiTopic, tone: aiTone })
+      })
+      const d = await res.json()
+      if (res.ok && d.success && d.data) {
+        setForm(prev => ({ 
+          ...prev, 
+          title: d.data.title || prev.title, 
+          content: d.data.content || prev.content,
+          slug: prev.slug || (d.data.title ? d.data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "") : prev.slug)
+        }))
+        setAiModalOpen(false)
+        setAiTopic("")
+        toast({ title: "Berhasil Dibuat", description: "Silakan review dan edit hasil tulisan AI sebelum menyimpan." })
+      } else {
+        toast({ title: "Gagal", description: d.error || "Terjadi kesalahan", variant: "destructive" })
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Gagal menghubungi server AI", variant: "destructive" })
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
   if (isFormOpen) {
     return (
       <div className="space-y-6">
@@ -130,7 +177,19 @@ export default function CustomPagesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Konten Halaman</Label>
+              <div className="flex items-center justify-between">
+                <Label>Konten Halaman</Label>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-full h-8 text-xs bg-gradient-to-r from-primary/10 to-indigo-500/10 hover:from-primary/20 hover:to-indigo-500/20 text-primary border-primary/20 gap-1.5"
+                  onClick={(e) => { e.preventDefault(); setAiModalOpen(true); }}
+                >
+                  <Sparkles className="h-3.5 w-3.5 fill-primary/20" />
+                  Buat dengan AI
+                </Button>
+              </div>
               <RichTextEditor 
                 value={form.content}
                 onChange={val => setForm(p => ({ ...p, content: val }))}
@@ -155,6 +214,71 @@ export default function CustomPagesPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Generate Modal */}
+      <Dialog open={aiModalOpen} onOpenChange={setAiModalOpen}>
+        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-0 shadow-2xl rounded-2xl glass">
+          <div className="bg-gradient-to-br from-primary to-indigo-600 p-6 text-primary-foreground">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
+                <Bot className="h-6 w-6 text-white" />
+              </div>
+              <DialogTitle className="text-2xl font-bold text-white">AI Page Generator</DialogTitle>
+            </div>
+            <DialogDescription className="text-primary-foreground/80">
+              Buat halaman kustom (Tata Tertib, Sejarah, Profil) dalam hitungan detik.
+            </DialogDescription>
+          </div>
+
+          <div className="p-6 space-y-6 bg-card">
+            <div className="space-y-3">
+              <Label className="font-semibold text-foreground/80">Topik atau Poin-poin Utama</Label>
+              <Textarea 
+                value={aiTopic}
+                onChange={(e) => setAiTopic(e.target.value)}
+                placeholder="Misal: Buatkan tata tertib siswa SD. Jam masuk 07.00. Wajib seragam rapi. Dilarang bawa HP."
+                className="h-32 rounded-xl resize-none focus-visible:ring-primary/50"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Label className="font-semibold text-foreground/80">Gaya Bahasa</Label>
+              <Select value={aiTone} onValueChange={setAiTone}>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Pilih gaya bahasa" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pengumuman">Instruksional & Tegas (Aturan / Tata Tertib)</SelectItem>
+                  <SelectItem value="formal">Formal & Profesional (Sejarah / Profil)</SelectItem>
+                  <SelectItem value="santai">Santai & Ramah</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 flex items-start gap-3">
+              <Sparkles className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Pembuatan halaman memotong saldo AI Token (50 token). Pastikan poin-poin cukup detail agar hasil maksimal.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="p-6 pt-0 bg-card sm:justify-between">
+            <Button variant="ghost" className="rounded-xl" onClick={() => setAiModalOpen(false)} disabled={aiLoading}>
+              Batal
+            </Button>
+            <Button 
+              className="rounded-xl gap-2 font-bold bg-primary hover:bg-primary/90 text-white"
+              onClick={handleGenerateAI} 
+              disabled={aiLoading || !aiTopic.trim()}
+            >
+              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {aiLoading ? "Membuat Halaman..." : "Generate Halaman"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
     )
   }
 
