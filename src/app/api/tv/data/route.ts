@@ -88,7 +88,7 @@ export async function GET(req: Request) {
     // Fetch all staff members to track their teaching locations
     const allStaff = await db.staff.findMany({
       where: { tenantId: tenant.id },
-      select: { id: true, name: true, role: true }
+      select: { id: true, name: true, role: true, imageUrl: true }
     })
 
     return NextResponse.json({

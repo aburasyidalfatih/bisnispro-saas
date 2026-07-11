@@ -7,6 +7,7 @@ import { id } from "date-fns/locale"
 import { Clock, Calendar, Users, Loader2, BookOpen, UserCircle, QrCode, Maximize, Minimize } from "lucide-react"
 import QRCode from "react-qr-code"
 import Image from "next/image"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { formatInTimeZone } from "date-fns-tz"
 
@@ -205,7 +206,17 @@ export default function SchoolTvPage() {
         })
       : []
 
-    const piket = (data?.piket || []).filter((p: any) => isTimeActive(p.time || "", mins))
+    const piket = (data?.piket || []).filter((p: any) => isTimeActive(p.time || "", mins)).map((p: any) => {
+      const matchedStaff = (data?.allStaff || []).filter((s: any) => {
+        if (!s.name) return false;
+        // Hanya match jika nama staff ada di dalam string p.names
+        return p.names?.toLowerCase().includes(s.name.toLowerCase());
+      });
+      return {
+        ...p,
+        matchedStaff
+      }
+    });
 
     const staffStat = (data?.allStaff || [])
       .map((staff: any) => {
@@ -214,6 +225,7 @@ export default function SchoolTvPage() {
           id: staff.id,
           name: staff.name,
           role: staff.role,
+          image: staff.image || staff.imageUrl,
           isTeaching: !!activeLesson,
           classroomName: activeLesson?.classroom?.name,
           subjectName: activeLesson?.subject?.name || activeLesson?.breakName
@@ -437,7 +449,21 @@ export default function SchoolTvPage() {
                         {p.time}
                       </span>
                     </div>
-                    <p className="font-bold text-slate-100 text-lg leading-snug whitespace-pre-wrap">{p.names}</p>
+                    <div className="flex items-start gap-3 mt-2">
+                      {p.matchedStaff && p.matchedStaff.length > 0 && (
+                        <div className="flex -space-x-3 shrink-0">
+                          {p.matchedStaff.map((staff: any, idx: number) => (
+                            <Avatar key={idx} className="h-10 w-10 border-2 border-slate-900 shrink-0">
+                              <AvatarImage src={staff.imageUrl || staff.image} alt={staff.name} className="object-cover" />
+                              <AvatarFallback className="bg-blue-900 text-blue-200 text-xs">
+                                {staff.name.substring(0, 2).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          ))}
+                        </div>
+                      )}
+                      <p className="font-bold text-slate-100 text-lg leading-snug whitespace-pre-wrap">{p.names}</p>
+                    </div>
                   </div>
                 )) : (
                   <p className="text-sm text-slate-400 text-center py-4">Tidak ada guru piket aktif saat ini.</p>
@@ -457,6 +483,15 @@ export default function SchoolTvPage() {
                     <div className="flex items-center gap-3 truncate pr-2">
                       {/* Indicator Dot */}
                       <div className={cn("h-2 w-2 rounded-full shrink-0", s.isTeaching ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-slate-700")}></div>
+                      
+                      {/* Avatar */}
+                      <Avatar className="h-8 w-8 border border-white/10 shrink-0">
+                        <AvatarImage src={s.image} alt={s.name} className="object-cover" />
+                        <AvatarFallback className="bg-slate-800 text-slate-300 text-[10px]">
+                          {s.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+
                       <div className="flex flex-col gap-0.5 truncate">
                         <span className={cn("font-bold truncate", s.isTeaching ? "text-white" : "text-slate-300")}>{s.name}</span>
                         <span className="text-[10px] text-slate-500 truncate">{s.role || "Pendidik"}</span>
