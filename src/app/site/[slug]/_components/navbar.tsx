@@ -13,7 +13,7 @@ import { ICONS, IconName } from "@/components/ui/icon-picker"
 interface NavbarProps {
   tenant: Pick<PublicTenant, 
     'name' | 'slug' | 'logo' | 'tagline' | 'phone' | 'email' | 'whatsapp' | 
-    'facebook' | 'instagram' | 'youtube' | 'tiktok' | 'websiteMenus'
+    'facebook' | 'instagram' | 'youtube' | 'tiktok' | 'websiteMenus' | 'settings'
   >
 }
 
@@ -255,16 +255,18 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
             </nav>
 
             {/* Right: Search + CTA */}
-            <div className="hidden lg:flex items-center gap-3 shrink-0">
-              {/* Primary CTA: Login */}
-              <Link
-                href="/login"
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:opacity-90 rounded-full shadow-md hover:shadow-lg transition-all"
-              >
-                Login
-                <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
-              </Link>
-            </div>
+            {(tenant.settings as any)?.showLoginButton !== false && (
+              <div className="hidden lg:flex items-center gap-3 shrink-0">
+                {/* Primary CTA: Login */}
+                <Link
+                  href="/login"
+                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:opacity-90 rounded-full shadow-md hover:shadow-lg transition-all"
+                >
+                  Login
+                  <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
+                </Link>
+              </div>
+            )}
 
             {/* Mobile toggle */}
             <button
@@ -379,15 +381,18 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
                   </div>
 
                   {/* Sticky Footer CTA */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5 bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] flex flex-col gap-3">
-                    <Link
+                  <div className="absolute bottom-0 left-0 right-0 p-5 bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+                  {/* Mobile Login CTA */}
+                  {(tenant.settings as any)?.showLoginButton !== false && (
+                    <Link 
                       href="/login"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl shadow-lg shadow-primary/30 hover:opacity-90 transition-opacity"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90"
                     >
                       Login
                       <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
                     </Link>
+                  )}
                   </div>
                 </div>
               </>

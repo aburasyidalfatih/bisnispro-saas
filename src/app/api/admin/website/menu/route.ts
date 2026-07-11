@@ -49,7 +49,15 @@ export async function GET(req: NextRequest) {
       })
     })
 
-    return NextResponse.json(normalizeWebsiteMenuTree(menus))
+    const tenant = await db.tenant.findUnique({
+      where: { id: tenantId },
+      select: { settings: true }
+    })
+
+    return NextResponse.json({
+      menus: normalizeWebsiteMenuTree(menus),
+      settings: tenant?.settings || {}
+    })
   } catch (error) {
     console.error("[WEBSITE_MENU_GET]", error)
     return NextResponse.json({ error: "Internal Error" }, { status: 500 })

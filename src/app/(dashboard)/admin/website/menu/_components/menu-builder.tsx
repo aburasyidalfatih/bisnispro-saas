@@ -28,6 +28,7 @@ export function MenuBuilder() {
   const [menus, setMenus] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [showLoginButton, setShowLoginButton] = useState(true)
   
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingMenu, setEditingMenu] = useState<MenuItem | null>(null)
@@ -49,7 +50,10 @@ export function MenuBuilder() {
       const res = await fetch("/api/admin/website/menu", { cache: "no-store" })
       if (res.ok) {
         const data = await res.json()
-        setMenus(data)
+        setMenus(data.menus || data)
+        if (data.settings && data.settings.showLoginButton !== undefined) {
+          setShowLoginButton(data.settings.showLoginButton)
+        }
       }
     } catch (e) {
       console.error(e)
@@ -200,14 +204,38 @@ export function MenuBuilder() {
     })
   }
 
+  const handleToggleLoginButton = async (checked: boolean) => {
+    setShowLoginButton(checked)
+    try {
+      const res = await fetch("/api/admin/website/menu/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ showLoginButton: checked })
+      })
+      if (!res.ok) throw new Error("Gagal menyimpan pengaturan")
+      toast({ title: "Berhasil", description: "Pengaturan tombol login disimpan." })
+    } catch (e: any) {
+      toast({ title: "Gagal", description: e.message, variant: "destructive" })
+      setShowLoginButton(!checked) // revert
+    }
+  }
+
   if (loading) return <div className="p-8 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-muted/30 p-4 rounded-xl border">
+        <div>
+          <h3 className="font-semibold text-sm">Tampilkan Tombol Login</h3>
+          <p className="text-xs text-muted-foreground mt-1">Tampilkan tombol masuk ke dasbor di header website publik.</p>
+        </div>
+        <Switch checked={showLoginButton} onCheckedChange={handleToggleLoginButton} />
+      </div>
+
       <div className="flex justify-between items-center mb-6">
-        <p className="text-sm text-muted-foreground hidden sm:block">Atur hierarki menu website Anda (Maksimal 2 tingkat).</p>
-        <Button onClick={() => handleOpenModal()} size="sm" className="w-full sm:w-auto">
-          <Plus className="h-4 w-4 mr-2" /> Tambah Menu Utama
+        <h2 className="text-lg font-semibold">Struktur Menu</h2>
+        <Button onClick={() => handleOpenModal()} className="rounded-xl" size="sm">
+          <Plus className="h-4 w-4 mr-2" /> Tambah Menu
         </Button>
       </div>
 
