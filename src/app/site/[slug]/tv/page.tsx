@@ -407,29 +407,7 @@ export default function SchoolTvPage() {
             )}
           </div>
 
-          {/* Section 2: Upcoming Schedules */}
-          {upcomingSchedules.length > 0 && (
-            <div className="mt-6 border-t border-white/10 pt-6 shrink-0">
-              <div className="flex items-center gap-2 mb-4">
-                <Clock className="h-5 w-5 text-blue-400" />
-                <h2 className="text-xl font-bold uppercase tracking-widest text-slate-200">Sesi Selanjutnya</h2>
-              </div>
-              <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-                {upcomingSchedules.slice(0, 4).map((s: any, i: number) => (
-                  <div key={i} className="bg-slate-900/60 rounded-2xl border border-white/10 p-4 flex flex-col justify-between hover:border-blue-500/30 transition-all duration-300 backdrop-blur-md">
-                    <span className="text-[10px] font-bold bg-blue-500/10 text-blue-400 self-start px-2 py-0.5 rounded-full border border-blue-500/20 uppercase tracking-widest">
-                      Mulai {s.startTime}
-                    </span>
-                    <div className="my-2">
-                      <h4 className="font-extrabold text-sm text-white line-clamp-1">{s.classroom.name}</h4>
-                      <p className="text-xs text-slate-400 line-clamp-1">{s.subject?.name || s.breakName || "Mata Pelajaran"}</p>
-                    </div>
-                    <span className="text-[10px] text-emerald-400 font-medium truncate">{s.staff?.name || "-"}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+
         </div>
 
         {/* Right Column: Sidebar Widgets */}
@@ -536,7 +514,7 @@ export default function SchoolTvPage() {
       </main>
 
       {/* FOOTER MARQUEE */}
-      <footer className="h-[7dvh] min-h-[50px] bg-gradient-to-r from-emerald-700 to-teal-600 flex items-center overflow-hidden shrink-0 shadow-[0_-10px_30px_rgba(5,150,105,0.3)] z-20 border-t border-emerald-500/30">
+      <footer className="h-[9dvh] min-h-[64px] bg-gradient-to-r from-emerald-700 to-teal-600 flex items-center overflow-hidden shrink-0 shadow-[0_-10px_30px_rgba(5,150,105,0.3)] z-20 border-t border-emerald-500/30">
         <div className="bg-emerald-900 text-emerald-100 font-black uppercase tracking-widest px-8 h-full flex items-center z-10 shrink-0 border-r border-emerald-700 shadow-xl">
           INFORMASI
         </div>
