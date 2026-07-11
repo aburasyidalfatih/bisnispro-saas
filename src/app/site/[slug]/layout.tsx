@@ -218,6 +218,11 @@ export default async function WebsiteLayout({
         {/* JSON-LD Structured Data untuk Rich Snippets */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
 
+        {/* Custom Head Script Integration */}
+        {(tenant.settings as any)?.headScript && (
+          <div dangerouslySetInnerHTML={{ __html: (tenant.settings as any).headScript }} />
+        )}
+
         <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme dan bukan halaman TV */}
@@ -279,6 +284,11 @@ export default async function WebsiteLayout({
         <Suspense fallback={null}>
           <PageTracker tenantId={tenant.id} />
         </Suspense>
+
+        {/* Custom Body Script Integration */}
+        {(tenant.settings as any)?.bodyScript && (
+          <div dangerouslySetInnerHTML={{ __html: (tenant.settings as any).bodyScript }} />
+        )}
       </div>
     </RoutingProvider>
   )

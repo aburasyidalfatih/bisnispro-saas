@@ -227,6 +227,7 @@ export interface PublicTenant {
   documents: PublicDocument[]
   sliders: PublicSlider[]
   partnerships: PublicPartnership[]
+  faqs?: any[]
 
   // Aggregate counts
   _count?: {

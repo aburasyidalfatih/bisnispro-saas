@@ -13,6 +13,7 @@ import { ExtracurricularsSection } from "../../_components/extracurriculars-sect
 import { StaffHighlight } from "../../_components/staff-highlight"
 import { AlumniTestimonials } from "../../_components/alumni-testimonials"
 import { PartnershipsSection } from "../../_components/partnerships-section"
+import { FaqSection } from "../../_components/faq-section"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { ThemeProps } from "../types"
 
@@ -253,7 +254,14 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          13. KONTAK CTA FOOTER
+          13. FAQ (Tanya Jawab)
+      ══════════════════════════════════════════════════════════════ */}
+      {tenant.faqs && tenant.faqs.length > 0 && (
+        <FaqSection faqs={tenant.faqs} />
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════
+          14. KONTAK CTA FOOTER
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
         <ScrollReveal delay={0.2}>

@@ -112,6 +112,7 @@ export const getTenantHomeData = async (slug: string) => {
             documents: { orderBy: { createdAt: 'desc' }, take: 10 },
             sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
             partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
+            faqs: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 50 },
           }
         })
         

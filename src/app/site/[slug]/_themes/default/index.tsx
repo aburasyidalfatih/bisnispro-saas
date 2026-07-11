@@ -15,6 +15,7 @@ import { ExtracurricularsSection } from "../../_components/extracurriculars-sect
 import { StaffHighlight } from "../../_components/staff-highlight"
 import { AlumniTestimonials } from "../../_components/alumni-testimonials"
 import { PartnershipsSection } from "../../_components/partnerships-section"
+import { FaqSection } from "../../_components/faq-section"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { ThemeProps } from "../types"
 
@@ -186,6 +187,11 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
       <ScrollReveal delay={0.1}>
         <PartnershipsSection partnerships={partnerships} labels={labels} basePath={base} />
       </ScrollReveal>
+
+      {/* ── 14. Tanya Jawab (FAQ) ── */}
+      {tenant.faqs && tenant.faqs.length > 0 && (
+        <FaqSection faqs={tenant.faqs} />
+      )}
 
       {/* ── 13. Kontak CTA ── */}
       {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (

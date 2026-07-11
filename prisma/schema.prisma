@@ -113,6 +113,8 @@ model Tenant {
   walletAccounts     WalletAccount[]
   walletTransactions WalletTransaction[]
   websiteMenus       WebsiteMenu[]
+  customPages        CustomPage[]
+  faqs               Faq[]
   pageViews          PageView[]
   errorLogs          ErrorLog[]
   systemFeedbacks    SystemFeedback[]
@@ -2491,4 +2493,35 @@ model PostInteraction {
   @@unique([postId, userId, type])
   @@index([postId])
   @@map("post_interactions")
+}
+
+model CustomPage {
+  id          String   @id @default(cuid())
+  tenantId    String
+  title       String
+  slug        String
+  content     String?  @db.Text
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("custom_pages")
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  tenantId  String
+  question  String
+  answer    String   @db.Text
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("faqs")
 }
