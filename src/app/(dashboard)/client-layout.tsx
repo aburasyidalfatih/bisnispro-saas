@@ -99,6 +99,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           if (pa.audit_log) allowedPaths.push("/admin/audit")
           if (pa.whatsapp_gateway) allowedPaths.push("/admin/wa-logs")
           if (pa.broadcast_wa) allowedPaths.push("/admin/broadcast")
+          if (pa.academy) allowedPaths.push("/admin/academy")
 
           const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(`${p}/`))
           
