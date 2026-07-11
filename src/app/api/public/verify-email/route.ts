@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { getRedisClient } from "@/lib/redis"
+import { verifyToken, consumeToken } from "@/features/auth/services/token.service"
 import { approveApplication } from "@/features/tenant/services/application.service"
 
 export async function GET(req: Request) {
@@ -20,10 +20,9 @@ export async function GET(req: Request) {
       `, { status: 400, headers: { 'Content-Type': 'text/html' } })
     }
 
-    const redis = await getRedisClient()
-    const applicationId = await redis.get(`verification:school:${token}`)
+    const tokenRecord = await verifyToken(token, "school_register")
 
-    if (!applicationId) {
+    if (!tokenRecord.success || !tokenRecord.data?.userId) {
       return new NextResponse(`
         <html>
           <body style="font-family: sans-serif; text-align: center; padding: 50px;">
@@ -93,10 +92,9 @@ export async function POST(req: Request) {
       `, { status: 400, headers: { 'Content-Type': 'text/html' } })
     }
 
-    const redis = await getRedisClient()
-    const applicationId = await redis.get(`verification:school:${token}`)
+    const tokenRecord = await verifyToken(token, "school_register")
 
-    if (!applicationId) {
+    if (!tokenRecord.success || !tokenRecord.data?.userId) {
       return new NextResponse(`
         <html>
           <body style="font-family: sans-serif; text-align: center; padding: 50px;">
@@ -109,6 +107,7 @@ export async function POST(req: Request) {
     }
 
     // Ambil data pengajuan
+    const applicationId = tokenRecord.data.userId
     const app = await db.tenantApplication.findUnique({ where: { id: applicationId } })
     if (!app) {
       return new NextResponse(`
@@ -145,7 +144,7 @@ export async function POST(req: Request) {
     }
 
     // Hapus token agar tidak bisa dipakai 2x
-    await redis.del(`verification:school:${token}`)
+    await consumeToken(token)
 
     // Redirect ke halaman login subdomain dengan status 303 (See Other) agar browser melakukan GET request
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"

@@ -159,14 +159,10 @@ export async function POST(req: Request) {
     const isInstant = instantApproveSetting?.value === "true"
 
     if (isInstant) {
-      // 1. Generate Token
-      const crypto = require("crypto")
-      const token = crypto.randomBytes(32).toString("hex")
-      
-      // 2. Simpan di Redis (Expired dalam 24 Jam)
-      const { getRedisClient } = require("@/lib/redis")
-      const redis = await getRedisClient()
-      await redis.set(`verification:school:${token}`, application.id, 86400)
+      // 1. Generate Token & Simpan di DB (Expired dalam 24 Jam)
+      const { createToken } = require("@/features/auth/services/token.service")
+      const tokenResult = await createToken(application.id, "school_register", 24)
+      const token = tokenResult.token
 
       // 3. Kirim Email Verifikasi
       const { sendEmail } = require("@/features/notification/services/notification.service")

@@ -1,7 +1,7 @@
 import crypto from "crypto"
 import { db } from "@/lib/db"
 
-export type TokenType = "email_verify" | "password_reset";
+export type TokenType = "email_verify" | "password_reset" | "school_register";
 
 /**
  * Membuat token verifikasi baru dan menghapus token lama dengan tipe yang sama.
