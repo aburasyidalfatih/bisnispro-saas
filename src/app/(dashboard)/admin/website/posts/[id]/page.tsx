@@ -39,6 +39,36 @@ export default function PostFormPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [isGeneratingSEO, setIsGeneratingSEO] = useState(false)
+
+  const isEditing = params.id !== "new"
+
+
+  const handleGenerateSEO = async () => {
+    const title = watch("title")
+    if (!title) {
+      toast({ title: "Validasi", description: "Isi judul artikel terlebih dahulu.", variant: "destructive" })
+      return
+    }
+    try {
+      setIsGeneratingSEO(true)
+      const res = await fetch("/api/ai/seo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Gagal generate SEO")
+      
+      setValue("seoTitle", data.metaTitle, { shouldValidate: true })
+      setValue("seoDesc", data.metaDescription, { shouldValidate: true })
+      toast({ title: "Berhasil", description: "Meta SEO berhasil dibuat oleh AI." })
+    } catch (err: any) {
+      toast({ title: "Error AI", description: err.message, variant: "destructive" })
+    } finally {
+      setIsGeneratingSEO(false)
+    }
+  }
 
   // AI State
   const [aiModalOpen, setAiModalOpen] = useState(false)
@@ -213,25 +243,24 @@ export default function PostFormPage() {
             <h1 className="text-2xl font-bold tracking-tight">{isNew ?"Tulis Artikel Baru" :"Edit Artikel"}</h1>
             <p className="text-muted-foreground mt-1 text-sm">Gunakan editor di bawah untuk membuat konten menarik.</p>
           </div>
-        </div>
-        <div>
-          <Button 
-            onClick={() => setAiModalOpen(true)}
-            className="gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-md border-0 rounded-xl"
-          >
-            <Sparkles className="h-4 w-4" />
-            Tulis dengan AI
-          </Button>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-3 items-start">
         {/* Kolom Kiri: Konten Utama */}
         <div className="lg:col-span-2 space-y-6">
           <Card className="glass border-0 overflow-hidden shadow-sm">
-            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
-              <CardTitle className="text-base">Konten Utama</CardTitle>
-              <CardDescription className="text-xs">Tulis judul dan isi artikel dengan lengkap.</CardDescription>
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base">Konten Utama</CardTitle>
+                <CardDescription className="text-xs">Tulis judul dan isi artikel dengan lengkap.</CardDescription>
+              </div>
+              <Button 
+                onClick={(e) => { e.preventDefault(); setAiModalOpen(true); }}
+                className="gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-md border-0 rounded-xl text-xs h-8 px-3"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Tulis dengan AI
+              </Button>
             </CardHeader>
             <CardContent className="p-6 space-y-6 pt-6">
               <div className="space-y-2">
@@ -258,13 +287,26 @@ export default function PostFormPage() {
           </Card>
           
           <Card className="glass border-0 overflow-hidden shadow-sm">
-            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Search className="h-4 w-4" /> Pengaturan SEO (Opsional)
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Tingkatkan peringkat artikel Anda di Google dengan mengisi meta informasi di bawah ini.
-              </CardDescription>
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50 flex flex-row items-start justify-between">
+              <div>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Search className="h-4 w-4" /> Pengaturan SEO (Opsional)
+                </CardTitle>
+                <CardDescription className="text-xs mt-1">
+                  Tingkatkan peringkat artikel Anda di Google dengan mengisi meta informasi di bawah ini.
+                </CardDescription>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleGenerateSEO}
+                disabled={isGeneratingSEO}
+                className="gap-2 text-xs h-8 border-primary/20 hover:bg-primary/5 hover:text-primary"
+              >
+                {isGeneratingSEO ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3 text-primary" />}
+                Generate AI
+              </Button>
             </CardHeader>
             <CardContent className="p-6 space-y-5">
               <div className="space-y-2">

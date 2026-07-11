@@ -119,6 +119,7 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             { label: "Kategori Artikel", href: `${basePath}/website/categories`, icon: Tag },
             { label: "Agenda & Acara", href: `${basePath}/website/events`, icon: Calendar },
             { label: "Pusat Unduhan", href: `${basePath}/website/documents`, icon: Download },
+            { label: "Halaman Khusus", href: `${basePath}/website/pages`, icon: FileText },
           ],
         },
         {

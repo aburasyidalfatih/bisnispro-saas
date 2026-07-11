@@ -24,7 +24,7 @@
     "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.77",
+    "@ai-sdk/google": "^3.0.91",
     "@ai-sdk/openai": "^3.0.69",
     "@ai-sdk/react": "^3.0.201",
     "@auth/prisma-adapter": "^2.0.0",
@@ -59,6 +59,10 @@
     "@tiptap/extension-color": "^3.27.1",
     "@tiptap/extension-image": "^3.22.5",
     "@tiptap/extension-link": "^3.22.5",
+    "@tiptap/extension-table": "^3.27.3",
+    "@tiptap/extension-table-cell": "^3.27.3",
+    "@tiptap/extension-table-header": "^3.27.3",
+    "@tiptap/extension-table-row": "^3.27.3",
     "@tiptap/extension-text-align": "^3.23.4",
     "@tiptap/extension-text-style": "^3.27.1",
     "@tiptap/react": "^3.22.5",
@@ -66,7 +70,7 @@
     "@types/leaflet": "^1.9.21",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
-    "ai": "^6.0.199",
+    "ai": "^6.0.224",
     "bcryptjs": "^2.4.3",
     "bullmq": "^5.76.10",
     "canvas-confetti": "^1.9.4",

@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
-import { ArrowLeft, Save, Loader2, Search } from "lucide-react"
+import { ArrowLeft, Save, Loader2, Search, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
 import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
@@ -28,6 +28,7 @@ export default function PostFormPage() {
   const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [isGeneratingSEO, setIsGeneratingSEO] = useState(false)
 
   const tenantId = branding.id
   const isNew = params.id === "new"
@@ -53,6 +54,32 @@ export default function PostFormPage() {
       seoDesc: ""
     }
   })
+
+  const handleGenerateSEO = async () => {
+    const title = watch("title")
+    if (!title) {
+      toast({ title: "Validasi", description: "Isi judul artikel terlebih dahulu.", variant: "destructive" })
+      return
+    }
+    try {
+      setIsGeneratingSEO(true)
+      const res = await fetch("/api/ai/seo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Gagal generate SEO")
+      
+      setValue("seoTitle", data.metaTitle, { shouldValidate: true })
+      setValue("seoDesc", data.metaDescription, { shouldValidate: true })
+      toast({ title: "Berhasil", description: "Meta SEO berhasil dibuat oleh AI." })
+    } catch (err: any) {
+      toast({ title: "Error AI", description: err.message, variant: "destructive" })
+    } finally {
+      setIsGeneratingSEO(false)
+    }
+  }
 
   // Auto generate slug from title
   const titleValue = watch("title")
@@ -190,13 +217,26 @@ export default function PostFormPage() {
           </Card>
           
           <Card className="glass border-0 overflow-hidden shadow-sm">
-            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Search className="h-4 w-4" /> Pengaturan SEO (Opsional)
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Tingkatkan peringkat artikel Anda di Google dengan mengisi meta informasi di bawah ini.
-              </CardDescription>
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50 flex flex-row items-start justify-between">
+              <div>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Search className="h-4 w-4" /> Pengaturan SEO (Opsional)
+                </CardTitle>
+                <CardDescription className="text-xs mt-1">
+                  Tingkatkan peringkat artikel Anda di Google dengan mengisi meta informasi di bawah ini.
+                </CardDescription>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleGenerateSEO}
+                disabled={isGeneratingSEO}
+                className="gap-2 text-xs h-8 border-primary/20 hover:bg-primary/5 hover:text-primary"
+              >
+                {isGeneratingSEO ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3 text-primary" />}
+                Generate AI
+              </Button>
             </CardHeader>
             <CardContent className="p-6 space-y-5">
               <div className="space-y-2">

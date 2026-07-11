@@ -7,6 +7,10 @@ import Image from "@tiptap/extension-image"
 import TextAlign from "@tiptap/extension-text-align"
 import { Color } from "@tiptap/extension-color"
 import { TextStyle } from "@tiptap/extension-text-style"
+import { Table } from "@tiptap/extension-table"
+import { TableRow } from "@tiptap/extension-table-row"
+import { TableHeader } from "@tiptap/extension-table-header"
+import { TableCell } from "@tiptap/extension-table-cell"
 import { 
   Bold, 
   Italic, 
@@ -24,7 +28,11 @@ import {
   AlignRight,
   AlignJustify,
   Image as ImageIcon,
-  Loader2
+  Loader2,
+  Table as TableIcon,
+  Trash2,
+  Rows3,
+  Columns3
 } from "lucide-react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { toast } from "@/hooks/use-toast"
@@ -143,6 +151,27 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       }),
       TextStyle,
       Color,
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: 'w-full border-collapse border border-border my-4',
+        },
+      }),
+      TableRow.configure({
+        HTMLAttributes: {
+          class: 'border-b border-border',
+        },
+      }),
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: 'border border-border bg-muted px-4 py-2 text-left font-bold',
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: 'border border-border px-4 py-2',
+        },
+      }),
     ],
     content: value,
     immediatelyRender: false,
@@ -349,6 +378,40 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         >
           <Quote className="h-4 w-4" />
         </ToggleButton>
+
+        <div className="w-[1px] h-6 bg-border mx-1 self-center hidden sm:block" />
+        <ToggleButton
+          isActive={editor.isActive('table')}
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          ariaLabel="Insert table"
+        >
+          <TableIcon className="h-4 w-4" />
+        </ToggleButton>
+        {editor.isActive('table') && (
+          <div className="flex items-center bg-muted/50 rounded-md border border-border/50 px-1 ml-1">
+            <ToggleButton
+              isActive={false}
+              onClick={() => editor.chain().focus().addRowAfter().run()}
+              ariaLabel="Add row"
+            >
+              <Rows3 className="h-4 w-4" />
+            </ToggleButton>
+            <ToggleButton
+              isActive={false}
+              onClick={() => editor.chain().focus().addColumnAfter().run()}
+              ariaLabel="Add column"
+            >
+              <Columns3 className="h-4 w-4" />
+            </ToggleButton>
+            <ToggleButton
+              isActive={false}
+              onClick={() => editor.chain().focus().deleteTable().run()}
+              ariaLabel="Delete table"
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </ToggleButton>
+          </div>
+        )}
         <div className="w-[1px] h-6 bg-border mx-1 self-center" />
         <button
           onClick={(e) => {
