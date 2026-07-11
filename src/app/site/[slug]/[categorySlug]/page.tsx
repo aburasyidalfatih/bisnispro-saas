@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { db } from "@/lib/db"
 import BeritaPage from "../berita/page"
+import CustomPagePublicView, { generateMetadata as generateCustomPageMetadata } from "../pages/[pageSlug]/page"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string, categorySlug: string }> }) {
@@ -15,7 +16,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const category = await db.category.findFirst({
     where: { slug: categorySlug, tenantId: tenant.id }
   })
-  if (!category) return {}
+
+  if (!category) {
+    // Cek apakah ini custom page
+    const customPage = await db.customPage.findFirst({
+      where: { slug: categorySlug, tenantId: tenant.id, isPublished: true }
+    })
+
+    if (customPage) {
+      return generateCustomPageMetadata({ params: Promise.resolve({ slug, pageSlug: categorySlug }) })
+    }
+
+    return {}
+  }
 
   const title = `Kategori: ${category.name}`
   const description = `Berita dan artikel dengan kategori ${category.name} dari ${tenant.name}`
@@ -50,6 +63,15 @@ export default async function CategoryProxyPage({
   })
 
   if (!category) {
+    // Cek apakah ini adalah custom page
+    const customPage = await db.customPage.findFirst({
+      where: { slug: categorySlug, tenantId: tenant.id, isPublished: true }
+    })
+
+    if (customPage) {
+      return CustomPagePublicView({ params: Promise.resolve({ slug, pageSlug: categorySlug }) })
+    }
+
     notFound()
   }
 
