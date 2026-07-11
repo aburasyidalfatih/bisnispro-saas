@@ -399,26 +399,6 @@ export default function PostFormPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="type">Jenis / Layout</Label>
-                <Select value={watch("type")} onValueChange={v => setValue("type", v as any, { shouldValidate: true })}>
-                  <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-shadow hover:border-primary/50">
-                    <SelectValue placeholder="Pilih Jenis" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(typeQuery ==="PENGUMUMAN" || watch("type") ==="PENGUMUMAN") ? (
-                      <SelectItem value="PENGUMUMAN">Pengumuman Publik (Web)</SelectItem>
-                    ) : (
-                      <>
-                        <SelectItem value="BLOG_GURU">Standar (Blog Guru)</SelectItem>
-                        <SelectItem value="EDITORIAL">Editorial Khusus</SelectItem>
-                      </>
-                    )}
-                  </SelectContent>
-                </Select>
-                {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
-              </div>
-
-              <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="categoryId">Kategori Artikel</Label>
                   <Link href="/admin/website/categories" className="text-[10px] text-primary hover:underline font-medium">Kelola</Link>

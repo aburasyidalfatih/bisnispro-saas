@@ -297,21 +297,6 @@ export default function PostFormPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="type">Jenis / Layout</Label>
-                <Select value={watch("type")} onValueChange={(val: any) => setValue("type", val, { shouldValidate: true })}>
-                  <SelectTrigger id="type" className="w-full rounded-xl h-10 hover:border-primary/50 transition-shadow">
-                    <SelectValue placeholder="Pilih jenis" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="BLOG_GURU">Standar (Blog Guru)</SelectItem>
-                    <SelectItem value="EDITORIAL">Editorial Khusus</SelectItem>
-                    <SelectItem value="PENGUMUMAN">Pengumuman Terbatas</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
-              </div>
-
-              <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="categoryId">Kategori Artikel</Label>
                 </div>

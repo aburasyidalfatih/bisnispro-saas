@@ -370,21 +370,6 @@ export default function PengumumanFormPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="type">Jenis / Layout</Label>
-                <Select value={watch("type")} onValueChange={v => setValue("type", v as any, { shouldValidate: true })}>
-                  <SelectTrigger className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm transition-shadow hover:border-primary/50">
-                    <SelectValue placeholder="Pilih Jenis" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PENGUMUMAN">Pengumuman Publik (Web)</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.type && <p className="text-xs text-red-500">{errors.type.message}</p>}
-              </div>
-
-
-
-              <div className="space-y-2">
                 <Label htmlFor="slug">Tautan URL (Slug)</Label>
                 <Input 
                   id="slug" 
