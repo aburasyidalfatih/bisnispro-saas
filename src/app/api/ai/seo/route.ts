@@ -17,10 +17,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 })
     }
 
-    const geminiSetting = await db.platformSetting.findUnique({
-      where: { key: "GEMINI_API_KEY" }
+    const geminiSetting = await db.platformSetting.findMany({
+      where: { key: { in: ["GEMINI_API_KEY", "GEMINI_MODEL"] } }
     })
-    const apiKey = geminiSetting?.value || process.env.GEMINI_API_KEY
+    const apiKey = geminiSetting.find(s => s.key === "GEMINI_API_KEY")?.value || process.env.GEMINI_API_KEY
+    const modelName = geminiSetting.find(s => s.key === "GEMINI_MODEL")?.value || "gemini-1.5-flash"
 
     if (!apiKey) {
        return NextResponse.json({ error: "GEMINI API KEY belum dikonfigurasi di Pengaturan Super Admin." }, { status: 500 })
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
     })
 
     const result = await generateObject({
-      model: googleProvider("gemini-1.5-flash"),
+      model: googleProvider(modelName),
       schema: z.object({
         metaTitle: z.string().describe("SEO Meta Title for the article. Make it catchy, max 60 characters."),
         metaDescription: z.string().describe("SEO Meta Description for the article. Summarize the title into 1-2 sentences, max 160 characters."),

@@ -243,6 +243,7 @@ export default function PostFormPage() {
             <h1 className="text-2xl font-bold tracking-tight">{isNew ?"Tulis Artikel Baru" :"Edit Artikel"}</h1>
             <p className="text-muted-foreground mt-1 text-sm">Gunakan editor di bawah untuk membuat konten menarik.</p>
           </div>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-3 items-start">

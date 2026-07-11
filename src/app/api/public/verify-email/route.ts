@@ -136,7 +136,7 @@ export async function POST(req: Request) {
     })
 
     // Setelah disetujui, User admin sudah tercipta. Kita set emailVerified agar valid.
-    const user = await db.user.findUnique({ where: { email: app.adminEmail } })
+    const user = await db.user.findUnique({ where: { email: app.adminEmail.toLowerCase() } })
     if (user) {
       await db.user.update({
         where: { id: user.id },
