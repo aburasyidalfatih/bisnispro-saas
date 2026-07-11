@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 export async function PATCH(req: NextRequest) {
   const session = await auth()
@@ -20,8 +21,12 @@ export async function PATCH(req: NextRequest) {
 
     const tenant = await db.tenant.findUnique({
       where: { id: tenantId },
-      select: { settings: true }
+      select: { slug: true, settings: true }
     })
+
+    if (!tenant) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 })
+    }
 
     const existingSettings = (tenant?.settings as Record<string, any>) || {}
     
@@ -34,6 +39,8 @@ export async function PATCH(req: NextRequest) {
         }
       }
     })
+
+    await clearTenantCache(tenant.slug)
 
     return NextResponse.json({ success: true })
   } catch (error) {
