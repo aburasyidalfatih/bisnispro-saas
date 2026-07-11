@@ -1,7 +1,8 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
-import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, MessageCircle, ChevronDown, ChevronRight } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
 import { formatSocialUrl } from "@/lib/utils"
 import type { PublicTenant } from "../_themes/types"
@@ -26,6 +27,7 @@ interface FooterProps {
 export function WebsiteFooter({ tenant }: FooterProps) {
   const { resolveHref } = useRouting()
   const year = new Date().getFullYear()
+  const [expandedMenuId, setExpandedMenuId] = useState<string | null>(null)
 
   // Inline SVG social icons (Lucide removed brand icons in v1.0)
   const InstagramIcon = (props: any) => (
@@ -126,34 +128,59 @@ export function WebsiteFooter({ tenant }: FooterProps) {
               <div>
                 <h3 className="font-bold text-white text-sm mb-4">Link Cepat</h3>
                 <ul className="space-y-2.5">
-                  {websiteMenus.map((menu) => (
-                    <li key={menu.id ?? `${menu.label}-${menu.url}`}>
-                      <Link
-                        href={resolveHref(menu.url)}
-                        className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
-                        style={{ color: "rgba(255,255,255,0.7)" }}
-                      >
-                        <span style={{ color: "hsl(var(--primary))" }}>›</span>
-                        {menu.label}
-                      </Link>
-                      {menu.children && menu.children.length > 0 && (
-                        <ul className="mt-2 ml-4 space-y-2">
-                          {menu.children.map((child) => (
-                            <li key={child.id ?? `${child.label}-${child.url}`}>
-                              <Link
-                                href={resolveHref(child.url)}
-                                className="text-[11px] transition-colors hover:text-white flex items-center gap-1.5"
-                                style={{ color: "rgba(255,255,255,0.38)" }}
-                              >
-                                <span style={{ color: "hsl(var(--primary))" }}>-</span>
-                                {child.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
+                  {websiteMenus.map((menu) => {
+                    const menuKey = menu.id ?? `${menu.label}-${menu.url}`
+                    const hasChildren = menu.children && menu.children.length > 0
+                    const isExpanded = expandedMenuId === menuKey
+
+                    return (
+                      <li key={menuKey}>
+                        {hasChildren ? (
+                          <button
+                            onClick={() => setExpandedMenuId(isExpanded ? null : menuKey)}
+                            className="w-full flex items-center justify-between text-xs transition-colors hover:text-white"
+                            style={{ color: "rgba(255,255,255,0.7)" }}
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <span style={{ color: "hsl(var(--primary))" }}>›</span>
+                              {menu.label}
+                            </span>
+                            {isExpanded ? (
+                              <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                            ) : (
+                              <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+                            )}
+                          </button>
+                        ) : (
+                          <Link
+                            href={resolveHref(menu.url)}
+                            className="text-xs transition-colors hover:text-white flex items-center gap-1.5"
+                            style={{ color: "rgba(255,255,255,0.7)" }}
+                          >
+                            <span style={{ color: "hsl(var(--primary))" }}>›</span>
+                            {menu.label}
+                          </Link>
+                        )}
+
+                        {hasChildren && isExpanded && (
+                          <ul className="mt-2 ml-4 space-y-2 animate-in slide-in-from-top-1 fade-in duration-200">
+                            {menu.children!.map((child) => (
+                              <li key={child.id ?? `${child.label}-${child.url}`}>
+                                <Link
+                                  href={resolveHref(child.url)}
+                                  className="text-[11px] transition-colors hover:text-white flex items-center gap-1.5 py-0.5"
+                                  style={{ color: "rgba(255,255,255,0.38)" }}
+                                >
+                                  <span style={{ color: "hsl(var(--primary))" }}>-</span>
+                                  {child.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             )}
