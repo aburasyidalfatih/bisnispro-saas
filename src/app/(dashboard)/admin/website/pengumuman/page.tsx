@@ -107,7 +107,6 @@ export default function PengumumanPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="px-4 py-3 font-medium rounded-tl-lg">Judul Artikel</TableHead>
-                    <TableHead className="px-4 py-3 font-medium">Tipe</TableHead>
                     <TableHead className="px-4 py-3 font-medium">Status</TableHead>
                     <TableHead className="px-4 py-3 font-medium">Penulis</TableHead>
                     <TableHead className="px-4 py-3 font-medium">Tanggal</TableHead>
@@ -144,20 +143,18 @@ export default function PengumumanPage() {
                           )}
                           <div>
                             <div className="font-medium text-foreground line-clamp-1" title={post.title}>{post.title}</div>
-                            <div className="text-[11px] text-muted-foreground font-mono mt-0.5 line-clamp-1">/{post.slug}</div>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <div className="text-[11px] text-muted-foreground font-mono line-clamp-1">/{post.slug}</div>
+                              {post.category?.name && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-medium bg-muted text-muted-foreground whitespace-nowrap">
+                                  {post.category.name}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="px-4 py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary">
-                          {post.type.replace('_', ' ')}
-                        </span>
-                        {post.category?.name && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground ml-1">
-                            {post.category.name}
-                          </span>
-                        )}
-                      </TableCell>
+
                       <TableCell className="px-4 py-3">
                         {post.status ==="PUBLISHED" && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-500/10 px-2 rounded-full py-0.5">
