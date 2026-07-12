@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 
-const ActivityCalendar = dynamic(() => import("react-activity-calendar"), { ssr: false })
+const ActivityCalendar = dynamic(
+  () => import("react-activity-calendar").then((mod) => mod.ActivityCalendar),
+  { ssr: false }
+)
 
 import { getAdminActivityHeatmap } from "../actions"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
