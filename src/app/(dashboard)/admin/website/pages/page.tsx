@@ -116,12 +116,8 @@ export default function CustomPagesPage() {
   }
 
   const generateSlug = (title: string) => {
-    if (!editingId && !form.slug) {
-      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "")
-      setForm(prev => ({ ...prev, title, slug }))
-    } else {
-      setForm(prev => ({ ...prev, title }))
-    }
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "")
+    setForm(prev => ({ ...prev, title, slug }))
   }
 
   const handleGenerateAI = async () => {
