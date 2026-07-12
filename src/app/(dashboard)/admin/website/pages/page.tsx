@@ -232,7 +232,7 @@ export default function CustomPagesPage() {
                 <ImageUploadDirect 
                   value={form.featuredImage}
                   onChange={(url) => setForm(p => ({ ...p, featuredImage: url }))}
-                  onRemove={() => setForm(p => ({ ...p, featuredImage: "" }))}
+                  tenantId={branding?.id as string}
                 />
                 <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">Gunakan gambar resolusi 1200x630px untuk hasil terbaik saat dibagikan ke sosmed.</p>
               </div>

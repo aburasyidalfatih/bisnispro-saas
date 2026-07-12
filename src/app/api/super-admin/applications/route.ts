@@ -47,7 +47,7 @@ export async function PUT(req: Request) {
         // Update status biasa (Rejected/Revision)
         const application = await db.tenantApplication.update({
           where: { id: targetId },
-          data: { status, adminMessage }
+          data: { status, adminMessage, emailOpenedAt: null }
         })
 
         // Kirim notifikasi status terbaru di background (Asynchronous)

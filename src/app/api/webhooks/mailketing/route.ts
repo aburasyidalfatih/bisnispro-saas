@@ -52,9 +52,10 @@ export async function POST(req: Request) {
         data: { openedAt: now }
       })
 
-      // Update emailOpenedAt untuk pendaftar PENDING
+      // Update emailOpenedAt untuk pendaftar (PENDING / APPROVED)
       const app = await db.tenantApplication.findFirst({
-        where: { adminEmail: email, status: "PENDING" }
+        where: { adminEmail: email },
+        orderBy: { createdAt: "desc" }
       })
       if (app) {
         await db.tenantApplication.update({

@@ -398,7 +398,7 @@ export async function approveApplication(id: string) {
 
   await db.tenantApplication.update({
     where: { id },
-    data: { status: "APPROVED" },
+    data: { status: "APPROVED", emailOpenedAt: null },
   })
 
   // 5. Kirim notifikasi langsung (bypass Inngest yang tidak aktif di Docker)
