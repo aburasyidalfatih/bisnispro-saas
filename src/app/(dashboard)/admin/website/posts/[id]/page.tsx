@@ -76,6 +76,15 @@ export default function PostFormPage() {
   const [aiTone, setAiTone] = useState("formal")
   const [aiLoading, setAiLoading] = useState(false)
 
+  // Fix radix UI body lock bug
+  useEffect(() => {
+    if (!aiModalOpen) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ""
+      }, 100)
+    }
+  }, [aiModalOpen])
+
   const tenantId = branding.id
   const isNew = params.id ==="new"
 

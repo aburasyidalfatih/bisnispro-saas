@@ -36,6 +36,15 @@ export default function CustomPagesPage() {
   const [aiTone, setAiTone] = useState("pengumuman")
   const [aiLoading, setAiLoading] = useState(false)
 
+  // Fix radix UI body lock bug
+  useEffect(() => {
+    if (!aiModalOpen) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ""
+      }, 100)
+    }
+  }, [aiModalOpen])
+
   const fetchPages = async () => {
     setLoading(true)
     try {
