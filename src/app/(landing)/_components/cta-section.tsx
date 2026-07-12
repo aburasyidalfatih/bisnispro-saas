@@ -17,11 +17,11 @@ export function CtaSection() {
           <p className="text-muted-foreground text-sm md:text-lg">
             Tidak perlu membuang jutaan rupiah untuk menyewa programmer dan hosting. Dapatkan web sekolah gratis dengan fitur lengkap untuk institusi Anda.
           </p>
-          <div className="pt-2">
-            <Link href="/daftarkan-sekolah">
+          <div className="pt-2 flex justify-center">
+            <Link href="/daftarkan-sekolah" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="rounded-xl md:rounded-2xl btn-gradient text-white shadow-2xl glow-primary h-12 md:h-14 px-7 md:px-10 text-sm md:text-lg font-semibold gap-3 border-0 w-full sm:w-auto flex items-center justify-center"
+                className="rounded-xl md:rounded-2xl btn-gradient text-white shadow-2xl glow-primary h-12 md:h-14 px-7 md:px-10 text-sm md:text-lg font-semibold gap-3 border-0 w-full flex items-center justify-center"
               >
                 Buat Web Sekolah Gratis Sekarang <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
               </Button>
