@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json()
-    const { tenantId, topic, tone } = body
+    const { tenantId, topic, tone, type = "post" } = body
 
     if (!tenantId || !topic) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
@@ -36,11 +36,11 @@ export async function POST(req: Request) {
     const model = aiResult.model
 
     // Generate content using AI
-    const systemPrompt = `Anda adalah seorang jurnalis dan praktisi humas profesional yang bekerja untuk sebuah sekolah di Indonesia. 
-Tugas Anda adalah mengubah poin-poin singkat yang diberikan menjadi sebuah artikel liputan atau berita sekolah yang utuh, profesional, dan inspiratif.
+    const systemPrompt = `Anda adalah seorang ahli konten website dan praktisi humas profesional yang bekerja untuk sebuah institusi pendidikan/sekolah di Indonesia. 
+Tugas Anda adalah mengubah instruksi atau poin-poin yang diberikan menjadi konten ${type === 'page' ? 'halaman statis website (seperti Profil, Sejarah, Visi Misi, atau Tata Tertib)' : 'artikel liputan/berita sekolah'} yang utuh, profesional, dan SEO friendly.
 
 Aturan penulisan:
-1. Gunakan gaya bahasa: ${tone === 'pengumuman' ? 'Instruksional, lugas, tegas, dan berwibawa (layaknya surat edaran resmi instansi).' : tone === 'formal' ? 'Formal, lugas, dan jurnalistik (layaknya berita koran).' : 'Santai, ramah, dan inspiratif (cocok untuk dibaca orang tua murid).'}
+1. Gunakan gaya bahasa: ${tone === 'pengumuman' ? 'Instruksional, jelas, tegas, dan berwibawa.' : tone === 'formal' ? 'Formal, profesional, dan terstruktur rapi.' : 'Santai, ramah, dan inspiratif (cocok untuk dibaca publik/orang tua).'}
 2. Gunakan bahasa Indonesia baku (PUEBI) namun tetap mengalir dan enak dibaca.
 3. Buatkan judul (title) yang menarik (maksimal 60 karakter).
 4. Buatkan ringkasan SEO (seoDesc) maksimal 150 karakter.

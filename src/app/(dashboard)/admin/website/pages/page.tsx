@@ -125,7 +125,7 @@ export default function CustomPagesPage() {
       const res = await fetch("/api/tenant/ai/generate-post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenantId, topic: aiTopic, tone: aiTone })
+        body: JSON.stringify({ tenantId, topic: aiTopic, tone: aiTone, type: "page" })
       })
       const d = await res.json()
       if (res.ok && d.success && d.data) {
