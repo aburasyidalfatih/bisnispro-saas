@@ -166,29 +166,33 @@ export default function CustomPagesPage() {
         <Card className="glass border-0">
           <CardContent className="p-6 space-y-6">
             <div className="grid sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Judul Halaman</Label>
-                <Input value={form.title} onChange={e => generateSlug(e.target.value)} placeholder="Contoh: Tata Tertib Siswa" className="rounded-xl h-10" />
-              </div>
-              <div className="space-y-2">
-                <Label>URL Slug</Label>
-                <div className="flex items-center">
-                  <span className="bg-muted px-3 border border-r-0 border-input rounded-l-xl h-10 flex items-center text-sm text-muted-foreground">
-                    /
-                  </span>
-                  <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="tata-tertib" className="rounded-l-none rounded-r-xl h-10" />
+              {/* Kolom 1: Judul dan Slug */}
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label>Judul Halaman</Label>
+                  <Input value={form.title} onChange={e => generateSlug(e.target.value)} placeholder="Contoh: Tata Tertib Siswa" className="rounded-xl h-10" />
+                </div>
+                <div className="space-y-2">
+                  <Label>URL Slug</Label>
+                  <div className="flex items-center">
+                    <span className="bg-muted px-3 border border-r-0 border-input rounded-l-xl h-10 flex items-center text-sm text-muted-foreground">
+                      /
+                    </span>
+                    <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="tata-tertib" className="rounded-l-none rounded-r-xl h-10" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label>Gambar Unggulan (Opsional)</Label>
-              <ImageUploadDirect 
-                value={form.featuredImage}
-                onChange={(url) => setForm(p => ({ ...p, featuredImage: url }))}
-                onRemove={() => setForm(p => ({ ...p, featuredImage: "" }))}
-              />
-              <p className="text-xs text-muted-foreground mt-1">Gunakan gambar resolusi 1200x630px untuk hasil terbaik saat dibagikan ke sosmed.</p>
+              {/* Kolom 2: Gambar Unggulan */}
+              <div className="space-y-2">
+                <Label>Gambar Unggulan (Opsional)</Label>
+                <ImageUploadDirect 
+                  value={form.featuredImage}
+                  onChange={(url) => setForm(p => ({ ...p, featuredImage: url }))}
+                  onRemove={() => setForm(p => ({ ...p, featuredImage: "" }))}
+                />
+                <p className="text-xs text-muted-foreground mt-1">Gunakan gambar resolusi 1200x630px untuk hasil terbaik saat dibagikan ke sosmed.</p>
+              </div>
             </div>
 
             <div className="space-y-2">
