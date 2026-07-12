@@ -232,6 +232,15 @@ export default function WebsiteAboutPage() {
     setAiModalOpen(true)
   }
 
+  // Fix radix UI body lock bug
+  useEffect(() => {
+    if (!aiModalOpen) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ""
+      }, 100)
+    }
+  }, [aiModalOpen])
+
   if (loading) return (
     <div className="space-y-4">
       {[1,2,3].map(i => <div key={i} className="skeleton h-40 rounded-2xl" />)}

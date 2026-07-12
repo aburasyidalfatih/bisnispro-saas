@@ -45,6 +45,15 @@ export function MenuBuilder() {
     fetchMenus()
   }, [])
 
+  // Fix radix UI body lock bug
+  useEffect(() => {
+    if (!isModalOpen) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ""
+      }, 100)
+    }
+  }, [isModalOpen])
+
   const fetchMenus = async () => {
     try {
       const res = await fetch("/api/admin/website/menu", { cache: "no-store" })
