@@ -59,12 +59,32 @@ export function IntegrationSettings({
           <p className="text-[11px] text-muted-foreground mb-3">Masukkan kredensial Service Account Google Cloud untuk melakukan indeksasi instan setiap kali Anda mempublikasikan berita/pengumuman. Jika dikosongkan, sistem akan menggunakan sistem indeksasi bawaan SchoolPro.</p>
           
           <div className="space-y-1.5">
-            <Label className="text-xs">Client Email</Label>
-            <Input value={rawSettings.googleIndexingEmail ||""} onChange={e => setRawSettings((p:any) => ({ ...p, googleIndexingEmail: e.target.value }))} placeholder="nama-akun@project-id.iam.gserviceaccount.com" className="rounded-xl h-9 text-xs font-mono" />
+            <Label className="text-xs">JSON Credentials</Label>
+            <textarea
+              className="flex min-h-[80px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder='{ "type": "service_account", "project_id": "..." }'
+              value={rawSettings.google_indexing_key || ""}
+              onChange={e => setRawSettings((p: any) => ({ ...p, google_indexing_key: e.target.value }))}
+            />
           </div>
+        </div>
+
+        {/* Link Afiliasi Tenant */}
+        <div className="space-y-2 p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 mt-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Globe className="h-4 w-4 text-amber-500" />
+            <Label className="font-semibold text-amber-600">Link Afiliasi / Referral</Label>
+          </div>
+          <p className="text-[11px] text-muted-foreground mb-3">Jika Anda adalah mitra afiliasi SchoolPro, masukkan link referal Anda di sini (contoh: <code className="bg-white/50 px-1 rounded">https://schoolpro.id/mitra-afiliasi?ref=KODEANDA</code>). Link ini akan disematkan di bagian bawah (footer) website sekolah Anda untuk mendapatkan komisi pendaftaran.</p>
+          
           <div className="space-y-1.5">
-            <Label className="text-xs">Private Key (JSON)</Label>
-            <Input type="password" value={rawSettings.googleIndexingKey ||""} onChange={e => setRawSettings((p:any) => ({ ...p, googleIndexingKey: e.target.value }))} placeholder="-----BEGIN PRIVATE KEY-----\n..." className="rounded-xl h-9 text-xs font-mono" />
+            <Label className="text-xs">URL Afiliasi Lengkap</Label>
+            <Input 
+              value={rawSettings.affiliate_link || ""} 
+              onChange={e => setRawSettings((p: any) => ({ ...p, affiliate_link: e.target.value }))} 
+              placeholder="https://schoolpro.id/mitra-afiliasi?ref=..." 
+              className="rounded-xl h-9 text-xs" 
+            />
           </div>
         </div>
 
