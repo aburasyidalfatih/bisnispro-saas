@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { db } from "@/lib/db"
 import BeritaPage from "../berita/page"
-import CustomPagePublicView, { generateMetadata as generateCustomPageMetadata } from "../pages/[pageSlug]/page"
+import CustomPagePublicView, { generateMetadata as generateCustomPageMetadata } from "../_components/custom-page-view"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string, categorySlug: string }> }) {
