@@ -116,8 +116,15 @@ export default function CustomPagesPage() {
   }
 
   const generateSlug = (title: string) => {
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "")
-    setForm(prev => ({ ...prev, title, slug }))
+    setForm(prev => {
+      // Jika sedang edit halaman (bukan buat baru), jangan overwrite slug saat judul diubah, 
+      // kecuali slug-nya memang kosong.
+      if (editingId && prev.slug.trim() !== "") {
+        return { ...prev, title }
+      }
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "")
+      return { ...prev, title, slug }
+    })
   }
 
   const handleGenerateAI = async () => {
