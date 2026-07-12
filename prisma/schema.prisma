@@ -98,6 +98,7 @@ model Tenant {
   sliders                Slider[]
   staff                  Staff[]
   staffAttendances       StaffAttendance[]
+  emailQueueLogs         EmailQueueLog[]
   students               Student[]
   subjects               Subject[]
   subscriptions          Subscription[]
@@ -2525,4 +2526,28 @@ model Faq {
 
   @@index([tenantId])
   @@map("faqs")
+}
+
+
+model EmailQueueLog {
+  id           String    @id @default(cuid())
+  tenantId     String?
+  to           String
+  subject      String
+  html         String    @db.Text
+  status       String    @default("PENDING") // PENDING, SENT, FAILED, BOUNCED
+  errorMessage String?   @db.Text
+  retryCount   Int       @default(0)
+  maxRetries   Int       @default(3)
+  openedAt     DateTime?
+  clickedAt    DateTime?
+  bouncedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sentAt       DateTime?
+
+  tenant       Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("email_queue_logs")
 }

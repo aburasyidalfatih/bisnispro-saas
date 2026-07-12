@@ -61,7 +61,15 @@ async function getEmailTransporter(tenantId?: string) {
 
 export async function sendEmail(to: string, subject: string, html: string, tenantId?: string) {
   const config = await getEmailTransporter(tenantId)
-  if (!config) return { success: false, error: "SMTP belum dikonfigurasi" }
+  if (!config) {
+    // Tetap catat ke antrean jika SMTP belum ada (siapa tahu nanti diisi)
+    await db.emailQueueLog.create({
+      data: {
+        to, subject, html, tenantId, status: "PENDING", errorMessage: "SMTP belum dikonfigurasi"
+      }
+    }).catch(e => logger.error("Failed queuing email", e))
+    return { success: false, error: "SMTP belum dikonfigurasi" }
+  }
   
   // Pastikan html dibungkus dengan tag standar agar tidak dibaca kosong oleh klien email tertentu
   const wrappedHtml = html.toLowerCase().includes("<html") ? html : `
@@ -84,9 +92,35 @@ export async function sendEmail(to: string, subject: string, html: string, tenan
       subject,
       html: wrappedHtml,
     })
+    
+    // Log as SENT
+    await db.emailQueueLog.create({
+      data: {
+        to,
+        subject,
+        html: wrappedHtml,
+        tenantId,
+        status: "SENT",
+        sentAt: new Date()
+      }
+    }).catch(e => logger.error("Failed logging email sent", e))
+
     return { success: true, res }
   } catch (error: any) {
-    logger.error("Email send failed", error)
+    logger.error("Email send failed, queuing for retry", error)
+    
+    // Log as PENDING for retry
+    await db.emailQueueLog.create({
+      data: {
+        to,
+        subject,
+        html: wrappedHtml,
+        tenantId,
+        status: "PENDING",
+        errorMessage: error.message
+      }
+    }).catch(e => logger.error("Failed queuing email", e))
+
     return { success: false, error: error.message }
   }
 }
@@ -674,4 +708,66 @@ export async function sendTemplateNotification(payload: {
 export async function createNotification(data: { userId: string, title: string, message: string, type?: string }) {
   // Stub for creating system notification
   logger.info("createNotification stub called", data)
+}
+
+// ==================== EMAIL QUEUE PROCESSOR ====================
+export async function processEmailQueueCron() {
+  // Ambil maksimal 50 antrean PENDING
+  const queues = await db.emailQueueLog.findMany({
+    where: {
+      status: "PENDING",
+      retryCount: { lt: 3 }
+    },
+    take: 50,
+    orderBy: { createdAt: "asc" }
+  })
+
+  if (queues.length === 0) return { processed: 0 }
+
+  let successCount = 0
+  let failCount = 0
+
+  for (const q of queues) {
+    const config = await getEmailTransporter(q.tenantId || undefined)
+    
+    if (!config) {
+      await db.emailQueueLog.update({
+        where: { id: q.id },
+        data: {
+          retryCount: q.retryCount + 1,
+          errorMessage: "SMTP belum dikonfigurasi",
+          status: q.retryCount + 1 >= 3 ? "FAILED" : "PENDING"
+        }
+      })
+      failCount++
+      continue
+    }
+
+    try {
+      await config.transporter.sendMail({
+        from: config.fromName ? `"${config.fromName}" <${config.from}>` : config.from,
+        to: q.to,
+        subject: q.subject,
+        html: q.html,
+      })
+
+      await db.emailQueueLog.update({
+        where: { id: q.id },
+        data: { status: "SENT", sentAt: new Date() }
+      })
+      successCount++
+    } catch (error: any) {
+      await db.emailQueueLog.update({
+        where: { id: q.id },
+        data: {
+          retryCount: q.retryCount + 1,
+          errorMessage: error.message,
+          status: q.retryCount + 1 >= q.maxRetries ? "FAILED" : "PENDING"
+        }
+      })
+      failCount++
+    }
+  }
+
+  return { processed: queues.length, successCount, failCount }
 }
