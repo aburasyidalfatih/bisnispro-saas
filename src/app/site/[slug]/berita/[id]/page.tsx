@@ -180,7 +180,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
           
           <div className="flex flex-wrap items-center gap-3 mb-4">
              <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
-               {post.type || "BERITA"}
+               {post.category?.name || "BERITA"}
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                <Calendar className="h-4 w-4" />

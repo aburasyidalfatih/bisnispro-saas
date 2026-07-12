@@ -106,7 +106,7 @@ export const getTenantHomeData = async (slug: string) => {
             posts: { 
               where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
               orderBy: { createdAt: 'desc' }, take: 20,
-              include: { author: { select: { name: true, avatar: true } } }
+              include: { author: { select: { name: true, avatar: true } }, category: true }
             },
             events: { orderBy: { createdAt: 'desc' }, take: 6 },
             documents: { orderBy: { createdAt: 'desc' }, take: 10 },
@@ -121,7 +121,7 @@ export const getTenantHomeData = async (slug: string) => {
             where: { tenantId: tenantHome.id, status: "PUBLISHED", type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] } },
             orderBy: { createdAt: 'desc' },
             take: 4,
-            include: { author: { select: { name: true, avatar: true } } }
+            include: { author: { select: { name: true, avatar: true } }, category: true }
           });
           const existingIds = new Set(tenantHome.posts.map(p => p.id));
           const missing = pengumuman.filter(a => !existingIds.has(a.id));
@@ -322,7 +322,7 @@ export const getTenantPosts = async (slug: string) => {
           posts: { 
             where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
             orderBy: { createdAt: 'desc' },
-            include: { author: { select: { name: true, avatar: true } } }
+            include: { author: { select: { name: true, avatar: true } }, category: true }
           },
         }
       })

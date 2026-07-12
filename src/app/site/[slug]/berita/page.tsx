@@ -184,7 +184,7 @@ export default async function BeritaPage({
                   {normalizeImageUrl(posts[0].featuredImage) ? (
                     <Image src={normalizeImageUrl(posts[0].featuredImage)!} alt={posts[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   ) : (
-                    <SmartPlaceholder title={posts[0].title} type={posts[0].type || "BERITA"} />
+                    <SmartPlaceholder title={posts[0].title} type={posts[0].category?.name || "BERITA"} />
                   )}
                   <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm text-primary text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
                      TERBARU
@@ -220,10 +220,10 @@ export default async function BeritaPage({
                       {normalizeImageUrl(post.featuredImage) ? (
                         <Image src={normalizeImageUrl(post.featuredImage)!} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       ) : (
-                        <SmartPlaceholder title={post.title} type={post.type || "BERITA"} />
+                        <SmartPlaceholder title={post.title} type={post.category?.name || "BERITA"} />
                       )}
                       <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
-                         {post.type || "BERITA"}
+                         {post.category?.name || "BERITA"}
                       </div>
                     </div>
                     <div className="p-8 flex-1 flex flex-col">
