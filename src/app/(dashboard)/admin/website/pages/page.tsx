@@ -172,76 +172,90 @@ export default function CustomPagesPage() {
           </div>
         </div>
 
-        <Card className="glass border-0">
-          <CardContent className="p-6 space-y-6">
-            <div className="grid sm:grid-cols-2 gap-6">
-              {/* Kolom 1: Judul dan Slug */}
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label>Judul Halaman</Label>
-                  <Input value={form.title} onChange={e => generateSlug(e.target.value)} placeholder="Contoh: Tata Tertib Siswa" className="rounded-xl h-10" />
-                </div>
-                <div className="space-y-2">
-                  <Label>URL Slug</Label>
-                  <div className="flex items-center">
-                    <span className="bg-muted px-3 border border-r-0 border-input rounded-l-xl h-10 flex items-center text-sm text-muted-foreground">
-                      /
-                    </span>
-                    <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="tata-tertib" className="rounded-l-none rounded-r-xl h-10" />
-                  </div>
-                </div>
+      <div className="grid gap-6 lg:grid-cols-3 items-start max-w-[1200px] mx-auto max-w-full">
+        {/* Kolom Kiri: Konten Utama */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="glass border-0 overflow-hidden shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base">Konten Utama</CardTitle>
+                <CardDescription className="text-xs">Tulis judul dan isi halaman kustom Anda.</CardDescription>
+              </div>
+              <Button 
+                type="button" 
+                onClick={(e) => { e.preventDefault(); setAiModalOpen(true); }}
+                className="gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-md border-0 rounded-xl text-xs h-8 px-3"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Buat dengan AI
+              </Button>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6 pt-6">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Judul Halaman <span className="text-red-500">*</span></Label>
+                <Input value={form.title} onChange={e => generateSlug(e.target.value)} placeholder="Contoh: Tata Tertib Siswa" className="rounded-xl h-10 font-medium" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Isi Halaman</Label>
+                <RichTextEditor 
+                  value={form.content}
+                  onChange={val => setForm(p => ({ ...p, content: val }))}
+                  placeholder="Tuliskan konten halaman di sini..."
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-                <div className="pt-2">
-                  <div className="flex items-center space-x-2 bg-muted/50 p-3 rounded-xl border border-border/50 w-fit">
-                    <Switch 
-                      id="published" 
-                      checked={form.isPublished} 
-                      onCheckedChange={c => setForm(p => ({ ...p, isPublished: c }))} 
-                    />
-                    <Label htmlFor="published" className="cursor-pointer">Publikasikan halaman ini</Label>
-                  </div>
+        {/* Kolom Kanan: Pengaturan */}
+        <div className="space-y-6">
+          <Card className="glass border-0 overflow-hidden shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
+              <CardTitle className="text-base">Pengaturan Halaman</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6 pt-6">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">URL Slug <span className="text-red-500">*</span></Label>
+                <div className="flex items-center">
+                  <span className="bg-muted px-3 border border-r-0 border-input rounded-l-xl h-10 flex items-center text-sm text-muted-foreground">
+                    /
+                  </span>
+                  <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="tata-tertib" className="rounded-l-none rounded-r-xl h-10" />
                 </div>
               </div>
 
-              {/* Kolom 2: Gambar Unggulan */}
               <div className="space-y-2">
-                <Label>Gambar Unggulan (Opsional)</Label>
+                <Label className="text-sm font-medium">Gambar Unggulan (Opsional)</Label>
                 <ImageUploadDirect 
                   value={form.featuredImage}
                   onChange={(url) => setForm(p => ({ ...p, featuredImage: url }))}
                   onRemove={() => setForm(p => ({ ...p, featuredImage: "" }))}
                 />
-                <p className="text-xs text-muted-foreground mt-1">Gunakan gambar resolusi 1200x630px untuk hasil terbaik saat dibagikan ke sosmed.</p>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">Gunakan gambar resolusi 1200x630px untuk hasil terbaik saat dibagikan ke sosmed.</p>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Konten Halaman</Label>
-                <Button 
-                  type="button" 
-                  onClick={(e) => { e.preventDefault(); setAiModalOpen(true); }}
-                  className="gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-md border-0 rounded-xl text-xs h-8 px-3"
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Buat dengan AI
-                </Button>
+              <div className="pt-2 border-t border-border/50">
+                <div className="flex flex-col space-y-3 pt-4">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="published" className="cursor-pointer font-medium">Status Publikasi</Label>
+                    <Switch 
+                      id="published" 
+                      checked={form.isPublished} 
+                      onCheckedChange={c => setForm(p => ({ ...p, isPublished: c }))} 
+                    />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">Jika dimatikan, halaman ini hanya akan tersimpan sebagai draft dan tidak bisa diakses publik.</p>
+                </div>
               </div>
-              <RichTextEditor 
-                value={form.content}
-                onChange={val => setForm(p => ({ ...p, content: val }))}
-                placeholder="Tuliskan konten halaman di sini..."
-              />
-            </div>
 
-            <div className="flex items-center justify-end border-t pt-4">
-              <Button onClick={handleSave} disabled={saving} className="rounded-xl gap-2 font-bold min-w-[120px]">
+              <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl gap-2 font-bold h-10">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                Simpan
+                Simpan Halaman
               </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
       </div>
 
       {/* AI Generate Modal */}
