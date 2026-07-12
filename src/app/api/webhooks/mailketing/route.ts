@@ -37,11 +37,31 @@ export async function POST(req: Request) {
         where: { id: lastLog.id },
         data: { status: "BOUNCED", bouncedAt: now, errorMessage: JSON.stringify(body) }
       })
+
+      // Cek apakah ini email pendaftaran yang masih PENDING
+      const app = await db.tenantApplication.findFirst({
+        where: { adminEmail: email, status: "PENDING" }
+      })
+      if (app) {
+        await db.tenantApplication.delete({ where: { id: app.id } })
+        logger.info(`Auto-deleted fake application ${app.id} due to email bounce`)
+      }
     } else if (event.includes("open")) {
       await db.emailQueueLog.update({
         where: { id: lastLog.id },
         data: { openedAt: now }
       })
+
+      // Update emailOpenedAt untuk pendaftar PENDING
+      const app = await db.tenantApplication.findFirst({
+        where: { adminEmail: email, status: "PENDING" }
+      })
+      if (app) {
+        await db.tenantApplication.update({
+          where: { id: app.id },
+          data: { emailOpenedAt: now }
+        })
+      }
     } else if (event.includes("click")) {
       await db.emailQueueLog.update({
         where: { id: lastLog.id },

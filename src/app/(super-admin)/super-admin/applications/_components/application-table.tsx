@@ -135,7 +135,7 @@ export function ApplicationTable({
                 <TableCell className="px-4 py-4">
                   <div className="flex flex-col gap-1.5 items-start">
                     {getStatusBadge(app.status)}
-                    {app.status === 'APPROVED' && (
+                    {(app.status === 'APPROVED' || app.status === 'PENDING') && (
                       app.emailOpenedAt ? (
                         <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1 text-[10px] px-1.5 py-0" title={`Dibaca pada: ${new Date(app.emailOpenedAt).toLocaleString('id-ID')}`}>
                           <MailOpen className="h-3 w-3" /> Dibaca
