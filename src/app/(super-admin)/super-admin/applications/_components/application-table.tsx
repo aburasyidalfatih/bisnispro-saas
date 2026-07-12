@@ -111,7 +111,10 @@ export function ApplicationTable({
                 </TableCell>
                 <TableCell className="px-4 py-4">
                   <p className="font-medium">{app.adminName}</p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5"><Phone className="h-3 w-3" /> {app.adminPhone}</p>
+                  <div className="flex flex-col gap-0.5 mt-0.5">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1"><Phone className="h-3 w-3" /> {app.adminPhone}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1"><Mail className="h-3 w-3" /> {app.adminEmail}</p>
+                  </div>
                 </TableCell>
                 <TableCell className="px-4 py-4">
                   <p className="font-medium">{app.regency}</p>
