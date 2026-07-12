@@ -190,6 +190,17 @@ export default function CustomPagesPage() {
                     <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="tata-tertib" className="rounded-l-none rounded-r-xl h-10" />
                   </div>
                 </div>
+
+                <div className="pt-2">
+                  <div className="flex items-center space-x-2 bg-muted/50 p-3 rounded-xl border border-border/50 w-fit">
+                    <Switch 
+                      id="published" 
+                      checked={form.isPublished} 
+                      onCheckedChange={c => setForm(p => ({ ...p, isPublished: c }))} 
+                    />
+                    <Label htmlFor="published" className="cursor-pointer">Publikasikan halaman ini</Label>
+                  </div>
+                </div>
               </div>
 
               {/* Kolom 2: Gambar Unggulan */}
@@ -223,15 +234,7 @@ export default function CustomPagesPage() {
               />
             </div>
 
-            <div className="flex items-center justify-between border-t pt-4">
-              <div className="flex items-center space-x-2">
-                <Switch 
-                  id="published" 
-                  checked={form.isPublished} 
-                  onCheckedChange={c => setForm(p => ({ ...p, isPublished: c }))} 
-                />
-                <Label htmlFor="published">Publikasikan halaman ini</Label>
-              </div>
+            <div className="flex items-center justify-end border-t pt-4">
               <Button onClick={handleSave} disabled={saving} className="rounded-xl gap-2 font-bold min-w-[120px]">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Simpan
