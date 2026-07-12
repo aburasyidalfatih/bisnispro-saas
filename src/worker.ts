@@ -772,3 +772,19 @@ runWithLock("tenantLifecycle", 6 * 60 * 60 * 1000, async () => {
     console.error("[cron] Failed Tenant Lifecycle check", error)
   }
 }) // Runs once every 6 hours
+
+// ============================================================
+// EMAIL QUEUE PROCESSOR
+// ============================================================
+runWithLock("emailQueueSync", 5 * 60 * 1000, async () => {
+  console.log("[cron] Running Email Queue Process...")
+  try {
+    const { processEmailQueueCron } = await import("@/features/notification/services/notification.service")
+    const result = await processEmailQueueCron()
+    if (result.processed && result.processed > 0) {
+      console.log(`[cron] Email Queue processed: ${result.processed}, success: ${result.successCount}, fail: ${result.failCount}`)
+    }
+  } catch (error) {
+    console.error("[cron] Failed to process email queue", error)
+  }
+}) // Runs every 5 minutes
