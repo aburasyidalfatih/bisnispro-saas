@@ -170,7 +170,7 @@ export default function CustomPagesPage() {
                 <Label>URL Slug</Label>
                 <div className="flex items-center">
                   <span className="bg-muted px-3 border border-r-0 border-input rounded-l-xl h-10 flex items-center text-sm text-muted-foreground">
-                    /pages/
+                    /
                   </span>
                   <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="tata-tertib" className="rounded-l-none rounded-r-xl h-10" />
                 </div>
@@ -182,12 +182,10 @@ export default function CustomPagesPage() {
                 <Label>Konten Halaman</Label>
                 <Button 
                   type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  className="rounded-full h-8 text-xs bg-gradient-to-r from-primary/10 to-indigo-500/10 hover:from-primary/20 hover:to-indigo-500/20 text-primary border-primary/20 gap-1.5"
                   onClick={(e) => { e.preventDefault(); setAiModalOpen(true); }}
+                  className="gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-md border-0 rounded-xl text-xs h-8 px-3"
                 >
-                  <Sparkles className="h-3.5 w-3.5 fill-primary/20" />
+                  <Sparkles className="h-3.5 w-3.5" />
                   Buat dengan AI
                 </Button>
               </div>
