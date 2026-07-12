@@ -18,11 +18,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trackMetaEvent } from "@/components/shared/meta-pixel"
 import { useSearchParams } from "next/navigation"
 
+import { getTenantCount } from "./actions"
+
 function RegisterSchoolForm() {
   const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [isChecking, setIsChecking] = useState(false)
+  const [tenantCount, setTenantCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    getTenantCount().then(count => {
+      setTenantCount(count > 0 ? count : null)
+    })
+  }, [])
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null)
   const [affiliateName, setAffiliateName] = useState<string | null>(null)
   const [csPhone, setCsPhone] = useState<string | null>(null)
@@ -297,7 +306,7 @@ function RegisterSchoolForm() {
           <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0 px-3 py-1">Formulir Pendaftaran</Badge>
           <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Daftarkan Sekolah Anda</h1>
           <p className="text-muted-foreground text-lg max-w-lg mx-auto leading-relaxed">
-            Bergabunglah dengan ratusan sekolah lainnya dalam transformasi digital manajemen sekolah.
+            Bergabunglah dengan {tenantCount ? <span className="font-semibold text-primary">{tenantCount}</span> : "ratusan"} sekolah lainnya dalam transformasi digital manajemen sekolah.
           </p>
         </div>
 
