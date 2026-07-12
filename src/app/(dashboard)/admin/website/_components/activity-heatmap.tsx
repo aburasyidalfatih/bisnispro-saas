@@ -1,7 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import ActivityCalendar from "react-activity-calendar"
+import dynamic from "next/dynamic"
+
+const ActivityCalendar = dynamic(() => import("react-activity-calendar"), { ssr: false })
+
 import { getAdminActivityHeatmap } from "../actions"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Activity } from "lucide-react"
@@ -35,9 +38,10 @@ export function ActivityHeatmap({ tenantId }: ActivityHeatmapProps) {
 
   // Fallback to GitHub-style green scale if explicitTheme is not preferred
   const greenTheme = {
-    light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-    dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
+    light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'] as [string, string, string, string, string],
+    dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'] as [string, string, string, string, string],
   }
+
 
   return (
     <Card className="col-span-1 md:col-span-2 lg:col-span-3 border border-border/50 bg-background/50 backdrop-blur-sm overflow-hidden">

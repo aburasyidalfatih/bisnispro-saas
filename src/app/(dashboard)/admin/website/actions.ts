@@ -45,7 +45,7 @@ export async function getAdminActivityHeatmap(tenantId: string) {
       return {
         date,
         count,
-        level
+        level: level as 0 | 1 | 2 | 3 | 4
       }
     })
 
