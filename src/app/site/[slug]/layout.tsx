@@ -192,6 +192,8 @@ export default async function WebsiteLayout({
         "address": {
           "@type": "PostalAddress",
           "streetAddress": tenant.address || "",
+          "addressLocality": (tenant.settings as any)?.regency || "",
+          "addressRegion": (tenant.settings as any)?.province || "",
           "addressCountry": "ID"
         }
       },
