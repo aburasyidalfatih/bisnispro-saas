@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Plus, Edit2, Trash2, Globe, FileText, ArrowLeft, Loader2, Save, Sparkles, Bot } from "lucide-react"
+import { Plus, Edit2, Trash2, Globe, FileText, ArrowLeft, Loader2, Save, Sparkles, Bot, Eye } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
 import { useSession } from "next-auth/react"
+import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -25,6 +26,8 @@ export default function CustomPagesPage() {
 
   const { data: session } = useSession()
   const tenantId = (session?.user as any)?.tenants?.[0]?.id
+  const { branding } = useTenantBranding()
+  const domainString = branding?.slug ? `${branding.slug}.schoolpro.id` : "domain.schoolpro.id"
 
   // AI State
   const [aiModalOpen, setAiModalOpen] = useState(false)
@@ -319,7 +322,7 @@ export default function CustomPagesPage() {
                     <div>
                       <h3 className="font-semibold text-base">{page.title}</h3>
                       <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> /pages/{page.slug}</span>
+                        <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {domainString}/{page.slug}</span>
                         <span className={page.isPublished ? "text-emerald-500 font-medium" : "text-amber-500 font-medium"}>
                           {page.isPublished ? "Publik" : "Draft"}
                         </span>
@@ -327,6 +330,13 @@ export default function CustomPagesPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    {page.isPublished && (
+                      <Button asChild variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground hover:bg-primary/10 hover:text-blue-600" title="Lihat di website">
+                        <a href={`https://${domainString}/${page.slug}`} target="_blank" rel="noopener noreferrer">
+                          <Eye className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
                     <Button variant="outline" size="sm" onClick={() => openForm(page)} className="rounded-lg h-9">
                       <Edit2 className="h-4 w-4 mr-1.5" /> Edit
                     </Button>
