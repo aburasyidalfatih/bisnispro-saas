@@ -36,7 +36,7 @@ import {
 } from "lucide-react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { toast } from "@/hooks/use-toast"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 
 interface RichTextEditorProps {
   value: string
@@ -186,15 +186,12 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
   })
 
   // Sinkronisasi nilai luar jika berubah (kecuali dari editor itu sendiri)
-  // Ini berguna jika data dimuat secara asinkron (misal saat edit artikel)
-  // Kita cek if (editor && value !== editor.getHTML()) tapi berhati-hati dengan loop
-  // Sebaiknya di-handle dari parent component saat set initial data, tapi untuk jaga-jaga:
-  /* useEffect(() => {
-       if (editor && value !== editor.getHTML()) {
-         editor.commands.setContent(value)
-       }
-     }, [value, editor]) 
-  */
+  // Ini berguna jika data dimuat secara asinkron atau diubah otomatis (misal AI generate)
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value)
+    }
+  }, [value, editor])
 
   if (!editor) {
     return <div className="min-h-[300px] rounded-xl border border-input bg-background/50 animate-pulse" />
