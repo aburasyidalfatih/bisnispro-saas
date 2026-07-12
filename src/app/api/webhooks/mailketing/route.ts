@@ -62,11 +62,41 @@ export async function POST(req: Request) {
           data: { emailOpenedAt: now }
         })
       }
+
+      // Update DripLog untuk Email Edukasi
+      const tenant = await db.tenant.findFirst({ where: { email } })
+      if (tenant) {
+        const latestDrip = await db.dripLog.findFirst({
+           where: { tenantId: tenant.id },
+           orderBy: { sentAt: "desc" }
+        })
+        if (latestDrip) {
+           await db.dripLog.update({
+              where: { id: latestDrip.id },
+              data: { isOpened: true, openedAt: now }
+           })
+        }
+      }
     } else if (event.includes("click")) {
       await db.emailQueueLog.update({
         where: { id: lastLog.id },
         data: { clickedAt: now }
       })
+
+      // Update DripLog untuk Email Edukasi
+      const tenant = await db.tenant.findFirst({ where: { email } })
+      if (tenant) {
+        const latestDrip = await db.dripLog.findFirst({
+           where: { tenantId: tenant.id },
+           orderBy: { sentAt: "desc" }
+        })
+        if (latestDrip) {
+           await db.dripLog.update({
+              where: { id: latestDrip.id },
+              data: { isClicked: true, clickedAt: now }
+           })
+        }
+      }
     }
 
     return NextResponse.json({ success: true, message: "Webhook processed" })
