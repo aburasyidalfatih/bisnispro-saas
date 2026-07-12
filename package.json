@@ -101,6 +101,7 @@
     "pdfkit": "^0.18.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.5",
+    "react-activity-calendar": "^3.2.1",
     "react-dom": "^19.2.5",
     "react-hook-form": "^7.50.0",
     "react-leaflet": "^5.0.0",

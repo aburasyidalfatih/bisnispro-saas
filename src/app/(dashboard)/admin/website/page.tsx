@@ -13,6 +13,7 @@ import {
 } from"lucide-react"
 import { cn, getRootDomain } from"@/lib/utils"
 import Link from"next/link"
+import { ActivityHeatmap } from "./_components/activity-heatmap"
 
 interface WebsiteData {
   name: string
@@ -414,6 +415,11 @@ export default function WebsiteOverviewPage() {
             </CardContent>
           </Card>
         </Link>
+      </div>
+
+      {/* Activity Heatmap */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {tenantId && <ActivityHeatmap tenantId={tenantId} />}
       </div>
 
       {/* Onboarding Steps Section */}
