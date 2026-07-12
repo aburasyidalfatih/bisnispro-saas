@@ -96,7 +96,7 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
       ],
     }] : []),
     ...(has("website_content") ? [{
-      title: "Konten Website",
+      title: "Kelola Website",
       items: [
         {
           label: "Beranda & Slider",
