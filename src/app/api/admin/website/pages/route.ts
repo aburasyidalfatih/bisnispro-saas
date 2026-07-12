@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     if (!tenantId) return NextResponse.json({ error: "No tenant" }, { status: 400 })
 
     const body = await req.json()
-    const { title, slug, content, isPublished } = body
+    const { title, slug, content, isPublished, featuredImage } = body
 
     if (!title || !slug) {
       return NextResponse.json({ error: "Judul dan URL Slug wajib diisi" }, { status: 400 })
@@ -51,6 +51,7 @@ export async function POST(req: Request) {
         title,
         slug,
         content,
+        featuredImage,
         isPublished: isPublished ?? false
       }
     })

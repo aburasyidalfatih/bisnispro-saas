@@ -10,6 +10,7 @@ import { Plus, Edit2, Trash2, Globe, FileText, ArrowLeft, Loader2, Save, Sparkle
 import { toast } from "@/hooks/use-toast"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { LazyRichTextEditor as RichTextEditor } from "@/components/ui/lazy-rich-text-editor"
+import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
 import { useSession } from "next-auth/react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
@@ -21,7 +22,7 @@ export default function CustomPagesPage() {
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [form, setForm] = useState({ title: "", slug: "", content: "", isPublished: true })
+  const [form, setForm] = useState({ title: "", slug: "", content: "", featuredImage: "", isPublished: true })
   const [saving, setSaving] = useState(false)
 
   const { data: session } = useSession()
@@ -97,10 +98,10 @@ export default function CustomPagesPage() {
   const openForm = (page?: any) => {
     if (page) {
       setEditingId(page.id)
-      setForm({ title: page.title, slug: page.slug, content: page.content || "", isPublished: page.isPublished })
+      setForm({ title: page.title, slug: page.slug, content: page.content || "", featuredImage: page.featuredImage || "", isPublished: page.isPublished })
     } else {
       setEditingId(null)
-      setForm({ title: "", slug: "", content: "", isPublished: true })
+      setForm({ title: "", slug: "", content: "", featuredImage: "", isPublished: true })
     }
     setIsFormOpen(true)
   }
@@ -178,6 +179,16 @@ export default function CustomPagesPage() {
                   <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="tata-tertib" className="rounded-l-none rounded-r-xl h-10" />
                 </div>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Gambar Unggulan (Opsional)</Label>
+              <ImageUploadDirect 
+                value={form.featuredImage}
+                onChange={(url) => setForm(p => ({ ...p, featuredImage: url }))}
+                onRemove={() => setForm(p => ({ ...p, featuredImage: "" }))}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Gunakan gambar resolusi 1200x630px untuk hasil terbaik saat dibagikan ke sosmed.</p>
             </div>
 
             <div className="space-y-2">

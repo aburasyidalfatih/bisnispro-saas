@@ -2501,6 +2501,7 @@ model CustomPage {
   title       String
   slug        String
   content     String?  @db.Text
+  featuredImage String?
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

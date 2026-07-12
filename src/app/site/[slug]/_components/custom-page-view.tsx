@@ -3,6 +3,8 @@ import { notFound } from "next/navigation"
 import { Metadata } from "next"
 import { headers } from "next/headers"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
+import Image from "next/image"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface PageProps {
   params: Promise<{ slug: string; pageSlug: string }>
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
   const pageUrl = `${domainUrl}/${page.slug}`
   
-  let imageUrl = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  let imageUrl = normalizeImageUrl(page.featuredImage) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
   if (imageUrl.startsWith("/")) imageUrl = `${domainUrl}${imageUrl}`
   const finalOgImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(imageUrl)}&ext=.jpg`
 
@@ -116,7 +118,8 @@ export default async function CustomPagePublicView({ params }: PageProps) {
                 "@type": "ImageObject",
                 "url": tenant.logo || "https://schoolpro.id/logo-schoolpro.png"
               }
-            }
+            },
+            "image": normalizeImageUrl(page.featuredImage) || tenant.heroImage || "https://schoolpro.id/default-og.jpg"
           })
         }}
       />
@@ -124,6 +127,19 @@ export default async function CustomPagePublicView({ params }: PageProps) {
       <div className="container max-w-4xl mx-auto px-4">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-8 text-foreground">{page.title}</h1>
         
+        {normalizeImageUrl(page.featuredImage) && (
+          <div className="w-full aspect-[21/9] relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
+            <Image
+              src={normalizeImageUrl(page.featuredImage)!}
+              alt={page.title}
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+            />
+          </div>
+        )}
+
         {page.content ? (
           <div 
             className="prose prose-slate md:prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-p:mb-6 prose-p:mt-2 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80"
