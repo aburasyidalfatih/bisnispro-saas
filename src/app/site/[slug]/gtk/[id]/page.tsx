@@ -76,13 +76,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3 z-0 max-w-full" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Link 
-            href={`${base}/gtk`}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary mb-12 transition-colors bg-white/60 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/60 shadow-sm hover:shadow-md"
-          >
-             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Guru
-          </Link>
-          
+
           <div className="flex flex-col md:flex-row gap-12 items-center md:items-start">
              
              {/* Profile Image with Glowing Ring */}
