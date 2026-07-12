@@ -31,6 +31,9 @@ export function LandingNavbar({ appLogo, platformName }: LandingNavbarProps) {
           <Link href="#solusi" className="hover:text-foreground transition-colors">
             Solusi
           </Link>
+          <Link href="/direktori" className="hover:text-foreground transition-colors font-medium">
+            Direktori Sekolah
+          </Link>
         </div>
 
         {/* CTA + Mobile hint */}
