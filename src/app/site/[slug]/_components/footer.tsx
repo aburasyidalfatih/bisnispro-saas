@@ -265,7 +265,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
               ) : tenant.plan === "lite" ? (
                 <span className="ml-2">Powered by <a href={(tenant.settings as any)?.affiliate_link || "https://schoolpro.id"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SchoolPro.id</a></span>
               ) : (
-                <span className="ml-2">Powered by <a href={`https://${tenant.domain || `${tenant.slug}.schoolpro.id`}`} className="hover:text-white transition-colors">{tenant.domain || `${tenant.slug}.schoolpro.id`}</a></span>
+                <span className="ml-2">Powered by <a href={(tenant.settings as any)?.affiliate_link || `https://${tenant.domain || `${tenant.slug}.schoolpro.id`}`} target={(tenant.settings as any)?.affiliate_link ? "_blank" : undefined} rel={(tenant.settings as any)?.affiliate_link ? "noopener noreferrer" : undefined} className="hover:text-white transition-colors">{tenant.domain || `${tenant.slug}.schoolpro.id`}</a></span>
               )}
             </p>
             <div className="flex gap-4">
