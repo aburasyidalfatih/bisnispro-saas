@@ -19,7 +19,8 @@ export function BackupTab() {
         const data = await res.json()
         setBackupData(data)
       } else {
-        toast({ title: "Gagal memuat data backup", variant: "destructive" })
+        const err = await res.json().catch(() => ({}))
+        toast({ title: "Gagal memuat data backup", description: err.error || res.statusText, variant: "destructive" })
       }
     } catch {
       toast({ title: "Error koneksi", variant: "destructive" })

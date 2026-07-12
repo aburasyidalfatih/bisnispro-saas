@@ -32,36 +32,42 @@ export async function GET() {
       })
     }
 
-    // List file backup lokal
-    const files = fs.readdirSync(BACKUP_DIR)
-      .filter(f => f.startsWith("schoolpro_db_") && f.endsWith(".sql.gz"))
-      .map(f => {
-        const stat = fs.statSync(path.join(BACKUP_DIR, f))
-        return {
-          name: f,
-          size: stat.size,
-          sizeHuman: formatBytes(stat.size),
-          createdAt: stat.mtime.toISOString(),
-        }
-      })
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-
-    // Karena API berjalan di dalam Docker, kita tidak bisa langsung mengeksekusi command rclone di VPS host.
-    // Kita anggap true jika folder backup ada.
+    // List file backup lokal (Gunakan try-catch agar tidak crash jika EACCES permission denied)
+    let files: any[] = []
     let rcloneInstalled = true
     let gdriveConnected = true
-
-    // Cek cron.log atau backup.log
     let lastBackupLog = null
-    const logFile = path.join(BACKUP_DIR, "backup.log")
-    if (fs.existsSync(logFile)) {
-      const logContent = fs.readFileSync(logFile, "utf-8")
-      const lines = logContent.trim().split("\n")
-      lastBackupLog = lines.slice(-20).join("\n")
+    let totalSize = 0
+
+    try {
+      files = fs.readdirSync(BACKUP_DIR)
+        .filter(f => f.startsWith("schoolpro_db_") && f.endsWith(".sql.gz"))
+        .map(f => {
+          const stat = fs.statSync(path.join(BACKUP_DIR, f))
+          return {
+            name: f,
+            size: stat.size,
+            sizeHuman: formatBytes(stat.size),
+            createdAt: stat.mtime.toISOString(),
+          }
+        })
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        
+      totalSize = files.reduce((acc, f) => acc + f.size, 0)
+
+      // Cek cron.log atau backup.log
+      const logFile = path.join(BACKUP_DIR, "backup.log")
+      if (fs.existsSync(logFile)) {
+        const logContent = fs.readFileSync(logFile, "utf-8")
+        const lines = logContent.trim().split("\n")
+        lastBackupLog = lines.slice(-20).join("\n")
+      }
+    } catch (e) {
+      console.error("Error reading backup directory:", e)
+      // Jika error EACCES, kita biarkan files kosong agar tidak crash
     }
 
-    // Hitung total ukuran backup lokal
-    const totalSize = files.reduce((acc, f) => acc + f.size, 0)
+    // (Logika rclone, gdrive, dbSize akan tetap berjalan)
 
     // Cek ukuran database
     let dbSize = null
