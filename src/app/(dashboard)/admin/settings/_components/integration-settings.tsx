@@ -75,14 +75,14 @@ export function IntegrationSettings({
             <Globe className="h-4 w-4 text-amber-500" />
             <Label className="font-semibold text-amber-600">Link Afiliasi / Referral</Label>
           </div>
-          <p className="text-[11px] text-muted-foreground mb-3">Jika Anda adalah mitra afiliasi SchoolPro, masukkan link referal Anda di sini (contoh: <code className="bg-white/50 px-1 rounded">https://schoolpro.id/mitra-afiliasi?ref=KODEANDA</code>). Link ini akan disematkan di bagian bawah (footer) website sekolah Anda untuk mendapatkan komisi pendaftaran.</p>
+          <p className="text-[11px] text-muted-foreground mb-3">Jika Anda adalah mitra afiliasi SchoolPro, masukkan link referal Anda di sini (contoh: <code className="bg-white/50 px-1 rounded">https://schoolpro.id/2sdyiu</code>). Link ini akan disematkan di bagian bawah (footer) website sekolah Anda untuk mendapatkan komisi pendaftaran.</p>
           
           <div className="space-y-1.5">
             <Label className="text-xs">URL Afiliasi Lengkap</Label>
             <Input 
               value={rawSettings.affiliate_link || ""} 
               onChange={e => setRawSettings((p: any) => ({ ...p, affiliate_link: e.target.value }))} 
-              placeholder="https://schoolpro.id/mitra-afiliasi?ref=..." 
+              placeholder="https://schoolpro.id/2sdyiu" 
               className="rounded-xl h-9 text-xs" 
             />
           </div>
