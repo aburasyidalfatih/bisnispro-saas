@@ -40,6 +40,7 @@ export const getTenantLayoutData = async (slug: string) => {
           slug: true,
           domain: true,
           logo: true,
+          plan: true,
           settings: true,
           theme: true,
           customThemeId: true,

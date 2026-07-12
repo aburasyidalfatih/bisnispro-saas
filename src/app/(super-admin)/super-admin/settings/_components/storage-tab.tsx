@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,6 +6,14 @@ import { Label } from "@/components/ui/label"
 import { HardDrive, Cloud, Save, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { SettingsForm } from "../constants"
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 B"
+  const k = 1024
+  const sizes = ["B", "KB", "MB", "GB"]
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+}
 
 interface StorageTabProps {
   form: SettingsForm;
@@ -16,9 +24,49 @@ interface StorageTabProps {
 
 export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTabProps) {
   const [showS3Secret, setShowS3Secret] = useState(false)
+  const [stats, setStats] = useState<{r2Count: number, r2Size: number, localCount: number, localSize: number} | null>(null)
+
+  useEffect(() => {
+    fetch("/api/super-admin/storage-stats")
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="grid gap-6 lg:grid-cols-2 outline-none">
+      {stats && (
+        <Card className="glass border-0 lg:col-span-2">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">Statistik Penyimpanan</CardTitle>
+            <CardDescription>Ringkasan penggunaan ruang penyimpanan lokal dan Cloudflare R2.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="rounded-xl border-2 border-orange-500/20 bg-orange-500/5 p-4 text-center">
+                <Cloud className="h-5 w-5 text-orange-500 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-orange-600">{stats.r2Count}</p>
+                <p className="text-xs text-muted-foreground">File di S3 / R2</p>
+              </div>
+              <div className="rounded-xl border-2 border-amber-500/20 bg-amber-500/5 p-4 text-center">
+                <HardDrive className="h-5 w-5 text-amber-500 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-amber-600">{formatBytes(stats.r2Size)}</p>
+                <p className="text-xs text-muted-foreground">Ukuran S3 / R2</p>
+              </div>
+              <div className="rounded-xl border-2 border-blue-500/20 bg-blue-500/5 p-4 text-center">
+                <HardDrive className="h-5 w-5 text-blue-500 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-blue-600">{stats.localCount}</p>
+                <p className="text-xs text-muted-foreground">File Lokal</p>
+              </div>
+              <div className="rounded-xl border-2 border-cyan-500/20 bg-cyan-500/5 p-4 text-center">
+                <HardDrive className="h-5 w-5 text-cyan-500 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-cyan-600">{formatBytes(stats.localSize)}</p>
+                <p className="text-xs text-muted-foreground">Ukuran Lokal</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <Card className="glass border-0">
         <CardHeader>
           <div className="flex items-center gap-2">

@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { usePathname } from "next/navigation"
-import { Bell, Check, CheckCircle2 } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { Bell, CheckCircle2, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -27,6 +27,7 @@ export function NotificationBell() {
 
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
   const unreadCount = data?.unreadCount || 0
   const notifications = data?.notifications || []
@@ -86,7 +87,10 @@ export function NotificationBell() {
                     }`}
                     onClick={() => {
                       if (!notif.isRead) markAsRead(notif.id)
-                      // Handle redirection logic if `notif.metadata?.link` exists
+                      setIsOpen(false)
+                      if (notif.metadata?.actionUrl) {
+                        router.push(notif.metadata.actionUrl)
+                      }
                     }}
                   >
                     <div className="flex w-full justify-between items-start gap-2">
@@ -100,6 +104,11 @@ export function NotificationBell() {
                     <p className={`text-xs line-clamp-2 ${!notif.isRead ? "text-foreground/80" : "text-muted-foreground"}`}>
                       {notif.message}
                     </p>
+                    {notif.metadata?.actionUrl && (
+                      <div className="flex items-center gap-1 mt-1.5 text-xs font-semibold text-primary">
+                        Tindak Lanjut <ArrowRight className="h-3 w-3" />
+                      </div>
+                    )}
                     <span className="text-[10px] text-muted-foreground mt-1">
                       {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: id })}
                     </span>

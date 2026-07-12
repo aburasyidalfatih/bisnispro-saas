@@ -193,6 +193,7 @@ export interface PublicTenant {
   tagline: string | null
   description: string | null
   about: string | null
+  plan: string
   heroImage: string | null
   gallery: GalleryItem[] | null
   phone: string | null

@@ -42,16 +42,16 @@ export function HeroSection() {
         <div className="mx-auto max-w-4xl space-y-6">
           <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-xs md:text-sm">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="text-muted-foreground">Platform Manajemen Pendidikan Masa Depan</span>
+            <span className="text-muted-foreground">Platform Web Sekolah Gratis & Manajemen Digital</span>
             <ChevronRight className="h-3 w-3 text-muted-foreground" />
           </div>
 
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15]">
-            Buat Website Resmi Sekolah Anda, <span className="text-gradient">100% Gratis</span> Selamanya
+            Solusi <span className="text-gradient">Website Sekolah Gratis</span> & Profesional
           </h1>
 
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
-            Tingkatkan kredibilitas sekolah Anda dalam 5 menit. Dapatkan website profesional yang cepat, aman, dan
+            Tingkatkan kredibilitas sekolah Anda dalam 5 menit. Dapatkan web sekolah gratis yang cepat, aman, dan
             mudah dikelola tanpa biaya server. Mulai dari website, tumbuh menjadi{" "}
             <em className="italic font-medium text-foreground">Smart School</em> dengan ekosistem PPDB dan Keuangan.
           </p>
@@ -62,7 +62,7 @@ export function HeroSection() {
                 size="lg"
                 className="w-full gap-2 rounded-xl btn-gradient text-white shadow-xl glow-primary h-12 md:h-14 px-6 md:px-8 text-sm md:text-base border-0 flex items-center justify-center"
               >
-                Buat Website Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                Buat Website Sekolah Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
               </Button>
             </Link>
             <Link href="#fitur" className="w-full sm:w-auto">

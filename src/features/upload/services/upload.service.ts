@@ -137,6 +137,9 @@ export async function saveFile(
                     ? `Penyimpanan sekolah Anda sudah ${usagePercent}% penuh (${usedStr} MB dari ${maxLimitStr}). Segera upgrade paket atau hapus file yang tidak diperlukan agar layanan tetap berjalan lancar.`
                     : `Penyimpanan sekolah Anda sudah ${usagePercent}% terpakai (${usedStr} MB dari ${maxLimitStr}). Pertimbangkan upgrade paket untuk menambah kapasitas penyimpanan.`,
                   type: "warning",
+                  metadata: {
+                    actionUrl: "/admin/settings/billing"
+                  }
                 })
                 // Prevent duplicate notification for 24 hours
                 await redis.set(cacheKey, "1", "EX", 86400)

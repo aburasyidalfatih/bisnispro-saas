@@ -16,7 +16,7 @@ type FooterWebsiteMenu = {
 
 interface FooterProps {
   tenant: Pick<PublicTenant, 
-    'name' | 'slug' | 'tagline' | 'description' | 'phone' | 'email' | 'whatsapp' | 
+    'name' | 'slug' | 'domain' | 'plan' | 'tagline' | 'description' | 'phone' | 'email' | 'whatsapp' | 
     'address' | 'instagram' | 'facebook' | 'youtube' | 'tiktok' | 'settings'
   > & { 
     programs?: { name: string }[]
@@ -259,7 +259,14 @@ export function WebsiteFooter({ tenant }: FooterProps) {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.5)" }}>
-              &copy; {year} {tenant.name}. All rights reserved. <span className="ml-2">Powered by <a href="https://schoolpro.id" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SchoolPro.id</a> v1.0.5 {process.env.NEXT_PUBLIC_APP_VERSION ? `(rev: ${process.env.NEXT_PUBLIC_APP_VERSION.substring(0, 7)})` : ""}</span>
+              &copy; {year} {tenant.name}. All rights reserved. 
+              {(!tenant.plan || tenant.plan === "free") ? (
+                <span className="ml-2">Dibuat menggunakan <a href="https://schoolpro.id" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline decoration-white/20 underline-offset-2">Platform Web Sekolah Gratis</a> dari SchoolPro</span>
+              ) : tenant.plan === "lite" ? (
+                <span className="ml-2">Powered by <a href="https://schoolpro.id" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SchoolPro.id</a></span>
+              ) : (
+                <span className="ml-2">Powered by <a href={`https://${tenant.domain || `${tenant.slug}.schoolpro.id`}`} className="hover:text-white transition-colors">{tenant.domain || `${tenant.slug}.schoolpro.id`}</a></span>
+              )}
             </p>
             <div className="flex gap-4">
               <Link href={resolveHref("/contact")} className="text-[11px] transition-colors hover:text-white/60" style={{ color: "rgba(255,255,255,0.5)" }}>

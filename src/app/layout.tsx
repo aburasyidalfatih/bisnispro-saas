@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "SchoolPro - Platform Manajemen & Website Sekolah Terpadu",
     description: "SchoolPro adalah platform SaaS terbaik untuk digitalisasi sekolah. Tersedia fitur pembuatan website sekolah otomatis, PPDB Online, manajemen data master, hingga tagihan siswa.",
-    keywords: ["aplikasi sekolah", "website sekolah", "sistem informasi sekolah", "ppdb online", "saas pendidikan", "software administrasi sekolah"],
+    keywords: ["aplikasi sekolah", "website sekolah", "sistem informasi sekolah", "ppdb online", "saas pendidikan", "software administrasi sekolah", "website sekolah gratis", "web sekolah gratis"],
     authors: [{ name: "SchoolPro Team" }],
     robots: blockIndexing ? { index: false, follow: false } : undefined,
     openGraph: {

@@ -4,9 +4,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 const featureModules = [
   {
     id: "website",
-    title: "Website Profil (Gratis)",
+    title: "Website Sekolah Gratis",
     icon: Globe,
-    description: "Pondasi digital sekolah Anda. Desain profesional siap pakai tanpa biaya server.",
+    description: "Pondasi digital sekolah Anda. Dapatkan web sekolah gratis dengan desain profesional tanpa biaya server.",
     features: [
       { name: "Profil Sekolah & Sejarah", status: "ready" },
       { name: "Manajemen Fasilitas & Ekstrakurikuler", status: "ready" },

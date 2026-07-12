@@ -10,12 +10,12 @@ export function CtaSection() {
         <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full orb-2 opacity-20 blur-3xl" />
         <div className="relative space-y-6 md:space-y-8 max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-            Wujudkan Website <br className="hidden sm:block" />
-            <span className="text-gradient">Sekolah Profesional</span>
+            Wujudkan <span className="text-gradient">Website Sekolah Gratis</span>
+            <br className="hidden sm:block" />
+            Dalam Genggaman Anda
           </h2>
           <p className="text-muted-foreground text-sm md:text-lg">
-            Tidak perlu membuang jutaan rupiah untuk menyewa programmer dan hosting. Buat website sekolah Anda secara
-            gratis dalam hitungan menit.
+            Tidak perlu membuang jutaan rupiah untuk menyewa programmer dan hosting. Dapatkan web sekolah gratis dengan fitur lengkap untuk institusi Anda.
           </p>
           <div className="pt-2">
             <Link href="/daftarkan-sekolah">
@@ -23,7 +23,7 @@ export function CtaSection() {
                 size="lg"
                 className="rounded-xl md:rounded-2xl btn-gradient text-white shadow-2xl glow-primary h-12 md:h-14 px-7 md:px-10 text-sm md:text-lg font-semibold gap-3 border-0 w-full sm:w-auto flex items-center justify-center"
               >
-                Buat Website Gratis <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                Buat Web Sekolah Gratis Sekarang <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
               </Button>
             </Link>
           </div>

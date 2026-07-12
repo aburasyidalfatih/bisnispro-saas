@@ -495,6 +495,7 @@ export async function createInAppNotification(params: {
   title: string
   message: string
   type?: string
+  metadata?: any
 }) {
   return db.notification.create({
     data: {
@@ -504,6 +505,7 @@ export async function createInAppNotification(params: {
       message: params.message,
       type: params.type || "info",
       channel: "inapp",
+      metadata: params.metadata || null,
     },
   })
 }
@@ -518,6 +520,7 @@ export async function sendNotification(params: {
   type?: string
   channels?: ("inapp" | "email" | "whatsapp")[]
   waTemplateData?: TemplateData
+  metadata?: { actionUrl?: string; [key: string]: any }
 }) {
   const channels = params.channels || ["inapp"]
 
@@ -536,19 +539,25 @@ export async function sendNotification(params: {
         break
       case "email":
         if (user?.email) {
+          const actionHtml = params.metadata?.actionUrl 
+            ? `<br><br><a href="https://${process.env.NEXT_PUBLIC_APP_DOMAIN}${params.metadata.actionUrl}" style="display:inline-block;padding:10px 20px;background-color:#4F46E5;color:white;text-decoration:none;border-radius:6px;font-weight:bold;">Tindak Lanjut</a>` 
+            : ""
           await sendEmail(
             user.email,
             params.title,
-            `<p>${params.message}</p>`,
+            `<p>${params.message}</p>${actionHtml}`,
             params.tenantId
           )
         }
         break
       case "whatsapp":
         if (user?.phone) {
+          const actionText = params.metadata?.actionUrl 
+            ? `\n\n🔗 *Tindak Lanjut:* https://${process.env.NEXT_PUBLIC_APP_DOMAIN}${params.metadata.actionUrl}` 
+            : ""
           await sendWhatsApp(
             user.phone,
-            `${params.title}\n\n${params.message}`,
+            `${params.title}\n\n${params.message}${actionText}`,
             params.tenantId,
             params.waTemplateData
           )
@@ -563,6 +572,7 @@ export async function notifyTenantAdmins(tenantId: string, params: {
   message: string
   type?: "info" | "success" | "warning" | "error"
   channels?: ("inapp" | "email" | "whatsapp")[]
+  metadata?: { actionUrl?: string; [key: string]: any }
 }) {
   const admins = await db.tenantUser.findMany({
     where: {
@@ -580,7 +590,8 @@ export async function notifyTenantAdmins(tenantId: string, params: {
         title: params.title,
         message: params.message,
         type: params.type || "info",
-        channels: params.channels || ["inapp", "email", "whatsapp"]
+        channels: params.channels || ["inapp", "email", "whatsapp"],
+        metadata: params.metadata
       })
     }
   }
