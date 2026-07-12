@@ -19,6 +19,7 @@ export default function RetentionPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [retentionData, setRetentionData] = useState<any>(null)
+  const [emailLogs, setEmailLogs] = useState<any[]>([])
   
   const [form, setForm] = useState({
     RETENTION_30_EMAIL_SUBJECT: DEFAULT_SETTINGS_FORM.RETENTION_30_EMAIL_SUBJECT,
@@ -50,6 +51,11 @@ export default function RetentionPage() {
     fetch("/api/super-admin/retention-history")
       .then(r => r.json())
       .then(setRetentionData)
+      .catch(console.error)
+
+    fetch("/api/super-admin/email-logs")
+      .then(r => r.json())
+      .then(setEmailLogs)
       .catch(console.error)
   }, [])
 
@@ -96,6 +102,7 @@ export default function RetentionPage() {
         <TabsList>
           <TabsTrigger value="settings">Pengaturan Pesan</TabsTrigger>
           <TabsTrigger value="history">Daftar Sekolah Dormant</TabsTrigger>
+          <TabsTrigger value="email-logs">History Email</TabsTrigger>
         </TabsList>
 
         <TabsContent value="settings" className="space-y-6">
@@ -228,6 +235,79 @@ export default function RetentionPage() {
                           </TableCell>
                           <TableCell className="pr-6">
                             <Badge className={tenant.badge}>{tenant.status}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="email-logs">
+          <Card className="glass border-0 shadow-sm">
+            <CardHeader className="border-b bg-white/50">
+              <CardTitle className="flex items-center gap-2">
+                History Pengiriman Email
+              </CardTitle>
+              <CardDescription>Log sistem pengiriman email (Retensi, Edukasi, Pengajuan).</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader className="bg-slate-50/50">
+                  <TableRow>
+                    <TableHead className="pl-6">Tanggal</TableHead>
+                    <TableHead>Penerima</TableHead>
+                    <TableHead>Subjek</TableHead>
+                    <TableHead className="pr-6">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {emailLogs.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
+                        Belum ada riwayat email.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    <>
+                      {emailLogs.map((log: any) => (
+                        <TableRow key={log.id}>
+                          <TableCell className="pl-6">
+                            <div className="text-sm">{new Date(log.createdAt).toLocaleDateString('id-ID')}</div>
+                            <div className="text-xs text-muted-foreground">{new Date(log.createdAt).toLocaleTimeString('id-ID')}</div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm font-medium">{log.to}</div>
+                            {log.tenant && <div className="text-xs text-muted-foreground">{log.tenant.name}</div>}
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm max-w-[300px] truncate" title={log.subject}>{log.subject}</div>
+                          </TableCell>
+                          <TableCell className="pr-6">
+                            <div className="flex flex-col gap-1 items-start">
+                              {log.status === 'BOUNCED' ? (
+                                <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20" title={`Bounced pada: ${log.bouncedAt ? new Date(log.bouncedAt).toLocaleString('id-ID') : '-'}`}>
+                                  Bounced (Gagal)
+                                </Badge>
+                              ) : log.status === 'FAILED' ? (
+                                <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20">Failed</Badge>
+                              ) : log.status === 'PENDING' ? (
+                                <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20">Pending</Badge>
+                              ) : log.status === 'SENT' ? (
+                                log.openedAt ? (
+                                  <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20" title={`Dibaca pada: ${new Date(log.openedAt).toLocaleString('id-ID')}`}>
+                                    Dibaca
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">Terkirim</Badge>
+                                )
+                              ) : (
+                                <Badge>{log.status}</Badge>
+                              )}
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
