@@ -11,6 +11,7 @@ import { Bot, Send, User, Coins, CreditCard, Sparkles, CheckCircle2, History } f
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import ReactMarkdown from "react-markdown"
+import Link from "next/link"
 
 export default function AiAssistantClient({ 
   userTokens, 
@@ -26,6 +27,12 @@ export default function AiAssistantClient({
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
     api: "/api/gtk/ai/chat",
     body: { sessionId: activeSessionId },
+    onResponse: (response: any) => {
+      const newSessionId = response.headers.get("x-session-id")
+      if (newSessionId && !activeSessionId) {
+        setActiveSessionId(newSessionId)
+      }
+    },
     onError: (err: any) => {
       alert("Gagal mengirim pesan: " + err.message)
     }
@@ -109,10 +116,12 @@ export default function AiAssistantClient({
                 <CardDescription className="text-[11px] font-medium hidden sm:block">Bantu susun RPP, Soal, & Materi Pelajaran</CardDescription>
               </div>
             </div>
-            <div className="flex items-center gap-2 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20">
-              <Coins className="h-4 w-4 text-amber-500" />
-              <span className="text-xs font-bold text-amber-600 dark:text-amber-400">{totalTokens.toLocaleString("id-ID")}</span>
-            </div>
+            <Link href="/panel-gtk/ai/topup" className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all hover:scale-105 ${totalTokens < 50 ? 'bg-red-500/10 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.2)] animate-pulse' : 'bg-amber-500/10 border-amber-500/20'}`} title="Top-Up Token AI">
+              <Coins className={`h-4 w-4 ${totalTokens < 50 ? 'text-red-500' : 'text-amber-500'}`} />
+              <span className={`text-xs font-bold ${totalTokens < 50 ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                {totalTokens.toLocaleString("id-ID")}
+              </span>
+            </Link>
           </CardHeader>
           
           <CardContent className="flex-1 p-0 overflow-hidden relative bg-slate-50/30 dark:bg-slate-900/10">

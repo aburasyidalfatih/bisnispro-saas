@@ -40,6 +40,22 @@ export async function POST(req: Request) {
     // Prepare system prompt
     const systemPrompt = "Anda adalah Asisten Guru yang ramah dan membantu. Tugas Anda adalah membantu guru dalam membuat materi pelajaran, RPP, soal ujian, menganalisa nilai, serta tugas-tugas administratif sekolah lainnya. Jawablah dengan menggunakan bahasa Indonesia yang baik dan benar serta mudah dipahami."
 
+    let activeSessionId = sessionId;
+
+    if (!activeSessionId) {
+       const firstUserMsg = messages.find((m: any) => m.role === "user")?.content || "Percakapan Baru"
+       const title = firstUserMsg.length > 50 ? firstUserMsg.substring(0, 50) + "..." : firstUserMsg
+       
+       const newSessionObj = await db.aiChatSession.create({
+          data: {
+             userId: session.user.id,
+             title,
+             messages: JSON.stringify(messages) // Will be updated in onFinish
+          }
+       })
+       activeSessionId = newSessionObj.id;
+    }
+
     // Generate Stream
     const result = await streamText({
       model: modelResult.model,
@@ -53,36 +69,26 @@ export async function POST(req: Request) {
         if (tokensUsed > 0) {
           await deductAiToken(user.tenants[0].tenantId!, tokensUsed, session.user.id, "AI_CHAT_GTK")
         }
-
-        // 2. Save Chat Session (if we want to persist it)
+        
+        // 2. Save Chat Session
         try {
            const allMessages = [...messages, { role: "assistant", content: text }]
            
-           if (sessionId) {
-              await db.aiChatSession.update({
-                 where: { id: sessionId },
-                 data: { messages: JSON.stringify(allMessages) }
-              })
-           } else {
-              // Create new session if this is the first message
-              const firstUserMsg = messages.find((m: any) => m.role === "user")?.content || "Percakapan Baru"
-              const title = firstUserMsg.length > 50 ? firstUserMsg.substring(0, 50) + "..." : firstUserMsg
-              
-              await db.aiChatSession.create({
-                 data: {
-                    userId: session.user.id,
-                    title,
-                    messages: JSON.stringify(allMessages)
-                 }
-              })
-           }
+           await db.aiChatSession.updateMany({
+              where: { id: activeSessionId, userId: session.user.id },
+              data: { messages: JSON.stringify(allMessages) }
+           })
         } catch (err) {
            console.error("Failed to save chat session", err)
         }
       }
     })
 
-    return result.toDataStreamResponse()
+    return result.toTextStreamResponse({
+      headers: {
+        'x-session-id': activeSessionId
+      }
+    })
   } catch (error: any) {
     console.error("AI Chat Error:", error)
     return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 })
