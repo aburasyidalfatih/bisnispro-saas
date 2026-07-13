@@ -12,6 +12,7 @@ import { normalizeImageUrl } from "@/lib/utils"
 import { PwaInstaller } from "@/components/pwa/pwa-installer"
 import { PageTracker } from "@/components/shared/page-tracker"
 import { FloatingWhatsApp } from "./_components/floating-whatsapp"
+import { ScrollToTop } from "./_components/scroll-to-top"
 import { Suspense } from "react"
 import { normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
 import { MediumZoomSetup } from "@/components/ui/medium-zoom-setup"
@@ -279,6 +280,13 @@ export default async function WebsiteLayout({
         {!isTvPage && tenant.whatsapp && !tenant.customThemeId && (
           <div className="print:hidden">
             <FloatingWhatsApp whatsappNumber={tenant.whatsapp} message={`Halo Admin ${tenant.name}, saya ingin bertanya mengenai info di website.`} />
+          </div>
+        )}
+
+        {/* Scroll To Top Widget */}
+        {!isTvPage && !tenant.customThemeId && (
+          <div className="print:hidden">
+            <ScrollToTop />
           </div>
         )}
 
