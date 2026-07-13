@@ -1,14 +1,12 @@
 import { db } from "@/lib/db"
 import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp"
 import { SocialProofPopup } from "@/components/shared/social-proof-popup"
-import { LandingNavbar } from "./_components/landing-navbar"
 import { HeroSection } from "./_components/hero-section"
 import { SchoolsMarquee } from "./_components/schools-marquee"
 import { SolutionsSection } from "./_components/solutions-section"
 import { FeaturesSection } from "./_components/features-section"
 import { CtaSection } from "./_components/cta-section"
 import { TestimonialsSection } from "./_components/testimonials-section"
-import { LandingFooter } from "./_components/landing-footer"
 
 export const revalidate = 60; // Cache halaman selama 60 detik agar tidak membebani database setiap kali di-refresh
 
@@ -64,25 +62,23 @@ export default async function LandingPage() {
   })
 
   return (
-    <div className="min-h-screen bg-mesh">
+    <div className="bg-background min-h-screen">
       <FloatingWhatsApp supportNumbers={supportWaNumbers} />
       <SocialProofPopup />
       
-      <LandingNavbar appLogo={appLogo} platformName={platformName} />
-      
-      <HeroSection />
-      
-      <SchoolsMarquee activeTenants={activeTenants} totalTenants={totalTenants} />
-      
-      <SolutionsSection />
-      
-      <FeaturesSection />
-      
-      <TestimonialsSection testimonials={JSON.parse(JSON.stringify(testimonials))} />
-      
-      <CtaSection />
-      
-      <LandingFooter platformName={platformName} />
+      <main className="pt-20">
+        <HeroSection />
+        
+        <SchoolsMarquee activeTenants={activeTenants} totalTenants={totalTenants} />
+        
+        <SolutionsSection />
+        
+        <FeaturesSection />
+        
+        <TestimonialsSection testimonials={JSON.parse(JSON.stringify(testimonials))} />
+        
+        <CtaSection />
+      </main>
     </div>
   )
 }
