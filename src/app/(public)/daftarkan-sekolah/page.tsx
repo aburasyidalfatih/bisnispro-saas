@@ -307,7 +307,7 @@ function RegisterSchoolForm() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 py-12 px-4">
+    <div className="min-h-[calc(100vh-4rem)] bg-muted/30 py-12 px-4">
       <div className="max-w-3xl mx-auto space-y-8">
         <div className="text-center space-y-3">
           <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0 px-3 py-1">Formulir Pendaftaran</Badge>
