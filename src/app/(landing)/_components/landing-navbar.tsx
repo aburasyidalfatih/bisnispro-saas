@@ -74,11 +74,6 @@ export function LandingNavbar({ appLogo, platformName }: LandingNavbarProps) {
                       Daftar Gratis
                     </Button>
                   </Link>
-                  <Link href="/login" className="block w-full mt-3">
-                    <Button variant="outline" className="w-full rounded-xl h-12">
-                      Login
-                    </Button>
-                  </Link>
                 </div>
               </nav>
             </SheetContent>
