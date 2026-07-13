@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
@@ -273,9 +274,15 @@ function RegisterSchoolForm() {
           <div className="space-y-2">
             <CardTitle className="text-2xl font-bold">Pendaftaran Terkirim!</CardTitle>
             <CardDescription className="text-base">
-              Pendaftaran website sekolah <strong>{form.schoolName}</strong> berhasil dikirim. <br/><br/>
-              Silahkan cek email Anda <strong>{form.adminEmail}</strong> sekarang untuk melakukan verifikasi dan mengaktifkan akses.
+              Pendaftaran website sekolah <strong>{form.schoolName}</strong> berhasil dikirim.
             </CardDescription>
+            <Alert className="bg-primary/5 border-primary/20 text-left mt-4 mb-2">
+              <Mail className="h-5 w-5 text-primary" />
+              <AlertTitle className="text-primary font-bold">Cek Email Anda Sekarang!</AlertTitle>
+              <AlertDescription className="text-muted-foreground text-sm mt-1">
+                Kami telah mengirimkan tautan verifikasi ke <strong>{form.adminEmail}</strong>. Silakan periksa kotak masuk (atau folder spam) untuk mengaktifkan website sekolah Anda.
+              </AlertDescription>
+            </Alert>
           </div>
           {csPhone ? (
             <Button 
