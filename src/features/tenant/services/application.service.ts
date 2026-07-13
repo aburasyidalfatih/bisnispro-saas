@@ -318,6 +318,12 @@ export async function approveApplication(id: string) {
           schoolStatus: app.schoolStatus,
           adminPosition: app.adminPosition,
         },
+        tenantScore: {
+          upsert: {
+            create: { contentScore: 0, trafficScore: 0, activityScore: 0, totalScore: 0, rank: 0 },
+            update: {}
+          }
+        }
       },
     })
   } else {
@@ -347,6 +353,9 @@ export async function approveApplication(id: string) {
           schoolStatus: app.schoolStatus,
           adminPosition: app.adminPosition,
         },
+        tenantScore: {
+          create: { contentScore: 0, trafficScore: 0, activityScore: 0, totalScore: 0, rank: 0 }
+        }
       },
     })
   }
