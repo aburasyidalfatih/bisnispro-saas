@@ -66,6 +66,22 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
   }
 
+  // --- UNIQUE SLUG GENERATION ---
+  if (data.slug) {
+    let slug = data.slug;
+    let counter = 1;
+    let uniqueSlug = slug;
+    while (true) {
+      const existing = await db.post.findUnique({
+        where: { tenantId_slug: { tenantId, slug: uniqueSlug } }
+      });
+      if (!existing || existing.id === id) break;
+      uniqueSlug = `${slug}-${counter}`;
+      counter++;
+    }
+    data.slug = uniqueSlug;
+  }
+
   const post = await db.post.updateMany({
     where: { id, tenantId },
     data

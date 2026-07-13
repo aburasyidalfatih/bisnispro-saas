@@ -119,6 +119,20 @@ export async function createPost(params: {
   // Extract autoShare so it doesn't get passed to Prisma
   const { autoShare, ...postData } = data
 
+  // --- UNIQUE SLUG GENERATION ---
+  let slug = postData.slug || (postData.title ? postData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : 'post');
+  let counter = 1;
+  let uniqueSlug = slug;
+  while (true) {
+    const existing = await tenantDb.post.findUnique({
+      where: { tenantId_slug: { tenantId, slug: uniqueSlug } }
+    });
+    if (!existing) break;
+    uniqueSlug = `${slug}-${counter}`;
+    counter++;
+  }
+  postData.slug = uniqueSlug;
+
   const post = await tenantDb.post.create({
     data: {
       ...postData,
