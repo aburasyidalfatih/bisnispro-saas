@@ -113,13 +113,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                 
                 {/* Social / Contact Buttons (Elegant Monochrome) */}
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                   <a href={staff.email ? `mailto:${staff.email}` : "#"} className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-700 hover:bg-slate-900 hover:text-white hover:border-slate-900 hover:-translate-y-1 transition-all duration-300 font-semibold text-sm shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/btn">
-                      <Mail className="h-4 w-4 text-slate-400 group-hover/btn:text-white transition-colors" /> Email
-                   </a>
-                   <a href={staff.phone ? `https://wa.me/${staff.phone.replace(/[^0-9]/g, '')}` : "#"} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-700 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 hover:-translate-y-1 transition-all duration-300 font-semibold text-sm shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/btn">
-                      <MessageCircle className="h-4 w-4 text-emerald-500 group-hover/btn:text-white transition-colors" /> WhatsApp
-                   </a>
-                   
+
                    {staff.instagram && (
                      <a href={staff.instagram} target="_blank" rel="noreferrer" className="flex items-center justify-center w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-400 hover:bg-pink-500 hover:text-white hover:border-pink-500 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/icon">
                        <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
