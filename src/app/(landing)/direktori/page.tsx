@@ -98,9 +98,12 @@ export default async function DirectoryPage({
                         <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-0 font-medium">Mitra SchoolPro</Badge>
                       </div>
                       
-                      <h2 className="font-bold text-lg leading-tight mb-2 line-clamp-2">{s.name}</h2>
+                      <h2 className="font-bold text-lg leading-tight mb-1 line-clamp-2">{s.name}</h2>
+                      {s.tagline && (
+                        <p className="text-sm text-muted-foreground/80 line-clamp-2 mb-2">{s.tagline}</p>
+                      )}
                       
-                      <div className="flex items-start gap-1.5 text-xs text-muted-foreground mb-6 line-clamp-2">
+                      <div className="flex items-start gap-1.5 text-xs text-muted-foreground mb-6 mt-auto line-clamp-2">
                         <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                         <span>{[s.regency, s.province].filter(Boolean).join(", ") || "Indonesia"}</span>
                       </div>
