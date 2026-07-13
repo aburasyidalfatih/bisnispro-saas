@@ -69,7 +69,6 @@ export async function getRecentActivity(tenantId: string) {
         user: { 
           select: { 
             name: true, 
-            image: true, 
             email: true,
             tenants: {
               where: { tenantId },

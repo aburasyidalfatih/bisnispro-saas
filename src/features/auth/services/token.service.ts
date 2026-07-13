@@ -1,6 +1,6 @@
 import crypto from "crypto"
 import { db } from "@/lib/db"
-import redis from "@/lib/redis"
+import { getRedisClient } from "@/lib/redis"
 
 export type TokenType = "email_verify" | "password_reset" | "school_register";
 
@@ -69,6 +69,7 @@ export async function consumeToken(token: string) {
  */
 export async function createAppRegistrationToken(applicationId: string, expiresInHours = 24) {
   const token = crypto.randomBytes(32).toString("hex")
+  const redis = await getRedisClient()
   await redis.set(`app_register:${token}`, applicationId, expiresInHours * 60 * 60)
   
   return {
@@ -81,6 +82,7 @@ export async function createAppRegistrationToken(applicationId: string, expiresI
  * Memverifikasi token registrasi sekolah.
  */
 export async function verifyAppRegistrationToken(token: string) {
+  const redis = await getRedisClient()
   const applicationId = await redis.get(`app_register:${token}`)
   
   if (!applicationId) {
@@ -98,6 +100,7 @@ export async function verifyAppRegistrationToken(token: string) {
  */
 export async function consumeAppRegistrationToken(token: string) {
   try {
+    const redis = await getRedisClient()
     await redis.del(`app_register:${token}`)
     return { success: true }
   } catch (error) {

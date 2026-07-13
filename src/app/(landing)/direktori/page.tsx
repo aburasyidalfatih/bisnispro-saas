@@ -14,12 +14,13 @@ export const metadata: Metadata = {
 export default async function DirectoryPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const search = typeof searchParams.q === "string" ? searchParams.q : ""
-  const province = typeof searchParams.prov === "string" ? searchParams.prov : ""
-  const regency = typeof searchParams.city === "string" ? searchParams.city : ""
-  const page = typeof searchParams.page === "string" ? parseInt(searchParams.page, 10) : 1
+  const resolvedSearchParams = await searchParams
+  const search = typeof resolvedSearchParams.q === "string" ? resolvedSearchParams.q : ""
+  const province = typeof resolvedSearchParams.prov === "string" ? resolvedSearchParams.prov : ""
+  const regency = typeof resolvedSearchParams.city === "string" ? resolvedSearchParams.city : ""
+  const page = typeof resolvedSearchParams.page === "string" ? parseInt(resolvedSearchParams.page, 10) : 1
 
   const data = await getSchoolsDirectory({ search, province, regency, page })
   
