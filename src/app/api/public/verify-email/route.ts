@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { verifyToken, consumeToken } from "@/features/auth/services/token.service"
+import { verifyToken, consumeToken, verifyAppRegistrationToken, consumeAppRegistrationToken } from "@/features/auth/services/token.service"
 import { approveApplication } from "@/features/tenant/services/application.service"
 
 export async function GET(req: Request) {
@@ -20,9 +20,9 @@ export async function GET(req: Request) {
       `, { status: 400, headers: { 'Content-Type': 'text/html' } })
     }
 
-    const tokenRecord = await verifyToken(token, "school_register")
+    const tokenRecord = await verifyAppRegistrationToken(token)
 
-    if (!tokenRecord.success || !tokenRecord.data?.userId) {
+    if (!tokenRecord.success || !tokenRecord.data?.applicationId) {
       return new NextResponse(`
         <html>
           <body style="font-family: sans-serif; text-align: center; padding: 50px;">
@@ -92,9 +92,9 @@ export async function POST(req: Request) {
       `, { status: 400, headers: { 'Content-Type': 'text/html' } })
     }
 
-    const tokenRecord = await verifyToken(token, "school_register")
+    const tokenRecord = await verifyAppRegistrationToken(token)
 
-    if (!tokenRecord.success || !tokenRecord.data?.userId) {
+    if (!tokenRecord.success || !tokenRecord.data?.applicationId) {
       return new NextResponse(`
         <html>
           <body style="font-family: sans-serif; text-align: center; padding: 50px;">
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
     }
 
     // Ambil data pengajuan
-    const applicationId = tokenRecord.data.userId
+    const applicationId = tokenRecord.data.applicationId
     const app = await db.tenantApplication.findUnique({ where: { id: applicationId } })
     if (!app) {
       return new NextResponse(`
@@ -134,7 +134,10 @@ export async function POST(req: Request) {
       data: { status: "APPROVED", adminMessage: "Disetujui otomatis (Verifikasi Email Instan)" }
     })
 
-    // Setelah disetujui, User admin sudah tercipta. Kita set emailVerified agar valid.
+    // 2. Tandai token sudah dipakai (hapus dari Redis)
+    await consumeAppRegistrationToken(token)
+
+    // 3. Jalankan alur persetujuan utama (membuat Tenant, membuat Super Admin Tenant, kirim WA/Email "Approved")
     const user = await db.user.findUnique({ where: { email: app.adminEmail.toLowerCase() } })
     if (user) {
       await db.user.update({

@@ -1,5 +1,6 @@
 import crypto from "crypto"
 import { db } from "@/lib/db"
+import redis from "@/lib/redis"
 
 export type TokenType = "email_verify" | "password_reset" | "school_register";
 
@@ -56,6 +57,48 @@ export async function verifyToken(token: string, type: TokenType) {
 export async function consumeToken(token: string) {
   try {
     await db.verificationToken.delete({ where: { token } })
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: "Gagal menghapus token" }
+  }
+}
+
+/**
+ * Membuat token untuk registrasi sekolah baru (tanpa model User).
+ * Disimpan ke Redis agar aman dan otomatis kedaluwarsa.
+ */
+export async function createAppRegistrationToken(applicationId: string, expiresInHours = 24) {
+  const token = crypto.randomBytes(32).toString("hex")
+  await redis.set(`app_register:${token}`, applicationId, expiresInHours * 60 * 60)
+  
+  return {
+    success: true,
+    token: token
+  }
+}
+
+/**
+ * Memverifikasi token registrasi sekolah.
+ */
+export async function verifyAppRegistrationToken(token: string) {
+  const applicationId = await redis.get(`app_register:${token}`)
+  
+  if (!applicationId) {
+    return { success: false, error: "Token tidak valid atau sudah kadaluarsa." }
+  }
+  
+  return {
+    success: true,
+    data: { applicationId }
+  }
+}
+
+/**
+ * Menghapus token registrasi sekolah setelah digunakan.
+ */
+export async function consumeAppRegistrationToken(token: string) {
+  try {
+    await redis.del(`app_register:${token}`)
     return { success: true }
   } catch (error) {
     return { success: false, error: "Gagal menghapus token" }
