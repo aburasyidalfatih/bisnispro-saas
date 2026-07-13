@@ -97,8 +97,15 @@ export async function PATCH(req: Request) {
     const { revalidatePath } = require("next/cache");
     const tenant = await db.tenant.findUnique({ where: { id: currentTenant.id }, select: { slug: true } })
     if (tenant) {
+      const { invalidatePublicTenantCache } = await import("@/features/tenant/services/tenant-public.service")
+      await invalidatePublicTenantCache(tenant.slug)
+      
+      const { clearTenantCache } = await import("@/features/tenant/services/tenant-modular.service")
+      await clearTenantCache(tenant.slug)
+
       revalidatePath(`/site/${tenant.slug}/gtk`, "page")
       revalidatePath(`/site/${tenant.slug}/gtk/[id]`, "page")
+      revalidatePath(`/site/${tenant.slug}`, "page")
     }
     revalidatePath("/(dashboard)/panel-gtk/profil", "page")
 
