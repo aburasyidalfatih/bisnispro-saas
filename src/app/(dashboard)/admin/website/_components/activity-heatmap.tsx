@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 
 const ActivityCalendar = dynamic(
@@ -12,12 +12,8 @@ import { getAdminActivityHeatmap } from "../actions"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Activity } from "lucide-react"
 import { useTheme } from "next-themes"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Tooltip as ReactTooltip } from "react-tooltip"
+import "react-tooltip/dist/react-tooltip.css"
 
 interface ActivityHeatmapProps {
   tenantId: string
@@ -53,63 +49,58 @@ export function ActivityHeatmap({ tenantId }: ActivityHeatmapProps) {
 
 
   return (
-    <Card className="border border-border/50 bg-background/50 backdrop-blur-sm overflow-hidden h-full">
-      <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
-        <div className="flex items-center gap-2">
-          <div className="p-2 bg-primary/10 rounded-xl">
-            <Activity className="h-4 w-4 text-primary" />
-          </div>
-          <div>
-            <CardTitle className="text-sm font-semibold">Aktivitas Sistem</CardTitle>
-            <CardDescription className="text-xs">Log kontribusi dan aktivitas harian pada website</CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-6 overflow-x-auto">
-        <div className="min-w-[800px] flex justify-center pb-2">
-          {loading ? (
-            <div className="h-[150px] flex items-center justify-center w-full animate-pulse bg-muted/20 rounded-xl border border-border/50">
-              <span className="text-sm text-muted-foreground">Memuat data aktivitas...</span>
+    <>
+      <Card className="border border-border/50 bg-background/50 backdrop-blur-sm overflow-hidden h-full">
+        <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-primary/10 rounded-xl">
+              <Activity className="h-4 w-4 text-primary" />
             </div>
-          ) : (
-            <ActivityCalendar
-              data={data}
-              theme={greenTheme}
-              colorScheme={currentTheme === "dark" ? "dark" : "light"}
-              labels={{
-                legend: {
-                  less: "Sedikit",
-                  more: "Banyak",
-                },
-                months: [
-                  "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-                  "Jul", "Ags", "Sep", "Okt", "Nov", "Des"
-                ],
-                totalCount: "{{count}} aktivitas di tahun ini",
-              }}
-              showWeekdayLabels
-              blockSize={12}
-              blockRadius={3}
-              blockMargin={4}
-              fontSize={12}
-              renderBlock={(block, activity) => (
-                <TooltipProvider key={activity.date}>
-                  <Tooltip delayDuration={50}>
-                    <TooltipTrigger asChild>
-                      {block}
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="px-2 py-1.5 z-[100]">
-                      <p className="text-xs">
-                        <strong>{activity.count} aktivitas</strong> pada {new Date(activity.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-            />
-          )}
-        </div>
-      </CardContent>
-    </Card>
+            <div>
+              <CardTitle className="text-sm font-semibold">Aktivitas Sistem</CardTitle>
+              <CardDescription className="text-xs">Log kontribusi dan aktivitas harian pada website</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6 overflow-x-auto">
+          <div className="min-w-[800px] flex justify-center pb-2">
+            {loading ? (
+              <div className="h-[150px] flex items-center justify-center w-full animate-pulse bg-muted/20 rounded-xl border border-border/50">
+                <span className="text-sm text-muted-foreground">Memuat data aktivitas...</span>
+              </div>
+            ) : (
+              <ActivityCalendar
+                data={data}
+                theme={greenTheme}
+                colorScheme={currentTheme === "dark" ? "dark" : "light"}
+                labels={{
+                  legend: {
+                    less: "Sedikit",
+                    more: "Banyak",
+                  },
+                  months: [
+                    "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+                    "Jul", "Ags", "Sep", "Okt", "Nov", "Des"
+                  ],
+                  totalCount: "{{count}} aktivitas di tahun ini",
+                }}
+                showWeekdayLabels
+                blockSize={12}
+                blockRadius={3}
+                blockMargin={4}
+                fontSize={12}
+                renderBlock={(block, activity) => (
+                  React.cloneElement(block, {
+                    'data-tooltip-id': 'react-tooltip',
+                    'data-tooltip-html': `<strong>${activity.count} aktivitas</strong> pada ${new Date(activity.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`
+                  })
+                )}
+              />
+            )}
+          </div>
+        </CardContent>
+      </Card>
+      <ReactTooltip id="react-tooltip" className="z-[100] text-xs px-2 py-1.5" />
+    </>
   )
 }
