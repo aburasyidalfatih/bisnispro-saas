@@ -66,7 +66,17 @@ export async function getRecentActivity(tenantId: string) {
       orderBy: { createdAt: 'desc' },
       take: 5,
       include: {
-        user: { select: { name: true, image: true, email: true } }
+        user: { 
+          select: { 
+            name: true, 
+            image: true, 
+            email: true,
+            tenants: {
+              where: { tenantId },
+              select: { role: true }
+            }
+          } 
+        }
       }
     })
     

@@ -79,18 +79,22 @@ export function RecentActivity({ tenantId }: RecentActivityProps) {
           <div className="space-y-5">
             {activities.map((log) => {
               const details = getActionDetails(log.action, log.entity)
+              const role = log.user?.tenants?.[0]?.role
+              const displayRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Admin"
+              
               return (
                 <div key={log.id} className="flex gap-3 items-start">
                   <Avatar className="h-8 w-8 border">
                     <AvatarImage src={log.user?.image || ""} />
                     <AvatarFallback className="bg-primary/5 text-[10px] font-medium">
-                      {log.user?.name?.substring(0, 2).toUpperCase() || "AD"}
+                      {log.user?.name?.substring(0, 2).toUpperCase() || displayRole.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 space-y-1">
                     <p className="text-xs leading-snug">
-                      <span className="font-semibold">{log.user?.name || "Admin"}</span>{" "}
-                      <span className="text-muted-foreground">{details.label}</span>
+                      <span className="font-semibold">{log.user?.name || displayRole}</span>
+                      <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1.5 font-medium">{displayRole}</span>
+                      <span className="text-muted-foreground block mt-0.5">{details.label}</span>
                     </p>
                     <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                       <div className={`p-0.5 rounded-sm ${details.bg}`}>
