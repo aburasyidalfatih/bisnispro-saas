@@ -84,8 +84,10 @@ export function SocialProofPopup() {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
           
           <Button 
+            variant="ghost"
+            size="icon"
             onClick={() => setIsVisible(false)}
-            className="absolute top-2 right-2 text-muted-foreground hover:text-foreground transition-colors p-1"
+            className="absolute top-2 right-2 h-6 w-6 text-muted-foreground hover:bg-black/5 hover:text-foreground transition-colors rounded-full"
             aria-label="Tutup"
           >
             <X className="h-3 w-3" />
