@@ -74,8 +74,8 @@ const nextConfig: NextConfig = {
     remotePatterns: ALLOWED_IMAGE_DOMAINS,
   },
   experimental: {
-    // Memaksimalkan penggunaan CPU VPS (4 Cores) dengan menyisakan 1 core
-    cpus: process.env.CI ? 4 : 2, 
+    // Kurangi penggunaan CPU/Thread menjadi 1 untuk mencegah Out of Memory saat build di VPS
+    cpus: 1, 
     reactCompiler: false,
     optimizePackageImports: [
       "lucide-react",
