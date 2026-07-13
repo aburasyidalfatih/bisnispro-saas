@@ -12,8 +12,9 @@ import {
   BarChart3, MessageSquare, SlidersHorizontal, Handshake, CalendarDays, Sparkles
 } from"lucide-react"
 import { cn, getRootDomain } from"@/lib/utils"
-import Link from"next/link"
+import Link from "next/link"
 import { ActivityHeatmap } from "./_components/activity-heatmap"
+import { RecentActivity } from "./_components/recent-activity"
 
 interface WebsiteData {
   name: string
@@ -417,9 +418,18 @@ export default function WebsiteOverviewPage() {
         </Link>
       </div>
 
-      {/* Activity Heatmap */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {tenantId && <ActivityHeatmap tenantId={tenantId} />}
+      {/* Activity Heatmap & Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {tenantId && (
+          <>
+            <div className="lg:col-span-2">
+              <ActivityHeatmap tenantId={tenantId} />
+            </div>
+            <div className="lg:col-span-1">
+              <RecentActivity tenantId={tenantId} />
+            </div>
+          </>
+        )}
       </div>
 
       {/* Onboarding Steps Section */}

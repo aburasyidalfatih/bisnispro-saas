@@ -59,3 +59,20 @@ export async function getAdminActivityHeatmap(tenantId: string) {
     return []
   }
 }
+export async function getRecentActivity(tenantId: string) {
+  try {
+    const logs = await db.auditLog.findMany({
+      where: { tenantId },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: {
+        user: { select: { name: true, image: true, email: true } }
+      }
+    })
+    
+    return logs
+  } catch (error) {
+    console.error("Error fetching recent activity:", error)
+    return []
+  }
+}
