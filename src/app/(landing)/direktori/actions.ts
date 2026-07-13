@@ -57,7 +57,7 @@ export async function getSchoolsDirectory(params: {
         where: whereClause,
         orderBy: {
           tenantScore: {
-            totalScore: 'desc'
+            totalScore: { sort: 'desc', nulls: 'last' }
           }
         },
         include: {
@@ -99,7 +99,7 @@ export async function getSchoolsDirectory(params: {
 
       const fallbackSchools = await db.tenant.findMany({
         where: whereClause,
-        orderBy: { tenantScore: { totalScore: 'desc' } },
+        orderBy: { tenantScore: { totalScore: { sort: 'desc', nulls: 'last' } } },
         include: { tenantScore: true },
         skip,
         take: limit,
