@@ -229,17 +229,15 @@ export async function editTenantUser(params: {
     data: updateData
   })
 
-  // Sinkronkan ke Staff jika role adalah guru
-  if (targetTu.role === "guru") {
-    const existingStaff = await tenantDb.staff.findFirst({
-      where: { tenantId: targetTu.tenantId, userId: targetTu.userId }
+  // Sinkronkan ke Staff (jika ada)
+  const existingStaff = await tenantDb.staff.findFirst({
+    where: { tenantId: targetTu.tenantId, userId: targetTu.userId }
+  })
+  if (existingStaff) {
+    await tenantDb.staff.update({
+      where: { id: existingStaff.id },
+      data: { name, email, phone: phone || null }
     })
-    if (existingStaff) {
-      await tenantDb.staff.update({
-        where: { id: existingStaff.id },
-        data: { name, email, phone: phone || null }
-      })
-    }
   }
 
   // Audit trail

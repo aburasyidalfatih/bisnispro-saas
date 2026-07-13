@@ -188,6 +188,19 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
         userId,
       }
     })
+
+    // Sync back to User profile if linked
+    if (userId) {
+      await db.user.update({
+        where: { id: userId },
+        data: {
+          name: parsed.name,
+          email: parsed.email || undefined,
+          phone: parsed.phone || null,
+          ...(parsed.imageUrl !== undefined ? { avatar: parsed.imageUrl || null } : {})
+        }
+      })
+    }
     
     const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } })
     if (tenant) {

@@ -36,5 +36,16 @@ export async function PUT(req: Request) {
     },
   })
 
+  // Sync to all associated Staff profiles
+  await db.staff.updateMany({
+    where: { userId: session.user.id },
+    data: {
+      name: parsed.data.name,
+      email: parsed.data.email || undefined,
+      phone: parsed.data.phone || null,
+      ...(parsed.data.avatar !== undefined ? { imageUrl: parsed.data.avatar || null } : {})
+    }
+  })
+
   return NextResponse.json({ message: "Profil berhasil diperbarui", name: updated.name, avatar: updated.avatar })
 }
