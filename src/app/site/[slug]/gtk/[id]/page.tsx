@@ -181,32 +181,36 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
 
               {/* ── ARTIKEL GURU ── */}
               {articles.length > 0 && (
-                <section>
-                   <h3 className="text-2xl font-black mb-6 text-slate-900 flex items-center gap-3 px-2">
-                      <PenTool className="h-6 w-6 text-primary" /> Artikel & Tulisan
-                   </h3>
-                   <div className="grid sm:grid-cols-2 gap-6">
+                <section className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/60 relative overflow-hidden">
+                   <div className="flex items-center justify-between mb-8 relative z-10 border-b border-slate-100 pb-6">
+                     <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
+                        <PenTool className="h-6 w-6 text-primary" /> Artikel
+                     </h3>
+                     <Link href={`${base}/berita`} className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors flex items-center">
+                        Lihat Semua <ChevronRight className="h-4 w-4 ml-1" />
+                     </Link>
+                   </div>
+                   
+                   <div className="space-y-6 relative z-10">
                       {articles.map((post: any) => (
-                        <Link href={`${base}/berita/${post.slug}`} key={post.id} className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-1 flex flex-col">
-                           <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                        <Link href={`${base}/berita/${post.slug}`} key={post.id} className="group flex items-center gap-5 transition-all duration-300 hover:bg-slate-50/50 p-2 -mx-2 rounded-2xl">
+                           <div className="relative w-28 h-20 sm:w-36 sm:h-24 rounded-2xl overflow-hidden bg-muted shrink-0 shadow-sm border border-slate-100/50">
                               {normalizeImageUrl(post.featuredImage) ? (
                                 <Image src={normalizeImageUrl(post.featuredImage)!} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                               ) : (
                                 <div className="absolute inset-0 bg-primary/5 flex items-center justify-center">
-                                  <BookOpen className="h-10 w-10 text-primary/20" />
+                                  <BookOpen className="h-8 w-8 text-primary/20" />
                                 </div>
                               )}
                            </div>
-                           <div className="p-6 flex flex-col flex-1 relative">
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium mb-3">
-                                 <Calendar className="h-3.5 w-3.5" />
-                                 {new Date(post.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                              </div>
-                              <h4 className="font-bold text-lg text-slate-900 mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                           <div className="flex flex-col justify-center flex-1 min-w-0">
+                              <h4 className="font-bold text-base sm:text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
                                 {post.title}
                               </h4>
-                              <div className="mt-auto pt-4 border-t border-slate-100 flex items-center text-sm font-semibold text-primary">
-                                 Baca selengkapnya <ChevronRight className="h-4 w-4 ml-1 transition-transform duration-300 group-hover:translate-x-1.5" />
+                              <div className="flex items-center gap-3 text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                 <span>{new Date(post.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                 <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                                 <span className="text-primary">{post.type === "PENGUMUMAN_PUBLIK" ? "PENGUMUMAN" : "BERITA"}</span>
                               </div>
                            </div>
                         </Link>
