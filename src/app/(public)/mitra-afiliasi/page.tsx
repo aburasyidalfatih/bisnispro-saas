@@ -8,17 +8,6 @@ import { Button } from "@/components/ui/button"
 export default function MitraAfiliasi() {
   return (
     <div className="min-h-screen bg-mesh flex flex-col">
-      <nav className="glass sticky top-0 z-50 border-b">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg btn-gradient text-white font-bold text-xs">S</div>
-            <span className="font-bold tracking-tight">SchoolPro</span>
-          </Link>
-          <Link href="/">
-            <Button variant="outline" size="sm" className="rounded-xl glass">Kembali ke Beranda</Button>
-          </Link>
-        </div>
-      </nav>
 
       <main className="flex-1 container mx-auto px-4 py-12 md:py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">

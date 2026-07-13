@@ -1,6 +1,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { Menu } from "lucide-react"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 
 interface LandingNavbarProps {
   appLogo: string
@@ -38,7 +40,7 @@ export function LandingNavbar({ appLogo, platformName }: LandingNavbarProps) {
 
         {/* CTA + Mobile hint */}
         <div className="flex items-center gap-2">
-          <Link href="/daftarkan-sekolah">
+          <Link href="/daftarkan-sekolah" className="hidden md:block">
             <Button
               size="sm"
               className="rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 text-xs md:text-sm flex items-center justify-center h-10 px-4"
@@ -46,6 +48,41 @@ export function LandingNavbar({ appLogo, platformName }: LandingNavbarProps) {
               Daftar Gratis
             </Button>
           </Link>
+          
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <SheetTitle className="sr-only">Menu Navigasi</SheetTitle>
+              <nav className="flex flex-col gap-4 mt-8">
+                <Link href="/" className="block px-2 py-1 text-lg font-medium hover:text-primary transition-colors">
+                  Beranda
+                </Link>
+                <Link href="/direktori" className="block px-2 py-1 text-lg font-medium hover:text-primary transition-colors">
+                  Direktori Sekolah
+                </Link>
+                <Link href="/mitra-afiliasi" className="block px-2 py-1 text-lg font-medium hover:text-primary transition-colors">
+                  Program Afiliasi
+                </Link>
+                <div className="mt-4 border-t pt-4">
+                  <Link href="/daftarkan-sekolah" className="block w-full">
+                    <Button className="w-full rounded-xl btn-gradient text-white shadow-lg border-0 h-12">
+                      Daftar Gratis
+                    </Button>
+                  </Link>
+                  <Link href="/login" className="block w-full mt-3">
+                    <Button variant="outline" className="w-full rounded-xl h-12">
+                      Login
+                    </Button>
+                  </Link>
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>
