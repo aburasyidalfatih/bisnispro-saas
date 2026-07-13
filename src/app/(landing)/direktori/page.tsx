@@ -48,7 +48,7 @@ export default async function DirectoryPage({
   }
 
   return (
-    <main className="min-h-screen bg-muted/30 pt-32 pb-20 px-4">
+    <main className="min-h-screen bg-muted/30 pt-12 pb-20 px-4">
       {/* Inject JSON-LD Schema */}
       <script
         type="application/ld+json"

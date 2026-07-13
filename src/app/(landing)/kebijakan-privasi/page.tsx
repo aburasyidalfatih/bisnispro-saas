@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="bg-background min-h-screen pt-24 pb-16">
+    <div className="bg-background min-h-screen pt-12 pb-16">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">Kebijakan Privasi</h1>
         <p className="text-sm text-muted-foreground mb-10">Terakhir diperbarui: {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>

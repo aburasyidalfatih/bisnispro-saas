@@ -66,7 +66,7 @@ export default async function LandingPage() {
       <FloatingWhatsApp supportNumbers={supportWaNumbers} />
       <SocialProofPopup />
       
-      <main className="pt-20">
+      <main>
         <HeroSection />
         
         <SchoolsMarquee activeTenants={activeTenants} totalTenants={totalTenants} />
