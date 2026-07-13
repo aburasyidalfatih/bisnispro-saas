@@ -229,15 +229,20 @@ export default function NewStaffPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="role">Jabatan / Mata Pelajaran <span className="text-destructive">*</span></Label>
-                  <Input 
-                    id="role" 
-                    required 
-                    value={formData.role} 
-                    onChange={e => setFormData({...formData, role: e.target.value})} 
-                    placeholder="Contoh: Kepala Sekolah / Guru Matematika" 
-                    className="rounded-xl"
-                  />
+                  <Label htmlFor="role">Jabatan <span className="text-destructive">*</span></Label>
+                  <Select value={formData.role} onValueChange={val => setFormData({...formData, role: val})}>
+                    <SelectTrigger id="role" className="w-full rounded-xl">
+                      <SelectValue placeholder="Pilih jabatan GTK" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Pimpinan">Pimpinan Sekolah (Kepala Sekolah/Direktur)</SelectItem>
+                      <SelectItem value="Wakil Pimpinan">Wakil Kepala Sekolah</SelectItem>
+                      <SelectItem value="Guru">Guru / Tenaga Pendidik</SelectItem>
+                      <SelectItem value="Staf">Staf Tata Usaha / Administrasi</SelectItem>
+                      <SelectItem value="Operator">Operator Yayasan / Sekolah</SelectItem>
+                      <SelectItem value="Lainnya">Lainnya</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
