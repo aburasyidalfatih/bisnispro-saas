@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       }
     })
 
-    return result.toTextStreamResponse()
+    return result.toDataStreamResponse()
   } catch (error: any) {
     console.error("AI Chat Error:", error)
     return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 })

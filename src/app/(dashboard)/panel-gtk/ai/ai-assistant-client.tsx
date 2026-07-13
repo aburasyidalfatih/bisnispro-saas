@@ -38,7 +38,7 @@ export default function AiAssistantClient({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  const totalTokens = userTokens
+  const totalTokens = userTokens + tenantTokens
   
   const loadSession = (session: any) => {
     setActiveSessionId(session.id)
