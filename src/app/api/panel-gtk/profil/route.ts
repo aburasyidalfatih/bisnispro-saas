@@ -48,7 +48,7 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json()
-    const { name, role, email, phone, subject, education, bio, instagram, facebook, tiktok, youtube } = body
+    const { name, role, email, phone, subject, education, bio, instagram, facebook, tiktok, youtube, linkedin, twitter, pinterest } = body
 
     // Cek apakah staff data milik user yang sedang login
     const existingStaff = await db.staff.findFirst({
@@ -76,7 +76,10 @@ export async function PATCH(req: Request) {
         instagram,
         facebook,
         tiktok,
-        youtube
+        youtube,
+        linkedin,
+        twitter,
+        pinterest
       }
     })
 
@@ -90,6 +93,14 @@ export async function PATCH(req: Request) {
         }
       })
     }
+
+    const { revalidatePath } = require("next/cache");
+    const tenant = await db.tenant.findUnique({ where: { id: currentTenant.id }, select: { slug: true } })
+    if (tenant) {
+      revalidatePath(`/site/${tenant.slug}/gtk`, "page")
+      revalidatePath(`/site/${tenant.slug}/gtk/[id]`, "page")
+    }
+    revalidatePath("/(dashboard)/panel-gtk/profil", "page")
 
     return NextResponse.json(updatedStaff)
   } catch (error: any) {
