@@ -15,7 +15,7 @@ import { ShareButtons } from "./_components/share-buttons"
 import { PostViewCounter } from "./_components/view-counter"
 import { getPostViews } from "@/features/post/services/views.service"
 import { getShareCount } from "@/features/post/services/share.service"
-
+import { AuthorBio } from "./_components/author-bio"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const headerList = await headers();
@@ -233,6 +233,11 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
           tenantId={tenant.id}
           initialShares={totalShares}
         />
+
+        {/* Author Bio */}
+        <div className="mt-8 print:hidden">
+          <AuthorBio author={post.author} tenantId={tenant.id} basePath={base} />
+        </div>
       </article>
 
       {/* Related Posts */}

@@ -323,7 +323,19 @@ export const getTenantPosts = async (slug: string) => {
           posts: { 
             where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
             orderBy: { createdAt: 'desc' },
-            include: { author: { select: { name: true, avatar: true } }, category: true }
+            include: { 
+              author: { 
+                select: { 
+                  name: true, 
+                  avatar: true, 
+                  id: true,
+                  staffProfiles: {
+                    select: { id: true, name: true, bio: true, imageUrl: true, tenantId: true }
+                  }
+                } 
+              }, 
+              category: true 
+            }
           },
         }
       })
