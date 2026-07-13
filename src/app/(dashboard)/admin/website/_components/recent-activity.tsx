@@ -76,21 +76,21 @@ export function RecentActivity({ tenantId }: RecentActivityProps) {
             <p className="text-xs">Belum ada riwayat aktivitas</p>
           </div>
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-3">
             {activities.map((log) => {
               const details = getActionDetails(log.action, log.entity)
               const role = log.user?.tenants?.[0]?.role
               const displayRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Admin"
               
               return (
-                <div key={log.id} className="flex gap-3 items-start">
+                <div key={log.id} className="flex gap-3 items-center">
                   <Avatar className="h-8 w-8 border">
                     <AvatarImage src={log.user?.image || ""} />
                     <AvatarFallback className="bg-primary/5 text-[10px] font-medium">
                       {log.user?.name?.substring(0, 2).toUpperCase() || displayRole.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 flex flex-wrap items-center gap-2 text-xs py-1">
+                  <div className="flex-1 flex flex-wrap items-center gap-2 text-xs">
                     <span className="font-semibold">{log.user?.name || displayRole}</span>
                     <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium -ml-0.5">{displayRole}</span>
                     <span className="text-muted-foreground">{details.label}</span>
