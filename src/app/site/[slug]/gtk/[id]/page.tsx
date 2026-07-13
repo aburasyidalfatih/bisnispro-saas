@@ -107,7 +107,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                    <Briefcase className="h-3.5 w-3.5" />
                    {staff.role}
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tighter mb-8 drop-shadow-sm">
+                <h1 className="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tighter mb-8 drop-shadow-sm break-words hyphens-auto">
                    {staff.name}
                 </h1>
                 
@@ -161,19 +161,20 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
         <div className="grid md:grid-cols-3 gap-10 items-start">
            
            <div className="md:col-span-2 space-y-12">
-              <section className="prose prose-lg max-w-none text-slate-600 leading-relaxed bg-white p-8 md:p-10 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/60 relative overflow-hidden">
+              <section className="bg-white p-6 sm:p-8 md:p-10 rounded-3xl md:rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/60 relative overflow-hidden">
                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2"></div>
-                 <h3 className="text-2xl font-black mb-8 text-slate-900 flex items-center gap-3 relative z-10">
+                 <h3 className="text-xl sm:text-2xl font-black mb-6 sm:mb-8 text-slate-900 flex items-center gap-3 relative z-10">
                     <User className="h-6 w-6 text-primary" /> Profil & Biografi
                  </h3>
-                 <div className="absolute top-20 left-6 text-[120px] leading-none text-slate-100 font-serif opacity-50 z-0">"</div>
+                 <div className="absolute top-16 sm:top-20 left-4 sm:left-6 text-[80px] sm:text-[120px] leading-none text-slate-100 font-serif opacity-50 z-0">"</div>
                  {staff.bio ? (
                    <div 
-                     className="whitespace-pre-wrap text-base md:text-lg prose prose-slate text-slate-600 prose-p:leading-loose relative z-10" 
-                     dangerouslySetInnerHTML={{ __html: staff.bio }} 
-                   />
+                     className="whitespace-pre-wrap break-words text-base md:text-lg text-slate-600 leading-loose relative z-10" 
+                   >
+                     {staff.bio}
+                   </div>
                  ) : (
-                   <p className="whitespace-pre-wrap text-base md:text-lg leading-loose text-slate-600 relative z-10">
+                   <p className="whitespace-pre-wrap break-words text-base md:text-lg leading-loose text-slate-600 relative z-10">
                       Berkomitmen penuh untuk mendidik dan membimbing siswa-siswi menuju masa depan yang cerah dengan bekal ilmu dan akhlak mulia.
                    </p>
                  )}
