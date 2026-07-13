@@ -12,6 +12,12 @@ import { getAdminActivityHeatmap } from "../actions"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Activity } from "lucide-react"
 import { useTheme } from "next-themes"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface ActivityHeatmapProps {
   tenantId: string
@@ -86,6 +92,20 @@ export function ActivityHeatmap({ tenantId }: ActivityHeatmapProps) {
               blockRadius={3}
               blockMargin={4}
               fontSize={12}
+              renderBlock={(block, activity) => (
+                <TooltipProvider key={activity.date}>
+                  <Tooltip delayDuration={50}>
+                    <TooltipTrigger asChild>
+                      {block}
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="px-2 py-1.5 z-[100]">
+                      <p className="text-xs">
+                        <strong>{activity.count} aktivitas</strong> pada {new Date(activity.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             />
           )}
         </div>
