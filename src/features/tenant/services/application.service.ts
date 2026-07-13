@@ -405,6 +405,28 @@ export async function approveApplication(id: string) {
     })
   }
 
+  // 4. Buat profil GTK (Staff) otomatis untuk admin menggunakan role saat mendaftar
+  if (app.adminPosition) {
+    const existingStaff = await db.staff.findFirst({
+      where: { tenantId: tenant.id, userId: user.id }
+    })
+    
+    if (!existingStaff) {
+      await db.staff.create({
+        data: {
+          tenantId: tenant.id,
+          userId: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone || null,
+          role: app.adminPosition,
+          sortOrder: 0, // Prioritaskan di urutan atas
+          bio: `Bertanggung jawab sebagai ${app.adminPosition} sekaligus pengelola sistem website sekolah.`
+        }
+      })
+    }
+  }
+
   await db.tenantApplication.update({
     where: { id },
     data: { status: "APPROVED", emailOpenedAt: null },
