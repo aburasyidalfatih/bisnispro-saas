@@ -188,7 +188,17 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                <User className="h-4 w-4" />
-               {post.author?.name || "Admin"}
+               {post.author?.staffProfiles?.find((s: any) => s.tenantId === tenant.id) ? (
+                 <Link 
+                   href={`${base}/gtk/${post.author.staffProfiles.find((s: any) => s.tenantId === tenant.id).id}`} 
+                   className="hover:text-primary transition-colors hover:underline"
+                   title={`Lihat profil ${post.author.staffProfiles.find((s: any) => s.tenantId === tenant.id).name || post.author.name}`}
+                 >
+                   {post.author.staffProfiles.find((s: any) => s.tenantId === tenant.id).name || post.author.name || "Admin"}
+                 </Link>
+               ) : (
+                 <span>{post.author?.name || "Admin"}</span>
+               )}
              </div>
              <PostViewCounter postId={post.id} initialViews={totalViews} />
           </div>
