@@ -279,65 +279,7 @@ export default function NewStaffPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone">Nomor WhatsApp (Cth: 0812345...)</Label>
-                <Input 
-                  id="phone" 
-                  value={formData.phone} 
-                  onChange={e => setFormData({...formData, phone: e.target.value})} 
-                  placeholder="Opsional" 
-                  className="rounded-xl"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="subject">Mata Pelajaran (Selain Jabatan)</Label>
-                <Input 
-                  id="subject" 
-                  value={formData.subject} 
-                  onChange={e => setFormData({...formData, subject: e.target.value})} 
-                  placeholder="Contoh: Matematika" 
-                  className="rounded-xl"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="education">Riwayat Akademik / Pendidikan Terakhir</Label>
-                <Select value={formData.education} onValueChange={val => setFormData({...formData, education: val})}>
-                  <SelectTrigger id="education" className="w-full rounded-xl h-10">
-                    <SelectValue placeholder="Pilih pendidikan terakhir" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="SD">SD / Sederajat</SelectItem>
-                    <SelectItem value="SMP">SMP / Sederajat</SelectItem>
-                    <SelectItem value="SMA">SMA / SMK / Sederajat</SelectItem>
-                    <SelectItem value="D1">Diploma 1 (D1)</SelectItem>
-                    <SelectItem value="D2">Diploma 2 (D2)</SelectItem>
-                    <SelectItem value="D3">Diploma 3 (D3)</SelectItem>
-                    <SelectItem value="D4">Diploma 4 (D4)</SelectItem>
-                    <SelectItem value="S1">Strata 1 (S1)</SelectItem>
-                    <SelectItem value="S2">Strata 2 (S2)</SelectItem>
-                    <SelectItem value="S3">Strata 3 (S3)</SelectItem>
-                    <SelectItem value="Lainnya">Lainnya</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="bio">Bio / Riwayat Singkat</Label>
-                <Button type="button" variant="outline" size="sm" onClick={() => setAiModalOpen(true)} className="h-7 text-[10px] gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700 px-2">
-                  <Sparkles className="h-3 w-3" /> Buat Bio AI
-                </Button>
-              </div>
-              <Textarea 
-                id="bio" 
-                value={formData.bio} 
-                onChange={e => setFormData({...formData, bio: e.target.value})} 
-                placeholder="Penjelasan singkat mengenai profil guru..."
-                className="rounded-xl resize-none h-24"
-              />
-            </div>
           </CardContent>
         </Card>
       </div>
