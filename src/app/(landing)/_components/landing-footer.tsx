@@ -29,7 +29,6 @@ export function LandingFooter({ platformName }: LandingFooterProps) {
               <li><Link href="/direktori" className="hover:text-primary transition-colors">Direktori Sekolah</Link></li>
               <li><Link href="/mitra-afiliasi" className="hover:text-primary transition-colors">Program Kemitraan</Link></li>
               <li><Link href="/blog" className="hover:text-primary transition-colors">Blog & Artikel</Link></li>
-              <li><Link href="/bantuan" className="hover:text-primary transition-colors">Pusat Bantuan</Link></li>
             </ul>
           </div>
 
@@ -39,7 +38,6 @@ export function LandingFooter({ platformName }: LandingFooterProps) {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/syarat-ketentuan" className="hover:text-primary transition-colors">Syarat & Ketentuan</Link></li>
               <li><Link href="/kebijakan-privasi" className="hover:text-primary transition-colors">Kebijakan Privasi</Link></li>
-              <li><Link href="/pengembalian-dana" className="hover:text-primary transition-colors">Kebijakan Pengembalian</Link></li>
             </ul>
           </div>
 
