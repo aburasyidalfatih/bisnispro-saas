@@ -48,7 +48,8 @@ export default function EditStaffPage() {
     phone:"",
     subject:"",
     education:"",
-    password:""
+    password:"",
+    customRole:""
   })
 
   // AI State
@@ -66,9 +67,13 @@ export default function EditStaffPage() {
             toast({ title:"Gagal", description:"Data GTK tidak ditemukan", variant:"destructive" })
             router.push("/admin/website/gtk")
           } else {
+            const fetchedRole = d.role || "";
+            const predefinedRoles = ["Operator", "Kepala Sekolah", "Wakil Kepala Sekolah", "Yayasan", "Pimpinan Lembaga", "Guru Mapel", "Tata Usaha", "Lainnya"];
+            const isCustomRole = !predefinedRoles.includes(fetchedRole) && fetchedRole !== "";
             setFormData({
               name: d.name ||"",
-              role: d.role ||"",
+              role: isCustomRole ? "Lainnya" : fetchedRole,
+              customRole: isCustomRole ? fetchedRole : "",
               bio: d.bio ||"",
               sortOrder: d.sortOrder || 0,
               imageUrl: d.imageUrl ||"",
@@ -133,7 +138,7 @@ export default function EditStaffPage() {
       
       const result = await updateStaff(id, tenantId, {
         name: formData.name,
-        role: formData.role,
+        role: formData.role === "Lainnya" ? formData.customRole : formData.role,
         bio: formData.bio,
         sortOrder: Number(formData.sortOrder),
         imageUrl: finalImageUrl,
@@ -275,14 +280,25 @@ export default function EditStaffPage() {
                       <SelectValue placeholder="Pilih jabatan GTK" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Pimpinan">Pimpinan Sekolah (Kepala Sekolah/Direktur)</SelectItem>
-                      <SelectItem value="Wakil Pimpinan">Wakil Kepala Sekolah</SelectItem>
-                      <SelectItem value="Guru">Guru / Tenaga Pendidik</SelectItem>
-                      <SelectItem value="Staf">Staf Tata Usaha / Administrasi</SelectItem>
-                      <SelectItem value="Operator">Operator Yayasan / Sekolah</SelectItem>
+                      <SelectItem value="Operator">Operator</SelectItem>
+                      <SelectItem value="Kepala Sekolah">Kepala Sekolah</SelectItem>
+                      <SelectItem value="Wakil Kepala Sekolah">Wakil Kepala Sekolah</SelectItem>
+                      <SelectItem value="Yayasan">Yayasan</SelectItem>
+                      <SelectItem value="Pimpinan Lembaga">Pimpinan Lembaga</SelectItem>
+                      <SelectItem value="Guru Mapel">Guru Mapel</SelectItem>
+                      <SelectItem value="Tata Usaha">Tata Usaha</SelectItem>
                       <SelectItem value="Lainnya">Lainnya</SelectItem>
                     </SelectContent>
                   </Select>
+                  {formData.role === "Lainnya" && (
+                    <Input 
+                      placeholder="Tuliskan jabatan kustom..." 
+                      value={formData.customRole} 
+                      onChange={e => setFormData({...formData, customRole: e.target.value})} 
+                      className="mt-2 rounded-xl"
+                      required
+                    />
+                  )}
                 </div>
 
                 <div className="space-y-2">

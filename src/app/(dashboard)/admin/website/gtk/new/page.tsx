@@ -41,7 +41,8 @@ export default function NewStaffPage() {
     phone:"",
     subject:"",
     education:"",
-    password:""
+    password:"",
+    customRole:""
   })
 
   // AI State
@@ -95,7 +96,7 @@ export default function NewStaffPage() {
       
       const result = await createStaff(tenantId, {
         name: formData.name,
-        role: formData.role,
+        role: formData.role === "Lainnya" ? formData.customRole : formData.role,
         bio: formData.bio,
         sortOrder: Number(formData.sortOrder),
         imageUrl: imageUrl,
@@ -235,14 +236,25 @@ export default function NewStaffPage() {
                       <SelectValue placeholder="Pilih jabatan GTK" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Pimpinan">Pimpinan Sekolah (Kepala Sekolah/Direktur)</SelectItem>
-                      <SelectItem value="Wakil Pimpinan">Wakil Kepala Sekolah</SelectItem>
-                      <SelectItem value="Guru">Guru / Tenaga Pendidik</SelectItem>
-                      <SelectItem value="Staf">Staf Tata Usaha / Administrasi</SelectItem>
-                      <SelectItem value="Operator">Operator Yayasan / Sekolah</SelectItem>
+                      <SelectItem value="Operator">Operator</SelectItem>
+                      <SelectItem value="Kepala Sekolah">Kepala Sekolah</SelectItem>
+                      <SelectItem value="Wakil Kepala Sekolah">Wakil Kepala Sekolah</SelectItem>
+                      <SelectItem value="Yayasan">Yayasan</SelectItem>
+                      <SelectItem value="Pimpinan Lembaga">Pimpinan Lembaga</SelectItem>
+                      <SelectItem value="Guru Mapel">Guru Mapel</SelectItem>
+                      <SelectItem value="Tata Usaha">Tata Usaha</SelectItem>
                       <SelectItem value="Lainnya">Lainnya</SelectItem>
                     </SelectContent>
                   </Select>
+                  {formData.role === "Lainnya" && (
+                    <Input 
+                      placeholder="Tuliskan jabatan kustom..." 
+                      value={formData.customRole} 
+                      onChange={e => setFormData({...formData, customRole: e.target.value})} 
+                      className="mt-2 rounded-xl"
+                      required
+                    />
+                  )}
                 </div>
 
                 <div className="space-y-2">
