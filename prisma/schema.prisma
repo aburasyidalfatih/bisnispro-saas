@@ -775,6 +775,9 @@ model Staff {
   facebook        String?
   tiktok          String?
   youtube         String?
+  linkedin        String?
+  twitter         String?
+  pinterest       String?
   userId          String?
   deletedAt       DateTime?
   cbtExams        CbtExam[]

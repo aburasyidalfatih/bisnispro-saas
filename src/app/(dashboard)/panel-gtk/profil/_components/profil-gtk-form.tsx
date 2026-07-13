@@ -37,7 +37,10 @@ export function ProfilGTKForm({ staff, sessionImage, sessionEmail }: ProfilGTKFo
       instagram: (staff as any).instagram || "",
       facebook: (staff as any).facebook || "",
       tiktok: (staff as any).tiktok || "",
-      youtube: (staff as any).youtube || ""
+      youtube: (staff as any).youtube || "",
+      linkedin: (staff as any).linkedin || "",
+      twitter: (staff as any).twitter || "",
+      pinterest: (staff as any).pinterest || "",
     }
   })
 
@@ -281,9 +284,48 @@ export function ProfilGTKForm({ staff, sessionImage, sessionEmail }: ProfilGTKFo
             <div className="flex-1">
               <p className="text-xs text-muted-foreground font-medium mb-1">YouTube</p>
               {isEditing ? (
-                <Input {...register("youtube")} placeholder="https://youtube.com/c/..." className="h-8 text-sm" />
+                <Input {...register("youtube")} placeholder="https://youtube.com/..." className="h-8 text-sm" />
               ) : (
                 <p className="text-sm font-medium">{(staff as any).youtube || "-"}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground font-medium mb-1">LinkedIn</p>
+              {isEditing ? (
+                <Input {...register("linkedin")} placeholder="https://linkedin.com/in/..." className="h-8 text-sm" />
+              ) : (
+                <p className="text-sm font-medium">{(staff as any).linkedin || "-"}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-8 rounded-full bg-slate-800/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-slate-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground font-medium mb-1">Twitter / X</p>
+              {isEditing ? (
+                <Input {...register("twitter")} placeholder="https://twitter.com/..." className="h-8 text-sm" />
+              ) : (
+                <p className="text-sm font-medium">{(staff as any).twitter || "-"}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 22s-2-5.5-2-9c0-1.6 1.4-3 3-3s3 1.4 3 3c0 2.2-1.7 4-3.5 4-2 0-3.5-1.5-3.5-3.5C9 10 10.5 8 12.5 8 15 8 17 10 17 12.5 17 16 15 19.5 12 22z"/></svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground font-medium mb-1">Pinterest</p>
+              {isEditing ? (
+                <Input {...register("pinterest")} placeholder="https://pinterest.com/..." className="h-8 text-sm" />
+              ) : (
+                <p className="text-sm font-medium">{(staff as any).pinterest || "-"}</p>
               )}
             </div>
           </div>

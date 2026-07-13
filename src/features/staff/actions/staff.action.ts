@@ -105,6 +105,13 @@ export async function createStaff(tenantId: string, data: any) {
         phone: parsed.phone || null,
         subject: parsed.subject || null,
         education: parsed.education || null,
+        instagram: parsed.instagram || null,
+        facebook: parsed.facebook || null,
+        tiktok: parsed.tiktok || null,
+        youtube: parsed.youtube || null,
+        linkedin: parsed.linkedin || null,
+        twitter: parsed.twitter || null,
+        pinterest: parsed.pinterest || null,
         userId,
         tenantId,
       }
@@ -185,6 +192,13 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
         phone: parsed.phone || null,
         subject: parsed.subject || null,
         education: parsed.education || null,
+        instagram: parsed.instagram || null,
+        facebook: parsed.facebook || null,
+        tiktok: parsed.tiktok || null,
+        youtube: parsed.youtube || null,
+        linkedin: parsed.linkedin || null,
+        twitter: parsed.twitter || null,
+        pinterest: parsed.pinterest || null,
         userId,
       }
     })

@@ -136,6 +136,21 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                        </svg>
                      </a>
                    )}
+                   {staff.linkedin && (
+                     <a href={staff.linkedin} target="_blank" rel="noreferrer" className="flex items-center justify-center w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/icon">
+                       <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                     </a>
+                   )}
+                   {staff.twitter && (
+                     <a href={staff.twitter} target="_blank" rel="noreferrer" className="flex items-center justify-center w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/icon">
+                       <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                     </a>
+                   )}
+                   {staff.pinterest && (
+                     <a href={staff.pinterest} target="_blank" rel="noreferrer" className="flex items-center justify-center w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/icon">
+                       <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 22s-2-5.5-2-9c0-1.6 1.4-3 3-3s3 1.4 3 3c0 2.2-1.7 4-3.5 4-2 0-3.5-1.5-3.5-3.5C9 10 10.5 8 12.5 8 15 8 17 10 17 12.5 17 16 15 19.5 12 22z"/></svg>
+                     </a>
+                   )}
                 </div>
              </div>
           </div>
