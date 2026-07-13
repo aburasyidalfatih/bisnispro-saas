@@ -93,7 +93,7 @@ export function ActivityHeatmap({ tenantId }: ActivityHeatmapProps) {
                   React.cloneElement(block, {
                     'data-tooltip-id': 'react-tooltip',
                     'data-tooltip-html': `<strong>${activity.count} aktivitas</strong> pada ${new Date(activity.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`
-                  })
+                  } as any)
                 )}
               />
             )}

@@ -101,6 +101,8 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
   const redisShares = await getShareCount(id)
   const totalShares = (post.shareCount || 0) + redisShares
 
+  const staffProfile = post.author?.staffProfiles?.find((s: any) => s.tenantId === tenant.id)
+
   return (
     <div className="bg-background min-h-screen pt-4 md:pt-12 pb-24 font-sans text-foreground">
       <div className="print:hidden">
@@ -188,13 +190,13 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                <User className="h-4 w-4" />
-               {post.author?.staffProfiles?.find((s: any) => s.tenantId === tenant.id) ? (
+               {staffProfile ? (
                  <Link 
-                   href={`${base}/gtk/${post.author.staffProfiles.find((s: any) => s.tenantId === tenant.id).id}`} 
+                   href={`${base}/gtk/${staffProfile.id}`} 
                    className="hover:text-primary transition-colors hover:underline"
-                   title={`Lihat profil ${post.author.staffProfiles.find((s: any) => s.tenantId === tenant.id).name || post.author.name}`}
+                   title={`Lihat profil ${staffProfile.name || post.author?.name}`}
                  >
-                   {post.author.staffProfiles.find((s: any) => s.tenantId === tenant.id).name || post.author.name || "Admin"}
+                   {staffProfile.name || post.author?.name || "Admin"}
                  </Link>
                ) : (
                  <span>{post.author?.name || "Admin"}</span>
