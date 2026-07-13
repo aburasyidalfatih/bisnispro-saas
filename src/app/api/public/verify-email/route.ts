@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { verifyToken, consumeToken, verifyAppRegistrationToken, consumeAppRegistrationToken } from "@/features/auth/services/token.service"
+import { verifyAppRegistrationToken, consumeAppRegistrationToken } from "@/features/auth/services/token.service"
 import { approveApplication } from "@/features/tenant/services/application.service"
 
 export async function GET(req: Request) {
@@ -144,11 +144,6 @@ export async function POST(req: Request) {
         where: { id: user.id },
         data: { emailVerified: new Date() }
       })
-    }
-
-    // Hapus token agar tidak bisa dipakai 2x
-    await consumeToken(token)
-
     // Redirect ke halaman login subdomain dengan status 303 (See Other) agar browser melakukan GET request
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
     return NextResponse.redirect(`https://${app.schoolSlug}.${rootDomain}/login?verified=true`, 303)
