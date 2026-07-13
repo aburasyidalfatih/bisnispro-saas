@@ -45,7 +45,7 @@ export function RecentActivity({ tenantId }: RecentActivityProps) {
   }, [tenantId])
 
   return (
-    <Card className="col-span-1 border border-border/50 bg-background/50 backdrop-blur-sm h-full flex flex-col">
+    <Card className="glass border-0 col-span-1 h-full flex flex-col overflow-hidden">
       <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-blue-500/10 rounded-xl">

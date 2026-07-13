@@ -50,7 +50,7 @@ export function ActivityHeatmap({ tenantId }: ActivityHeatmapProps) {
 
   return (
     <>
-      <Card className="border border-border/50 bg-background/50 backdrop-blur-sm overflow-hidden h-full">
+      <Card className="glass border-0 h-full overflow-hidden">
         <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-primary/10 rounded-xl">
