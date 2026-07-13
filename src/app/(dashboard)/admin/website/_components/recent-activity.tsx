@@ -90,13 +90,11 @@ export function RecentActivity({ tenantId }: RecentActivityProps) {
                       {log.user?.name?.substring(0, 2).toUpperCase() || displayRole.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-xs leading-snug">
-                      <span className="font-semibold">{log.user?.name || displayRole}</span>
-                      <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1.5 font-medium">{displayRole}</span>
-                      <span className="text-muted-foreground block mt-0.5">{details.label}</span>
-                    </p>
-                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <div className="flex-1 flex flex-wrap items-center gap-2 text-xs py-1">
+                    <span className="font-semibold">{log.user?.name || displayRole}</span>
+                    <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium -ml-0.5">{displayRole}</span>
+                    <span className="text-muted-foreground">{details.label}</span>
+                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground ml-auto">
                       <div className={`p-0.5 rounded-sm ${details.bg}`}>
                         {details.icon}
                       </div>
