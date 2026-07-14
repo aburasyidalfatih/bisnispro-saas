@@ -34,6 +34,8 @@ interface WebsiteData {
   gallery: any[] | null
   domain: string | null
   customDomain: { status: string } | null
+  plan?: string
+  diskUsage?: number
   _count?: {
     posts: number
     documents: number
@@ -140,8 +142,8 @@ export default function WebsiteOverviewPage() {
   const fallbackUrl = slug ? `${appUrl}/site/${slug}` : null
   const websiteUrl = customDomainUrl || subdomainUrl || fallbackUrl
 
-  // MOCK: Replace this later with actual storage check API response
-  const isStorageFull = true;
+  // Check if tenant is on free plan and has reached the 200MB limit (200 * 1024 * 1024)
+  const isStorageFull = data?.plan === "free" && typeof data?.diskUsage === "number" && data.diskUsage >= 209715200;
 
   const getColStatus = (count?: number | null):"ok" |"warn" |"empty" => {
     if (!count || count === 0) return"empty"

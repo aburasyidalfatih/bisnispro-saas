@@ -31,6 +31,7 @@ export async function getWebsiteData(tenantId: string) {
       email: true, website: true, whatsapp: true, instagram: true,
       facebook: true, youtube: true, tiktok: true, gallery: true, settings: true,
       seoTitle: true, seoDesc: true, googleClientId: true, googleClientSecret: true,
+      plan: true,
       _count: {
         select: {
           posts: true,
@@ -56,17 +57,27 @@ export async function getWebsiteData(tenantId: string) {
 
   if (!tenant) throw new Error("Tenant tidak ditemukan")
 
+  const diskStats = await db.fileUpload.aggregate({
+    where: { tenantId },
+    _sum: { size: true }
+  })
+
+  const resultData = {
+    ...tenant,
+    diskUsage: diskStats._sum.size || 0
+  }
+
   // Cache in Redis
   try {
     const redis = getRedis()
     if (redis) {
-      await redis.setex(`${DASHBOARD_CACHE_PREFIX}${tenantId}`, DASHBOARD_CACHE_TTL, JSON.stringify(tenant))
+      await redis.setex(`${DASHBOARD_CACHE_PREFIX}${tenantId}`, DASHBOARD_CACHE_TTL, JSON.stringify(resultData))
     }
   } catch (e) {
     // Non-critical
   }
 
-  return tenant
+  return resultData
 }
 
 /**
