@@ -2,7 +2,7 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Kebijakan Privasi | SchoolPro",
-  description: "Kebijakan privasi dan perlindungan data pengguna di platform SchoolPro.",
+  description: "Pelajari komitmen SchoolPro dalam menjaga kerahasiaan, keamanan, dan perlindungan data pribadi pengguna platform manajemen sekolah kami.",
 }
 
 export default function PrivacyPolicyPage() {

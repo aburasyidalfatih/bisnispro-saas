@@ -7,8 +7,8 @@ import { MapPin, ExternalLink, School, Instagram, Facebook, Youtube } from "luci
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Direktori Sekolah - SchoolPro",
-  description: "Daftar sekolah yang telah bergabung dan menggunakan layanan digital manajemen sekolah dari SchoolPro.",
+  title: "Direktori Sekolah Mitra - SchoolPro",
+  description: "Jelajahi daftar ratusan sekolah di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari SchoolPro.",
 }
 
 export default async function DirectoryPage({

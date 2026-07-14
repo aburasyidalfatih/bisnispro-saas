@@ -2,7 +2,7 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Syarat & Ketentuan | SchoolPro",
-  description: "Syarat dan Ketentuan penggunaan layanan platform SchoolPro.",
+  description: "Syarat dan ketentuan layanan serta panduan hukum penggunaan platform manajemen sekolah digital SchoolPro bagi seluruh institusi dan pengguna.",
 }
 
 export default function TermsAndConditionsPage() {
