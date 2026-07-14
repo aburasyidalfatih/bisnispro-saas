@@ -99,16 +99,35 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
   const showGtkStats = (tenant.settings as any)?.showGtkStats !== false
   const showGtkCta = (tenant.settings as any)?.showGtkCta !== false
 
+  const findMenuPath = (menus: any[], targetUrl: string): any[] | null => {
+    for (const menu of menus) {
+      const menuUrl = menu.url || ""
+      if (menuUrl === targetUrl || menuUrl === `${targetUrl}/` || menuUrl.endsWith(targetUrl)) {
+        return [menu]
+      }
+      if (menu.children && menu.children.length > 0) {
+        const found = findMenuPath(menu.children, targetUrl)
+        if (found) return [menu, ...found]
+      }
+    }
+    return null
+  }
+
+  const menuPath = findMenuPath(tenant.websiteMenus || [], "/gtk")
+  const dynamicBreadcrumbs = menuPath 
+    ? menuPath.map(m => ({ label: m.label }))
+    : [
+        { label: "Beranda" },
+        { label: (tenant.settings as any)?.labels?.staff?.sectionTitle || "Guru & Tenaga Kependidikan" }
+      ]
+
   return (
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}
       <PageHeader
         title={(tenant.settings as any)?.labels?.staff?.sectionTitle || "Guru & Tenaga Kependidikan"}
         description={(tenant.settings as any)?.labels?.staff?.sectionSubtitle || "Mengenal lebih dekat para pendidik dan profesional yang membimbing putra-putri Anda menuju masa depan cemerlang."}
-        breadcrumbs={[
-          { label: "Profil Sekolah" },
-          { label: "SDM Unggul" }
-        ]}
+        breadcrumbs={dynamicBreadcrumbs}
       />
 
       {/* ── PRINCIPAL HIGHLIGHT (If exists) ── */}
