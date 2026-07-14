@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     // AUTHORIZATION CHECK: Prevent IDOR (uploading files to other tenants)
     if (tenantId && !session.user.isSuperAdmin) {
       const userTenants = session.user.tenants || []
-      const hasAccess = userTenants.some((t: any) => t.tenantId === tenantId)
+      const hasAccess = userTenants.some((t: any) => t.id === tenantId)
       if (!hasAccess) {
         return NextResponse.json({ error: "Unauthorized to upload to this tenant" }, { status: 403 })
       }
