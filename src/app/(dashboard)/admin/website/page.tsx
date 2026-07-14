@@ -279,16 +279,31 @@ export default function WebsiteOverviewPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="shrink-0">
           <h1 className="text-2xl font-bold tracking-tight">Website</h1>
-          <p className="text-muted-foreground mt-1">Ringkasan dan status konten website Anda.</p>
+          <p className="text-muted-foreground mt-1 text-sm">Ringkasan dan status konten website Anda.</p>
         </div>
-        <div className="flex items-center gap-2">
+        
+        {/* Storage Warning */}
+        {isStorageFull && (
+          <div className="flex-1 max-w-lg flex items-center gap-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg py-2 px-3 md:mx-4">
+            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-500 shrink-0" />
+            <div className="flex-1">
+              <p className="text-xs font-bold text-red-700 dark:text-red-400">Penyimpanan Penuh (200 MB)</p>
+              <p className="text-[10px] text-red-600/90 dark:text-red-400/80 leading-tight">Batas maksimal paket Free telah tercapai. Anda tidak dapat mengunggah media baru.</p>
+            </div>
+            <Button size="sm" className="h-7 px-3 text-[10px] bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-sm shrink-0" asChild>
+              <Link href="/admin/billing">Upgrade</Link>
+            </Button>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 shrink-0">
           {websiteUrl && (
             <a href={websiteUrl} target="_blank" rel="noopener"
-              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-              <ExternalLink className="h-3.5 w-3.5" /> Lihat Website
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium">
+              <ExternalLink className="h-4 w-4" /> Lihat Website
             </a>
           )}
         </div>
@@ -320,21 +335,7 @@ export default function WebsiteOverviewPage() {
               ) : null}
             </div>
 
-            {/* Storage Warning */}
-            {isStorageFull && (
-              <div className="mt-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg p-3">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-500 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-bold text-red-700 dark:text-red-400">Penyimpanan Penuh (200 MB)</p>
-                    <p className="text-[10px] text-red-600/90 dark:text-red-400/80 mt-0.5 leading-tight">Anda telah mencapai batas maksimal paket Free. Unggah media mungkin gagal.</p>
-                    <Button size="sm" className="mt-2 h-6 px-3 text-[10px] bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-sm" asChild>
-                      <Link href="/admin/billing">Upgrade Sekarang</Link>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
+
 
             {data?.domain && data.customDomain?.status !=="verified" && (
               <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1">
