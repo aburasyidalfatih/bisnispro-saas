@@ -140,6 +140,9 @@ export default function WebsiteOverviewPage() {
   const fallbackUrl = slug ? `${appUrl}/site/${slug}` : null
   const websiteUrl = customDomainUrl || subdomainUrl || fallbackUrl
 
+  // MOCK: Replace this later with actual storage check API response
+  const isStorageFull = true;
+
   const getColStatus = (count?: number | null):"ok" |"warn" |"empty" => {
     if (!count || count === 0) return"empty"
     if (count >= 5) return"ok"
@@ -316,6 +319,23 @@ export default function WebsiteOverviewPage() {
                   : <ShieldOff className="h-4 w-4 text-amber-500 shrink-0" />
               ) : null}
             </div>
+
+            {/* Storage Warning */}
+            {isStorageFull && (
+              <div className="mt-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-500 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-bold text-red-700 dark:text-red-400">Penyimpanan Penuh (200 MB)</p>
+                    <p className="text-[10px] text-red-600/90 dark:text-red-400/80 mt-0.5 leading-tight">Anda telah mencapai batas maksimal paket Free. Unggah media mungkin gagal.</p>
+                    <Button size="sm" className="mt-2 h-6 px-3 text-[10px] bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-sm" asChild>
+                      <Link href="/admin/billing">Upgrade Sekarang</Link>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {data?.domain && data.customDomain?.status !=="verified" && (
               <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" /> Domain belum diverifikasi
