@@ -32,6 +32,9 @@ export async function getWebsiteData(tenantId: string) {
       facebook: true, youtube: true, tiktok: true, gallery: true, settings: true,
       seoTitle: true, seoDesc: true, googleClientId: true, googleClientSecret: true,
       plan: true,
+      subscriptionPlan: {
+        select: { maxStorage: true }
+      },
       _count: {
         select: {
           posts: true,
@@ -62,9 +65,15 @@ export async function getWebsiteData(tenantId: string) {
     _sum: { size: true }
   })
 
+  let maxStorage = tenant.subscriptionPlan?.maxStorage
+  if (maxStorage === undefined) {
+    maxStorage = tenant.plan === "free" ? 200 : 1024 // Fallback
+  }
+
   const resultData = {
     ...tenant,
-    diskUsage: diskStats._sum.size || 0
+    diskUsage: diskStats._sum.size || 0,
+    maxStorage: maxStorage * 1024 * 1024
   }
 
   // Cache in Redis

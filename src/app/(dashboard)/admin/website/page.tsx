@@ -36,6 +36,7 @@ interface WebsiteData {
   customDomain: { status: string } | null
   plan?: string
   diskUsage?: number
+  maxStorage?: number
   _count?: {
     posts: number
     documents: number
@@ -142,8 +143,10 @@ export default function WebsiteOverviewPage() {
   const fallbackUrl = slug ? `${appUrl}/site/${slug}` : null
   const websiteUrl = customDomainUrl || subdomainUrl || fallbackUrl
 
-  // Check if tenant is on free plan and has reached the 200MB limit (200 * 1024 * 1024)
-  const isStorageFull = data?.plan === "free" && typeof data?.diskUsage === "number" && data.diskUsage >= 209715200;
+  const isStorageFull = typeof data?.diskUsage === "number" && typeof data?.maxStorage === "number" && data.maxStorage > 0 && data.diskUsage >= data.maxStorage;
+  
+  const maxStorageMb = data?.maxStorage ? Math.round(data.maxStorage / (1024 * 1024)) : 0;
+  const maxStorageStr = maxStorageMb >= 1024 ? `${(maxStorageMb / 1024).toFixed(1)} GB` : `${maxStorageMb} MB`;
 
   const getColStatus = (count?: number | null):"ok" |"warn" |"empty" => {
     if (!count || count === 0) return"empty"
@@ -292,8 +295,8 @@ export default function WebsiteOverviewPage() {
           <div className="flex-1 max-w-lg flex items-center gap-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg py-2 px-3 md:mx-4">
             <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-500 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-red-700 dark:text-red-400">Penyimpanan Penuh (200 MB)</p>
-              <p className="text-[10px] text-red-600/90 dark:text-red-400/80 leading-tight">Batas maksimal paket Free telah tercapai. Anda tidak dapat mengunggah media baru.</p>
+              <p className="text-xs font-bold text-red-700 dark:text-red-400">Penyimpanan Penuh ({maxStorageStr})</p>
+              <p className="text-[10px] text-red-600/90 dark:text-red-400/80 leading-tight">Batas maksimal paket Anda telah tercapai. Anda tidak dapat mengunggah media baru.</p>
             </div>
             <Button size="sm" className="h-7 px-3 text-[10px] bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-sm shrink-0" asChild>
               <Link href="/admin/billing">Upgrade</Link>
