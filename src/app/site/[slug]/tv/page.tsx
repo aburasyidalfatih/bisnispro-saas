@@ -65,7 +65,6 @@ const LiveClock = memo(({ tz, isFullscreen, onToggleFullscreen }: { tz: string, 
 })
 LiveClock.displayName = "LiveClock"
 
-// Live Progress Bar Component for individual classes
 const ClassProgressBar = memo(({ startTime, endTime, tz }: { startTime: string, endTime: string, tz: string }) => {
   const [progress, setProgress] = useState(0)
   
@@ -107,6 +106,37 @@ const ClassProgressBar = memo(({ startTime, endTime, tz }: { startTime: string, 
 })
 ClassProgressBar.displayName = "ClassProgressBar"
 
+const TeacherRow = memo(({ s }: { s: any }) => (
+  <div className={cn("flex items-center justify-between p-2.5 rounded-xl border text-xs transition-colors", s.isTeaching ? "bg-emerald-950/30 border-emerald-500/20" : "bg-black/30 border-white/5")}>
+    <div className="flex items-center gap-3 truncate pr-2">
+      {/* Indicator Dot */}
+      <div className={cn("h-2 w-2 rounded-full shrink-0", s.isTeaching ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-slate-700")}></div>
+      
+      {/* Avatar */}
+      <Avatar className="h-8 w-8 border border-white/10 shrink-0">
+        <AvatarImage src={s.image} alt={s.name} className="object-cover" />
+        <AvatarFallback className="bg-slate-800 text-slate-300 text-[10px]">
+          {s.name.substring(0, 2).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+
+      <div className="flex flex-col gap-0.5 truncate">
+        <span className={cn("font-bold truncate", s.isTeaching ? "text-white" : "text-slate-300")}>{s.name}</span>
+        <span className="text-[10px] text-slate-500 truncate">{s.role || "Pendidik"}</span>
+      </div>
+    </div>
+    {s.isTeaching ? (
+      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold tracking-wide shrink-0">
+        {s.classroomName}
+      </span>
+    ) : (
+      <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-white/10 font-semibold shrink-0">
+        Standby
+      </span>
+    )}
+  </div>
+))
+TeacherRow.displayName = "TeacherRow"
 
 export default function SchoolTvPage() {
   const params = useParams()
@@ -468,37 +498,26 @@ export default function SchoolTvPage() {
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-white shrink-0">
                 <Users className="h-5 w-5 text-indigo-400" /> Status Mengajar Guru
               </h3>
-              <div className="flex-1 overflow-y-auto space-y-2 pr-1 hide-scrollbar">
-                {staffStatuses.map((s: any, i: number) => (
-                  <div key={i} className={cn("flex items-center justify-between p-2.5 rounded-xl border text-xs transition-colors", s.isTeaching ? "bg-emerald-950/30 border-emerald-500/20" : "bg-black/30 border-white/5")}>
-                    <div className="flex items-center gap-3 truncate pr-2">
-                      {/* Indicator Dot */}
-                      <div className={cn("h-2 w-2 rounded-full shrink-0", s.isTeaching ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-slate-700")}></div>
-                      
-                      {/* Avatar */}
-                      <Avatar className="h-8 w-8 border border-white/10 shrink-0">
-                        <AvatarImage src={s.image} alt={s.name} className="object-cover" />
-                        <AvatarFallback className="bg-slate-800 text-slate-300 text-[10px]">
-                          {s.name.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-
-                      <div className="flex flex-col gap-0.5 truncate">
-                        <span className={cn("font-bold truncate", s.isTeaching ? "text-white" : "text-slate-300")}>{s.name}</span>
-                        <span className="text-[10px] text-slate-500 truncate">{s.role || "Pendidik"}</span>
-                      </div>
-                    </div>
-                    {s.isTeaching ? (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold tracking-wide shrink-0">
-                        {s.classroomName}
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-white/10 font-semibold shrink-0">
-                        Standby
-                      </span>
-                    )}
+              <div className="flex-1 overflow-hidden relative">
+                {/* Fade masks for smooth edges */}
+                <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-slate-900/80 to-transparent z-10 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-slate-900/80 to-transparent z-10 pointer-events-none"></div>
+                
+                <div className={cn("flex flex-col gap-2", staffStatuses.length > 5 ? "animate-scroll-up" : "")}>
+                  <div className="flex flex-col gap-2">
+                    {staffStatuses.map((s: any, i: number) => (
+                      <TeacherRow key={i} s={s} />
+                    ))}
                   </div>
-                ))}
+                  {/* Duplicate set for infinite vertical marquee if list is long */}
+                  {staffStatuses.length > 5 && (
+                    <div className="flex flex-col gap-2">
+                      {staffStatuses.map((s: any, i: number) => (
+                        <TeacherRow key={`dup-${i}`} s={s} />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -570,6 +589,15 @@ export default function SchoolTvPage() {
           display: inline-block;
           animation: marquee 30s linear infinite;
         }
+        
+        @keyframes scrollUp {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-50%); }
+        }
+        .animate-scroll-up {
+          animation: scrollUp 40s linear infinite;
+        }
+
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
         }
