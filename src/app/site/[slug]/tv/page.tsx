@@ -431,33 +431,31 @@ export default function SchoolTvPage() {
         <div className="w-[380px] shrink-0 flex flex-col gap-6 z-10">
           
           {/* Guru Piket Widget */}
-          <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.5)] relative overflow-hidden">
+          <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.5)] relative overflow-hidden flex flex-col max-h-[350px]">
              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
-             <h3 className="text-xl font-bold mb-5 flex items-center gap-2 text-white">
+             <h3 className="text-lg font-bold mb-3 flex items-center gap-2 text-white shrink-0">
                <Users className="h-5 w-5 text-blue-400" /> Guru Piket Hari Ini
              </h3>
-              <div className="space-y-4">
+              <div className="space-y-2 overflow-y-auto hide-scrollbar pr-1">
                 {activePiket.length > 0 ? activePiket.map((p: any, i: number) => (
-                  <div key={i} className="flex flex-col gap-1.5 bg-slate-950/50 p-4 rounded-2xl border border-white/5 shadow-inner backdrop-blur-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="px-3 py-1 text-[10px] font-bold bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/30 uppercase tracking-widest">
+                  <div key={i} className="flex items-center gap-3 bg-slate-950/50 p-2.5 rounded-xl border border-white/5 shadow-inner backdrop-blur-sm">
+                    {p.matchedStaff && p.matchedStaff.length > 0 && (
+                      <div className="flex -space-x-2 shrink-0">
+                        {p.matchedStaff.map((staff: any, idx: number) => (
+                          <Avatar key={idx} className="h-8 w-8 border border-slate-900 shrink-0">
+                            <AvatarImage src={staff.imageUrl || staff.image} alt={staff.name} className="object-cover" />
+                            <AvatarFallback className="bg-blue-900 text-blue-200 text-[10px]">
+                              {staff.name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <p className="font-bold text-slate-100 text-sm leading-tight truncate">{p.names}</p>
+                      <span className="text-[10px] text-blue-400 font-semibold tracking-wide mt-0.5">
                         {p.time}
                       </span>
-                    </div>
-                    <div className="flex items-start gap-3 mt-2">
-                      {p.matchedStaff && p.matchedStaff.length > 0 && (
-                        <div className="flex -space-x-3 shrink-0">
-                          {p.matchedStaff.map((staff: any, idx: number) => (
-                            <Avatar key={idx} className="h-10 w-10 border-2 border-slate-900 shrink-0">
-                              <AvatarImage src={staff.imageUrl || staff.image} alt={staff.name} className="object-cover" />
-                              <AvatarFallback className="bg-blue-900 text-blue-200 text-xs">
-                                {staff.name.substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          ))}
-                        </div>
-                      )}
-                      <p className="font-bold text-slate-100 text-lg leading-snug whitespace-pre-wrap">{p.names}</p>
                     </div>
                   </div>
                 )) : (
