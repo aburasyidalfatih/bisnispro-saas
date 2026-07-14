@@ -1,4 +1,10 @@
 import { db } from "@/lib/db"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "SchoolPro - Platform Manajemen & Website Sekolah",
+  description: "SchoolPro adalah platform SaaS komprehensif untuk digitalisasi sekolah. Nikmati kemudahan PPDB online, manajemen data siswa, akademik, hingga keuangan dalam satu pintu.",
+}
 import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp"
 import { SocialProofPopup } from "@/components/shared/social-proof-popup"
 import { HeroSection } from "./_components/hero-section"
