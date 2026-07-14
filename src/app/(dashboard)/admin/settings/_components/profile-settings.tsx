@@ -53,25 +53,27 @@ export function ProfileSettings({
       <CardContent className="space-y-3">
         {/* Avatar row */}
         <div className="flex items-center gap-3">
-          <div className="relative shrink-0">
-            <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-border">
+          <div className="relative shrink-0 group cursor-pointer" onClick={() => !uploadingAvatar && avatarInputRef.current?.click()}>
+            <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-border relative transition-all group-hover:border-primary">
               {avatarPreview
-                ? <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" loading="lazy" decoding="async" />
-                : <div className="flex h-full w-full items-center justify-center bg-primary/10">
+                ? <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover transition-opacity group-hover:opacity-60" loading="lazy" decoding="async" />
+                : <div className="flex h-full w-full items-center justify-center bg-primary/10 transition-colors group-hover:bg-primary/20">
                     <span className="text-lg font-bold text-primary">{profileForm.name?.charAt(0)?.toUpperCase() ||"?"}</span>
                   </div>
               }
+              <div className={cn(
+                "absolute inset-0 flex items-center justify-center bg-black/40 text-white transition-opacity",
+                uploadingAvatar ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+              )}>
+                {uploadingAvatar ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Camera className="h-5 w-5" />}
+              </div>
             </div>
-            <Button variant="outline" size="icon" onClick={() => avatarInputRef.current?.click()} disabled={uploadingAvatar}
-              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-primary/90 border-0 p-0">
-              {uploadingAvatar ? <div className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : <Camera className="h-2.5 w-2.5" />}
-            </Button>
-            <Input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarUpload} />
+            <Input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
           </div>
-          <div>
+          <div className="flex flex-col items-start">
             <p className="text-sm font-medium">{profileForm.name ||"—"}</p>
             <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
-            {avatarPreview && <Button onClick={() => { setAvatarPreview(""); setAvatarUrl("") }} className="text-xs text-destructive hover:underline">Hapus foto</Button>}
+            {avatarPreview && <Button variant="link" onClick={() => { setAvatarPreview(""); setAvatarUrl("") }} className="text-xs text-destructive h-auto p-0 hover:underline mt-0.5">Hapus foto</Button>}
           </div>
         </div>
 
