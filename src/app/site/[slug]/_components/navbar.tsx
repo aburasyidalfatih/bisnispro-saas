@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, ChevronDown, Phone, Mail, MessageCircle, Home, Building, ImageIcon, Info, Users, BookOpen, Star, FileText } from "lucide-react"
-import { cn, normalizeImageUrl, formatSocialUrl } from "@/lib/utils"
+import { Menu, X, ChevronDown, Phone, Mail, MessageCircle, Home, Building, ImageIcon, Info, Users, BookOpen, Star, FileText, Search } from "lucide-react"import { cn, normalizeImageUrl, formatSocialUrl } from "@/lib/utils"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
 import type { PublicTenant } from "../_themes/types"
 import { ICONS, IconName } from "@/components/ui/icon-picker"
+import { Omnisearch } from "./omnisearch"
 
 interface NavbarProps {
   tenant: Pick<PublicTenant, 
@@ -255,28 +255,39 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
             </nav>
 
             {/* Right: Search + CTA */}
-            {(tenant.settings as any)?.showLoginButton !== false && (
-              <div className="hidden lg:flex items-center gap-3 shrink-0">
-                {/* Primary CTA: Login */}
-                <Link
-                  href="/login"
-                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:opacity-90 rounded-full shadow-md hover:shadow-lg transition-all"
-                >
-                  Login
-                  <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
-                </Link>
-              </div>
-            )}
+            <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+              {/* Omnisearch Trigger */}
+              <button 
+                type="button" 
+                onClick={() => window.dispatchEvent(new Event("open-omnisearch"))}
+                aria-label="Pencarian Global"
+                className="p-2 sm:p-2.5 text-gray-700 hover:text-primary hover:bg-primary/5 rounded-full transition-colors flex items-center justify-center"
+              >
+                <Search className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
 
-            {/* Mobile toggle */}
-            <button
-              type="button"
-              aria-label="Toggle mobile menu"
-              className="xl:hidden p-2.5 rounded-full text-gray-700 hover:bg-gray-100 transition-colors"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+              {(tenant.settings as any)?.showLoginButton !== false && (
+                <div className="hidden lg:flex items-center shrink-0">
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-primary-foreground bg-primary hover:opacity-90 rounded-full shadow-md hover:shadow-lg transition-all"
+                  >
+                    Login
+                    <ChevronDown className="h-4 w-4 -rotate-90 opacity-70" />
+                  </Link>
+                </div>
+              )}
+
+              {/* Mobile toggle */}
+              <button
+                type="button"
+                aria-label="Toggle mobile menu"
+                className="xl:hidden p-2 sm:p-2.5 rounded-full text-gray-700 hover:bg-gray-100 transition-colors"
+                onClick={() => setMobileOpen(!mobileOpen)}
+              >
+                {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
 
             {/* Mobile nav Drawer */}
             {mobileOpen && (
@@ -400,6 +411,7 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
           </div>
         </div>
       </header>
+      <Omnisearch tenantId={tenant.id} basePath={resolveHref("")} />
     </>
   )
 }
