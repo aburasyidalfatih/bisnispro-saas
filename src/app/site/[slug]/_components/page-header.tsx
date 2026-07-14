@@ -55,7 +55,7 @@ export function PageHeader({ title, description, breadcrumbs }: PageHeaderProps)
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-primary font-bold">{item.label}</span>
+                <span className="text-primary font-bold" aria-current="page">{item.label}</span>
               )}
             </div>
           ))}

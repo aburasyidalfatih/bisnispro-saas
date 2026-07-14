@@ -22,7 +22,13 @@ export const buildDynamicBreadcrumbs = (
   const menuPath = findMenuPath(menus, targetUrl)
   
   if (menuPath) {
-    return menuPath.map(m => ({ label: m.label }))
+    return menuPath.map((m, index) => {
+      const isLast = index === menuPath.length - 1
+      return {
+        label: m.label,
+        href: isLast ? undefined : (m.url || undefined)
+      }
+    })
   }
   
   return [
