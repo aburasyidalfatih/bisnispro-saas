@@ -106,6 +106,7 @@ export function ApplicationTable({
                     <div>
                       <p className="font-bold">{app.schoolName}</p>
                       <p className="text-[10px] text-muted-foreground">Subdomain: <span className="text-primary">{app.schoolSlug}.schoolpro.id</span></p>
+                      <p className="text-[10px] text-muted-foreground/70 mt-0.5">Pengajuan: {new Date(app.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
                   </div>
                 </TableCell>
