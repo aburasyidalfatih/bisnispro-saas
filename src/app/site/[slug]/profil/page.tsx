@@ -225,34 +225,51 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
       <section className="py-16 bg-slate-900 text-white relative overflow-hidden">
          <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center md:divide-x md:divide-white/10">
-            <div className="flex flex-col items-center group">
-               <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                  <Users className="h-6 w-6 text-primary group-hover:text-white" />
-               </div>
-               <p className="text-4xl md:text-5xl font-black mb-2">{totalStaff}+</p>
-               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">{(tenant.settings as any)?.labels?.profil?.stat1 || "Tenaga Pendidik"}</p>
-            </div>
-            <div className="flex flex-col items-center group">
-               <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                  <GraduationCap className="h-6 w-6 text-primary group-hover:text-white" />
-               </div>
-               <p className="text-4xl md:text-5xl font-black mb-2">{totalAlumni}+</p>
-               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">{(tenant.settings as any)?.labels?.profil?.stat2 || "Lulusan Sukses"}</p>
-            </div>
-            <div className="flex flex-col items-center group">
-               <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                  <BookOpen className="h-6 w-6 text-primary group-hover:text-white" />
-               </div>
-               <p className="text-4xl md:text-5xl font-black mb-2">{totalPrograms}</p>
-               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Program Studi</p>
-            </div>
-            <div className="flex flex-col items-center group">
-               <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                  <Activity className="h-6 w-6 text-primary group-hover:text-white" />
-               </div>
-               <p className="text-4xl md:text-5xl font-black mb-2">{totalEkskul}+</p>
-               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Ekstrakurikuler</p>
-            </div>
+            {settings.profilStats && Array.isArray(settings.profilStats) && settings.profilStats.length > 0 ? (
+              settings.profilStats.map((stat: any, i: number) => {
+                const IconComp = (require('lucide-react') as any)[stat.icon] || Activity
+                return (
+                  <div key={i} className="flex flex-col items-center group">
+                     <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                        <IconComp className="h-6 w-6 text-primary group-hover:text-white" />
+                     </div>
+                     <p className="text-4xl md:text-5xl font-black mb-2">{stat.value}</p>
+                     <p className="text-sm font-semibold uppercase tracking-widest text-white/70">{stat.label}</p>
+                  </div>
+                )
+              })
+            ) : (
+              <>
+                <div className="flex flex-col items-center group">
+                   <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                      <Users className="h-6 w-6 text-primary group-hover:text-white" />
+                   </div>
+                   <p className="text-4xl md:text-5xl font-black mb-2">{totalStaff}+</p>
+                   <p className="text-sm font-semibold uppercase tracking-widest text-white/70">{(tenant.settings as any)?.labels?.profil?.stat1 || "Tenaga Pendidik"}</p>
+                </div>
+                <div className="flex flex-col items-center group">
+                   <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                      <GraduationCap className="h-6 w-6 text-primary group-hover:text-white" />
+                   </div>
+                   <p className="text-4xl md:text-5xl font-black mb-2">{totalAlumni}+</p>
+                   <p className="text-sm font-semibold uppercase tracking-widest text-white/70">{(tenant.settings as any)?.labels?.profil?.stat2 || "Lulusan Sukses"}</p>
+                </div>
+                <div className="flex flex-col items-center group">
+                   <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                      <BookOpen className="h-6 w-6 text-primary group-hover:text-white" />
+                   </div>
+                   <p className="text-4xl md:text-5xl font-black mb-2">{totalPrograms}</p>
+                   <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Program Studi</p>
+                </div>
+                <div className="flex flex-col items-center group">
+                   <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                      <Activity className="h-6 w-6 text-primary group-hover:text-white" />
+                   </div>
+                   <p className="text-4xl md:text-5xl font-black mb-2">{totalEkskul}+</p>
+                   <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Ekstrakurikuler</p>
+                </div>
+              </>
+            )}
          </div>
       </section>
 
