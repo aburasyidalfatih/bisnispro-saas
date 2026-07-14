@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Users, Plus, Trash2, Megaphone } from "lucide-react"
 import { AboutFormState } from "./types"
 import { IconPicker } from "@/components/ui/icon-picker"
+import { Switch } from "@/components/ui/switch"
 
 interface GtkSettingsFormProps {
   form: AboutFormState
@@ -20,6 +21,19 @@ export function GtkSettingsForm({ form, setForm }: GtkSettingsFormProps) {
     description: "",
     buttonText: "",
     buttonLink: ""
+  }
+
+  const showGtkStats = form.settings?.showGtkStats !== false // default true
+  const showGtkCta = form.settings?.showGtkCta !== false // default true
+
+  const toggleVisibility = (key: string, value: boolean) => {
+    setForm(prev => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        [key]: value
+      }
+    }))
   }
 
   const updateStats = (newStats: any[]) => {
@@ -65,7 +79,7 @@ export function GtkSettingsForm({ form, setForm }: GtkSettingsFormProps) {
   return (
     <div className="space-y-6">
       <Card className="glass border-0">
-        <CardHeader className="flex flex-row items-center space-y-0 pb-4">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 shrink-0">
               <Users className="h-4 w-4 text-primary" />
@@ -76,6 +90,10 @@ export function GtkSettingsForm({ form, setForm }: GtkSettingsFormProps) {
                 Atur 4 statistik yang muncul di banner halaman GTK. Jika dikosongkan, akan menggunakan data bawaan (Total Staf, Lulusan, dsb).
               </CardDescription>
             </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label className="text-sm font-medium">Tampilkan</Label>
+            <Switch checked={showGtkStats} onCheckedChange={(v) => toggleVisibility("showGtkStats", v)} />
           </div>
         </CardHeader>
         <CardContent>
@@ -136,7 +154,7 @@ export function GtkSettingsForm({ form, setForm }: GtkSettingsFormProps) {
       </Card>
 
       <Card className="glass border-0">
-        <CardHeader className="flex flex-row items-center space-y-0 pb-4">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 shrink-0">
               <Megaphone className="h-4 w-4 text-blue-500" />
@@ -147,6 +165,10 @@ export function GtkSettingsForm({ form, setForm }: GtkSettingsFormProps) {
                 Teks ajakan atau informasi lowongan pekerjaan (Karir) di bagian bawah halaman GTK. Biarkan kosong untuk nilai bawaan.
               </CardDescription>
             </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label className="text-sm font-medium">Tampilkan</Label>
+            <Switch checked={showGtkCta} onCheckedChange={(v) => toggleVisibility("showGtkCta", v)} />
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

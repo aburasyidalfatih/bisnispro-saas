@@ -96,6 +96,9 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
     return `${base}${cleanLink}`.replace(/\/\//g, "/")
   }
 
+  const showGtkStats = (tenant.settings as any)?.showGtkStats !== false
+  const showGtkCta = (tenant.settings as any)?.showGtkCta !== false
+
   return (
     <div className="bg-background min-h-screen">
       {/* ── HERO SECTION ── */}
@@ -234,6 +237,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
       </section>
 
       {/* ── STATISTICS BAR ── */}
+      {showGtkStats && (
       <section className="bg-primary py-16 text-white overflow-hidden relative">
         <div className="absolute inset-0 bg-mesh opacity-10" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
@@ -250,8 +254,10 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
       </section>
+      )}
 
        {/* ── CALL TO ACTION ── */}
+       {showGtkCta && (
        <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">{gtkCta.title}</h2>
@@ -274,6 +280,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
       </section>
+      )}
     </div>
   )
 }
