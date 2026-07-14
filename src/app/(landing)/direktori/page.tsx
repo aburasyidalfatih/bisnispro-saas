@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, ExternalLink, School } from "lucide-react"
 import Link from "next/link"
+import { formatSocialUrl } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "Direktori Sekolah Mitra - SchoolPro",
@@ -37,7 +38,12 @@ export default async function DirectoryPage({
 
   const data = await getSchoolsDirectory({ search, province, regency, page })
   
-  const getUrl = (s: any) => s.domain ? `https://${s.domain}` : `https://${s.slug}.schoolpro.id`
+  const getUrl = (s: any) => {
+    if (s.customDomain) {
+      return `https://${s.customDomain}`
+    }
+    return `https://${s.slug}.schoolpro.id`
+  }
 
   // Generate ItemList Schema for SEO
   const jsonLd = {
@@ -125,21 +131,21 @@ export default async function DirectoryPage({
                       {(s.instagram || s.facebook || s.youtube || s.tiktok) && (
                         <div className="flex items-center justify-center gap-4 mb-4">
                           {s.instagram && (
-                            <a href={s.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pink-600 transition-colors">
+                            <a href={formatSocialUrl(s.instagram, 'instagram')} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pink-600 transition-colors">
                               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
                               </svg>
                             </a>
                           )}
                           {s.facebook && (
-                            <a href={s.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-600 transition-colors">
+                            <a href={formatSocialUrl(s.facebook, 'facebook')} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-600 transition-colors">
                               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                               </svg>
                             </a>
                           )}
                           {s.youtube && (
-                            <a href={s.youtube} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-red-600 transition-colors">
+                            <a href={formatSocialUrl(s.youtube, 'youtube')} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-red-600 transition-colors">
                               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
                                 <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
@@ -147,7 +153,7 @@ export default async function DirectoryPage({
                             </a>
                           )}
                           {s.tiktok && (
-                            <a href={s.tiktok} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-slate-900 transition-colors">
+                            <a href={formatSocialUrl(s.tiktok, 'tiktok')} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-slate-900 transition-colors">
                               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                               </svg>
