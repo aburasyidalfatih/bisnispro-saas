@@ -9,6 +9,19 @@ import Link from "next/link"
 export const metadata: Metadata = {
   title: "Direktori Sekolah Mitra - SchoolPro",
   description: "Jelajahi daftar ratusan sekolah di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari SchoolPro.",
+  alternates: {
+    canonical: "/direktori",
+  },
+  openGraph: {
+    title: "Direktori Sekolah Mitra - SchoolPro",
+    description: "Jelajahi daftar ratusan sekolah di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari SchoolPro.",
+    url: "/direktori",
+    images: ["/logo-schoolpro.png"],
+  },
+  twitter: {
+    title: "Direktori Sekolah Mitra - SchoolPro",
+    description: "Jelajahi daftar ratusan sekolah di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari SchoolPro.",
+  }
 }
 
 export default async function DirectoryPage({

@@ -4,6 +4,19 @@ import { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Buat Website Sekolah Gratis & Platform Manajemen - SchoolPro",
   description: "Buat website sekolah gratis secara otomatis dan instan dengan SchoolPro. Platform terbaik untuk digitalisasi sekolah yang dilengkapi fitur PPDB Online dan sistem manajemen terpadu.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Buat Website Sekolah Gratis & Platform Manajemen - SchoolPro",
+    description: "Buat website sekolah gratis secara otomatis dan instan dengan SchoolPro. Platform terbaik untuk digitalisasi sekolah yang dilengkapi fitur PPDB Online dan sistem manajemen terpadu.",
+    url: "/",
+    images: ["/logo-schoolpro.png"],
+  },
+  twitter: {
+    title: "Buat Website Sekolah Gratis & Platform Manajemen - SchoolPro",
+    description: "Buat website sekolah gratis secara otomatis dan instan dengan SchoolPro. Platform terbaik untuk digitalisasi sekolah yang dilengkapi fitur PPDB Online dan sistem manajemen terpadu.",
+  }
 }
 import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp"
 import { SocialProofPopup } from "@/components/shared/social-proof-popup"

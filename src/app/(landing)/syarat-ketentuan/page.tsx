@@ -3,6 +3,19 @@ import { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Syarat & Ketentuan | SchoolPro",
   description: "Syarat dan ketentuan layanan serta panduan hukum penggunaan platform manajemen sekolah digital SchoolPro bagi seluruh institusi dan pengguna.",
+  alternates: {
+    canonical: "/syarat-ketentuan",
+  },
+  openGraph: {
+    title: "Syarat & Ketentuan | SchoolPro",
+    description: "Syarat dan ketentuan layanan serta panduan hukum penggunaan platform manajemen sekolah digital SchoolPro bagi seluruh institusi dan pengguna.",
+    url: "/syarat-ketentuan",
+    images: ["/logo-schoolpro.png"],
+  },
+  twitter: {
+    title: "Syarat & Ketentuan | SchoolPro",
+    description: "Syarat dan ketentuan layanan serta panduan hukum penggunaan platform manajemen sekolah digital SchoolPro bagi seluruh institusi dan pengguna.",
+  }
 }
 
 export default function TermsAndConditionsPage() {

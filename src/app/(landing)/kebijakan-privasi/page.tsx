@@ -3,6 +3,19 @@ import { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Kebijakan Privasi | SchoolPro",
   description: "Pelajari komitmen SchoolPro dalam menjaga kerahasiaan, keamanan, dan perlindungan data pribadi pengguna platform manajemen sekolah kami.",
+  alternates: {
+    canonical: "/kebijakan-privasi",
+  },
+  openGraph: {
+    title: "Kebijakan Privasi | SchoolPro",
+    description: "Pelajari komitmen SchoolPro dalam menjaga kerahasiaan, keamanan, dan perlindungan data pribadi pengguna platform manajemen sekolah kami.",
+    url: "/kebijakan-privasi",
+    images: ["/logo-schoolpro.png"],
+  },
+  twitter: {
+    title: "Kebijakan Privasi | SchoolPro",
+    description: "Pelajari komitmen SchoolPro dalam menjaga kerahasiaan, keamanan, dan perlindungan data pribadi pengguna platform manajemen sekolah kami.",
+  }
 }
 
 export default function PrivacyPolicyPage() {
