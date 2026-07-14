@@ -13,7 +13,7 @@ import { Omnisearch } from "./omnisearch"
 
 interface NavbarProps {
   tenant: Pick<PublicTenant, 
-    'name' | 'slug' | 'logo' | 'tagline' | 'phone' | 'email' | 'whatsapp' | 
+    'id' | 'name' | 'slug' | 'logo' | 'tagline' | 'phone' | 'email' | 'whatsapp' | 
     'facebook' | 'instagram' | 'youtube' | 'tiktok' | 'websiteMenus' | 'settings'
   >
 }

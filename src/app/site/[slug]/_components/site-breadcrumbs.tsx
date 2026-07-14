@@ -20,7 +20,7 @@ export function SiteBreadcrumbs({
   currentItemUrl 
 }: SiteBreadcrumbsProps) {
   // Generate base breadcrumbs (e.g., Home > Informasi > Berita)
-  const baseBreadcrumbs = buildDynamicBreadcrumbs(tenant.websiteMenus || [], targetUrl, fallbackLabel)
+  const baseBreadcrumbs = buildDynamicBreadcrumbs(tenant.websiteMenus || [], targetUrl, fallbackLabel, !!currentItemName)
   
   // Append current detail item if provided
   const breadcrumbs = currentItemName 

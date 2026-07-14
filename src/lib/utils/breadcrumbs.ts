@@ -21,7 +21,8 @@ export const findMenuPath = (menus: any[], targetUrl: string): any[] | null => {
 export const buildDynamicBreadcrumbs = (
   menus: any[], 
   targetUrl: string, 
-  fallbackLabel: string
+  fallbackLabel: string,
+  preserveLastItemHref: boolean = false
 ) => {
   const menuPath = findMenuPath(menus, targetUrl)
   
@@ -30,13 +31,13 @@ export const buildDynamicBreadcrumbs = (
       const isLast = index === menuPath.length - 1
       return {
         label: m.label,
-        href: isLast ? undefined : (m.url || undefined)
+        href: (isLast && !preserveLastItemHref) ? undefined : (m.url || undefined)
       }
     })
   }
   
   return [
     { label: "Beranda", href: "/" },
-    { label: fallbackLabel }
+    { label: fallbackLabel, href: preserveLastItemHref ? targetUrl : undefined }
   ]
 }
