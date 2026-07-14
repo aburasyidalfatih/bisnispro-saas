@@ -105,8 +105,8 @@ export default function SchedulesPage() {
   const handleEditClick = (s: Schedule) => {
     setForm({
       id: s.id,
-      subjectId: s.subjectId || "",
-      staffId: s.staffId || "",
+      subjectId: s.subject?.id || "",
+      staffId: s.staff?.id || "",
       dayOfWeek: String(s.dayOfWeek),
       startTime: s.startTime,
       endTime: s.endTime,

@@ -34,7 +34,7 @@ import {
   Trash2,
   Rows3,
   Columns3,
-  Youtube as YoutubeIcon
+  Video as YoutubeIcon
 } from "lucide-react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { toast } from "@/hooks/use-toast"
