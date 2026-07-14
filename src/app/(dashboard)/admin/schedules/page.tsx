@@ -35,7 +35,7 @@ export default function SchedulesPage() {
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [form, setForm] = useState({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30", isBreak: false, breakName:"" })
+  const [form, setForm] = useState({ id: "", subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30", isBreak: false, breakName:"" })
 
   useEffect(() => {
     if (!tenant) return
@@ -64,14 +64,18 @@ export default function SchedulesPage() {
     loadSchedules(v)
   }
 
-  const handleAdd = async () => {
+  const handleSave = async () => {
     if (!tenant || !form.dayOfWeek || !selectedClass) return
     if (!form.isBreak && (!form.subjectId || !form.staffId)) return
     if (form.isBreak && !form.breakName) return
     setSaving(true)
     try {
-      const res = await fetch("/api/schedules", {
-        method:"POST",
+      const isEdit = !!form.id
+      const url = isEdit ? `/api/schedules/${form.id}` : "/api/schedules"
+      const method = isEdit ? "PUT" : "POST"
+
+      const res = await fetch(url, {
+        method,
         headers: {"Content-Type":"application/json" },
         body: JSON.stringify({
           tenantId: tenant.id, classroomId: selectedClass,
@@ -88,14 +92,29 @@ export default function SchedulesPage() {
         throw new Error(data.error || "Terjadi kesalahan saat menyimpan jadwal")
       }
       
-      toast({ title:"Jadwal ditambahkan" })
-      setForm({ subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30", isBreak: false, breakName:"" })
+      toast({ title: isEdit ? "Jadwal diperbarui" : "Jadwal ditambahkan" })
+      setForm({ id: "", subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30", isBreak: false, breakName:"" })
       setShowForm(false)
       await loadSchedules(selectedClass)
     } catch (error: any) {
       toast({ title:"Gagal Menyimpan", description: error.message, variant:"destructive" })
     }
     setSaving(false)
+  }
+
+  const handleEditClick = (s: Schedule) => {
+    setForm({
+      id: s.id,
+      subjectId: s.subjectId || "",
+      staffId: s.staffId || "",
+      dayOfWeek: String(s.dayOfWeek),
+      startTime: s.startTime,
+      endTime: s.endTime,
+      isBreak: s.isBreak,
+      breakName: s.breakName || "",
+    })
+    setShowForm(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleDelete = async () => {
@@ -220,7 +239,10 @@ export default function SchedulesPage() {
             <Button variant="outline" className="gap-2 h-10 px-4 font-semibold text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 border-emerald-200" onClick={exportToExcel}>
               <Download className="h-4 w-4" /> Export Excel
             </Button>
-            <Button className="gap-2 btn-gradient flex items-center justify-center h-10 px-4" onClick={() => setShowForm(true)}>
+            <Button className="gap-2 btn-gradient flex items-center justify-center h-10 px-4" onClick={() => {
+              setForm({ id: "", subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30", isBreak: false, breakName:"" })
+              setShowForm(true)
+            }}>
               <Plus className="h-4 w-4" /> Tambah Slot
             </Button>
           </div>
@@ -249,10 +271,10 @@ export default function SchedulesPage() {
         </CardContent>
       </Card>
 
-      {/* Form Tambah */}
+      {/* Form Tambah/Edit */}
       {showForm && (
         <Card className="glass border-0 border-l-4 border-l-primary">
-          <CardHeader className="pb-3"><CardTitle className="text-base">Tambah Slot Jadwal</CardTitle></CardHeader>
+          <CardHeader className="pb-3"><CardTitle className="text-base">{form.id ? "Edit Slot Jadwal" : "Tambah Slot Jadwal"}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
@@ -319,11 +341,14 @@ export default function SchedulesPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleAdd} disabled={saving} className="btn-gradient flex items-center justify-center h-10 px-4">
+              <Button onClick={handleSave} disabled={saving} className="btn-gradient flex items-center justify-center h-10 px-4">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Simpan Jadwal
               </Button>
-              <Button variant="outline" onClick={() => setShowForm(false)}>Batal</Button>
+              <Button variant="outline" onClick={() => {
+                setForm({ id: "", subjectId:"", staffId:"", dayOfWeek:"", startTime:"07:00", endTime:"08:30", isBreak: false, breakName:"" })
+                setShowForm(false)
+              }}>Batal</Button>
             </div>
           </CardContent>
         </Card>
@@ -367,10 +392,16 @@ export default function SchedulesPage() {
                       {!s.isBreak && <p className="text-[11px] text-muted-foreground">{s.staff?.name}</p>}
                       <p className={cn("text-[11px] font-mono", s.isBreak ? "text-amber-600/80" : "text-primary")}>{s.startTime} – {s.endTime}</p>
                     </div>
-                    <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0 rounded-lg text-destructive hover:text-destructive opacity-0 group-hover/item:opacity-100 transition-opacity"
-                      onClick={() => setDeleteId(s.id)}>
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <div className="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0 rounded-lg text-primary hover:text-primary"
+                        onClick={() => handleEditClick(s)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0 rounded-lg text-destructive hover:text-destructive"
+                        onClick={() => setDeleteId(s.id)}>
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </CardContent>

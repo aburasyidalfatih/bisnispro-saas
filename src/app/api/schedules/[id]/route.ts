@@ -31,10 +31,18 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     if (error) return error
 
     const body = await req.json()
-    const { subjectId, staffId, dayOfWeek, startTime, endTime } = body
+    const { subjectId, staffId, dayOfWeek, startTime, endTime, isBreak, breakName } = body
     const schedule = await db.schedule.update({
       where: { id },
-      data: { subjectId, staffId, dayOfWeek: Number(dayOfWeek), startTime, endTime },
+      data: { 
+        subjectId: isBreak ? null : subjectId, 
+        staffId: isBreak ? null : staffId, 
+        dayOfWeek: Number(dayOfWeek), 
+        startTime, 
+        endTime,
+        isBreak: Boolean(isBreak),
+        breakName: isBreak ? breakName : null
+      },
       include: {
         subject: { select: { id: true, name: true, code: true } },
         classroom: { select: { id: true, name: true } },
