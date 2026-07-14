@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { z } from "zod"
 import { parseBody } from "@/lib/api-utils"
+import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 const profileSchema = z.object({
   name: z.string().min(2, "Nama minimal 2 karakter").max(100),
@@ -46,6 +47,15 @@ export async function PUT(req: Request) {
       ...(parsed.data.avatar !== undefined ? { imageUrl: parsed.data.avatar || null } : {})
     }
   })
+
+  // Invalidate tenant caches so updated avatar reflects on frontend articles/bios immediately
+  if (session.user.tenants && Array.isArray(session.user.tenants)) {
+    for (const tu of session.user.tenants) {
+      if (tu.slug) {
+        await clearTenantCache(tu.slug)
+      }
+    }
+  }
 
   return NextResponse.json({ message: "Profil berhasil diperbarui", name: updated.name, avatar: updated.avatar })
 }
