@@ -202,7 +202,7 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
           </div>
 
           {/* Contact Form — Client Component */}
-          <ContactForm slug={slug} />
+          <ContactForm slug={slug} labels={(tenant.settings as any)?.labels?.contact || {}} />
         </div>
       </section>
     </>

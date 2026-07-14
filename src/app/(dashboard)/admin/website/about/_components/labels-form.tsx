@@ -58,6 +58,9 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
             <TabsTrigger value="extracurriculars">Ekskul</TabsTrigger>
             <TabsTrigger value="news">Berita & Info</TabsTrigger>
             <TabsTrigger value="gallery">Galeri</TabsTrigger>
+            <TabsTrigger value="profil">Profil</TabsTrigger>
+            <TabsTrigger value="contact">Kontak</TabsTrigger>
+            <TabsTrigger value="empty">Data Kosong</TabsTrigger>
             <TabsTrigger value="other">Lainnya</TabsTrigger>
           </TabsList>
 
@@ -430,7 +433,148 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  </div>
                </div>
              </div>
-          </TabsContent>
+           </TabsContent>
+
+           <TabsContent value="profil" className="space-y-4 outline-none">
+             <div className="grid md:grid-cols-2 gap-4">
+               <div className="space-y-1.5">
+                 <Label>Teks Default Sejarah</Label>
+                 <Input 
+                   value={labels?.profil?.defaultAbout ||""} 
+                   onChange={e => updateLabel("profil","defaultAbout", e.target.value)}
+                   placeholder="Belum ada informasi profil sejarah sekolah." 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Badge Sejarah</Label>
+                 <Input 
+                   value={labels?.profil?.historyBadge ||""} 
+                   onChange={e => updateLabel("profil","historyBadge", e.target.value)}
+                   placeholder="Sejarah Sekolah" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Judul Visi & Misi</Label>
+                 <Input 
+                   value={labels?.profil?.visiMisiTitle ||""} 
+                   onChange={e => updateLabel("profil","visiMisiTitle", e.target.value)}
+                   placeholder="Visi & Misi" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Deskripsi Visi & Misi</Label>
+                 <Input 
+                   value={labels?.profil?.visiMisiDesc ||""} 
+                   onChange={e => updateLabel("profil","visiMisiDesc", e.target.value)}
+                   placeholder="Arah langkah dan pedoman kami dalam menyelenggarakan pendidikan unggul." 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Label Statistik 1 (Pengajar)</Label>
+                 <Input 
+                   value={labels?.profil?.stat1 ||""} 
+                   onChange={e => updateLabel("profil","stat1", e.target.value)}
+                   placeholder="Tenaga Pendidik" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Label Statistik 2 (Alumni)</Label>
+                 <Input 
+                   value={labels?.profil?.stat2 ||""} 
+                   onChange={e => updateLabel("profil","stat2", e.target.value)}
+                   placeholder="Lulusan Sukses" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+           </TabsContent>
+
+           <TabsContent value="contact" className="space-y-4 outline-none">
+             <div className="grid md:grid-cols-2 gap-4">
+               <div className="space-y-1.5">
+                 <Label>Judul Kontak</Label>
+                 <Input 
+                   value={labels?.contact?.title ||""} 
+                   onChange={e => updateLabel("contact","title", e.target.value)}
+                   placeholder="Hubungi Kami" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Judul Form</Label>
+                 <Input 
+                   value={labels?.contact?.formTitle ||""} 
+                   onChange={e => updateLabel("contact","formTitle", e.target.value)}
+                   placeholder="Kirim Pesan" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Label Nama Lengkap</Label>
+                 <Input 
+                   value={labels?.contact?.labelName ||""} 
+                   onChange={e => updateLabel("contact","labelName", e.target.value)}
+                   placeholder="Nama Lengkap" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Tombol Submit Form</Label>
+                 <Input 
+                   value={labels?.contact?.btnSubmit ||""} 
+                   onChange={e => updateLabel("contact","btnSubmit", e.target.value)}
+                   placeholder="Kirim Pesan Sekarang" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+           </TabsContent>
+
+           <TabsContent value="empty" className="space-y-4 outline-none">
+             <div className="grid md:grid-cols-2 gap-4">
+               <div className="space-y-1.5">
+                 <Label>Fasilitas Kosong (Judul)</Label>
+                 <Input 
+                   value={labels?.empty?.facilitiesTitle ||""} 
+                   onChange={e => updateLabel("empty","facilitiesTitle", e.target.value)}
+                   placeholder="Fasilitas Belum Tersedia" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Fasilitas Kosong (Deskripsi)</Label>
+                 <Input 
+                   value={labels?.empty?.facilitiesDesc ||""} 
+                   onChange={e => updateLabel("empty","facilitiesDesc", e.target.value)}
+                   placeholder="Daftar fasilitas dan sarana prasarana sekolah..." 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Program Kosong (Judul)</Label>
+                 <Input 
+                   value={labels?.empty?.programsTitle ||""} 
+                   onChange={e => updateLabel("empty","programsTitle", e.target.value)}
+                   placeholder="Data Program Belum Tersedia" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+               <div className="space-y-1.5">
+                 <Label>Berita Kosong (Judul)</Label>
+                 <Input 
+                   value={labels?.empty?.newsTitle ||""} 
+                   onChange={e => updateLabel("empty","newsTitle", e.target.value)}
+                   placeholder="Berita Belum Tersedia" 
+                   className="rounded-xl h-9" 
+                 />
+               </div>
+             </div>
+           </TabsContent>
         </Tabs>
       </CardContent>
     </Card>

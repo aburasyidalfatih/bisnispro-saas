@@ -157,13 +157,11 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
       <section className="py-20 bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-16 items-center">
            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold uppercase tracking-wider">
-                 Sejarah Sekolah
-              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold uppercase tracking-wider">{(tenant.settings as any)?.labels?.profil?.historyBadge || "Sejarah Sekolah"}</div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-foreground">Tentang {tenant.name}</h2>
               <div 
                  className="prose prose-slate leading-relaxed text-muted-foreground max-w-none" 
-                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(profileData?.about || tenant.description || "Belum ada informasi profil sejarah sekolah.") }} 
+                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(profileData?.about || tenant.description || (tenant.settings as any)?.labels?.profil?.defaultAbout || "Belum ada informasi profil sejarah sekolah.") }} 
               />
            </div>
            
@@ -189,8 +187,8 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
       {(settings.visi || settings.misi) && (
         <section className="py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
            <div className="text-center mb-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">Visi & Misi</h2>
-              <p className="text-muted-foreground">Arah langkah dan pedoman kami dalam menyelenggarakan pendidikan unggul.</p>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">{(tenant.settings as any)?.labels?.profil?.visiMisiTitle || "Visi & Misi"}</h2>
+              <p className="text-muted-foreground">{(tenant.settings as any)?.labels?.profil?.visiMisiDesc || "Arah langkah dan pedoman kami dalam menyelenggarakan pendidikan unggul."}</p>
            </div>
            
            <div className="flex flex-col gap-12">
@@ -232,14 +230,14 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                   <Users className="h-6 w-6 text-primary group-hover:text-white" />
                </div>
                <p className="text-4xl md:text-5xl font-black mb-2">{totalStaff}+</p>
-               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Tenaga Pendidik</p>
+               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">{(tenant.settings as any)?.labels?.profil?.stat1 || "Tenaga Pendidik"}</p>
             </div>
             <div className="flex flex-col items-center group">
                <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                   <GraduationCap className="h-6 w-6 text-primary group-hover:text-white" />
                </div>
                <p className="text-4xl md:text-5xl font-black mb-2">{totalAlumni}+</p>
-               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Lulusan Sukses</p>
+               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">{(tenant.settings as any)?.labels?.profil?.stat2 || "Lulusan Sukses"}</p>
             </div>
             <div className="flex flex-col items-center group">
                <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">

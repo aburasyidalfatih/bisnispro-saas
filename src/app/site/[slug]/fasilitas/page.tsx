@@ -143,7 +143,7 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
                   {/* Floating Glassmorphism Specs Badge */}
                   <div className="absolute top-6 right-6 flex gap-2 z-20">
                     <span className="px-3 py-1.5 backdrop-blur-md bg-white/10 text-white rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/20 shadow-sm">
-                      {facility.category || "UMUM"}
+                      {facility.category || (tenant.settings as any)?.labels?.empty?.categoryFallback || "UMUM"}
                     </span>
                   </div>
 
@@ -174,10 +174,8 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
             <div className="bg-primary/10 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <Building2 className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-xl font-bold">Data Fasilitas Belum Tersedia</h3>
-            <p className="text-muted-foreground mt-2 max-w-sm mx-auto">
-              Maaf, saat ini kami belum memperbarui daftar fasilitas sekolah secara detail di website ini.
-            </p>
+            <h3 className="text-xl font-bold">{(tenant.settings as any)?.labels?.empty?.facilitiesTitle || "Data Fasilitas Belum Tersedia"}</h3>
+            <p className="text-muted-foreground mt-2 max-w-sm mx-auto">{(tenant.settings as any)?.labels?.empty?.facilitiesDesc || "Maaf, saat ini kami belum memperbarui daftar fasilitas sekolah secara detail di website ini."}</p>
           </div>
         )}
       </section>
@@ -185,17 +183,13 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
       {/* ── CALL TO ACTION ── */}
       <section className="py-20 bg-primary/5 border-y border-primary/10">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ingin Melihat Langsung?</h2>
-          <p className="text-muted-foreground mb-8 text-lg">
-            Kami mengundang Anda untuk berkunjung dan melihat langsung sarana pendidikan yang kami miliki. Jadwalkan kunjungan Anda sekarang.
-          </p>
+          <h2 className="text-3xl font-bold mb-6">{(tenant.settings as any)?.labels?.facilities?.ctaTitle || "Ingin Melihat Langsung?"}</h2>
+          <p className="text-muted-foreground mb-8 text-lg">{(tenant.settings as any)?.labels?.facilities?.ctaDesc || "Kami mengundang Anda untuk berkunjung dan melihat langsung sarana pendidikan yang kami miliki. Jadwalkan kunjungan Anda sekarang."}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link 
               href={`${base}/contact`} 
               className="px-8 py-3 bg-primary text-white rounded-full font-bold hover:shadow-lg transition-all"
-            >
-              Hubungi Kami
-            </Link>
+            >{(tenant.settings as any)?.labels?.facilities?.ctaBtn || "Hubungi Kami"}</Link>
             <Link 
               href={base} 
               className="px-8 py-3 bg-background border border-border rounded-full font-bold hover:bg-muted transition-all"

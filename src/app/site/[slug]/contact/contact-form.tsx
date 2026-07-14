@@ -5,9 +5,10 @@ import { CheckCircle, Send } from "lucide-react"
 
 interface Props {
   slug: string
+  labels?: any
 }
 
-export function ContactForm({ slug }: Props) {
+export function ContactForm({ slug, labels = {} }: Props) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
@@ -92,11 +93,11 @@ export function ContactForm({ slug }: Props) {
 
   return (
     <div className="rounded-2xl border bg-background p-8">
-      <h2 className="text-xl font-bold mb-6">Kirim Pesan</h2>
+      <h2 className="text-xl font-bold mb-6">{labels.formTitle || "Kirim Pesan"}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Nama <span className="text-destructive">*</span></label>
+            <label className="text-sm font-medium">{labels.labelName || "Nama Lengkap"} <span className="text-destructive">*</span></label>
             <input type="text" value={form.name} onChange={set("name")}
               placeholder="Nama lengkap Anda"
               className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
@@ -144,7 +145,7 @@ export function ContactForm({ slug }: Props) {
           ) : (
             <Send className="h-4 w-4" />
           )}
-          {sending ? "Mengirim..." : "Kirim Pesan"}
+          {sending ? "Mengirim..." : (labels.btnSubmit || "Kirim Pesan Sekarang")}
         </button>
       </form>
     </div>

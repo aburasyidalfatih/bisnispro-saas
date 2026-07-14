@@ -78,7 +78,7 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
              <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
                <Calendar className="h-10 w-10" />
              </div>
-             <h3 className="text-2xl font-bold mb-2">Belum ada agenda</h3>
+             <h3 className="text-2xl font-bold mb-2">{(tenant.settings as any)?.labels?.empty?.agendaTitle || "Belum ada agenda"}</h3>
              <p className="text-muted-foreground max-w-sm text-center">Jadwal acara dan kegiatan sekolah akan segera diperbarui di sini.</p>
           </div>
         ) : (

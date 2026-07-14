@@ -106,7 +106,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
           </div>
         ) : (
           <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed border-border">
-             <h3 className="text-xl font-bold">Data Program Belum Tersedia</h3>
+             <h3 className="text-xl font-bold">{(tenant.settings as any)?.labels?.empty?.programsTitle || "Data Program Belum Tersedia"}</h3>
              <p className="text-muted-foreground mt-2">Daftar program akademik sedang dalam proses sinkronisasi.</p>
           </div>
         )}
