@@ -74,7 +74,8 @@ export function Omnisearch({ tenantId, basePath }: { tenantId: string; basePath:
 
   const onSelect = (url: string) => {
     setOpen(false)
-    router.push(`${basePath}${url}`)
+    const finalUrl = (basePath + url).replace(/\/\//g, '/')
+    router.push(finalUrl)
   }
 
   const getIcon = (type: string) => {
