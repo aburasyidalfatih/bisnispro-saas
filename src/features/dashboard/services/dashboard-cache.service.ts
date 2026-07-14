@@ -47,16 +47,17 @@ export const getAdminStatsCached = unstable_cache(
         where: { tenantId, status: { in: ["UNPAID", "PARTIAL", "OVERDUE"] }, deletedAt: null },
         _sum: { amountDue: true },
       }),
-      // Data pembayaran 6 bulan terakhir untuk chart
-      db.invoice.findMany({
-        where: {
-          tenantId,
-          status: "PAID",
-          deletedAt: null,
-          updatedAt: { gte: sixMonthsAgo },
-        },
-        select: { amountPaid: true, updatedAt: true },
-      }),
+      // Data pembayaran 6 bulan terakhir untuk chart menggunakan queryRaw agar efisien
+      db.$queryRaw<Array<{ month: Date; total: number }>>`
+        SELECT DATE_TRUNC('month', "updatedAt") as month, SUM("amountPaid") as total
+        FROM "invoices"
+        WHERE "tenantId" = ${tenantId} 
+          AND status = 'PAID' 
+          AND "deletedAt" IS NULL 
+          AND "updatedAt" >= ${sixMonthsAgo}
+        GROUP BY DATE_TRUNC('month', "updatedAt")
+        ORDER BY month ASC
+      `
     ])
 
     // Hitung data chart bulanan
@@ -66,14 +67,15 @@ export const getAdminStatsCached = unstable_cache(
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
       const month = d.getMonth()
       const year = d.getFullYear()
-      const monthPayments = recentPayments.filter((p: any) => {
-        if (!p.updatedAt) return false
-        const pd = new Date(p.updatedAt)
+      
+      const found = (recentPayments as Array<{ month: Date; total: number }>).find((p) => {
+        const pd = new Date(p.month)
         return pd.getMonth() === month && pd.getFullYear() === year
       })
+      
       chartData.push({
         bulan: monthNames[month],
-        pendapatan: monthPayments.reduce((sum: number, p: any) => sum + (p.amountPaid || 0), 0),
+        pendapatan: found ? Number(found.total) : 0,
       })
     }
 

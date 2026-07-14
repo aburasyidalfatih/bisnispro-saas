@@ -5,6 +5,7 @@ import { headers } from "next/headers"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
+import { ShareButtons } from "../berita/[id]/_components/share-buttons"
 
 interface PageProps {
   params: Promise<{ slug: string; pageSlug: string }>
@@ -148,6 +149,15 @@ export default async function CustomPagePublicView({ params }: PageProps) {
         ) : (
           <p className="text-muted-foreground italic">Konten halaman belum tersedia.</p>
         )}
+
+        {/* Share Buttons */}
+        <div className="mt-12 pt-8 border-t border-border/50">
+          <ShareButtons 
+            url={pageUrl} 
+            title={page.title}
+            tenantId={tenant.id}
+          />
+        </div>
       </div>
     </div>
   )

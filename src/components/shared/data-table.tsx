@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   ColumnDef,
   flexRender,
@@ -33,6 +33,14 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState("")
+  const [inputValue, setInputValue] = useState("")
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setGlobalFilter(inputValue)
+    }, 300)
+    return () => clearTimeout(timeout)
+  }, [inputValue])
 
   const table = useReactTable({
     data,
@@ -54,8 +62,8 @@ export function DataTable<TData, TValue>({
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={searchPlaceholder}
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             className="pl-9 rounded-xl bg-background/50"
           />
         </div>

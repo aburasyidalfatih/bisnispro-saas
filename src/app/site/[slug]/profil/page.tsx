@@ -194,25 +194,31 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
               <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">Visi & Misi</h2>
               <p className="text-muted-foreground">Arah langkah dan pedoman kami dalam menyelenggarakan pendidikan unggul.</p>
            </div>
-           <div className="grid md:grid-cols-2 gap-8">
+           
+           <div className="flex flex-col gap-12">
               {settings.visi && (
-                 <div className="p-10 rounded-[2.5rem] bg-gradient-to-br from-primary to-primary/80 text-white shadow-xl relative overflow-hidden flex flex-col justify-center">
-                    <Target className="absolute -right-6 -top-6 h-40 w-40 opacity-10" />
-                    <div className="h-14 w-14 rounded-2xl bg-white/20 flex items-center justify-center mb-8 backdrop-blur-sm">
-                       <Target className="h-7 w-7 text-white" />
+                 <div className="p-10 md:p-14 rounded-[2.5rem] bg-gradient-to-br from-primary to-primary/80 text-white shadow-xl relative overflow-hidden flex flex-col items-center text-center group transition-transform hover:-translate-y-1 duration-500">
+                    <Target className="absolute -right-10 -top-10 h-64 w-64 opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700" />
+                    <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center mb-8 backdrop-blur-md shadow-inner">
+                       <Target className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="text-2xl font-black mb-4">Visi Kami</h3>
-                    <div className="text-lg leading-relaxed font-medium opacity-90 prose prose-invert" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(settings.visi) }} />
+                    <h3 className="text-xl font-bold uppercase tracking-widest text-white/80 mb-6">Visi Kami</h3>
+                    <div className="text-2xl md:text-4xl leading-snug md:leading-tight font-black prose prose-invert max-w-4xl mx-auto" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(settings.visi) }} />
                  </div>
               )}
+              
               {settings.misi && (
-                 <div className="p-10 rounded-[2.5rem] bg-white border border-border/60 shadow-xl relative overflow-hidden">
-                    <CheckCircle className="absolute -right-6 -bottom-6 h-40 w-40 text-muted/30" />
-                    <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-8">
-                       <CheckCircle className="h-7 w-7 text-primary" />
+                 <div className="p-10 md:p-12 rounded-[2.5rem] bg-white border border-border shadow-xl relative overflow-hidden transition-transform hover:-translate-y-1 duration-500">
+                    <CheckCircle className="absolute -left-10 -bottom-10 h-64 w-64 text-muted/30 group-hover:scale-110 transition-transform duration-700" />
+                    <div className="relative z-10">
+                       <div className="flex items-center gap-4 mb-8">
+                          <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                             <CheckCircle className="h-7 w-7 text-primary" />
+                          </div>
+                          <h3 className="text-2xl md:text-3xl font-black text-foreground">Misi Kami</h3>
+                       </div>
+                       <div className="prose prose-lg prose-slate text-muted-foreground marker:text-primary max-w-none md:columns-2 gap-12" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(settings.misi) }} />
                     </div>
-                    <h3 className="text-2xl font-black mb-4 text-foreground">Misi Kami</h3>
-                    <div className="space-y-3 prose prose-slate text-muted-foreground marker:text-primary max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(settings.misi) }} />
                  </div>
               )}
            </div>
@@ -220,23 +226,36 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
       )}
 
       {/* ── STATISTIK ── */}
-      <section className="py-16 bg-foreground text-background">
-         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:divide-x md:divide-background/10">
-            <div>
-               <p className="text-4xl md:text-5xl font-black text-primary mb-2">{totalStaff}+</p>
-               <p className="text-sm font-semibold uppercase tracking-widest opacity-80">Tenaga Pendidik</p>
+      <section className="py-16 bg-slate-900 text-white relative overflow-hidden">
+         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center md:divide-x md:divide-white/10">
+            <div className="flex flex-col items-center group">
+               <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <Users className="h-6 w-6 text-primary group-hover:text-white" />
+               </div>
+               <p className="text-4xl md:text-5xl font-black mb-2">{totalStaff}+</p>
+               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Tenaga Pendidik</p>
             </div>
-            <div>
-               <p className="text-4xl md:text-5xl font-black text-primary mb-2">{totalAlumni}+</p>
-               <p className="text-sm font-semibold uppercase tracking-widest opacity-80">Lulusan Sukses</p>
+            <div className="flex flex-col items-center group">
+               <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <GraduationCap className="h-6 w-6 text-primary group-hover:text-white" />
+               </div>
+               <p className="text-4xl md:text-5xl font-black mb-2">{totalAlumni}+</p>
+               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Lulusan Sukses</p>
             </div>
-            <div>
-               <p className="text-4xl md:text-5xl font-black text-primary mb-2">{totalPrograms}</p>
-               <p className="text-sm font-semibold uppercase tracking-widest opacity-80">Program Studi</p>
+            <div className="flex flex-col items-center group">
+               <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <BookOpen className="h-6 w-6 text-primary group-hover:text-white" />
+               </div>
+               <p className="text-4xl md:text-5xl font-black mb-2">{totalPrograms}</p>
+               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Program Studi</p>
             </div>
-            <div>
-               <p className="text-4xl md:text-5xl font-black text-primary mb-2">{totalEkskul}+</p>
-               <p className="text-sm font-semibold uppercase tracking-widest opacity-80">Ekstrakurikuler</p>
+            <div className="flex flex-col items-center group">
+               <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <Activity className="h-6 w-6 text-primary group-hover:text-white" />
+               </div>
+               <p className="text-4xl md:text-5xl font-black mb-2">{totalEkskul}+</p>
+               <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Ekstrakurikuler</p>
             </div>
          </div>
       </section>

@@ -421,15 +421,12 @@ export async function processAutoDebetSPP() {
     errors: [] as string[],
   };
 
-  let cursorId: string | undefined = undefined;
   let hasMore = true;
-  const BATCH_SIZE = 500;
+  const BATCH_SIZE = 100;
 
   while (hasMore) {
     const invoices = await db.invoice.findMany({
       take: BATCH_SIZE,
-      skip: cursorId ? 1 : 0,
-      cursor: cursorId ? { id: cursorId } : undefined,
       orderBy: { id: "asc" },
       where: {
         isAutoDebet: true,
@@ -451,16 +448,20 @@ export async function processAutoDebetSPP() {
       break;
     }
 
-    cursorId = invoices[invoices.length - 1].id;
     results.processed += invoices.length;
 
-    for (const invoice of invoices) {
+    // Proses dalam chunk (batch of 10) agar lebih cepat tapi tidak membanjiri koneksi database
+    const chunkSize = 10;
+    for (let i = 0; i < invoices.length; i += chunkSize) {
+      const chunk = invoices.slice(i, i + chunkSize);
+      
+      await Promise.allSettled(chunk.map(async (invoice) => {
       const wallet = invoice.student?.walletAccount;
       const amountToPay = invoice.amountDue;
 
       if (!wallet || wallet.balance < amountToPay) {
         results.skipped++;
-        continue;
+        return;
       }
 
       try {
@@ -519,12 +520,15 @@ export async function processAutoDebetSPP() {
             },
           });
         });
-
         results.succeeded++;
-      } catch (err: any) {
+      } catch (error: any) {
         results.failed++;
-        results.errors.push(`Invoice ${invoice.code}: ${err.message}`);
+        results.errors.push(`Gagal memproses auto-debet invoice ${invoice.id}: ${error.message}`);
       }
+      
+      // Yield the event loop
+      await new Promise(r => setTimeout(r, 0));
+    }));
     }
   }
 

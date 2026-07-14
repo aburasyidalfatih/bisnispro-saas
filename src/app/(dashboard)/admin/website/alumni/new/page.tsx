@@ -37,7 +37,14 @@ export default function NewAlumniPage() {
     graduationYear: new Date().getFullYear().toString(),
     currentStatus:"KULIAH",
     institutionName:"",
-    testimonial:""
+    testimonial:"",
+    instagram:"",
+    facebook:"",
+    tiktok:"",
+    youtube:"",
+    linkedin:"",
+    twitter:"",
+    pinterest:""
   })
   const [isCustomStatus, setIsCustomStatus] = useState(false)
 
@@ -97,6 +104,13 @@ export default function NewAlumniPage() {
         institutionName: formData.institutionName,
         testimonial: formData.testimonial,
         imageUrl: imageUrl,
+        instagram: formData.instagram,
+        facebook: formData.facebook,
+        tiktok: formData.tiktok,
+        youtube: formData.youtube,
+        linkedin: formData.linkedin,
+        twitter: formData.twitter,
+        pinterest: formData.pinterest,
       })
 
       toast({ title:"Data alumni berhasil disimpan!" })
@@ -285,6 +299,52 @@ export default function NewAlumniPage() {
                   onChange={e => setFormData({...formData, testimonial: e.target.value})} 
                   placeholder="Ceritakan pengalaman belajar di sekolah atau kesuksesan yang diraih..."
                   className="rounded-xl resize-none h-32 pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border/50">
+              <div className="col-span-1 sm:col-span-2">
+                <Label className="text-sm font-semibold">Sosial Media</Label>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="instagram" className="text-xs">Instagram (Opsional)</Label>
+                <Input 
+                  id="instagram" 
+                  value={formData.instagram} 
+                  onChange={e => setFormData({...formData, instagram: e.target.value})} 
+                  placeholder="URL atau username" 
+                  className="rounded-xl h-8 text-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="facebook" className="text-xs">Facebook (Opsional)</Label>
+                <Input 
+                  id="facebook" 
+                  value={formData.facebook} 
+                  onChange={e => setFormData({...formData, facebook: e.target.value})} 
+                  placeholder="URL atau username" 
+                  className="rounded-xl h-8 text-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tiktok" className="text-xs">TikTok (Opsional)</Label>
+                <Input 
+                  id="tiktok" 
+                  value={formData.tiktok} 
+                  onChange={e => setFormData({...formData, tiktok: e.target.value})} 
+                  placeholder="URL atau username" 
+                  className="rounded-xl h-8 text-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="linkedin" className="text-xs">LinkedIn (Opsional)</Label>
+                <Input 
+                  id="linkedin" 
+                  value={formData.linkedin} 
+                  onChange={e => setFormData({...formData, linkedin: e.target.value})} 
+                  placeholder="URL LinkedIn" 
+                  className="rounded-xl h-8 text-sm"
                 />
               </div>
             </div>

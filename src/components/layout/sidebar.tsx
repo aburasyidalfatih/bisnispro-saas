@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   Users,
@@ -78,24 +78,26 @@ interface SidebarProps {
 
 export function Sidebar({ isSuperAdmin }: SidebarProps) {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const currentQuery = searchParams.toString()
-  const fullPath = currentQuery ? `${pathname}?${currentQuery}` : pathname
-
-  const { data: session } = useSession()
-  const { branding } = useTenantBranding()
   const [collapsed, setCollapsed] = useState(false)
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({})
   const [pendingPayments, setPendingPayments] = useState(0)
   const [platformLogo, setPlatformLogo] = useState("/logo-schoolpro.png")
 
+  const { data: session } = useSession()
+  const { branding } = useTenantBranding()
+
   useEffect(() => {
-    fetch("/api/public/platform-info")
+    const controller = new AbortController()
+    fetch("/api/public/platform-info", { signal: controller.signal })
       .then(res => res.json())
       .then(data => {
         if (data && data.app_logo) setPlatformLogo(data.app_logo)
       })
-      .catch(console.error)
+      .catch((err) => {
+        if (err.name !== "AbortError") console.error(err)
+      })
+      
+    return () => controller.abort()
   }, [])
 
   const basePath = "/admin"
@@ -105,10 +107,15 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   // Fetch pending payments count for super admin badge
   useEffect(() => {
     if (!isSuperAdminPath) return
-    fetch("/api/super-admin/stats")
+    const controller = new AbortController()
+    fetch("/api/super-admin/stats", { signal: controller.signal })
       .then(r => r.json())
       .then(d => setPendingPayments(d.pendingPayments || 0))
-      .catch(() => {})
+      .catch((err) => {
+        if (err.name !== "AbortError") console.error(err)
+      })
+      
+    return () => controller.abort()
   }, [isSuperAdminPath])
 
   // Detect role dari session
@@ -156,7 +163,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
           const isChildActive = item.children.some(
             (child) => {
               if (child.href.includes("?")) {
-                return fullPath === child.href
+                return pathname === child.href
               }
               return pathname === child.href || pathname.startsWith(child.href + "/")
             }
@@ -243,10 +250,10 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
 
             <div className="space-y-0.5">
               {section.items.map((item) => {
-                const isExactActive = item.href.includes("?") ? fullPath === item.href : pathname === item.href
+                const isExactActive = pathname === item.href
                 const isChildActive = item.children?.some(
                   (child) => {
-                    if (child.href.includes("?")) return fullPath === child.href
+                    if (child.href.includes("?")) return pathname === child.href
                     return pathname === child.href || pathname.startsWith(child.href + "/")
                   }
                 )
@@ -337,7 +344,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                       <div className={cn("overflow-hidden transition-all duration-200 ease-in-out", isOpen ? "max-h-96 opacity-100 mt-0.5" : "max-h-0 opacity-0")}>
                         <div className="ml-[22px] border-l border-border/50 pl-4 space-y-0.5 py-0.5">
                           {item.children!.map((child) => {
-                            const isSubActive = child.href.includes("?") ? fullPath === child.href : (pathname === child.href || pathname.startsWith(child.href + "/"))
+                            const isSubActive = pathname === child.href || pathname.startsWith(child.href + "/")
                             return (
                               <Link
                                 key={child.href}

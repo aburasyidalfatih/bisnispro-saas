@@ -32,7 +32,13 @@ export const getPublicPosts = async (tenantId: string, page: number, perPage: nu
         take: perPage,
         include: {
           category: true,
-          author: { select: { name: true, avatar: true } }
+          author: { 
+            select: { 
+              name: true, 
+              avatar: true,
+              staffProfiles: true
+            } 
+          }
         }
       })
     },

@@ -15,6 +15,15 @@ export async function POST(req: Request) {
     const tenantId = formData.get("tenantId") as string | null
     const subDir = formData.get("subDir") as string | null
 
+    // AUTHORIZATION CHECK: Prevent IDOR (uploading files to other tenants)
+    if (tenantId && !session.user.isSuperAdmin) {
+      const userTenants = session.user.tenants || []
+      const hasAccess = userTenants.some((t: any) => t.tenantId === tenantId)
+      if (!hasAccess) {
+        return NextResponse.json({ error: "Unauthorized to upload to this tenant" }, { status: 403 })
+      }
+    }
+
     if (!file) {
       return NextResponse.json({ error: "File harus diupload" }, { status: 400 })
     }

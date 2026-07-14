@@ -150,16 +150,19 @@ export async function createTransaction(params: CreateTransactionParamsDTO): Pro
       })
 
       const { notifyAllSuperAdmins } = await import("@/features/super-admin/services/super-admin-notification.service")
-      db.tenant.findUnique({ where: { id: params.tenantId }, select: { name: true } })
-        .then(t => {
-          let itemName = params.plan === "WALLET_TOPUP" ? "Top Up Saldo" : (params.plan === "ai_addon" || params.plan === "AI_TOKEN_USER" || (params.metadata as any)?.type === "AI_QUOTA") ? "Top Up Token AI" : `Langganan Paket ${params.plan}`
-          notifyAllSuperAdmins({
-            title: "Menunggu Pembayaran ⏳",
-            message: `${t?.name || "Tenant"} baru saja melakukan checkout untuk ${itemName} senilai Rp ${params.amount.toLocaleString("id-ID")}.`,
-            type: "info",
-            metadata: { reference: merchantRef, amount: params.amount, tenantId: params.tenantId }
+      const { waitUntil } = await import("@vercel/functions")
+      waitUntil(
+        db.tenant.findUnique({ where: { id: params.tenantId }, select: { name: true } })
+          .then(t => {
+            let itemName = params.plan === "WALLET_TOPUP" ? "Top Up Saldo" : (params.plan === "ai_addon" || params.plan === "AI_TOKEN_USER" || (params.metadata as any)?.type === "AI_QUOTA") ? "Top Up Token AI" : `Langganan Paket ${params.plan}`
+            return notifyAllSuperAdmins({
+              title: "Menunggu Pembayaran ⏳",
+              message: `${t?.name || "Tenant"} baru saja melakukan checkout untuk ${itemName} senilai Rp ${params.amount.toLocaleString("id-ID")}.`,
+              type: "info",
+              metadata: { reference: merchantRef, amount: params.amount, tenantId: params.tenantId }
+            })
           }).catch(err => console.error(err))
-        }).catch(err => console.error(err))
+      )
 
       return { success: true, data: result.data }
     } else {
@@ -238,16 +241,19 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
     // Step 4: Upgrade tenant plan, TopUp Wallet, or Pay Invoice jika pembayaran berhasil
     if (body.status === "PAID") {
       const { notifyAllSuperAdmins } = await import("@/features/super-admin/services/super-admin-notification.service")
-      db.tenant.findUnique({ where: { id: payment.tenantId }, select: { name: true } })
-        .then(t => {
-          notifyAllSuperAdmins({
-            title: "Pembayaran Diterima 💰",
-            message: `Pembayaran senilai Rp ${payment.amount.toLocaleString("id-ID")} dari ${t?.name || "Tenant"} berhasil dikonfirmasi. (Ref: ${payment.reference})`,
-            type: "success",
-            metadata: { paymentId: payment.id, amount: payment.amount, tenantId: payment.tenantId }
-          }).catch(err => console.error("Gagal kirim notifikasi super admin:", err))
-        })
-        .catch(err => console.error(err))
+      const { waitUntil } = await import("@vercel/functions")
+      waitUntil(
+        db.tenant.findUnique({ where: { id: payment.tenantId }, select: { name: true } })
+          .then(t => {
+            return notifyAllSuperAdmins({
+              title: "Pembayaran Diterima 💰",
+              message: `Pembayaran senilai Rp ${payment.amount.toLocaleString("id-ID")} dari ${t?.name || "Tenant"} berhasil dikonfirmasi. (Ref: ${payment.reference})`,
+              type: "success",
+              metadata: { paymentId: payment.id, amount: payment.amount, tenantId: payment.tenantId }
+            })
+          })
+          .catch(err => console.error("Gagal kirim notifikasi super admin:", err))
+      )
       if (payment.plan === "WALLET_TOPUP") {
         await retryAsync(
           async () => {

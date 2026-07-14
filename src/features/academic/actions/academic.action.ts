@@ -27,27 +27,33 @@ export async function createSubject(data: { tenantId: string, name: string, code
   
   const tenantDb = withTenant(parsed.tenantId)
   
-  // Cek Kuota
-  const tenant = await db.tenant.findUnique({ where: { id: parsed.tenantId } })
-  if (tenant?.plan === "free") {
-    const subjectCount = await db.subject.count({ where: { tenantId: parsed.tenantId } })
-    if (subjectCount >= 1) {
-      return { error: "Kuota maksimal 1 mata pelajaran untuk paket Free. Silakan upgrade paket untuk menambah." }
-    }
+  try {
+    const subject = await db.$transaction(async (tx) => {
+      // Cek Kuota
+      const tenant = await tx.tenant.findUnique({ where: { id: parsed.tenantId } })
+      if (tenant?.plan === "free") {
+        const subjectCount = await tx.subject.count({ where: { tenantId: parsed.tenantId } })
+        if (subjectCount >= 1) {
+          throw new Error("Kuota maksimal 1 mata pelajaran untuk paket Free. Silakan upgrade paket untuk menambah.")
+        }
+      }
+
+      return await tx.subject.create({
+        data: {
+          tenantId: parsed.tenantId,
+          name: parsed.name,
+          code: parsed.code,
+          description: parsed.description,
+          isActive: true
+        }
+      })
+    })
+
+    revalidatePath('/admin/subjects')
+    return { success: true, subject }
+  } catch (error: any) {
+    return { error: error.message }
   }
-
-  const subject = await tenantDb.subject.create({
-    data: {
-      tenantId: parsed.tenantId, // Tetap disertakan untuk Create
-      name: parsed.name,
-      code: parsed.code,
-      description: parsed.description,
-      isActive: true
-    }
-  })
-
-  revalidatePath('/admin/subjects')
-  return { success: true, subject }
 }
 
 export async function updateSubject(id: string, data: { tenantId: string, name: string, code?: string, description?: string }) {

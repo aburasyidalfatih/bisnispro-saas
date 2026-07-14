@@ -35,12 +35,17 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
   const [isTopupOpen, setIsTopupOpen] = useState(false)
 
   useEffect(() => {
-    fetch('/api/gtk/ai/info')
+    const controller = new AbortController()
+    fetch('/api/gtk/ai/info', { signal: controller.signal })
       .then(r => r.json())
       .then(d => {
          if (!d.error) setAiData(d)
       })
-      .catch(console.error)
+      .catch((err) => {
+        if (err.name !== 'AbortError') console.error(err)
+      })
+      
+    return () => controller.abort()
   }, [])
 
   const navItems: { label: string; icon: any; href: string; badge?: string }[] = [

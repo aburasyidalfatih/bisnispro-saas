@@ -31,6 +31,7 @@ import DOMPurify from "isomorphic-dompurify"
 import Image from "next/image"
 import { ReadingProgress } from "@/app/site/[slug]/berita/[id]/_components/reading-progress"
 import { ShareButtons } from "@/app/site/[slug]/berita/[id]/_components/share-buttons"
+import { AuthorBio } from "@/app/site/[slug]/berita/[id]/_components/author-bio"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
@@ -232,6 +233,9 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
           postId={post.id}
           tenantId={tenant.id}
         />
+        
+        {/* Author Bio */}
+        <AuthorBio author={post.author} tenantId={tenant.id} basePath={base} />
       </article>
 
       {/* Related Posts */}

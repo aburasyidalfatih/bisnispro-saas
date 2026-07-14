@@ -58,21 +58,23 @@ export function AffiliateLeaderboardClient({ backHref, variant = "full" }: Affil
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState("all") // weekly, monthly, yearly, all
 
-  const fetchLeaderboard = useCallback(async () => {
+  const fetchLeaderboard = useCallback(async (signal?: AbortSignal) => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/super-admin/affiliates/leaderboard?filter=${filter}`)
+      const res = await fetch(`/api/super-admin/affiliates/leaderboard?filter=${filter}`, { signal })
       const result = await res.json()
       setData(result)
-    } catch (e) {
-      console.error(e)
+    } catch (e: any) {
+      if (e.name !== 'AbortError') console.error(e)
     } finally {
       setLoading(false)
     }
   }, [filter])
 
   useEffect(() => {
-    fetchLeaderboard()
+    const controller = new AbortController()
+    fetchLeaderboard(controller.signal)
+    return () => controller.abort()
   }, [fetchLeaderboard])
 
   const top3 = data.slice(0, 3)

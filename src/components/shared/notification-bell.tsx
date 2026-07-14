@@ -21,9 +21,7 @@ import Link from "next/link"
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export function NotificationBell() {
-  const { data, mutate } = useSWR("/api/notifications", fetcher, {
-    refreshInterval: 60000, // Poll every minute
-  })
+  const { data, mutate } = useSWR("/api/notifications", fetcher)
 
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()

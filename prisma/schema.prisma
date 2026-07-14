@@ -338,12 +338,12 @@ model Payment {
   courseId             String?
   course               Course?               @relation(fields: [courseId], references: [id])
 
-  @@index([tenantId])
-  @@index([status])
   @@index([createdAt])
   @@index([tenantId, status])
   @@index([tenantId, createdAt])
   @@index([status, expiredAt])
+  @@index([discountCodeId])
+  @@index([courseId])
   @@map("payments")
 }
 
@@ -742,6 +742,13 @@ model Alumni {
   institutionName String?
   testimonial     String?
   imageUrl        String?
+  instagram       String?
+  facebook        String?
+  tiktok          String?
+  youtube         String?
+  linkedin        String?
+  twitter         String?
+  pinterest       String?
   sortOrder       Int      @default(0)
   isApproved      Boolean  @default(true)
   createdAt       DateTime @default(now())
