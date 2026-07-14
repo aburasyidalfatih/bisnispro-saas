@@ -162,6 +162,7 @@ model User {
   password             String
   phone                String?
   avatar               String?
+  bio                  String?               @db.Text
   emailVerified        DateTime?
   isActive             Boolean               @default(true)
   isSuperAdmin         Boolean               @default(false)

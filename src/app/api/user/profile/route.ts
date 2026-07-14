@@ -10,6 +10,7 @@ const profileSchema = z.object({
   email: z.string().email("Format email tidak valid").optional(),
   phone: z.string().max(20).optional().nullable(),
   avatar: z.string().max(500).optional().nullable(),
+  bio: z.string().max(500).optional().nullable(),
 })
 
 export async function PUT(req: Request) {
@@ -34,6 +35,7 @@ export async function PUT(req: Request) {
       email: parsed.data.email || undefined,
       phone: parsed.data.phone || null,
       avatar: parsed.data.avatar !== undefined ? (parsed.data.avatar || null) : undefined,
+      bio: parsed.data.bio !== undefined ? (parsed.data.bio || null) : undefined,
     },
   })
 
@@ -44,7 +46,8 @@ export async function PUT(req: Request) {
       name: parsed.data.name,
       email: parsed.data.email || undefined,
       phone: parsed.data.phone || null,
-      ...(parsed.data.avatar !== undefined ? { imageUrl: parsed.data.avatar || null } : {})
+      ...(parsed.data.avatar !== undefined ? { imageUrl: parsed.data.avatar || null } : {}),
+      ...(parsed.data.bio !== undefined ? { bio: parsed.data.bio || null } : {})
     }
   })
 

@@ -35,7 +35,7 @@ export default function SettingsGeneralPage() {
   }, [isAdminRole, status, router])
 
   // Profile
-  const [profileForm, setProfileForm] = useState({ name:"", phone:"", email:"" })
+  const [profileForm, setProfileForm] = useState({ name:"", phone:"", email:"", bio:"" })
   const [savingProfile, setSavingProfile] = useState(false)
   const [avatarPreview, setAvatarPreview] = useState("")
   const [avatarUrl, setAvatarUrl] = useState("")
@@ -68,7 +68,7 @@ export default function SettingsGeneralPage() {
 
   useEffect(() => {
     if (!session?.user) return
-    setProfileForm({ name: session.user.name ||"", phone: (session.user as any).phone ||"", email: session.user.email ||"" })
+    setProfileForm({ name: session.user.name ||"", phone: (session.user as any).phone ||"", email: session.user.email ||"", bio: (session.user as any).bio ||"" })
     setAvatarPreview(session.user.image ||"")
     setAvatarUrl(session.user.image ||"")
   }, [session?.user])
@@ -104,7 +104,7 @@ export default function SettingsGeneralPage() {
     setSavingProfile(true)
     const res = await fetch("/api/user/profile", {
       method:"PUT", headers: {"Content-Type":"application/json" },
-      body: JSON.stringify({ name: profileForm.name, phone: profileForm.phone, email: profileForm.email, avatar: avatarUrl || null }),
+      body: JSON.stringify({ name: profileForm.name, phone: profileForm.phone, email: profileForm.email, avatar: avatarUrl || null, bio: profileForm.bio || null }),
     })
     setSavingProfile(false)
     if (res.ok) {

@@ -8,8 +8,8 @@ import { cn } from"@/lib/utils"
 
 interface ProfileSettingsProps {
   session: any
-  profileForm: { name: string; phone: string; email: string }
-  setProfileForm: React.Dispatch<React.SetStateAction<{ name: string; phone: string; email: string }>>
+  profileForm: { name: string; phone: string; email: string; bio: string }
+  setProfileForm: React.Dispatch<React.SetStateAction<{ name: string; phone: string; email: string; bio: string }>>
   savingProfile: boolean
   avatarPreview: string
   setAvatarPreview: (val: string) => void
@@ -92,6 +92,18 @@ export function ProfileSettings({
           <p className="text-[11px] text-muted-foreground -mt-1 flex items-center gap-1">
             <Info className="h-3 w-3 text-primary" />
             Gunakan email yang paling sering digunakan. Update rutin terkait SchoolPro akan disampaikan melalui email.
+          </p>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Bio Singkat</Label>
+          <textarea 
+            value={profileForm.bio} 
+            onChange={e => setProfileForm(p => ({ ...p, bio: e.target.value }))} 
+            placeholder="Tuliskan bio singkat Anda..." 
+            className="flex min-h-[80px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" 
+          />
+          <p className="text-[11px] text-muted-foreground -mt-1">
+            Ditampilkan sebagai profil penulis di bagian bawah artikel/berita yang Anda terbitkan.
           </p>
         </div>
         <Button className="flex items-center justify-center btn-gradient text-white border-0 rounded-xl w-full gap-2 h-9 px-4" onClick={handleSaveProfile} disabled={savingProfile}>

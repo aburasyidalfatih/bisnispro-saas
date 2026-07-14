@@ -328,6 +328,7 @@ export const getTenantPosts = async (slug: string) => {
                 select: { 
                   name: true, 
                   avatar: true, 
+                  bio: true,
                   id: true,
                   staffProfiles: {
                     select: { id: true, name: true, bio: true, imageUrl: true, tenantId: true, instagram: true, facebook: true, youtube: true, tiktok: true, linkedin: true, twitter: true, pinterest: true }

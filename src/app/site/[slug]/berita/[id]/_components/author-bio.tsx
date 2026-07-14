@@ -19,7 +19,7 @@ export function AuthorBio({ author, tenantId, basePath }: AuthorBioProps) {
   // Tentukan data yang akan ditampilkan
   const name = staffProfile?.name || author.name || "Tim Redaksi"
   const avatarUrl = staffProfile?.imageUrl || author.avatar
-  const bio = staffProfile?.bio || "Penulis dan pengelola konten untuk website sekolah. Berdedikasi untuk memberikan informasi terkini dan bermanfaat bagi seluruh warga sekolah."
+  const bio = staffProfile?.bio || author.bio || "Penulis dan pengelola konten untuk website sekolah. Berdedikasi untuk memberikan informasi terkini dan bermanfaat bagi seluruh warga sekolah."
 
   const avatarSrc = normalizeImageUrl(avatarUrl)
 

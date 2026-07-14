@@ -406,6 +406,8 @@ export const authOptions: NextAuthConfig = {
           token.isSuperAdmin = freshUser.isSuperAdmin
           token.twoFactorEnabled = freshUser.twoFactorEnabled
           token.isAffiliate = !!freshUser.affiliateProfile
+          token.phone = freshUser.phone
+          token.bio = freshUser.bio
           token.tenants = freshUser.tenants.map((tu) => ({
             id: tu.tenant.id,
             name: tu.tenant.name,
@@ -431,6 +433,8 @@ export const authOptions: NextAuthConfig = {
         session.user.tenants = (token.tenants as any[]) || []
         if (token.name) session.user.name = token.name as string
         if (token.picture !== undefined) session.user.image = token.picture as string | null
+        if (token.phone) (session.user as any).phone = token.phone as string
+        if (token.bio) (session.user as any).bio = token.bio as string
 
         // Handle Super Admin impersonation
         if (session.user.isSuperAdmin) {
