@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 const defaultServices = [
@@ -30,10 +31,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
       <PageHeader
         title="Layanan Kami"
         description="Menghadirkan layanan terpadu untuk menunjang kebutuhan pendidikan dan masyarakat."
-        breadcrumbs={[
-          { label: "Halaman" },
-          { label: "Layanan Utama" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/services", "Services")}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">

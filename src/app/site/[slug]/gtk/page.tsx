@@ -9,6 +9,7 @@ import { DynamicIcon } from "@/components/ui/icon-picker"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -127,7 +128,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
       <PageHeader
         title={(tenant.settings as any)?.labels?.staff?.sectionTitle || "Guru & Tenaga Kependidikan"}
         description={(tenant.settings as any)?.labels?.staff?.sectionSubtitle || "Mengenal lebih dekat para pendidik dan profesional yang membimbing putra-putri Anda menuju masa depan cemerlang."}
-        breadcrumbs={dynamicBreadcrumbs}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/gtk", (tenant.settings as any)?.labels?.staff?.sectionTitle || "Guru & Tenaga Kependidikan")}
       />
 
       {/* ── PRINCIPAL HIGHLIGHT (If exists) ── */}

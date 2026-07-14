@@ -8,6 +8,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import { Download, FileText, ExternalLink, Search } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export default async function UnduhanPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -41,10 +42,7 @@ export default async function UnduhanPage({ params }: { params: Promise<{ slug: 
       <PageHeader
         title="Pusat Unduhan"
         description={<>Akses dokumen, formulir, dan materi digital penting dari {tenant.name}.</>}
-        breadcrumbs={[
-          { label: "Informasi" },
-          { label: "Informasi Publik" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/unduhan", "Unduhan")}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">

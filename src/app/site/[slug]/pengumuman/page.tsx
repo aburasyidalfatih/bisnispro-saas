@@ -10,6 +10,7 @@ import { formatInTimeZone } from "date-fns-tz"
 import { id } from "date-fns/locale"
 import { getPublicPosts, countPublicPosts } from "@/features/tenant/services/tenant-public-queries.service"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -88,10 +89,7 @@ export default async function PengumumanPage({
       <PageHeader
         title={(tenant.settings as any)?.labels?.pengumuman?.sectionTitle || "Papan Pengumuman"}
         description={<>{(tenant.settings as any)?.labels?.pengumuman?.sectionSubtitle || `Informasi penting dan pengumuman resmi dari ${tenant.name}.`}</>}
-        breadcrumbs={[
-          { label: "Informasi" },
-          { label: "Pengumuman" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/pengumuman", (tenant.settings as any)?.labels?.pengumuman?.sectionTitle || "Papan Pengumuman")}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">

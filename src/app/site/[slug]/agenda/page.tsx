@@ -12,6 +12,7 @@ import { Calendar, MapPin, Clock, ArrowRight, Search } from "lucide-react"
 import { format } from "date-fns"
 import { formatInTimeZone } from "date-fns-tz"
 import { id } from "date-fns/locale"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -68,10 +69,7 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
       <PageHeader
         title={(tenant.settings as any)?.labels?.agenda?.sectionTitle || "Agenda & Acara Sekolah"}
         description={<>{(tenant.settings as any)?.labels?.agenda?.sectionSubtitle || `Jadwal kegiatan akademik, hari besar, dan acara menarik lainnya di ${tenant.name}.`}</>}
-        breadcrumbs={[
-          { label: "Informasi" },
-          { label: "Informasi Acara" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/agenda", (tenant.settings as any)?.labels?.agenda?.sectionTitle || "Agenda & Acara Sekolah")}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">

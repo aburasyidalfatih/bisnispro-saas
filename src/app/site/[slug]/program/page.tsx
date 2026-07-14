@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -65,10 +66,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
       <PageHeader
         title={(tenant.settings as any)?.labels?.programs?.sectionTitle || "Program Unggulan"}
         description={(tenant.settings as any)?.labels?.programs?.sectionSubtitle || "Membangun keunggulan akademik melalui program yang terintegrasi dan inovatif."}
-        breadcrumbs={[
-          { label: "Profil Sekolah" },
-          { label: "Program Unggulan" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/program", (tenant.settings as any)?.labels?.programs?.sectionTitle || "Program Unggulan")}
       />
 
       {/* ── ACADEMIC PROGRAMS ── */}

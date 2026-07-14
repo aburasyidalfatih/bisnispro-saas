@@ -6,6 +6,7 @@ import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export default async function EkstrakurikulerPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -44,10 +45,7 @@ export default async function EkstrakurikulerPage({ params }: { params: Promise<
  <PageHeader
         title={(tenant.settings as any)?.labels?.extracurriculars?.sectionTitle || "Ekstrakurikuler"}
         description={(tenant.settings as any)?.labels?.extracurriculars?.sectionSubtitle || "Wadah bagi siswa untuk mengeksplorasi minat, mengasah kepemimpinan, dan membangun kerjasama tim di luar jam kelas."}
-        breadcrumbs={[
-          { label: "Profil Sekolah" },
-          { label: "Ekstrakurikuler" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/ekstrakurikuler", (tenant.settings as any)?.labels?.extracurriculars?.sectionTitle || "Ekstrakurikuler")}
       />
 
  {/* ── EXTRACURRICULAR ACTIVITIES ── */}

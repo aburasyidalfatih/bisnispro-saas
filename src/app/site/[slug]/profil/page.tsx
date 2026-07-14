@@ -13,6 +13,7 @@ import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 import DOMPurify from "isomorphic-dompurify"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -88,10 +89,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
       <PageHeader
         title={<>{tenant.name}</>}
         description={<>"{tenant.tagline || "Mewujudkan Masa Depan Gemilang Melalui Pendidikan Berkualitas"}"</>}
-        breadcrumbs={[
-          { label: "Profil Sekolah" },
-          { label: "Profil Lengkap" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/profil", tenant.name)}
       />
 
       {/* ── LEGALITAS & IDENTITAS CEPAT ── */}

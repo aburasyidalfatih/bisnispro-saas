@@ -5,6 +5,7 @@ import { GalleryGrid } from "./gallery-grid"
 import { getTenantLayoutData, getTenantGallery } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -65,10 +66,7 @@ export default async function GalleryPage({ params }: { params: Promise<{ slug: 
       <PageHeader
         title="Galeri Kami"
         description="Dokumentasi kegiatan dan portofolio pekerjaan kami."
-        breadcrumbs={[
-          { label: "Galeri & Alumni" },
-          { label: "Dokumentasi" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/gallery", "Gallery")}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">

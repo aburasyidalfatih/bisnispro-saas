@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { db } from "@/lib/db"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -101,10 +102,7 @@ export default async function FasilitasPage({ params }: { params: Promise<{ slug
       <PageHeader
         title={(tenant.settings as any)?.labels?.facilities?.sectionTitle || "Fasilitas Sekolah"}
         description={(tenant.settings as any)?.labels?.facilities?.sectionSubtitle || "Sarana dan prasarana pendukung pendidikan berkualitas untuk kenyamanan seluruh siswa."}
-        breadcrumbs={[
-          { label: "Profil Sekolah" },
-          { label: "Lingkungan Belajar" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/fasilitas", (tenant.settings as any)?.labels?.facilities?.sectionTitle || "Fasilitas Sekolah")}
       />
 
       {/* ── MAIN CONTENT ── */}

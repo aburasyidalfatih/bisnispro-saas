@@ -6,6 +6,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { cn, normalizeImageUrl } from "@/lib/utils"
 import { AlumniSubmissionForm } from "./_components/alumni-submission-form"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export default async function AlumniPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -37,10 +38,7 @@ export default async function AlumniPage({ params }: { params: Promise<{ slug: s
       <PageHeader
         title={(tenant.settings as any)?.labels?.alumni?.sectionTitle || "Jejak Langkah Alumni"}
         description={(tenant.settings as any)?.labels?.alumni?.sectionSubtitle || "Melihat kontribusi dan kesuksesan para lulusan kami yang kini telah berkiprah di berbagai bidang dan institusi ternama."}
-        breadcrumbs={[
-          { label: "Galeri & Alumni" },
-          { label: "Alumni Success Stories" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/alumni", (tenant.settings as any)?.labels?.alumni?.sectionTitle || "Jejak Langkah Alumni")}
       />
 
 

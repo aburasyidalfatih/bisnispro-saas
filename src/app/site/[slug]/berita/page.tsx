@@ -13,6 +13,7 @@ import { Calendar, User, ArrowRight, BookOpen } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { cn, normalizeImageUrl } from "@/lib/utils"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 function SmartPlaceholder({ title, type }: { title: string, type: string }) {
@@ -124,10 +125,7 @@ export default async function BeritaPage({
       <PageHeader
         title={pageTitle}
         description={<>{pageDesc}</>}
-        breadcrumbs={[
-          { label: "Informasi" },
-          { label: breadcrumbLabel }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/berita", pageTitle)}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">

@@ -9,6 +9,7 @@ import Link from "next/link"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
 import { PrestasiList } from "./prestasi-list"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export default async function PrestasiPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -39,10 +40,7 @@ export default async function PrestasiPage({ params }: { params: Promise<{ slug:
       <PageHeader
         title={(tenant.settings as any)?.labels?.achievements?.sectionTitle || "Prestasi & Penghargaan"}
         description={(tenant.settings as any)?.labels?.achievements?.sectionSubtitle || "Membanggakan dan Inspiratif. Catatan perjalanan siswa dan institusi dalam meraih keunggulan di berbagai bidang."}
-        breadcrumbs={[
-          { label: "Galeri & Alumni" },
-          { label: "School Hall of Fame" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/prestasi", (tenant.settings as any)?.labels?.achievements?.sectionTitle || "Prestasi & Penghargaan")}
       />
 
       {/* ── MAIN CONTENT ── */}

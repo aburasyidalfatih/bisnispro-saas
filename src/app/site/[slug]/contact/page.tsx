@@ -6,6 +6,7 @@ import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.s
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { formatSocialUrl } from "@/lib/utils"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
+import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -81,10 +82,7 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
       <PageHeader
         title="Hubungi Kami"
         description="Kami senang mendengar dari Anda. Silakan hubungi kami melalui salah satu cara di bawah ini."
-        breadcrumbs={[
-          { label: "Halaman" },
-          { label: "Kontak" }
-        ]}
+        breadcrumbs={buildDynamicBreadcrumbs(tenant.websiteMenus || [], "/contact", "Contact")}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
