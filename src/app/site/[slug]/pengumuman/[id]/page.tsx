@@ -32,6 +32,7 @@ import Image from "next/image"
 import { ReadingProgress } from "@/app/site/[slug]/berita/[id]/_components/reading-progress"
 import { ShareButtons } from "@/app/site/[slug]/berita/[id]/_components/share-buttons"
 import { AuthorBio } from "@/app/site/[slug]/berita/[id]/_components/author-bio"
+import { SiteBreadcrumbs } from "@/app/site/[slug]/_components/site-breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
@@ -110,36 +111,16 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
     <div className="bg-background min-h-screen pt-4 md:pt-12 pb-24 font-sans text-foreground">
       <ReadingProgress />
 
-      {/* JSON-LD for BreadcrumbList */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Beranda",
-                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Pengumuman",
-                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}/pengumuman`
-              },
-              {
-                "@type": "ListItem",
-                "position": 3,
-                "name": post.title,
-                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}/pengumuman/${post.slug}`
-              }
-            ]
-          })
-        }}
-      />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <SiteBreadcrumbs 
+          tenant={tenant}
+          basePath={base}
+          targetUrl="/pengumuman"
+          fallbackLabel={(tenant.settings as any)?.labels?.pengumuman?.sectionTitle || "Pengumuman"}
+          currentItemName={post.title}
+          currentItemUrl={`/pengumuman/${post.slug}`}
+        />
+      </div>
 
       {/* JSON-LD for Article Rich Snippets */}
       <script
@@ -174,9 +155,9 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link 
             href={`${base}/pengumuman`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-blue-600 mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-blue-600 mb-6 transition-colors"
           >
-             <ArrowLeft className="h-4 w-4" /> Papan Pengumuman
+             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Pengumuman
           </Link>
           
           <div className="flex flex-wrap items-center gap-3 mb-4">

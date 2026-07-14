@@ -11,6 +11,7 @@ import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 import DOMPurify from "isomorphic-dompurify"
+import { SiteBreadcrumbs } from "@/app/site/[slug]/_components/site-breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
@@ -47,11 +48,19 @@ export default async function AchievementDetailPage({ params }: { params: Promis
       {/* ── HEADER SECTION ── */}
       <div className="bg-muted/30 pt-8 pb-12 border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SiteBreadcrumbs 
+            tenant={tenant}
+            basePath={base}
+            targetUrl="/prestasi"
+            fallbackLabel={(tenant.settings as any)?.labels?.achievements?.sectionTitle || "Prestasi"}
+            currentItemName={achievement.title}
+            currentItemUrl={`/prestasi/${achievement.slug || achievement.id}`}
+          />
           <Link 
             href={`${base}/prestasi`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors"
           >
-             <ArrowLeft className="h-4 w-4" /> Kembali
+             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Prestasi
           </Link>
           
           <div className="flex items-center gap-3 mb-4">

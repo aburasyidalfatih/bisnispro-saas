@@ -3,12 +3,16 @@ export const findMenuPath = (menus: any[], targetUrl: string): any[] | null => {
   
   for (const menu of menus) {
     const menuUrl = menu.url || ""
+    
+    // Check children first (Depth-First Search) to find the deepest matching node
+    if (menu.children && menu.children.length > 0) {
+      const foundInChildren = findMenuPath(menu.children, targetUrl)
+      if (foundInChildren) return [menu, ...foundInChildren]
+    }
+
+    // Only match self if no children matched
     if (menuUrl === targetUrl || menuUrl === `${targetUrl}/` || menuUrl.endsWith(targetUrl)) {
       return [menu]
-    }
-    if (menu.children && menu.children.length > 0) {
-      const found = findMenuPath(menu.children, targetUrl)
-      if (found) return [menu, ...found]
     }
   }
   return null

@@ -18,6 +18,7 @@ import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 import { EventViewCounter } from "./_components/view-counter"
 import { getEventViews } from "@/features/post/services/views.service"
 import DOMPurify from "isomorphic-dompurify"
+import { SiteBreadcrumbs } from "@/app/site/[slug]/_components/site-breadcrumbs"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
@@ -85,11 +86,19 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
       {/* ── HEADER SECTION ── */}
       <div className="bg-muted/30 pt-6 pb-10 border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SiteBreadcrumbs 
+            tenant={tenant}
+            basePath={base}
+            targetUrl="/agenda"
+            fallbackLabel={(tenant.settings as any)?.labels?.agenda?.sectionTitle || "Agenda"}
+            currentItemName={event.title}
+            currentItemUrl={`/agenda/${event.slug || event.id}`}
+          />
           <Link 
             href={`${base}/agenda`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors"
           >
-             <ArrowLeft className="h-4 w-4" /> Kembali
+             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Agenda
           </Link>
           
           <div className="flex flex-wrap items-center gap-3 mb-4">

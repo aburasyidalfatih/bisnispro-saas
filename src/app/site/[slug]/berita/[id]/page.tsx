@@ -16,7 +16,7 @@ import { PostViewCounter } from "./_components/view-counter"
 import { getPostViews } from "@/features/post/services/views.service"
 import { getShareCount } from "@/features/post/services/share.service"
 import { AuthorBio } from "./_components/author-bio"
-
+import { SiteBreadcrumbs } from "@/app/site/[slug]/_components/site-breadcrumbs"
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const headerList = await headers();
   const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
@@ -109,36 +109,16 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
         <ReadingProgress />
       </div>
 
-      {/* JSON-LD for BreadcrumbList */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Beranda",
-                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}`
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Berita",
-                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}/berita`
-              },
-              {
-                "@type": "ListItem",
-                "position": 3,
-                "name": post.title,
-                "item": `https://${tenant.domain || tenant.slug + '.' + rootDomain}/berita/${post.slug}`
-              }
-            ]
-          })
-        }}
-      />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <SiteBreadcrumbs 
+          tenant={tenant}
+          basePath={base}
+          targetUrl="/berita"
+          fallbackLabel="Berita"
+          currentItemName={post.title}
+          currentItemUrl={`/berita/${post.slug}`}
+        />
+      </div>
 
       {/* JSON-LD for Article Rich Snippets */}
       <script
@@ -175,9 +155,9 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link 
             href={`${base}/berita`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-8 transition-colors print:hidden"
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors print:hidden"
           >
-             <ArrowLeft className="h-4 w-4" /> Kembali
+             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Berita
           </Link>
           
           <div className="flex flex-wrap items-center gap-3 mb-4">
