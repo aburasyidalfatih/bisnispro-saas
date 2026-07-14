@@ -636,11 +636,11 @@ runWithLock("tenantLifecycle", 6 * 60 * 60 * 1000, async () => {
       })
 
       const emailSubject = settingsMap['RETENTION_30_EMAIL_SUBJECT'] || "Apakah ada kendala dengan website sekolah Anda?"
-      const emailBodyRaw = settingsMap['RETENTION_30_EMAIL_BODY'] || `<p>Halo Admin {nama_sekolah},</p><p>Kami perhatikan Anda belum login ke dasbor SchoolPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur sekolah Anda?</p><p>Yuk, mulai bangun kehadiran digital sekolah Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p>`
-      const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name)
+      const emailBodyRaw = settingsMap['RETENTION_30_EMAIL_BODY'] || `<p>Halo Admin {nama_sekolah},</p><p>Kami perhatikan Anda belum login ke dasbor SchoolPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur sekolah Anda?</p><p>Silakan login kembali menggunakan email pendaftaran Anda yaitu <strong>{email_pendaftaran}</strong> beserta password yang sudah Anda buat saat mendaftar. Jika Anda lupa password, silakan gunakan fitur "Lupa Password" di halaman login untuk membuat password baru.</p><p>Yuk, mulai bangun kehadiran digital sekolah Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p>`
+      const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name).replace(/{email_pendaftaran}/g, tenant.email || "")
       
-      const waMsgRaw = settingsMap['RETENTION_30_WA'] || "Halo Admin {nama_sekolah}, kami perhatikan Anda belum login dasbor selama 30 hari. Apakah ada kendala? Yuk, bangun kehadiran digital sekolah Anda sekarang. Balas pesan ini jika butuh bantuan!"
-      const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name)
+      const waMsgRaw = settingsMap['RETENTION_30_WA'] || "Halo Admin {nama_sekolah}, kami perhatikan Anda belum login dasbor selama 30 hari. Apakah ada kendala?\n\nSilakan login kembali menggunakan email pendaftaran Anda yaitu {email_pendaftaran} beserta password yang sudah Anda buat saat mendaftar. Jika lupa password, gunakan fitur Lupa Password di halaman login.\n\nYuk, bangun kehadiran digital sekolah Anda sekarang. Balas pesan ini jika butuh bantuan!"
+      const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name).replace(/{email_pendaftaran}/g, tenant.email || "")
 
       // Kirim Email
       if (tenant.email) {

@@ -123,12 +123,12 @@ export default function RetentionPage() {
                 <div className="grid gap-2">
                   <Label>Isi Email (HTML)</Label>
                   <Textarea rows={4} value={form.RETENTION_30_EMAIL_BODY || ""} onChange={e => setForm({...form, RETENTION_30_EMAIL_BODY: e.target.value})} className="font-mono text-sm" />
-                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> untuk variabel dinamis.</p>
+                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> dan <code>{"{email_pendaftaran}"}</code> untuk variabel dinamis.</p>
                 </div>
                 <div className="grid gap-2">
                   <Label>Pesan WhatsApp</Label>
                   <Textarea rows={3} value={form.RETENTION_30_WA || ""} onChange={e => setForm({...form, RETENTION_30_WA: e.target.value})} />
-                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> untuk variabel dinamis.</p>
+                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> dan <code>{"{email_pendaftaran}"}</code> untuk variabel dinamis.</p>
                 </div>
               </CardContent>
             </Card>

@@ -4,10 +4,10 @@ async function main() {
   await prisma.platformSetting.deleteMany({
     where: {
       key: {
-        in: ['DORMANT_WA_TEMPLATE', 'DORMANT_EMAIL_SUBJECT', 'DORMANT_EMAIL_HTML']
+        in: ['RETENTION_30_EMAIL_BODY', 'RETENTION_30_WA']
       }
     }
   });
-  console.log('Cleared!');
+  console.log('Cleared Retention 30!');
 }
 main().then(() => prisma.$disconnect());
