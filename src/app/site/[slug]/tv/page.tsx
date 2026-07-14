@@ -352,14 +352,16 @@ export default function SchoolTvPage() {
                       <div 
                         key={i} 
                         className={cn(
-                          "bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700/80 shadow-2xl relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 backdrop-blur-xl",
+                          "rounded-2xl border shadow-2xl relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 backdrop-blur-xl",
+                          s.isBreak ? "bg-gradient-to-br from-amber-900/40 to-slate-900 border-amber-500/30" : "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700/80",
                           isCompact ? "p-4" : "p-6"
                         )} 
                         style={{ animationDelay: `${i * 100}ms` }}
                       >
                         <div className="absolute top-0 right-0 p-3">
                            <span className={cn(
-                             "font-black bg-emerald-500/20 text-emerald-400 rounded-full uppercase tracking-wider border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]",
+                             "font-black rounded-full uppercase tracking-wider border",
+                             s.isBreak ? "bg-amber-500/20 text-amber-400 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]" : "bg-emerald-500/20 text-emerald-400 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]",
                              isCompact ? "text-[10px] px-2 py-0.5" : "text-xs px-3 py-1"
                            )}>
                              {s.startTime} - {s.endTime}
@@ -367,7 +369,10 @@ export default function SchoolTvPage() {
                         </div>
                         
                         <div className={cn("flex items-center gap-3", isCompact ? "mb-2" : "mb-4")}>
-                          <div className={cn("rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-[0_0_15px_rgba(16,185,129,0.3)] flex items-center justify-center shrink-0 text-white", isCompact ? "h-10 w-10" : "h-12 w-12")}>
+                          <div className={cn("rounded-xl flex items-center justify-center shrink-0 text-white", 
+                            s.isBreak ? "bg-gradient-to-br from-amber-500 to-orange-600 shadow-[0_0_15px_rgba(245,158,11,0.3)]" : "bg-gradient-to-br from-emerald-500 to-teal-600 shadow-[0_0_15px_rgba(16,185,129,0.3)]",
+                            isCompact ? "h-10 w-10" : "h-12 w-12"
+                          )}>
                             <span className={cn("font-black", isCompact ? "text-sm" : "text-lg")}>{s.classroom.name}</span>
                           </div>
                           <div className={isCompact ? "pr-14" : "pr-20"}>
@@ -378,19 +383,31 @@ export default function SchoolTvPage() {
                         </div>
 
                         <div className={cn("mt-auto flex flex-col", isCompact ? "pt-2" : "pt-4")}>
-                           <div className="flex items-center gap-2 mb-2">
-                             {s.staff?.imageUrl ? (
-                               <img src={s.staff.imageUrl} alt={s.staff.name} className={cn("rounded-full object-cover border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")} />
-                             ) : (
-                               <div className={cn("rounded-full bg-slate-700 flex items-center justify-center border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")}>
-                                 <UserCircle className={cn("text-slate-400", isCompact ? "h-5 w-5" : "h-6 w-6")} />
+                           {!s.isBreak ? (
+                             <div className="flex items-center gap-2 mb-2">
+                               {s.staff?.imageUrl ? (
+                                 <img src={s.staff.imageUrl} alt={s.staff.name} className={cn("rounded-full object-cover border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")} />
+                               ) : (
+                                 <div className={cn("rounded-full bg-slate-700 flex items-center justify-center border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")}>
+                                   <UserCircle className={cn("text-slate-400", isCompact ? "h-5 w-5" : "h-6 w-6")} />
+                                 </div>
+                               )}
+                               <div className="truncate max-w-[120px] sm:max-w-[180px]">
+                                 <p className="text-xs font-bold text-slate-200 truncate">{s.staff?.name || "-"}</p>
+                                 <p className="text-[10px] text-slate-400 font-medium">Guru Pengampu</p>
                                </div>
-                             )}
-                             <div className="truncate max-w-[120px] sm:max-w-[180px]">
-                               <p className="text-xs font-bold text-slate-200 truncate">{s.staff?.name || "-"}</p>
-                               <p className="text-[10px] text-slate-400 font-medium">Guru Pengampu</p>
                              </div>
-                           </div>
+                           ) : (
+                             <div className="flex items-center gap-2 mb-2">
+                               <div className={cn("rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30", isCompact ? "h-8 w-8" : "h-10 w-10")}>
+                                 <Clock className={cn("text-amber-400", isCompact ? "h-4 w-4" : "h-5 w-5")} />
+                               </div>
+                               <div className="truncate max-w-[120px] sm:max-w-[180px]">
+                                 <p className="text-xs font-bold text-amber-400 truncate">Waktu Bebas</p>
+                                 <p className="text-[10px] text-amber-500/70 font-medium">Jam Istirahat</p>
+                               </div>
+                             </div>
+                           )}
                            
                            <ClassProgressBar startTime={s.startTime} endTime={s.endTime} tz={tz} />
                         </div>
