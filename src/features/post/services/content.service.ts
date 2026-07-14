@@ -68,7 +68,7 @@ export async function createPost(params: {
 
   // Guru tidak bisa mempublikasikan langsung (wajib approval)
   let finalStatus = data.status || "PUBLISHED"
-  if (userRole === "guru" && finalStatus !== "SCHEDULED") {
+  if (userRole === "guru" && finalStatus === "PUBLISHED") {
     finalStatus = "PENDING"
   }
 

@@ -49,7 +49,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const tu = await db.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: session.user.id } },
     })
-    const allowedRoles = ["owner", "admin", "teacher", "operator"]
+    const allowedRoles = ["owner", "admin", "teacher", "operator", "guru"]
     if (!tu || !allowedRoles.includes(tu.role)) {
       return NextResponse.json({ error: "Tidak punya izin untuk mengubah artikel" }, { status: 403 })
     }
@@ -117,7 +117,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     const tu = await db.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId: session.user.id } },
     })
-    const allowedRoles = ["owner", "admin", "teacher", "operator"]
+    const allowedRoles = ["owner", "admin", "teacher", "operator", "guru"]
     if (!tu || !allowedRoles.includes(tu.role)) {
       return NextResponse.json({ error: "Tidak punya izin untuk menghapus artikel" }, { status: 403 })
     }
