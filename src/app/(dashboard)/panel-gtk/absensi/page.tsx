@@ -412,7 +412,7 @@ export default function GTKAttendancePage() {
                   alreadyCheckedIn ? "bg-emerald-500/10 border-emerald-300" : "bg-muted/50 border-dashed border-muted-foreground/30"
                 )}>
                   <LogIn className={cn("h-5 w-5 mx-auto mb-1", alreadyCheckedIn ? "text-emerald-600" : "text-muted-foreground")} />
-                  <p className="text-xs text-muted-foreground">Check-in</p>
+                  <p className="text-xs text-muted-foreground">Absen Masuk</p>
                   <p className={cn("font-black text-base", alreadyCheckedIn ? "text-emerald-600" : "text-muted-foreground")}>
                     {alreadyCheckedIn ? formatInTimeZone(new Date(todayRecord!.checkInAt!), tz, "HH:mm") : "--:--"}
                   </p>
@@ -434,7 +434,7 @@ export default function GTKAttendancePage() {
                   alreadyCheckedOut ? "bg-indigo-500/10 border-indigo-300" : "bg-muted/50 border-dashed border-muted-foreground/30"
                 )}>
                   <LogOut className={cn("h-5 w-5 mx-auto mb-1", alreadyCheckedOut ? "text-indigo-600" : "text-muted-foreground")} />
-                  <p className="text-xs text-muted-foreground">Check-out</p>
+                  <p className="text-xs text-muted-foreground">Absen Pulang</p>
                   <p className={cn("font-black text-base", alreadyCheckedOut ? "text-indigo-600" : "text-muted-foreground")}>
                     {alreadyCheckedOut ? formatInTimeZone(new Date(todayRecord!.checkOutAt!), tz, "HH:mm") : "--:--"}
                   </p>
@@ -536,7 +536,7 @@ export default function GTKAttendancePage() {
                   className="flex items-center gap-2 p-2 rounded-xl bg-blue-500/10 border border-blue-200 hover:bg-blue-100 transition-colors"
                 >
                   <MapPin className="h-4 w-4 text-blue-600 shrink-0" />
-                  <p className="text-xs text-blue-700">Lihat lokasi check-in di Maps</p>
+                  <p className="text-xs text-blue-700">Lihat lokasi absen masuk di Maps</p>
                 </a>
               )}
 
@@ -558,7 +558,7 @@ export default function GTKAttendancePage() {
                   onClick={handleCheckIn}
                 >
                   {checkingIn ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <LogIn className="mr-2 h-5 w-5" />}
-                  Check-In Sekarang
+                  Absen Masuk Sekarang
                 </Button>
               ) : !alreadyCheckedOut ? (
                 <Button
@@ -567,7 +567,7 @@ export default function GTKAttendancePage() {
                   onClick={handleCheckOut}
                 >
                   {checkingOut ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <LogOut className="mr-2 h-5 w-5" />}
-                  Check-Out Sekarang
+                  Absen Pulang Sekarang
                 </Button>
               ) : (
                 <div className="flex items-center justify-center gap-2 py-4 text-emerald-600 font-bold">
