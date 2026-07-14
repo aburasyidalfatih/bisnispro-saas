@@ -143,7 +143,8 @@ export default function WebsiteOverviewPage() {
   const fallbackUrl = slug ? `${appUrl}/site/${slug}` : null
   const websiteUrl = customDomainUrl || subdomainUrl || fallbackUrl
 
-  const isStorageFull = typeof data?.diskUsage === "number" && typeof data?.maxStorage === "number" && data.maxStorage > 0 && data.diskUsage >= data.maxStorage;
+  // Consider it full if it's at least 99% of max capacity
+  const isStorageFull = typeof data?.diskUsage === "number" && typeof data?.maxStorage === "number" && data.maxStorage > 0 && data.diskUsage >= (data.maxStorage * 0.99);
   
   const maxStorageMb = data?.maxStorage ? Math.round(data.maxStorage / (1024 * 1024)) : 0;
   const maxStorageStr = maxStorageMb >= 1024 ? `${(maxStorageMb / 1024).toFixed(1)} GB` : `${maxStorageMb} MB`;
