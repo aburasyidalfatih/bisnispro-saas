@@ -11,6 +11,7 @@ import { Table } from "@tiptap/extension-table"
 import { TableRow } from "@tiptap/extension-table-row"
 import { TableHeader } from "@tiptap/extension-table-header"
 import { TableCell } from "@tiptap/extension-table-cell"
+import Youtube from "@tiptap/extension-youtube"
 import { 
   Bold, 
   Italic, 
@@ -32,7 +33,8 @@ import {
   Table as TableIcon,
   Trash2,
   Rows3,
-  Columns3
+  Columns3,
+  Youtube as YoutubeIcon
 } from "lucide-react"
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { toast } from "@/hooks/use-toast"
@@ -151,6 +153,10 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       }),
       TextStyle,
       Color,
+      Youtube.configure({
+        controls: true,
+        nocookie: true,
+      }),
       Table.configure({
         resizable: true,
         HTMLAttributes: {
@@ -214,6 +220,13 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
     // update link
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+  }
+
+  const addYoutubeVideo = () => {
+    const url = window.prompt('URL Video YouTube (contoh: https://www.youtube.com/watch?v=...)')
+    if (url) {
+      editor.chain().focus().setYoutubeVideo({ src: url }).run()
+    }
   }
 
   const ToggleButton = ({ 
@@ -322,6 +335,15 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           title="Sisipkan Gambar (Upload & Compress)"
         >
           {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
+        </button>
+        <button
+          type="button"
+          onClick={addYoutubeVideo}
+          aria-label="Embed YouTube"
+          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors flex items-center justify-center"
+          title="Sisipkan Video YouTube"
+        >
+          <YoutubeIcon className="h-4 w-4 text-red-500" />
         </button>
 
         <div className="w-[1px] h-6 bg-border mx-1 self-center" />
