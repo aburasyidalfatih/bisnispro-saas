@@ -18,6 +18,7 @@ import { PrincipalSpeechForm } from"./_components/principal-speech-form"
 import { SeoForm } from"./_components/seo-form"
 import { LabelsForm } from"./_components/labels-form"
 import { StatsForm } from"./_components/stats-form"
+import { MarqueeForm } from"./_components/marquee-form"
 import { GtkSettingsForm } from "./_components/gtk-settings-form"
 import { AiContentModal } from"./_components/ai-content-modal"
 
@@ -368,37 +369,7 @@ export default function WebsiteAboutPage() {
         </TabsContent>
 
         <TabsContent value="marquee" className="outline-none">
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-lg font-bold">Teks Berjalan (Marquee)</h2>
-              <p className="text-sm text-muted-foreground">Teks berjalan yang muncul di bagian paling atas website publik sekolah.</p>
-            </div>
-            <div className="space-y-2 max-w-2xl">
-              <label className="text-sm font-medium">Teks Pengumuman</label>
-              <textarea
-                placeholder="Kosongkan jika tidak ingin menampilkan teks berjalan..."
-                value={form.settings?.marqueeText || ""}
-                onChange={(e) => setForm({ ...form, settings: { ...form.settings, marqueeText: e.target.value } })}
-                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <p className="text-[11px] text-muted-foreground">Jika diisi, teks akan berjalan dari kanan ke kiri di halaman pengunjung. Jika dikosongkan, area teks berjalan akan disembunyikan secara otomatis.</p>
-            </div>
-            
-            <div className="space-y-2 max-w-[250px]">
-              <label className="text-sm font-medium">Kecepatan Berjalan</label>
-              <select
-                value={form.settings?.marqueeSpeed || "25s"}
-                onChange={(e) => setForm({ ...form, settings: { ...form.settings, marqueeSpeed: e.target.value } })}
-                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="40s">Sangat Lambat (40s)</option>
-                <option value="30s">Lambat (30s)</option>
-                <option value="25s">Normal (25s)</option>
-                <option value="15s">Cepat (15s)</option>
-                <option value="10s">Sangat Cepat (10s)</option>
-              </select>
-            </div>
-          </div>
+          <MarqueeForm form={form} setForm={setForm} />
         </TabsContent>
 
         <TabsContent value="seo" className="mt-0 outline-none">
