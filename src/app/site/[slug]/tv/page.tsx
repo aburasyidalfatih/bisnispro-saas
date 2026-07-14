@@ -51,7 +51,7 @@ const LiveClock = memo(({ tz, isFullscreen, onToggleFullscreen }: { tz: string, 
       <div className="h-10 w-px bg-white/10"></div>
       <div className="text-5xl font-black tabular-nums tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">
         {formatInTimeZone(now, tz, "HH:mm")}
-        <span className="text-2xl text-emerald-400 ml-1">{formatInTimeZone(now, tz, "ss")}</span>
+        <span className="text-2xl text-primary ml-1">{formatInTimeZone(now, tz, "ss")}</span>
       </div>
       <button 
         onClick={onToggleFullscreen}
@@ -96,7 +96,7 @@ const ClassProgressBar = memo(({ startTime, endTime, tz }: { startTime: string, 
   return (
     <div className="w-full bg-slate-800/50 h-1.5 mt-4 rounded-full overflow-hidden border border-white/5">
       <div 
-        className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-1000 ease-linear rounded-full relative"
+        className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-1000 ease-linear rounded-full relative"
         style={{ width: `${progress}%` }}
       >
         <div className="absolute right-0 top-0 bottom-0 w-2 bg-white/50 blur-[2px]"></div>
@@ -107,10 +107,10 @@ const ClassProgressBar = memo(({ startTime, endTime, tz }: { startTime: string, 
 ClassProgressBar.displayName = "ClassProgressBar"
 
 const TeacherRow = memo(({ s }: { s: any }) => (
-  <div className={cn("flex items-center justify-between p-2.5 rounded-xl border text-xs transition-colors", s.isTeaching ? "bg-emerald-950/30 border-emerald-500/20" : "bg-black/30 border-white/5")}>
+  <div className={cn("flex items-center justify-between p-2.5 rounded-xl border text-xs transition-colors", s.isTeaching ? "bg-primary/30 border-primary/20" : "bg-black/30 border-white/5")}>
     <div className="flex items-center gap-3 truncate pr-2">
       {/* Indicator Dot */}
-      <div className={cn("h-2 w-2 rounded-full shrink-0", s.isTeaching ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-slate-700")}></div>
+      <div className={cn("h-2 w-2 rounded-full shrink-0", s.isTeaching ? "bg-primary shadow-md shadow-primary/50" : "bg-slate-700")}></div>
       
       {/* Avatar */}
       <Avatar className="h-8 w-8 border border-white/10 shrink-0">
@@ -126,7 +126,7 @@ const TeacherRow = memo(({ s }: { s: any }) => (
       </div>
     </div>
     {s.isTeaching ? (
-      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold tracking-wide shrink-0">
+      <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 font-bold tracking-wide shrink-0">
         {s.classroomName}
       </span>
     ) : (
@@ -309,14 +309,14 @@ export default function SchoolTvPage() {
   if (loading || !data) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
-        <Loader2 className="h-12 w-12 animate-spin text-emerald-500 mb-4" />
+        <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
         <h2 className="text-xl font-semibold">Memuat Sistem TV Sekolah...</h2>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-primary/30">
       {/* HEADER */}
       <header className="h-[10dvh] min-h-[80px] bg-slate-900/80 border-b border-white/10 flex items-center justify-between px-8 shadow-lg backdrop-blur-md z-10 shrink-0">
         <div className="flex items-center gap-4">
@@ -325,7 +325,7 @@ export default function SchoolTvPage() {
               <Image src={data.tenant.logo} alt="Logo" fill className="object-contain p-1" />
             </div>
           ) : (
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center border border-white/20">
+            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center border border-white/20">
               <BookOpen className="h-7 w-7 text-white" />
             </div>
           )}
@@ -333,16 +333,16 @@ export default function SchoolTvPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-extrabold tracking-tight text-white">{data.tenant?.name || "SchoolPro"}</h1>
               <div className="relative flex h-3.5 w-3.5 mt-1" title="Live">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/80 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-primary"></span>
               </div>
               {totalPages > 1 && (
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse border border-emerald-500/30 mt-1">
+                <span className="text-[10px] bg-primary/20 text-primary px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse border border-primary/30 mt-1">
                   Hal {activePageIndex + 1}/{totalPages}
                 </span>
               )}
             </div>
-            <p className="text-emerald-400 font-medium tracking-widest uppercase text-sm">Sistem Informasi Digital</p>
+            <p className="text-primary font-medium tracking-widest uppercase text-sm">Sistem Informasi Digital</p>
           </div>
         </div>
 
@@ -352,7 +352,7 @@ export default function SchoolTvPage() {
       {/* MAIN CONTENT */}
       <main className="flex-1 flex gap-6 p-6 overflow-hidden relative">
         {/* Background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
 
         {/* Left Column: Live Schedule Grid */}
         <div className="flex-1 flex flex-col h-full z-10 relative pt-2">
@@ -389,7 +389,7 @@ export default function SchoolTvPage() {
                         <div className="absolute top-0 right-0 p-3">
                            <span className={cn(
                              "font-black rounded-full uppercase tracking-wider border",
-                             s.isBreak ? "bg-amber-500/20 text-amber-400 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]" : "bg-emerald-500/20 text-emerald-400 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]",
+                             s.isBreak ? "bg-primary/20 text-primary border-primary/30 shadow-[0_0_15px_rgba(245,158,11,0.2)]" : "bg-primary/20 text-primary border-primary/20 shadow-lg shadow-primary/20",
                              isCompact ? "text-[10px] px-2 py-0.5" : "text-xs px-3 py-1"
                            )}>
                              {s.startTime} - {s.endTime}
@@ -398,7 +398,7 @@ export default function SchoolTvPage() {
                         
                         <div className={cn("flex items-center gap-3", isCompact ? "mb-2" : "mb-4")}>
                           <div className={cn("rounded-xl flex items-center justify-center shrink-0 text-white", 
-                            s.isBreak ? "bg-gradient-to-br from-amber-500 to-orange-600 shadow-[0_0_15px_rgba(245,158,11,0.3)]" : "bg-gradient-to-br from-emerald-500 to-teal-600 shadow-[0_0_15px_rgba(16,185,129,0.3)]",
+                            s.isBreak ? "bg-gradient-to-br from-primary to-primary/80 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]" : "bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/30 flex items-center justify-center shrink-0 text-white",
                             isCompact ? "h-10 w-10" : "h-12 w-12"
                           )}>
                             <span className={cn("font-black", isCompact ? "text-sm" : "text-lg")}>{s.classroom.name}</span>
@@ -524,21 +524,21 @@ export default function SchoolTvPage() {
 
           {/* QR Code Donation Widget */}
           {data.donation && (
-            <div className="bg-gradient-to-br from-emerald-900/50 to-teal-900/50 backdrop-blur-md rounded-3xl border border-emerald-500/30 p-6 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-primary/30 to-primary/10 backdrop-blur-md rounded-3xl border border-primary/30 p-6 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden group">
               <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
               
-              <QrCode className="h-8 w-8 text-emerald-400 mb-3" />
-              <h3 className="text-lg font-bold text-emerald-300 mb-1 leading-tight">{data.donation.title}</h3>
-              <p className="text-xs text-emerald-100/70 mb-5 max-w-[250px]">Scan barcode di bawah ini untuk berpartisipasi dalam program sekolah.</p>
+              <QrCode className="h-8 w-8 text-primary mb-3" />
+              <h3 className="text-lg font-bold text-primary mb-1 leading-tight">{data.donation.title}</h3>
+              <p className="text-xs text-primary/70 mb-5 max-w-[250px]">Scan barcode di bawah ini untuk berpartisipasi dalam program sekolah.</p>
               
-              <div className="bg-white p-3 rounded-2xl shadow-xl shadow-emerald-950/50">
+              <div className="bg-white p-3 rounded-2xl shadow-xl shadow-black/50">
                 <QRCode 
                   value={`${window.location.origin}/site/${slug}/donasi/${data.donation.slug || data.donation.id}`} 
                   size={160}
                   level="H"
                 />
               </div>
-              <p className="text-[10px] uppercase tracking-widest text-emerald-500 font-bold mt-4">Arahkan Kamera HP Anda</p>
+              <p className="text-[10px] uppercase tracking-widest text-primary font-bold mt-4">Arahkan Kamera HP Anda</p>
             </div>
           )}
 
@@ -546,11 +546,11 @@ export default function SchoolTvPage() {
       </main>
 
       {/* FOOTER MARQUEE */}
-      <footer className="h-[9dvh] min-h-[64px] bg-gradient-to-r from-emerald-700 to-teal-600 flex items-center overflow-hidden shrink-0 shadow-[0_-10px_30px_rgba(5,150,105,0.3)] z-20 border-t border-emerald-500/30">
-        <div className="bg-emerald-900 text-emerald-100 font-black uppercase tracking-widest px-8 h-full flex items-center z-10 shrink-0 border-r border-emerald-700 shadow-xl">
+      <footer className="h-[9dvh] min-h-[64px] bg-gradient-to-r from-primary/90 to-primary flex items-center overflow-hidden shrink-0 shadow-[0_-10px_30px_rgba(5,150,105,0.3)] z-20 border-t border-primary/30">
+        <div className="bg-primary text-primary-foreground border-primary/50 shadow-xl">
           INFORMASI
         </div>
-        <div className="flex-1 overflow-hidden relative flex items-center h-full bg-emerald-950/20">
+        <div className="flex-1 overflow-hidden relative flex items-center h-full bg-black/20">
           {/* Marquee Animation */}
           <div className="whitespace-nowrap animate-marquee flex items-center text-xl font-medium text-white tracking-wide">
             {(() => {
@@ -561,15 +561,15 @@ export default function SchoolTvPage() {
                   {marqueeItems.map((text: string, idx: number) => (
                     <span key={`m1-${idx}`} className="mx-8">
                       {text}
-                      {idx < marqueeItems.length - 1 && <span className="ml-16 text-emerald-300 shadow-emerald-300">•</span>}
+                      {idx < marqueeItems.length - 1 && <span className="ml-16 text-primary shadow-primary">•</span>}
                     </span>
                   ))}
-                  {marqueeItems.length > 0 && <span className="mx-8 text-emerald-300 shadow-emerald-300">•</span>}
+                  {marqueeItems.length > 0 && <span className="mx-8 text-primary shadow-primary">•</span>}
                   {/* Duplicate for seamless looping */}
                   {marqueeItems.map((text: string, idx: number) => (
                     <span key={`m2-${idx}`} className="mx-8">
                       {text}
-                      {idx < marqueeItems.length - 1 && <span className="ml-16 text-emerald-300 shadow-emerald-300">•</span>}
+                      {idx < marqueeItems.length - 1 && <span className="ml-16 text-primary shadow-primary">•</span>}
                     </span>
                   ))}
                 </>
