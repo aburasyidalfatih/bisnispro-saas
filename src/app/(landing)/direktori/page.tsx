@@ -3,7 +3,7 @@ import { getSchoolsDirectory } from "./actions"
 import { DirectoryFilters } from "./_components/directory-filters"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, ExternalLink, School, Instagram, Facebook } from "lucide-react"
+import { MapPin, ExternalLink, School } from "lucide-react"
 import Link from "next/link"
 
 export const metadata: Metadata = {
@@ -126,12 +126,16 @@ export default async function DirectoryPage({
                         <div className="flex items-center justify-center gap-4 mb-4">
                           {s.instagram && (
                             <a href={s.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pink-600 transition-colors">
-                              <Instagram className="h-4 w-4" />
+                              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                              </svg>
                             </a>
                           )}
                           {s.facebook && (
                             <a href={s.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-600 transition-colors">
-                              <Facebook className="h-4 w-4" />
+                              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                              </svg>
                             </a>
                           )}
                           {s.youtube && (
