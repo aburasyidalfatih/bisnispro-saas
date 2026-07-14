@@ -18,6 +18,7 @@ import { PrincipalSpeechForm } from"./_components/principal-speech-form"
 import { SeoForm } from"./_components/seo-form"
 import { LabelsForm } from"./_components/labels-form"
 import { StatsForm } from"./_components/stats-form"
+import { GtkSettingsForm } from "./_components/gtk-settings-form"
 import { AiContentModal } from"./_components/ai-content-modal"
 
 export default function WebsiteAboutPage() {
@@ -286,6 +287,7 @@ export default function WebsiteAboutPage() {
             <TabsTrigger value="stats" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Statistik Bar</TabsTrigger>
             <TabsTrigger value="labels" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Teks & Label</TabsTrigger>
             <TabsTrigger value="marquee" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Teks Berjalan</TabsTrigger>
+            <TabsTrigger value="gtk" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">Halaman GTK</TabsTrigger>
             <TabsTrigger value="seo" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all whitespace-nowrap">SEO & Meta</TabsTrigger>
           </TabsList>
         </div>
@@ -364,6 +366,10 @@ export default function WebsiteAboutPage() {
 
         <TabsContent value="seo" className="mt-0 outline-none">
           <SeoForm form={form} setForm={setForm} domainStatus={domainStatus} slug={slug} />
+        </TabsContent>
+
+        <TabsContent value="gtk" className="mt-0 outline-none">
+          <GtkSettingsForm form={form} setForm={setForm} />
         </TabsContent>
       </Tabs>
 

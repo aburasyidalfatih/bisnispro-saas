@@ -5,6 +5,7 @@ import { Users, GraduationCap, Mail, MessageSquare, Award, BookOpen } from "luci
 import { getTenantLayoutData, getTenantStaff } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
+import { DynamicIcon } from "@/components/ui/icon-picker"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { renderCustomTheme } from "@/app/site/[slug]/_themes/custom-renderer"
@@ -73,6 +74,27 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
   }
 
   const teachers = staff.filter((s: any) => s.id !== principal?.id)
+
+  const gtkStats = (tenant.settings as any)?.gtkStats?.length > 0 ? (tenant.settings as any).gtkStats : [
+    { icon: "Users", label: "Total Guru & Staf", value: totalStaff > 0 ? `${totalStaff}+` : "—" },
+    { icon: "GraduationCap", label: "Lulusan S1/S2", value: totalStaff > 0 ? "98%" : "—" },
+    { icon: "BookOpen", label: "Rasio Guru:Siswa", value: "1:20" },
+    { icon: "Award", label: "Guru Berprestasi", value: totalStaff > 3 ? `${Math.round(totalStaff * 0.3)}` : "—" },
+  ]
+
+  const gtkCta = (tenant.settings as any)?.gtkCta?.title ? (tenant.settings as any).gtkCta : {
+    title: "Ingin Menjadi Bagian dari Kami?",
+    description: "Kami selalu membuka kesempatan bagi para profesional yang memiliki passion tinggi di dunia pendidikan untuk bergabung dalam tim hebat kami.",
+    buttonText: "Kirim Lamaran (Karir)",
+    buttonLink: `${base}/contact`
+  }
+
+  const resolveLink = (link: string) => {
+    if (!link) return base || "/"
+    if (link.startsWith("http")) return link
+    const cleanLink = link.startsWith("/") ? link : `/${link}`
+    return `${base}${cleanLink}`.replace(/\/\//g, "/")
+  }
 
   return (
     <div className="bg-background min-h-screen">
@@ -216,15 +238,10 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
         <div className="absolute inset-0 bg-mesh opacity-10" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { icon: Users, label: "Total Guru & Staf", value: totalStaff > 0 ? `${totalStaff}+` : "—" },
-              { icon: GraduationCap, label: "Lulusan S1/S2", value: totalStaff > 0 ? "98%" : "—" },
-              { icon: BookOpen, label: "Rasio Guru:Siswa", value: "1:20" },
-              { icon: Award, label: "Guru Berprestasi", value: totalStaff > 3 ? `${Math.round(totalStaff * 0.3)}` : "—" },
-            ].map((stat, i) => (
+            {gtkStats.map((stat: any, i: number) => (
               <div key={i} className="space-y-2">
                 <div className="bg-white/10 h-12 w-12 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-md">
-                  <stat.icon className="h-6 w-6" />
+                  <DynamicIcon name={stat.icon} className="h-6 w-6" />
                 </div>
                 <div className="text-3xl font-black">{stat.value}</div>
                 <div className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">{stat.label}</div>
@@ -237,19 +254,19 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
        {/* ── CALL TO ACTION ── */}
        <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ingin Menjadi Bagian dari Kami?</h2>
+          <h2 className="text-3xl font-bold mb-6">{gtkCta.title}</h2>
           <p className="text-muted-foreground mb-8 text-lg">
-            Kami selalu membuka kesempatan bagi para profesional yang memiliki passion tinggi di dunia pendidikan untuk bergabung dalam tim hebat kami.
+            {gtkCta.description}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link 
-              href={`${base}/contact`} 
+              href={resolveLink(gtkCta.buttonLink)} 
               className="px-8 py-3 bg-primary text-white rounded-full font-bold hover:shadow-lg transition-all"
             >
-              Kirim Lamaran (Karir)
+              {gtkCta.buttonText}
             </Link>
             <Link 
-              href={base} 
+              href={base || "/"} 
               className="px-8 py-3 bg-background border border-border rounded-full font-bold hover:bg-muted transition-all"
             >
               Kembali ke Beranda
