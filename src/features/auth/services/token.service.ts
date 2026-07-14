@@ -65,12 +65,12 @@ export async function consumeToken(token: string) {
 
 /**
  * Membuat token untuk registrasi sekolah baru (tanpa model User).
- * Disimpan ke Redis agar aman dan otomatis kedaluwarsa.
+ * Disimpan ke Redis (tanpa kadaluarsa).
  */
-export async function createAppRegistrationToken(applicationId: string, expiresInHours = 24) {
+export async function createAppRegistrationToken(applicationId: string) {
   const token = crypto.randomBytes(32).toString("hex")
   const redis = await getRedisClient()
-  await redis.set(`app_register:${token}`, applicationId, expiresInHours * 60 * 60)
+  await redis.set(`app_register:${token}`, applicationId)
   
   return {
     success: true,

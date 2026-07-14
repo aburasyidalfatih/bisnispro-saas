@@ -26,8 +26,8 @@ export async function GET(req: Request) {
       return new NextResponse(`
         <html>
           <body style="font-family: sans-serif; text-align: center; padding: 50px;">
-            <h1 style="color: #dc2626;">Link Verifikasi Kadaluarsa atau Tidak Valid</h1>
-            <p>Link verifikasi ini mungkin sudah digunakan atau melewati batas waktu 24 jam.</p>
+            <h1 style="color: #dc2626;">Link Verifikasi Tidak Valid</h1>
+            <p>Link verifikasi ini mungkin tidak valid atau sudah pernah digunakan.</p>
             <p>Jika sekolah Anda sudah diverifikasi, silakan langsung login. Jika belum, silakan hubungi administrator.</p>
           </body>
         </html>

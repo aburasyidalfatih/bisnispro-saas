@@ -159,9 +159,9 @@ export async function POST(req: Request) {
     const isInstant = instantApproveSetting?.value === "true"
 
     if (isInstant) {
-      // 1. Generate Token & Simpan di Redis (Expired dalam 24 Jam)
+      // 1. Generate Token & Simpan di Redis (Tanpa Kedaluwarsa)
       const { createAppRegistrationToken } = require("@/features/auth/services/token.service")
-      const tokenResult = await createAppRegistrationToken(application.id, 24)
+      const tokenResult = await createAppRegistrationToken(application.id)
       const token = tokenResult.token
 
       // 3. Kirim Email Verifikasi
@@ -183,7 +183,7 @@ export async function POST(req: Request) {
             <div style="margin: 32px 0;">
               <a href="${verifyUrl}" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Verifikasi & Aktifkan Sekolah</a>
             </div>
-            <p style="font-size: 13px; color: #64748b;">Link verifikasi ini akan kadaluarsa dalam 24 jam.<br>Jika tombol tidak berfungsi, salin dan tempel URL berikut di browser Anda:<br><span style="word-break: break-all; color: #3b82f6;">${verifyUrl}</span></p>
+            <p style="font-size: 13px; color: #64748b;">Jika tombol tidak berfungsi, salin dan tempel URL berikut di browser Anda:<br><span style="word-break: break-all; color: #3b82f6;">${verifyUrl}</span></p>
           </div>
           <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
             ${platformName} — Platform Edukasi Terintegrasi
