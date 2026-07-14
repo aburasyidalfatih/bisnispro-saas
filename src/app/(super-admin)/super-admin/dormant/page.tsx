@@ -327,7 +327,7 @@ export default function DormantSchoolsPage() {
               Template Pesan Notifikasi
             </CardTitle>
             <CardDescription>
-              Ubah kata-kata pesan otomatis yang akan dikirim ke WhatsApp dan Email sekolah. Variabel yang didukung: <code className="bg-muted px-1 rounded">{{tenant_name}}</code>, <code className="bg-muted px-1 rounded">{{tenant_slug}}</code>, <code className="bg-muted px-1 rounded">{{tenant_email}}</code>, <code className="bg-muted px-1 rounded">{{tenant_phone}}</code>
+              Ubah kata-kata pesan otomatis yang akan dikirim ke WhatsApp dan Email sekolah. Variabel yang didukung: <code className="bg-muted px-1 rounded">{"{{tenant_name}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_slug}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_email}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_phone}}"}</code>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
