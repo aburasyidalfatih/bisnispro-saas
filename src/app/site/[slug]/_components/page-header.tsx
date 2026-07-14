@@ -43,19 +43,19 @@ export function PageHeader({ title, description, breadcrumbs }: PageHeaderProps)
       
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-primary transition-colors">
+        <nav className="flex items-center gap-1.5 sm:gap-2 text-sm text-muted-foreground mb-6 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-primary transition-colors shrink-0">
             <Home className="h-4 w-4" />
           </Link>
           {breadcrumbs.map((item, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              <ChevronRight className="h-4 w-4 opacity-50" />
+            <div key={index} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <ChevronRight className="h-4 w-4 opacity-50 shrink-0" />
               {item.href ? (
-                <Link href={item.href} className="hover:text-primary transition-colors font-medium">
+                <Link href={item.href} className="hover:text-primary transition-colors font-medium truncate max-w-[120px] sm:max-w-[200px]">
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-primary font-bold" aria-current="page">{item.label}</span>
+                <span className="text-primary font-bold truncate max-w-[150px] sm:max-w-[300px]" aria-current="page">{item.label}</span>
               )}
             </div>
           ))}

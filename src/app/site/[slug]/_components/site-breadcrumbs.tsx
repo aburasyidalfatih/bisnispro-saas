@@ -33,13 +33,13 @@ export function SiteBreadcrumbs({
   return (
     <>
       {/* UI Breadcrumbs */}
-      <nav className="flex flex-wrap items-center space-x-2 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
+      <nav className="flex items-center gap-1.5 sm:gap-2 text-sm text-muted-foreground mb-6 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" aria-label="Breadcrumb">
         <Link href={basePath || "/"} className="hover:text-primary transition-colors flex items-center shrink-0">
           <Home className="h-4 w-4" />
         </Link>
         {breadcrumbs.map((item, index) => (
-          <div key={index} className="flex items-center space-x-2 shrink-0">
-            <ChevronRight className="h-4 w-4 opacity-50" />
+          <div key={index} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <ChevronRight className="h-4 w-4 opacity-50 shrink-0" />
             {item.href && index < breadcrumbs.length - 1 ? (
               <Link href={`${basePath}${item.href}`} className="hover:text-primary transition-colors font-medium truncate max-w-[150px] sm:max-w-[200px]">
                 {item.label}
