@@ -78,6 +78,10 @@ export async function getSchoolsDirectory(params: {
         tagline: s.tagline || "",
         province: (s.settings as any)?.province || "",
         regency: (s.settings as any)?.regency || "",
+        instagram: s.instagram,
+        facebook: s.facebook,
+        youtube: s.youtube,
+        tiktok: s.tiktok,
       })),
       total,
       totalPages: Math.ceil(total / limit)
@@ -117,6 +121,10 @@ export async function getSchoolsDirectory(params: {
           tagline: s.tagline || "",
           province: (s.settings as any)?.province || "",
           regency: (s.settings as any)?.regency || "",
+          instagram: s.instagram,
+          facebook: s.facebook,
+          youtube: s.youtube,
+          tiktok: s.tiktok,
         })),
         total,
         totalPages: Math.ceil(total / limit)
