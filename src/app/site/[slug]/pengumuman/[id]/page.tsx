@@ -153,13 +153,6 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
       {/* ── HEADER SECTION ── */}
       <div className="bg-blue-500/5 pt-6 pb-10 border-b border-blue-500/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link 
-            href={`${base}/pengumuman`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-blue-600 mb-6 transition-colors"
-          >
-             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Pengumuman
-          </Link>
-          
           <div className="flex flex-wrap items-center gap-3 mb-4">
              <div className="px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-bold uppercase tracking-widest">
                {post.category?.name || "INFORMASI PENTING"}

@@ -49,14 +49,8 @@ export default async function FacilityDetailPage({ params }: { params: Promise<{
             currentItemName={facility.name}
             currentItemUrl={`/fasilitas/${facility.slug || facility.id}`}
           />
-          <Link 
-            href={`${base}/fasilitas`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors"
-          >
-             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Fasilitas
-          </Link>
           
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-4 mt-6">
              <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-1.5">
                <Building2 className="h-3.5 w-3.5" /> Fasilitas Utama
              </div>

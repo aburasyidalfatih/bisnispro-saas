@@ -94,14 +94,8 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
             currentItemName={event.title}
             currentItemUrl={`/agenda/${event.slug || event.id}`}
           />
-          <Link 
-            href={`${base}/agenda`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors"
-          >
-             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Agenda
-          </Link>
           
-          <div className="flex flex-wrap items-center gap-3 mb-4">
+          <div className="flex flex-wrap items-center gap-3 mb-4 mt-6">
              <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-1.5">
                <Calendar className="h-3.5 w-3.5" /> Agenda
              </div>

@@ -85,14 +85,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
             currentItemName={program.name}
             currentItemUrl={`/program/${program.slug || program.id}`}
           />
-          <Link 
-            href={`${base}/program`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors"
-          >
-             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Program Keahlian
-          </Link>
           
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-4 mt-6">
              <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-1.5">
                <BookOpen className="h-3.5 w-3.5" /> Program Keahlian
              </div>

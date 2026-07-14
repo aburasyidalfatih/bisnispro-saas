@@ -153,13 +153,6 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
       {/* ── HEADER SECTION ── */}
       <div className="bg-muted/30 pt-6 pb-10 border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link 
-            href={`${base}/berita`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors print:hidden"
-          >
-             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Berita
-          </Link>
-          
           <div className="flex flex-wrap items-center gap-3 mb-4">
              <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
                {post.category?.name || "BERITA"}
