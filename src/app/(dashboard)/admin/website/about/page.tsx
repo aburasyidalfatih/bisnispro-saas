@@ -63,6 +63,38 @@ export default function WebsiteAboutPage() {
     }
   }, [session?.user?.tenants])
 
+  const defaultLabels = {
+    hero: { cta1: "Hubungi Kami", cta2: "Tentang Kami" },
+    programs: { sectionTitle: "Program Keahlian Kami", buttonText: "Lihat Semua", sectionSubtitle: "Berbagai program keahlian yang dirancang untuk membekali siswa dengan kompetensi profesional dan siap menghadapi dunia kerja." },
+    staff: { sectionTitle: "Guru & Tenaga Kependidikan", buttonText: "Lihat Semua", sectionSubtitle: "Tim pengajar profesional dan berdedikasi yang siap membimbing siswa menuju kesuksesan." },
+    facilities: { sectionTitle: "Fasilitas Sekolah", sectionSubtitle: "Sarana dan prasarana pendukung pendidikan berkualitas untuk kenyamanan seluruh siswa." },
+    extracurriculars: { sectionTitle: "Ekstrakurikuler", sectionSubtitle: "Wadah bagi siswa untuk mengeksplorasi minat, mengasah kepemimpinan, dan membangun kerjasama." },
+    news: { sectionTitle: "Artikel & Berita Terbaru", sectionSubtitle: "Ikuti informasi terkini mengenai kegiatan, prestasi, dan pengumuman sekolah." },
+    achievements: { sectionTitle: "Prestasi Membanggakan", sectionSubtitle: "Apresiasi atas dedikasi dan kerja keras siswa-siswi." },
+    agenda: { sectionTitle: "Agenda Sekolah", sectionSubtitle: "Jadwal kegiatan akademik dan non-akademik di waktu mendatang." },
+    alumni: { sectionTitle: "Jejak Alumni", sectionSubtitle: "Kisah inspiratif para lulusan yang telah berkiprah di masyarakat." },
+    pengumuman: { sectionTitle: "Papan Pengumuman", sectionSubtitle: "Informasi resmi dan edaran penting dari sekolah." },
+    gallery: { sectionTitle: "Dokumentasi Kami", buttonText: "Lihat Semua", sectionSubtitle: "Kumpulan momen dan kegiatan berharga yang telah kami abadikan." },
+    contact: { sectionTitle: "Hubungi Kami", sectionSubtitle: "Kami siap membantu Anda. Jangan ragu untuk menghubungi kami.", btnWa: "Chat via WhatsApp", btnEmail: "Kirim Email", title: "Hubungi Kami", formTitle: "Kirim Pesan", labelName: "Nama Lengkap", btnSubmit: "Kirim Pesan Sekarang" },
+    widget: { facilities: "Fasilitas Sekolah", extracurriculars: "Kegiatan Ekstrakurikuler", achievements: "Prestasi Membanggakan" },
+    profil: { defaultAbout: "Belum ada informasi profil sejarah sekolah.", historyBadge: "Sejarah Sekolah", visiMisiTitle: "Visi & Misi", visiMisiDesc: "Arah langkah dan pedoman kami dalam menyelenggarakan pendidikan unggul.", stat1: "Tenaga Pendidik", stat2: "Lulusan Sukses" },
+    empty: { facilitiesTitle: "Fasilitas Belum Tersedia", facilitiesDesc: "Daftar fasilitas dan sarana prasarana sekolah...", programsTitle: "Data Program Belum Tersedia", newsTitle: "Berita Belum Tersedia" }
+  };
+
+  const mergeLabels = (defaults: any, current: any) => {
+    const merged = JSON.parse(JSON.stringify(defaults))
+    if (!current) return merged
+    for (const section in current) {
+      if (!merged[section]) merged[section] = {}
+      for (const key in current[section]) {
+        if (current[section][key] !== undefined && current[section][key] !== null) {
+          merged[section][key] = current[section][key]
+        }
+      }
+    }
+    return merged
+  };
+
   useEffect(() => {
     if (!tenantId) return
     fetch(`/api/tenant/website?tenantId=${tenantId}`)
@@ -74,12 +106,17 @@ export default function WebsiteAboutPage() {
           seoTitle: d.seoTitle || (d.name ? `Website Resmi ${d.name}` :""), 
           seoDesc: d.seoDesc || d.description || (d.name ? `Selamat datang di website resmi ${d.name}. Dapatkan informasi terbaru seputar profil, kegiatan, dan pendaftaran siswa baru kami.` :""),
           address: d.address ||"", phone: d.phone ||"", email: d.email ||"",
-          website: d.website ||"", whatsapp: d.whatsapp ||"",
-          instagram: d.instagram ||"", facebook: d.facebook ||"",
-          youtube: d.youtube ||"", tiktok: d.tiktok ||"", telegram: d.telegram ||"",
-          settings: d.settings || {},
+          website: d.website || "", whatsapp: d.whatsapp || "",
+          instagram: d.instagram || "", facebook: d.facebook || "",
+          youtube: d.youtube || "", tiktok: d.tiktok || "", telegram: d.telegram || "",
+          settings: {
+            ...(d.settings || {}),
+            labels: mergeLabels(defaultLabels, d.settings?.labels),
+            profilCtaTitle: d.settings?.profilCtaTitle !== undefined ? d.settings.profilCtaTitle : "Jadilah Bagian dari Kami",
+            profilCtaDescription: d.settings?.profilCtaDescription !== undefined ? d.settings.profilCtaDescription : "Pintu kami selalu terbuka untuk Anda yang ingin berkonsultasi...",
+          },
         })
-        setLogoPreview(d.logo ||"")
+        setLogoPreview(d.logo || "")
         setLoading(false)
       })
       .catch(() => setLoading(false))
