@@ -5,8 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Moon, MessageCircle, ExternalLink, RefreshCw, Mail, Trash2, Send } from "lucide-react"
+import { Moon, MessageCircle, ExternalLink, RefreshCw, Mail, Trash2, Send, Save, Settings } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 
 interface DormantTenant {
@@ -27,6 +31,13 @@ export default function DormantSchoolsPage() {
   const [selectedTenants, setSelectedTenants] = useState<string[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
 
+  // Template States
+  const [waTemplate, setWaTemplate] = useState("")
+  const [emailSubject, setEmailSubject] = useState("")
+  const [emailHtml, setEmailHtml] = useState("")
+  const [loadingTemplates, setLoadingTemplates] = useState(false)
+  const [savingTemplates, setSavingTemplates] = useState(false)
+
   const fetchTenants = () => {
     setLoading(true)
     fetch("/api/super-admin/dormant")
@@ -40,8 +51,22 @@ export default function DormantSchoolsPage() {
       .finally(() => setLoading(false))
   }
 
+  const fetchTemplates = () => {
+    setLoadingTemplates(true)
+    fetch("/api/super-admin/dormant/templates")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.DORMANT_WA_TEMPLATE) setWaTemplate(data.DORMANT_WA_TEMPLATE)
+        if (data.DORMANT_EMAIL_SUBJECT) setEmailSubject(data.DORMANT_EMAIL_SUBJECT)
+        if (data.DORMANT_EMAIL_HTML) setEmailHtml(data.DORMANT_EMAIL_HTML)
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoadingTemplates(false))
+  }
+
   useEffect(() => {
     fetchTenants()
+    fetchTemplates()
   }, [])
 
   const handleSelectAll = (checked: boolean) => {
@@ -133,7 +158,14 @@ export default function DormantSchoolsPage() {
         </Button>
       </div>
 
-      <Card className="glass border-0">
+      <Tabs defaultValue="list" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="list" className="gap-2"><Moon className="h-4 w-4" /> Daftar Sekolah</TabsTrigger>
+          <TabsTrigger value="templates" className="gap-2"><Settings className="h-4 w-4" /> Pengaturan Template</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="list" className="space-y-4">
+          <Card className="glass border-0">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -285,6 +317,95 @@ export default function DormantSchoolsPage() {
           </div>
         </CardContent>
       </Card>
+      </TabsContent>
+
+      <TabsContent value="templates" className="space-y-4">
+        <Card className="glass border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5 text-primary" />
+              Template Pesan Notifikasi
+            </CardTitle>
+            <CardDescription>
+              Ubah kata-kata pesan otomatis yang akan dikirim ke WhatsApp dan Email sekolah. Variabel yang didukung: <code className="bg-muted px-1 rounded">{{tenant_name}}</code>, <code className="bg-muted px-1 rounded">{{tenant_slug}}</code>, <code className="bg-muted px-1 rounded">{{tenant_email}}</code>, <code className="bg-muted px-1 rounded">{{tenant_phone}}</code>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {loadingTemplates ? (
+              <div className="flex justify-center p-8"><RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg border-b pb-2">WhatsApp</h3>
+                  <div className="space-y-2">
+                    <Label>Teks Pesan WA</Label>
+                    <Textarea 
+                      rows={6}
+                      value={waTemplate} 
+                      onChange={(e) => setWaTemplate(e.target.value)}
+                      placeholder="Halo {{tenant_name}}..."
+                      className="resize-y"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4 pt-4">
+                  <h3 className="font-semibold text-lg border-b pb-2">Email</h3>
+                  <div className="space-y-2">
+                    <Label>Subjek Email</Label>
+                    <Input 
+                      value={emailSubject} 
+                      onChange={(e) => setEmailSubject(e.target.value)}
+                      placeholder="Bantuan Setup Website Sekolah..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Konten Email (HTML)</Label>
+                    <Textarea 
+                      rows={8}
+                      value={emailHtml} 
+                      onChange={(e) => setEmailHtml(e.target.value)}
+                      placeholder="<p>Halo {{tenant_name}}...</p>"
+                      className="font-mono text-sm resize-y"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4 flex justify-end">
+                  <Button 
+                    onClick={async () => {
+                      setSavingTemplates(true)
+                      try {
+                        const res = await fetch("/api/super-admin/dormant/templates", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            DORMANT_WA_TEMPLATE: waTemplate,
+                            DORMANT_EMAIL_SUBJECT: emailSubject,
+                            DORMANT_EMAIL_HTML: emailHtml
+                          })
+                        })
+                        if (!res.ok) throw new Error("Gagal menyimpan")
+                        toast({ title: "Template berhasil disimpan!" })
+                      } catch (e: any) {
+                        toast({ title: e.message || "Gagal menyimpan", variant: "destructive" })
+                      } finally {
+                        setSavingTemplates(false)
+                      }
+                    }} 
+                    disabled={savingTemplates}
+                    className="gap-2"
+                  >
+                    {savingTemplates ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    Simpan Pengaturan
+                  </Button>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+      </Tabs>
     </div>
   )
 }
