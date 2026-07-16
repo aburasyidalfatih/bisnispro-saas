@@ -18,6 +18,7 @@ export async function GET(req: Request) {
       where: { tenantId },
       select: { id: true, name: true, role: true, imageUrl: true, subject: true, userId: true },
       orderBy: { name: "asc" },
+      take: 200,
     })
     return NextResponse.json({ staff })
   } catch {

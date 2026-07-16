@@ -46,7 +46,8 @@ export default async function FormatifPage() {
   // Get TPs to populate dropdowns
   const learningObjectives = await db.learningObjective.findMany({
     where: { tenantId },
-    orderBy: { code: 'asc' }
+    orderBy: { code: 'asc' },
+    take: 200,
   })
 
   return (

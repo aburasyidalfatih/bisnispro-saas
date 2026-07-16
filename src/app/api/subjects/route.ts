@@ -16,6 +16,7 @@ export async function GET(req: Request) {
     const subjects = await db.subject.findMany({
       where: { tenantId, isActive: true },
       orderBy: { name: "asc" },
+      take: 100,
     })
     return NextResponse.json({ subjects })
   } catch (e: any) {

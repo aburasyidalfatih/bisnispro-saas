@@ -25,6 +25,7 @@ export async function GET(req: Request) {
       _count: { select: { products: true, orders: true } },
     },
     orderBy: { name: "asc" },
+    take: 50,
   })
   return NextResponse.json(merchants)
 }

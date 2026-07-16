@@ -13,6 +13,7 @@ export async function GET(req: Request) {
     where: { tenantId },
     include: { _count: { select: { students: true } } },
     orderBy: [{ level: "asc" }, { name: "asc" }],
+    take: 100,
   })
   return NextResponse.json(classrooms)
 }

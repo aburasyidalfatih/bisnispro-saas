@@ -111,7 +111,7 @@ export default function AdminGTKAttendancePage() {
         tenantId: tenant.id,
         from: selectedDate,
         to: selectedDate,
-        take: "500",
+        take: "50",
       })
       const res = await fetch(`/api/gtk/attendance?${params}`)
       const data = await res.json()
@@ -169,7 +169,7 @@ export default function AdminGTKAttendancePage() {
         tenantId: tenant.id,
         from: start,
         to: end,
-        take: "3000",
+        take: "200",
       })
       const res = await fetch(`/api/gtk/attendance?${params}`)
       const data = await res.json()
@@ -230,7 +230,7 @@ export default function AdminGTKAttendancePage() {
         tenantId: tenant.id,
         from: start,
         to: end,
-        take: "15000",
+        take: "500",
       })
       const res = await fetch(`/api/gtk/attendance?${params}`)
       const data = await res.json()

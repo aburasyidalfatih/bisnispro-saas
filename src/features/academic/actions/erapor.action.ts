@@ -68,7 +68,8 @@ export async function getLearningObjectives(tenantId: string, subjectId?: string
     include: {
       subject: true
     },
-    orderBy: { createdAt: 'asc' }
+    orderBy: { createdAt: 'asc' },
+    take: 200,
   })
 }
 

@@ -133,7 +133,7 @@ export default function StudentsPage() {
       // Fetch ALL students for export without pagination
       const params = new URLSearchParams({
         tenantId: tenant.id,
-        take:"99999", // get all
+        take:"5000", // export limit
         ...(search ? { search } : {}),
         ...(classFilter !=="all" ? { classroomId: classFilter } : {}),
       })
