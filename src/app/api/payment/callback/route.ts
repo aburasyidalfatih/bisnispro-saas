@@ -2,8 +2,9 @@ import { NextResponse } from "next/server"
 import crypto from "crypto"
 import { handleCallback } from "@/features/finance/services/payment.service"
 import { logger } from "@/lib/logger"
+import { apiHandler } from "@/lib/api-utils"
 
-export async function POST(req: Request) {
+export const POST = apiHandler(async (req: Request) => {
   try {
     const rawBody = await req.text()
     const body = JSON.parse(rawBody)
@@ -40,4 +41,4 @@ export async function POST(req: Request) {
     logger.error("Payment callback error", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-}
+}, { rateLimit: 30, rateLimitWindowMs: 60000 })

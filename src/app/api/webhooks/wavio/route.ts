@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { apiHandler } from "@/lib/api-utils"
 
 /**
  * Endpoint webhook untuk menerima notifikasi status pesan dari Wavio API.
  * Method: POST
  * URL: /api/webhooks/wavio
  */
-export async function POST(req: Request) {
+export const POST = apiHandler(async (req: Request) => {
   try {
     const rawBody = await req.text()
     
@@ -47,4 +48,4 @@ export async function POST(req: Request) {
     logger.error("[Wavio Webhook] Internal Error", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
-}
+}, { rateLimit: 60, rateLimitWindowMs: 60000 })

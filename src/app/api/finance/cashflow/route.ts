@@ -1,48 +1,46 @@
 import { NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { auth } from "@/lib/auth"
 import { requireTenantMembership } from "@/lib/api-utils"
+import { parseBody } from "@/lib/api-utils"
+import { z } from "zod"
+
+const cashflowSchema = z.object({
+  tenantId: z.string().min(1),
+  type: z.enum(["INCOME", "EXPENSE"]),
+  category: z.string().min(1),
+  amount: z.number().min(1),
+  description: z.string().optional(),
+  recordedAt: z.string().datetime().optional()
+})
 
 export async function GET(req: Request) {
-  const session = await auth()
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
-  const type = url.searchParams.get("type")
-  const take = parseInt(url.searchParams.get("take") || "50")
-  
-  if (!tenantId) return NextResponse.json({ error: "Tenant ID required" }, { status: 400 })
+  const type = url.searchParams.get("type") as "INCOME" | "EXPENSE" | null
+  const month = parseInt(url.searchParams.get("month") || "")
+  const year = parseInt(url.searchParams.get("year") || "")
+
+  if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
+
   const { error: accessError } = await requireTenantMembership(tenantId)
   if (accessError) return accessError
 
-  try {
-    const where: any = { tenantId }
-    if (type && type !== "ALL") where.type = type
+  const where: any = { tenantId }
+  if (type) where.type = type
+  if (month && year) {
+    where.recordedAt = {
+      gte: new Date(year, month - 1, 1),
+      lt: new Date(year, month, 1)
+    }
+  }
 
-    const data = await db.cashflow.findMany({
+  try {
+    const cashflows = await db.cashflow.findMany({
       where,
       orderBy: { recordedAt: "desc" },
-      take
     })
-
-    const summary = await db.cashflow.groupBy({
-      by: ['type'],
-      where: { tenantId },
-      _sum: { amount: true }
-    })
-
-    const totalIncome = summary.find(s => s.type === "INCOME")?._sum.amount || 0
-    const totalExpense = summary.find(s => s.type === "EXPENSE")?._sum.amount || 0
-
-    return NextResponse.json({ 
-      data, 
-      summary: { 
-        income: totalIncome, 
-        expense: totalExpense, 
-        balance: totalIncome - totalExpense 
-      } 
-    })
+    return NextResponse.json(cashflows)
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
@@ -53,28 +51,27 @@ export async function POST(req: Request) {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
-    const body = await req.json()
-    const { tenantId, type, category, amount, description, recordedAt } = body
+    const { data, error } = await parseBody(req, cashflowSchema)
+    if (error) return error
 
-    if (!tenantId || !type || !category || !amount) {
-       return NextResponse.json({ error: "Semua kolom wajib diisi" }, { status: 400 })
-    }
+    const { tenantId, type, category, amount, description, recordedAt } = data
+
     const { error: accessError } = await requireTenantMembership(tenantId)
     if (accessError) return accessError
 
-    const cashflow = await db.cashflow.create({
+    const record = await db.cashflow.create({
       data: {
         tenantId,
         type,
         category,
-        amount: parseFloat(amount),
+        amount,
         description,
         recordedAt: recordedAt ? new Date(recordedAt) : new Date()
       }
     })
 
-    return NextResponse.json(cashflow)
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(record)
+  } catch (err: any) {
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
 }

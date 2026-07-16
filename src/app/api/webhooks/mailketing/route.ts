@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { apiHandler } from "@/lib/api-utils"
 
 /**
  * Webhook handler untuk Mailketing.
  * URL endpoint: POST /api/webhooks/mailketing
  * Menerima event: bounce, open, click, unsubscribe
  */
-export async function POST(req: Request) {
+export const POST = apiHandler(async (req: Request) => {
   try {
     const body = await req.json()
     logger.info("Mailketing Webhook Received", body)
@@ -105,4 +106,4 @@ export async function POST(req: Request) {
     logger.error("Mailketing Webhook Error", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-}
+}, { rateLimit: 120, rateLimitWindowMs: 60000 })
