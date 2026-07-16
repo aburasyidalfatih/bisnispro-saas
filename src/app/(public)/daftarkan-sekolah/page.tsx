@@ -1,25 +1,22 @@
 "use client"
 
 import { useState, useEffect, Suspense } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
-import { 
-  School, User, Mail, Phone, MapPin, Send, 
-  CheckCircle2, Globe, Hash, Landmark, Loader2, Check, X 
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { RegionSelector } from "@/components/ui/region-selector"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Mail, Send, CheckCircle2, Loader2 } from "lucide-react"
 import { trackMetaEvent } from "@/components/shared/meta-pixel"
 import { useSearchParams } from "next/navigation"
 
 import { getTenantCount } from "./actions"
+import { SchoolProfileSection } from "./_components/school-profile-section"
+import { LocationSection } from "./_components/location-section"
+import { AdminContactSection } from "./_components/admin-contact-section"
+import { AdditionalInfoSection } from "./_components/additional-info-section"
 
 function RegisterSchoolForm() {
   const searchParams = useSearchParams()
@@ -33,6 +30,7 @@ function RegisterSchoolForm() {
       setTenantCount(count > 0 ? count : null)
     })
   }, [])
+  
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null)
   const [affiliateName, setAffiliateName] = useState<string | null>(null)
   const [csPhone, setCsPhone] = useState<string | null>(null)
@@ -76,7 +74,6 @@ function RegisterSchoolForm() {
     const ref = searchParams.get('ref') || searchParams.get('r')
     let activeRef = ref
 
-    // Capture UTM parameters
     const utmSource = searchParams.get('utm_source') || ''
     const utmMedium = searchParams.get('utm_medium') || ''
     const utmCampaign = searchParams.get('utm_campaign') || ''
@@ -114,7 +111,6 @@ function RegisterSchoolForm() {
     }
   }, [searchParams])
 
-  // Debounced Subdomain Checker
   useEffect(() => {
     if (form.schoolSlug.length < 3) {
       setIsAvailable(null)
@@ -162,7 +158,7 @@ function RegisterSchoolForm() {
     }
 
     if (!form.adminEmail.toLowerCase().endsWith("@gmail.com")) {
-      toast({ title: "Email Tidak Valid", description: "Mohon gunakan email @gmail.com aktif untuk memastikan Anda menerima informasi penting dari kami.", variant: "destructive" })
+      toast({ title: "Email Tidak Valid", description: "Mohon gunakan email @gmail.com aktif.", variant: "destructive" })
       return
     }
 
@@ -171,8 +167,7 @@ function RegisterSchoolForm() {
       return
     }
 
-    const confirmMsg = `Pastikan email Anda (${form.adminEmail}) aktif dan bisa diakses, karena verifikasi akan dikirim ke email ini.\n\nLanjutkan pendaftaran?`
-    if (!window.confirm(confirmMsg)) {
+    if (!window.confirm(`Pastikan email Anda (${form.adminEmail}) aktif.\n\nLanjutkan pendaftaran?`)) {
       return
     }
 
@@ -195,16 +190,8 @@ function RegisterSchoolForm() {
           body: formData,
         })
         
-        let errData: any = null
-        try {
-          if (!uploadRes.ok) {
-            errData = await uploadRes.json()
-          }
-        } catch (e) {
-          errData = { error: "Terjadi kesalahan pada server saat mengunggah (kemungkinan file terlalu besar)." }
-        }
-
         if (!uploadRes.ok) {
+          const errData = await uploadRes.json()
           throw new Error(errData?.error || "Gagal upload logo")
         }
         
@@ -212,11 +199,7 @@ function RegisterSchoolForm() {
         uploadedLogoUrl = uploadData.url
       } catch (err: any) {
         setLoading(false)
-        let errMsg = err.message
-        if (errMsg === "Failed to fetch" || errMsg === "Network Error") {
-           errMsg = "Koneksi terputus saat mengunggah logo. Pastikan internet stabil atau coba gunakan file logo dengan ukuran lebih kecil (maks 2MB)."
-        }
-        toast({ title: "Gagal Mengunggah Logo", description: errMsg, variant: "destructive" })
+        toast({ title: "Gagal Mengunggah Logo", description: err.message, variant: "destructive" })
         return
       }
     }
@@ -228,13 +211,11 @@ function RegisterSchoolForm() {
       return null
     }
 
-    // Amankan kode referral: jika dikosongkan/diubah, prioritaskan dari cache sistem
     const originalRef = typeof window !== "undefined" ? localStorage.getItem('schoolpro_ref') : null
     const cookieRef = getCookie('schoolpro_ref')
     const finalReferralCode = originalRef || cookieRef || form.referralCode
 
     const payload = { ...form, referralCode: finalReferralCode, logo: uploadedLogoUrl || null }
-    let data: any = null
     try {
       const res = await fetch("/api/public/register-school", {
         method: "POST",
@@ -242,19 +223,14 @@ function RegisterSchoolForm() {
         body: JSON.stringify(payload),
       })
       
-      try {
-        data = await res.json()
-      } catch (e) {
-        data = { error: "Server mengalami gangguan (502/503). Silakan coba beberapa saat lagi." }
-      }
-
+      const data = await res.json()
       setLoading(false)
 
       if (res.ok) {
         if (data.csPhone) setCsPhone(data.csPhone)
         setSubmitted(true)
         trackMetaEvent('Lead')
-        toast({ title: "Berhasil!", description: `Pendaftaran website sekolah berhasil dikirim, silahkan cek email Anda ${form.adminEmail} sekarang.` })
+        toast({ title: "Berhasil!", description: `Pendaftaran website sekolah berhasil dikirim.` })
       } else {
         toast({ title: "Gagal", description: data.error || "Terjadi kesalahan server", variant: "destructive" })
       }
@@ -280,7 +256,7 @@ function RegisterSchoolForm() {
               <Mail className="h-5 w-5 text-primary" />
               <AlertTitle className="text-primary font-bold">Cek Email Anda Sekarang!</AlertTitle>
               <AlertDescription className="text-muted-foreground text-sm mt-1">
-                Kami telah mengirimkan tautan verifikasi ke <strong>{form.adminEmail}</strong>. Silakan periksa kotak masuk (atau folder spam) untuk mengaktifkan website sekolah Anda.
+                Kami telah mengirimkan tautan verifikasi ke <strong>{form.adminEmail}</strong>.
               </AlertDescription>
             </Alert>
           </div>
@@ -297,7 +273,7 @@ function RegisterSchoolForm() {
               Chat Admin Sekarang 
             </Button>
           ) : (
-            <Button className="w-full rounded-xl btn-gradient text-white border-0 flex items-center justify-center h-10 px-4" onClick={() => window.location.href = "/"}> 
+            <Button className="w-full rounded-xl btn-gradient text-white border-0" onClick={() => window.location.href = "/"}> 
               Selesai 
             </Button>
           )}
@@ -318,327 +294,18 @@ function RegisterSchoolForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Section 1: Profil Sekolah */}
-          <Card className="glass border-0 shadow-xl shadow-primary/5 overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-primary to-blue-500" />
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-primary/10"><School className="h-5 w-5 text-primary" /></div>
-                <div>
-                  <CardTitle>Profil Sekolah</CardTitle>
-                  <CardDescription>Identitas resmi sekolah Anda</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="space-y-2">
-                <Label>Logo Sekolah (Opsional)</Label>
-                <div className="flex items-center gap-4">
-                  {logoPreview ? (
-                    <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded-lg border bg-white" loading="lazy" decoding="async" />
-                  ) : (
-                    <div className="h-16 w-16 rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
-                      <School className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <Input 
-                      type="file" 
-                      accept="image/png, image/jpeg, image/webp"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          if (file.size > 2 * 1024 * 1024) {
-                            toast({ title: "File Terlalu Besar", description: "Maksimal ukuran logo adalah 2MB", variant: "destructive" })
-                            return
-                          }
-                          setLogoFile(file)
-                          setLogoPreview(URL.createObjectURL(file))
-                        }
-                      }}
-                      className="rounded-xl h-11"
-                    />
-                    <p className="text-[10px] text-muted-foreground mt-1">Maks 2MB. Format: JPG, PNG, WEBP.</p>
-                  </div>
-                </div>
-              </div>
+          <SchoolProfileSection 
+            form={form} setForm={setForm}
+            logoPreview={logoPreview} setLogoPreview={setLogoPreview} setLogoFile={setLogoFile}
+            isAvailable={isAvailable} isChecking={isChecking} toast={toast}
+          />
+          <LocationSection form={form} setForm={setForm} />
+          <AdditionalInfoSection 
+            form={form} setForm={setForm} 
+            isReferralLocked={isReferralLocked} setAffiliateName={setAffiliateName} 
+          />
+          <AdminContactSection form={form} setForm={setForm} />
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Nama Sekolah</Label>
-                  <Input 
-                    required 
-                    value={form.schoolName} 
-                    onChange={(e) => setForm({...form, schoolName: e.target.value})}
-                    placeholder="Contoh: SMA Negeri 1 Jakarta" 
-                    className="rounded-xl h-11"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Nomor NPSN</Label>
-                  <div className="relative">
-                    <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      required 
-                      value={form.npsn} 
-                      onChange={(e) => setForm({...form, npsn: e.target.value})}
-                      placeholder="Masukkan 8 digit NPSN" 
-                      className="rounded-xl h-11 pl-10"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Status Sekolah</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["NEGERI", "SWASTA"].map((s) => (
-                      <button
-                        key={s} type="button"
-                        onClick={() => setForm({...form, schoolStatus: s})}
-                        className={cn(
-                          "h-11 rounded-xl border-2 text-sm font-medium transition-all",
-                          form.schoolStatus === s 
-                            ? "border-primary bg-primary/5 text-primary" 
-                            : "border-muted bg-transparent text-muted-foreground hover:bg-muted/50"
-                        )}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Subdomain Website</Label>
-                  <div className="relative flex items-center">
-                    <Input 
-                      required 
-                      value={form.schoolSlug} 
-                      onChange={(e) => setForm({...form, schoolSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')})}
-                      placeholder="namasekolah" 
-                      className={cn(
-                        "rounded-xl h-11 pr-32",
-                        isAvailable === true && "border-emerald-500 focus-visible:ring-emerald-500",
-                        isAvailable === false && "border-rose-500 focus-visible:ring-rose-500"
-                      )}
-                    />
-                    <div className="absolute right-3 flex items-center gap-2">
-                      {isChecking && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
-                      {!isChecking && isAvailable === true && <Check className="h-4 w-4 text-emerald-500" />}
-                      {!isChecking && isAvailable === false && <X className="h-4 w-4 text-rose-500" />}
-                      <span className="text-xs font-medium text-muted-foreground">.schoolpro.id</span>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Jumlah Siswa Saat Ini</Label>
-                  <div className="relative">
-                    <Input 
-                      required 
-                      type="number"
-                      min="1"
-                      value={form.studentCount || ""} 
-                      onChange={(e) => setForm({...form, studentCount: parseInt(e.target.value) || 0})}
-                      placeholder="Contoh: 500" 
-                      className="rounded-xl h-11"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Kode Referral Mitra (Opsional)</Label>
-                  <div className="relative">
-                    <Input 
-                      value={form.referralCode || ""} 
-                      readOnly={isReferralLocked}
-                      onChange={(e) => {
-                        if (isReferralLocked) return;
-                        
-                        const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
-                        setForm({...form, referralCode: val});
-                        
-                        // Auto-fetch affiliate name if length is sufficient
-                        if (val.length >= 5) {
-                          fetch(`/api/public/affiliate-info?ref=${val}`)
-                            .then(res => res.json())
-                            .then(data => {
-                              if (data.name) setAffiliateName(data.name);
-                              else setAffiliateName(null);
-                            })
-                            .catch(() => setAffiliateName(null));
-                        } else {
-                          setAffiliateName(null);
-                        }
-                      }}
-                      placeholder="Masukkan kode mitra jika ada" 
-                      className={cn("rounded-xl h-11 uppercase", isReferralLocked && "bg-muted text-muted-foreground cursor-not-allowed")}
-                    />
-                    {isReferralLocked && (
-                      <div className="absolute right-3 top-3">
-                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                      </div>
-                    )}
-                  </div>
-                  {isReferralLocked && (
-                    <p className="text-xs text-muted-foreground">Kode referral telah terkunci dari link undangan.</p>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section 2: Lokasi */}
-          <Card className="glass border-0">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-blue-500/10"><MapPin className="h-5 w-5 text-blue-500" /></div>
-                <div>
-                  <CardTitle>Lokasi Sekolah</CardTitle>
-                  <CardDescription>Wilayah operasional sekolah</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <RegionSelector
-                province={form.province}
-                regency={form.regency}
-                onProvinceChange={(v) => setForm({...form, province: v, regency: ""})}
-                onRegencyChange={(v) => setForm({...form, regency: v})}
-                required
-              />
-              <div className="space-y-2">
-                <Label>Alamat Lengkap</Label>
-                <Textarea 
-                  required
-                  value={form.address} 
-                  onChange={(e) => setForm({...form, address: e.target.value})}
-                  placeholder="Jl. Pendidikan No. 123..." 
-                  className="rounded-xl min-h-[80px]"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section 3: Admin */}
-          <Card className="glass border-0">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-emerald-500/10"><User className="h-5 w-5 text-emerald-500" /></div>
-                <div>
-                  <CardTitle>Kontak Penanggung Jawab</CardTitle>
-                  <CardDescription>Informasi admin utama sekolah</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Nama Lengkap</Label>
-                  <Input 
-                    required 
-                    value={form.adminName} 
-                    onChange={(e) => setForm({...form, adminName: e.target.value})}
-                    placeholder="Nama lengkap tanpa gelar" 
-                    className="rounded-xl h-11"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Jabatan di Sekolah</Label>
-                  <Select
-                    value={form.adminPosition}
-                    onValueChange={(v) => setForm({...form, adminPosition: v})}
-                  >
-                    <SelectTrigger className="rounded-xl h-11">
-                      <SelectValue placeholder="Pilih jabatan..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Operator">Operator</SelectItem>
-                      <SelectItem value="Kepala Sekolah">Kepala Sekolah</SelectItem>
-                      <SelectItem value="Wakil Kepala Sekolah">Wakil Kepala Sekolah</SelectItem>
-                      <SelectItem value="Yayasan">Yayasan</SelectItem>
-                      <SelectItem value="Pimpinan Lembaga">Pimpinan Lembaga</SelectItem>
-                      <SelectItem value="Guru Mapel">Guru Mapel</SelectItem>
-                      <SelectItem value="Tata Usaha">Tata Usaha</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Email Penanggung Jawab</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      required type="email"
-                      value={form.adminEmail} 
-                      onChange={(e) => setForm({...form, adminEmail: e.target.value})}
-                      placeholder="emailanda@gmail.com" 
-                      className={cn(
-                        "rounded-xl h-11 pl-10",
-                        form.adminEmail && !form.adminEmail.toLowerCase().endsWith("@gmail.com") && "border-rose-500 focus-visible:ring-rose-500"
-                      )}
-                    />
-                  </div>
-                  {form.adminEmail && !form.adminEmail.toLowerCase().endsWith("@gmail.com") ? (
-                    <p className="text-[10px] text-rose-500 mt-1 font-medium">Harus menggunakan email @gmail.com yang aktif.</p>
-                  ) : (
-                    <p className="text-[10px] text-primary/80 mt-1 font-medium">Wajib menggunakan @gmail.com aktif, karena informasi penting akan dikirim ke email ini.</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label>Nomor WhatsApp (Aktif)</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      required 
-                      value={form.adminPhone} 
-                      onChange={(e) => setForm({...form, adminPhone: e.target.value})}
-                      placeholder="0812345678xx" 
-                      className="rounded-xl h-11 pl-10"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Password Akses</Label>
-                  <Input 
-                    required 
-                    type="password"
-                    value={form.password} 
-                    onChange={(e) => setForm({...form, password: e.target.value})}
-                    placeholder="Minimal 8 karakter" 
-                    className="rounded-xl h-11"
-                  />
-                  <p className="text-[10px] text-muted-foreground mt-1 font-medium">Buat password untuk login sebagai admin sekolah.</p>
-                </div>
-                <div className="space-y-2">
-                  <Label>Konfirmasi Password</Label>
-                  <Input 
-                    required 
-                    type="password"
-                    value={form.confirmPassword} 
-                    onChange={(e) => setForm({...form, confirmPassword: e.target.value})}
-                    placeholder="Ulangi password Anda" 
-                    className={cn(
-                      "rounded-xl h-11",
-                      form.confirmPassword && form.password !== form.confirmPassword && "border-rose-500 focus-visible:ring-rose-500"
-                    )}
-                  />
-                  {form.confirmPassword && form.password !== form.confirmPassword && (
-                    <p className="text-[10px] text-rose-500 mt-1 font-medium">Password tidak cocok.</p>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section 4: Verifikasi Keamanan */}
           <Card className="glass border-0">
             <CardContent className="pt-6 space-y-4">
               <div className="space-y-2">
