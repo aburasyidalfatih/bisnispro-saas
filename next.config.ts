@@ -58,9 +58,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "bcryptjs", "pdfkit"],
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
   typescript: {
-    // Abaikan type checking saat build di production untuk mencegah OOM (Exit code 137)
-    // Asumsinya type check sudah dilakukan di lokal saat development.
-    ignoreBuildErrors: true,
+    // Jalankan type check saat build di production untuk mencegah error lolos
+    ignoreBuildErrors: false,
   },
   eslint: {
     // Lint is enforced by the package prebuild script; Next's built-in lint step

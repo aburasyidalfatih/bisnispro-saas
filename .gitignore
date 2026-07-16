@@ -42,8 +42,15 @@ remote-*.env
 # ==========================================
 scratch/
 check-*.js
+check-*.ts
 scratch-*.js
+scratch-*.ts
 scratch_*.js
+scratch_*.ts
 test-*.js
+test-*.ts
+dist/
+backups/
+rclone-*/
 prod.html
 temp.*
