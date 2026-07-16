@@ -61,7 +61,7 @@ export async function DELETE(req: Request) {
       where: { id }
     })
     return NextResponse.json({ message: "Merchant dihapus" })
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json({ error: "Gagal menghapus merchant" }, { status: 500 })
   }
 }

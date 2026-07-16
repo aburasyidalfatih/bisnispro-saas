@@ -37,8 +37,8 @@ export async function GET(req: Request) {
   try {
     const { error: accessError } = await requireTenantMembership(tenantId);
   if (accessError) throw new Error("Unauthorized")
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 403 })
+  } catch (e) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : "Unknown error" }, { status: 403 })
   }
 
   const tenantDb = withTenant(tenantId)
@@ -75,8 +75,8 @@ export async function POST(req: Request) {
   try {
     const { error: accessError } = await requireTenantMembership(tenantId);
   if (accessError) throw new Error("Unauthorized")
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 403 })
+  } catch (e) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : "Unknown error" }, { status: 403 })
   }
 
   const parsed = invoiceSchema.safeParse(rest)
@@ -103,7 +103,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(result.data, { status: 201 })
-  } catch (error: any) {
+  } catch (error) {
     console.error("Gagal membuat invoice:", error)
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }

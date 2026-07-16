@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbo",
     "prebuild": "npm run lint:errors && npm run typecheck",
-    "build": "NEXT_MINIFIER_THREADS=1 NODE_OPTIONS='--max-old-space-size=4096' next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
+    "build": "npm run typecheck && NEXT_MINIFIER_THREADS=1 NODE_OPTIONS='--max-old-space-size=4096' next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "start": "next start",
     "lint": "eslint .",
     "lint:errors": "eslint . --quiet",
