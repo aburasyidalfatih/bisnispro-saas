@@ -2339,6 +2339,7 @@ model LearningObjective {
   formativeScores FormativeScore[]
 
   @@unique([subjectId, code, semester, year])
+  @@index([tenantId])
   @@map("learning_objectives")
 }
 
@@ -2355,6 +2356,7 @@ model FormativeScore {
   tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, objectiveId])
+  @@index([tenantId])
   @@map("formative_scores")
 }
 
@@ -2374,6 +2376,7 @@ model SummativeScore {
   tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, subjectId, type, semester, year])
+  @@index([tenantId])
   @@map("summative_scores")
 }
 
@@ -2399,6 +2402,7 @@ model ReportCard {
   achievements     ReportCardAchievement[]
 
   @@unique([studentId, semester, year])
+  @@index([tenantId])
   @@map("report_cards")
 }
 
@@ -2453,6 +2457,7 @@ model P5Project {
   tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   scores P5StudentScore[]
 
+  @@index([tenantId])
   @@map("p5_projects")
 }
 

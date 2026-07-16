@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -9,7 +9,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 403 })
   }
@@ -42,7 +43,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 403 })
   }
@@ -62,7 +64,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 403 })
   }

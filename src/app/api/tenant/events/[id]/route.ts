@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { eventSchema } from "@/features/event/schemas/event.schema"
-import { parseBody } from "@/lib/api-utils"
+import { parseBody, requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
 import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-public.service"
 
@@ -14,6 +14,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId)
+  if (accessError) return accessError
 
   const event = await db.event.findFirst({
     where: { id, tenantId },

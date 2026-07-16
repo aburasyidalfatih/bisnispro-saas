@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
 
 const billingTypeSchema = z.object({
@@ -18,7 +18,8 @@ export async function GET(req: Request) {
   const showAll = url.searchParams.get("showAll") === "true"
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 
-  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
+  const { error: accessError } = await requireTenantMembership(tenantId);
+    if (accessError) return accessError;
 
   const data = await db.billingType.findMany({
     where: { tenantId, ...(showAll ? {} : {}) }, // Admin UI fetches all, tidak filter isActive
@@ -33,7 +34,8 @@ export async function POST(req: Request) {
   const { tenantId, ...rest } = body
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
+  const { error: accessError } = await requireTenantMembership(tenantId);
+    if (accessError) return accessError;
 
   const parsed = billingTypeSchema.safeParse(rest)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })

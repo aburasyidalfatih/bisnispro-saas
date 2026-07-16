@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db, withTenant } from "@/lib/db"
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
 import { nanoid } from "nanoid"
 import { sendNotification } from "@/features/notification/services/notification.service"
@@ -35,7 +35,8 @@ export async function GET(req: Request) {
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 403 })
   }
@@ -72,7 +73,8 @@ export async function POST(req: Request) {
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 403 })
   }

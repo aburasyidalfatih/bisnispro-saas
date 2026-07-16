@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { db as prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
@@ -9,6 +10,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     const tenantId = (session.user as any).tenants?.[0]?.id
     if (!tenantId) return NextResponse.json({ error: "No tenant" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     const { id } = await params
     const body = await req.json()
@@ -61,6 +64,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     const tenantId = (session.user as any).tenants?.[0]?.id
     if (!tenantId) return NextResponse.json({ error: "No tenant" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     const { id } = await params
 

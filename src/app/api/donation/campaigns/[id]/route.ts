@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 
@@ -23,6 +24,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params
   const body = await req.json()
   const { tenantId, ...data } = body
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   const campaign = await db.donationCampaign.update({
     where: { id },

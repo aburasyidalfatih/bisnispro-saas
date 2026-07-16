@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 /**
  * API: Contact Submissions (Dashboard)
  * GET  /api/tenant/contact-submissions?tenantId=xxx&page=1
@@ -28,6 +29,8 @@ export async function GET(req: Request) {
   const limit = 20
 
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   const hasAccess = await checkAccess(tenantId, session.user.id, session.user.isSuperAdmin)
   if (!hasAccess) return NextResponse.json({ error: "Tidak punya izin" }, { status: 403 })
@@ -52,6 +55,8 @@ export async function PUT(req: Request) {
 
   const { tenantId, id, all } = await req.json()
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   const hasAccess = await checkAccess(tenantId, session.user.id, session.user.isSuperAdmin)
   if (!hasAccess) return NextResponse.json({ error: "Tidak punya izin" }, { status: 403 })

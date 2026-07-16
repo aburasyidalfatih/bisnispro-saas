@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
@@ -11,6 +12,8 @@ export async function DELETE(req: Request, props: { params: Promise<{ id: string
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId harus diisi" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   const isSuperAdmin = session.user.isSuperAdmin
   if (!isSuperAdmin) {

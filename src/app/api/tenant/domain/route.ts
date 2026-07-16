@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 /**
  * API: Custom Domain Tenant
  *
@@ -94,6 +95,8 @@ export async function PUT(req: Request) {
   const parsed = await parseBody(req, setDomainSchema)
   if (parsed.error) return parsed.error
   const { tenantId, domain } = parsed.data
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   const hasAccess = await checkTenantAccess(tenantId, session.user.id, session.user.isSuperAdmin)
   if (!hasAccess) {
@@ -190,6 +193,8 @@ export async function DELETE(req: Request) {
   const parsed = await parseBody(req, removeDomainSchema)
   if (parsed.error) return parsed.error
   const { tenantId } = parsed.data
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   const hasAccess = await checkTenantAccess(tenantId, session.user.id, session.user.isSuperAdmin)
   if (!hasAccess) {

@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { eventSchema } from "@/features/event/schemas/event.schema"

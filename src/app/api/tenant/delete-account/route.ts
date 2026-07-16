@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
@@ -11,6 +12,8 @@ export async function POST(req: Request) {
 
     const body = await req.json()
     const { tenantId } = body
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     if (!tenantId) {
       return NextResponse.json({ error: "Missing tenantId" }, { status: 400 })

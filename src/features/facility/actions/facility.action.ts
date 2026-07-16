@@ -1,14 +1,15 @@
 "use server"
 
 import { db } from "@/lib/db"
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { revalidatePath } from "next/cache"
 import { facilitySchema } from "@/features/facility/schemas/facility.schema"
 import { generateUniqueSlug } from "@/lib/utils/slug"
 import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 export async function getFacilities(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.facility.findMany({
     where: { tenantId },
@@ -17,7 +18,8 @@ export async function getFacilities(tenantId: string) {
 }
 
 export async function getFacilityById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.facility.findUnique({
     where: { id, tenantId }
@@ -25,7 +27,8 @@ export async function getFacilityById(id: string, tenantId: string) {
 }
 
 export async function createFacility(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = facilitySchema.parse(data)
   
@@ -52,7 +55,8 @@ export async function createFacility(tenantId: string, data: any) {
 }
 
 export async function updateFacility(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = facilitySchema.parse(data)
   
@@ -74,7 +78,8 @@ export async function updateFacility(id: string, tenantId: string, data: any) {
 }
 
 export async function deleteFacility(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.facility.delete({
     where: { id, tenantId }
@@ -92,7 +97,8 @@ export async function deleteFacility(id: string, tenantId: string) {
 }
 
 export async function updateFacilitiesOrder(tenantId: string, orderedIds: string[]) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.$transaction(
     orderedIds.map((id, i) =>

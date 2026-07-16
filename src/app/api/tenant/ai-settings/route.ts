@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { logger } from "@/lib/logger"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request) {
   const session = await auth()
@@ -9,6 +10,8 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const tenantId = searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "Missing tenantId" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId)
+  if (accessError) return accessError
 
   try {
     const { getAiSettings } = await import("@/features/ai/services/ai-settings.service")

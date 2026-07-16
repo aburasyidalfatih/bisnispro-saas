@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
@@ -7,6 +8,8 @@ export async function GET(req: Request) {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const tenantId = session.user.tenants?.[0]?.id
   if (!tenantId) return NextResponse.json({ error: "Tenant not found" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   try {
     const banks = await db.cbtQuestionBank.findMany({
@@ -30,6 +33,8 @@ export async function POST(req: Request) {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const tenantId = session.user.tenants?.[0]?.id
   if (!tenantId) return NextResponse.json({ error: "Tenant not found" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   try {
     const body = await req.json()

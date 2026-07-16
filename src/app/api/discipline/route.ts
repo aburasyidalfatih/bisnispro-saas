@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request) {
   try {
@@ -11,6 +12,8 @@ export async function GET(req: Request) {
     const studentId = searchParams.get("studentId")
     const classroomId = searchParams.get("classroomId")
     if (!tenantId) return NextResponse.json({ error: "tenantId required" }, { status: 400 })
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     // If studentId provided (ortu context), verify parent owns student
     if (studentId) {
@@ -46,6 +49,8 @@ export async function POST(req: Request) {
     if (!tenantId || !studentId || !staffId || !type || !category || !description || !date) {
       return NextResponse.json({ error: "Field wajib tidak lengkap" }, { status: 400 })
     }
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     const record = await db.disciplineRecord.create({
       data: {

@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { createStaff, getStaff, deleteStaff } from '@/features/staff/actions/staff.action'
 import { db } from '../../../__mocks__/prisma'
 
-vi.mock('@/lib/guards/tenant-guard', () => ({
-  requireTenantAccess: vi.fn(),
+vi.mock('@/lib/api-utils', () => ({
+  requireTenantMembership: vi.fn(),
 }))
 
 vi.mock('next/cache', () => ({
@@ -48,8 +48,8 @@ describe('Server Actions: Staff', () => {
     db.staff.findMany.mockResolvedValue([])
     await getStaff('tenant-abc')
 
-    const { requireTenantAccess } = await import('@/lib/guards/tenant-guard')
-    expect(requireTenantAccess).toHaveBeenCalledWith('tenant-abc')
+    const { requireTenantMembership } = await import('@/lib/api-utils')
+    expect(requireTenantMembership).toHaveBeenCalledWith('tenant-abc')
     expect(db.staff.findMany).toHaveBeenCalledWith({
       where: { tenantId: 'tenant-abc' },
       orderBy: { sortOrder: 'asc' },
@@ -63,8 +63,8 @@ describe('Server Actions: Staff', () => {
 
     await deleteStaff('staff-1', 'tenant-1')
 
-    const { requireTenantAccess } = await import('@/lib/guards/tenant-guard')
-    expect(requireTenantAccess).toHaveBeenCalledWith('tenant-1')
+    const { requireTenantMembership } = await import('@/lib/api-utils')
+    expect(requireTenantMembership).toHaveBeenCalledWith('tenant-1')
     expect(db.staff.delete).toHaveBeenCalledWith({
       where: { id: 'staff-1', tenantId: 'tenant-1' },
     })

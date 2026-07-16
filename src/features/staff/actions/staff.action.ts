@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { staffSchema } from "@/features/staff/schemas/staff.schema"
@@ -11,7 +11,8 @@ import { clearTenantCache } from "@/features/tenant/services/tenant-modular.serv
 
 
 export async function getStaff(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const staff = await db.staff.findMany({
     where: { tenantId },
@@ -42,7 +43,8 @@ export async function getStaff(tenantId: string) {
 }
 
 export async function getStaffById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.staff.findUnique({
     where: { id, tenantId }
@@ -51,7 +53,8 @@ export async function getStaffById(id: string, tenantId: string) {
 
 export async function createStaff(tenantId: string, data: any) {
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
     
     const parsed = staffSchema.parse(data)
     
@@ -137,7 +140,8 @@ export async function createStaff(tenantId: string, data: any) {
 
 export async function updateStaff(id: string, tenantId: string, data: any) {
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
     
     const parsed = staffSchema.parse(data)
     
@@ -236,7 +240,8 @@ export async function updateStaff(id: string, tenantId: string, data: any) {
 
 export async function deleteStaff(id: string, tenantId: string) {
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
 
     // Ambil data staff sebelum dihapus untuk cek role
     const staffToDelete = await db.staff.findUnique({ where: { id, tenantId }, select: { role: true } })
@@ -267,7 +272,8 @@ export async function deleteStaff(id: string, tenantId: string) {
 }
 
 export async function updateStaffOrder(tenantId: string, orderedIds: string[]) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.$transaction(
     orderedIds.map((id, i) =>

@@ -1,4 +1,4 @@
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { SumatifClient } from "./sumatif-client"
@@ -13,7 +13,8 @@ export default async function SumatifPage() {
   const tenantId = session?.user?.tenants?.[0]?.id
   if (!tenantId) return <div>Tenant tidak ditemukan</div>
   
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
 
   const ctx = await getUserStaffContext(tenantId)
   if (!ctx) return <div>Akses Ditolak</div>

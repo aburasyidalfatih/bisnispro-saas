@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { getAiModel, checkAiTokenBalance, deductAiToken, getAiTokenCosts } from "@/features/ai/services/ai.service"
@@ -15,6 +16,8 @@ export async function POST(req: Request) {
 
     const body = await req.json()
     const { tenantId, promptType, inputs } = body
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     if (!tenantId || !promptType || !inputs) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })

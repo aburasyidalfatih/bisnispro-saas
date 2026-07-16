@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { requireAuth } from "@/lib/api-utils"
 import { z } from "zod"
@@ -22,6 +23,8 @@ export async function PUT(req: Request) {
     }
 
     const { tenantId, newSlug } = parsed.data
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     const { changeSubdomain } = await import("@/features/tenant/services/tenant-management.service")
     const result = await changeSubdomain(tenantId, newSlug, session.user.id, session.user.isSuperAdmin)

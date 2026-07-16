@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { logger } from "@/lib/logger"
@@ -10,6 +11,8 @@ export async function POST(req: NextRequest) {
     }
 
     const { tenantId, students } = await req.json()
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     // Cek tenant akses
     if (session.user.tenants?.[0]?.id !== tenantId) {

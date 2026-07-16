@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { logger } from "@/lib/logger"
@@ -11,6 +12,8 @@ export async function POST(req: NextRequest) {
     }
 
     const { tenantId, users } = await req.json()
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     // Cek tenant akses & role (harus admin/owner)
     const activeTenant = session.user.tenants?.find((t: any) => t.id === tenantId)

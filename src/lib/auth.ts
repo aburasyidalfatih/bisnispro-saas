@@ -5,7 +5,7 @@ import { db } from "@/lib/db"
 import { verifyTwoFactorLogin } from "@/features/auth/services/two-factor.service"
 import { authConfig } from "@/lib/auth.config"
 import { NextAuthConfig } from "next-auth"
-import { logUserError } from "@/lib/error-logger"
+import { logger } from "@/lib/logger"
 
 class CustomAuthError extends CredentialsSignin {
   code: string
@@ -83,7 +83,7 @@ export const authOptions: NextAuthConfig = {
 
         if (!user || !user.isActive) {
           console.error(`[AUTH DEBUG] Login failed: user not found or inactive. email=${email}, found=${!!user}, isActive=${user?.isActive}`)
-          await logUserError("Gagal login: Email atau password salah / tidak aktif", null, { method: "LOGIN", metadata: { email } })
+          logger.error("Gagal login: Email atau password salah / tidak aktif", undefined, { method: "LOGIN", email })
           throw new CustomAuthError("Email atau password salah")
         }
 
@@ -95,7 +95,7 @@ export const authOptions: NextAuthConfig = {
         const isValid = await bcrypt.compare(password, user.password)
         if (!isValid) {
           console.error(`[AUTH DEBUG] Login failed: bcrypt.compare returned false. email=${email}, userId=${user.id}, passwordInputLength=${password.length}, hashPrefix=${user.password.substring(0, 7)}, hashLength=${user.password.length}`)
-          await logUserError("Gagal login: Password salah", null, { method: "LOGIN", userId: user.id, metadata: { email } })
+          logger.error("Gagal login: Password salah", undefined, { method: "LOGIN", userId: user.id, email })
           throw new CustomAuthError("Email atau password salah")
         }
 

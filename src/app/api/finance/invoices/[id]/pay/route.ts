@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
 import { auth } from "@/lib/auth"
 import { FinanceService } from "@/features/finance/services/finance.service"
@@ -10,6 +10,13 @@ const paySchema = z.object({
   amount: z.number().min(1),
   method: z.enum(["WALLET", "TRANSFER", "CASH", "TRIPAY"]),
   proofUrl: z.string().optional(),
+  notes: z.string().optional(),
+})
+
+const verifySchema = z.object({
+  tenantId: z.string(),
+  paymentId: z.string(),
+  action: z.enum(["VERIFIED", "REJECTED"]),
   notes: z.string().optional(),
 })
 
@@ -24,7 +31,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const { tenantId, amount, method, proofUrl, notes } = parsed.data
 
-  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
+  const { error: accessError } = await requireTenantMembership(tenantId);
+    if (accessError) return accessError;
 
   try {
     const res = await FinanceService.processPayment({
@@ -59,9 +67,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const session = await auth()
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const { tenantId, paymentId, action, notes } = await req.json() // action: VERIFIED | REJECTED
+  const parsed = verifySchema.safeParse(await req.json())
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Data tidak valid", details: parsed.error.flatten() }, { status: 400 })
+  }
+  const { tenantId, paymentId, action, notes } = parsed.data
 
-  try { await requireTenantAccess(tenantId) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 403 }) }
+  const { error: accessError } = await requireTenantMembership(tenantId);
+    if (accessError) return accessError;
 
   try {
     const res = await FinanceService.verifyPayment({

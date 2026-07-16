@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { alumniSchema } from "@/features/alumni/schemas/alumni.schema"
@@ -10,7 +10,8 @@ import { clearTenantCache } from "@/features/tenant/services/tenant-modular.serv
 
 
 export async function getAlumni(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.alumni.findMany({
     where: { tenantId },
@@ -19,7 +20,8 @@ export async function getAlumni(tenantId: string) {
 }
 
 export async function getAlumniById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.alumni.findUnique({
     where: { id, tenantId }
@@ -27,7 +29,8 @@ export async function getAlumniById(id: string, tenantId: string) {
 }
 
 export async function createAlumni(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = alumniSchema.parse(data)
   
@@ -51,7 +54,8 @@ export async function createAlumni(tenantId: string, data: any) {
 }
 
 export async function updateAlumni(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = alumniSchema.parse(data)
   
@@ -72,7 +76,8 @@ export async function updateAlumni(id: string, tenantId: string, data: any) {
 }
 
 export async function deleteAlumni(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.alumni.delete({
     where: { id, tenantId }
@@ -90,7 +95,8 @@ export async function deleteAlumni(id: string, tenantId: string) {
 }
 
 export async function updateAlumniOrder(tenantId: string, orderedIds: string[]) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.$transaction(
     orderedIds.map((id, i) =>
@@ -133,7 +139,8 @@ export async function submitPublicAlumni(tenantId: string, data: any) {
 }
 
 export async function toggleAlumniApproval(id: string, tenantId: string, isApproved: boolean) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.alumni.update({
     where: { id, tenantId },

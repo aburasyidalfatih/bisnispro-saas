@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request) {
   const session = await auth()
@@ -12,6 +13,8 @@ export async function GET(req: Request) {
   const take = parseInt(url.searchParams.get("take") || "50")
   
   if (!tenantId) return NextResponse.json({ error: "Tenant ID required" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId)
+  if (accessError) return accessError
 
   try {
     const where: any = { tenantId }
@@ -56,6 +59,8 @@ export async function POST(req: Request) {
     if (!tenantId || !type || !category || !amount) {
        return NextResponse.json({ error: "Semua kolom wajib diisi" }, { status: 400 })
     }
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     const cashflow = await db.cashflow.create({
       data: {

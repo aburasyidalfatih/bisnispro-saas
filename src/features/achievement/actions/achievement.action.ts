@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { achievementSchema } from "@/features/achievement/schemas/achievement.schema"
@@ -9,7 +9,8 @@ import { generateUniqueSlug } from "@/lib/utils/slug"
 import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 export async function getAchievements(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.achievement.findMany({
     where: { tenantId },
@@ -21,7 +22,8 @@ export async function getAchievements(tenantId: string) {
 }
 
 export async function getAchievementById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.achievement.findUnique({
     where: { id, tenantId }
@@ -29,7 +31,8 @@ export async function getAchievementById(id: string, tenantId: string) {
 }
 
 export async function createAchievement(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = achievementSchema.parse(data)
   
@@ -56,7 +59,8 @@ export async function createAchievement(tenantId: string, data: any) {
 }
 
 export async function updateAchievement(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = achievementSchema.parse(data)
   
@@ -77,7 +81,8 @@ export async function updateAchievement(id: string, tenantId: string, data: any)
 }
 
 export async function deleteAchievement(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.achievement.delete({
     where: { id, tenantId }
@@ -95,7 +100,8 @@ export async function deleteAchievement(id: string, tenantId: string) {
 }
 
 export async function updateAchievementsOrder(tenantId: string, orderedIds: string[]) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.$transaction(
     orderedIds.map((id, i) =>

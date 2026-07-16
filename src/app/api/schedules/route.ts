@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request) {
   try {
@@ -11,6 +12,8 @@ export async function GET(req: Request) {
     const classroomId = searchParams.get("classroomId")
     const staffId = searchParams.get("staffId")
     if (!tenantId) return NextResponse.json({ error: "tenantId required" }, { status: 400 })
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     const where: any = { tenantId }
     if (classroomId) where.classroomId = classroomId
@@ -44,6 +47,8 @@ export async function POST(req: Request) {
     if (!isBreak && (!subjectId || !staffId)) {
       return NextResponse.json({ error: "Guru dan Mata Pelajaran wajib dipilih" }, { status: 400 })
     }
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     // Deteksi bentrok jadwal (Clash Detection) hanya jika bukan istirahat
     if (!isBreak) {

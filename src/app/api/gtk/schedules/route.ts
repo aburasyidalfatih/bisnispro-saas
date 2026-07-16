@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
@@ -10,6 +11,8 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const tenantId = searchParams.get("tenantId")
     if (!tenantId) return NextResponse.json({ error: "tenantId required" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     // Find staff profile linked to this user
     const staff = await db.staff.findFirst({ where: { tenantId, userId: session.user.id } })

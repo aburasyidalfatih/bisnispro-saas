@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
@@ -23,6 +24,8 @@ export async function POST(req: Request) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
 
   const { campaignId, tenantId, amount, method, paymentChannel, donorName, donorEmail, message, isAnonymous } = parsed.data
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   const campaign = await db.donationCampaign.findFirst({
     where: { id: campaignId, tenantId, isActive: true, deletedAt: null },

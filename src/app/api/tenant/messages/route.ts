@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { parseBody } from "@/lib/api-utils"

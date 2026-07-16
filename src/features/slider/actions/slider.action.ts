@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { sliderSchema } from "@/features/slider/schemas/slider.schema"
@@ -11,7 +11,8 @@ import { clearTenantCache } from "@/features/tenant/services/tenant-modular.serv
 
 
 export async function getSliders(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.slider.findMany({
     where: { tenantId },
@@ -27,7 +28,8 @@ export async function getActiveSliders(tenantId: string) {
 }
 
 export async function getSliderById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.slider.findUnique({
     where: { id, tenantId }
@@ -35,7 +37,8 @@ export async function getSliderById(id: string, tenantId: string) {
 }
 
 export async function createSlider(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = sliderSchema.parse(data)
   
@@ -56,7 +59,8 @@ export async function createSlider(tenantId: string, data: any) {
 }
 
 export async function updateSlider(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = sliderSchema.parse(data)
   
@@ -74,7 +78,8 @@ export async function updateSlider(id: string, tenantId: string, data: any) {
 }
 
 export async function deleteSlider(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.slider.delete({
     where: { id, tenantId }
@@ -89,7 +94,8 @@ export async function deleteSlider(id: string, tenantId: string) {
 }
 
 export async function toggleSliderStatus(id: string, tenantId: string, isActive: boolean) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.slider.update({
     where: { id, tenantId },
@@ -105,7 +111,8 @@ export async function toggleSliderStatus(id: string, tenantId: string, isActive:
 }
 
 export async function updateSlidersOrder(tenantId: string, orderedIds: string[]) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.$transaction(
     orderedIds.map((id, i) =>

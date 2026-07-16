@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request) {
   try {
@@ -9,6 +10,8 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const tenantId = searchParams.get("tenantId")
     if (!tenantId) return NextResponse.json({ error: "tenantId required" }, { status: 400 })
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     const subjects = await db.subject.findMany({
       where: { tenantId, isActive: true },
@@ -28,6 +31,8 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { tenantId, name, code, description } = body
     if (!tenantId || !name) return NextResponse.json({ error: "tenantId & name required" }, { status: 400 })
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
     if (tenant?.plan === "free") {

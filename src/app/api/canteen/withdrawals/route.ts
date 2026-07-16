@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
@@ -18,6 +19,8 @@ export async function GET(req: Request) {
   const url = new URL(req.url)
   const tenantId = url.searchParams.get("tenantId")
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
   const merchant = await db.canteenMerchant.findFirst({
     where: { userId: session.user.id, tenantId },

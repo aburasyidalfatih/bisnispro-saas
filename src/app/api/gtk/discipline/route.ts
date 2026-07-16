@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request) {
   try {
@@ -16,6 +17,8 @@ export async function GET(req: Request) {
     if (!tenantId || !staffId) {
       return new NextResponse("Missing parameters", { status: 400 })
     }
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     // Ambil histori kedisiplinan yang pernah diinput oleh guru ini
     const records = await db.disciplineRecord.findMany({
@@ -55,6 +58,8 @@ export async function POST(req: Request) {
     if (!tenantId || !staffId || !studentId || !type || !category || !description) {
       return new NextResponse("Missing required fields", { status: 400 })
     }
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     // Pastikan poin berupa angka, negatif untuk pelanggaran, positif untuk prestasi
     let finalPoints = parseInt(points || "0")

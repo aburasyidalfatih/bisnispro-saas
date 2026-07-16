@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(
   req: Request,
@@ -19,6 +20,8 @@ export async function GET(
     if (!tenantId) {
       return new NextResponse("Missing tenantId", { status: 400 })
     }
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     const students = await db.student.findMany({
       where: {

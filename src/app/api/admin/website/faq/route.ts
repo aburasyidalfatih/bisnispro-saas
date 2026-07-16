@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { db as prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
@@ -9,6 +10,8 @@ export async function GET(req: Request) {
 
     const tenantId = (session.user as any).tenants?.[0]?.id
     if (!tenantId) return NextResponse.json({ error: "No tenant" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     const faqs = await prisma.faq.findMany({
       where: { tenantId },
@@ -29,6 +32,8 @@ export async function POST(req: Request) {
 
     const tenantId = (session.user as any).tenants?.[0]?.id
     if (!tenantId) return NextResponse.json({ error: "No tenant" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
 
     const body = await req.json()
     const { question, answer, isActive, sortOrder } = body

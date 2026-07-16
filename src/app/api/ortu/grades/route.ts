@@ -1,3 +1,4 @@
+import { requireTenantMembership } from "@/lib/api-utils"
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
@@ -13,17 +14,17 @@ export async function GET(req: Request) {
     const semester = searchParams.get("semester")
     const year = searchParams.get("year")
     if (!tenantId) return NextResponse.json({ error: "tenantId required" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId as string);
+  if (accessError) return accessError;
+    if (!studentId) return NextResponse.json({ error: "studentId required" }, { status: 400 })
 
-    // Ortu guard: Validate parent owns this student
-    const where: any = { tenantId }
-    if (studentId) {
-      // Verify the student belongs to this parent
-      const link = await db.studentParent.findFirst({
-        where: { userId: session.user.id, studentId },
-      })
-      if (!link) return NextResponse.json({ error: "Akses ditolak" }, { status: 403 })
-      where.studentId = studentId
-    }
+    // Ortu guard: Validate parent owns this student (always enforced)
+    const link = await db.studentParent.findFirst({
+      where: { userId: session.user.id, studentId },
+    })
+    if (!link) return NextResponse.json({ error: "Akses ditolak" }, { status: 403 })
+
+    const where: any = { tenantId, studentId }
     if (classroomId) where.classroomId = classroomId
     if (semester) where.semester = Number(semester)
     if (year) where.year = Number(year)

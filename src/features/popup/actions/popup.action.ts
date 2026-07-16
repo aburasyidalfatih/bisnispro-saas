@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { popupSchema } from "@/features/popup/schemas/popup.schema"
@@ -9,7 +9,8 @@ import { revalidatePath, unstable_cache } from "next/cache"
 
 
 export async function getPopups(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.popup.findMany({
     where: { tenantId },
@@ -32,7 +33,8 @@ export const getActivePopup = async (tenantId: string) => {
 }
 
 export async function getPopupById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.popup.findUnique({
     where: { id, tenantId }
@@ -40,7 +42,8 @@ export async function getPopupById(id: string, tenantId: string) {
 }
 
 export async function createPopup(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = popupSchema.parse(data)
   
@@ -71,7 +74,8 @@ export async function createPopup(tenantId: string, data: any) {
 }
 
 export async function updatePopup(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = popupSchema.parse(data)
   
@@ -98,7 +102,8 @@ export async function updatePopup(id: string, tenantId: string, data: any) {
 }
 
 export async function deletePopup(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.popup.delete({
     where: { id, tenantId }
@@ -115,7 +120,8 @@ export async function deletePopup(id: string, tenantId: string) {
 }
 
 export async function togglePopupStatus(id: string, tenantId: string, isActive: boolean) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   if (isActive) {
     await db.popup.updateMany({

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 
 export async function GET(req: Request) {
@@ -17,6 +18,8 @@ export async function GET(req: Request) {
     if (!periodeId || !tenantId) {
       return new NextResponse("Missing parameters", { status: 400 })
     }
+    const { error: accessError } = await requireTenantMembership(tenantId, ["owner", "admin", "operator"])
+    if (accessError) return accessError
 
     // Ambil data pendaftar
     const pendaftar = await db.pendaftarPpdb.findMany({

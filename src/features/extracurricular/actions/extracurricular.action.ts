@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { extracurricularSchema } from "@/features/extracurricular/schemas/extracurricular.schema"
@@ -11,7 +11,8 @@ import { clearTenantCache } from "@/features/tenant/services/tenant-modular.serv
 
 
 export async function getExtracurriculars(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.extracurricular.findMany({
     where: { tenantId },
@@ -20,7 +21,8 @@ export async function getExtracurriculars(tenantId: string) {
 }
 
 export async function getExtracurricularById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.extracurricular.findUnique({
     where: { id, tenantId }
@@ -28,7 +30,8 @@ export async function getExtracurricularById(id: string, tenantId: string) {
 }
 
 export async function createExtracurricular(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = extracurricularSchema.parse(data)
   
@@ -55,7 +58,8 @@ export async function createExtracurricular(tenantId: string, data: any) {
 }
 
 export async function updateExtracurricular(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = extracurricularSchema.parse(data)
   
@@ -76,7 +80,8 @@ export async function updateExtracurricular(id: string, tenantId: string, data: 
 }
 
 export async function deleteExtracurricular(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.extracurricular.delete({
     where: { id, tenantId }
@@ -94,7 +99,8 @@ export async function deleteExtracurricular(id: string, tenantId: string) {
 }
 
 export async function updateExtracurricularsOrder(tenantId: string, orderedIds: string[]) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.$transaction(
     orderedIds.map((id, i) =>

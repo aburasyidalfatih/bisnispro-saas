@@ -3,8 +3,8 @@ import { createFacility, updateFacility, deleteFacility, getFacilities } from '@
 import { db } from '../../../__mocks__/prisma'
 
 // Mock Guard: lolos secara default
-vi.mock('@/lib/guards/tenant-guard', () => ({
-  requireTenantAccess: vi.fn(),
+vi.mock('@/lib/api-utils', () => ({
+  requireTenantMembership: vi.fn(),
 }))
 
 // Mock revalidatePath Next.js
@@ -19,8 +19,8 @@ describe('Server Actions: Facilities', () => {
 
     await expect(createFacility('tenant-1', invalidData)).rejects.toThrow()
     
-    const { requireTenantAccess } = await import('@/lib/guards/tenant-guard')
-    expect(requireTenantAccess).toHaveBeenCalledWith('tenant-1')
+    const { requireTenantMembership } = await import('@/lib/api-utils')
+    expect(requireTenantMembership).toHaveBeenCalledWith('tenant-1')
     expect(db.facility.create).not.toHaveBeenCalled()
   })
 
@@ -42,13 +42,13 @@ describe('Server Actions: Facilities', () => {
     expect(result.id).toBe('fac-1')
   })
 
-  it('TC3: Selalu memanggil requireTenantAccess sebelum operasi DB pada getFacilities', async () => {
+  it('TC3: Selalu memanggil requireTenantMembership sebelum operasi DB pada getFacilities', async () => {
     db.facility.findMany.mockResolvedValue([])
 
     await getFacilities('tenant-xyz')
 
-    const { requireTenantAccess } = await import('@/lib/guards/tenant-guard')
-    expect(requireTenantAccess).toHaveBeenCalledWith('tenant-xyz')
+    const { requireTenantMembership } = await import('@/lib/api-utils')
+    expect(requireTenantMembership).toHaveBeenCalledWith('tenant-xyz')
     expect(db.facility.findMany).toHaveBeenCalledWith({
       where: { tenantId: 'tenant-xyz' },
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
@@ -61,8 +61,8 @@ describe('Server Actions: Facilities', () => {
 
     await updateFacility('fac-1', 'tenant-1', data)
 
-    const { requireTenantAccess } = await import('@/lib/guards/tenant-guard')
-    expect(requireTenantAccess).toHaveBeenCalledWith('tenant-1')
+    const { requireTenantMembership } = await import('@/lib/api-utils')
+    expect(requireTenantMembership).toHaveBeenCalledWith('tenant-1')
     expect(db.facility.update).toHaveBeenCalledWith({
       where: { id: 'fac-1', tenantId: 'tenant-1' },
       data: expect.objectContaining({ name: 'Updated Lab' }),
@@ -74,8 +74,8 @@ describe('Server Actions: Facilities', () => {
 
     await deleteFacility('fac-1', 'tenant-1')
 
-    const { requireTenantAccess } = await import('@/lib/guards/tenant-guard')
-    expect(requireTenantAccess).toHaveBeenCalledWith('tenant-1')
+    const { requireTenantMembership } = await import('@/lib/api-utils')
+    expect(requireTenantMembership).toHaveBeenCalledWith('tenant-1')
     expect(db.facility.delete).toHaveBeenCalledWith({
       where: { id: 'fac-1', tenantId: 'tenant-1' },
     })

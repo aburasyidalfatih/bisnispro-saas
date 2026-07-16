@@ -3,10 +3,11 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function verifyManualTopup(paymentId: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
 
   try {
     return await db.$transaction(async (tx) => {
@@ -73,7 +74,8 @@ export async function verifyManualTopup(paymentId: string, tenantId: string) {
 }
 
 export async function rejectManualTopup(paymentId: string, reason: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
 
   try {
     const payment = await db.payment.findUnique({

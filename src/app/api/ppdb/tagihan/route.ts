@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/logger";
+import { requireTenantMembership } from "@/lib/api-utils";
 
 export async function GET(req: Request) {
   try {
@@ -16,6 +17,8 @@ export async function GET(req: Request) {
     if (!tenantId) {
       return NextResponse.json({ error: "Tenant ID required" }, { status: 400 });
     }
+    const { error: accessError } = await requireTenantMembership(tenantId);
+    if (accessError) return accessError;
 
     const billings = await db.tagihanPpdb.findMany({
       where: {

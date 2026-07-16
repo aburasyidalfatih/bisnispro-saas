@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { programSchema } from "@/features/program/schemas/program.schema"
@@ -11,7 +11,8 @@ import { clearTenantCache } from "@/features/tenant/services/tenant-modular.serv
 
 
 export async function getPrograms(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.program.findMany({
     where: { tenantId },
@@ -20,7 +21,8 @@ export async function getPrograms(tenantId: string) {
 }
 
 export async function getProgramById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.program.findUnique({
     where: { id, tenantId }
@@ -28,7 +30,8 @@ export async function getProgramById(id: string, tenantId: string) {
 }
 
 export async function createProgram(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = programSchema.parse(data)
   
@@ -55,7 +58,8 @@ export async function createProgram(tenantId: string, data: any) {
 }
 
 export async function updateProgram(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = programSchema.parse(data)
   
@@ -76,7 +80,8 @@ export async function updateProgram(id: string, tenantId: string, data: any) {
 }
 
 export async function deleteProgram(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.program.delete({
     where: { id, tenantId }
@@ -94,7 +99,8 @@ export async function deleteProgram(id: string, tenantId: string) {
 }
 
 export async function updateProgramsOrder(tenantId: string, orderedIds: string[]) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.$transaction(
     orderedIds.map((id, i) =>

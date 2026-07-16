@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
@@ -38,7 +38,8 @@ export async function getUserStaffContext(tenantId: string) {
 
 export async function createLearningObjective(tenantId: string, data: LearningObjectiveInput) {
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
     const parsed = learningObjectiveSchema.parse(data)
     
     const objective = await db.learningObjective.create({
@@ -56,7 +57,8 @@ export async function createLearningObjective(tenantId: string, data: LearningOb
 }
 
 export async function getLearningObjectives(tenantId: string, subjectId?: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.learningObjective.findMany({
     where: { 
@@ -72,7 +74,8 @@ export async function getLearningObjectives(tenantId: string, subjectId?: string
 
 export async function saveFormativeScore(tenantId: string, data: FormativeScoreInput) {
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
     const parsed = formativeScoreSchema.parse(data)
     
     const score = await db.formativeScore.upsert({
@@ -100,7 +103,8 @@ export async function saveFormativeScore(tenantId: string, data: FormativeScoreI
 
 export async function saveSummativeScore(tenantId: string, data: SummativeScoreInput) {
   try {
-    await requireTenantAccess(tenantId)
+    const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
     const parsed = summativeScoreSchema.parse(data)
     
     const score = await db.summativeScore.upsert({
@@ -128,7 +132,8 @@ export async function saveSummativeScore(tenantId: string, data: SummativeScoreI
 }
 
 export async function getStudentsByClassroom(tenantId: string, classroomId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.student.findMany({
     where: { 

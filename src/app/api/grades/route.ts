@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function GET(req: Request) {
   try {
@@ -13,6 +14,8 @@ export async function GET(req: Request) {
     const semester = searchParams.get("semester")
     const year = searchParams.get("year")
     if (!tenantId) return NextResponse.json({ error: "tenantId required" }, { status: 400 })
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     const where: any = { tenantId }
     if (classroomId) where.classroomId = classroomId
@@ -46,6 +49,8 @@ export async function POST(req: Request) {
     if (!tenantId || !Array.isArray(gradesData) || gradesData.length === 0) {
       return NextResponse.json({ error: "tenantId & grades[] required" }, { status: 400 })
     }
+    const { error: accessError } = await requireTenantMembership(tenantId)
+    if (accessError) return accessError
 
     const results = await db.$transaction(
       gradesData.map((g: any) =>

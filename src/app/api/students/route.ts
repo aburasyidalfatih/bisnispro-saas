@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
 import { requireTenantMembership } from "@/lib/api-utils"
 import { z } from "zod"
 
@@ -14,11 +13,8 @@ export async function GET(req: Request) {
   const isActive = url.searchParams.get("isActive") !== "false" // default: hanya aktif
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
-  try {
-    await requireTenantAccess(tenantId)
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 403 })
-  }
+  const { error: accessError } = await requireTenantMembership(tenantId)
+  if (accessError) return accessError
 
   const where: any = {
     tenantId,
@@ -66,11 +62,8 @@ export async function POST(req: Request) {
     phone, email, fatherName, motherName, guardianName, classroomId, password } = body
 
   if (!tenantId || !name) return NextResponse.json({ error: "tenantId dan name wajib" }, { status: 400 })
-  try {
-    await requireTenantAccess(tenantId)
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 403 })
-  }
+  const { error: accessError } = await requireTenantMembership(tenantId)
+  if (accessError) return accessError
 
   try {
     let hashedPassword = undefined

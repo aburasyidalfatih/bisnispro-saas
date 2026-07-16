@@ -1,6 +1,6 @@
 "use server"
 
-import { requireTenantAccess } from "@/lib/guards/tenant-guard"
+import { requireTenantMembership } from "@/lib/api-utils"
 import { db } from "@/lib/db"
 import { partnershipSchema } from "@/features/partnership/schemas/partnership.schema"
 import { revalidatePath } from "next/cache"
@@ -8,7 +8,8 @@ import { invalidatePublicTenantCache } from "@/features/tenant/services/tenant-p
 import { clearTenantCache } from "@/features/tenant/services/tenant-modular.service"
 
 export async function getPartnerships(tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.partnership.findMany({
     where: { tenantId },
@@ -24,7 +25,8 @@ export async function getActivePartnerships(tenantId: string) {
 }
 
 export async function getPartnershipById(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   return await db.partnership.findUnique({
     where: { id, tenantId }
@@ -32,7 +34,8 @@ export async function getPartnershipById(id: string, tenantId: string) {
 }
 
 export async function createPartnership(tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = partnershipSchema.parse(data)
   
@@ -53,7 +56,8 @@ export async function createPartnership(tenantId: string, data: any) {
 }
 
 export async function updatePartnership(id: string, tenantId: string, data: any) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   const parsed = partnershipSchema.parse(data)
   
@@ -71,7 +75,8 @@ export async function updatePartnership(id: string, tenantId: string, data: any)
 }
 
 export async function deletePartnership(id: string, tenantId: string) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.partnership.delete({
     where: { id, tenantId }
@@ -86,7 +91,8 @@ export async function deletePartnership(id: string, tenantId: string) {
 }
 
 export async function togglePartnershipStatus(id: string, tenantId: string, isActive: boolean) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.partnership.update({
     where: { id, tenantId },
@@ -102,7 +108,8 @@ export async function togglePartnershipStatus(id: string, tenantId: string, isAc
 }
 
 export async function updatePartnershipsOrder(tenantId: string, orderedIds: string[]) {
-  await requireTenantAccess(tenantId)
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) throw new Error("Unauthorized")
   
   await db.$transaction(
     orderedIds.map((id, i) =>
