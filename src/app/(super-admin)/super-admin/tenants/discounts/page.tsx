@@ -50,11 +50,12 @@ export default function DiscountsPage() {
     setLoading(true)
     try {
       const res = await fetch("/api/super-admin/discounts")
-      const data = await res.json()
-      if (res.ok && Array.isArray(data)) {
-        setDiscounts(data)
+      const json = await res.json()
+      const items = Array.isArray(json) ? json : json.data || []
+      if (res.ok && Array.isArray(items)) {
+        setDiscounts(items)
       } else {
-        throw new Error(data.error || "Format respons tidak valid")
+        throw new Error(json.error || "Format respons tidak valid")
       }
     } catch {
       toast({ title: "Error", description: "Gagal memuat data diskon.", variant: "destructive" })

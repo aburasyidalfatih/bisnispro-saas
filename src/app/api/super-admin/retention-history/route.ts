@@ -14,19 +14,19 @@ export async function GET() {
         where: { retentionStatus: "WARN_30" },
         select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
         orderBy: { lastActiveAt: 'asc' },
-        take: 200,
+        take: 50,
       }),
       db.tenant.findMany({
         where: { retentionStatus: "SUSPENDED_60" },
         select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
         orderBy: { lastActiveAt: 'asc' },
-        take: 200,
+        take: 50,
       }),
       db.tenant.findMany({
         where: { retentionStatus: "CHURNED" },
         select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
         orderBy: { lastActiveAt: 'asc' },
-        take: 200,
+        take: 50,
       }),
     ])
 

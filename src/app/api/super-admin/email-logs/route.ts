@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
     const logs = await db.emailQueueLog.findMany({
       orderBy: { createdAt: "desc" },
-      take: 150,
+      take: 50,
       include: {
         tenant: {
           select: { name: true, slug: true }

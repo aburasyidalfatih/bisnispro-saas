@@ -2,25 +2,34 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await auth()
   if (!session?.user?.isSuperAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
-    const discounts = await db.discountCode.findMany({
-      take: 200,
-      orderBy: { createdAt: "desc" },
-      include: {
-        affiliate: {
-          include: {
-            user: { select: { email: true } }
+    const url = new URL(req.url)
+    const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"))
+    const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get("limit") || "20")))
+    const skip = (page - 1) * limit
+
+    const [discounts, total] = await Promise.all([
+      db.discountCode.findMany({
+        take: limit,
+        skip,
+        orderBy: { createdAt: "desc" },
+        include: {
+          affiliate: {
+            include: {
+              user: { select: { email: true } }
+            }
           }
         }
-      }
-    })
-    return NextResponse.json(discounts)
+      }),
+      db.discountCode.count()
+    ])
+    return NextResponse.json({ data: discounts, total, page, limit, totalPages: Math.ceil(total / limit) })
   } catch (error) {
     console.error("GET discounts error:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })

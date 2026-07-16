@@ -20,6 +20,7 @@ export default async function SuperAdminThemesPage() {
   const [dbThemes, defaultCount, modernCount, deletedThemesSetting] = await Promise.all([
     db.customTheme.findMany({
       orderBy: { createdAt: "desc" },
+      take: 50,
       include: {
         _count: {
           select: { tenants: true }

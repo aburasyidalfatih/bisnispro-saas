@@ -20,6 +20,7 @@ export default async function FeedbackPage() {
 
   const feedbacks = await db.systemFeedback.findMany({
     orderBy: { createdAt: "desc" },
+    take: 50,
     include: {
       user: {
         select: { name: true, email: true },

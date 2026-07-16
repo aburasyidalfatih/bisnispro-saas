@@ -42,10 +42,9 @@ export default function DormantSchoolsPage() {
     setLoading(true)
     fetch("/api/super-admin/dormant")
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setTenants(data)
-        }
+      .then((json) => {
+        const items = Array.isArray(json) ? json : json.data || []
+        setTenants(items)
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false))

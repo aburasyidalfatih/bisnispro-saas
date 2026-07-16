@@ -4,21 +4,30 @@ import { db } from "@/lib/db"
 import { approveApplication, sendApplicationNotification } from "@/features/tenant/services/application.service"
 import { logger } from "@/lib/logger"
 
-// Ambil semua daftar pengajuan
-export async function GET() {
+// Ambil semua daftar pengajuan (dengan pagination)
+export async function GET(req: Request) {
   const session = await auth()
   if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-  const applications = await db.tenantApplication.findMany({
-    take: 200,
-    orderBy: { createdAt: "desc" },
-    include: {
-      affiliate: {
-        include: { user: true }
+  const url = new URL(req.url)
+  const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"))
+  const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get("limit") || "20")))
+  const skip = (page - 1) * limit
+
+  const [applications, total] = await Promise.all([
+    db.tenantApplication.findMany({
+      take: limit,
+      skip,
+      orderBy: { createdAt: "desc" },
+      include: {
+        affiliate: {
+          include: { user: true }
+        }
       }
-    }
-  })
-  return NextResponse.json(applications)
+    }),
+    db.tenantApplication.count()
+  ])
+  return NextResponse.json({ data: applications, total, page, limit, totalPages: Math.ceil(total / limit) })
 }
 
 // Update status pengajuan (Approve, Reject, Revision) - Mendukung BULK
