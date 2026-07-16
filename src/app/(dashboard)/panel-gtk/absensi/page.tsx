@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from "@/components/ui/card"
@@ -9,23 +9,22 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
   MapPin, Clock, CheckCircle, LogIn, LogOut, Loader2,
-  Navigation, AlertCircle, Calendar, History, Camera, X, FileText, Send
+  Navigation, AlertCircle, Calendar, Camera, X
 } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { format, isToday } from "date-fns"
 import { formatInTimeZone } from "date-fns-tz"
 import { id as localeId } from "date-fns/locale"
 import { cn } from "@/lib/utils"
+import { useGeolocation } from "./_hooks/use-geolocation"
+import { useSelfieCapture } from "./_hooks/use-selfie-capture"
+import { PermitFormDialog } from "./_components/permit-form-dialog"
+import { PermitHistoryList } from "./_components/permit-history-list"
+import { AttendanceHistoryList } from "./_components/attendance-history-list"
 
 type AttendanceRecord = {
   id: string; date: string; status: string
   checkInAt?: string; checkOutAt?: string
   checkInLat?: number; checkInLng?: number; checkInPhoto?: string; notes?: string
 }
-
-type GeoState = "idle" | "loading" | "success" | "error"
 
 const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
   HADIR: { label: "Hadir", color: "text-emerald-600", bg: "bg-emerald-500/10 border-emerald-300" },
@@ -36,70 +35,44 @@ const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> =
 
 export default function GTKAttendancePage() {
   const { data: session } = useSession()
-  const { toast, dismiss } = useToast()
+  const { toast } = useToast()
   const tenant = session?.user?.tenants?.[0]
 
   const [staff, setStaff] = useState<any>(null)
   const [todayRecord, setTodayRecord] = useState<AttendanceRecord | null>(null)
   const [history, setHistory] = useState<AttendanceRecord[]>([])
   const [loading, setLoading] = useState(true)
-  const [geoState, setGeoState] = useState<GeoState>("idle")
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null)
-  const [locationName, setLocationName] = useState("")
   const [tz, setTz] = useState("Asia/Jakarta")
   const [checkingIn, setCheckingIn] = useState(false)
   const [checkingOut, setCheckingOut] = useState(false)
   const [notes, setNotes] = useState("")
   const [now, setNow] = useState(new Date())
+  const [requireSelfie, setRequireSelfie] = useState(false)
 
   // Permits state
   const [permits, setPermits] = useState<any[]>([])
   const [permitsLoading, setPermitsLoading] = useState(true)
-  const [openPermitModal, setOpenPermitModal] = useState(false)
-  const [submittingPermit, setSubmittingPermit] = useState(false)
-  const [permitForm, setPermitForm] = useState({
-    type: "IZIN",
-    startDate: format(new Date(), "yyyy-MM-dd"),
-    endDate: format(new Date(), "yyyy-MM-dd"),
-    reason: "",
-    proofUrl: ""
-  })
-  const [permitFile, setPermitFile] = useState<File | null>(null)
 
-  // Selfie state
-  const [requireSelfie, setRequireSelfie] = useState(false)
-  const [photoPreview, setPhotoPreview] = useState("")
-  const [uploadingPhoto, setUploadingPhoto] = useState(false)
-  const [isCameraOpen, setIsCameraOpen] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const streamRef = useRef<MediaStream | null>(null)
-
-  const stopCamera = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop())
-      streamRef.current = null
-    }
-    setIsCameraOpen(false)
-  }, [])
+  const geo = useGeolocation()
+  const selfie = useSelfieCapture(tenant?.id)
 
   // Live clock
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
     return () => {
       clearInterval(t)
-      stopCamera() // Ensure camera is stopped on unmount
+      selfie.stopCamera()
     }
-  }, [stopCamera])
+  }, [selfie.stopCamera])
 
-  // Fetch staff profile linked to current user
+  // Fetch staff profile
   useEffect(() => {
     if (!tenant) return
     fetch(`/api/panel-gtk/profil?tenantId=${tenant.id}`)
       .then(r => r.json())
       .then(data => {
         setStaff(data.error ? null : data)
-        if (data.error) setLoading(false) // Stop loading immediately if no staff
+        if (data.error) setLoading(false)
       })
       .catch(console.error)
   }, [tenant])
@@ -146,147 +119,14 @@ export default function GTKAttendancePage() {
 
   useEffect(() => { fetchPermits() }, [fetchPermits])
 
-  const handleSubmitPermit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!tenant || !staff) return
-    setSubmittingPermit(true)
-    try {
-      let finalProofUrl = permitForm.proofUrl
-
-      if (permitFile) {
-        const formData = new FormData()
-        formData.append("file", permitFile)
-        formData.append("tenantId", tenant.id)
-        formData.append("subDir", "permits")
-        
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formData
-        })
-        const uploadData = await uploadRes.json()
-        if (!uploadRes.ok) throw new Error(uploadData.error || "Gagal upload file")
-        
-        finalProofUrl = uploadData.url
-      }
-
-      const res = await fetch("/api/gtk/attendance/permits", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...permitForm,
-          proofUrl: finalProofUrl,
-          tenantId: tenant.id,
-          staffId: staff.id
-        })
-      })
-      if (!res.ok) throw new Error((await res.json()).error)
-      toast({ title: "Pengajuan izin berhasil dikirim!" })
-      setOpenPermitModal(false)
-      fetchPermits()
-      setPermitForm({
-        type: "IZIN",
-        startDate: format(new Date(), "yyyy-MM-dd"),
-        endDate: format(new Date(), "yyyy-MM-dd"),
-        reason: "",
-        proofUrl: ""
-      })
-      setPermitFile(null)
-    } catch (err: any) {
-      toast({ title: "Gagal mengajukan izin", description: err.message, variant: "destructive" })
-    } finally {
-      setSubmittingPermit(false)
-    }
-  }
-
-  // Get GPS location
-  const getLocation = () => {
-    if (!navigator.geolocation) {
-      toast({ title: "Browser tidak mendukung GPS", variant: "destructive" })
-      return
-    }
-    setGeoState("loading")
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        dismiss() // Clear any lingering error toasts
-        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        setLocationName(`${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`)
-        setGeoState("success")
-      },
-      (err) => {
-        dismiss()
-        setGeoState("error")
-        toast({ title: "Gagal mendapatkan lokasi", description: err.message, variant: "destructive" })
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    )
-  }
-
-  // Camera Handlers
-  const startCamera = async () => {
-    setPhotoPreview("")
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
-        audio: false,
-      })
-      streamRef.current = stream
-      setIsCameraOpen(true)
-      // Small timeout to ensure video element is rendered before attaching stream
-      setTimeout(() => {
-        if (videoRef.current) videoRef.current.srcObject = stream
-      }, 100)
-    } catch (err) {
-      toast({ title: "Gagal akses kamera", description: "Pastikan izin kamera diberikan di browser", variant: "destructive" })
-    }
-  }
-
-  const capturePhoto = async () => {
-    if (!videoRef.current || !canvasRef.current) return
-    const video = videoRef.current
-    const canvas = canvasRef.current
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-    
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.8)
-    
-    stopCamera()
-    setUploadingPhoto(true)
-    
-    try {
-      const res = await fetch(dataUrl)
-      const blob = await res.blob()
-      const file = new File([blob], "selfie.jpg", { type: "image/jpeg" })
-      
-      const fd = new FormData()
-      fd.append("file", file)
-      fd.append("subDir", "attendance")
-      if (tenant?.id) fd.append("tenantId", tenant.id)
-      
-      const uploadRes = await fetch("/api/upload", { method: "POST", body: fd })
-      const d = await uploadRes.json()
-      if (uploadRes.ok && d.url) { 
-         setPhotoPreview(d.url) 
-      } else {
-         toast({ title: "Gagal upload", description: d.error, variant: "destructive" })
-      }
-    } catch { 
-      toast({ title: "Gagal memproses foto", variant: "destructive" }) 
-    } finally { 
-      setUploadingPhoto(false) 
-    }
-  }
-
   // Check-in
   const handleCheckIn = async () => {
     if (!staff || !tenant) return
-    if (geoState !== "success" || !coords) {
+    if (geo.geoState !== "success" || !geo.coords) {
       toast({ title: "Aktifkan GPS terlebih dahulu", variant: "destructive" })
       return
     }
-    if (requireSelfie && !photoPreview) {
+    if (requireSelfie && !selfie.photoPreview) {
       toast({ title: "Wajib mengambil foto selfie", variant: "destructive" })
       return
     }
@@ -296,16 +136,13 @@ export default function GTKAttendancePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tenantId: tenant.id,
-          staffId: staff.id,
-          checkInLat: coords.lat,
-          checkInLng: coords.lng,
-          checkInPhoto: photoPreview || undefined,
-          notes,
+          tenantId: tenant.id, staffId: staff.id,
+          checkInLat: geo.coords.lat, checkInLng: geo.coords.lng,
+          checkInPhoto: selfie.photoPreview || undefined, notes,
         }),
       })
       if (!res.ok) throw new Error((await res.json()).error)
-      toast({ title: "✅ Check-in berhasil!", description: `Lokasi tercatat: ${locationName}` })
+      toast({ title: "✅ Check-in berhasil!", description: `Lokasi tercatat: ${geo.locationName}` })
       fetchAttendance()
     } catch (err: any) {
       toast({ title: "Gagal check-in", description: err.message, variant: "destructive" })
@@ -317,7 +154,7 @@ export default function GTKAttendancePage() {
   // Check-out
   const handleCheckOut = async () => {
     if (!staff || !tenant || !todayRecord) return
-    if (geoState !== "success" || !coords) {
+    if (geo.geoState !== "success" || !geo.coords) {
       toast({ title: "Aktifkan GPS terlebih dahulu", variant: "destructive" })
       return
     }
@@ -326,11 +163,9 @@ export default function GTKAttendancePage() {
       const res = await fetch(`/api/gtk/attendance/${todayRecord.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          tenantId: tenant?.id, 
-          notes,
-          checkOutLat: coords.lat,
-          checkOutLng: coords.lng
+        body: JSON.stringify({
+          tenantId: tenant?.id, notes,
+          checkOutLat: geo.coords.lat, checkOutLng: geo.coords.lng
         }),
       })
       if (!res.ok) throw new Error((await res.json()).error)
@@ -378,8 +213,6 @@ export default function GTKAttendancePage() {
         <p className="text-indigo-200 text-sm">Absensi Harian</p>
         <h1 className="text-white text-2xl font-black mt-1">{staff?.name || "Guru"}</h1>
         <p className="text-indigo-200 text-sm">{staff?.role || "Pengajar"} · {formatInTimeZone(now, tz, "EEEE, d MMMM yyyy", { locale: localeId })}</p>
-
-        {/* Live Clock */}
         <div className="mt-4 text-center">
           <p className="text-white text-5xl font-black tracking-tight font-mono">
             {formatInTimeZone(now, tz, "HH:mm")}
@@ -407,10 +240,7 @@ export default function GTKAttendancePage() {
             {/* Timeline Check-in / Check-out */}
             <div className="flex gap-0 mb-5">
               <div className="flex-1">
-                <div className={cn(
-                  "rounded-xl p-3 border text-center transition-all",
-                  alreadyCheckedIn ? "bg-emerald-500/10 border-emerald-300" : "bg-muted/50 border-dashed border-muted-foreground/30"
-                )}>
+                <div className={cn("rounded-xl p-3 border text-center transition-all", alreadyCheckedIn ? "bg-emerald-500/10 border-emerald-300" : "bg-muted/50 border-dashed border-muted-foreground/30")}>
                   <LogIn className={cn("h-5 w-5 mx-auto mb-1", alreadyCheckedIn ? "text-emerald-600" : "text-muted-foreground")} />
                   <p className="text-xs text-muted-foreground">Absen Masuk</p>
                   <p className={cn("font-black text-base", alreadyCheckedIn ? "text-emerald-600" : "text-muted-foreground")}>
@@ -420,19 +250,13 @@ export default function GTKAttendancePage() {
               </div>
               <div className="flex items-center px-3">
                 {workDuration !== null && !alreadyCheckedOut ? (
-                  <div className="text-center">
-                    <Clock className="h-4 w-4 text-indigo-500 mx-auto" />
-                    <p className="text-[10px] text-indigo-500 font-bold">{workDuration}m</p>
-                  </div>
+                  <div className="text-center"><Clock className="h-4 w-4 text-indigo-500 mx-auto" /><p className="text-[10px] text-indigo-500 font-bold">{workDuration}m</p></div>
                 ) : (
                   <div className="h-px w-6 bg-border" />
                 )}
               </div>
               <div className="flex-1">
-                <div className={cn(
-                  "rounded-xl p-3 border text-center transition-all",
-                  alreadyCheckedOut ? "bg-indigo-500/10 border-indigo-300" : "bg-muted/50 border-dashed border-muted-foreground/30"
-                )}>
+                <div className={cn("rounded-xl p-3 border text-center transition-all", alreadyCheckedOut ? "bg-indigo-500/10 border-indigo-300" : "bg-muted/50 border-dashed border-muted-foreground/30")}>
                   <LogOut className={cn("h-5 w-5 mx-auto mb-1", alreadyCheckedOut ? "text-indigo-600" : "text-muted-foreground")} />
                   <p className="text-xs text-muted-foreground">Absen Pulang</p>
                   <p className={cn("font-black text-base", alreadyCheckedOut ? "text-indigo-600" : "text-muted-foreground")}>
@@ -442,84 +266,50 @@ export default function GTKAttendancePage() {
               </div>
             </div>
 
-            {/* Lokasi GPS */}
+            {/* GPS + Selfie + Actions */}
             <div className="space-y-3">
               {!alreadyCheckedOut && (
-                <Button
-                  variant="outline"
-                  className={cn("w-full rounded-xl gap-2", geoState === "success" && "border-emerald-400 text-emerald-600")}
-                  onClick={getLocation}
-                  disabled={geoState === "loading" || geoState === "success"}
-                >
-                  {geoState === "loading" ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : geoState === "success" ? (
-                    <><CheckCircle className="h-4 w-4" /> Lokasi terdeteksi</>
-                  ) : (
-                    <><Navigation className="h-4 w-4" /> Aktifkan GPS</>
-                  )}
+                <Button variant="outline" className={cn("w-full rounded-xl gap-2", geo.geoState === "success" && "border-emerald-400 text-emerald-600")} onClick={geo.getLocation} disabled={geo.geoState === "loading" || geo.geoState === "success"}>
+                  {geo.geoState === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : geo.geoState === "success" ? <><CheckCircle className="h-4 w-4" /> Lokasi terdeteksi</> : <><Navigation className="h-4 w-4" /> Aktifkan GPS</>}
                 </Button>
               )}
 
-              {/* Lokasi info */}
-              {geoState === "success" && coords && (
+              {geo.geoState === "success" && geo.coords && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 p-2 rounded-xl bg-emerald-500/10 border border-emerald-200">
                     <MapPin className="h-4 w-4 text-emerald-600 shrink-0" />
-                    <p className="text-xs text-emerald-700 font-mono truncate">{locationName}</p>
+                    <p className="text-xs text-emerald-700 font-mono truncate">{geo.locationName}</p>
                   </div>
                   <div className="w-full h-48 rounded-xl overflow-hidden border shadow-sm">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      frameBorder="0"
-                      style={{ border: 0 }}
-                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng-0.005},${coords.lat-0.005},${coords.lng+0.005},${coords.lat+0.005}&layer=mapnik&marker=${coords.lat},${coords.lng}`}
+                    <iframe width="100%" height="100%" frameBorder="0" style={{ border: 0 }}
+                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${geo.coords.lng-0.005},${geo.coords.lat-0.005},${geo.coords.lng+0.005},${geo.coords.lat+0.005}&layer=mapnik&marker=${geo.coords.lat},${geo.coords.lng}`}
                       allowFullScreen
                     ></iframe>
                   </div>
-                  
+
                   {requireSelfie && !alreadyCheckedIn && (
                     <div className="rounded-xl border p-3 bg-muted/30">
                       <p className="text-xs font-bold mb-2 flex items-center gap-1.5"><Camera className="h-3.5 w-3.5 text-primary"/> Foto Selfie (Wajib)</p>
-                      
-                      {/* Hidden canvas for image capture */}
-                      <canvas ref={canvasRef} className="hidden" />
-                      
-                      {isCameraOpen ? (
+                      <canvas ref={selfie.canvasRef} className="hidden" />
+                      {selfie.isCameraOpen ? (
                         <div className="relative w-full rounded-lg overflow-hidden border border-border bg-black">
-                          <video ref={videoRef} autoPlay playsInline className="w-full h-auto min-h-[200px] object-cover scale-x-[-1]" />
+                          <video ref={selfie.videoRef} autoPlay playsInline className="w-full h-auto min-h-[200px] object-cover scale-x-[-1]" />
                           <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
-                            <Button size="icon" variant="destructive" className="h-12 w-12 rounded-full shadow-lg" onClick={stopCamera}>
-                              <X className="h-5 w-5" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-emerald-500 hover:bg-emerald-600" onClick={capturePhoto}>
-                              <Camera className="h-5 w-5 text-white" />
-                            </Button>
+                            <Button size="icon" variant="destructive" className="h-12 w-12 rounded-full shadow-lg" onClick={selfie.stopCamera}><X className="h-5 w-5" /></Button>
+                            <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-emerald-500 hover:bg-emerald-600" onClick={selfie.capturePhoto}><Camera className="h-5 w-5 text-white" /></Button>
                           </div>
                         </div>
-                      ) : photoPreview ? (
+                      ) : selfie.photoPreview ? (
                         <div className="relative w-full h-48 rounded-lg overflow-hidden border border-border bg-black">
-                          <img src={photoPreview} alt="Selfie" className="w-full h-full object-cover scale-x-[-1]" loading="lazy" decoding="async" />
-                          <Button onClick={() => setPhotoPreview("")} className="absolute top-2 right-2 bg-destructive text-white p-1.5 rounded-full shadow-md hover:bg-destructive/90">
-                            <X className="h-4 w-4" />
-                          </Button>
+                          <img src={selfie.photoPreview} alt="Selfie" className="w-full h-full object-cover scale-x-[-1]" loading="lazy" decoding="async" />
+                          <Button onClick={() => selfie.setPhotoPreview("")} className="absolute top-2 right-2 bg-destructive text-white p-1.5 rounded-full shadow-md hover:bg-destructive/90"><X className="h-4 w-4" /></Button>
                         </div>
                       ) : (
-                        <div 
-                          onClick={uploadingPhoto ? undefined : startCamera}
-                          className="w-full h-32 rounded-lg border-2 border-dashed border-primary/40 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors"
-                        >
-                          {uploadingPhoto ? (
-                            <div className="flex flex-col items-center">
-                               <Loader2 className="h-8 w-8 text-primary animate-spin mb-2" />
-                               <span className="text-xs font-medium text-muted-foreground">Memproses...</span>
-                            </div>
+                        <div onClick={selfie.uploadingPhoto ? undefined : selfie.startCamera} className="w-full h-32 rounded-lg border-2 border-dashed border-primary/40 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors">
+                          {selfie.uploadingPhoto ? (
+                            <div className="flex flex-col items-center"><Loader2 className="h-8 w-8 text-primary animate-spin mb-2" /><span className="text-xs font-medium text-muted-foreground">Memproses...</span></div>
                           ) : (
-                            <>
-                              <Camera className="h-8 w-8 text-primary mb-2 opacity-80" />
-                              <span className="text-xs font-medium text-muted-foreground">Ketuk untuk buka kamera</span>
-                            </>
+                            <><Camera className="h-8 w-8 text-primary mb-2 opacity-80" /><span className="text-xs font-medium text-muted-foreground">Ketuk untuk buka kamera</span></>
                           )}
                         </div>
                       )}
@@ -529,134 +319,36 @@ export default function GTKAttendancePage() {
               )}
 
               {todayRecord?.checkInLat && todayRecord?.checkInLng && (
-                <a
-                  href={`https://maps.google.com/?q=${todayRecord.checkInLat},${todayRecord.checkInLng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-2 rounded-xl bg-blue-500/10 border border-blue-200 hover:bg-blue-100 transition-colors"
-                >
+                <a href={`https://maps.google.com/?q=${todayRecord.checkInLat},${todayRecord.checkInLng}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-xl bg-blue-500/10 border border-blue-200 hover:bg-blue-100 transition-colors">
                   <MapPin className="h-4 w-4 text-blue-600 shrink-0" />
                   <p className="text-xs text-blue-700">Lihat lokasi absen masuk di Maps</p>
                 </a>
               )}
 
-              {/* Catatan */}
               {!alreadyCheckedOut && (
-                <Input
-                  value={notes}
-                  onChange={e => setNotes(e.target.value)}
-                  placeholder="Catatan (opsional)..."
-                  className="rounded-xl text-sm"
-                />
+                <Input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Catatan (opsional)..." className="rounded-xl text-sm" />
               )}
 
-              {/* Action Button */}
               {!alreadyCheckedIn ? (
-                <Button
-                  className="w-full h-14 rounded-2xl text-base font-bold bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-500/30"
-                  disabled={checkingIn || geoState !== "success"}
-                  onClick={handleCheckIn}
-                >
+                <Button className="w-full h-14 rounded-2xl text-base font-bold bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-500/30" disabled={checkingIn || geo.geoState !== "success"} onClick={handleCheckIn}>
                   {checkingIn ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <LogIn className="mr-2 h-5 w-5" />}
                   Absen Masuk Sekarang
                 </Button>
               ) : !alreadyCheckedOut ? (
-                <Button
-                  className="w-full h-14 rounded-2xl text-base font-bold bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 shadow-lg shadow-indigo-500/30"
-                  disabled={checkingOut}
-                  onClick={handleCheckOut}
-                >
+                <Button className="w-full h-14 rounded-2xl text-base font-bold bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 shadow-lg shadow-indigo-500/30" disabled={checkingOut} onClick={handleCheckOut}>
                   {checkingOut ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <LogOut className="mr-2 h-5 w-5" />}
                   Absen Pulang Sekarang
                 </Button>
               ) : (
                 <div className="flex items-center justify-center gap-2 py-4 text-emerald-600 font-bold">
-                  <CheckCircle className="h-5 w-5" />
-                  Absensi hari ini selesai!
+                  <CheckCircle className="h-5 w-5" /> Absensi hari ini selesai!
                 </div>
               )}
 
-              {/* Pengajuan Izin Button */}
-              <Dialog open={openPermitModal} onOpenChange={setOpenPermitModal}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full h-12 rounded-2xl font-bold border-blue-200 text-blue-700 bg-blue-50/50 hover:bg-blue-100 hover:text-blue-800 transition-colors">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Ajukan Izin / Sakit
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md border-0 glass-panel">
-                  <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-blue-600" /> Formulir Izin / Sakit
-                    </DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleSubmitPermit} className="space-y-4 mt-4">
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-muted-foreground">Jenis Izin</label>
-                      <Select value={permitForm.type} onValueChange={v => setPermitForm({ ...permitForm, type: v })}>
-                        <SelectTrigger className="rounded-xl">
-                          <SelectValue placeholder="Pilih Jenis" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="IZIN">Izin</SelectItem>
-                          <SelectItem value="SAKIT">Sakit</SelectItem>
-                          <SelectItem value="TUGAS_LUAR">Tugas Luar</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-muted-foreground">Dari Tanggal</label>
-                        <Input 
-                          type="date" 
-                          required 
-                          value={permitForm.startDate}
-                          onChange={e => setPermitForm({ ...permitForm, startDate: e.target.value })}
-                          className="rounded-xl"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-muted-foreground">Sampai Tanggal</label>
-                        <Input 
-                          type="date" 
-                          required 
-                          value={permitForm.endDate}
-                          onChange={e => setPermitForm({ ...permitForm, endDate: e.target.value })}
-                          className="rounded-xl"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-muted-foreground">Keterangan / Alasan</label>
-                      <Textarea 
-                        required 
-                        placeholder="Tuliskan alasan lengkap Anda..."
-                        value={permitForm.reason}
-                        onChange={e => setPermitForm({ ...permitForm, reason: e.target.value })}
-                        className="rounded-xl resize-none h-24"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-muted-foreground">Surat/Dokumen Lampiran (Opsional)</label>
-                      <Input 
-                        type="file" 
-                        accept="image/*,.pdf"
-                        onChange={e => {
-                          if (e.target.files && e.target.files[0]) {
-                            setPermitFile(e.target.files[0])
-                          }
-                        }}
-                        className="rounded-xl h-auto py-2 text-sm"
-                      />
-                      <p className="text-[10px] text-muted-foreground">Upload surat dokter, surat tugas luar, atau dokumen pendukung lainnya (Maks 2MB, PDF/Gambar).</p>
-                    </div>
-                    <Button type="submit" disabled={submittingPermit} className="w-full rounded-xl font-bold h-11 bg-blue-600 hover:bg-blue-700 mt-2">
-                      {submittingPermit ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
-                      Kirim Pengajuan
-                    </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+              {/* Pengajuan Izin */}
+              {tenant && staff && (
+                <PermitFormDialog tenantId={tenant.id} staffId={staff.id} onSubmitted={fetchPermits} />
+              )}
             </div>
           </CardContent>
         </Card>
@@ -678,104 +370,10 @@ export default function GTKAttendancePage() {
         </div>
 
         {/* Riwayat Absensi */}
-        <div>
-          <p className="font-bold text-sm mb-3 flex items-center gap-2">
-            <History className="h-4 w-4 text-muted-foreground" /> Riwayat 30 Hari Terakhir
-          </p>
-          {loading ? (
-            <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-          ) : history.length === 0 ? (
-            <Card className="glass border-0">
-              <CardContent className="py-12 text-center text-muted-foreground text-sm">Belum ada riwayat absensi.</CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-2">
-              {history.map(rec => {
-                const cfg = STATUS_CFG[rec.status] || STATUS_CFG.ALPHA
-                const isRecToday = isToday(new Date(rec.date))
-                return (
-                  <Card key={rec.id} className={cn("glass border-0 shadow-sm", isRecToday && "ring-1 ring-primary/30")}>
-                    <CardContent className="p-4 flex items-center gap-3">
-                      <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm", cfg.bg, cfg.color)}>
-                        {new Date(rec.date).getDate()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm">
-                          {formatInTimeZone(new Date(rec.date), tz, "EEEE, d MMMM", { locale: localeId })}
-                          {isRecToday && <span className="ml-2 text-[10px] text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-full">Hari Ini</span>}
-                        </p>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
-                          {rec.checkInAt && <span className="flex items-center gap-1"><LogIn className="h-3 w-3" />{formatInTimeZone(new Date(rec.checkInAt), tz, "HH:mm")}</span>}
-                          {rec.checkOutAt && <span className="flex items-center gap-1"><LogOut className="h-3 w-3" />{formatInTimeZone(new Date(rec.checkOutAt), tz, "HH:mm")}</span>}
-                          {rec.checkInLat && <span className="flex items-center gap-1 text-emerald-600"><MapPin className="h-3 w-3" />GPS</span>}
-                          {rec.checkInPhoto && (
-                            <a href={rec.checkInPhoto} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary hover:underline" onClick={e => e.stopPropagation()}>
-                              <Camera className="h-3 w-3" />Foto
-                            </a>
-                          )}
-                        </div>
-                        {rec.notes && <p className="text-xs text-muted-foreground italic mt-0.5 truncate">"{rec.notes}"</p>}
-                      </div>
-                      <Badge variant="outline" className={cn(cfg.bg, cfg.color, "border text-[10px] shrink-0 font-bold")}>{cfg.label}</Badge>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          )}
-        </div>
+        <AttendanceHistoryList history={history} loading={loading} tz={tz} />
 
         {/* Riwayat Pengajuan Izin */}
-        <div>
-          <p className="font-bold text-sm mb-3 flex items-center gap-2 mt-8">
-            <FileText className="h-4 w-4 text-muted-foreground" /> Riwayat Pengajuan Izin
-          </p>
-          {permitsLoading ? (
-            <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-          ) : permits.length === 0 ? (
-            <Card className="glass border-0">
-              <CardContent className="py-12 text-center text-muted-foreground text-sm">Belum ada riwayat pengajuan izin.</CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-2">
-              {permits.map(permit => {
-                const getStatusColor = (status: string) => {
-                  if (status === "APPROVED") return "bg-emerald-500/10 text-emerald-600 border-emerald-200"
-                  if (status === "REJECTED") return "bg-red-500/10 text-red-600 border-red-200"
-                  return "bg-amber-500/10 text-amber-600 border-amber-200"
-                }
-                const statusLabel = permit.status === "APPROVED" ? "Disetujui" : permit.status === "REJECTED" ? "Ditolak" : "Menunggu"
-                return (
-                  <Card key={permit.id} className="glass border-0 shadow-sm">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline" className={cn("text-[10px] uppercase font-bold", 
-                          permit.type === "IZIN" ? "text-blue-600 border-blue-200" :
-                          permit.type === "SAKIT" ? "text-amber-600 border-amber-200" : "text-purple-600 border-purple-200"
-                        )}>
-                          {permit.type.replace("_", " ")}
-                        </Badge>
-                        <Badge className={cn("text-[10px] border shadow-sm", getStatusColor(permit.status))}>
-                          {statusLabel}
-                        </Badge>
-                      </div>
-                      <p className="font-bold text-sm text-foreground">
-                        {formatInTimeZone(new Date(permit.startDate), tz, "d MMM yyyy", { locale: localeId })}
-                        {permit.startDate !== permit.endDate && ` - ${formatInTimeZone(new Date(permit.endDate), tz, "d MMM yyyy", { locale: localeId })}`}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{permit.reason}</p>
-                      {permit.proofUrl && (
-                        <a href={permit.proofUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 mt-2 hover:underline">
-                          <FileText className="h-3 w-3" /> Lampiran
-                        </a>
-                      )}
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          )}
-        </div>
+        <PermitHistoryList permits={permits} loading={permitsLoading} tz={tz} />
       </div>
     </div>
   )
