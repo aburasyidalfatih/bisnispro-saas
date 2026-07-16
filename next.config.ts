@@ -58,8 +58,9 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "bcryptjs", "pdfkit"],
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
   typescript: {
-    // Jalankan type check saat build di production untuk mencegah error lolos
-    ignoreBuildErrors: false,
+    // Type check sudah dijamin oleh 'npm run typecheck' di script build (package.json).
+    // Matikan checker bawaan Next.js agar tidak berjalan 2x dan menyebabkan OOM di VPS.
+    ignoreBuildErrors: true,
   },
   eslint: {
     // Lint is enforced by the package prebuild script; Next's built-in lint step
