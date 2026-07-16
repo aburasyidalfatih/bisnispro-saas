@@ -25,6 +25,7 @@ export async function GET(req: Request) {
     where: { tenantId, ...(showAll ? {} : {}) }, // Admin UI fetches all, tidak filter isActive
     include: { _count: { select: { invoices: true } } },
     orderBy: [{ category: "asc" }, { name: "asc" }],
+    take: 100,
   })
   return NextResponse.json(data)
 }

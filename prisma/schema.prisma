@@ -583,7 +583,7 @@ model Document {
 }
 
 model Event {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   tenantId      String
   title         String
   slug          String
@@ -592,12 +592,12 @@ model Event {
   contactPerson String?
   startDate     DateTime
   endDate       DateTime
-  status        String   @default("PUBLISHED")
+  status        String    @default("PUBLISHED")
   publishedAt   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  viewCount     Int      @default(0)
-  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  viewCount     Int       @default(0)
+  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
   @@index([tenantId])
@@ -1996,6 +1996,7 @@ model TenantScore {
   lastCalculated DateTime @default(now())
   tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
   @@index([totalScore(sort: Desc)])
   @@index([rank])
   @@map("tenant_scores")
@@ -2316,6 +2317,7 @@ model SocialMediaCredential {
   tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, platform])
+  @@index([tenantId])
   @@map("social_media_credentials")
 }
 
@@ -2513,16 +2515,16 @@ model PostInteraction {
 }
 
 model CustomPage {
-  id          String   @id @default(cuid())
-  tenantId    String
-  title       String
-  slug        String
-  content     String?  @db.Text
+  id            String   @id @default(cuid())
+  tenantId      String
+  title         String
+  slug          String
+  content       String?  @db.Text
   featuredImage String?
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  isPublished   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
   @@index([tenantId])
@@ -2544,7 +2546,6 @@ model Faq {
   @@map("faqs")
 }
 
-
 model EmailQueueLog {
   id           String    @id @default(cuid())
   tenantId     String?
@@ -2562,7 +2563,7 @@ model EmailQueueLog {
   updatedAt    DateTime  @updatedAt
   sentAt       DateTime?
 
-  tenant       Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@map("email_queue_logs")

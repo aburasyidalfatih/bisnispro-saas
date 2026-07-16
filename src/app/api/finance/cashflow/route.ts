@@ -39,6 +39,7 @@ export async function GET(req: Request) {
     const cashflows = await db.cashflow.findMany({
       where,
       orderBy: { recordedAt: "desc" },
+      take: 100,
     })
     return NextResponse.json(cashflows)
   } catch (error: any) {
