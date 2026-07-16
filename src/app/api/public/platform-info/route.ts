@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { unstable_cache } from "next/cache"
 
 export const dynamic = "force-dynamic"
 
-export async function GET() {
-  try {
+const getCachedPlatformInfo = unstable_cache(
+  async () => {
     const keys = ["app_logo", "platform_name", "platform_tagline", "GOOGLE_CLIENT_ID", "TURNSTILE_SITE_KEY", "TURNSTILE_ENABLED"]
     const settings = await db.platformSetting.findMany({
       where: { key: { in: keys } },
@@ -42,6 +43,15 @@ export async function GET() {
       data.googleAuthEnabled = true
     }
 
+    return data
+  },
+  ["platform-info"],
+  { revalidate: 3600 } // Cache for 1 hour — this data rarely changes
+)
+
+export async function GET() {
+  try {
+    const data = await getCachedPlatformInfo()
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ 

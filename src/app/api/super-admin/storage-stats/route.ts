@@ -9,31 +9,25 @@ export async function GET() {
   }
 
   try {
-    const files = await db.fileUpload.findMany({
-      select: { path: true, size: true }
-    })
-
-    let r2Count = 0
-    let r2Size = 0
-    let localCount = 0
-    let localSize = 0
-
-    files.forEach(file => {
-      // S3/R2 files have a public URL starting with http
-      if (file.path.startsWith("http")) {
-        r2Count++
-        r2Size += file.size
-      } else {
-        localCount++
-        localSize += file.size
-      }
-    })
+    // Use aggregate queries instead of loading all files into memory
+    const [r2Stats, localStats] = await Promise.all([
+      db.fileUpload.aggregate({
+        where: { path: { startsWith: "http" } },
+        _count: true,
+        _sum: { size: true },
+      }),
+      db.fileUpload.aggregate({
+        where: { NOT: { path: { startsWith: "http" } } },
+        _count: true,
+        _sum: { size: true },
+      }),
+    ])
 
     return NextResponse.json({
-      r2Count,
-      r2Size,
-      localCount,
-      localSize,
+      r2Count: r2Stats._count,
+      r2Size: r2Stats._sum.size || 0,
+      localCount: localStats._count,
+      localSize: localStats._sum.size || 0,
     })
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })

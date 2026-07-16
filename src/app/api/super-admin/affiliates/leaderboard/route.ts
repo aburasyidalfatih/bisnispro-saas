@@ -26,6 +26,7 @@ export async function GET(req: Request) {
     // 1. Fetch all affiliates basic info
     const affiliates = await db.affiliateProfile.findMany({
       where: { isActive: true },
+      take: 100,
       include: {
         user: { select: { name: true, email: true, avatar: true } }
       }

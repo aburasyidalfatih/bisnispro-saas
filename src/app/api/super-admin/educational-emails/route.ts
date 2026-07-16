@@ -66,18 +66,32 @@ export async function GET(req: Request) {
         _count: {
           select: { logs: true } // Total sent
         },
-        logs: {
-          select: { isOpened: true, isClicked: true } // We'll compute the stats below
-        }
       }
     })
 
+    // Fetch aggregated open/click stats per campaign in a single query
+    const campaignIds = campaigns.map(c => c.id)
+    const [openedCounts, clickedCounts] = await Promise.all([
+      db.dripLog.groupBy({
+        by: ['campaignId'],
+        where: { campaignId: { in: campaignIds }, isOpened: true },
+        _count: { id: true },
+      }),
+      db.dripLog.groupBy({
+        by: ['campaignId'],
+        where: { campaignId: { in: campaignIds }, isClicked: true },
+        _count: { id: true },
+      }),
+    ])
+    const openedMap = new Map(openedCounts.map((o: any) => [o.campaignId, o._count.id]))
+    const clickedMap = new Map(clickedCounts.map((c: any) => [c.campaignId, c._count.id]))
+
     const campaignsWithStats = campaigns.map(c => {
       const totalSent = c._count.logs
-      const totalOpened = c.logs.filter(l => l.isOpened).length
-      const totalClicked = c.logs.filter(l => l.isClicked).length
+      const totalOpened = openedMap.get(c.id) || 0
+      const totalClicked = clickedMap.get(c.id) || 0
       
-      const { logs, _count, ...rest } = c
+      const { _count, ...rest } = c
       return {
         ...rest,
         stats: { sent: totalSent, opened: totalOpened, clicked: totalClicked }

@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     if (target === "all_tenants") {
       const owners = await db.tenantUser.findMany({
         where: { role: "owner", tenant: { isActive: true } },
-        include: { user: true, tenant: true }
+        select: { user: { select: { id: true, name: true, email: true, phone: true } }, tenant: { select: { id: true, name: true } } }
       })
       
       owners.forEach(tu => {
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       const plan = target === "free_tenants" ? "free" : "pro"
       const owners = await db.tenantUser.findMany({
         where: { role: "owner", tenant: { plan, isActive: true } },
-        include: { user: true, tenant: true }
+        select: { user: { select: { id: true, name: true, email: true, phone: true } }, tenant: { select: { id: true, name: true } } }
       })
       
       owners.forEach(tu => {
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     else if (target === "all_affiliates") {
       const affiliates = await db.affiliateProfile.findMany({
         where: { isActive: true },
-        include: { user: true }
+        select: { userId: true, user: { select: { id: true, name: true, email: true, phone: true } } }
       })
       recipients = affiliates.map(aff => ({
         name: aff.user.name || "Mitra",

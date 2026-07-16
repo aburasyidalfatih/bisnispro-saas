@@ -20,7 +20,7 @@ export async function GET(req: Request) {
 
     const where: any = { tenantId }
     if (studentId) where.studentId = studentId
-    if (classroomId) where.studentId = { in: (await db.student.findMany({ where: { classroomId } })).map(s => s.id) }
+    if (classroomId) where.student = { classroomId }
 
     const records = await db.disciplineRecord.findMany({
       where,

@@ -33,26 +33,14 @@ export async function PUT(req: Request) {
     let affectedInvoices = 0
     if (body.INVOICE_EXPIRY_DAYS !== undefined) {
       const days = Math.max(1, Number(body.INVOICE_EXPIRY_DAYS) || 1)
-      const msPerDay = 24 * 60 * 60 * 1000
 
-      const pendingPayments = await db.payment.findMany({
-        where: { status: "pending" },
-        select: { id: true, createdAt: true }
-      })
-
-      if (pendingPayments.length > 0) {
-        await Promise.all(
-          pendingPayments.map(p =>
-            db.payment.update({
-              where: { id: p.id },
-              data: {
-                expiredAt: new Date(p.createdAt.getTime() + days * msPerDay)
-              }
-            })
-          )
-        )
-        affectedInvoices = pendingPayments.length
-      }
+      // Batch update all pending payments in a single SQL query
+      const result = await db.$executeRaw`
+        UPDATE payments 
+        SET "expiredAt" = "createdAt" + make_interval(days => ${days})
+        WHERE status = 'pending'
+      `
+      affectedInvoices = result
     }
 
     // Jika AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE diubah, update kupon cashback affiliate

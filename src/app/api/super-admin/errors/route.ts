@@ -16,11 +16,12 @@ export async function GET(req: Request) {
     const category = url.searchParams.get("category") || ""
     const status = url.searchParams.get("status") || ""
 
-    const where: any = {
-      OR: [
+    const where: any = {}
+    if (search) {
+      where.OR = [
         { message: { contains: search, mode: "insensitive" as const } },
         { path: { contains: search, mode: "insensitive" as const } },
-      ],
+      ]
     }
     
     if (category) {

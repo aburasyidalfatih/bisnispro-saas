@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
+import { unstable_cache } from "next/cache"
 
 export const dynamic = "force-dynamic"
 
@@ -39,10 +40,20 @@ export async function GET(req: NextRequest) {
   try {
     const plan = req.nextUrl.searchParams.get("plan") || "free"
 
-    // Coba baca dari key baru dulu
-    const newSetting = await db.platformSetting.findUnique({
-      where: { key: "PLAN_FEATURE_ACCESS" },
-    })
+    // Cached DB lookup — revalidate every 10 minutes
+    const getSettings = unstable_cache(
+      async () => {
+        const [newSetting, oldSetting] = await Promise.all([
+          db.platformSetting.findUnique({ where: { key: "PLAN_FEATURE_ACCESS" } }),
+          db.platformSetting.findUnique({ where: { key: "FREE_PLAN_ACCESS" } }),
+        ])
+        return { newSetting, oldSetting }
+      },
+      ["free-plan-access-settings"],
+      { revalidate: 600 }
+    )
+
+    const { newSetting, oldSetting } = await getSettings()
 
     if (newSetting?.value) {
       const allPlans = JSON.parse(newSetting.value)
@@ -86,9 +97,6 @@ export async function GET(req: NextRequest) {
     }
 
     // Fallback ke key lama (FREE_PLAN_ACCESS)
-    const oldSetting = await db.platformSetting.findUnique({
-      where: { key: "FREE_PLAN_ACCESS" },
-    })
 
     if (!oldSetting || !oldSetting.value) {
       return NextResponse.json({

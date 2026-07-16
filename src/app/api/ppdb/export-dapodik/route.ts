@@ -27,6 +27,7 @@ export async function GET(req: Request) {
             in: ["DITERIMA", "MENUNGGU"] // Bisa disesuaikan
         }
       },
+      take: 5000,
       orderBy: {
         createdAt: 'asc'
       }
