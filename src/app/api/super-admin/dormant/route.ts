@@ -12,7 +12,7 @@ export async function GET() {
     const dormantTenants = await db.tenant.findMany({
       where: {
         auditLogs: {
-          none: { action: { contains: "login", mode: "insensitive" } }
+          none: { action: "USER_LOGIN" }
         }
       },
       select: {

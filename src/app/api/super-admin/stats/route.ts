@@ -35,7 +35,7 @@ export async function GET() {
     db.payment.count({ where: { status: "pending" } }),
     db.tenantApplication.count(),
     db.auditLog.count({ where: { action: "USER_LOGIN", createdAt: { gte: startOfToday } } }),
-    db.tenant.count({ where: { auditLogs: { none: { action: { contains: "login", mode: "insensitive" } } } } })
+    db.tenant.count({ where: { auditLogs: { none: { action: "USER_LOGIN" } } } })
   ])
 
   const result = {
