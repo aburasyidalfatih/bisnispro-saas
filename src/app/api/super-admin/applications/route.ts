@@ -10,6 +10,7 @@ export async function GET() {
   if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
   const applications = await db.tenantApplication.findMany({
+    take: 200,
     orderBy: { createdAt: "desc" },
     include: {
       affiliate: {

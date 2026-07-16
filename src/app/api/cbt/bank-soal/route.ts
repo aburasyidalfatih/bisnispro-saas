@@ -11,6 +11,7 @@ export async function GET(req: Request) {
   try {
     const banks = await db.cbtQuestionBank.findMany({
       where: { tenantId },
+      take: 100,
       include: {
         _count: {
           select: { questions: true }

@@ -10,6 +10,7 @@ export async function GET() {
 
   try {
     const discounts = await db.discountCode.findMany({
+      take: 200,
       orderBy: { createdAt: "desc" },
       include: {
         affiliate: {

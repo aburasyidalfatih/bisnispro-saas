@@ -15,6 +15,7 @@ export async function GET(req: Request) {
   const documents = await db.document.findMany({
     where: { tenantId },
     orderBy: { createdAt: 'desc' },
+    take: 200,
   })
 
   return NextResponse.json(documents)

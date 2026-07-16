@@ -18,6 +18,7 @@ export async function GET(req: Request) {
 
     const schedules = await db.schedule.findMany({
       where,
+      take: 300,
       include: {
         subject: { select: { id: true, name: true, code: true } },
         classroom: { select: { id: true, name: true, level: true } },

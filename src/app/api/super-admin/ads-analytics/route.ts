@@ -31,6 +31,7 @@ export async function GET() {
           affiliateId: true,
         },
         orderBy: { createdAt: 'desc' },
+        take: 500,
       })
     } catch {
       // UTM columns might not exist yet — fallback without UTM fields
@@ -43,6 +44,7 @@ export async function GET() {
           affiliateId: true,
         },
         orderBy: { createdAt: 'desc' },
+        take: 500,
       })
       allApplications = fallback.map(a => ({ ...a, utmSource: null, utmMedium: null, utmCampaign: null, utmContent: null }))
     }
@@ -104,6 +106,7 @@ export async function GET() {
     // Get tenants that upgraded (lite or pro)
     const tenants = await db.tenant.findMany({
       select: { id: true, name: true, plan: true, createdAt: true },
+      take: 500,
     })
 
     const paidTenants = tenants.filter(t => t.plan === 'lite' || t.plan === 'pro')
@@ -112,6 +115,7 @@ export async function GET() {
     const paidPayments = await db.payment.findMany({
       where: { status: "paid", deletedAt: null },
       select: { amount: true, tenantId: true, plan: true, paidAt: true, createdAt: true },
+      take: 500,
     })
 
     const totalRevenueFromAds = paidPayments.reduce((sum, p) => sum + p.amount, 0)

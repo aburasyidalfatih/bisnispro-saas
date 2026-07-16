@@ -30,6 +30,7 @@ export async function listPosts(tenantId: string, type?: string | null) {
   return tenantDb.post.findMany({
     where: whereClause,
     orderBy: { createdAt: 'desc' },
+    take: 100,
     include: {
       author: {
         select: { id: true, name: true, email: true, avatar: true }
@@ -223,6 +224,7 @@ export async function listEvents(tenantId: string) {
   return tenantDb.event.findMany({
     where: { tenantId },
     orderBy: { startDate: 'asc' },
+    take: 200,
   })
 }
 
@@ -313,6 +315,7 @@ export async function listCategories(tenantId: string) {
   return tenantDb.category.findMany({
     where: { tenantId },
     orderBy: { createdAt: 'desc' },
+    take: 100,
   })
 }
 

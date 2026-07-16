@@ -61,6 +61,7 @@ export async function GET(req: Request) {
     // Fallback: PostgreSQL query (lebih lambat, tapi selalu akurat)
     const leaderboard = await db.tenantScore.findMany({
       orderBy: { totalScore: "desc" },
+      take: 100,
       include: {
         tenant: {
           select: {

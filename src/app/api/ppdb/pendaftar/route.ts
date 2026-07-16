@@ -25,11 +25,15 @@ export async function GET(req: Request) {
 
     const applicants = await db.pendaftarPpdb.findMany({
       where,
+      take: 100,
       include: {
-        periode: true,
+        periode: { select: { id: true, nama: true } },
         tagihan: {
-          include: {
-            pembayaran: true
+          select: {
+            id: true,
+            status: true,
+            nominal: true,
+            pembayaran: { select: { id: true, status: true, nominal: true } }
           }
         },
         berkas: true,

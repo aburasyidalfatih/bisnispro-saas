@@ -19,6 +19,7 @@ export async function GET(req: Request) {
     // Ambil Tugas yang sudah dipublish
     const exams = await db.cbtExam.findMany({
       where: { tenantId, type: "TUGAS", status: "PUBLISHED" },
+      take: 100,
       include: {
         questionBank: true,
         sessions: {

@@ -20,6 +20,7 @@ export async function GET(req: Request) {
   try {
     const exams = await db.cbtExam.findMany({
       where: { tenantId },
+      take: 100,
       include: {
         questionBank: {
           select: { name: true, subject: true, level: true, _count: { select: { questions: true } } }

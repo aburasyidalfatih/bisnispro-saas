@@ -9,23 +9,26 @@ export async function GET() {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
-    const warn30 = await db.tenant.findMany({
-      where: { retentionStatus: "WARN_30" },
-      select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
-      orderBy: { lastActiveAt: 'asc' }
-    })
-
-    const suspend60 = await db.tenant.findMany({
-      where: { retentionStatus: "SUSPENDED_60" },
-      select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
-      orderBy: { lastActiveAt: 'asc' }
-    })
-
-    const churned90 = await db.tenant.findMany({
-      where: { retentionStatus: "CHURNED" },
-      select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
-      orderBy: { lastActiveAt: 'asc' }
-    })
+    const [warn30, suspend60, churned90] = await Promise.all([
+      db.tenant.findMany({
+        where: { retentionStatus: "WARN_30" },
+        select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
+        orderBy: { lastActiveAt: 'asc' },
+        take: 200,
+      }),
+      db.tenant.findMany({
+        where: { retentionStatus: "SUSPENDED_60" },
+        select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
+        orderBy: { lastActiveAt: 'asc' },
+        take: 200,
+      }),
+      db.tenant.findMany({
+        where: { retentionStatus: "CHURNED" },
+        select: { id: true, name: true, slug: true, email: true, whatsapp: true, lastActiveAt: true },
+        orderBy: { lastActiveAt: 'asc' },
+        take: 200,
+      }),
+    ])
 
     return NextResponse.json({
       warn30,

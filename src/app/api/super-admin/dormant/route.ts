@@ -15,6 +15,7 @@ export async function GET() {
           none: { action: "USER_LOGIN" }
         }
       },
+      take: 200,
       select: {
         id: true,
         name: true,

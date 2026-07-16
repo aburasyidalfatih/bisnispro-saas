@@ -12,7 +12,8 @@ export async function GET(req: Request) {
 
     const faqs = await prisma.faq.findMany({
       where: { tenantId },
-      orderBy: { sortOrder: "asc" }
+      orderBy: { sortOrder: "asc" },
+      take: 100,
     })
 
     return NextResponse.json(faqs)

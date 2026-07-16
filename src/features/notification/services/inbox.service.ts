@@ -71,6 +71,7 @@ export async function listMessages(tenantId: string, userId: string, isSuperAdmi
     return tenantDb.internalMessage.findMany({
       where: { tenantId, senderId: userId },
       orderBy: { createdAt: 'desc' },
+      take: 100,
       include: {
         receiver: { select: { name: true, email: true, avatar: true } }
       }
@@ -91,6 +92,7 @@ export async function listMessages(tenantId: string, userId: string, isSuperAdmi
   return tenantDb.internalMessage.findMany({
     where: whereClause,
     orderBy: { createdAt: 'desc' },
+    take: 100,
     include: {
       sender: { select: { name: true, email: true, avatar: true } }
     }

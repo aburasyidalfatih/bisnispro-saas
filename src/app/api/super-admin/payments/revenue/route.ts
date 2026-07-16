@@ -8,7 +8,10 @@ export async function GET() {
 
   // Group by month
   const payments = await db.payment.findMany({
-    where: { status: "paid" },
+    where: {
+      status: "paid",
+      createdAt: { gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) },
+    },
     select: {
       amount: true,
       paidAt: true,

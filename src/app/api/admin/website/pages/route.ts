@@ -12,7 +12,8 @@ export async function GET(req: Request) {
 
     const pages = await prisma.customPage.findMany({
       where: { tenantId },
-      orderBy: { createdAt: "desc" }
+      orderBy: { createdAt: "desc" },
+      take: 100,
     })
 
     return NextResponse.json(pages)

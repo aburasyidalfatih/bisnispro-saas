@@ -22,6 +22,7 @@ export async function GET(req: Request) {
 
     const grades = await db.grade.findMany({
       where,
+      take: 200,
       include: {
         student: { select: { id: true, name: true, nis: true } },
         subject: { select: { id: true, name: true, code: true } },

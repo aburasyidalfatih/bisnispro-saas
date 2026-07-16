@@ -15,6 +15,7 @@ export async function listTenantUsers(tenantId: string, role?: string | null) {
       user: { select: { id: true, name: true, email: true, phone: true, isActive: true, createdAt: true } },
     },
     orderBy: { user: { createdAt: "desc" } },
+    take: 500,
   })
 
   // Fetch staff records if role is guru or fetching all

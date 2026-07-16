@@ -117,11 +117,20 @@ const getOverviewData = unstable_cache(
       db.subject.count({ where: { isActive: true } }),
     ])
 
-    const loginLogs7Days = await db.auditLog.findMany({ where: { action: "USER_LOGIN", createdAt: { gte: sevenDaysAgo } }, select: { createdAt: true } })
-    const loginTrend7Days = buildDailyTrend(loginLogs7Days.map(l => l.createdAt), 7)
+    const loginTrend7Days = await (async () => {
+      const result: { date: string; count: number }[] = []
+      const now = new Date()
+      for (let i = 6; i >= 0; i--) {
+        const start = new Date(now); start.setDate(start.getDate() - i); start.setHours(0,0,0,0)
+        const end = new Date(start); end.setHours(23,59,59,999)
+        const count = await db.auditLog.count({ where: { action: "USER_LOGIN", createdAt: { gte: start, lte: end } } })
+        result.push({ date: start.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }), count })
+      }
+      return result
+    })()
 
-    const recentPosts = await db.post.findMany({ where: { createdAt: { gte: thirtyDaysAgo }, deletedAt: null }, select: { createdAt: true } })
-    const contentTrend30Days = buildWeeklyTrend(recentPosts.map(p => p.createdAt), 4)
+    const recentPostCount = await db.post.count({ where: { createdAt: { gte: thirtyDaysAgo }, deletedAt: null } })
+    const contentTrend30Days = [{ week: '30 Hari Terakhir', count: recentPostCount }]
 
     const planGroups = await db.tenant.groupBy({ by: ['plan'], _count: { id: true } })
     const planBreakdown = planGroups.map(g => ({ name: g.plan.toUpperCase(), value: g._count.id }))
@@ -204,6 +213,8 @@ const getFinanceData = unstable_cache(
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const sixMonthsAgo = new Date()
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
 
     const paidPaymentsAgg = await db.payment.groupBy({ by: ['plan'], where: { status: "paid", deletedAt: null }, _sum: { amount: true } })
     const revenuePerPlan = paidPaymentsAgg.map(p => ({ name: (p.plan || 'unknown').toUpperCase(), amount: p._sum.amount || 0 })).sort((a, b) => b.amount - a.amount)
@@ -216,7 +227,7 @@ const getFinanceData = unstable_cache(
     const thisMonthRevenue = thisMonthAgg._sum.amount || 0
     const lastMonthRevenue = lastMonthAgg._sum.amount || 0
 
-    const allPaidPayments = await db.payment.findMany({ where: { status: "paid", deletedAt: null }, select: { amount: true, paidAt: true, createdAt: true } })
+    const allPaidPayments = await db.payment.findMany({ where: { status: "paid", deletedAt: null, OR: [{ paidAt: { gte: sixMonthsAgo } }, { createdAt: { gte: sixMonthsAgo } }] }, select: { amount: true, paidAt: true, createdAt: true } })
     const revenueTrendMap = new Map<string, number>()
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now)
@@ -231,7 +242,7 @@ const getFinanceData = unstable_cache(
     })
     const revenueTrend = [...revenueTrendMap.entries()].map(([month, amount]) => ({ month, amount }))
 
-    const payingTenants = await db.payment.groupBy({ by: ['tenantId'], where: { status: "paid", deletedAt: null } })
+    const payingTenants = await db.payment.findMany({ where: { status: "paid", deletedAt: null }, select: { tenantId: true }, distinct: ['tenantId'] })
     const arpu = payingTenants.length > 0 ? Math.round(totalRevenue / payingTenants.length) : 0
 
     const [totalAffiliates, activeAffiliates, totalAffiliateClicks, totalCommissionsPaid, pendingCommissions, affiliateApplications] = await Promise.all([
@@ -317,7 +328,7 @@ const getEngagementData = unstable_cache(
 
     const totalTenants = await db.tenant.count()
 
-    const tenantScores = await db.tenantScore.findMany({ select: { totalScore: true, tenant: { select: { plan: true } } } })
+    const tenantScores = await db.tenantScore.findMany({ select: { totalScore: true, tenant: { select: { plan: true } } }, take: 1000 })
     const scoreByPlan = new Map<string, { sum: number; count: number }>()
     const scoreBrackets = [
       { label: "0-20 (Rendah)", min: 0, max: 20, count: 0 }, { label: "21-40", min: 21, max: 40, count: 0 }, { label: "41-60", min: 41, max: 60, count: 0 }, { label: "61-80", min: 61, max: 80, count: 0 }, { label: "81-100 (Tinggi)", min: 81, max: 100, count: 0 },
@@ -363,12 +374,12 @@ const getEngagementData = unstable_cache(
       }
 
       // Optimize Unique Visitors logic to prevent Out Of Memory
-      const [uniqueSessions30Days, uniqueSessionsToday] = await Promise.all([
-        db.pageView.groupBy({ by: ['sessionId', 'ipHash'], where: { createdAt: { gte: thirtyDaysAgo } } }),
-        db.pageView.groupBy({ by: ['sessionId', 'ipHash'], where: { createdAt: { gte: startOfToday } } })
+      const [uv30Result, uvTodayResult] = await Promise.all([
+        db.$queryRaw<[{count: bigint}]>`SELECT COUNT(DISTINCT COALESCE("sessionId", "ipHash", 'unknown')) as count FROM page_views WHERE "createdAt" >= ${thirtyDaysAgo}`,
+        db.$queryRaw<[{count: bigint}]>`SELECT COUNT(DISTINCT COALESCE("sessionId", "ipHash", 'unknown')) as count FROM page_views WHERE "createdAt" >= ${startOfToday}`
       ])
-      uniqueVisitors = uniqueSessions30Days.length
-      todayUniqueVisitors = uniqueSessionsToday.length
+      uniqueVisitors = Number(uv30Result[0]?.count || 0)
+      todayUniqueVisitors = Number(uvTodayResult[0]?.count || 0)
 
       // Optimize Trend 7 Days logic to prevent Out Of Memory
       const trendPromises = []
