@@ -29,6 +29,10 @@ const connection = process.env.REDIS_URL
   ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null })
   : new Redis(redisOptions)
 
+// Reusable queue instances (module-scope to prevent connection leaks)
+const emailQueue = new Queue("email-queue", { connection })
+const waQueue = new Queue("wa-queue", { connection })
+
 console.log("🛠️  Starting BullMQ Enterprise Workers...")
 
 // ============================================================
@@ -260,7 +264,7 @@ const gamificationWorker = new Worker(
     await processGamificationPoints(job.data)
     return { success: true }
   },
-  { connection, concurrency: 50 }
+  { connection, concurrency: 10 }
 )
 
 // ============================================================
@@ -607,9 +611,6 @@ runWithLock("tenantLifecycle", 6 * 60 * 60 * 1000, async () => {
       where: { key: { in: retentionKeys } }
     })
     const settingsMap = platformSettings.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as any)
-    
-    const emailQueue = new Queue("email-queue", { connection })
-    const waQueue = new Queue("wa-queue", { connection })
 
     // 1. Fase 1: Peringatan 30 Hari (Re-engagement)
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)

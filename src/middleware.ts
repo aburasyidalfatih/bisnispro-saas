@@ -157,6 +157,11 @@ export default async function middleware(request: NextRequest) {
     return new NextResponse("Too Many Requests. Enterprise DDoS Protection active.", { status: 429 })
   }
 
+  // 2. Bypass middleware completely for internal APIs (before WAF to avoid wasting processing)
+  if (pathname.startsWith("/api/internal/")) {
+    return NextResponse.next()
+  }
+
   // ==========================================
   // WEB APPLICATION FIREWALL (WAF) & IDS
   // ==========================================
@@ -201,15 +206,6 @@ export default async function middleware(request: NextRequest) {
     rootDomain = "schoolpro.id"
   }
 
-  // 2. Bypass middleware completely for internal APIs to prevent infinite loops
-  if (pathname.startsWith("/api/internal/")) {
-    return NextResponse.next()
-  }
-
-  // Validasi Session
-  const session = await auth()
-
-  // KLASIFIKASI HOST
   const isMainDomain =
     hostname === rootDomain ||
     hostname === `www.${rootDomain}` ||
@@ -235,6 +231,9 @@ export default async function middleware(request: NextRequest) {
   // ============================================================
   const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/siswa") || pathname.startsWith("/ujian")
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
+
+  // Only validate session when needed (skip for public pages to save JWT parsing)
+  const session = (isProtected || isAuthPage) ? await auth() : null
 
   if (isProtected && !session) {
     return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
