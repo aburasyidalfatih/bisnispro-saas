@@ -1,43 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
 import { toast } from "@/hooks/use-toast"
-import {
-  Zap, Star, CheckCircle2,
-  Users, Edit, X, HardDrive, CreditCard, Save, Timer, GripVertical
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog"
-
-interface SubscriptionPlan {
-  id: string
-  name: string
-  slug: string
-  description: string | null
-  price: number
-  interval: string
-  features: any
-  maxStudents: number
-  maxStorage: number
-  monthlyAiTokens: number
-  isActive: boolean
-  isPopular: boolean
-  sortOrder: number
-}
+import { PlanCard } from "./_components/plan-card"
+import { EditPlanModal } from "./_components/edit-plan-modal"
+import { SubscriptionPlan } from "./_components/types"
 
 export default function PlansPage() {
   const [loading, setLoading] = useState(true)
@@ -45,11 +12,6 @@ export default function PlansPage() {
   const [editingPlan, setEditingPlan] = useState<Partial<SubscriptionPlan> | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [saving, setSaving] = useState(false)
-
-  // Feature input (only the text field, list lives inside editingPlan.features)
-  const [featureInput, setFeatureInput] = useState("")
-  const [draggedFeatureIdx, setDraggedFeatureIdx] = useState<number | null>(null)
-  const [dragOverFeatureIdx, setDragOverFeatureIdx] = useState<number | null>(null)
 
   // PRO pricing config (only relevant when editing PRO plan)
   const [pricing, setPricing] = useState({ PRICE_PER_STUDENT: "30000", MIN_STUDENTS: "50", INVOICE_EXPIRY_DAYS: "1" })
@@ -99,54 +61,7 @@ export default function PlansPage() {
       try { feats = JSON.parse(plan.features) } catch { feats = [] }
     }
     setEditingPlan({ ...plan, features: feats })
-    setFeatureInput("")
     setIsDialogOpen(true)
-  }
-
-  const addFeature = () => {
-    const trimmed = featureInput.trim()
-    if (!trimmed || !editingPlan) return
-    setEditingPlan(prev => ({ ...prev!, features: [...(Array.isArray(prev?.features) ? prev!.features : []), trimmed] }))
-    setFeatureInput("")
-  }
-
-  const removeFeature = (idx: number) => {
-    if (!editingPlan) return
-    setEditingPlan(prev => ({ ...prev!, features: (Array.isArray(prev?.features) ? prev!.features : []).filter((_: any, i: number) => i !== idx) }))
-  }
-
-  const handleDragStart = (e: React.DragEvent<HTMLLIElement>, idx: number) => {
-    setDraggedFeatureIdx(idx)
-    e.dataTransfer.effectAllowed = "move"
-  }
-
-  const handleDragOver = (e: React.DragEvent<HTMLLIElement>, idx: number) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = "move"
-    if (dragOverFeatureIdx !== idx) {
-      setDragOverFeatureIdx(idx)
-    }
-  }
-
-  const handleDragEnd = () => {
-    setDraggedFeatureIdx(null)
-    setDragOverFeatureIdx(null)
-  }
-
-  const handleDrop = (e: React.DragEvent<HTMLLIElement>, dropIdx: number) => {
-    e.preventDefault()
-    if (draggedFeatureIdx === null || draggedFeatureIdx === dropIdx || !editingPlan) {
-      handleDragEnd()
-      return
-    }
-
-    const feats = Array.isArray(editingPlan.features) ? [...editingPlan.features] : []
-    const draggedItem = feats[draggedFeatureIdx]
-    feats.splice(draggedFeatureIdx, 1) // remove from old index
-    feats.splice(dropIdx, 0, draggedItem) // insert at new index
-
-    setEditingPlan({ ...editingPlan, features: feats })
-    handleDragEnd()
   }
 
   const handleSave = async () => {
@@ -224,8 +139,6 @@ export default function PlansPage() {
     }
   }
 
-  const isProPlan = editingPlan?.slug === "pro"
-
   if (loading && plans.length === 0) {
     return <div className="space-y-4">{[1, 2].map(i => <div key={i} className="skeleton h-64 rounded-2xl" />)}</div>
   }
@@ -242,372 +155,28 @@ export default function PlansPage() {
 
       {/* Plan Cards */}
       <div className="grid gap-6 lg:grid-cols-3">
-        {plans.map((plan) => {
-          const feats = Array.isArray(plan.features) ? plan.features : []
-          return (
-            <Card key={plan.id} className={cn("glass border-0 overflow-hidden relative", plan.isPopular && "ring-2 ring-primary/30")}>
-              <div className={cn("h-1.5", plan.slug === "free" ? "bg-slate-400" : "bg-gradient-to-r from-primary to-primary/60")} />
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-3">
-                    <div className={cn("p-2.5 rounded-xl", plan.slug === "free" ? "bg-slate-100 text-slate-600" : "bg-primary/10 text-primary")}>
-                      {plan.slug === "free" ? <Zap className="h-5 w-5" /> : <Star className={cn("h-5 w-5", plan.isPopular && "fill-primary")} />}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <CardTitle>{plan.name}</CardTitle>
-                        {plan.isPopular && <Badge className="bg-primary/10 text-primary text-[10px] h-5">Populer</Badge>}
-                        {!plan.isActive && <Badge variant="outline" className="text-[10px] h-5 text-muted-foreground">Nonaktif</Badge>}
-                      </div>
-                      <CardDescription>{plan.description}</CardDescription>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {plan.slug !== "free" && (
-                      <div className="flex items-center gap-1.5 mr-1">
-                        <Switch
-                          id={`active-${plan.id}`}
-                          checked={plan.isActive}
-                          onCheckedChange={() => handleToggleActive(plan)}
-                          className="scale-90"
-                        />
-                      </div>
-                    )}
-                    <Button variant="outline" size="sm" className="gap-1 rounded-lg h-7 px-2 text-[10px]" onClick={() => openEdit(plan)}>
-                      <Edit className="h-3 w-3" /> Edit
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Price */}
-                <div className="text-2xl font-bold">
-                  {plan.slug === "pro" ? (
-                    <div>
-                      <span className="text-base text-primary block font-bold">Pay-per-Student</span>
-                      <span className="text-[10px] font-normal text-muted-foreground block mt-0.5">
-                        Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")}/siswa/thn · min. {pricing.MIN_STUDENTS}
-                      </span>
-                    </div>
-                  ) : (
-                    <>
-                      Rp {plan.price.toLocaleString("id-ID")}
-                      <span className="text-xs font-normal text-muted-foreground">
-                        {plan.interval === "MONTHLY" ? " / bulan" : plan.interval === "YEARLY" ? " / tahun" : " / sekali bayar"}
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                {/* Quotas */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
-                    <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Kuota Siswa</p>
-                    <div className="flex items-center gap-1.5">
-                      <Users className="h-3 w-3 text-primary" />
-                      <span className="font-bold text-xs truncate">
-                        {plan.slug === "pro" ? "Sesuai Beli" : plan.maxStudents === 0 ? "Unlimited" : `${plan.maxStudents} siswa`}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
-                    <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Penyimpanan</p>
-                    <div className="flex items-center gap-1.5">
-                      <HardDrive className="h-3 w-3 text-primary" />
-                      <span className="font-bold text-xs truncate">
-                        {plan.maxStorage === 0 ? "Unlimited" : plan.maxStorage >= 1024 ? `${(plan.maxStorage / 1024).toFixed(1)} GB` : `${plan.maxStorage} MB`}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
-                    <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Bonus AI (Bln)</p>
-                    <div className="flex items-center gap-1.5">
-                      <Zap className="h-3 w-3 text-primary" />
-                      <span className="font-bold text-xs truncate">
-                        {plan.monthlyAiTokens > 0 ? `${plan.monthlyAiTokens.toLocaleString("id-ID")} Token` : "-"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Features */}
-                {feats.length > 0 && (
-                  <ul className="space-y-1.5">
-                    {feats.slice(0, 5).map((f: string, i: number) => (
-                      <li key={i} className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                    {feats.length > 5 && (
-                      <li className="text-xs text-muted-foreground pl-6">+ {feats.length - 5} fitur lainnya</li>
-                    )}
-                  </ul>
-                )}
-              </CardContent>
-            </Card>
-          )
-        })}
+        {plans.map((plan) => (
+          <PlanCard 
+            key={plan.id}
+            plan={plan}
+            pricing={pricing}
+            onEdit={openEdit}
+            onToggleActive={handleToggleActive}
+          />
+        ))}
       </div>
 
       {/* ─── Edit Dialog ─── */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl">
-          <DialogHeader className="px-6 pt-6 pb-3 border-b border-border/50">
-            <DialogTitle className="text-lg font-bold flex items-center gap-2">
-              <div className={cn("p-1.5 rounded-lg", isProPlan ? "bg-primary/10 text-primary" : "bg-slate-100 text-slate-600")}>
-                {isProPlan ? <Star className="h-4 w-4" /> : <Zap className="h-4 w-4" />}
-              </div>
-              Edit Paket {editingPlan?.name}
-            </DialogTitle>
-            <DialogDescription>
-              Perbarui konfigurasi dan fitur paket ini.
-            </DialogDescription>
-          </DialogHeader>
-
-          {editingPlan && (
-            <div className="px-6 py-5 space-y-5 overflow-y-auto max-h-[70vh]">
-
-              {/* Name + Description */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Nama Paket</Label>
-                  <Input
-                    value={editingPlan.name || ""}
-                    onChange={e => setEditingPlan({ ...editingPlan, name: e.target.value })}
-                    className="rounded-xl"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Urutan Tampil</Label>
-                  <Input
-                    type="number"
-                    value={editingPlan.sortOrder ?? 0}
-                    onChange={e => setEditingPlan({ ...editingPlan, sortOrder: Number(e.target.value) })}
-                    className="rounded-xl"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Deskripsi Singkat</Label>
-                <Input
-                  value={editingPlan.description || ""}
-                  onChange={e => setEditingPlan({ ...editingPlan, description: e.target.value })}
-                  placeholder="Penjelasan singkat paket"
-                  className="rounded-xl"
-                />
-              </div>
-
-              {/* Price fields — only for FREE plan */}
-              {!isProPlan && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Harga (Rp)</Label>
-                    <Input
-                      type="number"
-                      value={editingPlan.price || 0}
-                      onChange={e => setEditingPlan({ ...editingPlan, price: Number(e.target.value) })}
-                      className="rounded-xl font-bold text-primary"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Periode Tagihan</Label>
-                    <Select value={editingPlan.interval} onValueChange={(value) => setEditingPlan({ ...editingPlan, interval: value })}>
-                      <SelectTrigger className="w-full h-10 rounded-xl">
-                        <SelectValue placeholder="Periode Tagihan" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MONTHLY">Bulanan</SelectItem>
-                        <SelectItem value="YEARLY">Tahunan</SelectItem>
-                        <SelectItem value="ONETIME">Sekali Bayar</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              )}
-
-              {/* PRO Pricing Config — only for PRO plan */}
-              {isProPlan && (
-                <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4 text-primary" />
-                    <p className="text-sm font-bold text-primary">Konfigurasi Harga Pay-per-Student</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold">Harga per Siswa (Rp / Tahun)</Label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">Rp</span>
-                        <Input
-                          type="number"
-                          value={pricing.PRICE_PER_STUDENT}
-                          onChange={e => setPricing({ ...pricing, PRICE_PER_STUDENT: e.target.value })}
-                          className="rounded-xl pl-8 font-bold text-primary"
-                        />
-                      </div>
-                      <p className="text-[10px] text-muted-foreground">
-                        Contoh: 50 siswa = Rp {(50 * Number(pricing.PRICE_PER_STUDENT)).toLocaleString("id-ID")}
-                      </p>
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold">Minimal Pembelian Siswa</Label>
-                      <Input
-                        type="number"
-                        value={pricing.MIN_STUDENTS}
-                        onChange={e => setPricing({ ...pricing, MIN_STUDENTS: e.target.value })}
-                        className="rounded-xl font-bold"
-                      />
-                      <p className="text-[10px] text-muted-foreground">
-                        Minimal <strong>{pricing.MIN_STUDENTS}</strong> siswa per upgrade.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Masa Aktif Invoice */}
-                  <div className="mt-4 pt-4 border-t border-primary/15">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Timer className="h-4 w-4 text-amber-500" />
-                      <p className="text-sm font-bold text-amber-600">Masa Aktif Invoice</p>
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold">Batas Waktu Pembayaran (Hari)</Label>
-                      <Input
-                        type="number"
-                        min={1}
-                        max={30}
-                        value={pricing.INVOICE_EXPIRY_DAYS}
-                        onChange={e => setPricing({ ...pricing, INVOICE_EXPIRY_DAYS: e.target.value })}
-                        className="rounded-xl font-bold w-full md:w-1/2"
-                      />
-                      <p className="text-[10px] text-muted-foreground leading-relaxed">
-                        Invoice yang dibuat akan berlaku selama <strong>{pricing.INVOICE_EXPIRY_DAYS} hari</strong> sejak tanggal pembuatan.
-                        Mengubah nilai ini akan <strong>memperbarui semua invoice pending</strong> yang ada saat ini.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Quotas */}
-              {/* Quotas */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1.5">
-                    <Users className="h-3.5 w-3.5" /> Siswa
-                  </Label>
-                  <Input
-                    type="number"
-                    value={editingPlan.maxStudents ?? 0}
-                    onChange={e => setEditingPlan({ ...editingPlan, maxStudents: Number(e.target.value) })}
-                    className="rounded-xl"
-                    disabled={isProPlan}
-                  />
-                  <p className="text-[9px] text-muted-foreground leading-tight">
-                    {isProPlan ? "Sesuai invoice" : "0 = Unlimited"}
-                  </p>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1.5">
-                    <HardDrive className="h-3.5 w-3.5" /> Penyimpanan
-                  </Label>
-                  <Input
-                    type="number"
-                    value={editingPlan.maxStorage ?? 1024}
-                    onChange={e => setEditingPlan({ ...editingPlan, maxStorage: Number(e.target.value) })}
-                    className="rounded-xl"
-                  />
-                  <p className="text-[9px] text-muted-foreground leading-tight">Dalam MB (1024 = 1GB)</p>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1.5">
-                    <Zap className="h-3.5 w-3.5" /> Bonus AI
-                  </Label>
-                  <Input
-                    type="number"
-                    value={editingPlan.monthlyAiTokens ?? 0}
-                    onChange={e => setEditingPlan({ ...editingPlan, monthlyAiTokens: Number(e.target.value) })}
-                    className="rounded-xl"
-                  />
-                  <p className="text-[9px] text-muted-foreground leading-tight">Token / Bulan</p>
-                </div>
-              </div>
-
-              {/* Sort Order hint removed — moved to top */}
-
-              {/* Feature Builder */}
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold">Fitur Unggulan</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={featureInput}
-                    onChange={e => setFeatureInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addFeature())}
-                    placeholder="Ketik fitur lalu tekan Enter..."
-                    className="rounded-xl flex-1"
-                  />
-                  <Button type="button" variant="outline" className="rounded-xl shrink-0" onClick={addFeature}>
-                    Tambah
-                  </Button>
-                </div>
-                {(() => {
-                  const feats: string[] = Array.isArray(editingPlan?.features) ? editingPlan.features as string[] : []
-                  return feats.length > 0 ? (
-                    <ul className="space-y-1.5 mt-2">
-                      {feats.map((feat, i) => (
-                        <li 
-                          key={i} 
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, i)}
-                          onDragOver={(e) => handleDragOver(e, i)}
-                          onDragEnd={handleDragEnd}
-                          onDrop={(e) => handleDrop(e, i)}
-                          className={cn(
-                            "flex items-center gap-2 rounded-xl px-3 py-2 text-sm group cursor-grab active:cursor-grabbing transition-colors",
-                            draggedFeatureIdx === i ? "bg-primary/20 opacity-50" : "bg-muted/40 hover:bg-muted",
-                            dragOverFeatureIdx === i && draggedFeatureIdx !== i ? "border-t-2 border-primary" : "border border-transparent"
-                          )}
-                        >
-                          <GripVertical className="h-4 w-4 text-muted-foreground/50 cursor-grab shrink-0 hover:text-foreground" />
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                          <span className="flex-1 select-none">{feat}</span>
-                          <Button
-                            onClick={() => removeFeature(i)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive h-6 w-6 p-0"
-                            variant="ghost"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-xs text-muted-foreground italic">Belum ada fitur ditambahkan.</p>
-                  )
-                })()}
-              </div>
-
-            </div>
-          )}
-
-          <DialogFooter className="px-6 py-4 border-t bg-muted/20 gap-2">
-            <Button variant="ghost" className="rounded-xl" onClick={() => setIsDialogOpen(false)}>
-              Batal
-            </Button>
-            <Button
-              className="justify-center items-center flex rounded-xl btn-gradient text-white border-0 px-8 gap-2 h-10"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? (
-                <><div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Menyimpan...</>
-              ) : (
-                <><Save className="h-4 w-4" /> Simpan Perubahan</>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EditPlanModal
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        plan={editingPlan}
+        onUpdatePlan={(p) => setEditingPlan(prev => ({ ...prev, ...p }))}
+        pricing={pricing}
+        onUpdatePricing={(p) => setPricing(prev => ({ ...prev, ...p }))}
+        onSave={handleSave}
+        saving={saving}
+      />
     </div>
   )
 }
