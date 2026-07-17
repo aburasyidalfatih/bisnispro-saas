@@ -30,7 +30,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com",
       "connect-src 'self' ws: wss: https://cloudflareinsights.com https://static.cloudflareinsights.com https://*.ingest.sentry.io https://*.sentry.io",
-      "frame-src 'self' https://challenges.cloudflare.com https://www.openstreetmap.org https://maps.google.com https://www.google.com https://www.youtube.com https://youtube.com https://youtu.be",
+      "frame-src 'self' data: blob: about:blank https://challenges.cloudflare.com https://www.openstreetmap.org https://maps.google.com https://www.google.com https://www.youtube.com https://youtube.com https://youtu.be https://www.youtube-nocookie.com https://player.vimeo.com",
       "frame-ancestors 'none'",
     ].join("; "),
   },
