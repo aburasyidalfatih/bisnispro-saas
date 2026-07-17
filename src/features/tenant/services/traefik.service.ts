@@ -30,6 +30,8 @@ export async function createCustomDomainRoute(domain: string): Promise<boolean> 
       rule: "Host(\`${safeDomain}\`)"
       entryPoints:
         - web
+      middlewares:
+        - redirect-to-https@file
       service: ${TRAEFIK_TARGET_SERVICE}
       priority: 100
     ${slug}-https:
