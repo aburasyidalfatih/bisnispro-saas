@@ -39,6 +39,9 @@ import {
 import { useTenantBranding } from "@/components/providers/tenant-branding-provider"
 import { toast } from "@/hooks/use-toast"
 import { useRef, useState, useEffect } from "react"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 interface RichTextEditorProps {
   value: string
@@ -51,6 +54,10 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
   const tenantId = branding.id
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [youtubeOpen, setYoutubeOpen] = useState(false)
+  const [youtubeUrl, setYoutubeUrl] = useState("")
+  const [linkOpen, setLinkOpen] = useState(false)
+  const [linkUrl, setLinkUrl] = useState("")
 
   const compressImage = async (file: File): Promise<File> => {
     return new Promise((resolve) => {
@@ -204,29 +211,36 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
   }
 
   const setLink = () => {
+    if (!editor) return
     const previousUrl = editor.getAttributes('link').href
-    const url = window.prompt('URL', previousUrl)
+    setLinkUrl(previousUrl || "")
+    setLinkOpen(true)
+  }
 
-    // cancelled
-    if (url === null) {
-      return
-    }
-
-    // empty
-    if (url === '') {
+  const handleLinkSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editor) return
+    
+    if (linkUrl === '') {
       editor.chain().focus().extendMarkRange('link').unsetLink().run()
-      return
+    } else {
+      editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run()
     }
-
-    // update link
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+    setLinkOpen(false)
+    setLinkUrl("")
   }
 
   const addYoutubeVideo = () => {
-    const url = window.prompt('URL Video YouTube (contoh: https://www.youtube.com/watch?v=...)')
-    if (url) {
-      editor.chain().focus().setYoutubeVideo({ src: url }).run()
+    setYoutubeOpen(true)
+  }
+
+  const handleYoutubeSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (youtubeUrl && editor) {
+      editor.chain().focus().setYoutubeVideo({ src: youtubeUrl }).run()
     }
+    setYoutubeOpen(false)
+    setYoutubeUrl("")
   }
 
   const ToggleButton = ({ 
@@ -460,6 +474,64 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       <div className="flex-1 overflow-y-auto max-h-[600px] prose-editor-container">
         <EditorContent editor={editor} />
       </div>
+
+      <Dialog open={youtubeOpen} onOpenChange={setYoutubeOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Embed Video YouTube</DialogTitle>
+            <DialogDescription>
+              Masukkan link video YouTube yang ingin Anda sisipkan ke dalam teks.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleYoutubeSubmit}>
+            <div className="grid gap-4 py-4">
+              <Input
+                id="youtube-url"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="col-span-4"
+                autoFocus
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setYoutubeOpen(false)}>
+                Batal
+              </Button>
+              <Button type="submit">Sisipkan Video</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={linkOpen} onOpenChange={setLinkOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Sisipkan Tautan</DialogTitle>
+            <DialogDescription>
+              Masukkan URL tautan. Kosongkan untuk menghapus tautan yang ada.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleLinkSubmit}>
+            <div className="grid gap-4 py-4">
+              <Input
+                id="link-url"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+                placeholder="https://..."
+                className="col-span-4"
+                autoFocus
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setLinkOpen(false)}>
+                Batal
+              </Button>
+              <Button type="submit">Simpan Tautan</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
