@@ -111,6 +111,13 @@ export function AlumniSubmissionForm({ tenantId }: { tenantId: string }) {
         institutionName: formData.institutionName,
         testimonial: formData.testimonial,
         imageUrl: finalImageUrl,
+        instagram: formData.instagram,
+        facebook: formData.facebook,
+        tiktok: formData.tiktok,
+        youtube: formData.youtube,
+        linkedin: formData.linkedin,
+        twitter: formData.twitter,
+        pinterest: formData.pinterest,
       })
 
       toast({ 
