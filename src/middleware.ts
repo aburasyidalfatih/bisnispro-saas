@@ -95,7 +95,7 @@ function addSecurityHeaders(response: NextResponse, routeType: "public" | "prote
   response.headers.set("Permissions-Policy", "camera=(self), microphone=(), geolocation=(self)")
   response.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ws: wss: https://cloudflareinsights.com https://static.cloudflareinsights.com; frame-src 'self' https://challenges.cloudflare.com https://www.openstreetmap.org https://maps.google.com https://www.google.com https://www.youtube.com https://youtube.com https://youtu.be; frame-ancestors 'none'"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ws: wss: https://cloudflareinsights.com https://static.cloudflareinsights.com; frame-src 'self' data: blob: about:blank https://challenges.cloudflare.com https://www.openstreetmap.org https://maps.google.com https://www.google.com https://www.youtube.com https://youtube.com https://youtu.be https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'"
   )
 
   // Aggressive SEO Indexing Header & Edge Caching for public pages
