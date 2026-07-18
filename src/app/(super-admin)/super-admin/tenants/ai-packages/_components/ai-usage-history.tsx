@@ -50,7 +50,7 @@ export function AiUsageHistory() {
             <TableHeader>
               <TableRow className="border-b bg-muted/30">
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Waktu</TableHead>
-                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Tenant</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Lembaga</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">User</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Fitur / Penggunaan</TableHead>
                 <TableHead className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Token Digunakan</TableHead>

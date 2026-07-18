@@ -111,7 +111,7 @@ export default function EducationalEmailsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Email Edukasi (Drip Campaign)</h2>
-          <p className="text-muted-foreground">Otomatis kirim email edukasi ke Tenant setelah pendaftaran disetujui.</p>
+          <p className="text-muted-foreground">Otomatis kirim email edukasi ke Lembaga setelah pendaftaran disetujui.</p>
         </div>
       </div>
 
@@ -149,7 +149,7 @@ export default function EducationalEmailsPage() {
           
           <Card className="glass border-0 bg-primary/5">
             <CardContent className="p-4 text-xs text-muted-foreground">
-              <p>Email akan otomatis terkirim pada jam 08:00 pagi setiap harinya (H+X) setelah tanggal <strong>approvedAt</strong> Tenant diatur.</p>
+              <p>Email akan otomatis terkirim pada jam 08:00 pagi setiap harinya (H+X) setelah tanggal <strong>approvedAt</strong> Lembaga diatur.</p>
             </CardContent>
           </Card>
         </div>

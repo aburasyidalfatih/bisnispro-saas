@@ -23,7 +23,7 @@ interface Document {
 }
 
 export default function DocumentsPage() {
-  const { branding, isLoadingTenant } = useTenantBranding()
+  const { branding, isLoadingLembaga } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [documents, setDocuments] = useState<Document[]>([])
 
@@ -42,7 +42,7 @@ export default function DocumentsPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingTenant && tenantId) {
+    if (!isLoadingLembaga && tenantId) {
       loadDocuments()
     }
   }, [tenantId, isLoadingTenant])

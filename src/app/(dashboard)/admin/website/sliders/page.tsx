@@ -22,7 +22,7 @@ interface Slider {
 }
 
 export default function SlidersPage() {
-  const { branding, isLoadingTenant } = useTenantBranding()
+  const { branding, isLoadingLembaga } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [sliders, setSliders] = useState<Slider[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -44,7 +44,7 @@ export default function SlidersPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingTenant && tenantId) {
+    if (!isLoadingLembaga && tenantId) {
       loadData()
     }
   }, [tenantId, isLoadingTenant])

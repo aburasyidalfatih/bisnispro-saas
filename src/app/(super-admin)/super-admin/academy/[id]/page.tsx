@@ -202,7 +202,7 @@ export default function CourseBuilderPage({ params }: { params: Promise<{ id: st
               <div className="flex items-center justify-between pt-2">
                 <div className="space-y-0.5">
                   <Label>Status Publikasi</Label>
-                  <div className="text-xs text-muted-foreground">Tampilkan di katalog tenant</div>
+                  <div className="text-xs text-muted-foreground">Tampilkan di katalog lembaga</div>
                 </div>
                 <Switch checked={course.isPublished} onCheckedChange={c => setCourse({...course, isPublished: c})} />
               </div>

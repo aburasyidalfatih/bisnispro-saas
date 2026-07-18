@@ -45,7 +45,7 @@ export default async function FeedbackPage() {
           <div>
             <CardTitle>Daftar Laporan</CardTitle>
             <CardDescription className="mt-1">
-              Menampilkan seluruh masukan dari tenant. Anda dapat mengubah statusnya untuk memudahkan pelacakan (tracking).
+              Menampilkan seluruh masukan dari lembaga. Anda dapat mengubah statusnya untuk memudahkan pelacakan (tracking).
             </CardDescription>
           </div>
           <ExportFeedbackButton data={feedbacks} />
@@ -56,7 +56,7 @@ export default async function FeedbackPage() {
               <TableRow>
                 <TableHead>Tanggal</TableHead>
                 <TableHead>Pengirim</TableHead>
-                <TableHead>Tenant</TableHead>
+                <TableHead>Lembaga</TableHead>
                 <TableHead>Tipe</TableHead>
                 <TableHead>Pesan</TableHead>
                 <TableHead>Status</TableHead>

@@ -51,7 +51,7 @@ export function OverviewTab() {
         <SummaryCard icon={Wifi} label="Online Saat Ini" value={data.onlineUsers} color="emerald" pulse />
         <SummaryCard icon={UserCheck} label="Guru/Staff Online" value={data.onlineStaff} color="blue" />
         <SummaryCard icon={Users} label="Ortu/Siswa Online" value={data.onlineParents} color="violet" />
-        <SummaryCard icon={Building2} label="Tenant Aktif" value={data.activeTenants} color="primary" subtitle={`/ ${data.totalTenants} total`} />
+        <SummaryCard icon={Building2} label="Lembaga Aktif" value={data.activeTenants} color="primary" subtitle={`/ ${data.totalTenants} total`} />
         <SummaryCard icon={Users} label="Total User" value={data.totalUsers} color="slate" />
         <SummaryCard icon={TrendingUp} label="Login Hari Ini" value={data.loginsToday} color="amber" />
         <SummaryCard icon={MessageSquare} label="WA Terkirim" value={data.contentStats.totalWaMessages} color="green" />
@@ -84,7 +84,7 @@ export function OverviewTab() {
             <CardTitle className="flex items-center gap-2 text-base">
               <TrendingUp className="h-5 w-5 text-blue-500" /> Tren Login Harian (7 Hari Terakhir)
             </CardTitle>
-            <CardDescription>Jumlah login unik per hari dari seluruh tenant.</CardDescription>
+            <CardDescription>Jumlah login unik per hari dari seluruh lembaga.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[220px] sm:h-[280px] w-full">
@@ -130,11 +130,11 @@ export function OverviewTab() {
           </CardContent>
         </Card>
 
-        {/* Top 10 Tenant Aktif */}
+        {/* Top 10 Lembaga Aktif */}
         <Card className="glass border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <TrendingUp className="h-5 w-5 text-emerald-500" /> Top 10 Tenant Paling Aktif
+              <TrendingUp className="h-5 w-5 text-emerald-500" /> Top 10 Lembaga Paling Aktif
             </CardTitle>
             <CardDescription>Berdasarkan total login bulan ini.</CardDescription>
           </CardHeader>

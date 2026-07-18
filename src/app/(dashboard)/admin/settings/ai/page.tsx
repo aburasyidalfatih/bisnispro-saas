@@ -45,7 +45,7 @@ export default function AiSettingsPage() {
     }
   }, [session?.user?.tenants])
 
-  const currentTenant = session?.user?.tenants?.find((t: any) => t.id === tenantId) || session?.user?.tenants?.[0]
+  const currentLembaga = session?.user?.tenants?.find((t: any) => t.id === tenantId) || session?.user?.tenants?.[0]
   const tenantPlan = currentTenant?.plan ||"free"
   const isFreePlan = tenantPlan ==="free"
 

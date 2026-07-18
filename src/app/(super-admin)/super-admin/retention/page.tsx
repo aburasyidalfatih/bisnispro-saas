@@ -89,7 +89,7 @@ export default function RetentionPage() {
     <div className="space-y-6 pb-10">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Retensi Tenant</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Retensi Lembaga</h1>
           <p className="text-muted-foreground mt-1">Kelola pesan dan pantau tenant yang tidak aktif (dormant).</p>
         </div>
         <Button onClick={handleSave} disabled={saving} className="gap-2">
@@ -194,7 +194,7 @@ export default function RetentionPage() {
                 <Clock className="h-5 w-5 text-primary" />
                 Daftar Sekolah Dormant (30, 60, 90 Hari)
               </CardTitle>
-              <CardDescription>Daftar tenant yang terdeteksi tidak aktif berdasarkan kategori hari.</CardDescription>
+              <CardDescription>Daftar Lembaga yang terdeteksi tidak aktif berdasarkan kategori hari.</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               <Table>

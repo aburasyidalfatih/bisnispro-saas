@@ -84,7 +84,7 @@ export function FinanceTab() {
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600"><Target className="h-5 w-5" /></div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground font-medium">Tenant Bayar</p>
+                  <p className="text-[10px] text-muted-foreground font-medium">Lembaga Bayar</p>
                   <h3 className="text-lg font-bold">{data.revenueStats.payingTenantCount}</h3>
                 </div>
               </div>

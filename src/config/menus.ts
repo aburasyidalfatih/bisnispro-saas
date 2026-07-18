@@ -477,17 +477,17 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
       title: "Platform",
       items: [
         {
-          label: "Tenant",
+          label: "Lembaga",
           href: "/super-admin/tenants",
           icon: Building2,
           children: [
-            { label: "Semua Tenant", href: "/super-admin/tenants", icon: Globe },
+            { label: "Semua Lembaga", href: "/super-admin/tenants", icon: Globe },
             { label: "Paket & Harga", href: "/super-admin/tenants/plans", icon: Tag },
             { label: "Paket Token AI", href: "/super-admin/tenants/ai-packages", icon: Zap },
             { label: "Kode Diskon", href: "/super-admin/tenants/discounts", icon: Tag },
             { label: "Pengajuan Sekolah", href: "/super-admin/applications", icon: FileText },
             { label: "Sekolah Dormant", href: "/super-admin/dormant", icon: Moon },
-            { label: "Retensi Tenant", href: "/super-admin/retention", icon: Megaphone },
+            { label: "Retensi Lembaga", href: "/super-admin/retention", icon: Megaphone },
           ],
         },
         {

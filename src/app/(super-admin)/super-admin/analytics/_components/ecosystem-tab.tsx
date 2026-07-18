@@ -60,7 +60,7 @@ export function EcosystemTab() {
               {formatRupiah(ecosystemStats.totalGmv)}
             </h1>
             <p className="text-slate-300 max-w-lg text-sm">
-              Total perputaran uang melalui ekosistem transaksi platform (Kantin, Tabungan Siswa, dan PPDB) dari seluruh tenant.
+              Total perputaran uang melalui ekosistem transaksi platform (Kantin, Tabungan Siswa, dan PPDB) dari seluruh lembaga.
             </p>
           </div>
           <div className="shrink-0">

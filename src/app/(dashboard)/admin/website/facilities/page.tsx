@@ -25,7 +25,7 @@ interface Facility {
 }
 
 export default function FacilitiesPage() {
-  const { branding, isLoadingTenant } = useTenantBranding()
+  const { branding, isLoadingLembaga } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -45,7 +45,7 @@ export default function FacilitiesPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingTenant && tenantId) {
+    if (!isLoadingLembaga && tenantId) {
       loadFacilities()
     }
   }, [tenantId, isLoadingTenant])

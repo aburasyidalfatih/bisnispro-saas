@@ -25,7 +25,7 @@ interface Achievement {
 }
 
 export default function AchievementsPage() {
-  const { branding, isLoadingTenant } = useTenantBranding()
+  const { branding, isLoadingLembaga } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -47,7 +47,7 @@ export default function AchievementsPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingTenant && tenantId) {
+    if (!isLoadingLembaga && tenantId) {
       loadAchievements()
     }
   }, [tenantId, isLoadingTenant])

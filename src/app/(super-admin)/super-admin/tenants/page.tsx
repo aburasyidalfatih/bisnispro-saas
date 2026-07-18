@@ -118,7 +118,7 @@ export default function TenantsPage() {
       body: JSON.stringify({ id }),
     })
     if (res.ok) {
-      toast({ title: "Tenant dihapus", description: `${name} berhasil dihapus.` })
+      toast({ title: "Lembaga dihapus", description: `${name} berhasil dihapus.` })
       fetchTenants()
     } else {
       toast({ title: "Gagal", description: "Tidak dapat menghapus tenant.", variant: "destructive" })
@@ -161,7 +161,7 @@ export default function TenantsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="flex-1">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Manajemen Tenant</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Manajemen Lembaga</h1>
           <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola sekolah dan lembaga yang terdaftar ({total} tenant)</p>
         </div>
         <div className="flex items-center gap-2">
@@ -192,7 +192,7 @@ export default function TenantsPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-b bg-muted/30">
-                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Tenant / Institusi</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Lembaga / Institusi</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Kontak Owner</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest hidden lg:table-cell">URL / Domain</TableHead>
                 <TableHead 

@@ -76,7 +76,7 @@ export default function AcademyPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="flex-1">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Academy (LMS)</h1>
-          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola kelas dan pelatihan untuk Tenant Admin ({total} kelas)</p>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola kelas dan pelatihan untuk Admin Lembaga ({total} kelas)</p>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/super-admin/academy/create">

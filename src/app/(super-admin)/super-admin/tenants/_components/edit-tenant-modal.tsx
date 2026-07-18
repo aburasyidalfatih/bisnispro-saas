@@ -72,7 +72,7 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="rounded-3xl max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit Data Tenant</DialogTitle>
+          <DialogTitle>Edit Data Lembaga</DialogTitle>
           <DialogDescription>Perbarui informasi institusi dan lisensi.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">

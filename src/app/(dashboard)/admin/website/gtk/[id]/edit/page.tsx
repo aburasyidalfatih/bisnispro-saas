@@ -29,7 +29,7 @@ export default function EditStaffPage() {
   const params = useParams()
   const id = params.id as string
 
-  const { branding, isLoadingTenant } = useTenantBranding()
+  const { branding, isLoadingLembaga } = useTenantBranding()
   const tenantId = branding.id
   
   const [loading, setLoading] = useState(true)
@@ -60,7 +60,7 @@ export default function EditStaffPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (!isLoadingTenant && tenantId) {
+    if (!isLoadingLembaga && tenantId) {
       getStaffById(id, tenantId)
         .then(d => {
           if (!d) {

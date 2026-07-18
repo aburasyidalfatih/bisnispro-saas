@@ -33,7 +33,7 @@ export function IntegrationSettings({
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {/* Google OAuth Tenant */}
+        {/* Google OAuth Lembaga */}
         <div className="space-y-2 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="h-4 w-4 text-red-500" />
@@ -50,7 +50,7 @@ export function IntegrationSettings({
             <Input type="password" value={orgForm.googleClientSecret} onChange={e => setOrgForm(p => ({ ...p, googleClientSecret: e.target.value }))} placeholder="Google Client Secret" className="rounded-xl h-9 text-xs font-mono" />
           </div>
         </div>
-        {/* Google Indexing API Tenant */}
+        {/* Google Indexing API Lembaga */}
         <div className="space-y-2 p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 mt-4">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="h-4 w-4 text-blue-500" />
@@ -69,7 +69,7 @@ export function IntegrationSettings({
           </div>
         </div>
 
-        {/* Link Afiliasi Tenant */}
+        {/* Link Afiliasi Lembaga */}
         <div className="space-y-2 p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 mt-4">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="h-4 w-4 text-amber-500" />

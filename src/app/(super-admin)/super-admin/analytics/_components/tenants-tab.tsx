@@ -60,7 +60,7 @@ export function TenantsTab() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <CardTitle className="text-base">Detail Aktivitas Per-Tenant</CardTitle>
-              <CardDescription>Top 50 tenant berdasarkan aktivitas login terbaru.</CardDescription>
+              <CardDescription>Top 50 lembaga berdasarkan aktivitas login terbaru.</CardDescription>
             </div>
             <div className="relative max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

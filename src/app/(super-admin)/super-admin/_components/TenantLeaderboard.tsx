@@ -7,7 +7,7 @@ import { Trophy, Building2, TrendingUp } from "lucide-react"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 
-interface LeaderboardTenant {
+interface LeaderboardLembaga {
   id: string
   name: string
   slug: string

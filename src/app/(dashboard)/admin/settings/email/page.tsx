@@ -39,7 +39,7 @@ export default function EmailSettingsPage() {
   })
 
   useEffect(() => {
-    const activeTenant = session?.user?.tenants?.[0]
+    const activeLembaga = session?.user?.tenants?.[0]
     const id = activeTenant?.id
     if (activeTenant?.plan) setTenantPlan(activeTenant.plan)
 

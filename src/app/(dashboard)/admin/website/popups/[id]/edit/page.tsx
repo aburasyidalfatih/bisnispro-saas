@@ -20,7 +20,7 @@ export default function EditPopupPage() {
   const params = useParams()
   const id = params.id as string
 
-  const { branding, isLoadingTenant } = useTenantBranding()
+  const { branding, isLoadingLembaga } = useTenantBranding()
   const tenantId = branding.id
   
   const [loading, setLoading] = useState(true)
@@ -43,7 +43,7 @@ export default function EditPopupPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (!isLoadingTenant && tenantId) {
+    if (!isLoadingLembaga && tenantId) {
       getPopupById(id, tenantId)
         .then(d => {
           if (!d) {

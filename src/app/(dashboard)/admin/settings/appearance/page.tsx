@@ -111,7 +111,7 @@ export default function AppearancePage() {
     }
     if (!tenantId) {
       setSaving(false)
-      toast({ title:"Gagal menyimpan", description:"Tenant tidak ditemukan.", variant:"destructive" })
+      toast({ title:"Gagal menyimpan", description:"Lembaga tidak ditemukan.", variant:"destructive" })
       return
     }
     try {

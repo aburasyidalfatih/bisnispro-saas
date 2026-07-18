@@ -33,7 +33,7 @@ type FormData = z.infer<typeof postSchema>
 export default function PengumumanFormPage() {
   const router = useRouter()
   const params = useParams()
-  const { branding, isLoadingTenant } = useTenantBranding()
+  const { branding, isLoadingLembaga } = useTenantBranding()
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [isGeneratingSEO, setIsGeneratingSEO] = useState(false)

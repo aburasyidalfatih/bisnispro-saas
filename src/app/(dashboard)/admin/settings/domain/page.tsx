@@ -183,7 +183,7 @@ export default function DomainSettingsPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Custom Domain</h1>
         <p className="text-muted-foreground mt-1">
-          Hubungkan domain Anda sendiri ke website tenant ini.
+          Hubungkan domain Anda sendiri ke website lembaga ini.
         </p>
       </div>
 

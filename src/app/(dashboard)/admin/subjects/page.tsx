@@ -106,7 +106,7 @@ export default function SubjectsPage() {
       const worksheet = XLSX.utils.json_to_sheet(formattedData)
       const workbook = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(workbook, worksheet,"Data Mapel")
-      XLSX.writeFile(workbook, `Data_Mapel_${tenant?.name?.replace(/\s+/g, '_') || 'Tenant'}.xlsx`)
+      XLSX.writeFile(workbook, `Data_Mapel_${tenant?.name?.replace(/\s+/g, '_') || 'Lembaga'}.xlsx`)
       toast({ title:"Berhasil", description:"File Excel berhasil diunduh" })
     } catch (e: any) {
       toast({ title:"Gagal Ekspor", description: e.message, variant:"destructive" })

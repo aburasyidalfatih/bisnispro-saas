@@ -21,7 +21,7 @@ interface Extracurricular {
 }
 
 export default function ExtracurricularPage() {
-  const { branding, isLoadingTenant } = useTenantBranding()
+  const { branding, isLoadingLembaga } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState<Extracurricular[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -43,7 +43,7 @@ export default function ExtracurricularPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingTenant && tenantId) {
+    if (!isLoadingLembaga && tenantId) {
       loadData()
     }
   }, [tenantId, isLoadingTenant])

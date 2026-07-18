@@ -73,7 +73,7 @@ export default function CreateCoursePage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Buat Kelas Baru</h1>
-          <p className="text-muted-foreground text-sm">Tambahkan materi kursus baru untuk Tenant Admin</p>
+          <p className="text-muted-foreground text-sm">Tambahkan materi kursus baru untuk Admin Lembaga</p>
         </div>
       </div>
 

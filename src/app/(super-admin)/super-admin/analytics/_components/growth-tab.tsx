@@ -66,9 +66,9 @@ export function GrowthTab() {
               <div className="space-y-2 pt-3 border-t">
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Pending Review</span><Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">{data.conversionFunnel.pendingApplications}</Badge></div>
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Ditolak</span><Badge variant="outline" className="bg-rose-50 text-rose-600 border-rose-200">{data.conversionFunnel.rejectedApplications}</Badge></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant FREE</span><span className="font-bold">{data.conversionFunnel.freeTenants}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant LITE</span><span className="font-bold text-blue-600">{data.conversionFunnel.liteTenants}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tenant PRO</span><span className="font-bold text-violet-600">{data.conversionFunnel.proTenants}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lembaga FREE</span><span className="font-bold">{data.conversionFunnel.freeTenants}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lembaga LITE</span><span className="font-bold text-blue-600">{data.conversionFunnel.liteTenants}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lembaga PRO</span><span className="font-bold text-violet-600">{data.conversionFunnel.proTenants}</span></div>
               </div>
             </CardContent>
           </Card>
@@ -156,7 +156,7 @@ export function GrowthTab() {
         <Card className="glass border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Receipt className="h-5 w-5 text-amber-500" /> Insight Keuangan Tenant
+              <Receipt className="h-5 w-5 text-amber-500" /> Insight Keuangan Lembaga
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">

@@ -53,7 +53,7 @@ export function ApplicationTable({
                   onChange={toggleSelectAll} 
                 />
               </TableHead>
-              <TableHead className="px-4 py-3 font-semibold">Tenant (Sekolah)</TableHead>
+              <TableHead className="px-4 py-3 font-semibold">Lembaga (Sekolah)</TableHead>
               <TableHead className="px-4 py-3 font-semibold">Penanggungjawab</TableHead>
               <TableHead className="px-4 py-3 font-semibold">Kota / Provinsi</TableHead>
               <TableHead className="px-4 py-3 font-semibold text-center">Jml. Siswa</TableHead>

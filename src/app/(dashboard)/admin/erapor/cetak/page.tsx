@@ -11,7 +11,7 @@ export const metadata = {
 export default async function CetakRaporPage() {
   const session = await auth()
   const tenantId = session?.user?.tenants?.[0]?.id
-  if (!tenantId) return <div>Tenant tidak ditemukan</div>
+  if (!tenantId) return <div>Lembaga tidak ditemukan</div>
   
   const { error: accessError } = await requireTenantMembership(tenantId);
   if (accessError) throw new Error("Unauthorized")

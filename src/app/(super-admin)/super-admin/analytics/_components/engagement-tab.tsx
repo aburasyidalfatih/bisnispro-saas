@@ -90,7 +90,7 @@ export function EngagementTab() {
               <CardTitle className="text-base flex items-center gap-2">
                 <Globe className="h-5 w-5 text-blue-500" /> Sumber Traffic
               </CardTitle>
-              <CardDescription>Dari mana pengunjung website tenant berasal.</CardDescription>
+              <CardDescription>Dari mana pengunjung website lembaga berasal.</CardDescription>
             </CardHeader>
             <CardContent>
               {data.visitorStats.sources.length === 0 ? (
@@ -194,12 +194,12 @@ export function EngagementTab() {
           </Card>
         </div>
 
-        {/* Top Tenant by Traffic */}
+        {/* Top Lembaga by Traffic */}
         {data.visitorStats.topTrafficTenants.length > 0 && (
           <Card className="glass border-0 mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <TrendingUp className="h-5 w-5 text-cyan-500" /> Top 10 Tenant Website Terbanyak Dikunjungi
+                <TrendingUp className="h-5 w-5 text-cyan-500" /> Top 10 Website Lembaga Terbanyak Dikunjungi
               </CardTitle>
               <CardDescription>Berdasarkan total tampilan halaman bulan ini.</CardDescription>
             </CardHeader>
@@ -243,7 +243,7 @@ export function EngagementTab() {
                     <XAxis dataKey="label" stroke="#6b7280" fontSize={9} tickLine={false} axisLine={false} />
                     <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                     <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Bar dataKey="value" name="Tenant" radius={[6, 6, 0, 0]} barSize={36}>
+                    <Bar dataKey="value" name="Lembaga" radius={[6, 6, 0, 0]} barSize={36}>
                       <Cell fill="#10b981" /><Cell fill="#f59e0b" /><Cell fill="#f97316" /><Cell fill="#ef4444" />
                     </Bar>
                   </BarChart>
@@ -289,7 +289,7 @@ export function EngagementTab() {
 
       {/* SECTION 14: ENGAGEMENT SCORE */}
       <div>
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Star className="h-5 w-5 text-yellow-500" /> Skor Engagement Tenant</h2>
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Star className="h-5 w-5 text-yellow-500" /> Skor Engagement Lembaga</h2>
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           <Card className="glass border-0">
             <CardHeader><CardTitle className="text-base">Rata-rata Skor</CardTitle><CardDescription>{data.engagementStats.totalScored} tenant dinilai.</CardDescription></CardHeader>
@@ -319,7 +319,7 @@ export function EngagementTab() {
                         ps.plan === 'LITE' && 'bg-blue-50 text-blue-600 border-blue-200',
                         ps.plan === 'PRO' && 'bg-violet-50 text-violet-600 border-violet-200',
                       )}>{ps.plan}</Badge>
-                      <span className="text-sm font-bold">{ps.avgScore}/100 <span className="text-[10px] text-muted-foreground font-normal">({ps.count} tenant)</span></span>
+                      <span className="text-sm font-bold">{ps.avgScore}/100 <span className="text-[10px] text-muted-foreground font-normal">({ps.count} lembaga)</span></span>
                     </div>
                     <div className="h-2 rounded-full bg-muted overflow-hidden">
                       <div className="h-full rounded-full transition-all" style={{ width: `${ps.avgScore}%`, backgroundColor: ps.plan === 'FREE' ? '#94a3b8' : ps.plan === 'LITE' ? '#3b82f6' : '#8b5cf6' }} />
@@ -330,7 +330,7 @@ export function EngagementTab() {
             </CardContent>
           </Card>
           <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Distribusi Skor</CardTitle><CardDescription>Sebaran skor engagement seluruh tenant.</CardDescription></CardHeader>
+            <CardHeader><CardTitle className="text-base">Distribusi Skor</CardTitle><CardDescription>Sebaran skor engagement seluruh lembaga.</CardDescription></CardHeader>
             <CardContent>
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -339,7 +339,7 @@ export function EngagementTab() {
                     <XAxis dataKey="name" stroke="#6b7280" fontSize={8} tickLine={false} axisLine={false} />
                     <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                     <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Bar dataKey="value" name="Tenant" radius={[6, 6, 0, 0]} barSize={36}>
+                    <Bar dataKey="value" name="Lembaga" radius={[6, 6, 0, 0]} barSize={36}>
                       <Cell fill="#ef4444" /><Cell fill="#f97316" /><Cell fill="#f59e0b" /><Cell fill="#3b82f6" /><Cell fill="#10b981" />
                     </Bar>
                   </BarChart>
@@ -354,7 +354,7 @@ export function EngagementTab() {
       <div>
         <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><Zap className="h-5 w-5 text-amber-500" /> Adopsi Fitur</h2>
         <Card className="glass border-0">
-          <CardHeader><CardTitle className="text-base">Fitur yang Digunakan Tenant</CardTitle><CardDescription>Berapa banyak tenant yang mengaktifkan setiap fitur. Data ini menentukan selling point.</CardDescription></CardHeader>
+          <CardHeader><CardTitle className="text-base">Fitur yang Digunakan Lembaga</CardTitle><CardDescription>Berapa banyak lembaga yang mengaktifkan setiap fitur. Data ini menentukan selling point.</CardDescription></CardHeader>
           <CardContent>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {data.featureAdoption.map((f) => {
@@ -367,7 +367,7 @@ export function EngagementTab() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1"><span className="text-xs font-medium truncate">{f.feature}</span><span className="text-xs font-bold text-primary ml-2">{f.count}</span></div>
                       <div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-amber-500 transition-all" style={{ width: `${pct}%` }} /></div>
-                      <p className="text-[9px] text-muted-foreground mt-0.5">{pct.toFixed(1)}% dari {data.totalTenants} tenant</p>
+                      <p className="text-[9px] text-muted-foreground mt-0.5">{pct.toFixed(1)}% dari {data.totalTenants} lembaga</p>
                     </div>
                   </div>
                 )
