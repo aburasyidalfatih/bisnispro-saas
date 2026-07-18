@@ -28,7 +28,10 @@ export async function markNotificationRead(userId: string, id?: string, all?: bo
       data: { isRead: true },
     })
   } else if (id) {
-    await db.notification.update({ where: { id }, data: { isRead: true } })
+    await db.notification.updateMany({ 
+      where: { id, userId }, 
+      data: { isRead: true } 
+    })
   }
   return { message: "OK" }
 }
