@@ -24,7 +24,7 @@ interface Alumni {
 }
 
 export default function AlumniPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [alumniList, setAlumniList] = useState<Alumni[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -46,7 +46,7 @@ export default function AlumniPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadData()
     }
   }, [tenantId, isLoadingTenant])

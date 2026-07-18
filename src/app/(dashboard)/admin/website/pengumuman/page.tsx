@@ -26,7 +26,7 @@ interface Post {
 }
 
 export default function PengumumanPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const typeFilter ="PENGUMUMAN"
   
   const [loading, setLoading] = useState(true)
@@ -48,7 +48,7 @@ export default function PengumumanPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadPosts()
     }
   }, [tenantId, isLoadingTenant, typeFilter])

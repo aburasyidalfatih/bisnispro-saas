@@ -13,7 +13,7 @@ export default async function WebsiteLayout({ children }: { children: React.Reac
   
   const cookieStore = await cookies()
   const isImpersonatingUser = cookieStore.has("impersonate-user")
-  const isImpersonatingLembaga = cookieStore.has("impersonate-tenant")
+  const isImpersonatingTenant = cookieStore.has("impersonate-tenant")
   
   const isAdminRole = !isImpersonatingUser && (
     currentRole ==="owner" || 

@@ -35,7 +35,7 @@ interface Category {
 }
 
 export default function CategoryPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState<Category[]>([])
   const [open, setOpen] = useState(false)
@@ -81,7 +81,7 @@ export default function CategoryPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadData()
     }
   }, [tenantId, isLoadingTenant])

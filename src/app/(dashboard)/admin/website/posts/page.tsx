@@ -28,7 +28,7 @@ interface Post {
 import { useSearchParams } from"next/navigation"
 
 export default function PostsPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const searchParams = useSearchParams()
   const typeFilter = searchParams.get("type") ||""
   
@@ -51,7 +51,7 @@ export default function PostsPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadPosts()
     }
   }, [tenantId, isLoadingTenant, typeFilter])

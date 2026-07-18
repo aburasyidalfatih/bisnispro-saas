@@ -19,7 +19,7 @@ interface Popup {
 }
 
 export default function PopupsPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [popups, setPopups] = useState<Popup[]>([])
 
@@ -39,7 +39,7 @@ export default function PopupsPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadData()
     }
   }, [tenantId, isLoadingTenant])

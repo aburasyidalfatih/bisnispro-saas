@@ -36,7 +36,7 @@ export default function PostFormPage() {
   const params = useParams()
   const searchParams = useSearchParams()
   const typeQuery = searchParams.get("type")
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [isGeneratingSEO, setIsGeneratingSEO] = useState(false)

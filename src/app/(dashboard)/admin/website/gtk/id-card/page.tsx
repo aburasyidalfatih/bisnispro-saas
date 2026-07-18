@@ -11,7 +11,7 @@ import { getStaff } from"@/features/staff/actions/staff.action"
 import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
 
 export default function IDCardPrintPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const { data: session } = useSession()
   const [tenant, setTenant] = useState<any>(null)
   const [staff, setStaff] = useState<any[]>([])

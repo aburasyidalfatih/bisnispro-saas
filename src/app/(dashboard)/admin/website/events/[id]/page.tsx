@@ -32,7 +32,7 @@ type FormData = z.infer<typeof eventSchema>
 export default function EventFormPage() {
   const router = useRouter()
   const params = useParams()
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
 

@@ -20,7 +20,7 @@ interface Event {
 }
 
 export default function EventsPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [events, setEvents] = useState<Event[]>([])
 
@@ -39,7 +39,7 @@ export default function EventsPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadEvents()
     }
   }, [tenantId, isLoadingTenant])

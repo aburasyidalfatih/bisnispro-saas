@@ -23,7 +23,7 @@ interface Staff {
 }
 
 export default function StaffPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -45,7 +45,7 @@ export default function StaffPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadStaff()
     }
   }, [tenantId, isLoadingTenant])

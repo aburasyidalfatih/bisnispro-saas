@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 
-interface DormantLembaga {
+interface DormantTenant {
   id: string
   name: string
   slug: string

@@ -23,7 +23,7 @@ interface Partnership {
 }
 
 export default function PartnershipsPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [partnerships, setPartnerships] = useState<Partnership[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -45,7 +45,7 @@ export default function PartnershipsPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadData()
     }
   }, [tenantId, isLoadingTenant])

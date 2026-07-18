@@ -12,7 +12,7 @@ export default async function ProfilGTKPage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
 
-  const currentLembaga = session.user.tenants?.[0]
+  const currentTenant = session.user.tenants?.[0]
   if (!currentTenant) redirect("/dashboard")
 
   // Ambil data staff berdasarkan userId

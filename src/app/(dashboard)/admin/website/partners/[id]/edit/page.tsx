@@ -19,7 +19,7 @@ export default function EditPartnershipPage() {
   const params = useParams()
   const id = params.id as string
 
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const tenantId = branding.id
   
   const [loading, setLoading] = useState(true)
@@ -39,7 +39,7 @@ export default function EditPartnershipPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       getPartnershipById(id, tenantId)
         .then(d => {
           if (!d) {

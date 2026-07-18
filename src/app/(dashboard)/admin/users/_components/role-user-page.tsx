@@ -81,7 +81,7 @@ export function RoleUserPage({ userRole }: RoleUserPageProps) {
   const tenantId = session?.user?.tenants?.[0]?.id
   const currentRole = session?.user?.tenants?.[0]?.role
   const isImpersonatingUser = typeof document !== "undefined" && document.cookie.includes("impersonate-user=")
-  const isImpersonatingLembaga = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
+  const isImpersonatingTenant = typeof document !== "undefined" && document.cookie.includes("impersonate-tenant=")
   const isAdmin = !isImpersonatingUser && (currentRole === "owner" || currentRole === "admin" || session?.user?.isSuperAdmin)
 
   const [resolvedTenantId, setResolvedTenantId] = useState<string | null>(tenantId || null)

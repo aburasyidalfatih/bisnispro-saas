@@ -20,7 +20,7 @@ interface Program {
 }
 
 export default function ProgramsPage() {
-  const { branding, isLoadingLembaga } = useTenantBranding()
+  const { branding, isLoadingTenant } = useTenantBranding()
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState<Program[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -42,7 +42,7 @@ export default function ProgramsPage() {
   }
 
   useEffect(() => {
-    if (!isLoadingLembaga && tenantId) {
+    if (!isLoadingTenant && tenantId) {
       loadData()
     }
   }, [tenantId, isLoadingTenant])

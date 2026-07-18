@@ -21,11 +21,11 @@ export default function SettingsGeneralPage() {
 
   // Role check — card Lembaga hanya untuk owner/admin
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
-  const currentLembaga = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
+  const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
   const currentRole = currentTenant?.role ||"orangtua"
   
   const isImpersonatingUser = typeof document !=="undefined" && document.cookie.includes("impersonate-user=")
-  const isImpersonatingLembaga = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
+  const isImpersonatingTenant = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
   const isAdminRole = !isImpersonatingUser && (currentRole ==="owner" || currentRole ==="admin" || !!(session?.user?.isSuperAdmin && isImpersonatingTenant))
 
   useEffect(() => {
