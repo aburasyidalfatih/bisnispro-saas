@@ -293,7 +293,7 @@ export default function GTKAttendancePage() {
                       <canvas ref={selfie.canvasRef} className="hidden" />
                       {selfie.isCameraOpen ? (
                         <div className="relative w-full rounded-lg overflow-hidden border border-border bg-black">
-                          <video ref={selfie.videoRef} autoPlay playsInline className="w-full h-auto min-h-[200px] object-cover scale-x-[-1]" />
+                          <video ref={selfie.videoRef} autoPlay playsInline muted className="w-full h-auto min-h-[200px] object-cover scale-x-[-1]" />
                           <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
                             <Button size="icon" variant="destructive" className="h-12 w-12 rounded-full shadow-lg" onClick={selfie.stopCamera}><X className="h-5 w-5" /></Button>
                             <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-emerald-500 hover:bg-emerald-600" onClick={selfie.capturePhoto}><Camera className="h-5 w-5 text-white" /></Button>

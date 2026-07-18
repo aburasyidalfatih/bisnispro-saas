@@ -29,7 +29,10 @@ export function useSelfieCapture(tenantId?: string) {
       streamRef.current = stream
       setIsCameraOpen(true)
       setTimeout(() => {
-        if (videoRef.current) videoRef.current.srcObject = stream
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          videoRef.current.play().catch(e => console.error("Auto-play failed:", e))
+        }
       }, 100)
     } catch {
       toast({ title: "Gagal akses kamera", description: "Pastikan izin kamera diberikan di browser", variant: "destructive" })
