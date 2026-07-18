@@ -22,7 +22,12 @@ export async function POST(req: Request) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const body = await req.json()
+  let body
+  try {
+    body = await req.json()
+  } catch (e) {
+    return NextResponse.json({ error: "Invalid JSON format" }, { status: 400 })
+  }
   const parsed = manualSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
 

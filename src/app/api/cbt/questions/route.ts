@@ -11,8 +11,14 @@ export async function POST(req: Request) {
   const { error: accessError } = await requireTenantMembership(tenantId as string);
   if (accessError) return accessError;
 
+  let body
   try {
-    const body = await req.json()
+    body = await req.json()
+  } catch (e) {
+    return NextResponse.json({ error: "Invalid JSON format" }, { status: 400 })
+  }
+  
+  try {
     const { questionBankId, type, content, options, explanation, points } = body
 
     // Verify ownership of the question bank

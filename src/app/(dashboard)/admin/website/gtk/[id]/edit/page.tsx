@@ -138,7 +138,7 @@ export default function EditStaffPage() {
       
       const result = await updateStaff(id, tenantId, {
         name: formData.name,
-        role: formData.role === "Lainnya" ? formData.customRole : formData.role,
+        role: formData.role === "Lainnya" ? (formData.customRole.trim() || "Lainnya") : formData.role,
         bio: formData.bio,
         sortOrder: Number(formData.sortOrder),
         imageUrl: finalImageUrl,

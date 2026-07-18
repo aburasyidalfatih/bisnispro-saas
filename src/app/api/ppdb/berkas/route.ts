@@ -18,6 +18,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "pendaftarId required" }, { status: 400 });
     }
 
+    const pendaftar = await db.pendaftarPpdb.findUnique({ where: { id: pendaftarId } });
+    if (!pendaftar || pendaftar.userId !== session.user.id) {
+      // For simplicity, we just enforce that the logged-in user is the owner
+      return NextResponse.json({ error: "Unauthorized access to pendaftar data" }, { status: 403 });
+    }
+
     const berkas = await db.berkasPpdb.findMany({
       where: { pendaftarId },
       include: { requirement: true },
@@ -39,11 +45,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      return NextResponse.json({ error: "Invalid JSON format" }, { status: 400 });
+    }
     const { pendaftarId, requirementId, fileUrl } = body;
 
     if (!pendaftarId || !requirementId || !fileUrl) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    const pendaftar = await db.pendaftarPpdb.findUnique({ where: { id: pendaftarId } });
+    if (!pendaftar || pendaftar.userId !== session.user.id) {
+      return NextResponse.json({ error: "Unauthorized access to pendaftar data" }, { status: 403 });
     }
 
     // Upsert: update jika sudah ada, insert jika belum
@@ -83,6 +99,15 @@ export async function DELETE(req: Request) {
 
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
+    }
+
+    const existingBerkas = await db.berkasPpdb.findUnique({
+      where: { id },
+      include: { pendaftar: true }
+    });
+
+    if (!existingBerkas || existingBerkas.pendaftar.userId !== session.user.id) {
+      return NextResponse.json({ error: "Unauthorized or not found" }, { status: 403 });
     }
 
     await db.berkasPpdb.delete({ where: { id } });

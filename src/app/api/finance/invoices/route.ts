@@ -68,7 +68,12 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json()
+  let body
+  try {
+    body = await req.json()
+  } catch (e) {
+    return NextResponse.json({ error: "Invalid JSON format" }, { status: 400 })
+  }
   const { tenantId, ...rest } = body
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })

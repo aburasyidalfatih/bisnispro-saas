@@ -198,9 +198,14 @@ export async function editTenantUser(params: {
       throw new Error("Tidak punya izin untuk mengedit user dari tenant ini")
     }
 
-    // Blokir Admin mengedit Owner
-    if (callerTu.role === "admin" && targetTu.role === "owner") {
-      throw new Error("Admin tidak diizinkan mengubah data Owner")
+    // Blokir Admin mengedit Owner atau Admin lain
+    if (callerTu.role === "admin") {
+      if (targetTu.role === "owner") {
+        throw new Error("Admin tidak diizinkan mengubah data Owner")
+      }
+      if (targetTu.role === "admin" && callerTu.userId !== targetTu.userId) {
+        throw new Error("Admin tidak diizinkan mengubah data Admin lain")
+      }
     }
   }
 
@@ -269,8 +274,13 @@ export async function deleteTenantUser(tenantUserId: string, callerUserId: strin
     if (!callerTu || !["owner", "admin"].includes(callerTu.role)) {
       throw new Error("Tidak punya izin untuk menghapus user dari tenant ini")
     }
-    if (targetTu.role === "owner" && callerTu.role !== "owner") {
-      throw new Error("Admin tidak bisa menghapus Owner")
+    if (callerTu.role === "admin") {
+      if (targetTu.role === "owner") {
+        throw new Error("Admin tidak bisa menghapus Owner")
+      }
+      if (targetTu.role === "admin" && callerTu.userId !== targetTu.userId) {
+        throw new Error("Admin tidak bisa menghapus Admin lain")
+      }
     }
   }
 

@@ -7,6 +7,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
+import DOMPurify from "isomorphic-dompurify"
 
 export function AcademyPlayer({ course }: { course: any }) {
   const router = useRouter()
@@ -108,7 +109,7 @@ export function AcademyPlayer({ course }: { course: any }) {
               <h2 className="text-2xl sm:text-3xl font-bold">{activeLesson.title}</h2>
               
               {activeLesson.content && (
-                <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none bg-card p-6 rounded-2xl border shadow-sm" dangerouslySetInnerHTML={{ __html: activeLesson.content }} />
+                <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none bg-card p-6 rounded-2xl border shadow-sm" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(activeLesson.content) }} />
               )}
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t">

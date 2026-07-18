@@ -6,6 +6,7 @@ import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.s
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
 import { ShareButtons } from "../berita/[id]/_components/share-buttons"
+import DOMPurify from "isomorphic-dompurify"
 
 interface PageProps {
   params: Promise<{ slug: string; pageSlug: string }>
@@ -144,7 +145,7 @@ export default async function CustomPagePublicView({ params }: PageProps) {
         {page.content ? (
           <div 
             className="prose prose-slate md:prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-p:mb-6 prose-p:mt-2 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80"
-            dangerouslySetInnerHTML={{ __html: page.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(page.content) }}
           />
         ) : (
           <p className="text-muted-foreground italic">Konten halaman belum tersedia.</p>
