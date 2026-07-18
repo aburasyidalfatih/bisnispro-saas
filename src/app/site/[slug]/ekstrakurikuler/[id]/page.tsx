@@ -91,7 +91,7 @@ export default async function ExtracurricularDetailPage({ params }: { params: Pr
               <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
                 <h3 className="text-xl font-bold mb-4 text-foreground">Mengenal {extra.name}</h3>
                 {extra.description ? (
-                  <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(extra.description) }} />
+                  <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(extra.description, { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }} />
                 ) : (
                   <p className="italic">Tidak ada deskripsi detail untuk ekstrakurikuler ini.</p>
                 )}

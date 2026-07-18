@@ -92,7 +92,7 @@ export default async function AchievementDetailPage({ params }: { params: Promis
 
         <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
           {achievement.description ? (
-            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(achievement.description) }} />
+            <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(achievement.description, { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }} />
           ) : (
             <p className="italic">Tidak ada detail deskripsi untuk prestasi ini.</p>
           )}

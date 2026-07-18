@@ -268,7 +268,7 @@ export function ParentDashboard({ childrenData = [], unpaidInvoices = [], recent
                     </div>
                     <div>
                        <h4 className="text-xs font-bold text-foreground mb-1">{post.title}</h4>
-                       <p className="text-[10px] text-muted-foreground line-clamp-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content?.substring(0, 150) || "") }}></p>
+                       <p className="text-[10px] text-muted-foreground line-clamp-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content?.substring(0, 150) || "", { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }}></p>
                        <p className="text-[9px] text-primary font-medium mt-1 flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(post.createdAt), "dd MMM yyyy", { locale: localeId })}</p>
                     </div>
                  </div>

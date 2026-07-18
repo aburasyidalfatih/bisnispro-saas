@@ -145,7 +145,7 @@ export default async function CustomPagePublicView({ params }: PageProps) {
         {page.content ? (
           <div 
             className="prose prose-slate md:prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-p:mb-6 prose-p:mt-2 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80"
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(page.content) }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(page.content, { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }}
           />
         ) : (
           <p className="text-muted-foreground italic">Konten halaman belum tersedia.</p>

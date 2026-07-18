@@ -200,7 +200,7 @@ export function Announcements({
                   </div>
                 </div>
                 <h3 className="font-bold text-lg mb-2 mt-3 text-primary">{post.title}</h3>
-                <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content ||"") }} />
+                <div className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content ||"", { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }} />
               </div>
             ))}
           </div>

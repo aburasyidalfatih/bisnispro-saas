@@ -200,7 +200,7 @@ export default async function BeritaDetailPage({ params }: { params: Promise<{ s
 
         <div
           className="prose prose-lg prose-primary max-w-none mx-auto prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6 prose-p:mt-2 prose-li:my-0 prose-ul:my-2 prose-ol:my-2 prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl prose-img:shadow-md mt-10 md:mt-16"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "", { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }}
         />
 
         {/* If content is plain text (no HTML), render as paragraphs */}

@@ -122,7 +122,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
            <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
              <h3 className="text-xl font-bold mb-4 text-foreground">Tentang Program</h3>
              {program.description ? (
-               <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(program.description) }} />
+               <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(program.description, { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }} />
              ) : (
                <p className="italic">Tidak ada deskripsi detail untuk program ini.</p>
              )}
