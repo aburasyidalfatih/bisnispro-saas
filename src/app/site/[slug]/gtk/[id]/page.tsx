@@ -116,7 +116,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                    <Briefcase className="h-3.5 w-3.5" />
                    {staff.role}
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tighter mb-8 drop-shadow-sm break-words hyphens-auto">
+                <h1 className="text-4xl md:text-6xl font-black text-foreground leading-tight tracking-tighter mb-8 drop-shadow-sm break-words hyphens-auto">
                    {staff.name}
                 </h1>
                 
@@ -172,7 +172,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
            <div className="md:col-span-2 space-y-12">
               <section className="bg-white p-6 sm:p-8 md:p-10 rounded-3xl md:rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/60 relative overflow-hidden">
                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2"></div>
-                 <h3 className="text-xl sm:text-2xl font-black mb-6 sm:mb-8 text-slate-900 flex items-center gap-3 relative z-10">
+                 <h3 className="text-xl sm:text-2xl font-black mb-6 sm:mb-8 text-foreground flex items-center gap-3 relative z-10">
                     <User className="h-6 w-6 text-primary" /> Profil & Biografi
                  </h3>
                  <div className="absolute top-16 sm:top-20 left-4 sm:left-6 text-[80px] sm:text-[120px] leading-none text-slate-100 font-serif opacity-50 z-0">"</div>
@@ -193,7 +193,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
               {articles.length > 0 && (
                 <section className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/60 relative overflow-hidden">
                    <div className="flex items-center justify-between mb-8 relative z-10 border-b border-slate-100 pb-6">
-                     <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
+                     <h3 className="text-xl font-black text-foreground flex items-center gap-3">
                         <PenTool className="h-6 w-6 text-primary" /> Artikel
                      </h3>
                      <Link href={`${base}/berita`} className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors flex items-center">
@@ -214,7 +214,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                               )}
                            </div>
                            <div className="flex flex-col justify-center flex-1 min-w-0">
-                              <h4 className="font-bold text-base sm:text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                              <h4 className="font-bold text-base sm:text-lg text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
                                 {post.title}
                               </h4>
                               <div className="flex items-center gap-3 text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">
@@ -234,20 +234,20 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
               <div className="relative rounded-[2.5rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/80 bg-white/60 backdrop-blur-2xl overflow-hidden group">
                  {/* Decorative elements */}
                  <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/3 transition-transform duration-700 group-hover:scale-110"></div>
-                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/10 rounded-full blur-[40px] translate-y-1/3 -translate-x-1/3"></div>
+                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px] translate-y-1/3 -translate-x-1/3"></div>
                  
-                 <h4 className="font-black text-xl mb-8 text-slate-900 flex items-center gap-3 relative z-10">
+                 <h4 className="font-black text-xl mb-8 text-foreground flex items-center gap-3 relative z-10">
                     Informasi Akademik
                  </h4>
                  
                  <ul className="space-y-8 relative z-10">
                     <li className="flex items-start gap-5 group/item">
-                       <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-blue-500 shrink-0 shadow-sm group-hover/item:bg-blue-50 group-hover/item:text-blue-600 group-hover/item:border-blue-100 transition-all duration-300">
+                       <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-primary shrink-0 shadow-sm group-hover/item:bg-primary/5 group-hover/item:text-primary group-hover/item:border-primary/20 transition-all duration-300">
                           <BookOpen className="h-6 w-6" />
                        </div>
                        <div className="flex-1 pt-1">
                           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Mata Pelajaran</p>
-                          <p className="font-bold text-slate-800 text-base leading-tight">{staff.subject || "Guru Kelas / Umum"}</p>
+                          <p className="font-bold text-foreground text-base leading-tight">{staff.subject || "Guru Kelas / Umum"}</p>
                        </div>
                     </li>
                     
@@ -259,7 +259,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                        </div>
                        <div className="flex-1 pt-1">
                           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Pendidikan</p>
-                          <p className="font-bold text-slate-800 text-base leading-tight">{staff.education || "S1 Pendidikan"}</p>
+                          <p className="font-bold text-foreground text-base leading-tight">{staff.education || "S1 Pendidikan"}</p>
                        </div>
                     </li>
                  </ul>

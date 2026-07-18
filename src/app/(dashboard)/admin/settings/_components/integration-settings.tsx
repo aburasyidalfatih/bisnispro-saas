@@ -1,7 +1,8 @@
 import React from"react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
-import { Input } from"@/components/ui/input"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Label } from"@/components/ui/label"
 import { KeyRound, Globe, Save } from"lucide-react"
 
@@ -60,8 +61,8 @@ export function IntegrationSettings({
           
           <div className="space-y-1.5">
             <Label className="text-xs">JSON Credentials</Label>
-            <textarea
-              className="flex min-h-[80px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            <Textarea
+              className="flex min-h-[80px] w-full rounded-xl text-xs font-mono"
               placeholder='{ "type": "service_account", "project_id": "..." }'
               value={rawSettings.google_indexing_key || ""}
               onChange={e => setRawSettings((p: any) => ({ ...p, google_indexing_key: e.target.value }))}

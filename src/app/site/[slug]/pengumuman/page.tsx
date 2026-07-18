@@ -95,7 +95,7 @@ export default async function PengumumanPage({
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         {posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 bg-white/50 rounded-[3rem] border border-dashed border-border/60">
-             <div className="h-24 w-24 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 mb-6">
+             <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
                <Megaphone className="h-10 w-10" />
              </div>
              <h3 className="text-2xl font-bold mb-2">Belum ada pengumuman</h3>
@@ -110,9 +110,9 @@ export default async function PengumumanPage({
                 className="group flex flex-col md:flex-row bg-white rounded-3xl overflow-hidden border border-border/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative"
               >
                 {/* Decoration line */}
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500/20 group-hover:bg-blue-600 transition-colors" />
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary/20 group-hover:bg-primary transition-colors" />
                 
-                <div className="md:w-56 bg-blue-500/5 group-hover:bg-blue-600 text-blue-600 group-hover:text-white flex flex-col items-center justify-center p-8 text-center transition-colors duration-300">
+                <div className="md:w-56 bg-primary/5 group-hover:bg-primary text-primary group-hover:text-primary-foreground flex flex-col items-center justify-center p-8 text-center transition-colors duration-300">
                    <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-2">
                       {formatInTimeZone(new Date(post.createdAt), tz, 'MMMM', { locale: id })}
                    </p>
@@ -125,15 +125,15 @@ export default async function PengumumanPage({
                 </div>
                 <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
+                    <span className="bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
                       {post.category?.name || "INFORMASI PENTING"}
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-slate-900 group-hover:text-blue-600 transition-colors">{post.title}</h3>
+                  <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors">{post.title}</h3>
                   <p className="text-muted-foreground line-clamp-2 leading-relaxed">
                      {post.seoDesc || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + "..."}
                   </p>
-                  <div className="mt-6 flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-widest opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                  <div className="mt-6 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                     Baca Selengkapnya <ArrowRight className="h-3 w-3" />
                   </div>
                 </div>
@@ -164,15 +164,15 @@ export default async function PengumumanPage({
 
       {/* Info tambahan */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
-         <div className="bg-blue-500/5 rounded-3xl p-8 border border-blue-500/10 flex flex-col md:flex-row items-center gap-6">
-            <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
+         <div className="bg-primary/5 rounded-3xl p-8 border border-primary/10 flex flex-col md:flex-row items-center gap-6">
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
                <Search className="h-6 w-6" />
             </div>
             <div className="flex-1 text-center md:text-left">
                <h4 className="font-bold text-lg">Butuh informasi lebih detail?</h4>
                <p className="text-sm text-muted-foreground">Silakan hubungi pihak tata usaha sekolah untuk pertanyaan terkait pengumuman di atas.</p>
             </div>
-            <Link href={`${base}/contact`} className="px-6 py-2.5 bg-white border border-blue-500/20 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-500/5 transition-colors">
+            <Link href={`${base}/contact`} className="px-6 py-2.5 bg-background border border-primary/20 text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">
                Hubungi Sekolah
             </Link>
          </div>

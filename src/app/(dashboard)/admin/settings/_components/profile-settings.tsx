@@ -1,7 +1,8 @@
 import React from"react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
-import { Input } from"@/components/ui/input"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Label } from"@/components/ui/label"
 import { User, Camera, Save, Info, KeyRound, Eye, EyeOff } from"lucide-react"
 import { cn } from"@/lib/utils"
@@ -98,11 +99,11 @@ export function ProfileSettings({
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Bio Singkat</Label>
-          <textarea 
+          <Textarea 
             value={profileForm.bio} 
             onChange={e => setProfileForm(p => ({ ...p, bio: e.target.value }))} 
             placeholder="Tuliskan bio singkat Anda..." 
-            className="flex min-h-[80px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" 
+            className="min-h-[80px]" 
           />
           <p className="text-[11px] text-muted-foreground -mt-1">
             Ditampilkan sebagai profil penulis di bagian bawah artikel/berita yang Anda terbitkan.

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { CheckCircle, Send } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 interface Props {
   slug: string
@@ -98,40 +100,34 @@ export function ContactForm({ slug, labels = {} }: Props) {
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">{labels.labelName || "Nama Lengkap"} <span className="text-destructive">*</span></label>
-            <input type="text" value={form.name} onChange={set("name")}
-              placeholder="Nama lengkap Anda"
-              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+            <Input type="text" value={form.name} onChange={set("name")}
+              placeholder="Nama lengkap Anda" />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Email <span className="text-destructive">*</span></label>
-            <input type="email" value={form.email} onChange={set("email")}
-              placeholder="email@contoh.com"
-              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+            <Input type="email" value={form.email} onChange={set("email")}
+              placeholder="email@contoh.com" />
           </div>
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Nomor Telepon</label>
-          <input type="tel" value={form.phone} onChange={set("phone")}
-            placeholder="08xxxxxxxxxx (opsional)"
-            className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+          <Input type="tel" value={form.phone} onChange={set("phone")}
+            placeholder="08xxxxxxxxxx (opsional)" />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Subjek</label>
-          <input type="text" value={form.subject} onChange={set("subject")}
-            placeholder="Perihal pesan Anda (opsional)"
-            className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+          <Input type="text" value={form.subject} onChange={set("subject")}
+            placeholder="Perihal pesan Anda (opsional)" />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Pesan <span className="text-destructive">*</span></label>
-          <textarea rows={5} value={form.message} onChange={set("message")}
-            placeholder="Tulis pesan Anda di sini..."
-            className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring" />
+          <Textarea rows={5} value={form.message} onChange={set("message")}
+            placeholder="Tulis pesan Anda di sini..." />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Berapa hasil dari {num1} + {num2}? <span className="text-destructive">*</span></label>
-          <input type="number" value={captchaAnswer} onChange={e => setCaptchaAnswer(e.target.value)}
-            placeholder="Jawaban"
-            className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+          <Input type="number" value={captchaAnswer} onChange={e => setCaptchaAnswer(e.target.value)}
+            placeholder="Jawaban" />
         </div>
 
         {error && (

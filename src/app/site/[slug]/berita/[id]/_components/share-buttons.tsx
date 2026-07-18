@@ -88,21 +88,21 @@ export function ShareButtons({ url, title, postId, tenantId, initialShares = 0 }
       </div>
       <button
         onClick={() => handleShare("whatsapp", `https://wa.me/?text=${encodeURIComponent(title + " " + absoluteUrl)}`)}
-        className="h-10 w-10 rounded-full bg-green-500/10 text-green-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
+        className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm hover:scale-110"
         aria-label="Bagikan ke WhatsApp"
       >
         <WhatsAppIcon className="h-4 w-4" />
       </button>
       <button
         onClick={() => handleShare("facebook", `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(absoluteUrl)}`)}
-        className="h-10 w-10 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
+        className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm hover:scale-110"
         aria-label="Bagikan ke Facebook"
       >
         <FacebookIcon className="h-4 w-4" />
       </button>
       <button
         onClick={() => handleShare("twitter", `https://twitter.com/intent/tweet?url=${encodeURIComponent(absoluteUrl)}&text=${encodeURIComponent(title)}`)}
-        className="h-10 w-10 rounded-full bg-sky-500/10 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all duration-300 shadow-sm hover:scale-110"
+        className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm hover:scale-110"
         aria-label="Bagikan ke X/Twitter"
       >
         <TwitterIcon className="h-4 w-4" />

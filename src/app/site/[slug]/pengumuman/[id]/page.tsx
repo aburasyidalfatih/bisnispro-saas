@@ -151,10 +151,10 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
       />
 
       {/* ── HEADER SECTION ── */}
-      <div className="bg-blue-500/5 pt-6 pb-10 border-b border-blue-500/10">
+      <div className="bg-primary/5 pt-6 pb-10 border-b border-primary/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center gap-3 mb-4">
-             <div className="px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-bold uppercase tracking-widest">
+             <div className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-bold uppercase tracking-widest">
                {post.category?.name || "INFORMASI PENTING"}
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
@@ -167,7 +167,7 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
              </div>
           </div>
           
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight">
             {post.title}
           </h1>
         </div>
@@ -189,13 +189,13 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
 
         {/* Content */}
         <div
-          className="prose prose-lg prose-blue max-w-none mx-auto prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6 prose-p:mt-2 prose-li:my-0 prose-ul:my-2 prose-ol:my-2 prose-a:text-blue-600 hover:prose-a:text-blue-700 prose-img:rounded-3xl prose-img:shadow-md mt-10 md:mt-16"
+          className="prose prose-lg prose-primary max-w-none mx-auto prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6 prose-p:mt-2 prose-li:my-0 prose-ul:my-2 prose-ol:my-2 prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl prose-img:shadow-md mt-10 md:mt-16"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "", { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }}
         />
 
         {/* If content is plain text (no HTML), render as paragraphs */}
         {post.content && !post.content.includes("<") && (
-          <div className="prose prose-lg prose-blue max-w-none mx-auto text-muted-foreground leading-relaxed mt-8">
+          <div className="prose prose-lg prose-primary max-w-none mx-auto text-muted-foreground leading-relaxed mt-8">
             <p className="whitespace-pre-wrap">{post.content}</p>
           </div>
         )}
@@ -225,10 +225,10 @@ export default async function PengumumanDetailPage({ params }: { params: Promise
               >
                 <div className="p-5 flex-1 flex flex-col">
                   <div className="flex items-center gap-2 text-[11px] text-muted-foreground mb-3">
-                    <Calendar className="h-3 w-3 text-blue-500" />
+                    <Calendar className="h-3 w-3 text-primary" />
                     {format(new Date(related.createdAt), "dd MMM yyyy", { locale: idLocale })}
                   </div>
-                  <h4 className="text-base font-bold mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">
+                  <h4 className="text-base font-bold mb-2 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
                     {related.title}
                   </h4>
                   <p className="text-sm text-muted-foreground line-clamp-2">
