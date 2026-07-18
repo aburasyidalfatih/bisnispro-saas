@@ -60,7 +60,7 @@ export default function AdminGTKAttendancePage() {
       {/* Month Navigator + Search */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div className="flex items-center gap-3 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/50 w-fit">
-          <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg" onClick={() => {
+          <Button variant="outline" size="icon" aria-label="Bulan Sebelumnya" className="h-8 w-8 rounded-lg" onClick={() => {
             const parsed = parseMonthStr(monthly.selectedMonth)
             monthly.setSelectedMonth(format(subMonths(parsed, 1), "yyyy-MM"))
           }}>
@@ -75,7 +75,7 @@ export default function AdminGTKAttendancePage() {
               className="border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-auto font-semibold cursor-pointer w-28 text-center text-xs"
             />
           </div>
-          <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg" onClick={() => {
+          <Button variant="outline" size="icon" aria-label="Bulan Berikutnya" className="h-8 w-8 rounded-lg" onClick={() => {
             const parsed = parseMonthStr(monthly.selectedMonth)
             monthly.setSelectedMonth(format(addMonths(parsed, 1), "yyyy-MM"))
           }}>

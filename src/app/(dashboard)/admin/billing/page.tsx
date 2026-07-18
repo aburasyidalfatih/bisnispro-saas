@@ -188,7 +188,7 @@ export default function BillingPage() {
     } else if (!discountCodeInput && appliedDiscount) {
       setAppliedDiscount(null)
     }
-  }, [discountCodeInput])
+  }, [discountCodeInput, appliedDiscount])
 
   const handleRemoveDiscount = () => {
     setAppliedDiscount(null)

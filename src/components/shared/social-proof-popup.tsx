@@ -64,7 +64,7 @@ export function SocialProofPopup() {
     }
   }, [isVisible, registrations.length])
 
-  if (registrations.length === 0) return null
+  if (!registrations || registrations.length === 0 || currentIndex >= registrations.length) return null
 
   const current = registrations[currentIndex]
   const normalizedLogo = normalizeImageUrl(current.logo)

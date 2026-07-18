@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { UserPlus, Info } from "lucide-react"
+import Image from "next/image"
 import { getRootDomain, normalizeImageUrl } from "@/lib/utils"
 
 export default function RegisterPage({
@@ -71,10 +72,10 @@ export default function RegisterPage({
         <div className="glass rounded-3xl p-8 md:p-10 shadow-2xl">
           <div className="flex flex-col items-center mb-8 text-center">
             {isMainDomain ? (
-              <img src={normalizeImageUrl(platformLogo)} alt="SchoolPro Logo" className="h-20 w-auto mb-2 object-contain" loading="lazy" decoding="async" />
+              <Image src={normalizeImageUrl(platformLogo)} alt="SchoolPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
             ) : (
               platformLogo ? (
-                <img src={normalizeImageUrl(platformLogo)} alt={tenantNameDisplay || "Logo Tenant"} className="h-20 w-auto mb-4 object-contain" loading="lazy" decoding="async" />
+                <Image src={normalizeImageUrl(platformLogo)} alt={tenantNameDisplay || "Logo Tenant"} width={160} height={80} className="h-20 w-auto mb-4 object-contain" priority />
               ) : (
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
                   {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "S"}

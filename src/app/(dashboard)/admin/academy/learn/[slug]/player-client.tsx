@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ChevronLeft, PlayCircle, CheckCircle2, FileText, ChevronRight, Menu, X, Loader2 } from "lucide-react"
@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 export function AcademyPlayer({ course }: { course: any }) {
   const router = useRouter()
   // Flatten all lessons into a single array for easy prev/next navigation
-  const allLessons = course.modules.flatMap((m: any) => m.lessons)
+  const allLessons = useMemo(() => course.modules.flatMap((m: any) => m.lessons), [course.modules])
   
   const [activeLesson, setActiveLesson] = useState<any>(allLessons[0])
   const [sidebarOpen, setSidebarOpen] = useState(true)

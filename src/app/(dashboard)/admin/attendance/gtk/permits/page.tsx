@@ -69,9 +69,13 @@ export default function GTKPermitsPage() {
   }, [tenant?.id])
 
   const fetchStaff = async (tenantId: string) => {
-    const res = await fetch(`/api/gtk/staff?tenantId=${tenantId}`)
-    const d = await res.json()
-    setStaffList(d.staff || [])
+    try {
+      const res = await fetch(`/api/gtk/staff?tenantId=${tenantId}`)
+      const d = await res.json()
+      setStaffList(d.staff || [])
+    } catch (e) {
+      toast({ title: "Gagal memuat daftar guru/staf", variant: "destructive" })
+    }
   }
 
   const fetchPermits = async () => {
@@ -81,6 +85,8 @@ export default function GTKPermitsPage() {
       const res = await fetch(`/api/gtk/attendance/permits?tenantId=${tenant.id}&take=100`)
       const d = await res.json()
       setPermits(d.data || [])
+    } catch (e) {
+      toast({ title: "Gagal memuat pengajuan izin", variant: "destructive" })
     } finally {
       setPermitsLoading(false)
     }
@@ -99,6 +105,8 @@ export default function GTKPermitsPage() {
       const res = await fetch(`/api/gtk/attendance?${params}`)
       const data = await res.json()
       setLogsRecords(data.data || [])
+    } catch (e) {
+      toast({ title: "Gagal memuat riwayat absen", variant: "destructive" })
     } finally {
       setLogsLoading(false)
     }

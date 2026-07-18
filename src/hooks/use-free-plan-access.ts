@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 
-let cachedAccess: Record<string, Record<string, boolean>> = {};
 
 export interface PlanAccess {
   // Legacy keys (backward compat)
@@ -25,25 +24,33 @@ const DEFAULT_ACCESS: PlanAccess = {
 }
 
 export function usePlanAccess(plan: string = "free") {
-  const [access, setAccess] = useState<PlanAccess>(
-    (cachedAccess[plan] as any) || DEFAULT_ACCESS
-  )
-  const [loading, setLoading] = useState(!cachedAccess[plan])
+  const [access, setAccess] = useState<PlanAccess>(DEFAULT_ACCESS)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (cachedAccess[plan]) {
-      setAccess(cachedAccess[plan] as any)
-      setLoading(false)
-      return
-    }
-    fetch(`/api/public/free-plan-access?plan=${plan}`, { cache: "no-store" })
+    const controller = new AbortController()
+    setLoading(true)
+
+    fetch(`/api/public/free-plan-access?plan=${plan}`, { 
+      cache: "force-cache", // Let Next.js handle the fetch caching safely
+      signal: controller.signal 
+    })
       .then(res => res.json())
       .then(data => {
-        cachedAccess[plan] = data
-        setAccess(data)
-        setLoading(false)
+        if (!controller.signal.aborted) {
+          setAccess(data)
+          setLoading(false)
+        }
       })
-      .catch(() => setLoading(false))
+      .catch((err) => {
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
+      })
+      
+    return () => {
+      controller.abort()
+    }
   }, [plan])
 
   return { access, loading }

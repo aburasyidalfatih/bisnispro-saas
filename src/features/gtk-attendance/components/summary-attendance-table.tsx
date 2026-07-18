@@ -18,7 +18,7 @@ export function SummaryAttendanceTable({ title, loading, data, emptyMessage = "T
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-bold tracking-tight">{title}</CardTitle>
       </CardHeader>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto w-full">
         {loading ? (
           <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
         ) : (

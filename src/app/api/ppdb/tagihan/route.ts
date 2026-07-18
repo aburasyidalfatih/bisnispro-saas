@@ -36,7 +36,7 @@ export async function GET(req: Request) {
         }
       },
       orderBy: { createdAt: "desc" },
-      take: 100,
+      take: 50,
     });
 
     return NextResponse.json(billings);

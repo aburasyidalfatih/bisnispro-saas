@@ -46,16 +46,17 @@ export function PwaInstaller({ tenantName, tenantLogo }: PwaInstallerProps) {
       setIsInstallable(true)
     }
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
-
-    // Deteksi jika sudah diinstal
-    window.addEventListener("appinstalled", () => {
+    const handleAppInstalled = () => {
       setIsInstallable(false)
       setDeferredPrompt(null)
-    })
+    }
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
+    window.addEventListener("appinstalled", handleAppInstalled)
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
+      window.removeEventListener("appinstalled", handleAppInstalled)
     }
   }, [tenantName])
 

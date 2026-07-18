@@ -18,16 +18,19 @@ export default function DashboardPage() {
 
   // Resolve tenantId — fallback ke impersonate cookie
   useEffect(() => {
-    const sessionTenantId = session?.user?.tenants?.[0]?.id
-    if (sessionTenantId) { setTenantId(sessionTenantId); return }
-    const match = document.cookie.match(/impersonate-tenant=([^;]+)/)
-    const slug = match?.[1]
-    if (slug) {
-      fetch(`/api/tenant/by-slug?slug=${slug}`)
+    const match = typeof document !== "undefined" ? document.cookie.match(/impersonate-tenant=([^;]+)/) : null
+    const impersonatedSlug = match?.[1]
+    
+    if (impersonatedSlug) {
+      fetch(`/api/tenant/by-slug?slug=${impersonatedSlug}`)
         .then((r) => r.json())
         .then((data) => { if (data.id) setTenantId(data.id) })
         .catch(() => {})
+      return
     }
+
+    const sessionTenantId = session?.user?.tenants?.[0]?.id
+    if (sessionTenantId) { setTenantId(sessionTenantId) }
   }, [session?.user?.tenants])
 
   useEffect(() => {

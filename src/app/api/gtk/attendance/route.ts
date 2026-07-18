@@ -27,7 +27,8 @@ export async function GET(req: Request) {
   const from = url.searchParams.get("from")
   const to = url.searchParams.get("to")
   const page = parseInt(url.searchParams.get("page") || "1")
-  const take = parseInt(url.searchParams.get("take") || "30")
+  let take = parseInt(url.searchParams.get("take") || "30")
+  if (take > 500) take = 500 // HARD LIMIT to prevent memory leaks
 
   if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
 

@@ -379,7 +379,7 @@ export default function StudentsPage() {
                         </Link>
                         <ConfirmDialog
                           trigger={
-                            <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-lg shrink-0">
+                            <Button size="icon" variant="ghost" aria-label={`Hapus ${student.name}`} className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-lg shrink-0">
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           }

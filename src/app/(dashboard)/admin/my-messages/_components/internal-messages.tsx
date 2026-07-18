@@ -10,6 +10,8 @@ import { format } from"date-fns"
 import { id } from"date-fns/locale"
 import { Message } from"./types"
 import { Textarea } from "@/components/ui/textarea"
+import { Skeleton } from "@/components/ui/skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface InternalMessagesProps {
   messages: Message[]
@@ -102,16 +104,18 @@ export function InternalMessages({
       <CardContent className="p-6">
         <div className="space-y-4">
           {loadingInternal ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <div className="space-y-4">
+              <Skeleton className="h-28 w-full rounded-xl" />
+              <Skeleton className="h-28 w-full rounded-xl" />
+              <Skeleton className="h-28 w-full rounded-xl" />
             </div>
           ) : messages.length === 0 ? (
-            <div className="text-center py-16 flex flex-col items-center">
-              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-3">
-                <MessageSquare className="h-6 w-6 text-muted-foreground/50" />
-              </div>
-              <p className="text-muted-foreground">Kotak masuk Anda kosong.</p>
-            </div>
+            <EmptyState 
+              icon={MessageSquare} 
+              title="Kotak masuk kosong" 
+              description="Belum ada pesan internal dari staf atau guru lainnya." 
+              className="py-12 border-0 bg-transparent"
+            />
           ) : (
             messages.map((msg) => (
               <div key={msg.id} className="p-4 rounded-xl border border-border/50 bg-background/50 hover:bg-muted/20 transition-colors">

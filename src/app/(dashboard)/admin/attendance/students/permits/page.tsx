@@ -22,9 +22,14 @@ export default function PermitsPage() {
   const fetchPermits = async () => {
     if (!tenant) return
     setLoading(true)
-    const res = await fetch(`/api/attendance/permits?tenantId=${tenant.id}&status=${filterStatus}`)
-    setPermits(await res.json())
-    setLoading(false)
+    try {
+      const res = await fetch(`/api/attendance/permits?tenantId=${tenant.id}&status=${filterStatus}`)
+      setPermits(await res.json())
+    } catch (e) {
+      toast({ title: "Gagal memuat data izin", variant: "destructive" })
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { fetchPermits() }, [tenant, filterStatus])
