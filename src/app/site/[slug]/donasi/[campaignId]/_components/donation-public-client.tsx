@@ -103,7 +103,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
             <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-gray-200 flex flex-col items-center gap-2">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Scan QRIS</span>
               <div className="relative w-48 h-48 bg-white border rounded-lg p-2 overflow-hidden flex items-center justify-center">
-                <img src={normalizeImageUrl(campaign.qrisUrl) || campaign.qrisUrl} alt="QRIS Sekolah" className="object-contain max-h-full max-w-full" />
+                <Image src={normalizeImageUrl(campaign.qrisUrl) || campaign.qrisUrl} alt="QRIS Sekolah" fill className="object-contain max-h-full max-w-full" unoptimized />
               </div>
               <p className="text-[10px] text-muted-foreground">Bisa discan dengan aplikasi m-banking atau e-wallet apa saja</p>
             </div>
@@ -152,7 +152,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <div className="flex items-center gap-2 mb-3">
             {campaign.tenant.logo && (
-              <img src={normalizeImageUrl(campaign.tenant.logo) || campaign.tenant.logo} alt={campaign.tenant.name} className="h-8 w-8 rounded-full bg-white p-0.5 object-contain" loading="lazy" decoding="async" />
+              <Image src={normalizeImageUrl(campaign.tenant.logo) || campaign.tenant.logo} alt={campaign.tenant.name} width={32} height={32} className="rounded-full bg-white p-0.5 object-contain" unoptimized />
             )}
             <span className="text-sm font-semibold text-white/90">{campaign.tenant.name}</span>
           </div>

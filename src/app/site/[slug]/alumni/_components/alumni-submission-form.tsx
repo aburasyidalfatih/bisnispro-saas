@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -182,7 +183,7 @@ export function AlumniSubmissionForm({ tenantId }: { tenantId: string }) {
                 />
                 
                 {previewUrl ? (
-                  <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" loading="lazy" decoding="async" />
+                  <Image src={previewUrl} alt="Preview" fill className="object-cover w-full h-full" unoptimized />
                 ) : (
                   <div className="text-center p-2">
                     <User className="h-6 w-6 mx-auto mb-1 text-muted-foreground/50" />

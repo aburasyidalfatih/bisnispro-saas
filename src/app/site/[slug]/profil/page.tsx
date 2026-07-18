@@ -168,8 +168,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
            <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl group bg-black">
               {settings.videoProfil ? (
                  <>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={normalizeImageUrl(videoThumbnail)} alt="Video Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" loading="lazy" decoding="async" />
+                    <OptimizedImage src={normalizeImageUrl(videoThumbnail) || ""} alt="Video Thumbnail" fill className="opacity-60 group-hover:opacity-40 transition-opacity object-cover" />
                     <a href={settings.videoProfil} target="_blank" rel="noreferrer" className="absolute inset-0 flex items-center justify-center">
                        <div className="h-20 w-20 rounded-full bg-primary/90 flex items-center justify-center text-white shadow-xl hover:scale-110 transition-transform cursor-pointer">
                           <Play className="h-8 w-8 ml-1" />

@@ -104,8 +104,8 @@ export function GalleryGrid({ items }: Props) {
                  />
               </div>
             ) : (
-               <img src={normalizeImageUrl(items[lightbox].url) || items[lightbox].url} alt={items[lightbox].imageAlt || items[lightbox].caption || `Foto ${lightbox + 1}`}
-                 className="max-h-[70vh] max-w-full rounded-xl object-contain shadow-2xl" loading="lazy" decoding="async" />
+               <Image src={normalizeImageUrl(items[lightbox].url) || items[lightbox].url} alt={items[lightbox].imageAlt || items[lightbox].caption || `Foto ${lightbox + 1}`}
+                 width={1200} height={800} className="max-h-[70vh] w-auto max-w-full rounded-xl object-contain shadow-2xl" unoptimized />
             )}
             {items[lightbox].caption && (
               <p className="text-white text-sm text-center max-w-lg">{items[lightbox].caption}</p>

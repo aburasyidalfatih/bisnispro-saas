@@ -414,7 +414,7 @@ export default function SchoolTvPage() {
                            {!s.isBreak ? (
                              <div className="flex items-center gap-2 mb-2">
                                {s.staff?.imageUrl ? (
-                                 <img src={s.staff.imageUrl} alt={s.staff.name} className={cn("rounded-full object-cover border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")} />
+                                 <Image src={s.staff.imageUrl} alt={s.staff.name} width={40} height={40} className={cn("rounded-full object-cover border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")} unoptimized />
                                ) : (
                                  <div className={cn("rounded-full bg-slate-700 flex items-center justify-center border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")}>
                                    <UserCircle className={cn("text-slate-400", isCompact ? "h-5 w-5" : "h-6 w-6")} />
