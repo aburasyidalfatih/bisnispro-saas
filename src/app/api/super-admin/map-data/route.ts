@@ -12,14 +12,12 @@ export async function GET() {
   // 1. Ambil semua Tenant aktif (lokasi dari settings JSON)
   const tenants = await db.tenant.findMany({
     where: { isActive: true },
-    take: 500,
     select: { id: true, name: true, slug: true, settings: true }
   })
 
   // 2. Ambil semua pengajuan (status PENDING/REVISION)
   const applications = await db.tenantApplication.findMany({
     where: { status: { in: ["PENDING", "REVISION"] } },
-    take: 200,
     select: { id: true, schoolName: true, province: true, regency: true, status: true }
   })
 

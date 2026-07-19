@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet"
 import { useTheme } from "next-themes"
+import MarkerClusterGroup from "react-leaflet-cluster"
 import "leaflet/dist/leaflet.css"
 
 interface MapPoint {
@@ -34,31 +35,36 @@ export default function MapContent({ points }: { points: MapPoint[] }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url={tileUrl}
         />
-        {points.map((point, idx) => (
-          <CircleMarker
-            key={`${point.type}-${idx}`}
-            center={[point.lat, point.lng]}
-            radius={point.type === "tenant" ? 5 : 4}
-            pathOptions={{
-              color: isDark ? "#0f172a" : "#ffffff", // Border putih agar tiap titik tidak menyatu
-              fillColor: point.type === "tenant" ? "#10b981" : "#f59e0b",
-              fillOpacity: 1,
-              weight: 1.5,
-            }}
-          >
-            <Popup>
-              <div className="text-sm">
-                <p className="font-bold">{point.name}</p>
-                <p className="text-xs mt-1" style={{ color: point.type === "tenant" ? "#10b981" : "#f59e0b" }}>
-                  {point.type === "tenant" ? "🟢 Sekolah Aktif" : "🟠 Pengajuan"}
-                </p>
-                {point.slug && (
-                  <p className="text-xs text-gray-500 mt-0.5">{point.slug}.schoolpro.id</p>
-                )}
-              </div>
-            </Popup>
-          </CircleMarker>
-        ))}
+        <MarkerClusterGroup
+          chunkedLoading
+          maxClusterRadius={40}
+        >
+          {points.map((point, idx) => (
+            <CircleMarker
+              key={`${point.type}-${idx}`}
+              center={[point.lat, point.lng]}
+              radius={point.type === "tenant" ? 5 : 4}
+              pathOptions={{
+                color: isDark ? "#0f172a" : "#ffffff", // Border putih agar tiap titik tidak menyatu
+                fillColor: point.type === "tenant" ? "#10b981" : "#f59e0b",
+                fillOpacity: 1,
+                weight: 1.5,
+              }}
+            >
+              <Popup>
+                <div className="text-sm">
+                  <p className="font-bold">{point.name}</p>
+                  <p className="text-xs mt-1" style={{ color: point.type === "tenant" ? "#10b981" : "#f59e0b" }}>
+                    {point.type === "tenant" ? "🟢 Sekolah Aktif" : "🟠 Pengajuan"}
+                  </p>
+                  {point.slug && (
+                    <p className="text-xs text-gray-500 mt-0.5">{point.slug}.schoolpro.id</p>
+                  )}
+                </div>
+              </Popup>
+            </CircleMarker>
+          ))}
+        </MarkerClusterGroup>
       </MapContainer>
     </div>
   )
