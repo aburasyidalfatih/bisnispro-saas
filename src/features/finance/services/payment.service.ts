@@ -303,17 +303,49 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
              const metadata = payment.metadata as any
              if (!metadata?.invoiceId) throw new Error("Invoice ID not found in payment metadata")
              
-             const invoice = await db.invoice.findUnique({ where: { id: metadata.invoiceId }})
+             const invoice = await db.invoice.findUnique({ 
+               where: { id: metadata.invoiceId },
+               include: { student: { select: { name: true } } }
+             })
              if (!invoice) throw new Error("Invoice not found")
 
-             // Update Invoice to PAID
-             await db.invoice.update({
-               where: { id: invoice.id },
-               data: { 
-                 status: "PAID",
-                 amountPaid: invoice.amount,
-                 amountDue: 0,
-               }
+             await db.$transaction(async (tx) => {
+               // Update Invoice to PAID
+               await tx.invoice.update({
+                 where: { id: invoice.id },
+                 data: { 
+                   status: "PAID",
+                   amountPaid: invoice.amount,
+                   amountDue: 0,
+                 }
+               })
+
+               // 1. Rekam jejak pembayaran invoice
+               await tx.invoicePayment.create({
+                 data: {
+                   invoiceId: invoice.id,
+                   tenantId: invoice.tenantId,
+                   amount: payment.amount,
+                   method: "TRIPAY",
+                   status: "VERIFIED",
+                   reference: payment.reference,
+                   verifiedAt: new Date(),
+                   paidAt: new Date(),
+                   notes: "Pembayaran otomatis via Tripay",
+                 }
+               })
+
+               // 2. Rekam Pemasukan di Arus Kas (Cashflow) Sekolah
+               await tx.cashflow.create({
+                 data: {
+                   tenantId: invoice.tenantId,
+                   type: "INCOME",
+                   category: "SPP", 
+                   amount: payment.amount,
+                   description: `${invoice.title} — ${invoice.student?.name || 'Siswa'}`,
+                   referenceId: invoice.code,
+                 },
+               })
              })
 
              // Notify Admin
