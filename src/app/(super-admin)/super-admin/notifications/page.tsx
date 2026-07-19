@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { Mail, Bell, CheckCircle2, XCircle, MessageSquare, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { Mail, Bell, CheckCircle2, XCircle, MessageSquare, Loader2 } from "lucide-react"
+import { ServerPagination } from "@/components/shared/server-pagination"
 
 // --- Subcomponents for each tab ---
 
@@ -98,16 +99,13 @@ function DripTable() {
             </div>
             
             {/* Pagination Controls */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Halaman {meta.page} dari {meta.totalPages}</span>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => fetchData(meta.page - 1)} disabled={meta.page <= 1}>
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Prev
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => fetchData(meta.page + 1)} disabled={meta.page >= meta.totalPages}>
-                  Next <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
+            <div className="mt-4">
+              <ServerPagination 
+                page={meta.page} 
+                totalPages={meta.totalPages} 
+                total={meta.total} 
+                onPageChange={fetchData} 
+              />
             </div>
           </div>
         )}
@@ -201,16 +199,13 @@ function SystemTable() {
               </div>
             </div>
             {/* Pagination Controls */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Halaman {meta.page} dari {meta.totalPages}</span>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => fetchData(meta.page - 1)} disabled={meta.page <= 1}>
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Prev
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => fetchData(meta.page + 1)} disabled={meta.page >= meta.totalPages}>
-                  Next <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
+            <div className="mt-4">
+              <ServerPagination 
+                page={meta.page} 
+                totalPages={meta.totalPages} 
+                total={meta.total} 
+                onPageChange={fetchData} 
+              />
             </div>
           </div>
         )}
@@ -300,16 +295,13 @@ function InternalTable() {
               </div>
             </div>
             {/* Pagination Controls */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Halaman {meta.page} dari {meta.totalPages}</span>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => fetchData(meta.page - 1)} disabled={meta.page <= 1}>
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Prev
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => fetchData(meta.page + 1)} disabled={meta.page >= meta.totalPages}>
-                  Next <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
+            <div className="mt-4">
+              <ServerPagination 
+                page={meta.page} 
+                totalPages={meta.totalPages} 
+                total={meta.total} 
+                onPageChange={fetchData} 
+              />
             </div>
           </div>
         )}

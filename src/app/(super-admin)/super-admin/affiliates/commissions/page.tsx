@@ -1,5 +1,6 @@
 "use client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ServerPagination } from "@/components/shared/server-pagination"
 
 import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -35,7 +36,7 @@ interface Commission {
 }
 
 export default function SuperAdminCommissionsPage() {
-  const [data, setData] = useState<{ commissions: Commission[], totalPages: number }>({ commissions: [], totalPages: 1 })
+  const [data, setData] = useState<{ commissions: Commission[], totalPages: number, total: number }>({ commissions: [], totalPages: 1, total: 0 })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
@@ -178,29 +179,14 @@ export default function SuperAdminCommissionsPage() {
           </div>
 
           {/* Pagination */}
-          {data.totalPages > 1 && (
-            <div className="flex items-center justify-end space-x-2 mt-4 pt-4 border-t">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                Prev
-              </Button>
-              <div className="text-sm font-medium">
-                {page} / {data.totalPages}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
-                disabled={page === data.totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          )}
+          <div className="mt-4">
+            <ServerPagination 
+              page={page} 
+              totalPages={data.totalPages} 
+              total={data.total} 
+              onPageChange={setPage} 
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

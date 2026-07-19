@@ -14,8 +14,27 @@ export async function GET(req: Request) {
   const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get("limit") || "20")))
   const skip = (page - 1) * limit
 
+  const search = url.searchParams.get("search") || ""
+  const status = url.searchParams.get("status") || "ALL"
+  
+  const where: any = {}
+  
+  if (status !== "ALL") {
+    where.status = status
+  }
+  
+  if (search) {
+    where.OR = [
+      { schoolName: { contains: search, mode: "insensitive" } },
+      { adminEmail: { contains: search, mode: "insensitive" } },
+      { regency: { contains: search, mode: "insensitive" } },
+      { province: { contains: search, mode: "insensitive" } },
+    ]
+  }
+
   const [applications, total] = await Promise.all([
     db.tenantApplication.findMany({
+      where,
       take: limit,
       skip,
       orderBy: { createdAt: "desc" },
@@ -25,7 +44,7 @@ export async function GET(req: Request) {
         }
       }
     }),
-    db.tenantApplication.count()
+    db.tenantApplication.count({ where })
   ])
   return NextResponse.json({ data: applications, total, page, limit, totalPages: Math.ceil(total / limit) })
 }

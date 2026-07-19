@@ -13,6 +13,7 @@ import { Application } from "./_components/types"
 import { ApplicationTable } from "./_components/application-table"
 import { ApplicationDetailModal } from "./_components/application-detail-modal"
 import { ActionModal, BulkActionModal } from "./_components/action-modals"
+import { ServerPagination } from "@/components/shared/server-pagination"
 
 export default function SuperAdminApplicationsPage() {
   const [apps, setApps] = useState<Application[]>([])
@@ -37,34 +38,34 @@ export default function SuperAdminApplicationsPage() {
   // Search state
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("ALL")
+  
+  // Pagination state
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
 
-  const filteredApps = useMemo(() => {
-    let result = apps
+  const filteredApps = apps
+
+  const fetchApps = (currentPage = page, search = searchQuery, status = statusFilter) => {
+    setLoading(true)
+    const params = new URLSearchParams({
+      page: currentPage.toString(),
+      limit: "20",
+      search,
+      status
+    })
     
-    if (statusFilter !== "ALL") {
-      result = result.filter(app => app.status === statusFilter)
-    }
-
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      result = result.filter(app => 
-        app.schoolName.toLowerCase().includes(query) ||
-        app.adminEmail.toLowerCase().includes(query) ||
-        (app.regency && app.regency.toLowerCase().includes(query)) ||
-        (app.province && app.province.toLowerCase().includes(query))
-      )
-    }
-    
-    return result
-  }, [apps, searchQuery, statusFilter])
-
-  const fetchApps = () => {
-    fetch("/api/super-admin/applications")
+    fetch(`/api/super-admin/applications?${params.toString()}`)
       .then(async (r) => {
         const text = await r.text();
         return text ? JSON.parse(text) : [];
       })
-      .then((data) => { setApps(Array.isArray(data) ? data : data.data || []); setLoading(false) })
+      .then((data) => { 
+        setApps(Array.isArray(data) ? data : data.data || [])
+        setTotalPages(data.totalPages || 1)
+        setTotal(data.total || 0)
+        setLoading(false) 
+      })
       .catch((err) => { console.error(err); setLoading(false); })
   }
 
@@ -342,10 +343,20 @@ export default function SuperAdminApplicationsPage() {
               placeholder="Cari nama, email, kota..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setPage(1)
+                  fetchApps(1, searchQuery, statusFilter)
+                }
+              }}
               className="pl-9 h-10 rounded-xl w-full"
             />
           </div>
-          <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value)}>
+          <Select value={statusFilter} onValueChange={(value) => {
+            setStatusFilter(value)
+            setPage(1)
+            fetchApps(1, searchQuery, value)
+          }}>
             <SelectTrigger className="w-full sm:w-40 h-10 rounded-xl">
               <SelectValue placeholder="Semua Status" />
             </SelectTrigger>
@@ -407,6 +418,10 @@ export default function SuperAdminApplicationsPage() {
         isUpdating={isUpdating}
         handleUpdateStatus={handleUpdateStatus}
       />
+
+      <div className="mt-4">
+        <ServerPagination page={page} totalPages={totalPages} total={total} onPageChange={(p) => { setPage(p); fetchApps(p, searchQuery, statusFilter); }} />
+      </div>
 
       <BulkActionModal 
         open={bulkActionModalOpen}

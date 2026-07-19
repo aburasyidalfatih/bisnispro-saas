@@ -1,5 +1,6 @@
 "use client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ServerPagination } from "@/components/shared/server-pagination"
 
 import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -35,10 +36,11 @@ interface Stats {
 }
 
 export default function SuperAdminAffiliatesPage() {
-  const [data, setData] = useState<{ affiliates: Affiliate[], stats: Stats, totalPages: number }>({ 
+  const [data, setData] = useState<{ affiliates: Affiliate[], stats: Stats, totalPages: number, total: number }>({ 
     affiliates: [], 
     stats: { totalAffiliates: 0, totalBalance: 0, totalWithdrawalsPending: 0, totalWithdrawalsPaid: 0 },
-    totalPages: 1
+    totalPages: 1,
+    total: 0
   })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
@@ -328,31 +330,14 @@ export default function SuperAdminAffiliatesPage() {
             </div>
           )}
 
-          {data.totalPages > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-6">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="rounded-xl"
-              >
-                Sebelumnya
-              </Button>
-              <span className="text-sm font-medium text-muted-foreground">
-                Halaman {page} dari {data.totalPages}
-              </span>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
-                disabled={page === data.totalPages}
-                className="rounded-xl"
-              >
-                Selanjutnya
-              </Button>
-            </div>
-          )}
+          <div className="mt-4">
+            <ServerPagination 
+              page={page} 
+              totalPages={data.totalPages} 
+              total={data.total} 
+              onPageChange={setPage} 
+            />
+          </div>
         </CardContent>
       </Card>
 

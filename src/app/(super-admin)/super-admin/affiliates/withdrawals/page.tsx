@@ -1,5 +1,6 @@
 "use client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ServerPagination } from "@/components/shared/server-pagination"
 
 import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,10 +31,11 @@ interface Withdrawal {
   }
 }
 
-export default function WithdrawalsPage() {
-  const [data, setData] = useState<{ withdrawals: Withdrawal[], totalPages: number }>({ 
+export default function SuperAdminWithdrawalsPage() {
+  const [data, setData] = useState<{ withdrawals: Withdrawal[], totalPages: number, total: number }>({ 
     withdrawals: [], 
-    totalPages: 1
+    totalPages: 1,
+    total: 0
   })
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -241,13 +243,14 @@ export default function WithdrawalsPage() {
             </div>
           )}
 
-          {data.totalPages > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-6">
-              <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="rounded-xl">Sebelumnya</Button>
-              <span className="text-sm font-medium text-muted-foreground">Halaman {page} dari {data.totalPages}</span>
-              <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(data.totalPages, p + 1))} disabled={page === data.totalPages} className="rounded-xl">Selanjutnya</Button>
-            </div>
-          )}
+          <div className="mt-4">
+            <ServerPagination 
+              page={page} 
+              totalPages={data.totalPages} 
+              total={data.total} 
+              onPageChange={setPage} 
+            />
+          </div>
         </CardContent>
       </Card>
 

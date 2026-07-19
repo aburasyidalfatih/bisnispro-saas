@@ -1,5 +1,6 @@
 "use client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ServerPagination } from "@/components/shared/server-pagination"
 
 import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -40,7 +41,7 @@ interface Stats {
 }
 
 export default function PaymentsPage() {
-  const [data, setData] = useState<{ payments: Payment[], stats: Stats, totalPages: number }>({ payments: [], stats: { totalRevenue: 0, pendingCount: 0 }, totalPages: 1 })
+  const [data, setData] = useState<{ payments: Payment[], stats: Stats, totalPages: number, total: number }>({ payments: [], stats: { totalRevenue: 0, pendingCount: 0 }, totalPages: 1, total: 0 })
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>("all")
   const [search, setSearch] = useState("")
@@ -402,31 +403,14 @@ export default function PaymentsPage() {
       </Card>
 
       {/* Pagination Controls */}
-      {data.totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-6">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="rounded-xl"
-          >
-            Sebelumnya
-          </Button>
-          <span className="text-sm font-medium text-muted-foreground">
-            Halaman {page} dari {data.totalPages}
-          </span>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
-            disabled={page === data.totalPages}
-            className="rounded-xl"
-          >
-            Selanjutnya
-          </Button>
-        </div>
-      )}
+      <div className="mt-4">
+        <ServerPagination 
+          page={page} 
+          totalPages={data.totalPages} 
+          total={data.total} 
+          onPageChange={setPage} 
+        />
+      </div>
 
       {/* Modals */}
       <ConfirmPaymentModal 

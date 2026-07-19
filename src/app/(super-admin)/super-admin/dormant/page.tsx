@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
+import { ServerPagination } from "@/components/shared/server-pagination"
 
 interface DormantTenant {
   id: string
@@ -30,6 +31,9 @@ export default function DormantSchoolsPage() {
   const [loading, setLoading] = useState(true)
   const [selectedTenants, setSelectedTenants] = useState<string[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
 
   // Template States
   const [waTemplate, setWaTemplate] = useState("")
@@ -38,13 +42,17 @@ export default function DormantSchoolsPage() {
   const [loadingTemplates, setLoadingTemplates] = useState(false)
   const [savingTemplates, setSavingTemplates] = useState(false)
 
-  const fetchTenants = () => {
+  const fetchTenants = (currentPage = 1) => {
     setLoading(true)
-    fetch("/api/super-admin/dormant")
+    fetch(`/api/super-admin/dormant?page=${currentPage}&limit=50`)
       .then((res) => res.json())
       .then((json) => {
         const items = Array.isArray(json) ? json : json.data || []
         setTenants(items)
+        if (!Array.isArray(json)) {
+          setTotalPages(json.totalPages || 1)
+          setTotal(json.total || items.length)
+        }
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false))
@@ -64,9 +72,9 @@ export default function DormantSchoolsPage() {
   }
 
   useEffect(() => {
-    fetchTenants()
+    fetchTenants(page)
     fetchTemplates()
-  }, [])
+  }, [page])
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -151,7 +159,7 @@ export default function DormantSchoolsPage() {
             Daftar {tenants.length} sekolah yang sudah disetujui namun belum pernah login ke dasbor mereka.
           </p>
         </div>
-        <Button onClick={fetchTenants} variant="outline" size="sm" className="gap-2">
+        <Button onClick={() => fetchTenants(page)} variant="outline" size="sm" className="gap-2">
           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
@@ -313,6 +321,10 @@ export default function DormantSchoolsPage() {
                 )}
               </TableBody>
             </Table>
+          </div>
+          
+          <div className="mt-4">
+            <ServerPagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
           </div>
         </CardContent>
       </Card>

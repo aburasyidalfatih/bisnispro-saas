@@ -9,27 +9,41 @@ import { formatDistanceToNow } from "date-fns"
 import { id } from "date-fns/locale"
 import { SystemFeedbackStatusAction } from "./_components/status-action"
 import { ExportFeedbackButton } from "./_components/export-button"
+import Link from "next/link"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
   title: "Feedback Laporan | Super Admin",
 }
 
-export default async function FeedbackPage() {
+export default async function FeedbackPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const session = await auth()
   if (!session?.user?.isSuperAdmin) redirect("/login")
 
-  const feedbacks = await db.systemFeedback.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 50,
-    include: {
-      user: {
-        select: { name: true, email: true },
+  const resolvedParams = await searchParams
+  const pageParam = resolvedParams?.page
+  const page = parseInt(Array.isArray(pageParam) ? pageParam[0] : (pageParam || "1"))
+  const limit = 20
+  const skip = (page - 1) * limit
+
+  const [feedbacks, total] = await Promise.all([
+    db.systemFeedback.findMany({
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      skip,
+      include: {
+        user: {
+          select: { name: true, email: true },
+        },
+        tenant: {
+          select: { name: true, slug: true },
+        },
       },
-      tenant: {
-        select: { name: true, slug: true },
-      },
-    },
-  })
+    }),
+    db.systemFeedback.count()
+  ])
+  const totalPages = Math.ceil(total / limit)
 
   return (
     <div className="space-y-6">
@@ -118,6 +132,24 @@ export default async function FeedbackPage() {
               )}
             </TableBody>
           </Table>
+          
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <span className="text-xs text-muted-foreground">Total {total} data · Halaman {page} dari {totalPages}</span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" asChild disabled={page <= 1} className={page <= 1 ? "pointer-events-none opacity-50" : ""}>
+                  <Link href={`/super-admin/feedback?page=${page - 1}`}>
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild disabled={page >= totalPages} className={page >= totalPages ? "pointer-events-none opacity-50" : ""}>
+                  <Link href={`/super-admin/feedback?page=${page + 1}`}>
+                    Next <ChevronRight className="h-4 w-4 ml-1" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
