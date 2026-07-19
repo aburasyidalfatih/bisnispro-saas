@@ -61,7 +61,13 @@ export function AffiliateLeaderboardClient({ backHref, variant = "full" }: Affil
   const fetchLeaderboard = useCallback(async (signal?: AbortSignal) => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/super-admin/affiliates/leaderboard?filter=${filter}`, { signal })
+      const res = await fetch(`/api/super-admin/affiliates/leaderboard?filter=${filter}`, { 
+        signal,
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      })
       const result = await res.json()
       setData(result)
     } catch (e: any) {
