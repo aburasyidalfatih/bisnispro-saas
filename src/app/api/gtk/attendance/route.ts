@@ -109,29 +109,37 @@ export async function POST(req: Request) {
   const dateStr = new Date().toLocaleDateString("en-CA", { timeZone: tz })
   const today = new Date(`${dateStr}T00:00:00.000Z`)
 
-  // Upsert: create jika belum ada rekord hari ini, update jika sudah ada
-  // Perbaikan Bug: update TIDAK boleh menimpa checkInAt
-  const record = await db.staffAttendance.upsert({
+  let record = await db.staffAttendance.findUnique({
     where: { tenantId_staffId_date: { tenantId, staffId, date: today } },
-    create: {
-      tenantId,
-      staffId,
-      date: today,
-      checkInAt: new Date(),
-      checkInLat,
-      checkInLng,
-      checkInPhoto,
-      status: "HADIR",
-      notes,
-    },
-    update: {
-      checkInLat,
-      checkInLng,
-      checkInPhoto,
-      status: "HADIR",
-      notes,
-    },
   })
+
+  if (record) {
+    record = await db.staffAttendance.update({
+      where: { id: record.id },
+      data: {
+        ...(record.checkInAt ? {} : { checkInAt: new Date() }),
+        ...(record.checkInLat ? {} : { checkInLat }),
+        ...(record.checkInLng ? {} : { checkInLng }),
+        ...(record.checkInPhoto ? {} : { checkInPhoto }),
+        status: "HADIR",
+        notes: notes || record.notes,
+      },
+    })
+  } else {
+    record = await db.staffAttendance.create({
+      data: {
+        tenantId,
+        staffId,
+        date: today,
+        checkInAt: new Date(),
+        checkInLat,
+        checkInLng,
+        checkInPhoto,
+        status: "HADIR",
+        notes,
+      },
+    })
+  }
 
   return NextResponse.json(record, { status: 201 })
 }

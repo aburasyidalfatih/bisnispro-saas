@@ -198,6 +198,7 @@ export async function updateTenantSettings(tenantId: string, settings: Record<st
   })
 
   await invalidatePublicTenantCache(updated.slug)
+  await invalidateDashboardCache(tenantId)
   try {
     const { revalidatePath } = await import("next/cache")
     revalidatePath("/", "layout");

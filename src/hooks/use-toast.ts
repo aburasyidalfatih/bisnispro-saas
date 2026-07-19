@@ -12,6 +12,7 @@ type ToasterToast = {
   description?: string
   action?: ToastActionElement
   variant?: "default" | "destructive"
+  open?: boolean
 }
 
 let count = 0
@@ -57,7 +58,17 @@ export const reducer = (state: State, action: Action): State => {
       } else {
         state.toasts.forEach((t) => addToRemoveQueue(t.id))
       }
-      return { ...state }
+      return {
+        ...state,
+        toasts: state.toasts.map((t) =>
+          t.id === toastId || toastId === undefined
+            ? {
+                ...t,
+                open: false,
+              }
+            : t
+        ),
+      }
     }
     case "REMOVE_TOAST":
       if (action.toastId === undefined) return { ...state, toasts: [] }

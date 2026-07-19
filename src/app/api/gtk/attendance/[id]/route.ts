@@ -10,6 +10,7 @@ const checkOutSchema = z.object({
   notes: z.string().optional(),
   checkOutLat: z.number().optional(),
   checkOutLng: z.number().optional(),
+  checkOutPhoto: z.string().optional(),
 })
 
 /**
@@ -67,6 +68,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     where: { id },
     data: {
       checkOutAt: new Date(),
+      ...(checkOutLat ? { checkOutLat } : {}),
+      ...(checkOutLng ? { checkOutLng } : {}),
+      ...(parsed.data.checkOutPhoto ? { checkOutPhoto: parsed.data.checkOutPhoto } : {}),
       ...(parsed.data.status ? { status: parsed.data.status } : {}),
       ...(parsed.data.notes ? { notes: parsed.data.notes } : {}),
     },

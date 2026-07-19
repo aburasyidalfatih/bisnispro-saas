@@ -1564,6 +1564,9 @@ model StaffAttendance {
   checkInLat   Float?
   checkInLng   Float?
   checkInPhoto String?
+  checkOutLat  Float?
+  checkOutLng  Float?
+  checkOutPhoto String?
   status       String    @default("HADIR")
   notes        String?
   createdAt    DateTime  @default(now())
