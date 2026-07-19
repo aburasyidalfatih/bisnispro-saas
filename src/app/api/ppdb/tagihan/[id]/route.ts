@@ -60,7 +60,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       // Optional: Update Pembayaran if ID provided
       if (pembayaranId) {
         await tx.pembayaranPpdb.update({
-          where: { id: pembayaranId },
+          where: { id: pembayaranId, tagihanId: id },
           data: { status: pembayaranStatus || "SUCCESS" }
         });
       }

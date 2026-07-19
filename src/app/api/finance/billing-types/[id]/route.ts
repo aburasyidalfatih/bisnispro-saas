@@ -39,7 +39,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
 
   const record = await db.billingType.update({
-    where: { id },
+    where: { id, tenantId },
     data: parsed.data,
   })
   return NextResponse.json(record)
@@ -54,6 +54,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const { error: accessError } = await requireTenantMembership(tenantId);
     if (accessError) return accessError;
 
-  await db.billingType.update({ where: { id }, data: { isActive: false } })
+  await db.billingType.update({ where: { id, tenantId }, data: { isActive: false } })
   return NextResponse.json({ message: "Berhasil dinonaktifkan" })
 }

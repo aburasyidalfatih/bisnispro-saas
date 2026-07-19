@@ -28,7 +28,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (accessError) return accessError;
 
   const campaign = await db.donationCampaign.update({
-    where: { id },
+    where: { id, tenantId: tenantId as string },
     data: {
       ...data,
       startDate: data.startDate ? new Date(data.startDate) : undefined,
@@ -40,6 +40,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  await db.donationCampaign.update({ where: { id }, data: { deletedAt: new Date(), isActive: false } })
+  const url = new URL(req.url)
+  const tenantId = url.searchParams.get("tenantId")
+  if (!tenantId) return NextResponse.json({ error: "tenantId diperlukan" }, { status: 400 })
+  const { error: accessError } = await requireTenantMembership(tenantId);
+  if (accessError) return accessError;
+
+  await db.donationCampaign.update({ where: { id, tenantId }, data: { deletedAt: new Date(), isActive: false } })
   return NextResponse.json({ message: "Kampanye dinonaktifkan" })
 }

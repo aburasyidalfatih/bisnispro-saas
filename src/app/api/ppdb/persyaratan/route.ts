@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/logger";
-
+import { requireTenantMembership } from "@/lib/api-utils";
 export async function GET(req: Request) {
   try {
     const session = await auth();
@@ -72,6 +72,18 @@ export async function DELETE(req: Request) {
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
     }
+
+    const existing = await db.persyaratanBerkas.findUnique({
+      where: { id },
+      include: { periode: true }
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    const { error: accessError } = await requireTenantMembership(existing.periode.tenantId);
+    if (accessError) return accessError;
 
     await db.persyaratanBerkas.delete({
       where: { id },

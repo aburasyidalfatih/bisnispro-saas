@@ -18,10 +18,32 @@ export async function POST(req: Request) {
     if (!student) return NextResponse.json({ error: "Bukan siswa" }, { status: 403 })
 
     const cbtSession = await db.cbtSession.findFirst({
-      where: { id: sessionId, studentId: student.id }
+      where: { id: sessionId, studentId: student.id },
+      include: { exam: true }
     })
     if (!cbtSession || cbtSession.status !== "ONGOING") {
       return NextResponse.json({ error: "Sesi tidak valid atau sudah selesai" }, { status: 400 })
+    }
+
+    // Strict Server-Side Time Verification
+    const now = new Date()
+    const sessionDeadline = new Date(cbtSession.startTime.getTime() + cbtSession.exam.duration * 60000)
+    const absoluteDeadline = new Date(Math.min(sessionDeadline.getTime(), cbtSession.exam.endTime.getTime()) + 60000) // 1 min grace period
+
+    if (now > absoluteDeadline && action !== "FINISH") {
+      // Auto-finish session if time is up to prevent cheating
+      await db.cbtSession.update({
+        where: { id: sessionId },
+        data: { status: "FINISHED", endTime: now }
+      })
+      
+      const { cbtQueue } = await import("@/lib/queue")
+      await cbtQueue.add("score-session", { 
+        sessionId: cbtSession.id, 
+        examId: cbtSession.examId 
+      })
+      
+      return NextResponse.json({ error: "Waktu ujian telah berakhir" }, { status: 403 })
     }
 
     // Handle Finish Action

@@ -50,7 +50,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   }
 
   const invoice = await db.invoice.update({
-    where: { id },
+    where: { id, tenantId },
     data,
   })
   return NextResponse.json(invoice)
@@ -70,6 +70,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     return NextResponse.json({ error: e.message }, { status: 403 })
   }
 
-  await db.invoice.update({ where: { id }, data: { deletedAt: new Date(), status: "CANCELLED" } })
+  await db.invoice.update({ where: { id, tenantId }, data: { deletedAt: new Date(), status: "CANCELLED" } })
   return NextResponse.json({ message: "Tagihan dibatalkan" })
 }
