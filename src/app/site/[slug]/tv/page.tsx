@@ -359,7 +359,7 @@ export default function SchoolTvPage() {
           <div className="flex-1 overflow-hidden relative min-h-[300px]">
             <div className="absolute inset-0 overflow-y-auto pb-10 hide-scrollbar scroll-smooth flex flex-col">
               {pagedActiveSchedules.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-slate-400 bg-white/5 rounded-3xl border border-white/10 p-12 backdrop-blur-sm">
+                <div className="h-full w-full flex flex-col items-center justify-center text-slate-400 bg-white/5 rounded-3xl border border-white/10 p-12 backdrop-blur-sm">
                   <div className="relative">
                      <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full"></div>
                      <Clock className="h-32 w-32 mb-6 text-slate-600/50 relative z-10 animate-pulse" />
