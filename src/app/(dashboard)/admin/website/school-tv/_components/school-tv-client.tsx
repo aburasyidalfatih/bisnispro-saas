@@ -54,6 +54,26 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
   const [staffSearch, setStaffSearch] = useState("")
   const [showDropdown, setShowDropdown] = useState(false)
 
+  const [tvBarcode, setTvBarcode] = useState<{
+    image?: string;
+    bankAccount?: string;
+    accountName?: string;
+  }>(initialSettings?.tvBarcode || {})
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ title: "Terlalu besar", description: "Ukuran gambar maksimal 2MB.", variant: "destructive" })
+      return
+    }
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setTvBarcode(prev => ({ ...prev, image: reader.result as string }))
+    }
+    reader.readAsDataURL(file)
+  }
+
   // Add a slot to active day
   const handleAddSlot = (e: React.FormEvent) => {
     e.preventDefault()
@@ -108,7 +128,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
       const res = await fetch("/api/tv/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ piketSettings })
+        body: JSON.stringify({ piketSettings, tvBarcode })
       })
 
       if (res.ok) {
@@ -183,6 +203,67 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
               </p>
               <p className="text-amber-600 font-medium">
                 5. Jangan lupa klik tombol <b>Simpan Jadwal Piket</b> di bagian bawah untuk menyimpan perubahan permanen.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-md border-slate-200">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <QrCode className="h-5 w-5 text-indigo-500" />
+                Barcode Pembayaran TV
+              </CardTitle>
+              <CardDescription>
+                Tampilkan QR Code manual di layar TV untuk donasi/pembayaran.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-xs font-bold">Gambar Barcode (Max 2MB)</Label>
+                <div className="flex items-center gap-3">
+                  {tvBarcode.image && (
+                    <div className="h-16 w-16 relative rounded-md border overflow-hidden shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={tvBarcode.image} alt="Barcode" className="object-cover w-full h-full" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <Input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleImageUpload}
+                      className="text-xs file:bg-blue-50 file:text-blue-600 file:border-0 file:rounded-md file:px-2 file:py-1 file:mr-2 file:text-xs file:font-semibold hover:file:bg-blue-100 cursor-pointer"
+                    />
+                    {tvBarcode.image && (
+                      <button 
+                        type="button" 
+                        onClick={() => setTvBarcode(prev => ({ ...prev, image: undefined }))}
+                        className="text-xs text-red-500 hover:underline mt-1 block"
+                      >
+                        Hapus Gambar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-bold">Nomor Rekening & Bank</Label>
+                <Input 
+                  placeholder="Misal: BCA 1234567890" 
+                  value={tvBarcode.bankAccount || ""}
+                  onChange={e => setTvBarcode(prev => ({ ...prev, bankAccount: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-bold">Atas Nama</Label>
+                <Input 
+                  placeholder="Misal: Budi Santoso" 
+                  value={tvBarcode.accountName || ""}
+                  onChange={e => setTvBarcode(prev => ({ ...prev, accountName: e.target.value }))}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Data ini akan otomatis muncul di sudut kanan bawah TV jika diisi.
               </p>
             </CardContent>
           </Card>

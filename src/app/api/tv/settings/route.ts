@@ -25,7 +25,7 @@ export async function PUT(req: Request) {
       }
     }
 
-    const { marqueeText, piketSettings } = await req.json()
+    const { marqueeText, piketSettings, tvBarcode } = await req.json()
 
     // Get current tenant settings
     const tenant = await db.tenant.findUnique({
@@ -39,6 +39,7 @@ export async function PUT(req: Request) {
       ...currentSettings,
       marqueeText: marqueeText !== undefined ? marqueeText : currentSettings.marqueeText,
       piketSettings: piketSettings !== undefined ? piketSettings : currentSettings.piketSettings,
+      tvBarcode: tvBarcode !== undefined ? tvBarcode : currentSettings.tvBarcode,
     }
 
     const updated = await db.tenant.update({

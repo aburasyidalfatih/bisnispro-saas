@@ -207,6 +207,7 @@ export default function SchoolTvPage() {
 
 
   const tz = data?.tenant?.settings?.timezone || "Asia/Jakarta"
+  const tvBarcode = data?.tenant?.settings?.tvBarcode || null
   
   // Use useMemo to only recalculate when minuteTick or data changes
   const { currentMins, activeSchedules, upcomingSchedules, activePiket, staffStatuses, totalPages, pagedActiveSchedules } = useMemo(() => {
@@ -494,7 +495,7 @@ export default function SchoolTvPage() {
 
           {/* Teacher Status Widget */}
           {staffStatuses.length > 0 && (
-            <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)] flex flex-col min-h-[220px] max-h-[300px]">
+            <div className={cn("bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)] flex flex-col min-h-[220px]", (data.donation || tvBarcode?.image || tvBarcode?.bankAccount) ? "max-h-[300px]" : "flex-1")}>
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-white shrink-0">
                 <Users className="h-5 w-5 text-indigo-400" /> Status Mengajar Guru
               </h3>
@@ -522,8 +523,30 @@ export default function SchoolTvPage() {
             </div>
           )}
 
-          {/* QR Code Donation Widget */}
-          {data.donation && (
+          {/* Manual TV Barcode or QR Code Donation Widget */}
+          {tvBarcode?.image || tvBarcode?.bankAccount ? (
+            <div className="bg-gradient-to-br from-indigo-900/40 to-slate-900/80 backdrop-blur-md rounded-3xl border border-indigo-500/30 p-5 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
+              
+              <h3 className="text-lg font-bold text-indigo-400 mb-2 flex items-center gap-2"><QrCode className="h-5 w-5" /> Pembayaran / Donasi</h3>
+              
+              {tvBarcode.image && (
+                <div className="bg-white p-2 rounded-2xl shadow-xl shadow-black/50 mb-3 h-32 w-32 relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={tvBarcode.image} alt="Barcode" className="w-full h-full object-contain rounded-xl" />
+                </div>
+              )}
+              
+              {tvBarcode.bankAccount && (
+                <div className="bg-slate-950/50 w-full px-3 py-2 rounded-xl border border-white/10 shadow-inner">
+                  <p className="text-sm font-black tracking-widest text-white">{tvBarcode.bankAccount}</p>
+                  {tvBarcode.accountName && (
+                    <p className="text-[10px] text-slate-400 mt-0.5 font-medium uppercase truncate">A.N. {tvBarcode.accountName}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : data.donation ? (
             <div className="bg-gradient-to-br from-primary/30 to-primary/10 backdrop-blur-md rounded-3xl border border-primary/30 p-6 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden group">
               <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
               
@@ -540,7 +563,7 @@ export default function SchoolTvPage() {
               </div>
               <p className="text-[10px] uppercase tracking-widest text-primary font-bold mt-4">Arahkan Kamera HP Anda</p>
             </div>
-          )}
+          ) : null}
 
         </div>
       </main>
