@@ -397,11 +397,11 @@ export default function SchoolTvPage() {
                         </div>
                         
                         <div className={cn("flex items-center gap-3", isCompact ? "mb-2" : "mb-4")}>
-                          <div className={cn("rounded-xl flex items-center justify-center shrink-0 text-white", 
-                            s.isBreak ? "bg-gradient-to-br from-primary to-primary/80 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]" : "bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/30 flex items-center justify-center shrink-0 text-white",
-                            isCompact ? "h-10 w-10" : "h-12 w-12"
+                          <div className={cn("rounded-xl flex flex-col text-center items-center justify-center shrink-0 text-white leading-tight", 
+                            s.isBreak ? "bg-gradient-to-br from-primary to-primary/80 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]" : "bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/30 flex flex-col text-center items-center justify-center shrink-0 text-white leading-tight",
+                            isCompact ? "min-h-10 min-w-12 px-2 py-1" : "min-h-12 min-w-16 px-3 py-1.5"
                           )}>
-                            <span className={cn("font-black", isCompact ? "text-sm" : "text-lg")}>{s.classroom.name}</span>
+                            <span className={cn("font-black", isCompact ? "text-xs" : "text-sm", "max-w-[70px] break-words")}>{s.classroom.name}</span>
                           </div>
                           <div className={isCompact ? "pr-14" : "pr-20"}>
                             <h3 className={cn("font-bold text-white leading-tight line-clamp-2", isCompact ? "text-base" : "text-xl")}>
