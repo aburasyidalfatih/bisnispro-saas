@@ -1,14 +1,20 @@
-import { auth } from"@/lib/auth"
-import { redirect } from"next/navigation"
-import { InvoiceList } from"./_components/invoice-list"
-import { FileText } from"lucide-react"
+import { auth } from "@/lib/auth"
+import { redirect } from "next/navigation"
+import { InvoiceList } from "./_components/invoice-list"
+import { FileText } from "lucide-react"
+import { LockedFeature } from "@/components/locked-feature"
+import { PlanType } from "@/lib/subscription"
 
 export default async function InvoicePage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
 
   const tenant = session.user.tenants?.[0]
-  if (!tenant || tenant.plan ==="free") redirect("/admin")
+  if (!tenant) redirect("/login")
+
+  if (tenant.plan === "free") {
+    return <LockedFeature featureName="Tagihan & Keuangan Siswa" requiredPlan={PlanType.LITE} />
+  }
 
   return (
     <div className="space-y-6">

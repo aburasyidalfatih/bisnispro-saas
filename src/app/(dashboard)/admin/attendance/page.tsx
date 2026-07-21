@@ -15,7 +15,7 @@ export default async function AttendanceOverviewPage() {
   const tenant = session.user.tenants?.[0]
   const tenantId = tenant?.id
   const tenantPlan = tenant?.plan || "free"
-  if (!tenantId) redirect("/admin")
+  if (!tenantId) redirect("/login")
 
   if (!hasFeature(tenantPlan, PlanType.PRO)) {
     return <LockedFeature featureName="Manajemen Absensi" requiredPlan={PlanType.PRO} />

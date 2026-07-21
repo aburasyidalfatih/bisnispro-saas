@@ -17,7 +17,7 @@ export default async function PrintCardsPage({
   const session = await auth()
   const tenantId = session?.user?.tenants?.[0]?.id
 
-  if (!tenantId) redirect("/admin")
+  if (!tenantId) redirect("/login")
 
   const tenant = await db.tenant.findUnique({
     where: { id: tenantId },

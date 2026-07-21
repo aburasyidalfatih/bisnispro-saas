@@ -8,7 +8,7 @@ export default async function AdminWalletPage() {
   if (!session?.user) redirect("/login")
   
   const tenantId = session.user.tenants?.[0]?.id
-  if (!tenantId) redirect("/admin")
+  if (!tenantId) redirect("/login")
 
   // Fetch all wallets
   const wallets = await db.walletAccount.findMany({
