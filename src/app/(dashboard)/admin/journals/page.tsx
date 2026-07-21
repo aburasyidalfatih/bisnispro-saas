@@ -44,15 +44,25 @@ export default function AdminJournalsPage() {
     }
   }
 
-  const filteredJournals = data?.journals?.filter((j: any) => 
-    j.staff?.name.toLowerCase().includes(search.toLowerCase()) || 
-    j.subject?.name.toLowerCase().includes(search.toLowerCase()) ||
-    j.classroom?.name.toLowerCase().includes(search.toLowerCase())
-  ) || []
+  const searchLower = (search || "").toLowerCase().trim()
 
-  const filteredUnsubmitted = data?.unsubmittedStaff?.filter((s: any) => 
-    s.name.toLowerCase().includes(search.toLowerCase())
-  ) || []
+  const filteredJournals = data?.journals?.filter((j: any) => {
+    if (!searchLower) return true
+    const staffName = j.staff?.name || ""
+    const subjectName = j.subject?.name || ""
+    const classroomName = j.classroom?.name || ""
+    return (
+      staffName.toLowerCase().includes(searchLower) || 
+      subjectName.toLowerCase().includes(searchLower) ||
+      classroomName.toLowerCase().includes(searchLower)
+    )
+  }) || []
+
+  const filteredUnsubmitted = data?.unsubmittedStaff?.filter((s: any) => {
+    if (!searchLower) return true
+    const staffName = s.name || ""
+    return staffName.toLowerCase().includes(searchLower)
+  }) || []
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
@@ -174,17 +184,17 @@ export default function AdminJournalsPage() {
                             <div className="md:w-1/4 flex items-center gap-3">
                               <Avatar className="h-10 w-10 border shadow-sm">
                                 <AvatarImage src={j.staff?.imageUrl || ""} />
-                                <AvatarFallback>{j.staff?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                <AvatarFallback>{(j.staff?.name || "Guru").substring(0, 2).toUpperCase()}</AvatarFallback>
                               </Avatar>
                               <div>
-                                <p className="font-semibold text-sm">{j.staff?.name}</p>
+                                <p className="font-semibold text-sm">{j.staff?.name || "Guru"}</p>
                                 <p className="text-xs text-muted-foreground mt-0.5">
-                                  {j.classroom?.name} • {j.subject?.name}
+                                  {j.classroom?.name || "Kelas"} • {j.subject?.name || "Mapel"}
                                 </p>
                               </div>
                             </div>
                             <div className="md:w-2/4">
-                              <p className="text-sm font-medium line-clamp-1">{j.topic}</p>
+                              <p className="text-sm font-medium line-clamp-1">{j.topic || "Materi Pelajaran"}</p>
                               <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                                 {j.notes || "Tidak ada catatan."}
                               </p>
@@ -194,7 +204,7 @@ export default function AdminJournalsPage() {
                                 {j.presences?.length || 0} Siswa Diabsen
                               </div>
                               <span className="text-[10px] text-muted-foreground">
-                                Disubmit: {format(new Date(j.createdAt), "HH:mm")}
+                                Disubmit: {j.createdAt ? format(new Date(j.createdAt), "HH:mm") : "-"}
                               </span>
                             </div>
                           </div>
@@ -216,7 +226,7 @@ export default function AdminJournalsPage() {
                         <div key={s.id} className="flex items-center gap-3 p-3 rounded-xl border bg-card/50 hover:bg-card hover:shadow-sm transition-all">
                           <Avatar className="h-10 w-10 border border-rose-100">
                             <AvatarImage src={s.imageUrl || ""} />
-                            <AvatarFallback className="bg-rose-50 text-rose-600">{s.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="bg-rose-50 text-rose-600">{(s.name || "Guru").substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="min-w-0">
                             <p className="text-sm font-semibold truncate">{s.name}</p>
