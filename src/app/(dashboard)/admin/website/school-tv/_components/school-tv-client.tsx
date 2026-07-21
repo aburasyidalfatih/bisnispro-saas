@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { 
   MonitorSmartphone, Save, Plus, Trash2, Clock, User, 
-  Calendar, Loader2, PlayCircle, ExternalLink, RefreshCw 
+  Calendar, Loader2, PlayCircle, ExternalLink, RefreshCw, QrCode
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
