@@ -41,11 +41,27 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
   const [loading, setLoading] = useState(false)
   const [activeDay, setActiveDay] = useState("1") // Default to Senin
   
-  // State for all days
-  const [piketSettings, setPiketSettings] = useState<Record<string, PiketSlot[]>>(
-    initialSettings?.piketSettings || {
+  // State for all days (safely initialized as arrays)
+  const [piketSettings, setPiketSettings] = useState<Record<string, PiketSlot[]>>(() => {
+    const defaultPiket: Record<string, PiketSlot[]> = {
       "1": [], "2": [], "3": [], "4": [], "5": [], "6": [], "0": []
     }
+    if (initialSettings?.piketSettings && typeof initialSettings.piketSettings === "object") {
+      const merged = { ...defaultPiket, ...initialSettings.piketSettings }
+      Object.keys(merged).forEach(key => {
+        if (!Array.isArray(merged[key])) {
+          merged[key] = []
+        }
+      })
+      return merged
+    }
+    return defaultPiket
+  })
+
+  // Sanitize staff list to prevent crash if s.name is null/undefined
+  const safeStaffList = (staffList || []).filter(
+    (s): s is { id: string; name: string; role: string | null } =>
+      Boolean(s && s.id && s.name && typeof s.name === "string")
   )
 
   // Form states for adding new slot
@@ -398,17 +414,17 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                         />
                         
                         {/* Dropdown list */}
-                        {showDropdown && (staffSearch || (staffList || []).length > 0) && (
+                        {showDropdown && (staffSearch || safeStaffList.length > 0) && (
                           <>
                             {/* Backdrop to close dropdown */}
                             <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
                             
                             <div className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 divide-y divide-slate-100">
-                              {((staffList || []).filter(s => s.name.toLowerCase().includes(staffSearch.toLowerCase())).length === 0) ? (
+                              {safeStaffList.filter(s => s.name.toLowerCase().includes((staffSearch || "").toLowerCase())).length === 0 ? (
                                 <div className="p-3 text-sm text-slate-500 text-center">Tidak ada nama guru yang cocok</div>
                               ) : (
-                                (staffList || [])
-                                  .filter(s => s.name.toLowerCase().includes(staffSearch.toLowerCase()))
+                                safeStaffList
+                                  .filter(s => s.name.toLowerCase().includes((staffSearch || "").toLowerCase()))
                                   .map(s => {
                                     const isSelected = selectedStaff.includes(s.name)
                                     return (

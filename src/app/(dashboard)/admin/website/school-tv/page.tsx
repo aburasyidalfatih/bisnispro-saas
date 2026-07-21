@@ -25,8 +25,21 @@ function getTvUrl(slug: string) {
 
 export default async function SchoolTvSettingsPage() {
   const session = await auth()
-  const tenant = session?.user?.tenants?.[0]
-  if (!tenant) return redirect("/login")
+  const sessionTenant = (session?.user as any)?.tenants?.[0]
+  if (!sessionTenant?.id) return redirect("/login")
+
+  const tenant = await db.tenant.findUnique({
+    where: { id: sessionTenant.id },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      plan: true,
+      settings: true
+    }
+  })
+
+  if (!tenant || !tenant.slug) return redirect("/login")
   
   const tvUrl = getTvUrl(tenant.slug)
   
@@ -39,11 +52,6 @@ export default async function SchoolTvSettingsPage() {
   const planAccess = allPlans[plan] || {}
 
   const isPremium = ["pro", "lite", "premium"].includes(plan)
-
-  const tenantDbData = await db.tenant.findUnique({
-    where: { id: tenant.id },
-    select: { settings: true }
-  })
 
   if (!isPremium || !planAccess.school_tv) {
     return (
@@ -98,7 +106,7 @@ export default async function SchoolTvSettingsPage() {
       </div>
 
       <SchoolTvClient 
-        initialSettings={tenantDbData?.settings || {}}
+        initialSettings={tenant.settings || {}}
         tenantSlug={tenant.slug}
         tvUrl={tvUrl}
         staffList={staff}

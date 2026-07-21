@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, memo } from "react"
 import { useParams } from "next/navigation"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { Clock, Calendar, Users, Loader2, BookOpen, UserCircle, QrCode, Maximize, Minimize } from "lucide-react"
+import { Clock, Calendar, Users, Loader2, BookOpen, UserCircle, QrCode, Maximize, Minimize, Activity, Radio, Sparkles, CheckCircle2 } from "lucide-react"
 import QRCode from "react-qr-code"
 import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -34,7 +34,7 @@ function isTimeActive(timeRange: string, currentMins: number): boolean {
   }
 }
 
-// Separate Clock component to prevent full page re-renders every second
+// Ultra-Sleek Financial/Display Style Clock & Header Widget
 const LiveClock = memo(({ tz, isFullscreen, onToggleFullscreen }: { tz: string, isFullscreen: boolean, onToggleFullscreen: () => void }) => {
   const [now, setNow] = useState(new Date())
   useEffect(() => {
@@ -42,29 +42,38 @@ const LiveClock = memo(({ tz, isFullscreen, onToggleFullscreen }: { tz: string, 
     return () => clearInterval(timer)
   }, [])
   return (
-    <div className="flex items-center gap-6 bg-black/30 px-6 py-3 rounded-2xl border border-white/5">
+    <div className="flex items-center gap-5 bg-slate-900/90 backdrop-blur-2xl px-6 py-2.5 rounded-2xl border border-white/10 shadow-[0_0_25px_rgba(0,0,0,0.5)]">
       <div className="text-right">
-        <p className="text-lg font-medium text-slate-300">
+        <p className="text-sm font-semibold tracking-wide text-slate-300 capitalize">
           {formatInTimeZone(now, tz, "EEEE, dd MMMM yyyy", { locale: id })}
         </p>
+        <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400/90 flex items-center justify-end gap-1.5 mt-0.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+          REALTIME DISPLAY
+        </span>
       </div>
-      <div className="h-10 w-px bg-white/10"></div>
-      <div className="text-5xl font-black tabular-nums tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">
-        {formatInTimeZone(now, tz, "HH:mm")}
-        <span className="text-2xl text-primary ml-1">{formatInTimeZone(now, tz, "ss")}</span>
+      <div className="h-9 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+      <div className="flex items-baseline gap-1 font-mono tabular-nums tracking-tight">
+        <span className="text-4xl font-extrabold text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]">
+          {formatInTimeZone(now, tz, "HH:mm")}
+        </span>
+        <span className="text-xl font-bold text-emerald-400">
+          :{formatInTimeZone(now, tz, "ss")}
+        </span>
       </div>
       <button 
         onClick={onToggleFullscreen}
-        className="ml-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors border border-white/10 group"
-        title="Toggle Fullscreen"
+        className="ml-2 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10 active:scale-95 group shadow-inner"
+        title="Toggle Fullscreen Display"
       >
-        {isFullscreen ? <Minimize className="h-5 w-5 group-hover:scale-110 transition-transform" /> : <Maximize className="h-5 w-5 group-hover:scale-110 transition-transform" />}
+        {isFullscreen ? <Minimize className="h-4 w-4 group-hover:scale-110 transition-transform text-emerald-400" /> : <Maximize className="h-4 w-4 group-hover:scale-110 transition-transform text-emerald-400" />}
       </button>
     </div>
   )
 })
 LiveClock.displayName = "LiveClock"
 
+// Glowing Financial-Style Progress Bar
 const ClassProgressBar = memo(({ startTime, endTime, tz }: { startTime: string, endTime: string, tz: string }) => {
   const [progress, setProgress] = useState(0)
   
@@ -89,48 +98,63 @@ const ClassProgressBar = memo(({ startTime, endTime, tz }: { startTime: string, 
     }
     
     setProgress(calculateProgress())
-    const timer = setInterval(() => setProgress(calculateProgress()), 10000) // Update every 10 seconds
+    const timer = setInterval(() => setProgress(calculateProgress()), 5000)
     return () => clearInterval(timer)
   }, [startTime, endTime, tz])
 
   return (
-    <div className="w-full bg-slate-800/50 h-1.5 mt-4 rounded-full overflow-hidden border border-white/5">
+    <div className="w-full bg-slate-950/60 h-2 mt-3 rounded-full overflow-hidden border border-white/10 p-0.5 relative">
       <div 
-        className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-1000 ease-linear rounded-full relative"
+        className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 transition-all duration-1000 ease-linear rounded-full relative shadow-[0_0_12px_rgba(16,185,129,0.8)]"
         style={{ width: `${progress}%` }}
       >
-        <div className="absolute right-0 top-0 bottom-0 w-2 bg-white/50 blur-[2px]"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-3 bg-white/80 blur-[2px] animate-pulse"></div>
       </div>
     </div>
   )
 })
 ClassProgressBar.displayName = "ClassProgressBar"
 
+// Sleek Teacher Row with Live Pulse Indicator
 const TeacherRow = memo(({ s }: { s: any }) => (
-  <div className={cn("flex items-center justify-between p-2.5 rounded-xl border text-xs transition-colors", s.isTeaching ? "bg-primary/30 border-primary/20" : "bg-black/30 border-white/5")}>
+  <div className={cn(
+    "flex items-center justify-between p-2.5 rounded-xl border text-xs transition-all duration-300 backdrop-blur-md shadow-sm",
+    s.isTeaching 
+      ? "bg-gradient-to-r from-emerald-950/50 via-slate-900/80 to-slate-900/80 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]" 
+      : "bg-slate-950/40 border-white/5 hover:border-white/10"
+  )}>
     <div className="flex items-center gap-3 truncate pr-2">
-      {/* Indicator Dot */}
-      <div className={cn("h-2 w-2 rounded-full shrink-0", s.isTeaching ? "bg-primary shadow-md shadow-primary/50" : "bg-slate-700")}></div>
+      {/* Live Status Pulse Dot */}
+      <div className="relative flex h-2.5 w-2.5 shrink-0">
+        {s.isTeaching ? (
+          <>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,1)]"></span>
+          </>
+        ) : (
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-700"></span>
+        )}
+      </div>
       
       {/* Avatar */}
-      <Avatar className="h-8 w-8 border border-white/10 shrink-0">
+      <Avatar className="h-8 w-8 border border-white/15 shrink-0 shadow-md">
         <AvatarImage src={s.image} alt={s.name} className="object-cover" />
-        <AvatarFallback className="bg-slate-800 text-slate-300 text-[10px]">
-          {s.name.substring(0, 2).toUpperCase()}
+        <AvatarFallback className="bg-slate-800 text-slate-300 font-bold text-[10px]">
+          {s.name ? s.name.substring(0, 2).toUpperCase() : "G"}
         </AvatarFallback>
       </Avatar>
 
       <div className="flex flex-col gap-0.5 truncate">
-        <span className={cn("font-bold truncate", s.isTeaching ? "text-white" : "text-slate-300")}>{s.name}</span>
-        <span className="text-[10px] text-slate-500 truncate">{s.role || "Pendidik"}</span>
+        <span className={cn("font-bold truncate tracking-tight", s.isTeaching ? "text-white" : "text-slate-300")}>{s.name}</span>
+        <span className="text-[10px] text-slate-400 truncate font-medium">{s.role || "Pendidik"}</span>
       </div>
     </div>
     {s.isTeaching ? (
-      <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 font-bold tracking-wide shrink-0">
+      <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] tracking-wider uppercase shrink-0 shadow-sm">
         {s.classroomName}
       </span>
     ) : (
-      <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-white/10 font-semibold shrink-0">
+      <span className="px-2.5 py-0.5 rounded-lg bg-slate-800/80 text-slate-400 border border-white/10 font-medium text-[10px] shrink-0">
         Standby
       </span>
     )}
@@ -146,9 +170,7 @@ export default function SchoolTvPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
-  // For minute-based updates without re-rendering every second
   const [minuteTick, setMinuteTick] = useState(0) 
-
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [activePageIndex, setActivePageIndex] = useState(0)
 
@@ -166,7 +188,6 @@ export default function SchoolTvPage() {
     return () => document.removeEventListener("fullscreenchange", handleFsChange)
   }, [])
 
-  // Minute tick to trigger recalculations
   useEffect(() => {
     const timer = setInterval(() => {
       setMinuteTick(prev => prev + 1)
@@ -176,7 +197,6 @@ export default function SchoolTvPage() {
 
   const fetchData = async () => {
     try {
-      // Calculate dayOfWeek freshly on every fetch to avoid stale closure if TV runs 24/7
       const activeTz = data?.tenant?.settings?.timezone || "Asia/Jakarta"
       const currentNow = new Date()
       const dayOfWeekStr = formatInTimeZone(currentNow, activeTz, "i")
@@ -199,17 +219,14 @@ export default function SchoolTvPage() {
     }
   }
 
-  // Fetch every 1 minute
   useEffect(() => {
     if (!slug) return
     fetchData()
   }, [slug, minuteTick]) 
 
-
   const tz = data?.tenant?.settings?.timezone || "Asia/Jakarta"
   const tvBarcode = data?.tenant?.settings?.tvBarcode || null
   
-  // Use useMemo to only recalculate when minuteTick or data changes
   const { currentMins, activeSchedules, upcomingSchedules, activePiket, staffStatuses, totalPages, pagedActiveSchedules } = useMemo(() => {
     const currentNow = new Date()
     const tzTimeStr = formatInTimeZone(currentNow, tz, "HH:mm")
@@ -223,7 +240,6 @@ export default function SchoolTvPage() {
           const [endH, endM] = s.endTime.split(':').map(Number)
           const startMins = startH * 60 + startM
           const endMins = endH * 60 + endM
-          // FIX: Use < endMins so overlapping classes (e.g. 07:00-08:30 and 08:30-10:00) switch cleanly
           return mins >= startMins && mins < endMins
         })
       : []
@@ -240,7 +256,6 @@ export default function SchoolTvPage() {
     const piket = (data?.piket || []).filter((p: any) => isTimeActive(p.time || "", mins)).map((p: any) => {
       const matchedStaff = (data?.allStaff || []).filter((s: any) => {
         if (!s.name) return false;
-        // Hanya match jika nama staff ada di dalam string p.names
         return p.names?.toLowerCase().includes(s.name.toLowerCase());
       });
       return {
@@ -275,7 +290,6 @@ export default function SchoolTvPage() {
     return { currentMins: mins, activeSchedules: activeScheds, upcomingSchedules: upcomingScheds, activePiket: piket, staffStatuses: staffStat, totalPages: totalPgs, pagedActiveSchedules: paged }
   }, [data, tz, minuteTick, activePageIndex])
 
-
   useEffect(() => {
     if (totalPages <= 1) {
       setActivePageIndex(0)
@@ -283,14 +297,14 @@ export default function SchoolTvPage() {
     }
     const interval = setInterval(() => {
       setActivePageIndex(prev => (prev + 1) % totalPages)
-    }, 10000) // Switch page every 10 seconds
+    }, 10000)
     return () => clearInterval(interval)
   }, [totalPages])
 
   if (error) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white px-4 text-center">
-        <div className="h-16 w-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4 border border-red-500/20">
+        <div className="h-16 w-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4 border border-red-500/20 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
           <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
@@ -299,7 +313,7 @@ export default function SchoolTvPage() {
         <p className="text-slate-400 max-w-md mb-6 text-sm">{error}</p>
         <button 
           onClick={() => { setLoading(true); setError(null); fetchData(); }}
-          className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl border border-white/10 transition-colors font-medium text-sm"
+          className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl border border-white/10 transition-colors font-medium text-sm shadow-lg"
         >
           Coba Lagi
         </button>
@@ -310,67 +324,128 @@ export default function SchoolTvPage() {
   if (loading || !data) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
-        <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-        <h2 className="text-xl font-semibold">Memuat Sistem TV Sekolah...</h2>
+        <Loader2 className="h-12 w-12 animate-spin text-emerald-400 mb-4" />
+        <h2 className="text-xl font-semibold tracking-wide">Memuat Display TV Digital...</h2>
       </div>
     )
   }
 
+  const activeTeachingCount = staffStatuses.filter((s: any) => s.isTeaching).length
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-primary/30">
-      {/* HEADER */}
-      <header className="h-[10dvh] min-h-[80px] bg-slate-900/80 border-b border-white/10 flex items-center justify-between px-8 shadow-lg backdrop-blur-md z-10 shrink-0">
+    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-emerald-500/30">
+      
+      {/* FINANCIAL DISPLAY STYLE HEADER */}
+      <header className="h-[11dvh] min-h-[85px] bg-slate-900/90 border-b border-white/10 flex items-center justify-between px-8 shadow-2xl backdrop-blur-2xl z-20 shrink-0">
+        
+        {/* Left: Branding & Tenant Logo */}
         <div className="flex items-center gap-4">
           {data.tenant?.logo ? (
-            <div className="relative h-14 w-14 rounded-full overflow-hidden bg-white/10 p-1 border border-white/20">
+            <div className="relative h-14 w-14 rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 p-1 border border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
               <Image src={data.tenant.logo} alt="Logo" fill className="object-contain p-1" />
             </div>
           ) : (
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center border border-white/20">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 flex items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
               <BookOpen className="h-7 w-7 text-white" />
             </div>
           )}
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-extrabold tracking-tight text-white">{data.tenant?.name || "SchoolPro"}</h1>
-              <div className="relative flex h-3.5 w-3.5 mt-1" title="Live">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/80 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-primary"></span>
+              <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-white drop-shadow-md">
+                {data.tenant?.name || "SchoolPro"}
+              </h1>
+              
+              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full shadow-inner">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">LIVE SIGNAGE</span>
               </div>
+
               {totalPages > 1 && (
-                <span className="text-[10px] bg-primary/20 text-primary px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse border border-primary/30 mt-1">
-                  Hal {activePageIndex + 1}/{totalPages}
+                <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border border-cyan-500/30 animate-pulse">
+                  HAL {activePageIndex + 1}/{totalPages}
                 </span>
               )}
             </div>
-            <p className="text-primary font-medium tracking-widest uppercase text-sm">Sistem Informasi Digital</p>
+            <p className="text-emerald-400 font-bold tracking-[0.2em] uppercase text-xs mt-0.5">Sistem Informasi Digital Display</p>
           </div>
         </div>
 
+        {/* Center: Quick Realtime Financial-Style Metric Counters */}
+        <div className="hidden lg:flex items-center gap-3 bg-slate-950/60 p-1.5 rounded-2xl border border-white/10 shadow-inner">
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-white/5 border border-white/5">
+            <Activity className="h-4 w-4 text-emerald-400" />
+            <div className="text-left leading-none">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Kelas Aktif</p>
+              <p className="text-sm font-extrabold text-white mt-0.5">{activeSchedules.length} Kelas</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-white/5 border border-white/5">
+            <Users className="h-4 w-4 text-cyan-400" />
+            <div className="text-left leading-none">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Guru Mengajar</p>
+              <p className="text-sm font-extrabold text-white mt-0.5">{activeTeachingCount} / {staffStatuses.length}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-white/5 border border-white/5">
+            <ShieldCheckIcon className="h-4 w-4 text-blue-400" />
+            <div className="text-left leading-none">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Guru Piket</p>
+              <p className="text-sm font-extrabold text-white mt-0.5">{activePiket.length} Petugas</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Live Clock & Fullscreen Switcher */}
         <LiveClock tz={tz} isFullscreen={isFullscreen} onToggleFullscreen={toggleFullscreen} />
       </header>
 
-      {/* MAIN CONTENT */}
-      <main className="flex-1 flex gap-6 p-6 overflow-hidden relative">
-        {/* Background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 flex gap-6 p-6 overflow-hidden relative bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+        
+        {/* Ambient Glow Effects */}
+        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none"></div>
 
-        {/* Left Column: Live Schedule Grid */}
-        <div className="flex-1 flex flex-col h-full z-10 relative pt-2">
+        {/* Left Column: Schedule Grid Cards */}
+        <div className="flex-1 flex flex-col h-full z-10 relative">
           <div className="flex-1 overflow-hidden relative min-h-[300px]">
             <div className="absolute inset-0 overflow-y-auto pb-10 hide-scrollbar scroll-smooth flex flex-col">
+              
               {pagedActiveSchedules.length === 0 ? (
-                <div className="h-full w-full flex flex-col items-center justify-center text-slate-400 bg-white/5 rounded-3xl border border-white/10 p-12 backdrop-blur-sm">
-                  <div className="relative">
-                     <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full"></div>
-                     <Clock className="h-32 w-32 mb-6 text-slate-600/50 relative z-10 animate-pulse" />
+                /* Sleek Bank Display Empty State (Break/Finished) */
+                <div className="h-full w-full flex flex-col items-center justify-center text-slate-400 bg-slate-900/60 backdrop-blur-2xl rounded-3xl border border-white/10 p-12 shadow-2xl relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5"></div>
+                  <div className="relative z-10 flex flex-col items-center text-center">
+                    <div className="relative mb-6">
+                      <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full"></div>
+                      <div className="h-28 w-28 rounded-3xl bg-slate-800/80 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(16,185,129,0.2)]">
+                        <Clock className="h-14 w-14 text-emerald-400 animate-pulse" />
+                      </div>
+                    </div>
+                    <h2 className="text-3xl lg:text-4xl font-black text-white mb-3 tracking-tight drop-shadow-md">
+                      Waktu Istirahat / Selesai KBM
+                    </h2>
+                    <p className="text-base text-slate-400 max-w-lg mb-8 font-medium">
+                      Saat ini tidak ada kegiatan belajar mengajar aktif di kelas. Layar akan otomatis diperbarui saat jam pelajaran berikutnya dimulai.
+                    </p>
+                    
+                    {activePiket.length > 0 && (
+                      <div className="bg-slate-950/80 border border-white/10 rounded-2xl px-6 py-3.5 flex items-center gap-3 shadow-xl backdrop-blur-md">
+                        <Users className="h-5 w-5 text-emerald-400" />
+                        <span className="text-xs text-slate-300 font-semibold">
+                          Petugas Piket Siap Membantu: <strong className="text-white font-bold">{activePiket.map((p: any) => p.names).join(", ")}</strong>
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <h2 className="text-4xl font-extrabold text-white mb-3 tracking-tight">Waktu Istirahat / Selesai</h2>
-                  <p className="text-lg font-medium text-slate-400">Tidak ada jadwal kelas aktif untuk saat ini.</p>
                 </div>
               ) : (
+                /* Bank-Style Active Schedule Grid */
                 <div className={cn(
-                  "grid gap-4 pb-4",
+                  "grid gap-4.5 pb-4",
                   pagedActiveSchedules.length <= 6
                     ? "grid-cols-2 xl:grid-cols-3"
                     : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
@@ -381,59 +456,75 @@ export default function SchoolTvPage() {
                       <div 
                         key={i} 
                         className={cn(
-                          "rounded-2xl border shadow-2xl relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 backdrop-blur-xl",
-                          s.isBreak ? "bg-gradient-to-br from-amber-900/40 to-slate-900 border-amber-500/30" : "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700/80",
-                          isCompact ? "p-4" : "p-6"
+                          "rounded-2xl border shadow-xl relative overflow-hidden flex flex-col h-full transition-all duration-300 backdrop-blur-2xl group",
+                          s.isBreak 
+                            ? "bg-gradient-to-br from-amber-950/60 via-slate-900/80 to-slate-950/90 border-amber-500/30 shadow-[0_10px_30px_rgba(245,158,11,0.1)]" 
+                            : "bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-slate-950/90 border-white/10 hover:border-emerald-500/40 shadow-[0_10px_30px_rgba(0,0,0,0.5)]",
+                          isCompact ? "p-4" : "p-5"
                         )} 
-                        style={{ animationDelay: `${i * 100}ms` }}
+                        style={{ animationDelay: `${i * 80}ms` }}
                       >
-                        <div className="absolute top-0 right-0 p-3">
-                           <span className={cn(
-                             "font-black rounded-full uppercase tracking-wider border",
-                             s.isBreak ? "bg-primary/20 text-primary border-primary/30 shadow-[0_0_15px_rgba(245,158,11,0.2)]" : "bg-primary/20 text-primary border-primary/20 shadow-lg shadow-primary/20",
-                             isCompact ? "text-[10px] px-2 py-0.5" : "text-xs px-3 py-1"
-                           )}>
-                             {s.startTime} - {s.endTime}
-                           </span>
+                        {/* Accent Top Glow Bar */}
+                        <div className={cn(
+                          "absolute top-0 left-0 right-0 h-1",
+                          s.isBreak ? "bg-gradient-to-r from-amber-500 to-amber-300" : "bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500"
+                        )}></div>
+
+                        {/* Top Time Pill */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className={cn(
+                            "rounded-xl font-black uppercase tracking-wider flex items-center justify-center text-white shadow-md",
+                            s.isBreak 
+                              ? "bg-gradient-to-br from-amber-500 to-amber-600 shadow-amber-500/20" 
+                              : "bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 shadow-emerald-500/20",
+                            isCompact ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm"
+                          )}>
+                            {s.classroom.name}
+                          </div>
+                          
+                          <span className={cn(
+                            "font-mono font-bold rounded-xl uppercase tracking-wider border backdrop-blur-md",
+                            s.isBreak ? "bg-amber-500/10 text-amber-300 border-amber-500/30" : "bg-slate-800/80 text-emerald-400 border-emerald-500/30",
+                            isCompact ? "text-[11px] px-2.5 py-0.5" : "text-xs px-3 py-1"
+                          )}>
+                            {s.startTime} - {s.endTime}
+                          </span>
                         </div>
                         
-                        <div className={cn("flex items-center gap-3", isCompact ? "mb-2" : "mb-4")}>
-                          <div className={cn("rounded-xl flex flex-col text-center items-center justify-center shrink-0 text-white leading-tight", 
-                            s.isBreak ? "bg-gradient-to-br from-primary to-primary/80 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]" : "bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/30 flex flex-col text-center items-center justify-center shrink-0 text-white leading-tight",
-                            isCompact ? "min-h-10 min-w-12 px-2 py-1" : "min-h-12 min-w-16 px-3 py-1.5"
+                        {/* Subject Title */}
+                        <div className="mb-3 flex-1">
+                          <h3 className={cn(
+                            "font-extrabold text-white leading-tight line-clamp-2 drop-shadow-sm group-hover:text-emerald-300 transition-colors", 
+                            isCompact ? "text-base" : "text-lg"
                           )}>
-                            <span className={cn("font-black", isCompact ? "text-xs" : "text-sm", "max-w-[70px] break-words")}>{s.classroom.name}</span>
-                          </div>
-                          <div className={isCompact ? "pr-14" : "pr-20"}>
-                            <h3 className={cn("font-bold text-white leading-tight line-clamp-2", isCompact ? "text-base" : "text-xl")}>
-                              {s.subject?.name || s.breakName || "Mata Pelajaran"}
-                            </h3>
-                          </div>
+                            {s.subject?.name || s.breakName || "Mata Pelajaran"}
+                          </h3>
                         </div>
 
-                        <div className={cn("mt-auto flex flex-col", isCompact ? "pt-2" : "pt-4")}>
+                        {/* Teacher Profile & Progress */}
+                        <div className="mt-auto pt-2 border-t border-white/5">
                            {!s.isBreak ? (
-                             <div className="flex items-center gap-2 mb-2">
+                             <div className="flex items-center gap-3">
                                {s.staff?.imageUrl ? (
-                                 <Image src={s.staff.imageUrl} alt={s.staff.name} width={40} height={40} className={cn("rounded-full object-cover border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")} unoptimized />
+                                 <Image src={s.staff.imageUrl} alt={s.staff.name} width={40} height={40} className={cn("rounded-xl object-cover border border-white/20 shadow-md shrink-0", isCompact ? "h-8 w-8" : "h-10 w-10")} unoptimized />
                                ) : (
-                                 <div className={cn("rounded-full bg-slate-700 flex items-center justify-center border border-slate-600", isCompact ? "h-8 w-8" : "h-10 w-10")}>
+                                 <div className={cn("rounded-xl bg-slate-800 flex items-center justify-center border border-white/10 shrink-0", isCompact ? "h-8 w-8" : "h-10 w-10")}>
                                    <UserCircle className={cn("text-slate-400", isCompact ? "h-5 w-5" : "h-6 w-6")} />
                                  </div>
                                )}
-                               <div className="truncate max-w-[120px] sm:max-w-[180px]">
-                                 <p className="text-xs font-bold text-slate-200 truncate">{s.staff?.name || "-"}</p>
-                                 <p className="text-[10px] text-slate-400 font-medium">Guru Pengampu</p>
+                               <div className="truncate min-w-0 flex-1">
+                                 <p className="text-xs font-bold text-slate-100 truncate">{s.staff?.name || "-"}</p>
+                                 <p className="text-[10px] text-emerald-400/80 font-semibold tracking-wide uppercase">Guru Pengampu</p>
                                </div>
                              </div>
                            ) : (
-                             <div className="flex items-center gap-2 mb-2">
-                               <div className={cn("rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30", isCompact ? "h-8 w-8" : "h-10 w-10")}>
+                             <div className="flex items-center gap-2.5">
+                               <div className={cn("rounded-xl bg-amber-500/20 flex items-center justify-center border border-amber-500/30 shrink-0", isCompact ? "h-8 w-8" : "h-10 w-10")}>
                                  <Clock className={cn("text-amber-400", isCompact ? "h-4 w-4" : "h-5 w-5")} />
                                </div>
-                               <div className="truncate max-w-[120px] sm:max-w-[180px]">
-                                 <p className="text-xs font-bold text-amber-400 truncate">Waktu Bebas</p>
-                                 <p className="text-[10px] text-amber-500/70 font-medium">Jam Istirahat</p>
+                               <div className="truncate min-w-0 flex-1">
+                                 <p className="text-xs font-bold text-amber-300 truncate">Waktu Istirahat</p>
+                                 <p className="text-[10px] text-amber-400/70 font-semibold uppercase">Jam Bebas Siswa</p>
                                </div>
                              </div>
                            )}
@@ -446,64 +537,67 @@ export default function SchoolTvPage() {
                 </div>
               )}
             </div>
-            
-            {/* Scroll Indicator Gradient */}
-            {totalPages <= 1 && activeSchedules.length > 6 && (
-              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none"></div>
-            )}
           </div>
-
-
         </div>
 
-        {/* Right Column: Sidebar Widgets */}
-        <div className="w-[380px] shrink-0 flex flex-col gap-6 z-10 h-full min-h-0">
+        {/* Right Sidebar Widgets */}
+        <div className="w-[380px] shrink-0 flex flex-col gap-5 z-10 h-full min-h-0">
           
           {/* Guru Piket Widget */}
-          <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.5)] relative overflow-hidden flex flex-col max-h-[350px]">
-             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
-             <h3 className="text-lg font-bold mb-3 flex items-center gap-2 text-white shrink-0">
-               <Users className="h-5 w-5 text-blue-400" /> Guru Piket Hari Ini
+          <div className="bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-white/10 p-4.5 shadow-2xl relative overflow-hidden flex flex-col max-h-[300px]">
+             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-indigo-500 to-cyan-400"></div>
+             <h3 className="text-base font-bold mb-3 flex items-center gap-2 text-white shrink-0">
+               <ShieldCheckIcon className="h-5 w-5 text-blue-400" /> Guru Piket Hari Ini
              </h3>
               <div className="space-y-2 overflow-y-auto hide-scrollbar pr-1">
                 {activePiket.length > 0 ? activePiket.map((p: any, i: number) => (
-                  <div key={i} className="flex items-center gap-3 bg-slate-950/50 p-2.5 rounded-xl border border-white/5 shadow-inner backdrop-blur-sm">
+                  <div key={i} className="flex items-center gap-3 bg-slate-950/60 p-3 rounded-2xl border border-white/5 shadow-inner backdrop-blur-sm">
                     {p.matchedStaff && p.matchedStaff.length > 0 && (
                       <div className="flex -space-x-2 shrink-0">
                         {p.matchedStaff.map((staff: any, idx: number) => (
-                          <Avatar key={idx} className="h-8 w-8 border border-slate-900 shrink-0">
+                          <Avatar key={idx} className="h-8 w-8 border-2 border-slate-900 shrink-0 shadow-md">
                             <AvatarImage src={staff.imageUrl || staff.image} alt={staff.name} className="object-cover" />
-                            <AvatarFallback className="bg-blue-900 text-blue-200 text-[10px]">
-                              {staff.name.substring(0, 2).toUpperCase()}
+                            <AvatarFallback className="bg-blue-900 text-blue-200 font-bold text-[10px]">
+                              {staff.name ? staff.name.substring(0, 2).toUpperCase() : "GP"}
                             </AvatarFallback>
                           </Avatar>
                         ))}
                       </div>
                     )}
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <p className="font-bold text-slate-100 text-sm leading-tight truncate">{p.names}</p>
-                      <span className="text-[10px] text-blue-400 font-semibold tracking-wide mt-0.5">
+                      <p className="font-bold text-slate-100 text-xs leading-snug truncate">{p.names}</p>
+                      <span className="text-[10px] text-blue-400 font-mono font-semibold tracking-wide mt-0.5">
                         {p.time}
                       </span>
                     </div>
                   </div>
                 )) : (
-                  <p className="text-sm text-slate-400 text-center py-4">Tidak ada guru piket aktif saat ini.</p>
+                  <p className="text-xs text-slate-400 text-center py-4">Tidak ada petugas piket aktif saat ini.</p>
                 )}
               </div>
           </div>
 
-          {/* Teacher Status Widget */}
+          {/* Teacher Teaching Status Widget */}
           {staffStatuses.length > 0 && (
-            <div className={cn("bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)] flex flex-col min-h-[220px]", (data.donation || tvBarcode?.image || tvBarcode?.bankAccount) ? "max-h-[300px]" : "flex-1 min-h-0")}>
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-white shrink-0">
-                <Users className="h-5 w-5 text-indigo-400" /> Status Mengajar Guru
+            <div className={cn(
+              "bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-white/10 p-4.5 shadow-2xl flex flex-col min-h-[220px]", 
+              (data.donation || tvBarcode?.image || tvBarcode?.bankAccount) ? "max-h-[320px]" : "flex-1 min-h-0"
+            )}>
+              <h3 className="text-base font-bold mb-3 flex items-center justify-between text-white shrink-0">
+                <span className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-indigo-400" /> Status Mengajar Guru
+                </span>
+                <span className="text-[10px] font-mono bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30 font-bold">
+                  {activeTeachingCount} MENGAJAR
+                </span>
               </h3>
+              
               <div className="flex-1 relative min-h-0">
-                {/* Fade masks for smooth edges */}
+                {/* Edge Fading Gradient Masks */}
                 <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-slate-900/80 to-transparent z-10 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-slate-900/80 to-transparent z-10 pointer-events-none"></div>
                 
+                {/* ABSOLUTE POSITIONED SCROLLING CONTAINER (0 Overflow Guarantee) */}
                 <div className="absolute inset-0 overflow-hidden">
                   <div className={cn("flex flex-col gap-2", staffStatuses.length > 5 ? "animate-scroll-up" : "")}>
                     <div className="flex flex-col gap-2">
@@ -525,76 +619,79 @@ export default function SchoolTvPage() {
             </div>
           )}
 
-          {/* Manual TV Barcode or QR Code Donation Widget */}
+          {/* Barcode & Payment/Donation Widget */}
           {tvBarcode?.image || tvBarcode?.bankAccount ? (
-            <div className="bg-gradient-to-br from-indigo-900/40 to-slate-900/80 backdrop-blur-md rounded-3xl border border-indigo-500/30 p-5 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden group">
-              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
+            <div className="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-4 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+              <div className="absolute inset-0 bg-emerald-500/5 blur-xl pointer-events-none"></div>
               
-              <h3 className="text-lg font-bold text-indigo-400 mb-2 flex items-center gap-2"><QrCode className="h-5 w-5" /> Pembayaran / Donasi</h3>
+              <h3 className="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-1.5 relative z-10">
+                <QrCode className="h-4 w-4" /> Pembayaran / Donasi Resmi
+              </h3>
               
               {tvBarcode.image && (
-                <div className="bg-white p-2 rounded-2xl shadow-xl shadow-black/50 mb-3 h-32 w-32 relative">
+                <div className="bg-white p-2 rounded-2xl shadow-xl mb-2 h-28 w-28 relative border border-white/20">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={tvBarcode.image} alt="Barcode" className="w-full h-full object-contain rounded-xl" />
                 </div>
               )}
               
               {tvBarcode.bankAccount && (
-                <div className="bg-slate-950/50 w-full px-3 py-2 rounded-xl border border-white/10 shadow-inner">
-                  <p className="text-sm font-black tracking-widest text-white">{tvBarcode.bankAccount}</p>
+                <div className="bg-slate-950/80 w-full px-3 py-1.5 rounded-xl border border-white/10 shadow-inner">
+                  <p className="text-xs font-mono font-black tracking-widest text-white">{tvBarcode.bankAccount}</p>
                   {tvBarcode.accountName && (
-                    <p className="text-[10px] text-slate-400 mt-0.5 font-medium uppercase truncate">A.N. {tvBarcode.accountName}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase truncate">A.N. {tvBarcode.accountName}</p>
                   )}
                 </div>
               )}
             </div>
           ) : data.donation ? (
-            <div className="bg-gradient-to-br from-primary/30 to-primary/10 backdrop-blur-md rounded-3xl border border-primary/30 p-6 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden group">
-              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
+            <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900/90 to-slate-950 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-5 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden">
+              <QrCode className="h-7 w-7 text-emerald-400 mb-2" />
+              <h3 className="text-sm font-bold text-emerald-300 mb-1 leading-tight">{data.donation.title}</h3>
+              <p className="text-[11px] text-slate-400 mb-3 max-w-[240px]">Scan barcode di bawah ini untuk berpartisipasi dalam program sekolah.</p>
               
-              <QrCode className="h-8 w-8 text-primary mb-3" />
-              <h3 className="text-lg font-bold text-primary mb-1 leading-tight">{data.donation.title}</h3>
-              <p className="text-xs text-primary/70 mb-5 max-w-[250px]">Scan barcode di bawah ini untuk berpartisipasi dalam program sekolah.</p>
-              
-              <div className="bg-white p-3 rounded-2xl shadow-xl shadow-black/50">
+              <div className="bg-white p-2.5 rounded-2xl shadow-2xl">
                 <QRCode 
                   value={`${window.location.origin}/site/${slug}/donasi/${data.donation.slug || data.donation.id}`} 
-                  size={160}
+                  size={140}
                   level="H"
                 />
               </div>
-              <p className="text-[10px] uppercase tracking-widest text-primary font-bold mt-4">Arahkan Kamera HP Anda</p>
+              <p className="text-[10px] uppercase tracking-widest text-emerald-400 font-bold mt-3">Arahkan Kamera HP Anda</p>
             </div>
           ) : null}
 
         </div>
       </main>
 
-      {/* FOOTER MARQUEE */}
-      <footer className="h-[9dvh] min-h-[64px] bg-gradient-to-r from-primary/90 to-primary flex items-center overflow-hidden shrink-0 shadow-[0_-10px_30px_rgba(5,150,105,0.3)] z-20 border-t border-primary/30">
-        <div className="bg-primary text-primary-foreground border-primary/50 shadow-xl">
-          INFORMASI
+      {/* BANK / TV NEWS STYLE TICKER FOOTER */}
+      <footer className="h-[8dvh] min-h-[60px] bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 flex items-center overflow-hidden shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] z-30 border-t border-emerald-500/30">
+        
+        {/* Ticker Category Label */}
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs px-6 py-full h-full flex items-center gap-2 shrink-0 shadow-2xl tracking-wider uppercase z-10 border-r border-emerald-400/30">
+          <Radio className="h-4 w-4 animate-pulse" />
+          INFORMASI SEKOLAH
         </div>
-        <div className="flex-1 overflow-hidden relative flex items-center h-full bg-black/20">
-          {/* Marquee Animation */}
-          <div className="whitespace-nowrap animate-marquee flex items-center text-xl font-medium text-white tracking-wide">
+
+        {/* Ticker Marquee Track */}
+        <div className="flex-1 overflow-hidden relative flex items-center h-full bg-slate-950/80">
+          <div className="whitespace-nowrap animate-marquee flex items-center text-lg font-semibold text-slate-100 tracking-wide">
             {(() => {
-              const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Cerdas Kami"}! Mari bersama-sama mewujudkan pendidikan berkualitas yang berkarakter. \n Mohon jaga kebersihan dan ketertiban di lingkungan sekolah. \n Guru piket saat ini: ${activePiket?.map((p:any) => `${p.names} (${p.time})`).join(" | ") || "-"}`
+              const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Digital Sekolah"}! Mari bersama mewujudkan pendidikan berkualitas & berkarakter. \n Mohon senantiasa menjaga kebersihan dan ketertiban di lingkungan sekolah. \n Petugas piket hari ini: ${activePiket?.map((p:any) => `${p.names} (${p.time})`).join(" | ") || "-"}`
               const marqueeItems = rawMarquee.split('\n').map((item: string) => item.trim()).filter(Boolean)
               return (
                 <>
                   {marqueeItems.map((text: string, idx: number) => (
-                    <span key={`m1-${idx}`} className="mx-8">
+                    <span key={`m1-${idx}`} className="mx-8 flex items-center gap-4">
                       {text}
-                      {idx < marqueeItems.length - 1 && <span className="ml-16 text-primary shadow-primary">•</span>}
+                      <span className="text-emerald-400 text-sm shadow-emerald-500">•</span>
                     </span>
                   ))}
-                  {marqueeItems.length > 0 && <span className="mx-8 text-primary shadow-primary">•</span>}
-                  {/* Duplicate for seamless looping */}
+                  {/* Duplicate for seamless continuous looping */}
                   {marqueeItems.map((text: string, idx: number) => (
-                    <span key={`m2-${idx}`} className="mx-8">
+                    <span key={`m2-${idx}`} className="mx-8 flex items-center gap-4">
                       {text}
-                      {idx < marqueeItems.length - 1 && <span className="ml-16 text-primary shadow-primary">•</span>}
+                      <span className="text-emerald-400 text-sm shadow-emerald-500">•</span>
                     </span>
                   ))}
                 </>
@@ -604,7 +701,7 @@ export default function SchoolTvPage() {
         </div>
       </footer>
 
-      {/* Internal CSS for Marquee & hiding scrollbar */}
+      {/* Internal CSS for Smooth Marquee */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes marquee {
           0% { transform: translateX(0); }
@@ -632,5 +729,13 @@ export default function SchoolTvPage() {
         }
       `}} />
     </div>
+  )
+}
+
+function ShieldCheckIcon(props: any) {
+  return (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+    </svg>
   )
 }
