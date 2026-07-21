@@ -499,25 +499,27 @@ export default function SchoolTvPage() {
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-white shrink-0">
                 <Users className="h-5 w-5 text-indigo-400" /> Status Mengajar Guru
               </h3>
-              <div className="flex-1 overflow-hidden relative min-h-0">
+              <div className="flex-1 relative min-h-0">
                 {/* Fade masks for smooth edges */}
                 <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-slate-900/80 to-transparent z-10 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-slate-900/80 to-transparent z-10 pointer-events-none"></div>
                 
-                <div className={cn("flex flex-col gap-2", staffStatuses.length > 5 ? "animate-scroll-up" : "")}>
-                  <div className="flex flex-col gap-2">
-                    {staffStatuses.map((s: any, i: number) => (
-                      <TeacherRow key={i} s={s} />
-                    ))}
-                  </div>
-                  {/* Duplicate set for infinite vertical marquee if list is long */}
-                  {staffStatuses.length > 5 && (
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className={cn("flex flex-col gap-2", staffStatuses.length > 5 ? "animate-scroll-up" : "")}>
                     <div className="flex flex-col gap-2">
                       {staffStatuses.map((s: any, i: number) => (
-                        <TeacherRow key={`dup-${i}`} s={s} />
+                        <TeacherRow key={i} s={s} />
                       ))}
                     </div>
-                  )}
+                    {/* Duplicate set for infinite vertical marquee if list is long */}
+                    {staffStatuses.length > 5 && (
+                      <div className="flex flex-col gap-2">
+                        {staffStatuses.map((s: any, i: number) => (
+                          <TeacherRow key={`dup-${i}`} s={s} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
