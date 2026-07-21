@@ -9,17 +9,15 @@ export default async function WebsiteLayout({ children }: { children: React.Reac
     redirect("/login")
   }
   
-  const currentRole = session.user.tenants?.[0]?.role ||"orangtua"
-  
   const cookieStore = await cookies()
   const isImpersonatingUser = cookieStore.has("impersonate-user")
-  const isImpersonatingTenant = cookieStore.has("impersonate-tenant")
   
-  const isAdminRole = !isImpersonatingUser && (
-    currentRole ==="owner" || 
-    currentRole ==="admin" || 
-    (session.user.isSuperAdmin && isImpersonatingTenant)
+  const hasAdminRole = Boolean(
+    session.user.isSuperAdmin || 
+    session.user.tenants?.some((t: any) => t.role === "owner" || t.role === "admin")
   )
+  
+  const isAdminRole = !isImpersonatingUser && hasAdminRole
   
   if (!isAdminRole) {
     redirect("/admin")
