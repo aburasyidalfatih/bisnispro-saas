@@ -39,8 +39,8 @@ export async function GET(req: Request) {
         where: { 
           tenantId, 
           staffId: staff.id,
-          // dayOfWeek = 1 (Senin) - 7 (Minggu)
-          dayOfWeek: new Date().getDay() || 7
+          // dayOfWeek = 0 (Minggu) - 6 (Sabtu)
+          dayOfWeek: new Date().getDay()
         },
         include: {
           classroom: { select: { id: true, name: true } },

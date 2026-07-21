@@ -12,7 +12,7 @@ import { toast } from"@/hooks/use-toast"
 import { Calendar, Clock, Plus, Trash2, Loader2, BookOpen, Users, GraduationCap, Download } from"lucide-react"
 import { cn } from"@/lib/utils"
 
-const DAYS = ["","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
+const DAYS = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
 
 interface Schedule {
   id: string; dayOfWeek: number; startTime: string; endTime: string
@@ -165,7 +165,7 @@ export default function SchedulesPage() {
       sheet.addRow([])
 
       // Table Headers
-      const headerRow = sheet.addRow(["Jam & Waktu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"])
+      const headerRow = sheet.addRow(["Jam & Waktu", "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"])
       headerRow.font = { bold: true }
       headerRow.alignment = { horizontal: 'center', vertical: 'middle' }
       headerRow.eachCell(cell => {
@@ -182,7 +182,7 @@ export default function SchedulesPage() {
         const rowData: any = { time: timeLabel }
         let rowHeight = 30
         
-        for (let day = 1; day <= 6; day++) {
+        for (let day = 0; day <= 6; day++) {
           const classInSlot = schedules.find(s => s.dayOfWeek === day && `${s.startTime} - ${s.endTime}` === timeLabel)
           if (classInSlot) {
             if (classInSlot.isBreak) {
@@ -222,9 +222,9 @@ export default function SchedulesPage() {
   }
 
   // Group by day
-  const byDay = DAYS.slice(1).map((day, idx) => ({
-    day, idx: idx + 1,
-    items: schedules.filter(s => s.dayOfWeek === idx + 1),
+  const byDay = DAYS.map((day, idx) => ({
+    day, idx,
+    items: schedules.filter(s => s.dayOfWeek === idx),
   }))
 
   return (
@@ -281,7 +281,7 @@ export default function SchedulesPage() {
                 <Label>Hari</Label>
                 <Select value={form.dayOfWeek} onValueChange={v => setForm(f => ({ ...f, dayOfWeek: v }))}>
                   <SelectTrigger><SelectValue placeholder="Pilih hari" /></SelectTrigger>
-                  <SelectContent>{DAYS.slice(1).map((d, i) => <SelectItem key={i+1} value={String(i+1)}>{d}</SelectItem>)}</SelectContent>
+                  <SelectContent>{DAYS.map((d, i) => <SelectItem key={i} value={String(i)}>{d}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">

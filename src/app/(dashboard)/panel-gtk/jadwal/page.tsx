@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-const DAYS = ["", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]
+const DAYS = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
 
 export default function JadwalPage() {
   const { data: session } = useSession()
@@ -17,7 +17,7 @@ export default function JadwalPage() {
   const [loading, setLoading] = useState(true)
   const [schedules, setSchedules] = useState<any[]>([])
   
-  const currentDayOfWeek = new Date().getDay() || 7 // 1-7
+  const currentDayOfWeek = new Date().getDay()
   const [activeDay, setActiveDay] = useState(currentDayOfWeek)
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
 
@@ -51,7 +51,7 @@ export default function JadwalPage() {
     dayIndex: i,
     dayName: DAYS[i],
     items: schedules.filter(s => s.dayOfWeek === i)
-  })).filter(g => g.dayIndex > 0) // Remove empty 0 index
+  }))
 
   if (loading) return <div className="skeleton h-96 rounded-3xl" />
 

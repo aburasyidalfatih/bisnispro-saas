@@ -268,7 +268,7 @@ export default function SchoolTvPage() {
         return a.name.localeCompare(b.name)
       })
 
-    const limit = 12
+    const limit = 24
     const totalPgs = Math.ceil(activeScheds.length / limit)
     const paged = activeScheds.slice(activePageIndex * limit, (activePageIndex + 1) * limit)
 

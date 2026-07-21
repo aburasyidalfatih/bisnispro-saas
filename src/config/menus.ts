@@ -176,6 +176,7 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
             icon: GraduationCap,
             children: [
               { label: "Jadwal Pelajaran", href: `${basePath}/schedules`, icon: Calendar },
+              { label: "Jurnal Guru", href: `${basePath}/journals`, icon: BookOpen },
               ...(has("akademik") ? [
                 { 
                   label: "E-Rapor Kurmer", 

@@ -18,10 +18,9 @@ export async function GET(req: Request) {
     const staff = await db.staff.findFirst({ where: { tenantId, userId: session.user.id } })
     if (!staff) return NextResponse.json({ error: "Profil staff tidak ditemukan" }, { status: 404 })
 
-    // Get today's day of week (1=Senin...6=Sabtu, JS: 0=Sun,1=Mon...)
+    // Get today's day of week (0=Minggu...6=Sabtu)
     const today = new Date()
-    const jsDay = today.getDay() // 0=Sun
-    const dayOfWeek = jsDay === 0 ? 7 : jsDay // Convert to 1=Mon..7=Sun
+    const dayOfWeek = today.getDay()
 
     const schedules = await db.schedule.findMany({
       where: { tenantId, staffId: staff.id, dayOfWeek },
