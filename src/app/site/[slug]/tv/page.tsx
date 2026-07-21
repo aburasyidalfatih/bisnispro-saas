@@ -457,7 +457,7 @@ export default function SchoolTvPage() {
         </div>
 
         {/* Right Column: Sidebar Widgets */}
-        <div className="w-[380px] shrink-0 flex flex-col gap-6 z-10">
+        <div className="w-[380px] shrink-0 flex flex-col gap-6 z-10 h-full min-h-0">
           
           {/* Guru Piket Widget */}
           <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.5)] relative overflow-hidden flex flex-col max-h-[350px]">
@@ -495,11 +495,11 @@ export default function SchoolTvPage() {
 
           {/* Teacher Status Widget */}
           {staffStatuses.length > 0 && (
-            <div className={cn("bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)] flex flex-col min-h-[220px]", (data.donation || tvBarcode?.image || tvBarcode?.bankAccount) ? "max-h-[300px]" : "flex-1")}>
+            <div className={cn("bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)] flex flex-col min-h-[220px]", (data.donation || tvBarcode?.image || tvBarcode?.bankAccount) ? "max-h-[300px]" : "flex-1 min-h-0")}>
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-white shrink-0">
                 <Users className="h-5 w-5 text-indigo-400" /> Status Mengajar Guru
               </h3>
-              <div className="flex-1 overflow-hidden relative">
+              <div className="flex-1 overflow-hidden relative min-h-0">
                 {/* Fade masks for smooth edges */}
                 <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-slate-900/80 to-transparent z-10 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-slate-900/80 to-transparent z-10 pointer-events-none"></div>
