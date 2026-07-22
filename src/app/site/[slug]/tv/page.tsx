@@ -42,28 +42,28 @@ const LiveClock = memo(({ tz, isFullscreen, onToggleFullscreen }: { tz: string, 
     return () => clearInterval(timer)
   }, [])
   return (
-    <div className="flex items-center gap-5 bg-slate-900/90 backdrop-blur-2xl px-6 py-2.5 rounded-2xl border border-white/10 shadow-[0_0_25px_rgba(0,0,0,0.5)]">
+    <div className="flex items-center gap-4 bg-slate-900/90 backdrop-blur-2xl px-5 py-2 rounded-2xl border border-white/10 shadow-[0_0_25px_rgba(0,0,0,0.5)]">
       <div className="text-right">
-        <p className="text-sm font-semibold tracking-wide text-slate-300 capitalize">
+        <p className="text-xs lg:text-sm font-semibold tracking-wide text-slate-300 capitalize">
           {formatInTimeZone(now, tz, "EEEE, dd MMMM yyyy", { locale: id })}
         </p>
-        <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400/90 flex items-center justify-end gap-1.5 mt-0.5">
+        <span className="text-[9px] lg:text-[10px] uppercase font-bold tracking-widest text-emerald-400/90 flex items-center justify-end gap-1.5 mt-0.5">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping"></span>
           REALTIME DISPLAY
         </span>
       </div>
-      <div className="h-9 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
-      <div className="flex items-baseline gap-1 font-mono tabular-nums tracking-tight">
-        <span className="text-4xl font-extrabold text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]">
+      <div className="h-8 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+      <div className="flex items-baseline gap-0.5 font-mono tabular-nums tracking-tight">
+        <span className="text-3xl lg:text-4xl font-extrabold text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]">
           {formatInTimeZone(now, tz, "HH:mm")}
         </span>
-        <span className="text-xl font-bold text-emerald-400">
+        <span className="text-lg lg:text-xl font-bold text-emerald-400">
           :{formatInTimeZone(now, tz, "ss")}
         </span>
       </div>
       <button 
         onClick={onToggleFullscreen}
-        className="ml-2 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10 active:scale-95 group shadow-inner"
+        className="ml-1 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10 active:scale-95 group shadow-inner"
         title="Toggle Fullscreen Display"
       >
         {isFullscreen ? <Minimize className="h-4 w-4 group-hover:scale-110 transition-transform text-emerald-400" /> : <Maximize className="h-4 w-4 group-hover:scale-110 transition-transform text-emerald-400" />}
@@ -333,34 +333,34 @@ export default function SchoolTvPage() {
   const activeTeachingCount = staffStatuses.filter((s: any) => s.isTeaching).length
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-emerald-500/30">
+    <div className="h-screen h-[100dvh] w-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-emerald-500/30">
       
       {/* FINANCIAL DISPLAY STYLE HEADER */}
-      <header className="h-[11dvh] min-h-[85px] bg-slate-900/90 border-b border-white/10 flex items-center justify-between px-8 shadow-2xl backdrop-blur-2xl z-20 shrink-0">
+      <header className="h-[76px] shrink-0 bg-slate-900/90 border-b border-white/10 flex items-center justify-between px-6 lg:px-8 shadow-2xl backdrop-blur-2xl z-20">
         
         {/* Left: Branding & Tenant Logo */}
         <div className="flex items-center gap-4">
           {data.tenant?.logo ? (
-            <div className="relative h-14 w-14 rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 p-1 border border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            <div className="relative h-12 w-12 rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 p-1 border border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
               <Image src={data.tenant.logo} alt="Logo" fill className="object-contain p-1" />
             </div>
           ) : (
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 flex items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-              <BookOpen className="h-7 w-7 text-white" />
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 flex items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+              <BookOpen className="h-6 w-6 text-white" />
             </div>
           )}
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-white drop-shadow-md">
+              <h1 className="text-xl lg:text-2xl font-black tracking-tight text-white drop-shadow-md">
                 {data.tenant?.name || "SchoolPro"}
               </h1>
               
-              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full shadow-inner">
-                <span className="relative flex h-2.5 w-2.5">
+              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full shadow-inner">
+                <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">LIVE SIGNAGE</span>
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">LIVE SIGNAGE</span>
               </div>
 
               {totalPages > 1 && (
@@ -369,31 +369,31 @@ export default function SchoolTvPage() {
                 </span>
               )}
             </div>
-            <p className="text-emerald-400 font-bold tracking-[0.2em] uppercase text-xs mt-0.5">Sistem Informasi Digital Display</p>
+            <p className="text-emerald-400 font-bold tracking-[0.2em] uppercase text-[10px] mt-0.5">Sistem Informasi Digital Display</p>
           </div>
         </div>
 
         {/* Center: Quick Realtime Financial-Style Metric Counters */}
         <div className="hidden lg:flex items-center gap-3 bg-slate-950/60 p-1.5 rounded-2xl border border-white/10 shadow-inner">
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-2 px-3.5 py-1 rounded-xl bg-white/5 border border-white/5">
             <Activity className="h-4 w-4 text-emerald-400" />
             <div className="text-left leading-none">
-              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Kelas Aktif</p>
-              <p className="text-sm font-extrabold text-white mt-0.5">{activeSchedules.length} Kelas</p>
+              <p className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Kelas Aktif</p>
+              <p className="text-xs font-extrabold text-white mt-0.5">{activeSchedules.length} Kelas</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-2 px-3.5 py-1 rounded-xl bg-white/5 border border-white/5">
             <Users className="h-4 w-4 text-cyan-400" />
             <div className="text-left leading-none">
-              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Guru Mengajar</p>
-              <p className="text-sm font-extrabold text-white mt-0.5">{activeTeachingCount} / {staffStatuses.length}</p>
+              <p className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Guru Mengajar</p>
+              <p className="text-xs font-extrabold text-white mt-0.5">{activeTeachingCount} / {staffStatuses.length}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-2 px-3.5 py-1 rounded-xl bg-white/5 border border-white/5">
             <ShieldCheckIcon className="h-4 w-4 text-blue-400" />
             <div className="text-left leading-none">
-              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Guru Piket</p>
-              <p className="text-sm font-extrabold text-white mt-0.5">{activePiket.length} Petugas</p>
+              <p className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Guru Piket</p>
+              <p className="text-xs font-extrabold text-white mt-0.5">{activePiket.length} Petugas</p>
             </div>
           </div>
         </div>
@@ -403,38 +403,38 @@ export default function SchoolTvPage() {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 flex gap-6 p-6 overflow-hidden relative bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+      <main className="flex-1 min-h-0 flex gap-6 p-6 overflow-hidden relative bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
         
         {/* Ambient Glow Effects */}
         <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none"></div>
 
         {/* Left Column: Schedule Grid Cards */}
-        <div className="flex-1 flex flex-col h-full z-10 relative">
-          <div className="flex-1 overflow-hidden relative min-h-[300px]">
-            <div className="absolute inset-0 overflow-y-auto pb-10 hide-scrollbar scroll-smooth flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 z-10 relative">
+          <div className="flex-1 overflow-hidden relative">
+            <div className="absolute inset-0 overflow-y-auto pb-4 hide-scrollbar scroll-smooth flex flex-col">
               
               {pagedActiveSchedules.length === 0 ? (
                 /* Sleek Bank Display Empty State (Break/Finished) */
-                <div className="h-full w-full flex flex-col items-center justify-center text-slate-400 bg-slate-900/60 backdrop-blur-2xl rounded-3xl border border-white/10 p-12 shadow-2xl relative overflow-hidden">
+                <div className="h-full w-full flex flex-col items-center justify-center text-slate-400 bg-slate-900/60 backdrop-blur-2xl rounded-3xl border border-white/10 p-8 shadow-2xl relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5"></div>
                   <div className="relative z-10 flex flex-col items-center text-center">
-                    <div className="relative mb-6">
+                    <div className="relative mb-5">
                       <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full"></div>
-                      <div className="h-28 w-28 rounded-3xl bg-slate-800/80 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(16,185,129,0.2)]">
-                        <Clock className="h-14 w-14 text-emerald-400 animate-pulse" />
+                      <div className="h-24 w-24 rounded-3xl bg-slate-800/80 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(16,185,129,0.2)]">
+                        <Clock className="h-12 w-12 text-emerald-400 animate-pulse" />
                       </div>
                     </div>
-                    <h2 className="text-3xl lg:text-4xl font-black text-white mb-3 tracking-tight drop-shadow-md">
+                    <h2 className="text-3xl lg:text-4xl font-black text-white mb-2 tracking-tight drop-shadow-md">
                       Waktu Istirahat / Selesai KBM
                     </h2>
-                    <p className="text-base text-slate-400 max-w-lg mb-8 font-medium">
+                    <p className="text-sm text-slate-400 max-w-lg mb-6 font-medium leading-relaxed">
                       Saat ini tidak ada kegiatan belajar mengajar aktif di kelas. Layar akan otomatis diperbarui saat jam pelajaran berikutnya dimulai.
                     </p>
                     
                     {activePiket.length > 0 && (
-                      <div className="bg-slate-950/80 border border-white/10 rounded-2xl px-6 py-3.5 flex items-center gap-3 shadow-xl backdrop-blur-md">
-                        <Users className="h-5 w-5 text-emerald-400" />
+                      <div className="bg-slate-950/80 border border-white/10 rounded-2xl px-6 py-3 flex items-center gap-3 shadow-xl backdrop-blur-md">
+                        <Users className="h-5 w-5 text-emerald-400 shrink-0" />
                         <span className="text-xs text-slate-300 font-semibold">
                           Petugas Piket Siap Membantu: <strong className="text-white font-bold">{activePiket.map((p: any) => p.names).join(", ")}</strong>
                         </span>
@@ -445,7 +445,7 @@ export default function SchoolTvPage() {
               ) : (
                 /* Bank-Style Active Schedule Grid */
                 <div className={cn(
-                  "grid gap-4.5 pb-4",
+                  "grid gap-4 pb-4",
                   pagedActiveSchedules.length <= 6
                     ? "grid-cols-2 xl:grid-cols-3"
                     : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
@@ -541,23 +541,23 @@ export default function SchoolTvPage() {
         </div>
 
         {/* Right Sidebar Widgets */}
-        <div className="w-[380px] shrink-0 flex flex-col gap-5 z-10 h-full min-h-0">
+        <div className="w-[360px] lg:w-[380px] shrink-0 flex flex-col gap-4 z-10 h-full min-h-0">
           
           {/* Guru Piket Widget */}
-          <div className="bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-white/10 p-4.5 shadow-2xl relative overflow-hidden flex flex-col max-h-[300px]">
+          <div className="bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-white/10 p-4 shadow-2xl relative overflow-hidden flex flex-col shrink-0 max-h-[220px]">
              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-indigo-500 to-cyan-400"></div>
-             <h3 className="text-base font-bold mb-3 flex items-center gap-2 text-white shrink-0">
-               <ShieldCheckIcon className="h-5 w-5 text-blue-400" /> Guru Piket Hari Ini
+             <h3 className="text-sm font-bold mb-2.5 flex items-center gap-2 text-white shrink-0">
+               <ShieldCheckIcon className="h-4 w-4 text-blue-400" /> Guru Piket Hari Ini
              </h3>
               <div className="space-y-2 overflow-y-auto hide-scrollbar pr-1">
                 {activePiket.length > 0 ? activePiket.map((p: any, i: number) => (
-                  <div key={i} className="flex items-center gap-3 bg-slate-950/60 p-3 rounded-2xl border border-white/5 shadow-inner backdrop-blur-sm">
+                  <div key={i} className="flex items-center gap-3 bg-slate-950/60 p-2.5 rounded-2xl border border-white/5 shadow-inner backdrop-blur-sm">
                     {p.matchedStaff && p.matchedStaff.length > 0 && (
                       <div className="flex -space-x-2 shrink-0">
                         {p.matchedStaff.map((staff: any, idx: number) => (
-                          <Avatar key={idx} className="h-8 w-8 border-2 border-slate-900 shrink-0 shadow-md">
+                          <Avatar key={idx} className="h-7 w-7 border-2 border-slate-900 shrink-0 shadow-md">
                             <AvatarImage src={staff.imageUrl || staff.image} alt={staff.name} className="object-cover" />
-                            <AvatarFallback className="bg-blue-900 text-blue-200 font-bold text-[10px]">
+                            <AvatarFallback className="bg-blue-900 text-blue-200 font-bold text-[9px]">
                               {staff.name ? staff.name.substring(0, 2).toUpperCase() : "GP"}
                             </AvatarFallback>
                           </Avatar>
@@ -572,20 +572,17 @@ export default function SchoolTvPage() {
                     </div>
                   </div>
                 )) : (
-                  <p className="text-xs text-slate-400 text-center py-4">Tidak ada petugas piket aktif saat ini.</p>
+                  <p className="text-xs text-slate-400 text-center py-3">Tidak ada petugas piket aktif saat ini.</p>
                 )}
               </div>
           </div>
 
           {/* Teacher Teaching Status Widget */}
           {staffStatuses.length > 0 && (
-            <div className={cn(
-              "bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-white/10 p-4.5 shadow-2xl flex flex-col min-h-[220px]", 
-              (data.donation || tvBarcode?.image || tvBarcode?.bankAccount) ? "max-h-[320px]" : "flex-1 min-h-0"
-            )}>
-              <h3 className="text-base font-bold mb-3 flex items-center justify-between text-white shrink-0">
+            <div className="bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-white/10 p-4 shadow-2xl flex flex-col flex-1 min-h-0">
+              <h3 className="text-sm font-bold mb-3 flex items-center justify-between text-white shrink-0">
                 <span className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-indigo-400" /> Status Mengajar Guru
+                  <Users className="h-4 w-4 text-indigo-400" /> Status Mengajar Guru
                 </span>
                 <span className="text-[10px] font-mono bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30 font-bold">
                   {activeTeachingCount} MENGAJAR
@@ -621,43 +618,43 @@ export default function SchoolTvPage() {
 
           {/* Barcode & Payment/Donation Widget */}
           {tvBarcode?.image || tvBarcode?.bankAccount ? (
-            <div className="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-4 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-3.5 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden shrink-0">
               <div className="absolute inset-0 bg-emerald-500/5 blur-xl pointer-events-none"></div>
               
-              <h3 className="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-1.5 relative z-10">
-                <QrCode className="h-4 w-4" /> Pembayaran / Donasi Resmi
+              <h3 className="text-xs font-bold text-emerald-400 mb-1.5 flex items-center gap-1.5 relative z-10">
+                <QrCode className="h-3.5 w-3.5" /> Pembayaran / Donasi Resmi
               </h3>
               
               {tvBarcode.image && (
-                <div className="bg-white p-2 rounded-2xl shadow-xl mb-2 h-28 w-28 relative border border-white/20">
+                <div className="bg-white p-1.5 rounded-2xl shadow-xl mb-1.5 h-24 w-24 relative border border-white/20">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={tvBarcode.image} alt="Barcode" className="w-full h-full object-contain rounded-xl" />
                 </div>
               )}
               
               {tvBarcode.bankAccount && (
-                <div className="bg-slate-950/80 w-full px-3 py-1.5 rounded-xl border border-white/10 shadow-inner">
-                  <p className="text-xs font-mono font-black tracking-widest text-white">{tvBarcode.bankAccount}</p>
+                <div className="bg-slate-950/80 w-full px-3 py-1 rounded-xl border border-white/10 shadow-inner">
+                  <p className="text-[11px] font-mono font-black tracking-widest text-white">{tvBarcode.bankAccount}</p>
                   {tvBarcode.accountName && (
-                    <p className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase truncate">A.N. {tvBarcode.accountName}</p>
+                    <p className="text-[9px] text-slate-400 mt-0.5 font-semibold uppercase truncate">A.N. {tvBarcode.accountName}</p>
                   )}
                 </div>
               )}
             </div>
           ) : data.donation ? (
-            <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900/90 to-slate-950 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-5 shadow-2xl flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden">
-              <QrCode className="h-7 w-7 text-emerald-400 mb-2" />
-              <h3 className="text-sm font-bold text-emerald-300 mb-1 leading-tight">{data.donation.title}</h3>
-              <p className="text-[11px] text-slate-400 mb-3 max-w-[240px]">Scan barcode di bawah ini untuk berpartisipasi dalam program sekolah.</p>
+            <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900/90 to-slate-950 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-4 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden shrink-0">
+              <QrCode className="h-6 w-6 text-emerald-400 mb-1.5" />
+              <h3 className="text-xs font-bold text-emerald-300 mb-1 leading-tight">{data.donation.title}</h3>
+              <p className="text-[10px] text-slate-400 mb-2 max-w-[220px]">Scan barcode di bawah ini untuk berpartisipasi.</p>
               
-              <div className="bg-white p-2.5 rounded-2xl shadow-2xl">
+              <div className="bg-white p-2 rounded-2xl shadow-2xl">
                 <QRCode 
                   value={`${window.location.origin}/site/${slug}/donasi/${data.donation.slug || data.donation.id}`} 
-                  size={140}
+                  size={110}
                   level="H"
                 />
               </div>
-              <p className="text-[10px] uppercase tracking-widest text-emerald-400 font-bold mt-3">Arahkan Kamera HP Anda</p>
+              <p className="text-[9px] uppercase tracking-widest text-emerald-400 font-bold mt-2">Arahkan Kamera HP Anda</p>
             </div>
           ) : null}
 
@@ -665,17 +662,17 @@ export default function SchoolTvPage() {
       </main>
 
       {/* BANK / TV NEWS STYLE TICKER FOOTER */}
-      <footer className="h-[8dvh] min-h-[60px] bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 flex items-center overflow-hidden shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] z-30 border-t border-emerald-500/30">
+      <footer className="h-[56px] shrink-0 bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 flex items-center overflow-hidden z-30 border-t border-emerald-500/30">
         
         {/* Ticker Category Label */}
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs px-6 py-full h-full flex items-center gap-2 shrink-0 shadow-2xl tracking-wider uppercase z-10 border-r border-emerald-400/30">
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs px-6 h-full flex items-center gap-2 shrink-0 shadow-2xl tracking-wider uppercase z-10 border-r border-emerald-400/30">
           <Radio className="h-4 w-4 animate-pulse" />
           INFORMASI SEKOLAH
         </div>
 
         {/* Ticker Marquee Track */}
         <div className="flex-1 overflow-hidden relative flex items-center h-full bg-slate-950/80">
-          <div className="whitespace-nowrap animate-marquee flex items-center text-lg font-semibold text-slate-100 tracking-wide">
+          <div className="whitespace-nowrap animate-marquee flex items-center text-base font-semibold text-slate-100 tracking-wide">
             {(() => {
               const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Digital Sekolah"}! Mari bersama mewujudkan pendidikan berkualitas & berkarakter. \n Mohon senantiasa menjaga kebersihan dan ketertiban di lingkungan sekolah. \n Petugas piket hari ini: ${activePiket?.map((p:any) => `${p.names} (${p.time})`).join(" | ") || "-"}`
               const marqueeItems = rawMarquee.split('\n').map((item: string) => item.trim()).filter(Boolean)
