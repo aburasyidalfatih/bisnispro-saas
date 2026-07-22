@@ -248,7 +248,9 @@ export function initCronJobs() {
           data: {
             isActive: false,
             retentionStatus: "CHURNED",
-            deletedAt: new Date()
+            deletedAt: new Date(),
+            slug: `${tenant.slug}-deleted-${Date.now()}`,
+            domain: null,
           }
         })
       }
