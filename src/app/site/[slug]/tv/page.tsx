@@ -672,21 +672,21 @@ export default function SchoolTvPage() {
 
         {/* Ticker Marquee Track */}
         <div className="flex-1 overflow-hidden relative flex items-center h-full bg-slate-950/80">
-          <div className="whitespace-nowrap animate-marquee flex items-center w-max text-base font-semibold text-slate-100 tracking-wide">
+          <div className="whitespace-nowrap animate-marquee text-base font-semibold text-slate-100 tracking-wide">
             {(() => {
               const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Digital Sekolah"}! Mari bersama mewujudkan pendidikan berkualitas & berkarakter. \n Mohon senantiasa menjaga kebersihan dan ketertiban di lingkungan sekolah. \n Petugas piket hari ini: ${activePiket?.map((p:any) => `${p.names} (${p.time})`).join(" | ") || "-"}`
               const marqueeItems = rawMarquee.split('\n').map((item: string) => item.trim()).filter(Boolean)
               return (
                 <>
                   {marqueeItems.map((text: string, idx: number) => (
-                    <span key={`m1-${idx}`} className="mx-8 flex items-center gap-4 shrink-0">
+                    <span key={`m1-${idx}`} className="mx-8 inline-flex items-center gap-4">
                       {text}
                       <span className="text-emerald-400 text-sm shadow-emerald-500">•</span>
                     </span>
                   ))}
                   {/* Duplicate for seamless continuous looping */}
                   {marqueeItems.map((text: string, idx: number) => (
-                    <span key={`m2-${idx}`} className="mx-8 flex items-center gap-4 shrink-0">
+                    <span key={`m2-${idx}`} className="mx-8 inline-flex items-center gap-4">
                       {text}
                       <span className="text-emerald-400 text-sm shadow-emerald-500">•</span>
                     </span>
