@@ -28,16 +28,14 @@ export async function GET(req: Request) {
       targetDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
     }
 
-    // Get all active staff (teachers)
+    // Get all staff (teachers)
     const activeStaff = await db.staff.findMany({
       where: {
         tenantId,
-        isActive: true,
       },
       select: {
         id: true,
         name: true,
-        nip: true,
         imageUrl: true,
       },
       orderBy: {

@@ -9,6 +9,7 @@ export async function getTenantsForSuperAdmin(params: {
   limit: number
   search: string
   sort: string
+  order: string
   status?: string
 }) {
   const { page, limit, search, sort, order, status } = params
