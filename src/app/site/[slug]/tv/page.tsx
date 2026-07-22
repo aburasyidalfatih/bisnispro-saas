@@ -47,8 +47,8 @@ const LiveClock = memo(({ tz, isFullscreen, onToggleFullscreen }: { tz: string, 
         <p className="text-xs lg:text-sm font-semibold tracking-wide text-slate-300 capitalize">
           {formatInTimeZone(now, tz, "EEEE, dd MMMM yyyy", { locale: id })}
         </p>
-        <span className="text-[9px] lg:text-[10px] uppercase font-bold tracking-widest text-emerald-400/90 flex items-center justify-end gap-1.5 mt-0.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+        <span className="text-[9px] lg:text-[10px] uppercase font-bold tracking-widest text-primary/90 flex items-center justify-end gap-1.5 mt-0.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping"></span>
           REALTIME DISPLAY
         </span>
       </div>
@@ -57,7 +57,7 @@ const LiveClock = memo(({ tz, isFullscreen, onToggleFullscreen }: { tz: string, 
         <span className="text-3xl lg:text-4xl font-extrabold text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]">
           {formatInTimeZone(now, tz, "HH:mm")}
         </span>
-        <span className="text-lg lg:text-xl font-bold text-emerald-400">
+        <span className="text-lg lg:text-xl font-bold text-primary">
           :{formatInTimeZone(now, tz, "ss")}
         </span>
       </div>
@@ -66,7 +66,7 @@ const LiveClock = memo(({ tz, isFullscreen, onToggleFullscreen }: { tz: string, 
         className="ml-1 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all border border-white/10 active:scale-95 group shadow-inner"
         title="Toggle Fullscreen Display"
       >
-        {isFullscreen ? <Minimize className="h-4 w-4 group-hover:scale-110 transition-transform text-emerald-400" /> : <Maximize className="h-4 w-4 group-hover:scale-110 transition-transform text-emerald-400" />}
+        {isFullscreen ? <Minimize className="h-4 w-4 group-hover:scale-110 transition-transform text-primary" /> : <Maximize className="h-4 w-4 group-hover:scale-110 transition-transform text-primary" />}
       </button>
     </div>
   )
@@ -105,7 +105,7 @@ const ClassProgressBar = memo(({ startTime, endTime, tz }: { startTime: string, 
   return (
     <div className="w-full bg-slate-950/60 h-2 mt-3 rounded-full overflow-hidden border border-white/10 p-0.5 relative">
       <div 
-        className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 transition-all duration-1000 ease-linear rounded-full relative shadow-[0_0_12px_rgba(16,185,129,0.8)]"
+        className="h-full bg-primary transition-all duration-1000 ease-linear rounded-full relative shadow-[0_0_12px_hsl(var(--primary))] shadow-primary/80"
         style={{ width: `${progress}%` }}
       >
         <div className="absolute right-0 top-0 bottom-0 w-3 bg-white/80 blur-[2px] animate-pulse"></div>
@@ -120,7 +120,7 @@ const TeacherRow = memo(({ s }: { s: any }) => (
   <div className={cn(
     "flex items-center justify-between p-2.5 rounded-xl border text-xs transition-all duration-300 backdrop-blur-md shadow-sm",
     s.isTeaching 
-      ? "bg-gradient-to-r from-emerald-950/50 via-slate-900/80 to-slate-900/80 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]" 
+      ? "bg-gradient-to-r from-primary/30 via-slate-900/80 to-slate-900/80 border-primary/50 shadow-[0_0_15px_hsl(var(--primary))] shadow-primary/20" 
       : "bg-slate-950/40 border-white/5 hover:border-white/10"
   )}>
     <div className="flex items-center gap-3 truncate pr-2">
@@ -128,8 +128,8 @@ const TeacherRow = memo(({ s }: { s: any }) => (
       <div className="relative flex h-2.5 w-2.5 shrink-0">
         {s.isTeaching ? (
           <>
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,1)]"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/80 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary shadow-[0_0_8px_hsl(var(--primary))] shadow-primary"></span>
           </>
         ) : (
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-700"></span>
@@ -150,7 +150,7 @@ const TeacherRow = memo(({ s }: { s: any }) => (
       </div>
     </div>
     {s.isTeaching ? (
-      <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[10px] tracking-wider uppercase shrink-0 shadow-sm">
+      <span className="px-2.5 py-1 rounded-lg bg-primary/20 text-primary border border-primary/40 font-bold text-[10px] tracking-wider uppercase shrink-0 shadow-sm">
         {s.classroomName}
       </span>
     ) : (
@@ -324,7 +324,7 @@ export default function SchoolTvPage() {
   if (loading || !data) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
-        <Loader2 className="h-12 w-12 animate-spin text-emerald-400 mb-4" />
+        <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
         <h2 className="text-xl font-semibold tracking-wide">Memuat Display TV Digital...</h2>
       </div>
     )
@@ -333,7 +333,7 @@ export default function SchoolTvPage() {
   const activeTeachingCount = staffStatuses.filter((s: any) => s.isTeaching).length
 
   return (
-    <div className="h-screen h-[100dvh] w-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-emerald-500/30">
+    <div className="h-screen h-[100dvh] w-screen bg-slate-950 text-slate-50 flex flex-col overflow-hidden font-sans selection:bg-primary/30">
       
       {/* FINANCIAL DISPLAY STYLE HEADER */}
       <header className="h-[76px] shrink-0 bg-slate-900/90 border-b border-white/10 flex items-center justify-between px-6 lg:px-8 shadow-2xl backdrop-blur-2xl z-20">
@@ -341,11 +341,11 @@ export default function SchoolTvPage() {
         {/* Left: Branding & Tenant Logo */}
         <div className="flex items-center gap-4">
           {data.tenant?.logo ? (
-            <div className="relative h-12 w-12 rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 p-1 border border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            <div className="relative h-12 w-12 rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 p-1 border border-white/20 shadow-[0_0_20px_hsl(var(--primary))] shadow-primary/20">
               <Image src={data.tenant.logo} alt="Logo" fill className="object-contain p-1" />
             </div>
           ) : (
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 flex items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center border border-white/20 shadow-[0_0_20px_hsl(var(--primary))] shadow-primary/30">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
           )}
@@ -355,12 +355,12 @@ export default function SchoolTvPage() {
                 {data.tenant?.name || "SchoolPro"}
               </h1>
               
-              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full shadow-inner">
+              <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 px-2.5 py-0.5 rounded-full shadow-inner">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/80 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">LIVE SIGNAGE</span>
+                <span className="text-[10px] font-bold text-primary uppercase tracking-wider">LIVE SIGNAGE</span>
               </div>
 
               {totalPages > 1 && (
@@ -369,14 +369,14 @@ export default function SchoolTvPage() {
                 </span>
               )}
             </div>
-            <p className="text-emerald-400 font-bold tracking-[0.2em] uppercase text-[10px] mt-0.5">Sistem Informasi Digital Display</p>
+            <p className="text-primary font-bold tracking-[0.2em] uppercase text-[10px] mt-0.5">Sistem Informasi Digital Display</p>
           </div>
         </div>
 
         {/* Center: Quick Realtime Financial-Style Metric Counters */}
         <div className="hidden lg:flex items-center gap-3 bg-slate-950/60 p-1.5 rounded-2xl border border-white/10 shadow-inner">
           <div className="flex items-center gap-2 px-3.5 py-1 rounded-xl bg-white/5 border border-white/5">
-            <Activity className="h-4 w-4 text-emerald-400" />
+            <Activity className="h-4 w-4 text-primary" />
             <div className="text-left leading-none">
               <p className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Kelas Aktif</p>
               <p className="text-xs font-extrabold text-white mt-0.5">{activeSchedules.length} Kelas</p>
@@ -406,7 +406,7 @@ export default function SchoolTvPage() {
       <main className="flex-1 min-h-0 flex gap-6 p-6 overflow-hidden relative bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
         
         {/* Ambient Glow Effects */}
-        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary/10 blur-[150px] rounded-full pointer-events-none"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none"></div>
 
         {/* Left Column: Schedule Grid Cards */}
@@ -417,12 +417,12 @@ export default function SchoolTvPage() {
               {pagedActiveSchedules.length === 0 ? (
                 /* Sleek Bank Display Empty State (Break/Finished) */
                 <div className="h-full w-full flex flex-col items-center justify-center text-slate-400 bg-slate-900/60 backdrop-blur-2xl rounded-3xl border border-white/10 p-8 shadow-2xl relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-cyan-500/5"></div>
                   <div className="relative z-10 flex flex-col items-center text-center">
                     <div className="relative mb-5">
-                      <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full"></div>
-                      <div className="h-24 w-24 rounded-3xl bg-slate-800/80 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(16,185,129,0.2)]">
-                        <Clock className="h-12 w-12 text-emerald-400 animate-pulse" />
+                      <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full"></div>
+                      <div className="h-24 w-24 rounded-3xl bg-slate-800/80 border border-primary/30 flex items-center justify-center shadow-[0_0_50px_hsl(var(--primary))] shadow-primary/20">
+                        <Clock className="h-12 w-12 text-primary animate-pulse" />
                       </div>
                     </div>
                     <h2 className="text-3xl lg:text-4xl font-black text-white mb-2 tracking-tight drop-shadow-md">
@@ -434,7 +434,7 @@ export default function SchoolTvPage() {
                     
                     {activePiket.length > 0 && (
                       <div className="bg-slate-950/80 border border-white/10 rounded-2xl px-6 py-3 flex items-center gap-3 shadow-xl backdrop-blur-md">
-                        <Users className="h-5 w-5 text-emerald-400 shrink-0" />
+                        <Users className="h-5 w-5 text-primary shrink-0" />
                         <span className="text-xs text-slate-300 font-semibold">
                           Petugas Piket Siap Membantu: <strong className="text-white font-bold">{activePiket.map((p: any) => p.names).join(", ")}</strong>
                         </span>
@@ -459,7 +459,7 @@ export default function SchoolTvPage() {
                           "rounded-2xl border shadow-xl relative overflow-hidden flex flex-col h-full transition-all duration-300 backdrop-blur-2xl group",
                           s.isBreak 
                             ? "bg-gradient-to-br from-amber-950/60 via-slate-900/80 to-slate-950/90 border-amber-500/30 shadow-[0_10px_30px_rgba(245,158,11,0.1)]" 
-                            : "bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-slate-950/90 border-white/10 hover:border-emerald-500/40 shadow-[0_10px_30px_rgba(0,0,0,0.5)]",
+                            : "bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-slate-950/90 border-white/10 hover:border-primary/40 shadow-[0_10px_30px_rgba(0,0,0,0.5)]",
                           isCompact ? "p-4" : "p-5"
                         )} 
                         style={{ animationDelay: `${i * 80}ms` }}
@@ -467,7 +467,7 @@ export default function SchoolTvPage() {
                         {/* Accent Top Glow Bar */}
                         <div className={cn(
                           "absolute top-0 left-0 right-0 h-1",
-                          s.isBreak ? "bg-gradient-to-r from-amber-500 to-amber-300" : "bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500"
+                          s.isBreak ? "bg-gradient-to-r from-amber-500 to-amber-300" : "bg-gradient-to-r from-primary via-primary/80 to-primary/60"
                         )}></div>
 
                         {/* Top Time Pill */}
@@ -476,7 +476,7 @@ export default function SchoolTvPage() {
                             "rounded-xl font-black uppercase tracking-wider flex items-center justify-center text-white shadow-md",
                             s.isBreak 
                               ? "bg-gradient-to-br from-amber-500 to-amber-600 shadow-amber-500/20" 
-                              : "bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 shadow-emerald-500/20",
+                              : "bg-gradient-to-br from-primary via-primary/80 to-primary/60 shadow-primary/20",
                             isCompact ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm"
                           )}>
                             {s.classroom.name}
@@ -484,7 +484,7 @@ export default function SchoolTvPage() {
                           
                           <span className={cn(
                             "font-mono font-bold rounded-xl uppercase tracking-wider border backdrop-blur-md",
-                            s.isBreak ? "bg-amber-500/10 text-amber-300 border-amber-500/30" : "bg-slate-800/80 text-emerald-400 border-emerald-500/30",
+                            s.isBreak ? "bg-amber-500/10 text-amber-300 border-amber-500/30" : "bg-slate-800/80 text-primary border-primary/30",
                             isCompact ? "text-[11px] px-2.5 py-0.5" : "text-xs px-3 py-1"
                           )}>
                             {s.startTime} - {s.endTime}
@@ -494,7 +494,7 @@ export default function SchoolTvPage() {
                         {/* Subject Title */}
                         <div className="mb-3 flex-1">
                           <h3 className={cn(
-                            "font-extrabold text-white leading-tight line-clamp-2 drop-shadow-sm group-hover:text-emerald-300 transition-colors", 
+                            "font-extrabold text-white leading-tight line-clamp-2 drop-shadow-sm group-hover:text-primary/80 transition-colors", 
                             isCompact ? "text-base" : "text-lg"
                           )}>
                             {s.subject?.name || s.breakName || "Mata Pelajaran"}
@@ -514,7 +514,7 @@ export default function SchoolTvPage() {
                                )}
                                <div className="truncate min-w-0 flex-1">
                                  <p className="text-xs font-bold text-slate-100 truncate">{s.staff?.name || "-"}</p>
-                                 <p className="text-[10px] text-emerald-400/80 font-semibold tracking-wide uppercase">Guru Pengampu</p>
+                                 <p className="text-[10px] text-primary/80 font-semibold tracking-wide uppercase">Guru Pengampu</p>
                                </div>
                              </div>
                            ) : (
@@ -618,10 +618,10 @@ export default function SchoolTvPage() {
 
           {/* Barcode & Payment/Donation Widget */}
           {tvBarcode?.image || tvBarcode?.bankAccount ? (
-            <div className="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-3.5 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden shrink-0">
-              <div className="absolute inset-0 bg-emerald-500/5 blur-xl pointer-events-none"></div>
+            <div className="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950 backdrop-blur-2xl rounded-3xl border border-primary/30 p-3.5 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden shrink-0">
+              <div className="absolute inset-0 bg-primary/5 blur-xl pointer-events-none"></div>
               
-              <h3 className="text-xs font-bold text-emerald-400 mb-1.5 flex items-center gap-1.5 relative z-10">
+              <h3 className="text-xs font-bold text-primary mb-1.5 flex items-center gap-1.5 relative z-10">
                 <QrCode className="h-3.5 w-3.5" /> Pembayaran / Donasi Resmi
               </h3>
               
@@ -642,9 +642,9 @@ export default function SchoolTvPage() {
               )}
             </div>
           ) : data.donation ? (
-            <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900/90 to-slate-950 backdrop-blur-2xl rounded-3xl border border-emerald-500/30 p-4 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden shrink-0">
-              <QrCode className="h-6 w-6 text-emerald-400 mb-1.5" />
-              <h3 className="text-xs font-bold text-emerald-300 mb-1 leading-tight">{data.donation.title}</h3>
+            <div className="bg-gradient-to-br from-primary/20 via-slate-900/90 to-slate-950 backdrop-blur-2xl rounded-3xl border border-primary/30 p-4 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden shrink-0">
+              <QrCode className="h-6 w-6 text-primary mb-1.5" />
+              <h3 className="text-xs font-bold text-primary/90 mb-1 leading-tight">{data.donation.title}</h3>
               <p className="text-[10px] text-slate-400 mb-2 max-w-[220px]">Scan barcode di bawah ini untuk berpartisipasi.</p>
               
               <div className="bg-white p-2 rounded-2xl shadow-2xl">
@@ -654,7 +654,7 @@ export default function SchoolTvPage() {
                   level="H"
                 />
               </div>
-              <p className="text-[9px] uppercase tracking-widest text-emerald-400 font-bold mt-2">Arahkan Kamera HP Anda</p>
+              <p className="text-[9px] uppercase tracking-widest text-primary font-bold mt-2">Arahkan Kamera HP Anda</p>
             </div>
           ) : null}
 
@@ -662,10 +662,10 @@ export default function SchoolTvPage() {
       </main>
 
       {/* BANK / TV NEWS STYLE TICKER FOOTER */}
-      <footer className="h-[56px] shrink-0 bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 flex items-center overflow-hidden z-30 border-t border-emerald-500/30">
+      <footer className="h-[56px] shrink-0 bg-gradient-to-r from-primary/30 via-slate-900 to-slate-950 flex items-center overflow-hidden z-30 border-t border-primary/30">
         
         {/* Ticker Category Label */}
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs px-6 h-full flex items-center gap-2 shrink-0 shadow-2xl tracking-wider uppercase z-10 border-r border-emerald-400/30">
+        <div className="bg-gradient-to-r from-primary to-primary/80 text-white font-black text-xs px-6 h-full flex items-center gap-2 shrink-0 shadow-2xl tracking-wider uppercase z-10 border-r border-primary/30">
           <Radio className="h-4 w-4 animate-pulse" />
           INFORMASI SEKOLAH
         </div>
@@ -681,14 +681,14 @@ export default function SchoolTvPage() {
                   {marqueeItems.map((text: string, idx: number) => (
                     <span key={`m1-${idx}`} className="mx-8 inline-flex items-center gap-4">
                       {text}
-                      <span className="text-emerald-400 text-sm shadow-emerald-500">•</span>
+                      <span className="text-primary text-sm shadow-primary">•</span>
                     </span>
                   ))}
                   {/* Duplicate for seamless continuous looping */}
                   {marqueeItems.map((text: string, idx: number) => (
                     <span key={`m2-${idx}`} className="mx-8 inline-flex items-center gap-4">
                       {text}
-                      <span className="text-emerald-400 text-sm shadow-emerald-500">•</span>
+                      <span className="text-primary text-sm shadow-primary">•</span>
                     </span>
                   ))}
                 </>
