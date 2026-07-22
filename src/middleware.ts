@@ -25,12 +25,15 @@ const redis = process.env.UPSTASH_REDIS_REST_URL ? Redis.fromEnv() : null
 async function resolveCustomDomain(domain: string, requestUrl: string): Promise<string | null> {
   try {
     if (redis) {
-      const cached = await redis.get(`domain:${domain}`)
+      const cached = await redis.get(`smp:domain:${domain}`)
       if (cached) return cached as string
     }
 
     // Edge-Safe: Fetch from absolute URL or local Node.js API
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `http://127.0.0.1:${process.env.PORT || "3000"}`
+    let baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id";
+    if (baseUrl.includes("127.0.0.1") || baseUrl.includes("localhost")) {
+      baseUrl = "https://schoolpro.id"; // Fallback to public URL to avoid Edge fetch issues
+    }
     const res = await fetch(
       `${baseUrl}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
       {
@@ -45,11 +48,12 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
     const slug = data.slug
 
     if (redis && slug) {
-      await redis.set(`domain:${domain}`, slug, { ex: 300 })
+      await redis.set(`smp:domain:${domain}`, slug, { ex: 300 })
     }
 
     return slug
-  } catch {
+  } catch (err: any) {
+    console.error("resolveCustomDomain ERROR:", err);
     return null
   }
 }
@@ -64,7 +68,10 @@ async function getCustomDomainForSlug(slug: string, requestUrl: string): Promise
       if (cached) return cached as string
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `http://127.0.0.1:${process.env.PORT || "3000"}`
+    let baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id";
+    if (baseUrl.includes("127.0.0.1") || baseUrl.includes("localhost")) {
+      baseUrl = "https://schoolpro.id";
+    }
     const res = await fetch(
       `${baseUrl}/api/internal/slug-lookup?slug=${encodeURIComponent(slug)}`,
       {
@@ -223,7 +230,12 @@ export default async function middleware(request: NextRequest) {
   let resolvedCustomSlug: string | null = null;
   if (isCustomDomain) {
     resolvedCustomSlug = await resolveCustomDomain(hostname, request.url);
-    if (!resolvedCustomSlug) return addSecurityHeaders(NextResponse.rewrite(new URL("/not-found", request.url)));
+    if (!resolvedCustomSlug) {
+      const dbgResponse = NextResponse.rewrite(new URL("/not-found", request.url));
+      dbgResponse.headers.set("X-Debug-Host", hostname);
+      dbgResponse.headers.set("X-Debug-BaseUrl", process.env.NEXT_PUBLIC_APP_URL || `http://127.0.0.1:${process.env.PORT || "3000"}`);
+      return addSecurityHeaders(dbgResponse);
+    }
   }
 
   // ============================================================
