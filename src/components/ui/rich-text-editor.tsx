@@ -3,7 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Link from "@tiptap/extension-link"
-import Image from "@tiptap/extension-image"
+import ImageResize from "tiptap-extension-resize-image"
 import TextAlign from "@tiptap/extension-text-align"
 import { Color } from "@tiptap/extension-color"
 import { TextStyle } from "@tiptap/extension-text-style"
@@ -150,11 +150,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           class: 'text-primary underline underline-offset-4',
         },
       }),
-      Image.configure({
-        HTMLAttributes: {
-          class: 'rounded-lg max-w-full h-auto my-4',
-        },
-      }),
+      ImageResize,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),

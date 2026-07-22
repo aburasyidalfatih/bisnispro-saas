@@ -116,6 +116,7 @@
     "swr": "^2.4.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
+    "tiptap-extension-resize-image": "^1.4.4",
     "twitter-api-v2": "^1.29.0",
     "xlsx": "^0.18.5",
     "zod": "^3.22.0"
