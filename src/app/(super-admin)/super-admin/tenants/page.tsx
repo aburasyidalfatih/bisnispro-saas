@@ -50,6 +50,7 @@ export default function TenantsPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [filterStatus, setFilterStatus] = useState("all")
   const [sortColumn, setSortColumn] = useState("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const limit = 10
@@ -72,7 +73,7 @@ export default function TenantsPage() {
 
   const fetchTenants = useCallback(() => {
     setLoading(true)
-    fetch(`/api/super-admin/tenants?page=${page}&limit=${limit}&search=${search}&sort=${sortColumn}&order=${sortOrder}`)
+    fetch(`/api/super-admin/tenants?page=${page}&limit=${limit}&search=${search}&sort=${sortColumn}&order=${sortOrder}&status=${filterStatus}`)
       .then(async (r) => {
         const text = await r.text();
         return text ? JSON.parse(text) : { data: [], total: 0 };
@@ -83,7 +84,7 @@ export default function TenantsPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [page, search, sortColumn, sortOrder])
+  }, [page, search, sortColumn, sortOrder, filterStatus])
 
   useEffect(() => { fetchTenants() }, [fetchTenants])
 
@@ -173,16 +174,26 @@ export default function TenantsPage() {
       </div>
 
       {/* Search & Filter */}
-      <div className="flex items-center gap-3">
-        <div className="relative max-w-sm flex-1">
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="relative w-full sm:max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Cari nama, email, atau slug..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-            className="pl-9 rounded-xl"
+            className="pl-9 rounded-xl w-full"
           />
         </div>
+        <select
+          value={filterStatus}
+          onChange={(e) => { setFilterStatus(e.target.value); setPage(1) }}
+          className="flex h-10 w-full sm:w-auto items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <option value="all">Semua Status</option>
+          <option value="active">Aktif</option>
+          <option value="suspended">Suspended</option>
+          <option value="deleted">Dihapus (Soft Delete)</option>
+        </select>
       </div>
 
       {/* Table */}

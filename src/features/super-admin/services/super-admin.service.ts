@@ -9,20 +9,32 @@ export async function getTenantsForSuperAdmin(params: {
   limit: number
   search: string
   sort: string
-  order: string
+  status?: string
 }) {
-  const { page, limit, search, sort, order } = params
+  const { page, limit, search, sort, order, status } = params
 
-  const where: any = search
-    ? {
-        OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { email: { contains: search, mode: "insensitive" } },
-          { slug: { contains: search, mode: "insensitive" } },
-          { users: { some: { role: "owner", user: { email: { contains: search, mode: "insensitive" } } } } }
-        ]
-      }
-    : {}
+  const where: any = {}
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+      { slug: { contains: search, mode: "insensitive" } },
+      { users: { some: { role: "owner", user: { email: { contains: search, mode: "insensitive" } } } } }
+    ]
+  }
+
+  if (status) {
+    if (status === "active") {
+      where.isActive = true
+      where.deletedAt = null
+    } else if (status === "suspended") {
+      where.isActive = false
+      where.deletedAt = null
+    } else if (status === "deleted") {
+      where.deletedAt = { not: null }
+    }
+  }
 
   if (sort === "storage") {
     // Optimized: Only fetch IDs to prevent OOM
@@ -153,17 +165,25 @@ export async function updateTenantByAdmin(id: string, data: {
       select: { slug: true }
     })
 
+    const updateData: any = {
+      name: data.name,
+      slug: data.slug,
+      domain: data.domain || null,
+      plan: data.plan,
+      isActive: data.isActive,
+      studentQuota: Number(data.studentQuota || 0),
+      aiTokens: Number(data.aiTokens || 0)
+    }
+
+    if (data.isActive === true) {
+      updateData.deletedAt = null
+      updateData.retentionStatus = "ACTIVE"
+      updateData.lastActiveAt = new Date()
+    }
+
     const updated = await db.tenant.update({
       where: { id },
-      data: {
-        name: data.name,
-        slug: data.slug,
-        domain: data.domain || null,
-        plan: data.plan,
-        isActive: data.isActive,
-        studentQuota: Number(data.studentQuota || 0),
-        aiTokens: Number(data.aiTokens || 0)
-      }
+      data: updateData
     })
 
     if (existing?.slug) {

@@ -13,10 +13,11 @@ export async function GET(req: Request) {
   const search = url.searchParams.get("search") || ""
   const sort = url.searchParams.get("sort") || "createdAt"
   const order = url.searchParams.get("order") || "desc"
+  const status = url.searchParams.get("status") || "all"
 
   try {
     const { getTenantsForSuperAdmin } = await import("@/features/super-admin/services/super-admin.service")
-    const result = await getTenantsForSuperAdmin({ page, limit, search, sort, order })
+    const result = await getTenantsForSuperAdmin({ page, limit, search, sort, order, status: status !== "all" ? status : undefined })
     return NextResponse.json(result)
   } catch (error: any) {
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
