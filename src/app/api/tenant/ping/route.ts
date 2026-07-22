@@ -30,7 +30,7 @@ export async function POST() {
     if (tenantsToUpdate.length > 0) {
       await db.tenant.updateMany({
         where: { id: { in: tenantsToUpdate } },
-        data: { lastActiveAt: new Date(), retentionStatus: "ACTIVE" }
+        data: { lastActiveAt: new Date(), retentionStatus: "ACTIVE", isActive: true }
       })
     }
 
