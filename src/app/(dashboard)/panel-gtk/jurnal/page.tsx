@@ -41,9 +41,24 @@ export default function JurnalPage() {
     classroomId: "",
     subjectId: "",
     topic: "",
-    notes: ""
+    notes: "",
+    scheduleId: "" // Added scheduleId to track selected schedule
   })
   const [presences, setPresences] = useState<Record<string, { status: string, notes: string }>>({})
+  
+  // Calculate active schedules
+  const now = new Date()
+  const activeSchedules = metadata?.scheduleToday?.filter(s => {
+    const [startHr, startMin] = s.startTime.split(':').map(Number)
+    const [endHr, endMin] = s.endTime.split(':').map(Number)
+    const start = new Date(); start.setHours(startHr, startMin, 0, 0)
+    const end = new Date(); end.setHours(endHr, endMin, 0, 0)
+    // Tolerance: 60 minutes after class ends
+    end.setMinutes(end.getMinutes() + 60)
+    
+    // Also include if the schedule is currently ongoing or recently finished
+    return now >= start && now <= end
+  }) || []
 
   useEffect(() => {
     if (!tenantId) return
@@ -130,6 +145,7 @@ export default function JurnalPage() {
         classroomId: formData.classroomId,
         subjectId: formData.subjectId,
         date: new Date(formData.date).toISOString(),
+        scheduleId: formData.scheduleId,
         topic: formData.topic,
         notes: formData.notes,
         presences: Object.entries(presences).map(([studentId, data]) => ({
@@ -149,7 +165,7 @@ export default function JurnalPage() {
         toast({ title: "Berhasil", description: "Jurnal & Absensi berhasil disimpan" })
         setMode("list")
         // Reset form
-        setFormData({ ...formData, topic: "", notes: "", classroomId: "", subjectId: "" })
+        setFormData({ ...formData, topic: "", notes: "", classroomId: "", subjectId: "", scheduleId: "" })
         setPresences({})
         setStudents([])
       } else {
@@ -192,33 +208,41 @@ export default function JurnalPage() {
             <CardContent className="p-6 grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-semibold">Tanggal</label>
-                <Input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} className="rounded-xl bg-muted/40" />
+                <Input type="date" value={formData.date} disabled className="rounded-xl bg-muted/40 cursor-not-allowed opacity-70" />
+                <p className="text-[10px] text-muted-foreground">Jurnal hanya dapat diisi untuk hari ini.</p>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Mata Pelajaran</label>
-                <Select value={formData.subjectId} onValueChange={(val) => setFormData({ ...formData, subjectId: val })}>
+                <label className="text-sm font-semibold">Jadwal Mengajar Aktif</label>
+                <Select 
+                  value={formData.scheduleId} 
+                  onValueChange={(val) => {
+                    const sched = activeSchedules.find((s: any) => s.id === val)
+                    if (sched) {
+                      setFormData({ 
+                        ...formData, 
+                        scheduleId: val,
+                        classroomId: sched.classroom.id, 
+                        subjectId: sched.subject.id 
+                      })
+                    }
+                  }}
+                >
                   <SelectTrigger className="rounded-xl bg-muted/40">
-                    <SelectValue placeholder="Pilih Mata Pelajaran" />
+                    <SelectValue placeholder="Pilih Jadwal Aktif" />
                   </SelectTrigger>
                   <SelectContent>
-                    {metadata?.subjects.map(s => (
-                      <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-                    ))}
+                    {activeSchedules.length === 0 ? (
+                      <div className="p-2 text-sm text-muted-foreground text-center">Tidak ada jadwal aktif saat ini.</div>
+                    ) : (
+                      activeSchedules.map((s: any) => (
+                        <SelectItem key={s.id} value={s.id}>
+                          {s.startTime} - {s.endTime} | {s.classroom.name} ({s.subject.name})
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Kelas</label>
-                <Select value={formData.classroomId} onValueChange={(val) => setFormData({ ...formData, classroomId: val })}>
-                  <SelectTrigger className="rounded-xl bg-muted/40">
-                    <SelectValue placeholder="Pilih Kelas" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {metadata?.classrooms.map(c => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <p className="text-[10px] text-muted-foreground">Menampilkan jadwal yang sedang berlangsung (termasuk toleransi 60 menit).</p>
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <div className="flex items-center justify-between">
@@ -326,27 +350,45 @@ export default function JurnalPage() {
           <h1 className="text-2xl font-bold tracking-tight">Jurnal Mengajar</h1>
           <p className="text-muted-foreground mt-1 text-sm">Riwayat materi pembelajaran dan presensi kelas.</p>
         </div>
-        <Button className="rounded-xl w-full sm:w-auto shadow-md shadow-primary/20" onClick={() => setMode("create")}>
+        <Button 
+          className="rounded-xl w-full sm:w-auto shadow-md shadow-primary/20" 
+          disabled={activeSchedules.length === 0}
+          onClick={() => setMode("create")}
+        >
           <Plus className="mr-2 h-4 w-4" /> Buat Jurnal
         </Button>
       </div>
 
-      {metadata?.scheduleToday && metadata.scheduleToday.length > 0 && (
+      {activeSchedules.length === 0 && metadata?.scheduleToday && metadata.scheduleToday.length > 0 && (
+        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <AlertCircle className="h-5 w-5 shrink-0" />
+          <div className="text-sm">
+            <span className="font-bold">Info:</span> Tombol buat jurnal dinonaktifkan karena Anda tidak memiliki jadwal mengajar yang sedang aktif saat ini. Anda hanya dapat mengisi jurnal saat jam mengajar (dan toleransi 60 menit).
+          </div>
+        </div>
+      )}
+
+      {activeSchedules.length > 0 && (
         <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-primary text-sm">Saran Kelas Hari Ini</h4>
+            <h4 className="font-semibold text-primary text-sm">Jadwal Aktif Anda Saat Ini</h4>
             <div className="flex flex-wrap gap-2 mt-2">
-              {metadata.scheduleToday.map(s => (
+              {activeSchedules.map((s: any) => (
                 <Button 
                   key={s.id}
                   onClick={() => {
-                    setFormData({ ...formData, classroomId: s.classroom.id, subjectId: s.subject.id })
+                    setFormData({ 
+                      ...formData, 
+                      scheduleId: s.id,
+                      classroomId: s.classroom.id, 
+                      subjectId: s.subject.id 
+                    })
                     setMode("create")
                   }}
                   className="text-xs bg-white dark:bg-black border rounded-lg px-3 py-1.5 hover:border-primary hover:text-primary transition-colors flex items-center gap-1.5 font-medium"
                 >
-                  <Clock className="h-3 w-3" /> {s.startTime} - {s.classroom.name}
+                  <Clock className="h-3 w-3" /> {s.startTime} - {s.endTime} | {s.classroom.name}
                 </Button>
               ))}
             </div>

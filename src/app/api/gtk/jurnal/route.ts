@@ -19,6 +19,34 @@ export async function POST(req: Request) {
     const { error: accessError } = await requireTenantMembership(tenantId)
     if (accessError) return accessError
 
+    // Validasi Schedule Aktif
+    const dayOfWeek = new Date().getDay()
+    const schedule = await db.schedule.findFirst({
+      where: {
+        tenantId,
+        staffId,
+        classroomId,
+        subjectId,
+        dayOfWeek
+      }
+    })
+
+    if (!schedule) {
+      return new NextResponse("Jadwal mengajar tidak ditemukan untuk kelas dan mata pelajaran ini pada hari ini.", { status: 403 })
+    }
+
+    // Validasi Waktu
+    const now = new Date()
+    const [startHr, startMin] = schedule.startTime.split(':').map(Number)
+    const [endHr, endMin] = schedule.endTime.split(':').map(Number)
+    
+    const start = new Date(); start.setHours(startHr, startMin, 0, 0)
+    const end = new Date(); end.setHours(endHr, endMin + 60, 0, 0) // Toleransi 60 menit
+
+    if (now < start || now > end) {
+      return new NextResponse("Di luar jam mengajar. Anda hanya dapat mengisi jurnal saat jadwal mengajar Anda sedang berlangsung (termasuk toleransi 60 menit).", { status: 403 })
+    }
+
     // Gunakan transaksi untuk memastikan Jurnal dan Presensi tersimpan semua atau tidak sama sekali
     const result = await db.$transaction(async (tx) => {
       // 1. Upsert Jurnal (jika hari yang sama, kelas sama, mapel sama, staf sama -> update)
