@@ -596,7 +596,10 @@ export default function SchoolTvPage() {
                 
                 {/* ABSOLUTE POSITIONED SCROLLING CONTAINER (0 Overflow Guarantee) */}
                 <div className="absolute inset-0 overflow-hidden">
-                  <div className={cn("flex flex-col gap-2", staffStatuses.length > 5 ? "animate-scroll-up" : "")}>
+                  <div 
+                    className={cn("flex flex-col gap-2", staffStatuses.length > 5 ? "animate-scroll-up" : "")}
+                    style={staffStatuses.length > 5 ? { animationDuration: `${Math.max(40, staffStatuses.length * 4)}s` } : undefined}
+                  >
                     <div className="flex flex-col gap-2">
                       {staffStatuses.map((s: any, i: number) => (
                         <TeacherRow key={i} s={s} />
@@ -672,7 +675,10 @@ export default function SchoolTvPage() {
 
         {/* Ticker Marquee Track */}
         <div className="flex-1 overflow-hidden relative flex items-center h-full bg-slate-950/80">
-          <div className="whitespace-nowrap animate-marquee text-base font-semibold text-slate-100 tracking-wide">
+          <div 
+            className="whitespace-nowrap animate-marquee text-base font-semibold text-slate-100 tracking-wide"
+            style={{ animationDuration: `${Math.max(30, (data.tenant?.settings?.marqueeText || "").length / 5 + (activePiket?.length || 0) * 2)}s` }}
+          >
             {(() => {
               const rawMarquee = data.tenant?.settings?.marqueeText?.trim() || `Selamat Datang di ${data.tenant?.name || "Sistem Digital Sekolah"}! Mari bersama mewujudkan pendidikan berkualitas & berkarakter. \n Mohon senantiasa menjaga kebersihan dan ketertiban di lingkungan sekolah. \n Petugas piket hari ini: ${activePiket?.map((p:any) => `${p.names} (${p.time})`).join(" | ") || "-"}`
               const marqueeItems = rawMarquee.split('\n').map((item: string) => item.trim()).filter(Boolean)

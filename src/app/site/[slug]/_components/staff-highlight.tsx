@@ -23,6 +23,9 @@ export function StaffHighlight({ staff, labels, basePath = "" }: StaffHighlightP
   // Duplicate the array to guarantee seamless infinite scrolling
   const displayStaff = Array.from({ length: Math.max(4, Math.ceil(12 / staff.length)) }).flatMap(() => staff)
   const l = labels?.staff || {}
+  
+  // Calculate dynamic duration based on number of items (approx 4 seconds per item)
+  const animationDuration = `${Math.max(25, displayStaff.length * 4)}s`;
 
   return (
     <section className="py-16 md:py-20 bg-muted/30 relative overflow-hidden">
@@ -46,7 +49,10 @@ export function StaffHighlight({ staff, labels, basePath = "" }: StaffHighlightP
         </div>
 
         <div className="relative flex overflow-hidden group/slider -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-4">
-          <div className="flex animate-marquee gap-5 shrink-0 items-center pr-5 group-hover/slider:[animation-play-state:paused]">
+          <div 
+            className="flex animate-marquee gap-5 shrink-0 items-center pr-5 group-hover/slider:[animation-play-state:paused]"
+            style={{ animationDuration }}
+          >
             {displayStaff.map((member, i) => (
               <Link key={`${member.id}-${i}`} href={`${basePath}/gtk/${member.id}`} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px] max-w-full">
                 <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover/card:shadow-xl group-hover/card:border-primary/30 transition-all duration-300">
@@ -65,7 +71,11 @@ export function StaffHighlight({ staff, labels, basePath = "" }: StaffHighlightP
             ))}
           </div>
           
-          <div aria-hidden="true" className="flex animate-marquee gap-5 shrink-0 items-center pr-5 group-hover/slider:[animation-play-state:paused]">
+          <div 
+            aria-hidden="true" 
+            className="flex animate-marquee gap-5 shrink-0 items-center pr-5 group-hover/slider:[animation-play-state:paused]"
+            style={{ animationDuration }}
+          >
             {displayStaff.map((member, i) => (
               <Link key={`${member.id}-clone-${i}`} href={`${basePath}/gtk/${member.id}`} className="group/card text-center flex-shrink-0 w-[140px] md:w-[160px] max-w-full">
                 <div className="relative mx-auto w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-border bg-muted mb-4 shadow-sm group-hover/card:shadow-xl group-hover/card:border-primary/30 transition-all duration-300">
