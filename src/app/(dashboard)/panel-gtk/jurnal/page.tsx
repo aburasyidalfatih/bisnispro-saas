@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -46,19 +46,27 @@ export default function JurnalPage() {
   })
   const [presences, setPresences] = useState<Record<string, { status: string, notes: string }>>({})
   
-  // Calculate active schedules
-  const now = new Date()
-  const activeSchedules = metadata?.scheduleToday?.filter(s => {
-    const [startHr, startMin] = s.startTime.split(':').map(Number)
-    const [endHr, endMin] = s.endTime.split(':').map(Number)
-    const start = new Date(); start.setHours(startHr, startMin, 0, 0)
-    const end = new Date(); end.setHours(endHr, endMin, 0, 0)
-    // Tolerance: 60 minutes after class ends
-    end.setMinutes(end.getMinutes() + 60)
-    
-    // Also include if the schedule is currently ongoing or recently finished
-    return now >= start && now <= end
-  }) || []
+  // Reactive clock — updates every 60 seconds so activeSchedules stays fresh
+  const [currentTime, setCurrentTime] = useState(() => new Date())
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60_000)
+    return () => clearInterval(timer)
+  }, [])
+
+  // Calculate active schedules (recomputes when currentTime ticks)
+  const activeSchedules = useMemo(() => {
+    if (!metadata?.scheduleToday) return []
+    return metadata.scheduleToday.filter(s => {
+      if (!s.startTime || !s.endTime) return false // Guard: skip schedules without times
+      const [startHr, startMin] = s.startTime.split(':').map(Number)
+      const [endHr, endMin] = s.endTime.split(':').map(Number)
+      if (isNaN(startHr) || isNaN(startMin) || isNaN(endHr) || isNaN(endMin)) return false
+      const startTotal = startHr * 60 + startMin
+      const endTotal = (endHr * 60 + endMin) + 60 // Toleransi 60 menit
+      const nowTotal = currentTime.getHours() * 60 + currentTime.getMinutes()
+      return nowTotal >= startTotal && nowTotal <= endTotal
+    })
+  }, [metadata?.scheduleToday, currentTime])
 
   useEffect(() => {
     if (!tenantId) return

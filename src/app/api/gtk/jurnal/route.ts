@@ -19,8 +19,20 @@ export async function POST(req: Request) {
     const { error: accessError } = await requireTenantMembership(tenantId)
     if (accessError) return accessError
 
+    // Ambil timezone sekolah dari settings tenant
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } })
+    const settings = (tenant?.settings as Record<string, any>) || {}
+    const tz = settings.timezone || settings.attendance?.timezone || "Asia/Jakarta"
+
     // Validasi Schedule Aktif
-    const dayOfWeek = new Date().getDay()
+    // Gunakan timezone sekolah untuk menentukan hari dan jam saat ini
+    const nowLocal = new Date().toLocaleString("en-US", { timeZone: tz })
+    const localDate = new Date(nowLocal)
+    const dayOfWeek = localDate.getDay()
+    const currentHour = localDate.getHours()
+    const currentMinute = localDate.getMinutes()
+    const currentTotalMinutes = currentHour * 60 + currentMinute
+
     const schedule = await db.schedule.findFirst({
       where: {
         tenantId,
@@ -35,16 +47,17 @@ export async function POST(req: Request) {
       return new NextResponse("Jadwal mengajar tidak ditemukan untuk kelas dan mata pelajaran ini pada hari ini.", { status: 403 })
     }
 
-    // Validasi Waktu
-    const now = new Date()
+    // Validasi Waktu menggunakan perbandingan menit total (menghindari overflow)
     const [startHr, startMin] = schedule.startTime.split(':').map(Number)
     const [endHr, endMin] = schedule.endTime.split(':').map(Number)
-    
-    const start = new Date(); start.setHours(startHr, startMin, 0, 0)
-    const end = new Date(); end.setHours(endHr, endMin + 60, 0, 0) // Toleransi 60 menit
+    const startTotalMinutes = startHr * 60 + startMin
+    const endTotalMinutes = (endHr * 60 + endMin) + 60 // Toleransi 60 menit
 
-    if (now < start || now > end) {
-      return new NextResponse("Di luar jam mengajar. Anda hanya dapat mengisi jurnal saat jadwal mengajar Anda sedang berlangsung (termasuk toleransi 60 menit).", { status: 403 })
+    if (currentTotalMinutes < startTotalMinutes || currentTotalMinutes > endTotalMinutes) {
+      return new NextResponse(
+        `Di luar jam mengajar. Jurnal hanya dapat diisi saat jadwal mengajar berlangsung (termasuk toleransi 60 menit). Waktu lokal Anda saat ini: ${String(currentHour).padStart(2,'0')}:${String(currentMinute).padStart(2,'0')}, jadwal: ${schedule.startTime} - ${schedule.endTime}.`,
+        { status: 403 }
+      )
     }
 
     // Gunakan transaksi untuk memastikan Jurnal dan Presensi tersimpan semua atau tidak sama sekali

@@ -53,6 +53,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
   const totalViews = (event.viewCount || 0) + redisViews
 
   const tz = (tenant.settings as any)?.timezone || (tenant.settings as any)?.attendance?.timezone || "Asia/Jakarta"
+  const tzLabel = tz === "Asia/Makassar" || tz === "Asia/Pontianak" ? "WITA" : tz === "Asia/Jayapura" ? "WIT" : "WIB"
 
   return (
     <div className="bg-background min-h-screen pb-16">
@@ -104,7 +105,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                 <Clock className="h-4 w-4" />
-                {formatInTimeZone(new Date(event.startDate), tz, "HH:mm")} - {formatInTimeZone(new Date(event.endDate || event.startDate), tz, "HH:mm")} WIB
+                {formatInTimeZone(new Date(event.startDate), tz, "HH:mm")} - {formatInTimeZone(new Date(event.endDate || event.startDate), tz, "HH:mm")} {tzLabel}
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                 <MapPin className="h-4 w-4" />
