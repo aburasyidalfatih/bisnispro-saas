@@ -107,7 +107,7 @@ export default async function AgendaPage({ params }: { params: Promise<{ slug: s
                   <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors">{event.title}</h3>
                   <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-muted-foreground mb-6 font-medium">
                      <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg">
-                        <Clock className="h-4 w-4 text-primary" /> {event.time || "08.00 - Selesai"}
+                        <Clock className="h-4 w-4 text-primary" /> {formatInTimeZone(new Date(event.startDate), tz, 'HH.mm')} - {formatInTimeZone(new Date(event.endDate || event.startDate), tz, 'HH.mm')}
                      </div>
                      <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg">
                         <MapPin className="h-4 w-4 text-primary" /> {event.location || "Area Sekolah"}

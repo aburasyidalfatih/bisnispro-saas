@@ -13,6 +13,7 @@ import { getPublicBasePath } from "@/lib/utils/public-path"
 import Link from "next/link"
 import { Calendar, ArrowLeft, Clock, MapPin, User } from "lucide-react"
 import { format } from "date-fns"
+import { formatInTimeZone } from "date-fns-tz"
 import { id as idLocale } from "date-fns/locale"
 import { ShareButtons } from "../../berita/[id]/_components/share-buttons"
 import { EventViewCounter } from "./_components/view-counter"
@@ -50,6 +51,8 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
   
   const redisViews = await getEventViews(id)
   const totalViews = (event.viewCount || 0) + redisViews
+
+  const tz = (tenant.settings as any)?.timezone || (tenant.settings as any)?.attendance?.timezone || "Asia/Jakarta"
 
   return (
     <div className="bg-background min-h-screen pb-16">
@@ -101,7 +104,7 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                 <Clock className="h-4 w-4" />
-                {format(new Date(event.startDate), "HH:mm")} WIB
+                {formatInTimeZone(new Date(event.startDate), tz, "HH:mm")} - {formatInTimeZone(new Date(event.endDate || event.startDate), tz, "HH:mm")} WIB
              </div>
              <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
                 <MapPin className="h-4 w-4" />
@@ -121,13 +124,13 @@ export default async function AgendaDetailPage({ params }: { params: Promise<{ s
           {/* Date Card */}
           <div className="bg-muted rounded-3xl p-6 text-center border border-border/50 shadow-sm flex flex-col justify-center">
              <div className="text-primary font-bold uppercase tracking-widest text-xs mb-1">
-                {format(new Date(event.startDate), "MMMM", { locale: idLocale })}
+                {formatInTimeZone(new Date(event.startDate), tz, "MMMM", { locale: idLocale })}
              </div>
              <div className="text-5xl font-black text-foreground leading-none mb-1">
-                {format(new Date(event.startDate), "dd")}
+                {formatInTimeZone(new Date(event.startDate), tz, "dd")}
              </div>
              <div className="text-muted-foreground font-medium text-sm">
-                {format(new Date(event.startDate), "yyyy")}
+                {formatInTimeZone(new Date(event.startDate), tz, "yyyy")}
              </div>
           </div>
           
