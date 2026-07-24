@@ -66,7 +66,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
           <DialogHeader>
             <DialogTitle>Kirim Feedback</DialogTitle>
             <DialogDescription>
-              Laporkan bug, ajukan permintaan fitur, atau kirimkan testimoni Anda untuk membantu kami meningkatkan platform SchoolPro.
+              Laporkan bug, ajukan permintaan fitur, atau kirimkan testimoni Anda untuk membantu kami meningkatkan platform BisnisPro.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

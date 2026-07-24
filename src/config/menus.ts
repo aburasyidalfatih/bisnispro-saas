@@ -108,6 +108,7 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
         { label: "Agenda/Event", href: `${basePath}/website/events`, icon: Calendar },
         { label: "Galeri", href: `${basePath}/website/gallery`, icon: ImageIcon },
         { label: "Partner & Klien", href: `${basePath}/website/partners`, icon: Building2 },
+        { label: "Kantor Cabang", href: `${basePath}/website/offices`, icon: Store },
         { label: "FAQ", href: `${basePath}/website/faq`, icon: HelpCircle },
         { label: "Halaman Custom", href: `${basePath}/website/pages`, icon: LayoutTemplate },
         { label: "Dokumen/Download", href: `${basePath}/website/documents`, icon: Download },
@@ -175,17 +176,17 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
       title: "Platform",
       items: [
         {
-          label: "Lembaga",
+          label: "Bisnis",
           href: "/super-admin/tenants",
           icon: Building2,
           children: [
-            { label: "Semua Lembaga", href: "/super-admin/tenants", icon: Globe },
+            { label: "Semua Bisnis", href: "/super-admin/tenants", icon: Globe },
             { label: "Paket & Harga", href: "/super-admin/tenants/plans", icon: Tag },
             { label: "Paket Token AI", href: "/super-admin/tenants/ai-packages", icon: Zap },
             { label: "Kode Diskon", href: "/super-admin/tenants/discounts", icon: Tag },
-            { label: "Pengajuan Sekolah", href: "/super-admin/applications", icon: FileText },
-            { label: "Sekolah Dormant", href: "/super-admin/dormant", icon: Moon },
-            { label: "Retensi Lembaga", href: "/super-admin/retention", icon: Megaphone },
+            { label: "Pengajuan Perusahaan", href: "/super-admin/applications", icon: FileText },
+            { label: "Perusahaan Dormant", href: "/super-admin/dormant", icon: Moon },
+            { label: "Retensi Bisnis", href: "/super-admin/retention", icon: Megaphone },
           ],
         },
         {
@@ -268,7 +269,7 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
       title: "Academy (LMS)",
       items: [
         {
-          label: "Manajemen Kelas",
+          label: "Manajemen Divisi",
           href: "/super-admin/academy",
           icon: GraduationCap,
         },

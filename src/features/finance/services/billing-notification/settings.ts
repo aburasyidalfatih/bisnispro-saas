@@ -84,11 +84,11 @@ export async function getBillingSettings(): Promise<BillingSettingsDTO> {
   const map: Record<string, string> = {}
   settings.forEach(s => { if (s.value) map[s.key] = s.value })
   return {
-    platformName: map.platform_name || "SchoolPro",
-    rootDomain: map.NEXT_PUBLIC_ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id",
+    platformName: map.platform_name || "BisnisPro",
+    rootDomain: map.NEXT_PUBLIC_ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id",
     bankName: map.MANUAL_PAYMENT_BANK || "Bank BCA",
     bankNumber: map.MANUAL_PAYMENT_NUMBER || "-",
-    bankAccountName: map.MANUAL_PAYMENT_NAME || "PT SchoolPro Indonesia",
+    bankAccountName: map.MANUAL_PAYMENT_NAME || "PT BisnisPro Indonesia",
     adminWA: map.MANUAL_PAYMENT_WA || "-",
     tplInvoiceCreated: map.WA_TEMPLATE_INVOICE_CREATED || "",
     tplPaymentConfirmed: map.WA_TEMPLATE_PAYMENT_CONFIRMED || "",

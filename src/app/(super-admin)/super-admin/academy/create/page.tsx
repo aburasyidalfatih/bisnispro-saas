@@ -51,7 +51,7 @@ export default function CreateCoursePage() {
       const data = await res.json()
 
       if (res.ok) {
-        toast({ title: "Berhasil", description: "Kelas baru berhasil dibuat" })
+        toast({ title: "Berhasil", description: "Divisi baru berhasil dibuat" })
         router.push("/super-admin/academy")
       } else {
         toast({ title: "Gagal", description: data.error || "Terjadi kesalahan", variant: "destructive" })
@@ -72,23 +72,23 @@ export default function CreateCoursePage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Buat Kelas Baru</h1>
-          <p className="text-muted-foreground text-sm">Tambahkan materi kursus baru untuk Admin Lembaga</p>
+          <h1 className="text-2xl font-bold tracking-tight">Buat Divisi Baru</h1>
+          <p className="text-muted-foreground text-sm">Tambahkan materi kursus baru untuk Admin Bisnis</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit}>
         <Card className="glass border-0 shadow-xl rounded-2xl overflow-hidden">
           <CardHeader className="bg-muted/30 border-b">
-            <CardTitle className="text-lg">Informasi Dasar Kelas</CardTitle>
+            <CardTitle className="text-lg">Informasi Dasar Divisi</CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="title">Judul Kelas</Label>
+                <Label htmlFor="title">Judul Divisi</Label>
                 <Input
                   id="title"
-                  placeholder="Contoh: Digital Marketing untuk Sekolah"
+                  placeholder="Contoh: Digital Marketing untuk Perusahaan"
                   value={formData.title}
                   onChange={handleTitleChange}
                   required
@@ -100,7 +100,7 @@ export default function CreateCoursePage() {
                 <Label htmlFor="slug">Slug URL</Label>
                 <Input
                   id="slug"
-                  placeholder="digital-marketing-sekolah"
+                  placeholder="digital-marketing-perusahaan"
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: generateSlug(e.target.value) })}
                   required
@@ -119,7 +119,7 @@ export default function CreateCoursePage() {
                   className="rounded-xl bg-background/50"
                   min="0"
                 />
-                <p className="text-[10px] text-muted-foreground">Isi 0 jika kelas ini gratis.</p>
+                <p className="text-[10px] text-muted-foreground">Isi 0 jika divisi ini gratis.</p>
               </div>
 
               <div className="space-y-2 sm:col-span-2">
@@ -146,9 +146,9 @@ export default function CreateCoursePage() {
 
               <div className="flex items-center justify-between sm:col-span-2 p-4 rounded-xl border bg-muted/20">
                 <div className="space-y-0.5">
-                  <Label>Publikasikan Kelas</Label>
+                  <Label>Publikasikan Divisi</Label>
                   <p className="text-[11px] text-muted-foreground">
-                    Jika tidak diaktifkan, kelas akan tersimpan sebagai draft dan tidak terlihat oleh Tenant.
+                    Jika tidak diaktifkan, divisi akan tersimpan sebagai draft dan tidak terlihat oleh Tenant.
                   </p>
                 </div>
                 <Switch
@@ -164,7 +164,7 @@ export default function CreateCoursePage() {
               </Link>
               <Button type="submit" disabled={loading} className="rounded-xl gap-2 px-6">
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                Simpan Kelas
+                Simpan Divisi
               </Button>
             </div>
           </CardContent>

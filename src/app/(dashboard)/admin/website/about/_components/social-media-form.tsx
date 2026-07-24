@@ -20,7 +20,7 @@ export function SocialMediaForm({ form, setForm }: SocialMediaFormProps) {
           </div>
           <div>
             <CardTitle className="text-lg">Media Sosial</CardTitle>
-            <CardDescription>Tautan ke akun media sosial lembaga</CardDescription>
+            <CardDescription>Tautan ke akun media sosial bisnis</CardDescription>
           </div>
         </div>
       </CardHeader>

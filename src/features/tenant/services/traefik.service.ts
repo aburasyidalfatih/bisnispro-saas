@@ -8,11 +8,11 @@ import { logger } from "@/lib/logger"
 const TRAEFIK_DYNAMIC_DIR = process.env.TRAEFIK_DYNAMIC_DIR || "/app/traefik-dynamic"
 
 /**
- * Nama service Traefik (file-provider) yang didefinisikan di schoolpro.yml
+ * Nama service Traefik (file-provider) yang didefinisikan di bisnispro.yml
  * Service ini mengarah ke container produksi Next.js.
- * Untuk dev, override via env: TRAEFIK_TARGET_SERVICE=schoolpro-dev
+ * Untuk dev, override via env: TRAEFIK_TARGET_SERVICE=bisnispro-dev
  */
-const TRAEFIK_TARGET_SERVICE = process.env.TRAEFIK_TARGET_SERVICE || "schoolpro-prod"
+const TRAEFIK_TARGET_SERVICE = process.env.TRAEFIK_TARGET_SERVICE || "bisnispro-prod"
 
 /**
  * Membuat file YAML untuk Traefik Dynamic Configuration.

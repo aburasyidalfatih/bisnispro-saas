@@ -207,6 +207,9 @@ export default async function middleware(request: NextRequest) {
   }
   
   let rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
+  // Hapus port dari rootDomain untuk memastikan pencocokan akurat (sama seperti hostname)
+  rootDomain = rootDomain.split(':')[0]
+  
   if (hostname.endsWith("bisnispro.my.id") || hostname === "bisnispro.my.id") {
     rootDomain = "bisnispro.my.id"
   } else if (hostname.endsWith("bisnispro.id") || hostname === "bisnispro.id") {
@@ -226,6 +229,11 @@ export default async function middleware(request: NextRequest) {
 
   const isSubdomain = !isMainDomain && subdomain !== "" && subdomain !== "www"
   const isCustomDomain = !isMainDomain && !isSubdomain
+
+  // Bypass middleware rewrite for API routes so NextAuth and other APIs work on subdomains
+  if ((isSubdomain || isCustomDomain) && pathname.startsWith("/api/")) {
+    return NextResponse.next()
+  }
 
   let resolvedCustomSlug: string | null = null;
   if (isCustomDomain) {

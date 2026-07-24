@@ -71,7 +71,7 @@ export function PaymentTab({ form, setForm, handleSaveBatch, saving }: PaymentTa
           <p>API platform digunakan untuk tagihan otomatis upgrade paket langganan tenant.</p>
           <div className="rounded-xl bg-muted/50 p-4 space-y-2">
             <p className="font-semibold text-foreground">URL Callback / IPN:</p>
-            <code className="block bg-muted p-2 rounded-lg text-xs break-all">https://schoolpro.id/api/payment/callback</code>
+            <code className="block bg-muted p-2 rounded-lg text-xs break-all">https://bisnispro.id/api/payment/callback</code>
             <p className="text-[10px]">Daftarkan URL ini di dashboard Tripay Anda.</p>
           </div>
         </CardContent>
@@ -97,7 +97,7 @@ export function PaymentTab({ form, setForm, handleSaveBatch, saving }: PaymentTa
             </div>
             <div className="space-y-2">
               <Label>Atas Nama (Pemilik)</Label>
-              <Input value={form.MANUAL_PAYMENT_NAME} onChange={e => setForm({...form, MANUAL_PAYMENT_NAME: e.target.value})} placeholder="PT SchoolPro Indonesia" className="rounded-xl" />
+              <Input value={form.MANUAL_PAYMENT_NAME} onChange={e => setForm({...form, MANUAL_PAYMENT_NAME: e.target.value})} placeholder="PT BisnisPro Indonesia" className="rounded-xl" />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">

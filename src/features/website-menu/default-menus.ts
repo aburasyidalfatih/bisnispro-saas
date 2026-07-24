@@ -13,15 +13,15 @@ type DefaultWebsiteMenuItem = {
 export const DEFAULT_WEBSITE_MENU_TREE: DefaultWebsiteMenuItem[] = [
   { label: "Beranda", url: "/", order: 0, isSystem: true },
   {
-    label: "Profil Sekolah",
+    label: "Profil Perusahaan",
     url: "/profil",
     order: 1,
     children: [
-      { label: "Profil Lembaga", url: "/profil", order: 0 },
-      { label: "Guru & Staf (GTK)", url: "/gtk", order: 1 },
-      { label: "Fasilitas Sekolah", url: "/fasilitas", order: 2 },
+      { label: "Profil Bisnis", url: "/profil", order: 0 },
+      { label: "Staf & Staf (GTK)", url: "/gtk", order: 1 },
+      { label: "Aset Perusahaan", url: "/aset", order: 2 },
       { label: "Program Unggulan", url: "/program", order: 3 },
-      { label: "Ekstrakurikuler", url: "/ekstrakurikuler", order: 4 },
+      { label: "Aset Ekstra", url: "/aset ekstra", order: 4 },
     ],
   },
   {
@@ -42,7 +42,7 @@ export const DEFAULT_WEBSITE_MENU_TREE: DefaultWebsiteMenuItem[] = [
     children: [
       { label: "Galeri Foto", url: "/gallery", order: 0 },
       { label: "Prestasi", url: "/prestasi", order: 1 },
-      { label: "Alumni Success", url: "/alumni", order: 2 },
+      { label: "Mitra Success", url: "/mitra", order: 2 },
     ],
   },
   { label: "Kontak", url: "/contact", order: 4 },

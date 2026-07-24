@@ -93,10 +93,10 @@ export default function LoginPage({
           }
         } else {
           const role = session?.user?.tenants?.[0]?.role
-          if (role === "guru") {
+          if (role === "staf") {
             router.push("/panel-gtk")
-          } else if (role === "siswa") {
-            router.push("/siswa")
+          } else if (role === "klien") {
+            router.push("/klien")
           } else if (role === "orangtua") {
             router.push("/ortu")
           } else {
@@ -120,10 +120,10 @@ export default function LoginPage({
         <div className="glass rounded-3xl p-8 md:p-10 shadow-2xl">
           <div className="flex flex-col items-center mb-8 text-center">
             {isMainDomain ? (
-              <Image src={normalizeImageUrl(platformLogo) || "/logo-schoolpro.png"} alt="SchoolPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
+              <Image src={normalizeImageUrl(platformLogo) || "/logo-bisnispro.png"} alt="BisnisPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
             ) : (
               platformLogo ? (
-                <Image src={normalizeImageUrl(platformLogo) || "/logo-schoolpro.png"} alt={tenantNameDisplay || "Logo Tenant"} width={160} height={80} className="h-20 w-auto mb-4 object-contain" priority />
+                <Image src={normalizeImageUrl(platformLogo) || "/logo-bisnispro.png"} alt={tenantNameDisplay || "Logo Tenant"} width={160} height={80} className="h-20 w-auto mb-4 object-contain" priority />
               ) : (
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
                   {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "S"}
@@ -133,8 +133,8 @@ export default function LoginPage({
             <h1 className="text-2xl font-bold tracking-tight">Selamat datang</h1>
             <p className="text-sm text-muted-foreground mt-1">
               {isMainDomain 
-                ? "Masuk ke akun SchoolPro Anda" 
-                : `Masuk ke sistem informasi ${tenantNameDisplay || 'sekolah'}`}
+                ? "Masuk ke akun BisnisPro Anda" 
+                : `Masuk ke sistem informasi ${tenantNameDisplay || 'perusahaan'}`}
             </p>
           </div>
 
@@ -216,7 +216,7 @@ export default function LoginPage({
             </div>
           )}
         </div>
-        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "SchoolPro" : "Sistem Informasi Sekolah")}</p>
+        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "BisnisPro" : "Sistem Informasi Perusahaan")}</p>
       </div>
     </div>
   )

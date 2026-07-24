@@ -28,7 +28,7 @@ export default function AnalyticsPage() {
       <div>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Analitik Platform</h1>
         <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
-          Pantau aktivitas real-time, konten, dan pertumbuhan seluruh lembaga di platform.
+          Pantau aktivitas real-time, konten, dan pertumbuhan seluruh bisnis di platform.
         </p>
       </div>
 

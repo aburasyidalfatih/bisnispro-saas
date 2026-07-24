@@ -134,7 +134,7 @@ export function AiPackagesList() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <p className="text-muted-foreground text-sm">
-          Kelola paket *Top-Up* Token AI yang bisa dibeli oleh sekolah secara terpisah.
+          Kelola paket *Top-Up* Token AI yang bisa dibeli oleh perusahaan secara terpisah.
         </p>
         <Button onClick={openCreate} className="btn-gradient text-white border-0 rounded-xl gap-2 h-10 shadow-lg shadow-primary/20 flex items-center justify-center">
           <Plus className="h-4 w-4" /> Tambah Paket

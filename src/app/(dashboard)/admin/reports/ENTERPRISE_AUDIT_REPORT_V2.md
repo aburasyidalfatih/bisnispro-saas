@@ -1,7 +1,7 @@
-# Laporan Audit Arsitektur Skala Enterprise: SchoolPro SaaS (FINAL 10/10)
+# Laporan Audit Arsitektur Skala Enterprise: BisnisPro SaaS (FINAL 10/10)
 
 > [!NOTE]
-> Laporan ini merupakan audit final setelah menyelesaikan Peta Jalan Skalabilitas Enterprise. SchoolPro SaaS secara resmi siap beroperasi untuk skala **puluhan ribu sekolah**.
+> Laporan ini merupakan audit final setelah menyelesaikan Peta Jalan Skalabilitas Enterprise. BisnisPro SaaS secara resmi siap beroperasi untuk skala **puluhan ribu perusahaan**.
 
 ## 1. Executive Summary (Ringkasan Eksekutif)
 
@@ -17,7 +17,7 @@
 
 | Kategori | Temuan Saat Ini | Tingkat Risiko | Dampak Skalabilitas |
 | :--- | :--- | :--- | :--- |
-| **Hyper-Tenant Isolation & RLS** | ✅ **SEMPURNA:** Telah dimigrasi ke **PostgreSQL RLS** via konfigurasi `set_config('app.current_tenant')` di Prisma Client. Isolasi dikawal ketat oleh *database engine*. | Aman | Tidak akan ada kebocoran data antar sekolah, meskipun *developer* melakukan kesalahan penulisan kueri ORM. |
+| **Hyper-Tenant Isolation & RLS** | ✅ **SEMPURNA:** Telah dimigrasi ke **PostgreSQL RLS** via konfigurasi `set_config('app.current_tenant')` di Prisma Client. Isolasi dikawal ketat oleh *database engine*. | Aman | Tidak akan ada kebocoran data antar perusahaan, meskipun *developer* melakukan kesalahan penulisan kueri ORM. |
 | **Connection Pooling & Caching** | ✅ **SEMPURNA:** Menggunakan ekstensi `@prisma/extension-accelerate`. Kueri otomatis di-*pool* dan bisa di-*cache* secara global. | Aman | *Database* tidak akan mengalami *Connection Timeout* di masa puncak seperti PPDB atau pembagian rapor. |
 | **Background Processing** | ✅ **SEMPURNA:** Seluruh proses berat (Impor CSV, WA Queue, Mass Billing, Gamifikasi) menggunakan **BullMQ + Redis Worker** yang asinkron. | Aman | Aplikasi utama (Dashboard) tetap sangat responsif. Beban kerja dialihkan dengan *concurrency control*. |
 | **Rate Limiting & Security** | ✅ **SEMPURNA:** Middleware Next.js menggunakan `@upstash/redis` untuk proteksi *DDoS* dan *Brute Force* sebelum menembus lapisan Node.js API. | Aman | Tagihan VPS & Redis aman. Penyerang (*bot*) otomatis di-*block* di *Edge Network* dengan respons 429. |
@@ -28,7 +28,7 @@
 ## 3. Deep Dive & Eksekusi yang Telah Selesai
 
 ### Eksekusi 1: Isolasi Data Tingkat Database (Tenant Data Leakage)
-Sistem sekarang tidak lagi hanya mengandalkan ORM untuk memisahkan data ribuan sekolah. Standar SaaS Enterprise mensyaratkan *Database-level Isolation*, dan kita telah mengimplementasikan PostgreSQL RLS.
+Sistem sekarang tidak lagi hanya mengandalkan ORM untuk memisahkan data ribuan perusahaan. Standar SaaS Enterprise mensyaratkan *Database-level Isolation*, dan kita telah mengimplementasikan PostgreSQL RLS.
 
 **After (Enterprise RLS Approach):**
 ```typescript
@@ -57,6 +57,6 @@ Pekerjaan *Engineering* ke depannya dapat 100% difokuskan pada **Pembuatan Fitur
 ## 5. Conclusion (Kesimpulan Penutup)
 
 **Keputusan: GO ALL OUT (100% Aman & Stabil)**
-Arsitektur SchoolPro SaaS saat ini sudah setara dengan standar perusahaan teknologi unicorn. Dengan perpaduan *App Router Edge Middleware*, *Prisma Accelerate*, *BullMQ Redis Queue*, dan *PostgreSQL Row Level Security*, platform ini kebal terhadap *Event Loop Blocking*, *Connection Timeout*, *Data Leaks*, maupun serangan *DDoS*. 
+Arsitektur BisnisPro SaaS saat ini sudah setara dengan standar perusahaan teknologi unicorn. Dengan perpaduan *App Router Edge Middleware*, *Prisma Accelerate*, *BullMQ Redis Queue*, dan *PostgreSQL Row Level Security*, platform ini kebal terhadap *Event Loop Blocking*, *Connection Timeout*, *Data Leaks*, maupun serangan *DDoS*. 
 
-Anda siap menginvasi pasar sekolah seluruh Indonesia! 🚀
+Anda siap menginvasi pasar perusahaan seluruh Indonesia! 🚀

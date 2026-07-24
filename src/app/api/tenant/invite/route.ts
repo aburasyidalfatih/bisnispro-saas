@@ -52,11 +52,11 @@ export async function POST(req: Request) {
 
     await sendEmail(
       email,
-      `Undangan bergabung ke ${tenant?.name} — SchoolPro`,
+      `Undangan bergabung ke ${tenant?.name} — BisnisPro`,
       `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
           <h2 style="margin: 0;">📩 Undangan Bergabung</h2>
-          <p style="margin: 4px 0 0; opacity: 0.9;">${tenant?.name || "SchoolPro"}</p>
+          <p style="margin: 4px 0 0; opacity: 0.9;">${tenant?.name || "BisnisPro"}</p>
         </div>
         <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
           <p>Halo,</p>
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
           <p style="color: #64748b; font-size: 13px;">Undangan ini berlaku selama 7 hari. Jika Anda tidak merasa mengajukan ini, abaikan email ini.</p>
         </div>
         <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
-          SchoolPro — Platform Edukasi Terintegrasi
+          BisnisPro — Platform Edukasi Terintegrasi
         </div>
       </div>`
     ).catch(() => {})

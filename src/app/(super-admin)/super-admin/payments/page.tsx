@@ -220,10 +220,10 @@ export default function PaymentsPage() {
               <TableHeader>
                 <TableRow className="border-b border-border/50 text-muted-foreground font-medium">
                   <TableHead className="text-left py-3 px-2">ID Referensi</TableHead>
-                  <TableHead className="text-left py-3 px-2">Lembaga</TableHead>
+                  <TableHead className="text-left py-3 px-2">Bisnis</TableHead>
                   <TableHead className="text-left py-3 px-2">Paket</TableHead>
                   <TableHead className="text-left py-3 px-2">Nominal</TableHead>
-                  <TableHead className="text-left py-3 px-2">Siswa</TableHead>
+                  <TableHead className="text-left py-3 px-2">Klien</TableHead>
                   <TableHead className="text-left py-3 px-2">Kupon</TableHead>
                   <TableHead className="text-left py-3 px-2">Status</TableHead>
                   <TableHead className="text-left py-3 px-2">Tanggal</TableHead>
@@ -253,7 +253,7 @@ export default function PaymentsPage() {
                       <TableCell className="py-4 px-2 font-bold text-primary">Rp {p.amount.toLocaleString("id-ID")}</TableCell>
                       <TableCell className="py-4 px-2 text-xs text-muted-foreground">
                         <div className="flex flex-col gap-1">
-                          <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}</span>
+                          <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} klien` : "—"}</span>
                           {p.method && <Badge variant="outline" className="text-[9px] uppercase px-1.5 py-0.5 rounded-sm w-fit bg-muted/50">{p.method}</Badge>}
                         </div>
                       </TableCell>
@@ -327,7 +327,7 @@ export default function PaymentsPage() {
               <div className="divide-y divide-border/40">
                 {filteredPayments.map((p) => (
                   <div key={p.id} className={cn("p-4 space-y-3", p.status === "pending" && "bg-amber-500/3")}>
-                    {/* Row 1: Lembaga + Status */}
+                    {/* Row 1: Bisnis + Status */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
@@ -355,7 +355,7 @@ export default function PaymentsPage() {
                             <span>·</span>
                           </>
                         )}
-                        <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} siswa` : "—"}</span>
+                        <span>{(p.metadata as any)?.studentCount ? `${(p.metadata as any).studentCount} klien` : "—"}</span>
                         <span>·</span>
                         <span>{new Date(p.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</span>
                       </div>

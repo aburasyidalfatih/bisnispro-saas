@@ -169,7 +169,7 @@ export default function AdsAnalyticsPage() {
         <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
           <Megaphone className="h-5 sm:h-6 w-5 sm:w-6 text-blue-500" /> Analisa Meta Ads
         </h1>
-        <p className="text-muted-foreground text-xs sm:text-sm mt-1">Kelola dan analisa kampanye iklan Facebook & Instagram langsung dari SchoolPro.</p>
+        <p className="text-muted-foreground text-xs sm:text-sm mt-1">Kelola dan analisa kampanye iklan Facebook & Instagram langsung dari BisnisPro.</p>
       </div>
 
       <AdsConnection 

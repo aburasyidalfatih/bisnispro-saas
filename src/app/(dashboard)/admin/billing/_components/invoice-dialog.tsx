@@ -52,7 +52,7 @@ export function InvoiceDialog({
         <div className="px-6 py-5 space-y-4 -mt-4 bg-card rounded-t-2xl">
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Nama Sekolah</span>
+              <span className="text-muted-foreground">Nama Perusahaan</span>
               <span className="font-semibold">{invoice?.tenantName}</span>
             </div>
             {invoice?.aiTokens ? (
@@ -65,11 +65,11 @@ export function InvoiceDialog({
                 {(invoice?.studentCount || 0) > 0 ? (
                   <>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Jumlah Siswa</span>
-                      <span className="font-semibold">{invoice?.studentCount} siswa</span>
+                      <span className="text-muted-foreground">Jumlah Klien</span>
+                      <span className="font-semibold">{invoice?.studentCount} klien</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Harga per Siswa</span>
+                      <span className="text-muted-foreground">Harga per Klien</span>
                       <span className="font-semibold">Rp {Number(invoice?.pricePerStudent || 0).toLocaleString("id-ID")}</span>
                     </div>
                   </>

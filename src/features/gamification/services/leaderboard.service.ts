@@ -193,8 +193,8 @@ export async function processLeaderboardSync() {
     if (newRank < oldRank) {
       // 📈 NAIK PERINGKAT
       if (newRank <= 3) {
-        title = `🏆 WOW! Sekolah Anda masuk Top 3!`
-        message = `Selamat! Website ${score.tenantName} naik dari peringkat #${oldRank} ke #${newRank} dari ${totalParticipants} sekolah! Terus pertahankan!`
+        title = `🏆 WOW! Perusahaan Anda masuk Top 3!`
+        message = `Selamat! Website ${score.tenantName} naik dari peringkat #${oldRank} ke #${newRank} dari ${totalParticipants} perusahaan! Terus pertahankan!`
         type = "success"
       } else {
         title = `📈 Peringkat Naik ke #${newRank}!`

@@ -76,7 +76,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: campaignsData.error.message }, { status: 400 })
     }
 
-    // 3. Fetch internal SchoolPro data (last 7 days)
+    // 3. Fetch internal BisnisPro data (last 7 days)
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
@@ -125,7 +125,7 @@ export async function POST(req: Request) {
           platform: d.publisher_platform, clicks: d.clicks, spend: d.spend, impressions: d.impressions,
         })),
       },
-      schoolpro_internal: {
+      bisnispro_internal: {
         total_tenants: totalTenants,
         weekly_registrations: weeklyRegistrations,
         weekly_approved: weeklyApproved,
@@ -140,15 +140,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: aiResult.error }, { status: 500 })
     }
 
-    const prompt = `Kamu adalah seorang Digital Marketing Expert, Copywriter, dan Data Analyst profesional untuk platform SaaS bernama SchoolPro (platform manajemen sekolah berbasis web untuk SD, SMP, SMA, dan SMK di Indonesia).
+    const prompt = `Kamu adalah seorang Digital Marketing Expert, Copywriter, dan Data Analyst profesional untuk platform SaaS bernama BisnisPro (platform manajemen perusahaan berbasis web untuk SD, SMP, SMA, dan SMK di Indonesia).
 
-SchoolPro menawarkan:
-- Website sekolah profesional
+BisnisPro menawarkan:
+- Website perusahaan profesional
 - Sistem akademik (absensi, nilai, rapor)  
-- Keuangan sekolah (SPP, pembayaran online)
+- Keuangan perusahaan (SPP, pembayaran online)
 - PPDB Online
-- Paket: Free (gratis), Lite (Rp 500/siswa/bulan), Pro (Rp 1.000/siswa/bulan)
-- Target: Kepala Sekolah, Operator Sekolah, Yayasan Pendidikan
+- Paket: Free (gratis), Lite (Rp 500/klien/bulan), Pro (Rp 1.000/klien/bulan)
+- Target: Kepala Perusahaan, Operator Perusahaan, Yayasan Pendidikan
 
 Analisa data iklan Meta Ads dan data internal berikut secara mendalam. Tujuan utama: **BIAYA SEMINIMAL MUNGKIN, HASIL SEMAKSIMAL MUNGKIN**.
 
@@ -196,21 +196,21 @@ Berdasarkan data demografi dan kampanye terbaik, buat 5 variasi ad copy yang opt
 ### Variasi 1: Pain Point
 - **Headline (max 40 karakter):** [Menyentuh masalah utama target]
 - **Primary Text (max 125 karakter):** [...]  
-- **Description:** [Paragraf 2-3 kalimat yang persuasif, menyentuh frustrasi admin sekolah yang masih manual]
+- **Description:** [Paragraf 2-3 kalimat yang persuasif, menyentuh frustrasi admin perusahaan yang masih manual]
 - **CTA Button:** [Pilih: Daftar Sekarang / Pelajari Selengkapnya / Coba Gratis]
 - **Target Audience:** [Usia, gender, interest berdasarkan data]
 
 ### Variasi 2: Social Proof / Testimoni
-- **Headline:** [Angka pengguna/sekolah yang sudah pakai]
+- **Headline:** [Angka pengguna/perusahaan yang sudah pakai]
 - **Primary Text:** [...]
-- **Description:** [Bukti sosial, berapa sekolah sudah bergabung]
+- **Description:** [Bukti sosial, berapa perusahaan sudah bergabung]
 - **CTA Button:** [...]
 - **Target Audience:** [...]
 
 ### Variasi 3: FOMO (Fear of Missing Out)
 - **Headline:** [Urgensi atau ketertinggalan]
 - **Primary Text:** [...]
-- **Description:** [Sekolah lain sudah digital, apakah Anda mau tertinggal?]
+- **Description:** [Perusahaan lain sudah digital, apakah Anda mau tertinggal?]
 - **CTA Button:** [...]
 - **Target Audience:** [...]
 
@@ -237,11 +237,11 @@ Buat 5 prompt detail untuk generate gambar iklan menggunakan AI image generator 
 **Format:** Facebook Feed (1200x628)
 
 ### Gambar 2: Cocok untuk Ad Copy Social Proof
-**Prompt:** "[Menampilkan banyak sekolah/guru yang happy menggunakan platform. Warna cerah, profesional]"
+**Prompt:** "[Menampilkan banyak perusahaan/staf yang happy menggunakan platform. Warna cerah, profesional]"
 **Format:** Instagram Feed (1080x1080)
 
 ### Gambar 3: Cocok untuk Ad Copy FOMO
-**Prompt:** "[Visual yang menunjukkan modernisasi/transformasi digital sekolah. Dramatic, eye-catching]"
+**Prompt:** "[Visual yang menunjukkan modernisasi/transformasi digital perusahaan. Dramatic, eye-catching]"
 **Format:** Instagram Story (1080x1920)
 
 ### Gambar 4: Cocok untuk Ad Copy Benefit

@@ -26,7 +26,7 @@ export async function notifySuperAdminNewInvoice(paymentId: string): Promise<voi
 
     const waMessage = `*INVOICE BARU 📋*
 
-Sekolah: ${payment.tenant.name}
+Perusahaan: ${payment.tenant.name}
 Tipe: ${type}
 Jumlah: Rp ${formatCurrency(payment.amount)}
 No. Invoice: ${payment.reference}
@@ -80,7 +80,7 @@ export async function notifySuperAdminPaymentSuccess(paymentId: string): Promise
 
     const waMessage = cfg.tplPaymentSuccessSuperAdmin
       ? renderTemplate(cfg.tplPaymentSuccessSuperAdmin, templateVars)
-      : `*PEMBAYARAN BERHASIL! 💰*\n\nHore! Pembayaran sebesar Rp ${templateVars.amount} dari sekolah ${templateVars.tenantName} telah berhasil.\n\nTipe: ${templateVars.invoiceType}\nReference: ${templateVars.reference}\n\nSilakan cek dashboard untuk detail lebih lanjut.`
+      : `*PEMBAYARAN BERHASIL! 💰*\n\nHore! Pembayaran sebesar Rp ${templateVars.amount} dari perusahaan ${templateVars.tenantName} telah berhasil.\n\nTipe: ${templateVars.invoiceType}\nReference: ${templateVars.reference}\n\nSilakan cek dashboard untuk detail lebih lanjut.`
 
     const emailHtml = `
       <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -199,7 +199,7 @@ export async function notifySuperAdminInvoiceExpired(paymentId: string): Promise
 
     const waMessage = cfg.tplInvoiceExpiredSuperAdmin
       ? renderTemplate(cfg.tplInvoiceExpiredSuperAdmin, templateVars)
-      : `*⚠️ INVOICE KEDALUWARSA*\n\nInvoice dari tenant ${templateVars.tenantName} telah kedaluwarsa dan gagal dibayar.\n\nReference: ${templateVars.reference}\nNominal: Rp ${templateVars.amount}\n\nMohon tim sales mem-follow up sekolah ini.`
+      : `*⚠️ INVOICE KEDALUWARSA*\n\nInvoice dari tenant ${templateVars.tenantName} telah kedaluwarsa dan gagal dibayar.\n\nReference: ${templateVars.reference}\nNominal: Rp ${templateVars.amount}\n\nMohon tim sales mem-follow up perusahaan ini.`
 
     const emailHtml = `
       <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">

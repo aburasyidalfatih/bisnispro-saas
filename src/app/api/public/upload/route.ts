@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "File harus diupload" }, { status: 400 })
     }
 
-    // Hanya izinkan gambar untuk upload publik (logo sekolah)
+    // Hanya izinkan gambar untuk upload publik (logo perusahaan)
     const allowedTypes = [
       "image/jpeg", "image/png", "image/webp", "image/svg+xml"
     ]

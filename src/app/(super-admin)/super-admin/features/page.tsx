@@ -25,17 +25,17 @@ interface FeatureItem {
 
 const FEATURE_LIST: FeatureItem[] = [
   // Konten & Website
-  { key: "website_content", label: "Konten Website", description: "Beranda, slider, artikel, galeri, profil sekolah, popup, dll.", icon: Globe, category: "Konten & Website" },
+  { key: "website_content", label: "Konten Website", description: "Beranda, slider, artikel, galeri, profil perusahaan, popup, dll.", icon: Globe, category: "Konten & Website" },
   { key: "scheduled_posts", label: "Jadwalkan Postingan", description: "Atur tanggal rilis artikel & berita di masa depan.", icon: CalendarCheck, category: "Konten & Website" },
   { key: "dashboard_analytics", label: "Dashboard & Analytics", description: "Akses ke dashboard utama dan grafik analitik.", icon: BarChart3, category: "Konten & Website" },
-  { key: "school_tv", label: "School TV", description: "Layar Digital Signage untuk informasi publik di lobi sekolah.", icon: MonitorSmartphone, category: "Konten & Website" },
+  { key: "school_tv", label: "School TV", description: "Layar Digital Signage untuk informasi publik di lobi perusahaan.", icon: MonitorSmartphone, category: "Konten & Website" },
   
   // Data & Manajemen
-  { key: "data_master", label: "Data Master", description: "Data admin, guru, siswa, orang tua, kelas, dan mata pelajaran.", icon: Users, category: "Data & Manajemen" },
+  { key: "data_master", label: "Data Master", description: "Data admin, staf, klien, orang tua, divisi, dan mata pelajaran.", icon: Users, category: "Data & Manajemen" },
   { key: "ppdb", label: "PPDB Online", description: "Penerimaan peserta didik baru secara online.", icon: UserPlus, category: "Data & Manajemen" },
   { key: "akademik", label: "Akademik", description: "Jadwal pelajaran, e-rapor, dan catatan perilaku (BK).", icon: GraduationCap, category: "Akademik & Kehadiran" },
-  { key: "kehadiran_guru", label: "Kehadiran Guru (GTK)", description: "Absensi guru, rekap harian/bulanan/tahunan, dan koreksi manual.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
-  { key: "kehadiran_siswa", label: "Kehadiran Siswa", description: "Sesi absensi siswa, jurnal kelas, dan pengajuan izin siswa.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
+  { key: "kehadiran_staf", label: "Kehadiran Staf (GTK)", description: "Absensi staf, rekap harian/bulanan/tahunan, dan koreksi manual.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
+  { key: "kehadiran_klien", label: "Kehadiran Klien", description: "Sesi absensi klien, jurnal divisi, dan pengajuan izin klien.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
   
   // Keuangan
   { key: "keuangan", label: "Keuangan & Kas", description: "Tagihan SPP, tabungan, cashflow, dan jenis tagihan.", icon: Wallet, category: "Keuangan" },
@@ -45,12 +45,12 @@ const FEATURE_LIST: FeatureItem[] = [
   
   // Komunikasi
   { key: "whatsapp_gateway", label: "WhatsApp Gateway", description: "Kirim notifikasi otomatis via WhatsApp.", icon: MessageSquare, category: "Komunikasi" },
-  { key: "broadcast_wa", label: "Broadcast WA", description: "Kirim pesan massal ke orang tua dan guru.", icon: Megaphone, category: "Komunikasi" },
+  { key: "broadcast_wa", label: "Broadcast WA", description: "Kirim pesan massal ke orang tua dan staf.", icon: Megaphone, category: "Komunikasi" },
   { key: "email_smtp", label: "Email SMTP", description: "Konfigurasi pengiriman email dari server sendiri.", icon: Mail, category: "Komunikasi" },
   { key: "auto_share_social", label: "Auto Share Sosial Media", description: "Bagikan artikel otomatis ke Telegram, Facebook, X, IG, & Threads.", icon: Share2, category: "Komunikasi" },
   
   // Fitur Lanjutan
-  { key: "academy", label: "Academy (LMS)", description: "Katalog kelas dan sistem pembelajaran tenant.", icon: GraduationCap, category: "Fitur Lanjutan" },
+  { key: "academy", label: "Academy (LMS)", description: "Katalog divisi dan sistem pembelajaran tenant.", icon: GraduationCap, category: "Fitur Lanjutan" },
   { key: "laporan", label: "Laporan", description: "Dashboard laporan dan ekspor data.", icon: FileText, category: "Fitur Lanjutan" },
   { key: "custom_domain", label: "Custom Domain", description: "Gunakan domain sendiri (.sch.id, dll).", icon: Globe, category: "Fitur Lanjutan" },
   { key: "ai_settings", label: "Kecerdasan Buatan (AI)", description: "Asisten AI untuk konten dan analisis.", icon: BrainCircuit, category: "Fitur Lanjutan" },

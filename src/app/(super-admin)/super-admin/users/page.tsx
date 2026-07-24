@@ -109,7 +109,7 @@ export default function UsersPage() {
               <TableRow className="border-b bg-muted/30">
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Nama & Email</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Akses Platform</TableHead>
-                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Lembaga (Tenant)</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Bisnis (Tenant)</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Bergabung</TableHead>
                 <TableHead className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">Aksi</TableHead>
               </TableRow>
@@ -183,7 +183,7 @@ export default function UsersPage() {
                             </div>
                           ))
                         ) : (
-                          <span className="text-xs text-muted-foreground italic">Tidak ada lembaga</span>
+                          <span className="text-xs text-muted-foreground italic">Tidak ada bisnis</span>
                         )}
                       </div>
                     </TableCell>

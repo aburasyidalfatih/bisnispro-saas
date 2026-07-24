@@ -6,7 +6,7 @@ import { ResetMenuButton } from"./_components/reset-menu-button"
 
 export const metadata = {
   title:"Kelola Menu Website",
-  description:"Atur navigasi utama website sekolah Anda"
+  description:"Atur navigasi utama website perusahaan Anda"
 }
 
 export default async function WebsiteMenuPage() {
@@ -24,7 +24,7 @@ export default async function WebsiteMenuPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Navigasi Website</h1>
           <p className="text-muted-foreground mt-1">
-            Atur struktur menu navigasi (header) untuk website publik sekolah Anda.
+            Atur struktur menu navigasi (header) untuk website publik perusahaan Anda.
           </p>
         </div>
         <ResetMenuButton />

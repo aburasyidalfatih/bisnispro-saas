@@ -19,7 +19,7 @@ export default function SettingsGeneralPage() {
 
   const [tenantId, setTenantId] = useState<string | null>(null)
 
-  // Role check — card Lembaga hanya untuk owner/admin
+  // Role check — card Bisnis hanya untuk owner/admin
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
   const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
   const currentRole = currentTenant?.role ||"orangtua"
@@ -166,7 +166,7 @@ export default function SettingsGeneralPage() {
     if (res.ok) {
       await updateSession({ forceRefresh: true })
       router.refresh()
-      toast({ title:"Lembaga disimpan" })
+      toast({ title:"Bisnis disimpan" })
     } else {
       const d = await res.json().catch(() => ({}))
       toast({ title:"Gagal", description: d.error, variant:"destructive" })
@@ -187,7 +187,7 @@ export default function SettingsGeneralPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Pengaturan Umum</h1>
-        <p className="text-muted-foreground mt-1">Kelola profil, lembaga, dan preferensi notifikasi.</p>
+        <p className="text-muted-foreground mt-1">Kelola profil, bisnis, dan preferensi notifikasi.</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

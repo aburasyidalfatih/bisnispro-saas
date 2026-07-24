@@ -28,7 +28,7 @@ export async function GET(req: Request) {
           <body style="font-family: sans-serif; text-align: center; padding: 50px;">
             <h1 style="color: #dc2626;">Link Verifikasi Tidak Valid</h1>
             <p>Link verifikasi ini mungkin tidak valid atau sudah pernah digunakan.</p>
-            <p>Jika sekolah Anda sudah diverifikasi, silakan langsung login. Jika belum, silakan hubungi administrator.</p>
+            <p>Jika perusahaan Anda sudah diverifikasi, silakan langsung login. Jika belum, silakan hubungi administrator.</p>
           </body>
         </html>
       `, { status: 400, headers: { 'Content-Type': 'text/html' } })
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
     return new NextResponse(`
       <html>
         <head>
-          <title>Verifikasi Email - SchoolPro</title>
+          <title>Verifikasi Email - BisnisPro</title>
           <meta name="viewport" content="width=device-width, initial-scale=1">
         </head>
         <body style="font-family: sans-serif; text-align: center; padding: 50px; background-color: #f8fafc;">
@@ -50,7 +50,7 @@ export async function GET(req: Request) {
             </div>
             <h1 style="color: #0f172a; margin-bottom: 16px; font-size: 24px;">Verifikasi Email Pendaftaran</h1>
             <p style="color: #475569; line-height: 1.6; margin-bottom: 32px; font-size: 15px;">
-              Terima kasih telah mendaftar di SchoolPro. Silakan klik tombol di bawah ini untuk memverifikasi email Anda dan mengaktifkan sistem sekolah Anda.
+              Terima kasih telah mendaftar di BisnisPro. Silakan klik tombol di bawah ini untuk memverifikasi email Anda dan mengaktifkan sistem perusahaan Anda.
             </p>
             <form method="POST" action="/api/public/verify-email?token=${token}">
               <button type="submit" style="background: #4f46e5; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; width: 100%; max-width: 300px;">
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
           <body style="font-family: sans-serif; text-align: center; padding: 50px;">
             <h1 style="color: #dc2626;">Link Verifikasi Kadaluarsa atau Tidak Valid</h1>
             <p>Link verifikasi ini mungkin sudah digunakan atau melewati batas waktu 24 jam.</p>
-            <p>Jika sekolah Anda sudah diverifikasi, silakan langsung login. Jika belum, silakan hubungi administrator.</p>
+            <p>Jika perusahaan Anda sudah diverifikasi, silakan langsung login. Jika belum, silakan hubungi administrator.</p>
           </body>
         </html>
       `, { status: 400, headers: { 'Content-Type': 'text/html' } })
@@ -114,14 +114,14 @@ export async function POST(req: Request) {
         <html>
           <body style="font-family: sans-serif; text-align: center; padding: 50px;">
             <h1 style="color: #dc2626;">Pengajuan tidak ditemukan</h1>
-            <p>Data pendaftaran sekolah Anda tidak ditemukan di sistem.</p>
+            <p>Data pendaftaran perusahaan Anda tidak ditemukan di sistem.</p>
           </body>
         </html>
       `, { status: 404, headers: { 'Content-Type': 'text/html' } })
     }
 
     if (app.status === "APPROVED") {
-      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
       return NextResponse.redirect(`https://${app.businessSlug}.${rootDomain}/login?verified=true`, 303)
     }
 
@@ -147,7 +147,7 @@ export async function POST(req: Request) {
     }
     
     // Redirect ke halaman login subdomain dengan status 303 (See Other) agar browser melakukan GET request
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
     return NextResponse.redirect(`https://${app.businessSlug}.${rootDomain}/login?verified=true`, 303)
 
   } catch (error) {

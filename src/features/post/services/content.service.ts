@@ -60,16 +60,16 @@ export async function createPost(params: {
     const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId } },
     })
-    const allowedRoles = ["owner", "admin", "teacher", "operator", "guru"]
+    const allowedRoles = ["owner", "admin", "teacher", "operator", "staf"]
     if (!tu || !allowedRoles.includes(tu.role)) {
       throw new Error("Tidak punya izin untuk membuat artikel")
     }
     userRole = tu.role
   }
 
-  // Guru tidak bisa mempublikasikan langsung (wajib approval)
+  // Staf tidak bisa mempublikasikan langsung (wajib approval)
   let finalStatus = data.status || "PUBLISHED"
-  if (userRole === "guru" && finalStatus === "PUBLISHED") {
+  if (userRole === "staf" && finalStatus === "PUBLISHED") {
     finalStatus = "PENDING"
   }
 
@@ -159,7 +159,7 @@ export async function createPost(params: {
 
     // [AUTO-INDEXING] Asynchronously Ping Search Engines if published
     if (finalStatus === "PUBLISHED") {
-      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
       const host = tenant.domain || `${tenant.slug}.${rootDomain}`
       const isPengumuman = typeof data.type === 'string' && data.type.includes("PENGUMUMAN")
       const postUrl = `https://${host}/${isPengumuman ? 'pengumuman' : 'berita'}/${post.slug}`
@@ -279,7 +279,7 @@ export async function createEvent(params: {
     }
 
     // [AUTO-INDEXING] Asynchronously Ping Search Engines for new Event
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
     const host = tenant.domain || `${tenant.slug}.${rootDomain}`
     const eventUrl = `https://${host}/agenda/${event.id}`
     

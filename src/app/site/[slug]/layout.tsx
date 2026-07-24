@@ -26,13 +26,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tenant) return {}
 
   const headerList = await headers()
-  const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
 
   const canonicalDomain = tenant.domain 
     ? `https://${tenant.domain}` 
     : `https://${tenant.slug}.${rootDomain}`
 
-  const ogImageBase = tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  const ogImageBase = tenant.heroImage || tenant.logo || "https://bisnispro.id/default-og.jpg"
   // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
   const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
 
@@ -99,7 +99,7 @@ export default async function WebsiteLayout({
   ])
   
   const hostname = headerList.get("x-hostname") || headerList.get("host") || ""
-  const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
   const pathname = headerList.get("x-pathname") || ""
   const isTvPage = pathname.endsWith("/tv") || pathname.includes("/tv?")
   
@@ -124,9 +124,9 @@ export default async function WebsiteLayout({
               Website perusahaan ini sedang dalam keadaan ditangguhkan (Suspend) karena tidak ada aktivitas masuk (login) oleh pengelola selama lebih dari 60 hari.
             </p>
             <p className="text-sm text-gray-500 mb-8 p-4 bg-gray-50 rounded-xl">
-              Jika Anda adalah pengelola website ini, segera masuk (login) ke Dasbor Admin SchoolPro untuk mengaktifkannya kembali sebelum data dihapus secara permanen.
+              Jika Anda adalah pengelola website ini, segera masuk (login) ke Dasbor Admin BisnisPro untuk mengaktifkannya kembali sebelum data dihapus secara permanen.
             </p>
-            <a href="https://schoolpro.id/login" className="inline-block bg-primary text-white font-medium py-3 px-8 rounded-xl hover:opacity-90 transition-opacity">
+            <a href="https://bisnispro.id/login" className="inline-block bg-primary text-white font-medium py-3 px-8 rounded-xl hover:opacity-90 transition-opacity">
               Login ke Dasbor
             </a>
           </div>
@@ -182,7 +182,7 @@ export default async function WebsiteLayout({
         "@id": `${canonicalUrl}/#organization`,
         "name": tenant.name,
         "url": canonicalUrl,
-        "logo": tenant.logo ? (normalizeImageUrl(tenant.logo) || tenant.logo) : "https://schoolpro.id/logo-schoolpro.png",
+        "logo": tenant.logo ? (normalizeImageUrl(tenant.logo) || tenant.logo) : "https://bisnispro.id/logo-bisnispro.png",
         "telephone": tenant.phone || "",
         "email": tenant.email || "",
         "sameAs": [

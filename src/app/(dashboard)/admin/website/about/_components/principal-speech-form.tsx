@@ -28,7 +28,7 @@ export function PrincipalSpeechForm({
             <Info className="h-4 w-4 text-primary" />
           </div>
           <div className="space-y-1">
-            <CardTitle className="text-lg">Sambutan Utama (Pimpinan / Kepala Sekolah)</CardTitle>
+            <CardTitle className="text-lg">Sambutan Utama (Pimpinan / Kepala Perusahaan)</CardTitle>
             <CardDescription>Pesan sambutan dari tokoh utama untuk beranda website</CardDescription>
           </div>
         </div>
@@ -54,7 +54,7 @@ export function PrincipalSpeechForm({
                         settings: {
                           ...p.settings,
                           principalName: selected.name,
-                          principalTitle: selected.role ||"Kepala Sekolah",
+                          principalTitle: selected.role ||"Kepala Perusahaan",
                           principalImage: selected.imageUrl || p.settings?.principalImage
                         }
                       }))
@@ -83,7 +83,7 @@ export function PrincipalSpeechForm({
                 <div className="space-y-2">
                   <Label>Jabatan (Opsional)</Label>
                   <Input value={form.settings?.principalTitle ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, principalTitle: e.target.value } }))}
-                    placeholder="Contoh: Kepala Sekolah" className="rounded-xl" />
+                    placeholder="Contoh: Kepala Perusahaan" className="rounded-xl" />
                 </div>
               </div>
 

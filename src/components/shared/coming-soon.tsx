@@ -33,7 +33,7 @@ export function ComingSoon({ title, description, icon: Icon = Construction }: Co
           <h2 className="text-2xl font-bold tracking-tight mb-2">{title}</h2>
           
           <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
-            {description || "Modul ini sedang dalam tahap pengembangan aktif oleh tim SchoolPro. Nantikan pembaruannya segera untuk menikmati fitur luar biasa ini!"}
+            {description || "Modul ini sedang dalam tahap pengembangan aktif oleh tim BisnisPro. Nantikan pembaruannya segera untuk menikmati fitur luar biasa ini!"}
           </p>
           
           <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center">

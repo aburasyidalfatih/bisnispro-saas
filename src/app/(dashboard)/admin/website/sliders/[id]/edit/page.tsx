@@ -184,7 +184,7 @@ export default function EditSliderPage() {
                   id="title" 
                   value={formData.title} 
                   onChange={e => setFormData({...formData, title: e.target.value})} 
-                  placeholder="Misal: Selamat Datang di SchoolPro" 
+                  placeholder="Misal: Selamat Datang di BisnisPro" 
                   className="rounded-xl"
                 />
               </div>

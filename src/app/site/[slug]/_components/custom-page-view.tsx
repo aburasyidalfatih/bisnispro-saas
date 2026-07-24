@@ -14,7 +14,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const headerList = await headers();
-  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id';
   const { slug, pageSlug } = await params
   
   // Use getTenantLayoutData for cached, fast response
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
   const pageUrl = `${domainUrl}/${page.slug}`
   
-  let imageUrl = normalizeImageUrl(page.featuredImage) || tenant.heroImage || tenant.logo || "https://schoolpro.id/default-og.jpg"
+  let imageUrl = normalizeImageUrl(page.featuredImage) || tenant.heroImage || tenant.logo || "https://bisnispro.id/default-og.jpg"
   if (imageUrl.startsWith("/")) imageUrl = `${domainUrl}${imageUrl}`
   const finalOgImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(imageUrl)}&ext=.jpg`
 
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CustomPagePublicView({ params }: PageProps) {
   const headerList = await headers();
-  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id';
   const { slug, pageSlug } = await params
   
   const tenant = await getTenantLayoutData(slug)
@@ -118,10 +118,10 @@ export default async function CustomPagePublicView({ params }: PageProps) {
               "name": tenant.name,
               "logo": {
                 "@type": "ImageObject",
-                "url": tenant.logo || "https://schoolpro.id/logo-schoolpro.png"
+                "url": tenant.logo || "https://bisnispro.id/logo-bisnispro.png"
               }
             },
-            "image": normalizeImageUrl(page.featuredImage) || tenant.heroImage || "https://schoolpro.id/default-og.jpg"
+            "image": normalizeImageUrl(page.featuredImage) || tenant.heroImage || "https://bisnispro.id/default-og.jpg"
           })
         }}
       />

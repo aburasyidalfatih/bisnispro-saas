@@ -42,9 +42,9 @@ export default function ForgotPasswordPage({
         <div className="glass rounded-3xl p-8 md:p-10 shadow-2xl">
           <div className="flex flex-col items-center mb-8 text-center">
             {isMainDomain ? (
-              <Image src={normalizeImageUrl(platformLogo) || "/logo-schoolpro.png"} alt="SchoolPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
+              <Image src={normalizeImageUrl(platformLogo) || "/logo-bisnispro.png"} alt="BisnisPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
             ) : platformLogo ? (
-              <Image src={normalizeImageUrl(platformLogo) || "/logo-schoolpro.png"} alt="SchoolPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
+              <Image src={normalizeImageUrl(platformLogo) || "/logo-bisnispro.png"} alt="BisnisPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
             ) : (
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
                 {tenantNameDisplay ? tenantNameDisplay.charAt(0) : <Mail className="h-6 w-6" />}
@@ -53,8 +53,8 @@ export default function ForgotPasswordPage({
             <h1 className="text-2xl font-bold tracking-tight">Lupa Password</h1>
             <p className="text-sm text-muted-foreground mt-1">
               {isMainDomain 
-                ? "Masukkan email Anda untuk menerima link reset akun SchoolPro" 
-                : `Masukkan email Anda untuk menerima link reset ${tenantNameDisplay || 'sekolah'}`}
+                ? "Masukkan email Anda untuk menerima link reset akun BisnisPro" 
+                : `Masukkan email Anda untuk menerima link reset ${tenantNameDisplay || 'perusahaan'}`}
             </p>
           </div>
 
@@ -86,7 +86,7 @@ export default function ForgotPasswordPage({
             </form>
           )}
         </div>
-        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "SchoolPro" : "Sistem Informasi Sekolah")}</p>
+        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "BisnisPro" : "Sistem Informasi Perusahaan")}</p>
       </div>
     </div>
   )

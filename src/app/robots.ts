@@ -7,7 +7,7 @@ export const revalidate = 3600 // Edge Caching ISR (1 jam)
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const headerList = await headers()
   const protocol = headerList.get("x-forwarded-proto") || "https"
-  const host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
+  const host = headerList.get("x-forwarded-host") || headerList.get("host") || "bisnispro.id"
   const domainUrl = `${protocol}://${host}`
 
   // Periksa apakah Super Admin menyalakan mode Block Indexing (Dev Mode)

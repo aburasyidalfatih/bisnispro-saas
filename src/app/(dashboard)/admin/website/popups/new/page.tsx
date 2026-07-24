@@ -124,7 +124,7 @@ export default function NewPopupPage() {
                   required 
                   value={formData.title} 
                   onChange={e => setFormData({...formData, title: e.target.value})} 
-                  placeholder="Misal: Penerimaan Siswa Baru Gelombang 2" 
+                  placeholder="Misal: Penerimaan Klien Baru Gelombang 2" 
                   className="rounded-xl"
                 />
               </div>

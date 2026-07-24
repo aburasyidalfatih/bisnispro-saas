@@ -29,14 +29,14 @@ import { ModernTheme } from "./_themes/modern"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();
-  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id';
   const { slug } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   const title = tenant.seoTitle || tenant.name
   const description = tenant.seoDesc || tenant.description || tenant.tagline || `Website resmi ${tenant.name}`
 
-  let imageUrl = tenant.logo || "https://schoolpro.id/default-og.jpg"
+  let imageUrl = tenant.logo || "https://bisnispro.id/default-og.jpg"
   if (imageUrl.startsWith("/")) {
     const domain = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
     imageUrl = `${domain}${imageUrl}`
@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function SitePage({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();
-  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id';
   const { slug } = await params
 
   const [tenant, tenantLayout] = await Promise.all([
@@ -103,10 +103,10 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     const getCachedStats = unstable_cache(
       async (tenantId: string) => {
         const klien = await db.portfolio.count({ where: { tenantId } })
-        const guru = await db.portfolio.count({ where: { tenantId } })
-        const s1s2 = await db.teamMember.count({ where: { tenantId, education: { in: ["S1", "S2", "S3"] } } })
+        const staf = await db.testimonial.count({ where: { tenantId } })
+        const services = await db.service.count({ where: { tenantId } })
         const total = await db.teamMember.count({ where: { tenantId } })
-        return { klien, guru, s1s2, total }
+        return { klien, staf, services, total }
       },
       [`tenant-stats-${tenantForRender.id}`],
       { tags: [`tenant-${tenantForRender.slug}`, `tenant-${tenantForRender.slug}-stats`], revalidate: 3600 }
@@ -114,14 +114,15 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
     const cachedCounts = await getCachedStats(tenantForRender.id)
     const klienAchievementsCount = cachedCounts.klien
-    const guruAchievementsCount = cachedCounts.guru
-    const s1s2StaffCount = cachedCounts.s1s2
+    const stafAchievementsCount = cachedCounts.staf
+    const servicesCount = cachedCounts.services
     const totalStaffCount = cachedCounts.total
+    const yearsExperience = new Date().getFullYear() - establishedYear
 
     stats = [
       { value: klienAchievementsCount > 0 ? `${klienAchievementsCount}+` : "0", label: "Proyek Selesai", icon: "CheckCircle" },
-      { value: guruAchievementsCount > 0 ? `${guruAchievementsCount}+` : "0", label: "Klien Puas", icon: "Smile" },
-      { value: s1s2StaffCount > 0 ? `${s1s2StaffCount}` : "0", label: "Tahun Pengalaman", icon: "Calendar" },
+      { value: stafAchievementsCount > 0 ? `${stafAchievementsCount}+` : "0", label: "Klien Puas", icon: "Smile" },
+      { value: yearsExperience > 0 ? `${yearsExperience}` : "1", label: "Tahun Pengalaman", icon: "Calendar" },
       { value: totalStaffCount > 0 ? `${totalStaffCount}` : "0", label: "Tim Profesional", icon: "Users" },
     ]
   }

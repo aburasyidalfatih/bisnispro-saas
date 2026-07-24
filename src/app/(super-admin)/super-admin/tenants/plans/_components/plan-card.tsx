@@ -58,7 +58,7 @@ export function PlanCard({ plan, pricing, onEdit, onToggleActive }: PlanCardProp
             <div>
               <span className="text-base text-primary block font-bold">Pay-per-Student</span>
               <span className="text-[10px] font-normal text-muted-foreground block mt-0.5">
-                Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")}/siswa/thn · min. {pricing.MIN_STUDENTS}
+                Rp {Number(pricing.PRICE_PER_STUDENT).toLocaleString("id-ID")}/klien/thn · min. {pricing.MIN_STUDENTS}
               </span>
             </div>
           ) : (
@@ -74,11 +74,11 @@ export function PlanCard({ plan, pricing, onEdit, onToggleActive }: PlanCardProp
         {/* Quotas */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40">
-            <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Kuota Siswa</p>
+            <p className="text-[9px] uppercase text-muted-foreground mb-0.5">Kuota Klien</p>
             <div className="flex items-center gap-1.5">
               <Users className="h-3 w-3 text-primary" />
               <span className="font-bold text-xs truncate">
-                {plan.slug === "pro" ? "Sesuai Beli" : plan.maxStudents === 0 ? "Unlimited" : `${plan.maxStudents} siswa`}
+                {plan.slug === "pro" ? "Sesuai Beli" : plan.maxStudents === 0 ? "Unlimited" : `${plan.maxStudents} klien`}
               </span>
             </div>
           </div>

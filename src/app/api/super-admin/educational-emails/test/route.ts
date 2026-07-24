@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     // Dummy data untuk pengetesan
     const dummyOwnerName = session.user.name || "Bapak/Ibu Admin"
-    const dummySchoolName = "Sekolah Uji Coba SchoolPro"
+    const dummySchoolName = "Perusahaan Uji Coba BisnisPro"
 
     const subject = campaign.subject
       .replace(/{{name}}/g, dummyOwnerName)
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       .replace(/{{name}}/g, dummyOwnerName)
       .replace(/{{schoolName}}/g, dummySchoolName)
 
-    rawContent = rawContent.replace(/https:\/\/schoolpro\.id\/admin/g, `https://sekolah-uji-coba.schoolpro.id/admin`)
+    rawContent = rawContent.replace(/https:\/\/bisnispro\.id\/admin/g, `https://perusahaan-uji-coba.bisnispro.id/admin`)
 
     const trackableContent = rawContent.replace(/(https?:\/\/[^\s<>'")]+)/g, (url) => {
       return `<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 24px 0;"><tr><td><a href="${url}" style="display: inline-block; padding: 14px 28px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; text-align: center;">Buka Tautan</a></td></tr></table><span style="font-size: 12px; color: #94a3b8; word-break: break-all;">Atau copy link: <br/>${url}</span>`
@@ -54,8 +54,8 @@ export async function POST(req: Request) {
               <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); overflow: hidden;">
                 <tr>
                   <td style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); padding: 40px 30px; text-align: center;">
-                    <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.025em;">SchoolPro Edukasi</h1>
-                    <p style="color: #e0e7ff; margin: 8px 0 0 0; font-size: 15px; font-weight: 500;">Membantu Anda Mengembangkan Sekolah</p>
+                    <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.025em;">BisnisPro Edukasi</h1>
+                    <p style="color: #e0e7ff; margin: 8px 0 0 0; font-size: 15px; font-weight: 500;">Membantu Anda Mengembangkan Perusahaan</p>
                   </td>
                 </tr>
                 <tr>
@@ -66,10 +66,10 @@ export async function POST(req: Request) {
                 <tr>
                   <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
                     <p style="margin: 0 0 10px 0; color: #64748b; font-size: 13px; line-height: 1.5;">
-                      Ini adalah email pengujian (Test Email) dari Dasbor SchoolPro.
+                      Ini adalah email pengujian (Test Email) dari Dasbor BisnisPro.
                     </p>
                     <p style="margin: 0; color: #94a3b8; font-size: 12px;">
-                      &copy; ${new Date().getFullYear()} SchoolPro Indonesia. All rights reserved.
+                      &copy; ${new Date().getFullYear()} BisnisPro Indonesia. All rights reserved.
                     </p>
                   </td>
                 </tr>

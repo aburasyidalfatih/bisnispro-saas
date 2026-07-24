@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import Script from "next/script"
 import { hexToTailwindHsl } from "@/lib/color-utils"
 
 export function ThemeInjector({ theme, settings }: { theme: string; settings?: any }) {
@@ -60,7 +61,7 @@ export function ThemeInjector({ theme, settings }: { theme: string; settings?: a
 
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: injectScript }} />
+      <Script id={`theme-script-${theme}`} strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: injectScript }} />
       <style dangerouslySetInnerHTML={{
         __html: `
           :root {

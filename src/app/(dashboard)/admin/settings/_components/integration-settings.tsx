@@ -34,13 +34,13 @@ export function IntegrationSettings({
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {/* Google OAuth Lembaga */}
+        {/* Google OAuth Bisnis */}
         <div className="space-y-2 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="h-4 w-4 text-red-500" />
             <Label className="font-semibold text-red-600">Google Login (OAuth 2.0)</Label>
           </div>
-          <p className="text-[11px] text-muted-foreground mb-3">Isi kredensial ini jika ingin mengaktifkan"Login dengan Google" khusus untuk sekolah Anda. Authorized redirect URI: <code className="bg-white/50 px-1 rounded">https://{session?.user?.tenants?.[0]?.slug ||"sub"}.schoolpro.id/api/auth/callback/google</code></p>
+          <p className="text-[11px] text-muted-foreground mb-3">Isi kredensial ini jika ingin mengaktifkan"Login dengan Google" khusus untuk perusahaan Anda. Authorized redirect URI: <code className="bg-white/50 px-1 rounded">https://{session?.user?.tenants?.[0]?.slug ||"sub"}.bisnispro.id/api/auth/callback/google</code></p>
           
           <div className="space-y-1.5">
             <Label className="text-xs">Client ID</Label>
@@ -51,13 +51,13 @@ export function IntegrationSettings({
             <Input type="password" value={orgForm.googleClientSecret} onChange={e => setOrgForm(p => ({ ...p, googleClientSecret: e.target.value }))} placeholder="Google Client Secret" className="rounded-xl h-9 text-xs font-mono" />
           </div>
         </div>
-        {/* Google Indexing API Lembaga */}
+        {/* Google Indexing API Bisnis */}
         <div className="space-y-2 p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 mt-4">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="h-4 w-4 text-blue-500" />
             <Label className="font-semibold text-blue-600">Google Indexing API (SEO)</Label>
           </div>
-          <p className="text-[11px] text-muted-foreground mb-3">Masukkan kredensial Service Account Google Cloud untuk melakukan indeksasi instan setiap kali Anda mempublikasikan berita/pengumuman. Jika dikosongkan, sistem akan menggunakan sistem indeksasi bawaan SchoolPro.</p>
+          <p className="text-[11px] text-muted-foreground mb-3">Masukkan kredensial Service Account Google Cloud untuk melakukan indeksasi instan setiap kali Anda mempublikasikan berita/pengumuman. Jika dikosongkan, sistem akan menggunakan sistem indeksasi bawaan BisnisPro.</p>
           
           <div className="space-y-1.5">
             <Label className="text-xs">JSON Credentials</Label>
@@ -70,16 +70,16 @@ export function IntegrationSettings({
           </div>
         </div>
 
-        {/* Link Afiliasi Lembaga */}
+        {/* Link Afiliasi Bisnis */}
         <div className="space-y-2 p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 mt-4">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="h-4 w-4 text-amber-500" />
             <Label className="font-semibold text-amber-600">Link Afiliasi / Referral</Label>
           </div>
           <p className="text-[11px] text-muted-foreground mb-3">
-            Jika Anda adalah mitra afiliasi SchoolPro, masukkan link referal Anda di sini (contoh: <code className="bg-white/50 px-1 rounded">https://schoolpro.id/2sdyiu</code>). Link ini akan disematkan di bagian bawah (footer) website sekolah Anda untuk mendapatkan komisi pendaftaran.
+            Jika Anda adalah mitra afiliasi BisnisPro, masukkan link referal Anda di sini (contoh: <code className="bg-white/50 px-1 rounded">https://bisnispro.id/2sdyiu</code>). Link ini akan disematkan di bagian bawah (footer) website perusahaan Anda untuk mendapatkan komisi pendaftaran.
             <br/><br/>
-            Belum jadi mitra? <a href="https://schoolpro.id/mitra-afiliasi" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700 underline font-medium">Daftar di Sini</a>
+            Belum jadi mitra? <a href="https://bisnispro.id/mitra-afiliasi" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700 underline font-medium">Daftar di Sini</a>
           </p>
           
           <div className="space-y-1.5">
@@ -87,7 +87,7 @@ export function IntegrationSettings({
             <Input 
               value={rawSettings.affiliate_link || ""} 
               onChange={e => setRawSettings((p: any) => ({ ...p, affiliate_link: e.target.value }))} 
-              placeholder="https://schoolpro.id/2sdyiu" 
+              placeholder="https://bisnispro.id/2sdyiu" 
               className="rounded-xl h-9 text-xs" 
             />
           </div>

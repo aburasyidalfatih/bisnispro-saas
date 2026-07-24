@@ -19,7 +19,7 @@ function CaptureLogic() {
           body: JSON.stringify({ ref })
         }).catch(console.error)
       }
-      localStorage.setItem("schoolpro_ref", ref)
+      localStorage.setItem("bisnispro_ref", ref)
     }
   }, [searchParams])
 

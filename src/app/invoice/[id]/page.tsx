@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { notFound, redirect } from "next/navigation"
 import { CheckCircle2, Clock, XCircle } from "lucide-react"
+import Script from "next/script"
 
 export default async function InvoicePrintPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -37,11 +38,11 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
   const settingsMap: Record<string, string> = {}
   platformSettings.forEach(s => { settingsMap[s.key] = s.value })
 
-  const platformLogo = settingsMap.app_logo || "/logo-schoolpro.png"
-  const platformName = settingsMap.platform_name || "SchoolPro"
-  const platformTagline = settingsMap.platform_tagline || "Solusi Manajemen Sekolah Digital"
+  const platformLogo = settingsMap.app_logo || "/logo-bisnispro.png"
+  const platformName = settingsMap.platform_name || "BisnisPro"
+  const platformTagline = settingsMap.platform_tagline || "Solusi Manajemen Perusahaan Digital"
   const platformAddress = settingsMap.platform_address || ""
-  const contactEmail = settingsMap.contact_email || "support@schoolpro.id"
+  const contactEmail = settingsMap.contact_email || "support@bisnispro.id"
   const bankName = settingsMap.MANUAL_PAYMENT_BANK || ""
   const bankAccount = settingsMap.MANUAL_PAYMENT_NUMBER || ""
   const bankHolder = settingsMap.MANUAL_PAYMENT_NAME || ""
@@ -148,7 +149,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
           <div>
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Ditagihkan Kepada</p>
             <p className="text-base font-bold text-gray-900">{payment.tenant.name}</p>
-            <p className="text-sm text-gray-500 mt-0.5">{payment.tenant.slug}.schoolpro.id</p>
+            <p className="text-sm text-gray-500 mt-0.5">{payment.tenant.slug}.bisnispro.id</p>
           </div>
 
           {/* Invoice Details */}
@@ -187,7 +188,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
             </p>
             {invoiceType === "ADDON_QUOTA" ? (
               <p className="text-sm text-gray-700">
-                Kuota <strong>+{studentCount} siswa</strong> ditambahkan ke paket aktif
+                Kuota <strong>+{studentCount} klien</strong> ditambahkan ke paket aktif
                 {isPaid && " — berlaku hingga masa aktif paket berakhir"}
               </p>
             ) : (
@@ -241,12 +242,12 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
               <TableRow className="border-b border-gray-100">
                 <TableCell className="py-5 px-4">
                   <p className="font-semibold text-gray-900">
-                    {invoiceType === "ADDON_QUOTA" ? "Penambahan Kuota Siswa" : 
+                    {invoiceType === "ADDON_QUOTA" ? "Penambahan Kuota Klien" : 
                      invoiceType === "AI_QUOTA" ? "Top-Up Token AI" : 
                      "Upgrade / Perpanjang Paket PRO"}
                   </p>
                   <p className="text-sm text-gray-500 mt-0.5">
-                    {invoiceType === "AI_QUOTA" ? "Pembelian token AI" : "Biaya berlangganan per siswa (Tahunan)"}
+                    {invoiceType === "AI_QUOTA" ? "Pembelian token AI" : "Biaya berlangganan per klien (Tahunan)"}
                   </p>
                   {meta.isLockedPrice && (
                     <p className="text-[10px] text-blue-600 bg-blue-50 inline-block px-2 py-0.5 rounded mt-1">Harga Kontrak Aktif</p>
@@ -307,15 +308,15 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
                 <span className="text-xl font-black" style={{ color: "#4F46E5" }}>Rp {payment.amount.toLocaleString("id-ID")}</span>
               </div>
 
-              {/* Harga per siswa setelah diskon */}
+              {/* Harga per klien setelah diskon */}
               {discountPercentage > 0 && studentCount > 0 && (
                 <div className="rounded-lg border border-dashed border-gray-200 p-3 mt-1 space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-gray-500">Harga asli per siswa</span>
+                    <span className="text-gray-500">Harga asli per klien</span>
                     <span className="text-gray-500 line-through">Rp {Number(pricePerStudent).toLocaleString("id-ID")}</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-emerald-600 font-semibold">Harga setelah diskon per siswa</span>
+                    <span className="text-emerald-600 font-semibold">Harga setelah diskon per klien</span>
                     <span className="text-emerald-600 font-bold">Rp {Math.round(payment.amount / studentCount).toLocaleString("id-ID")}</span>
                   </div>
                 </div>
@@ -346,7 +347,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
             {isPending && <li>Invoice yang melewati batas waktu akan otomatis dibatalkan oleh sistem.</li>}
             <li>Layanan akan aktif setelah pembayaran dikonfirmasi oleh administrator.</li>
             <li>Harga sudah termasuk seluruh biaya layanan. Tidak ada biaya tersembunyi.</li>
-            {invoiceType !== "AI_QUOTA" && <li>Kuota siswa berlaku sesuai periode langganan yang tertera.</li>}
+            {invoiceType !== "AI_QUOTA" && <li>Kuota klien berlaku sesuai periode langganan yang tertera.</li>}
           </ul>
         </div>
 
@@ -368,7 +369,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
       </div>
 
       {/* Script to trigger print automatically */}
-      <script dangerouslySetInnerHTML={{ __html: `
+      <Script id="invoice-print-script" dangerouslySetInnerHTML={{ __html: `
         window.onload = function() {
           setTimeout(function() {
             window.print();

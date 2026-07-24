@@ -167,7 +167,7 @@ export default function CampaignDetailPage({ params }: Props) {
           <div>
             <h1 className="text-2xl font-bold">{campaign.title}</h1>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <span>Crowdfunding Sekolah</span>
+              <span>Crowdfunding Perusahaan</span>
               <span>•</span>
               <span className="font-mono text-xs">{campaign.slug}</span>
               {campaign.isPublic && (
@@ -223,7 +223,7 @@ export default function CampaignDetailPage({ params }: Props) {
               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Menunggu Persetujuan</p>
               <h3 className="text-3xl font-black text-amber-600 mt-1">{pendingDonations.length} Transaksi</h3>
               <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                Terdapat donasi manual (Transfer/QRIS) yang memerlukan pengecekan rekening sekolah & persetujuan Anda.
+                Terdapat donasi manual (Transfer/QRIS) yang memerlukan pengecekan rekening perusahaan & persetujuan Anda.
               </p>
             </div>
             {pendingDonations.length > 0 && (
@@ -254,7 +254,7 @@ export default function CampaignDetailPage({ params }: Props) {
                   <AlertCircle className="h-5 w-5 text-amber-500" /> Butuh Persetujuan Pembayaran
                 </CardTitle>
                 <CardDescription>
-                  Periksa mutasi rekening sekolah Anda sebelum menyetujui transaksi donasi manual di bawah ini.
+                  Periksa mutasi rekening perusahaan Anda sebelum menyetujui transaksi donasi manual di bawah ini.
                 </CardDescription>
               </CardHeader>
               <CardContent className="divide-y divide-amber-200/30">
@@ -390,17 +390,17 @@ export default function CampaignDetailPage({ params }: Props) {
               </div>
 
               <div className="border-t border-slate-100 pt-5 space-y-4">
-                <h4 className="font-bold text-sm text-foreground">Metode Pembayaran Manual Sekolah</h4>
+                <h4 className="font-bold text-sm text-foreground">Metode Pembayaran Manual Perusahaan</h4>
 
                 <div className="space-y-2">
-                  <Label>QRIS Sekolah (Unggah Gambar Barcode)</Label>
+                  <Label>QRIS Perusahaan (Unggah Gambar Barcode)</Label>
                   {tenant && (
                     <ImageUploadDirect
                       tenantId={tenant.id}
                       value={form.qrisUrl}
                       onChange={url => setForm(f => ({ ...f, qrisUrl: url }))}
                       subDir="donations"
-                      hint="Upload file gambar QRIS sekolah"
+                      hint="Upload file gambar QRIS perusahaan"
                     />
                   )}
                 </div>
@@ -410,7 +410,7 @@ export default function CampaignDetailPage({ params }: Props) {
                   <Textarea
                     value={form.bankInfo}
                     onChange={e => setForm(f => ({ ...f, bankInfo: e.target.value }))}
-                    placeholder="Contoh: Transfer ke BSI 123-456-7890 a.n. Masjid Sekolah"
+                    placeholder="Contoh: Transfer ke BSI 123-456-7890 a.n. Masjid Perusahaan"
                     className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm min-h-[80px] resize-none focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>

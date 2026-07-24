@@ -134,8 +134,8 @@ export async function saveFile(
                 await notifyTenantAdmins(tenantId, {
                   title: usagePercent >= 95 ? "⚠️ Penyimpanan Hampir Penuh!" : "📦 Penyimpanan Menipis",
                   message: usagePercent >= 95
-                    ? `Penyimpanan sekolah Anda sudah ${usagePercent}% penuh (${usedStr} MB dari ${maxLimitStr}). Segera upgrade paket atau hapus file yang tidak diperlukan agar layanan tetap berjalan lancar.`
-                    : `Penyimpanan sekolah Anda sudah ${usagePercent}% terpakai (${usedStr} MB dari ${maxLimitStr}). Pertimbangkan upgrade paket untuk menambah kapasitas penyimpanan.`,
+                    ? `Penyimpanan perusahaan Anda sudah ${usagePercent}% penuh (${usedStr} MB dari ${maxLimitStr}). Segera upgrade paket atau hapus file yang tidak diperlukan agar layanan tetap berjalan lancar.`
+                    : `Penyimpanan perusahaan Anda sudah ${usagePercent}% terpakai (${usedStr} MB dari ${maxLimitStr}). Pertimbangkan upgrade paket untuk menambah kapasitas penyimpanan.`,
                   type: "warning",
                   metadata: {
                     actionUrl: "/admin/settings/billing"

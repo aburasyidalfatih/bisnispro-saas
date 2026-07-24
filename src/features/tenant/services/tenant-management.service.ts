@@ -39,12 +39,11 @@ export async function getWebsiteData(tenantId: string) {
         select: {
           posts: true,
           documents: true,
-          facilities: true,
-          staff: true,
-          achievements: true,
-          alumni: true,
-          extracurriculars: true,
-          programs: true,
+          services: true,
+          portfolios: true,
+          testimonials: true,
+          teamMembers: true,
+          offices: true,
           popups: true,
           sliders: true,
           events: true,
@@ -239,14 +238,14 @@ export async function changeSubdomain(tenantId: string, newSlug: string, userId:
     throw new Error("Subdomain baru harus berbeda dengan yang lama.")
   }
 
-  const reservedSlugs = ["admin", "superadmin", "api", "auth", "static", "assets", "dashboard", "site", "schoolpro"]
+  const reservedSlugs = ["admin", "superadmin", "api", "auth", "static", "assets", "dashboard", "site", "bisnispro"]
   if (reservedSlugs.includes(newSlug)) {
     throw new Error("Subdomain ini tidak dapat digunakan.")
   }
 
   const existing = await db.tenant.findUnique({ where: { slug: newSlug } })
   if (existing) {
-    throw new Error("Subdomain sudah digunakan oleh sekolah lain. Silakan pilih yang berbeda.")
+    throw new Error("Subdomain sudah digunakan oleh perusahaan lain. Silakan pilih yang berbeda.")
   }
 
   await db.tenant.update({

@@ -23,7 +23,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     if (!isActive) {
       const tenantsCount = await db.tenant.count({ where: { customThemeId: id } })
       if (tenantsCount > 0) {
-        return NextResponse.json({ error: "Tema tidak bisa dinonaktifkan karena masih digunakan oleh sekolah." }, { status: 400 })
+        return NextResponse.json({ error: "Tema tidak bisa dinonaktifkan karena masih digunakan oleh perusahaan." }, { status: 400 })
       }
     }
 

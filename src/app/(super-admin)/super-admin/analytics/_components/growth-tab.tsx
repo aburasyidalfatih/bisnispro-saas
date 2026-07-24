@@ -66,9 +66,9 @@ export function GrowthTab() {
               <div className="space-y-2 pt-3 border-t">
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Pending Review</span><Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">{data.conversionFunnel.pendingApplications}</Badge></div>
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Ditolak</span><Badge variant="outline" className="bg-rose-50 text-rose-600 border-rose-200">{data.conversionFunnel.rejectedApplications}</Badge></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lembaga FREE</span><span className="font-bold">{data.conversionFunnel.freeTenants}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lembaga LITE</span><span className="font-bold text-blue-600">{data.conversionFunnel.liteTenants}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lembaga PRO</span><span className="font-bold text-violet-600">{data.conversionFunnel.proTenants}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Bisnis FREE</span><span className="font-bold">{data.conversionFunnel.freeTenants}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Bisnis LITE</span><span className="font-bold text-blue-600">{data.conversionFunnel.liteTenants}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Bisnis PRO</span><span className="font-bold text-violet-600">{data.conversionFunnel.proTenants}</span></div>
               </div>
             </CardContent>
           </Card>
@@ -80,7 +80,7 @@ export function GrowthTab() {
         <h2 className="text-lg font-bold mb-3 flex items-center gap-2"><MapPin className="h-5 w-5 text-rose-500" /> Sebaran Geografis ({data.geoStats.totalProvinces} Provinsi)</h2>
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Top Provinsi</CardTitle><CardDescription>Provinsi dengan jumlah sekolah terbanyak.</CardDescription></CardHeader>
+            <CardHeader><CardTitle className="text-base">Top Provinsi</CardTitle><CardDescription>Provinsi dengan jumlah perusahaan terbanyak.</CardDescription></CardHeader>
             <CardContent>{data.geoStats.provinces.length === 0 ? (
               <p className="text-sm text-muted-foreground italic py-8 text-center">Belum ada data.</p>
             ) : (
@@ -90,7 +90,7 @@ export function GrowthTab() {
                   <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={9} tickLine={false} axisLine={false} width={130} />
                   <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Bar dataKey="value" name="Sekolah" radius={[0, 6, 6, 0]} barSize={18}>
+                  <Bar dataKey="value" name="Perusahaan" radius={[0, 6, 6, 0]} barSize={18}>
                     {data.geoStats.provinces.slice(0, 10).map((_, index) => (<Cell key={index} fill={COLORS[index % COLORS.length]} />))}
                   </Bar>
                 </BarChart>
@@ -98,7 +98,7 @@ export function GrowthTab() {
             )}</CardContent>
           </Card>
           <Card className="glass border-0">
-            <CardHeader><CardTitle className="text-base">Top Kota/Kabupaten</CardTitle><CardDescription>10 kota/kabupaten dengan sekolah terbanyak.</CardDescription></CardHeader>
+            <CardHeader><CardTitle className="text-base">Top Kota/Kabupaten</CardTitle><CardDescription>10 kota/kabupaten dengan perusahaan terbanyak.</CardDescription></CardHeader>
             <CardContent>{data.geoStats.topRegencies.length === 0 ? (
               <p className="text-sm text-muted-foreground italic py-8 text-center">Belum ada data.</p>
             ) : (
@@ -156,7 +156,7 @@ export function GrowthTab() {
         <Card className="glass border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Receipt className="h-5 w-5 text-amber-500" /> Insight Keuangan Lembaga
+              <Receipt className="h-5 w-5 text-amber-500" /> Insight Keuangan Bisnis
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">

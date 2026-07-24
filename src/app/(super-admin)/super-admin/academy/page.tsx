@@ -59,10 +59,10 @@ export default function AcademyPage() {
       method: "DELETE",
     })
     if (res.ok) {
-      toast({ title: "Kelas dihapus", description: `Kelas ${title} berhasil dihapus.` })
+      toast({ title: "Divisi dihapus", description: `Divisi ${title} berhasil dihapus.` })
       fetchCourses()
     } else {
-      toast({ title: "Gagal", description: "Tidak dapat menghapus kelas.", variant: "destructive" })
+      toast({ title: "Gagal", description: "Tidak dapat menghapus divisi.", variant: "destructive" })
     }
   }
 
@@ -76,13 +76,13 @@ export default function AcademyPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="flex-1">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Academy (LMS)</h1>
-          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola kelas dan pelatihan untuk Admin Lembaga ({total} kelas)</p>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola divisi dan pelatihan untuk Admin Bisnis ({total} divisi)</p>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/super-admin/academy/create">
             <Button className="gap-2 rounded-xl">
               <Plus className="h-4 w-4" />
-              Buat Kelas Baru
+              Buat Divisi Baru
             </Button>
           </Link>
         </div>
@@ -92,7 +92,7 @@ export default function AcademyPage() {
         <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Cari judul kelas..."
+            placeholder="Cari judul divisi..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             className="pl-9 rounded-xl"
@@ -105,7 +105,7 @@ export default function AcademyPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-b bg-muted/30">
-                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Judul Kelas</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Judul Divisi</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Harga</TableHead>
                 <TableHead className="px-4 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Modul</TableHead>
                 <TableHead className="px-4 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Peserta</TableHead>
@@ -124,7 +124,7 @@ export default function AcademyPage() {
                 <TableRow>
                   <TableCell colSpan={6} className="px-4 py-20 text-center">
                     <GraduationCap className="h-12 w-12 mx-auto text-muted-foreground/20 mb-4" />
-                    <p className="text-muted-foreground italic">Belum ada kelas yang dibuat.</p>
+                    <p className="text-muted-foreground italic">Belum ada divisi yang dibuat.</p>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -171,7 +171,7 @@ export default function AcademyPage() {
                           <Link href={`/super-admin/academy/${c.slug}/edit`}>
                             <DropdownMenuItem className="gap-2 rounded-xl h-10 cursor-pointer">
                               <Pencil className="h-4 w-4 text-primary" />
-                              <span className="font-medium text-sm">Edit Kelas</span>
+                              <span className="font-medium text-sm">Edit Divisi</span>
                             </DropdownMenuItem>
                           </Link>
                           <Link href={`/super-admin/academy/${c.slug}/modules`}>
@@ -185,11 +185,11 @@ export default function AcademyPage() {
                             trigger={
                               <DropdownMenuItem className="gap-2 rounded-xl h-10 cursor-pointer text-rose-600" onSelect={(e) => e.preventDefault()}>
                                 <Trash2 className="h-4 w-4" />
-                                <span className="font-bold text-sm">Hapus Kelas</span>
+                                <span className="font-bold text-sm">Hapus Divisi</span>
                               </DropdownMenuItem>
                             }
-                            title={`Hapus kelas "${c.title}"?`}
-                            description="Tindakan ini akan menghapus permanen kelas beserta seluruh materi dan data pendaftaran di dalamnya."
+                            title={`Hapus divisi "${c.title}"?`}
+                            description="Tindakan ini akan menghapus permanen divisi beserta seluruh materi dan data pendaftaran di dalamnya."
                             confirmText="Ya, Hapus"
                             onConfirm={() => handleDelete(c.id, c.title)}
                           />

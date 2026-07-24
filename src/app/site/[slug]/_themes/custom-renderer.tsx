@@ -4,8 +4,10 @@
  * Shared helper for rendering Handlebars-based custom themes
  * across all public site pages.
  */
+import React from "react"
 import Handlebars from "handlebars"
 import parse from "html-react-parser"
+import Script from "next/script"
 
 // ─── Register custom Handlebars helpers (idempotent) ───
 let helpersRegistered = false
@@ -146,8 +148,9 @@ export function renderCustomTheme(opts: RenderCustomThemeOptions): React.ReactEl
       <div className="custom-theme-wrapper">
         <style dangerouslySetInnerHTML={{ __html: opts.customCss }} />
         {parse(finalHtml)}
-        {sandboxedJs && (
-          <script dangerouslySetInnerHTML={{ __html: sandboxedJs }} />
+        {/* Custom JS with proper Script component */}
+        {opts.customJs && (
+          <Script id={`custom-theme-js-${opts.context.tenant?.id}`} strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: sandboxedJs }} />
         )}
       </div>
     ) as React.ReactElement

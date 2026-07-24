@@ -71,7 +71,7 @@ export default function NotificationsPage() {
     {
       id:"attendance_alert",
       name:"Notifikasi Kehadiran",
-      desc:"Dikirim saat absensi harian siswa dicatat.",
+      desc:"Dikirim saat absensi harian klien dicatat.",
       variables: ["studentName","status","time","schoolName"],
       defaultTitle:"Info Kehadiran: {{studentName}}",
       defaultMessage:"Ananda {{studentName}} tercatat dengan status: {{status}} pada pukul {{time}}."
@@ -79,7 +79,7 @@ export default function NotificationsPage() {
     {
       id:"ppdb_registered",
       name:"PPDB: Pendaftaran Akun",
-      desc:"Dikirim setelah calon siswa membuat akun pendaftaran.",
+      desc:"Dikirim setelah calon klien membuat akun pendaftaran.",
       variables: ["applicantName","registrationNumber","schoolName","loginUrl"],
       defaultTitle:"Pendaftaran Akun PPDB Berhasil",
       defaultMessage:"Halo {{applicantName}}, akun pendaftaran PPDB Anda di {{schoolName}} telah dibuat dengan Nomor Registrasi: {{registrationNumber}}. Silakan login di {{loginUrl}} untuk melanjutkan."
@@ -95,7 +95,7 @@ export default function NotificationsPage() {
     {
       id:"ppdb_document_submitted",
       name:"PPDB: Berkas Terkirim",
-      desc:"Dikirim saat calon siswa menyelesaikan pengisian biodata dan submit berkas.",
+      desc:"Dikirim saat calon klien menyelesaikan pengisian biodata dan submit berkas.",
       variables: ["applicantName","registrationNumber","schoolName"],
       defaultTitle:"Berkas PPDB Berhasil Dikirim",
       defaultMessage:"Terima kasih {{applicantName}} (No. {{registrationNumber}}). Seluruh berkas pendaftaran Anda telah kami terima dan sedang dalam proses verifikasi oleh panitia {{schoolName}}."
@@ -110,11 +110,11 @@ export default function NotificationsPage() {
     },
     {
       id:"ppdb_official_student",
-      name:"PPDB: Resmi Menjadi Siswa",
-      desc:"Dikirim saat siswa telah diverifikasi daftar ulang dan resmi diterima di kelas.",
+      name:"PPDB: Resmi Menjadi Klien",
+      desc:"Dikirim saat klien telah diverifikasi daftar ulang dan resmi diterima di divisi.",
       variables: ["studentName","nis","schoolName"],
       defaultTitle:"Selamat Bergabung di {{schoolName}}!",
-      defaultMessage:"Selamat! Proses daftar ulang selesai. Ananda {{studentName}} dengan NIS {{nis}} telah terdaftar secara resmi sebagai siswa di {{schoolName}}."
+      defaultMessage:"Selamat! Proses daftar ulang selesai. Ananda {{studentName}} dengan NIS {{nis}} telah terdaftar secara resmi sebagai klien di {{schoolName}}."
     },
     {
       id:"invoice_overdue",
@@ -127,7 +127,7 @@ export default function NotificationsPage() {
     {
       id:"canteen_transaction",
       name:"E-Kantin: Pemotongan Saldo (Jajan)",
-      desc:"Dikirim saat siswa melakukan transaksi jajan di kantin menggunakan ID Card/QR.",
+      desc:"Dikirim saat klien melakukan transaksi jajan di kantin menggunakan ID Card/QR.",
       variables: ["studentName","merchantName","amount","newBalance","schoolName"],
       defaultTitle:"Transaksi E-Kantin",
       defaultMessage:"Info Transaksi: Ananda {{studentName}} baru saja melakukan pembelian di {{merchantName}} sebesar Rp {{amount}}. Sisa saldo dompet saat ini: Rp {{newBalance}}."
@@ -137,7 +137,7 @@ export default function NotificationsPage() {
       name:"Konseling: Catatan Kedisiplinan/Pelanggaran",
       desc:"Dikirim ke wali murid saat ada penambahan poin pelanggaran atau catatan BK.",
       variables: ["studentName","violation","points","schoolName"],
-      defaultTitle:"Pemberitahuan Kedisiplinan Siswa",
+      defaultTitle:"Pemberitahuan Kedisiplinan Klien",
       defaultMessage:"Bapak/Ibu Wali Murid, menginformasikan bahwa ananda {{studentName}} mendapat catatan terkait: {{violation}} (Poin: {{points}}). Harap hubungi pihak BK {{schoolName}} untuk detail lebih lanjut."
     },
     {

@@ -54,7 +54,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
             <TabsTrigger value="hero">Utama (Hero)</TabsTrigger>
             <TabsTrigger value="programs">Program</TabsTrigger>
             <TabsTrigger value="staff">Pengajar</TabsTrigger>
-            <TabsTrigger value="facilities">Fasilitas</TabsTrigger>
+            <TabsTrigger value="facilities">Aset</TabsTrigger>
             <TabsTrigger value="extracurriculars">Ekskul</TabsTrigger>
             <TabsTrigger value="news">Berita & Info</TabsTrigger>
             <TabsTrigger value="gallery">Galeri</TabsTrigger>
@@ -124,7 +124,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.staff?.sectionTitle ?? ""} 
                    onChange={e => updateLabel("staff", "sectionTitle", e.target.value)}
-                   placeholder="Guru & Tenaga Kependidikan" 
+                   placeholder="Staf & Tenaga Kependidikan" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -157,7 +157,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.facilities?.sectionTitle ?? ""} 
                    onChange={e => updateLabel("facilities", "sectionTitle", e.target.value)}
-                   placeholder="Fasilitas Sekolah" 
+                   placeholder="Aset Perusahaan" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -181,7 +181,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Input 
                    value={labels?.extracurriculars?.sectionTitle ?? ""} 
                    onChange={e => updateLabel("extracurriculars", "sectionTitle", e.target.value)}
-                   placeholder="Ekstrakurikuler" 
+                   placeholder="Aset Ekstra" 
                    className="rounded-xl h-9" 
                  />
                </div>
@@ -190,7 +190,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Textarea 
                    value={labels?.extracurriculars?.sectionSubtitle ?? ""} 
                    onChange={e => updateLabel("extracurriculars", "sectionSubtitle", e.target.value)}
-                   placeholder="Wadah bagi siswa untuk mengeksplorasi minat..." 
+                   placeholder="Wadah bagi klien untuk mengeksplorasi minat..." 
                    className="rounded-xl resize-none"
                    rows={2}
                  />
@@ -252,7 +252,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                  <Textarea 
                    value={labels?.pengumuman?.sectionSubtitle ?? ""} 
                    onChange={e => updateLabel("pengumuman", "sectionSubtitle", e.target.value)}
-                   placeholder="Informasi resmi dan edaran penting dari sekolah." 
+                   placeholder="Informasi resmi dan edaran penting dari perusahaan." 
                    className="rounded-xl resize-none"
                    rows={2}
                  />
@@ -302,7 +302,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Input 
                      value={labels?.profil?.historyBadge ?? ""} 
                      onChange={e => updateLabel("profil", "historyBadge", e.target.value)}
-                     placeholder="Sejarah Sekolah" 
+                     placeholder="Sejarah Perusahaan" 
                      className="rounded-xl h-9" 
                    />
                  </div>
@@ -330,7 +330,7 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                    <Textarea 
                      value={labels?.profil?.defaultAbout ?? ""} 
                      onChange={e => updateLabel("profil", "defaultAbout", e.target.value)}
-                     placeholder="Belum ada informasi profil sejarah sekolah." 
+                     placeholder="Belum ada informasi profil sejarah perusahaan." 
                      className="rounded-xl resize-none"
                      rows={2}
                    />
@@ -380,11 +380,11 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <h3 className="font-medium text-sm pt-4 border-t">Teks Data Kosong (Empty State)</h3>
                <div className="grid md:grid-cols-2 gap-4">
                  <div className="space-y-1.5">
-                   <Label>Fasilitas Kosong</Label>
+                   <Label>Aset Kosong</Label>
                    <Input 
                      value={labels?.empty?.facilitiesTitle ?? ""} 
                      onChange={e => updateLabel("empty", "facilitiesTitle", e.target.value)}
-                     placeholder="Fasilitas Belum Tersedia" 
+                     placeholder="Aset Belum Tersedia" 
                      className="rounded-xl h-9" 
                    />
                  </div>
@@ -411,20 +411,20 @@ export function LabelsForm({ form, setForm }: LabelsFormProps) {
                <h3 className="font-medium text-sm pt-4 border-t">Label Widget Halaman Utama</h3>
                <div className="grid md:grid-cols-3 gap-4">
                  <div className="space-y-1.5">
-                   <Label>Fasilitas</Label>
+                   <Label>Aset</Label>
                    <Input 
                      value={labels?.widget?.facilities ?? ""} 
                      onChange={e => updateLabel("widget", "facilities", e.target.value)}
-                     placeholder="Fasilitas Sekolah" 
+                     placeholder="Aset Perusahaan" 
                      className="rounded-xl h-9" 
                    />
                  </div>
                  <div className="space-y-1.5">
-                   <Label>Ekstrakurikuler</Label>
+                   <Label>Aset Ekstra</Label>
                    <Input 
                      value={labels?.widget?.extracurriculars ?? ""} 
                      onChange={e => updateLabel("widget", "extracurriculars", e.target.value)}
-                     placeholder="Kegiatan Ekstrakurikuler" 
+                     placeholder="Kegiatan Aset Ekstra" 
                      className="rounded-xl h-9" 
                    />
                  </div>

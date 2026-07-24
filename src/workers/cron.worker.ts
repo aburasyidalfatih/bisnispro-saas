@@ -122,12 +122,12 @@ export function initCronJobs() {
           data: { retentionStatus: "WARN_30" }
         })
 
-        const emailSubject = settingsMap['RETENTION_30_EMAIL_SUBJECT'] || "Apakah ada kendala dengan website sekolah Anda?"
-        const emailBodyRaw = settingsMap['RETENTION_30_EMAIL_BODY'] || `<p>Halo Admin {nama_sekolah},</p><p>Kami perhatikan Anda belum login ke dasbor SchoolPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur sekolah Anda?</p><p>Silakan login kembali menggunakan email pendaftaran Anda yaitu <strong>{email_pendaftaran}</strong> beserta password yang sudah Anda buat saat mendaftar. Jika Anda lupa password, silakan gunakan fitur "Lupa Password" di halaman login untuk membuat password baru.</p><p>Yuk, mulai bangun kehadiran digital sekolah Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p><p>Jangan lupa juga untuk bergabung di <strong>Grup Support WhatsApp SchoolPro</strong> untuk mendapatkan bantuan cepat dari tim kami dan update terbaru melalui tautan ini: <a href="https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4">https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4</a></p>`
-        const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name).replace(/{email_pendaftaran}/g, tenant.email || "")
+        const emailSubject = settingsMap['RETENTION_30_EMAIL_SUBJECT'] || "Apakah ada kendala dengan website perusahaan Anda?"
+        const emailBodyRaw = settingsMap['RETENTION_30_EMAIL_BODY'] || `<p>Halo Admin {nama_perusahaan},</p><p>Kami perhatikan Anda belum login ke dasbor BisnisPro selama 30 hari. Apakah ada kendala dalam mengatur website atau fitur perusahaan Anda?</p><p>Silakan login kembali menggunakan email pendaftaran Anda yaitu <strong>{email_pendaftaran}</strong> beserta password yang sudah Anda buat saat mendaftar. Jika Anda lupa password, silakan gunakan fitur "Lupa Password" di halaman login untuk membuat password baru.</p><p>Yuk, mulai bangun kehadiran digital perusahaan Anda sekarang. Jika butuh bantuan teknis, jangan sungkan membalas email ini!</p><p>Jangan lupa juga untuk bergabung di <strong>Grup Support WhatsApp BisnisPro</strong> untuk mendapatkan bantuan cepat dari tim kami dan update terbaru melalui tautan ini: <a href="https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4">https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4</a></p>`
+        const emailBody = emailBodyRaw.replace(/{nama_perusahaan}/g, tenant.name).replace(/{email_pendaftaran}/g, tenant.email || "")
         
-        const waMsgRaw = settingsMap['RETENTION_30_WA'] || "Halo Admin {nama_sekolah}, kami perhatikan Anda belum login dasbor selama 30 hari. Apakah ada kendala?\n\nSilakan login kembali menggunakan email pendaftaran Anda yaitu {email_pendaftaran} beserta password yang sudah Anda buat saat mendaftar. Jika lupa password, gunakan fitur Lupa Password di halaman login.\n\nYuk, bangun kehadiran digital sekolah Anda sekarang. Balas pesan ini jika butuh bantuan!\n\nJangan lupa bergabung di Grup Support WhatsApp SchoolPro untuk mendapatkan bantuan cepat dan update terbaru: https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4"
-        const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name).replace(/{email_pendaftaran}/g, tenant.email || "")
+        const waMsgRaw = settingsMap['RETENTION_30_WA'] || "Halo Admin {nama_perusahaan}, kami perhatikan Anda belum login dasbor selama 30 hari. Apakah ada kendala?\n\nSilakan login kembali menggunakan email pendaftaran Anda yaitu {email_pendaftaran} beserta password yang sudah Anda buat saat mendaftar. Jika lupa password, gunakan fitur Lupa Password di halaman login.\n\nYuk, bangun kehadiran digital perusahaan Anda sekarang. Balas pesan ini jika butuh bantuan!\n\nJangan lupa bergabung di Grup Support WhatsApp BisnisPro untuk mendapatkan bantuan cepat dan update terbaru: https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4"
+        const waMsg = waMsgRaw.replace(/{nama_perusahaan}/g, tenant.name).replace(/{email_pendaftaran}/g, tenant.email || "")
 
         if (tenant.email) {
           await emailQueue.add("retention-warning", {
@@ -179,12 +179,12 @@ export function initCronJobs() {
           }
         })
 
-        const emailSubject = settingsMap['RETENTION_60_EMAIL_SUBJECT'] || "PEMBERITAHUAN: Website Sekolah Anda Ditangguhkan (Suspend)"
-        const emailBodyRaw = settingsMap['RETENTION_60_EMAIL_BODY'] || `<p>Halo Admin {nama_sekolah},</p><p>Kami ingin memberitahukan bahwa website sekolah Anda saat ini telah <strong>ditangguhkan (suspend)</strong> karena tidak ada aktivitas login selama 60 hari terakhir.</p><p>Untuk mengaktifkan kembali website Anda, silakan segera menghubungi tim Admin SchoolPro. Jika tidak ada konfirmasi lebih lanjut, data website Anda akan dihapus secara permanen pada hari ke-90.</p><p>Jika Anda butuh bantuan, bergabunglah di <strong>Grup Support WhatsApp SchoolPro</strong>: <a href="https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4">https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4</a></p>`
-        const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name)
+        const emailSubject = settingsMap['RETENTION_60_EMAIL_SUBJECT'] || "PEMBERITAHUAN: Website Perusahaan Anda Ditangguhkan (Suspend)"
+        const emailBodyRaw = settingsMap['RETENTION_60_EMAIL_BODY'] || `<p>Halo Admin {nama_perusahaan},</p><p>Kami ingin memberitahukan bahwa website perusahaan Anda saat ini telah <strong>ditangguhkan (suspend)</strong> karena tidak ada aktivitas login selama 60 hari terakhir.</p><p>Untuk mengaktifkan kembali website Anda, silakan segera menghubungi tim Admin BisnisPro. Jika tidak ada konfirmasi lebih lanjut, data website Anda akan dihapus secara permanen pada hari ke-90.</p><p>Jika Anda butuh bantuan, bergabunglah di <strong>Grup Support WhatsApp BisnisPro</strong>: <a href="https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4">https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4</a></p>`
+        const emailBody = emailBodyRaw.replace(/{nama_perusahaan}/g, tenant.name)
         
-        const waMsgRaw = settingsMap['RETENTION_60_WA'] || "Halo Admin {nama_sekolah}, website sekolah Anda saat ini berstatus SUSPEND (ditangguhkan) karena tidak ada aktivitas login selama 60 hari. Silakan hubungi admin SchoolPro jika ingin mengaktifkan kembali website Anda sebelum dihapus permanen.\n\nGrup Support WhatsApp SchoolPro: https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4"
-        const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name)
+        const waMsgRaw = settingsMap['RETENTION_60_WA'] || "Halo Admin {nama_perusahaan}, website perusahaan Anda saat ini berstatus SUSPEND (ditangguhkan) karena tidak ada aktivitas login selama 60 hari. Silakan hubungi admin BisnisPro jika ingin mengaktifkan kembali website Anda sebelum dihapus permanen.\n\nGrup Support WhatsApp BisnisPro: https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4"
+        const waMsg = waMsgRaw.replace(/{nama_perusahaan}/g, tenant.name)
 
         if (tenant.email) {
           await emailQueue.add("retention-suspend", {
@@ -219,12 +219,12 @@ export function initCronJobs() {
       for (const tenant of deleteTenants) {
         console.log(`[retention] Hard-deleting 90-day inactive tenant: ${tenant.slug}`)
         
-        const emailSubject = settingsMap['RETENTION_90_EMAIL_SUBJECT'] || "PEMBERITAHUAN: Website Sekolah Anda Telah Dihapus Permanen"
-        const emailBodyRaw = settingsMap['RETENTION_90_EMAIL_BODY'] || `<p>Halo Admin {nama_sekolah},</p><p>Karena tidak ada aktivitas login selama 90 hari dan masa penangguhan telah berakhir, dengan berat hati kami menginformasikan bahwa data website sekolah Anda telah <strong>dihapus secara total</strong> dari sistem kami untuk menjaga performa server.</p><p>Jika di kemudian hari Anda ingin memiliki website kembali, silakan melakukan pengajuan pendaftaran ulang. Terima kasih atas ketertarikan Anda pada SchoolPro.</p><p>Tetap terhubung bersama kami di <strong>Grup Support WhatsApp SchoolPro</strong>: <a href="https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4">https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4</a></p>`
-        const emailBody = emailBodyRaw.replace(/{nama_sekolah}/g, tenant.name)
+        const emailSubject = settingsMap['RETENTION_90_EMAIL_SUBJECT'] || "PEMBERITAHUAN: Website Perusahaan Anda Telah Dihapus Permanen"
+        const emailBodyRaw = settingsMap['RETENTION_90_EMAIL_BODY'] || `<p>Halo Admin {nama_perusahaan},</p><p>Karena tidak ada aktivitas login selama 90 hari dan masa penangguhan telah berakhir, dengan berat hati kami menginformasikan bahwa data website perusahaan Anda telah <strong>dihapus secara total</strong> dari sistem kami untuk menjaga performa server.</p><p>Jika di kemudian hari Anda ingin memiliki website kembali, silakan melakukan pengajuan pendaftaran ulang. Terima kasih atas ketertarikan Anda pada BisnisPro.</p><p>Tetap terhubung bersama kami di <strong>Grup Support WhatsApp BisnisPro</strong>: <a href="https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4">https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4</a></p>`
+        const emailBody = emailBodyRaw.replace(/{nama_perusahaan}/g, tenant.name)
         
-        const waMsgRaw = settingsMap['RETENTION_90_WA'] || "Halo Admin {nama_sekolah}, website sekolah Anda telah DIHAPUS TOTAL dari sistem karena tidak ada aktivitas selama 90 hari. Jika di kemudian hari Anda membutuhkan website kembali, silakan ajukan pendaftaran ulang. Terima kasih.\n\nGrup Support WhatsApp SchoolPro: https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4"
-        const waMsg = waMsgRaw.replace(/{nama_sekolah}/g, tenant.name)
+        const waMsgRaw = settingsMap['RETENTION_90_WA'] || "Halo Admin {nama_perusahaan}, website perusahaan Anda telah DIHAPUS TOTAL dari sistem karena tidak ada aktivitas selama 90 hari. Jika di kemudian hari Anda membutuhkan website kembali, silakan ajukan pendaftaran ulang. Terima kasih.\n\nGrup Support WhatsApp BisnisPro: https://chat.whatsapp.com/FtA3asfD4bcGpGyPXJgcg4"
+        const waMsg = waMsgRaw.replace(/{nama_perusahaan}/g, tenant.name)
 
         if (tenant.email) {
           await emailQueue.add("retention-delete", {

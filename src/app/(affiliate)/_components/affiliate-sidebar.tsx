@@ -9,7 +9,7 @@ import { signOut } from "next-auth/react"
 
 const affiliateMenu = [
   { label: "Overview", href: "/affiliate", icon: LayoutDashboard },
-  { label: "Leads & Sekolah", href: "/affiliate/referrals", icon: Users },
+  { label: "Leads & Perusahaan", href: "/affiliate/referrals", icon: Users },
   { label: "Komisi & Penarikan", href: "/affiliate/commissions", icon: Wallet },
   { label: "Leaderboard", href: "/affiliate/leaderboard", icon: Trophy },
   { label: "Panduan Program", href: "/affiliate/panduan", icon: BookOpen },
@@ -27,7 +27,7 @@ export default function AffiliateSidebar() {
             S
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-sm tracking-tight leading-tight">SchoolPro</span>
+            <span className="font-bold text-sm tracking-tight leading-tight">BisnisPro</span>
             <span className="text-[10px] font-medium text-emerald-500 leading-tight">Mitra Afiliasi</span>
           </div>
         </Link>

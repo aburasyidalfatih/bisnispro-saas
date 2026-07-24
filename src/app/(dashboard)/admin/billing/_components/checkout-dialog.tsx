@@ -57,14 +57,14 @@ export function CheckoutDialog({
               </div>
             )}
             {selectedPlanSlug ==="pro" 
-              ? (isPro ?"Tambah Kuota Siswa" :"Upgrade ke PRO")
+              ? (isPro ?"Tambah Kuota Klien" :"Upgrade ke PRO")
               : (billing?.plan ==="lite" ?"Perpanjang Paket LITE" :"Upgrade ke LITE")}
           </DialogTitle>
           <DialogDescription>
             {selectedPlanSlug ==="pro"
               ? (isPro 
                 ? `Biaya disesuaikan (pro-rata) dengan sisa masa aktif Anda (${daysRemaining} hari).`
-                :"Masukkan jumlah siswa untuk menghitung biaya.")
+                :"Masukkan jumlah klien untuk menghitung biaya.")
               :"Dapatkan fitur Lite untuk masa aktif 1 tahun ke depan."}
           </DialogDescription>
         </DialogHeader>
@@ -74,7 +74,7 @@ export function CheckoutDialog({
           {selectedPlanSlug ==="pro" && (
             <div className="space-y-2">
               <Label className="flex items-center gap-2 text-sm font-semibold">
-                <Users className="h-4 w-4 text-primary" /> {isPro ?"Jumlah Tambah Siswa" :"Jumlah Siswa Aktif"}
+                <Users className="h-4 w-4 text-primary" /> {isPro ?"Jumlah Tambah Klien" :"Jumlah Klien Aktif"}
               </Label>
               <Input
                 type="number" min={minStudents}
@@ -83,7 +83,7 @@ export function CheckoutDialog({
                 className="rounded-xl h-12 text-lg font-semibold"
               />
               <p className="text-[11px] text-muted-foreground">
-                Minimal {isPro ?"tambah" :"upgrade"}: <strong>{minStudents} siswa</strong>
+                Minimal {isPro ?"tambah" :"upgrade"}: <strong>{minStudents} klien</strong>
               </p>
             </div>
           )}
@@ -94,7 +94,7 @@ export function CheckoutDialog({
             
             {isPro && selectedPlanSlug ==="pro" && (
               <div className="flex justify-between text-[11px] text-muted-foreground mb-1">
-                <span>Harga Normal ({studentCount} siswa)</span>
+                <span>Harga Normal ({studentCount} klien)</span>
                 <span>Rp {baseSubTotal.toLocaleString("id-ID")}</span>
               </div>
             )}
@@ -112,7 +112,7 @@ export function CheckoutDialog({
             </div>
             <p className="text-[11px] text-primary/70 italic">
               {selectedPlanSlug ==="pro" 
-                ? <>Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / siswa / tahun</>
+                ? <>Rp {Number(effectivePricePerStudent).toLocaleString("id-ID")} / klien / tahun</>
                 : <>Biaya perpanjangan langganan tetap</>
               }
               {isUsingLockedPrice && selectedPlanSlug ==="pro" && (

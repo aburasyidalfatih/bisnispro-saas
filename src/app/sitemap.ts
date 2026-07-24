@@ -9,14 +9,14 @@ export const revalidate = 3600 // Edge Caching ISR (1 jam)
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const headerList = await headers()
   const protocol = headerList.get("x-forwarded-proto") || "https"
-  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
+  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "bisnispro.id"
   host = host.split(':')[0] // remove port if any
 
-  let rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
-  if (host.endsWith("schoolpro.my.id") || host === "schoolpro.my.id") {
-    rootDomain = "schoolpro.my.id"
-  } else if (host.endsWith("schoolpro.id") || host === "schoolpro.id") {
-    rootDomain = "schoolpro.id"
+  let rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
+  if (host.endsWith("bisnispro.my.id") || host === "bisnispro.my.id") {
+    rootDomain = "bisnispro.my.id"
+  } else if (host.endsWith("bisnispro.id") || host === "bisnispro.id") {
+    rootDomain = "bisnispro.id"
   }
 
   const isMainDomain =
@@ -46,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 1,
       },
       {
-        url: `${domainUrl}/daftarkan-sekolah`,
+        url: `${domainUrl}/daftarkan-perusahaan`,
         lastModified: new Date(),
         changeFrequency: "monthly",
         priority: 0.8,

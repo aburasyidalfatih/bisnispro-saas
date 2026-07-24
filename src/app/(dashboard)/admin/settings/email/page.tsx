@@ -142,7 +142,7 @@ export default function EmailSettingsPage() {
           <div className="text-sm">
             <p className="font-medium">Konfigurasi SMTP per-Tenant</p>
             <p className="text-muted-foreground mt-0.5">
-              Jika tidak dikonfigurasi, sistem akan menggunakan SMTP default platform (SchoolPro).
+              Jika tidak dikonfigurasi, sistem akan menggunakan SMTP default platform (BisnisPro).
               Aktifkan konfigurasi kustom untuk menggunakan server email Anda sendiri. 
               Fitur ini hanya tersedia untuk paket <strong>Pro, Premium, dan Enterprise</strong>.
             </p>
@@ -159,7 +159,7 @@ export default function EmailSettingsPage() {
             </div>
             <h3 className="font-semibold text-lg text-amber-800 dark:text-amber-500">Fitur Premium</h3>
             <p className="text-sm text-amber-700/80 dark:text-amber-400/80 max-w-md mx-auto">
-              Konfigurasi SMTP Kustom (menggunakan email pengirim sekolah Anda sendiri) hanya tersedia untuk paket Pro ke atas. Saat ini Anda menggunakan paket {tenantPlan}.
+              Konfigurasi SMTP Kustom (menggunakan email pengirim perusahaan Anda sendiri) hanya tersedia untuk paket Pro ke atas. Saat ini Anda menggunakan paket {tenantPlan}.
             </p>
             <Button variant="default" className="bg-amber-500 hover:bg-amber-600 text-white mt-4">
               Upgrade Paket
@@ -261,7 +261,7 @@ export default function EmailSettingsPage() {
                 <div className="space-y-2">
                   <Label>Nama Pengirim</Label>
                   <Input value={config.smtpFromName} onChange={set("smtpFromName")}
-                    placeholder="Nama Lembaga Anda" className="rounded-xl" />
+                    placeholder="Nama Bisnis Anda" className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
                   <Label>Email Pengirim (From)</Label>

@@ -52,7 +52,7 @@ export default function NewPartnershipPage() {
     }
 
     if (!formData.name) {
-      toast({ title:"Nama lembaga wajib diisi", variant:"destructive" })
+      toast({ title:"Nama bisnis wajib diisi", variant:"destructive" })
       return
     }
 
@@ -102,7 +102,7 @@ export default function NewPartnershipPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Tambah Kerjasama</h1>
-            <p className="text-muted-foreground mt-1 text-sm">Unggah logo dan detail lembaga/perusahaan mitra.</p>
+            <p className="text-muted-foreground mt-1 text-sm">Unggah logo dan detail bisnis/perusahaan mitra.</p>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function NewPartnershipPage() {
         <div className="lg:col-span-2 space-y-6">
           <Card className="glass border-0 overflow-hidden shadow-sm">
             <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
-              <CardTitle className="text-base">Logo Lembaga</CardTitle>
+              <CardTitle className="text-base">Logo Bisnis</CardTitle>
               <CardDescription className="text-xs">Gunakan gambar transparan (PNG) untuk hasil terbaik.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
@@ -142,7 +142,7 @@ export default function NewPartnershipPage() {
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nama Lembaga / Perusahaan</Label>
+                <Label htmlFor="name">Nama Bisnis / Perusahaan</Label>
                 <Input 
                   id="name" 
                   value={formData.name} 

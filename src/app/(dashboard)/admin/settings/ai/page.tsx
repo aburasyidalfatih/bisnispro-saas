@@ -113,7 +113,7 @@ export default function AiSettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Pengaturan Kecerdasan Buatan (AI)</h1>
-        <p className="text-muted-foreground mt-1">Kelola penggunaan AI dan API Key untuk fitur otomatisasi sekolah.</p>
+        <p className="text-muted-foreground mt-1">Kelola penggunaan AI dan API Key untuk fitur otomatisasi perusahaan.</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -140,7 +140,7 @@ export default function AiSettingsPage() {
               </div>
               <div>
                 <CardTitle>Top-Up Token AI</CardTitle>
-                <CardDescription>Beli kuota tambahan untuk layanan Kecerdasan Buatan (AI) di SchoolPro.</CardDescription>
+                <CardDescription>Beli kuota tambahan untuk layanan Kecerdasan Buatan (AI) di BisnisPro.</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -203,7 +203,7 @@ export default function AiSettingsPage() {
             </div>
             <div>
               <CardTitle className="text-lg">Riwayat Penggunaan AI</CardTitle>
-              <CardDescription>Catatan aktivitas penggunaan fitur AI oleh guru dan staf.</CardDescription>
+              <CardDescription>Catatan aktivitas penggunaan fitur AI oleh staf dan staf.</CardDescription>
             </div>
           </div>
         </CardHeader>

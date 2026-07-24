@@ -64,7 +64,7 @@ export async function consumeToken(token: string) {
 }
 
 /**
- * Membuat token untuk registrasi sekolah baru (tanpa model User).
+ * Membuat token untuk registrasi perusahaan baru (tanpa model User).
  * Disimpan ke Redis (tanpa kadaluarsa).
  */
 export async function createAppRegistrationToken(applicationId: string) {
@@ -79,7 +79,7 @@ export async function createAppRegistrationToken(applicationId: string) {
 }
 
 /**
- * Memverifikasi token registrasi sekolah.
+ * Memverifikasi token registrasi perusahaan.
  */
 export async function verifyAppRegistrationToken(token: string) {
   const redis = await getRedisClient()
@@ -96,7 +96,7 @@ export async function verifyAppRegistrationToken(token: string) {
 }
 
 /**
- * Menghapus token registrasi sekolah setelah digunakan.
+ * Menghapus token registrasi perusahaan setelah digunakan.
  */
 export async function consumeAppRegistrationToken(token: string) {
   try {

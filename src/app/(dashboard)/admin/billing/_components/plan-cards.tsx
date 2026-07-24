@@ -67,7 +67,7 @@ export function PlanCards({
               ))
             ) : (
               <>
-                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" /><span>Website Sekolah</span></div>
+                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" /><span>Website Perusahaan</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" /><span>Data Master</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" /><span>Subdomain Gratis</span></div>
               </>
@@ -111,7 +111,7 @@ export function PlanCards({
             </div>
             <div>
               <CardTitle className="text-lg">Lite</CardTitle>
-              <CardDescription>{litePlan?.description ||"Paket menengah untuk sekolah berkembang"}</CardDescription>
+              <CardDescription>{litePlan?.description ||"Paket menengah untuk perusahaan berkembang"}</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -152,7 +152,7 @@ export function PlanCards({
               <>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Custom Domain</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Broadcast WhatsApp</span></div>
-                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Kehadiran Guru (GTK)</span></div>
+                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Kehadiran Staf (GTK)</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" /><span>Semua fitur Free</span></div>
               </>
             )}
@@ -203,7 +203,7 @@ export function PlanCards({
             </div>
             <div>
               <CardTitle className="text-lg">PRO</CardTitle>
-              <CardDescription>{proPlan?.description ||"Fitur lengkap untuk sekolah modern"}</CardDescription>
+              <CardDescription>{proPlan?.description ||"Fitur lengkap untuk perusahaan modern"}</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -213,7 +213,7 @@ export function PlanCards({
               <span className="text-sm font-semibold text-muted-foreground">Rp</span>
               <span className="text-3xl font-black">{Number(effectivePricePerStudent).toLocaleString("id-ID")}</span>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1">Per siswa / tahun · Min. {pricing.MIN_STUDENTS} siswa</p>
+            <p className="text-[11px] text-muted-foreground mt-1">Per klien / tahun · Min. {pricing.MIN_STUDENTS} klien</p>
             {isUsingLockedPrice && (
               <span className="text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-semibold dark:bg-blue-900/30 dark:text-blue-400">Harga Kontrak</span>
             )}
@@ -237,7 +237,7 @@ export function PlanCards({
               <div className="flex items-center justify-between bg-muted/40 rounded-xl px-3 py-2">
                 <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Kapasitas</span>
                 <span className="text-sm font-bold flex items-center gap-1">
-                  <Users className="h-3.5 w-3.5 text-primary" /> {billing?.studentQuota || 0} Siswa
+                  <Users className="h-3.5 w-3.5 text-primary" /> {billing?.studentQuota || 0} Klien
                 </span>
               </div>
             </div>
@@ -256,7 +256,7 @@ export function PlanCards({
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Semua fitur Lite</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Akademik & E-Rapor</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Keuangan & E-Kantin</span></div>
-                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Absensi Siswa & Donasi</span></div>
+                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Absensi Klien & Donasi</span></div>
               </>
             )}
           </div>
@@ -268,7 +268,7 @@ export function PlanCards({
                 disabled={checkingOut || billing?.hasPendingInvoice || !billing?.upgradeEnabled}
                 onClick={() => { setSelectedPlanSlug("pro"); setShowCheckoutModal(true) }}
               >
-                Tambah Kuota Siswa
+                Tambah Kuota Klien
                 <ArrowRight className="h-4 w-4" />
               </Button>
             ) : (

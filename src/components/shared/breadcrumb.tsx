@@ -28,7 +28,7 @@ const labelMap: Record<string, string> = {
   "my-messages": "Pesan",
   help: "Panduan",
   faq: "FAQ",
-  tenants: "Lembaga",
+  tenants: "Bisnis",
   plans: "Paket & Harga",
   admins: "Super Admin",
   activity: "Aktivitas",

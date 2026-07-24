@@ -17,11 +17,11 @@ export async function generateMetadata({ params }: Props) {
   if (!campaign) return { title: "Kampanye Tidak Ditemukan" }
   const headerList = await headers()
   const protocol = headerList.get("x-forwarded-proto") || "https"
-  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
+  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "bisnispro.id"
   host = host.split(':')[0]
   const domainUrl = `${protocol}://${host}`
 
-  const ogImageBase = (campaign.imageUrl as string) || (campaign.tenant as any).logo || "https://schoolpro.id/default-og.jpg"
+  const ogImageBase = (campaign.imageUrl as string) || (campaign.tenant as any).logo || "https://bisnispro.id/default-og.jpg"
   const ogImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
 
   return {

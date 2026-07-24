@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     if (tenantSlug) {
       const existingTenant = await db.tenant.findUnique({ where: { slug: tenantSlug } })
       if (!existingTenant) {
-        return NextResponse.json({ error: "Sekolah tidak ditemukan" }, { status: 404 })
+        return NextResponse.json({ error: "Perusahaan tidak ditemukan" }, { status: 404 })
       }
 
       const result = await db.$transaction(async (tx) => {
@@ -62,9 +62,9 @@ export async function POST(req: Request) {
       })
     }
 
-    // Jika tenantSlug tidak ada (Mendaftar di domain utama / buat lembaga baru)
+    // Jika tenantSlug tidak ada (Mendaftar di domain utama / buat bisnis baru)
     if (!tenantName) {
-      return NextResponse.json({ error: "Nama lembaga harus diisi" }, { status: 400 })
+      return NextResponse.json({ error: "Nama bisnis harus diisi" }, { status: 400 })
     }
 
     let slug = generateSlug(tenantName)
@@ -118,7 +118,7 @@ export async function POST(req: Request) {
       const { notifyAllSuperAdmins } = await import("@/features/super-admin/services/super-admin-notification.service")
       notifyAllSuperAdmins({
         title: "Pendaftar Tenant Baru",
-        message: `Sekolah/Lembaga "${tenant.name}" baru saja mendaftar.`,
+        message: `Perusahaan/Bisnis "${tenant.name}" baru saja mendaftar.`,
         type: "success",
         metadata: { tenantId: tenant.id, slug: tenant.slug, ownerEmail: user.email }
       }).catch(err => console.error("Gagal mengirim notifikasi super admin:", err))

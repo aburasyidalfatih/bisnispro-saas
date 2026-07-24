@@ -81,7 +81,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({})
   const [pendingPayments, setPendingPayments] = useState(0)
-  const [platformLogo, setPlatformLogo] = useState("/logo-schoolpro.png")
+  const [platformLogo, setPlatformLogo] = useState("/logo-bisnispro.png")
 
   const { data: session } = useSession()
   const { branding } = useTenantBranding()
@@ -127,7 +127,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   const { access: planAccess } = usePlanAccess(currentPlan)
 
   // Branding: pakai context (update instan) untuk nama & logo, fallback ke session
-  const brandName = isSuperAdminPath ? "SchoolPro" : (branding.name || currentTenant?.name || "SchoolPro")
+  const brandName = isSuperAdminPath ? "BisnisPro" : (branding.name || currentTenant?.name || "BisnisPro")
   const brandLogo = isSuperAdminPath ? null : (branding.logo || (currentTenant as any)?.logo || null)
   const finalBrandLogo = brandLogo || platformLogo
   const brandInitial = brandName.charAt(0).toUpperCase()
@@ -198,7 +198,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                 finalBrandLogo || isSuperAdminPath ? "bg-transparent shadow-none" : "btn-gradient"
               )}>
                 {isSuperAdminPath
-                  ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
+                  ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="BisnisPro Logo" fill sizes="48px" className="object-contain p-0.5" />
                   : finalBrandLogo
                     ? <Image src={normalizeImageUrl(finalBrandLogo) || finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
                     : brandInitial
@@ -227,7 +227,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
             )}
           >
             {isSuperAdminPath
-              ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="SchoolPro Logo" fill sizes="48px" className="object-contain p-0.5" />
+              ? <Image src={normalizeImageUrl(platformLogo) || platformLogo} alt="BisnisPro Logo" fill sizes="48px" className="object-contain p-0.5" />
               : finalBrandLogo
                 ? <Image src={normalizeImageUrl(finalBrandLogo) || finalBrandLogo} alt={brandName} fill sizes="48px" className="object-contain p-0.5" />
                 : brandInitial
@@ -382,7 +382,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
       {/* App Version */}
       <div className={cn("p-4 text-center border-t border-border mt-auto flex flex-col gap-1", collapsed ? "hidden" : "block")}>
         <p className="text-[10px] text-muted-foreground font-mono">
-          &copy; {new Date().getFullYear()} <a href="https://schoolpro.id" target="_blank" rel="noopener noreferrer" className="hover:underline text-foreground">SchoolPro.id</a>
+          &copy; {new Date().getFullYear()} <a href="https://bisnispro.id" target="_blank" rel="noopener noreferrer" className="hover:underline text-foreground">BisnisPro.id</a>
         </p>
         <p className="text-[10px] text-muted-foreground font-mono" title="Application Version">
           v1.0.5 {process.env.NEXT_PUBLIC_APP_VERSION ? `(rev: ${process.env.NEXT_PUBLIC_APP_VERSION.substring(0, 7)})` : "(dev)"}

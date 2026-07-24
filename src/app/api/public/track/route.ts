@@ -77,8 +77,8 @@ function detectSourceFromReferrer(referrer: string): string | null {
   if (r.includes("wa.me") || r.includes("whatsapp.com") || r.includes("web.whatsapp")) return "whatsapp"
   if (r.includes("t.me") || r.includes("telegram.org")) return "telegram"
   
-  // SchoolPro internal
-  if (r.includes("schoolpro.id")) return "schoolpro"
+  // BisnisPro internal
+  if (r.includes("bisnispro.id")) return "bisnispro"
   
   // Extract domain name as source
   try {
@@ -98,7 +98,7 @@ function detectMedium(source: string): string {
   if (socialMedia.includes(source)) return "social"
   if (messaging.includes(source)) return "messaging"
   if (source === "direct") return "direct"
-  if (source === "schoolpro") return "internal"
+  if (source === "bisnispro") return "internal"
   return "referral"
 }
 

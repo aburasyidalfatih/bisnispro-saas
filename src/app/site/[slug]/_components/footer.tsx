@@ -261,11 +261,11 @@ export function WebsiteFooter({ tenant }: FooterProps) {
             <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.5)" }}>
               &copy; {year} {tenant.name}. All rights reserved. 
               {(!tenant.plan || tenant.plan === "free") ? (
-                <span className="ml-2">Dibuat menggunakan <a href={(tenant.settings as any)?.affiliate_link || "https://schoolpro.id"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline decoration-white/20 underline-offset-2">Platform Web Perusahaan Gratis</a> dari SchoolPro</span>
+                <span className="ml-2">Dibuat menggunakan <a href={(tenant.settings as any)?.affiliate_link || "https://bisnispro.id"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline decoration-white/20 underline-offset-2">Platform Web Perusahaan Gratis</a> dari BisnisPro</span>
               ) : tenant.plan === "lite" ? (
-                <span className="ml-2">Powered by <a href={(tenant.settings as any)?.affiliate_link || "https://schoolpro.id"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SchoolPro.id</a></span>
+                <span className="ml-2">Powered by <a href={(tenant.settings as any)?.affiliate_link || "https://bisnispro.id"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">BisnisPro.id</a></span>
               ) : (
-                <span className="ml-2">Powered by <a href={(tenant.settings as any)?.affiliate_link || `https://${tenant.slug}.schoolpro.id`} target={(tenant.settings as any)?.affiliate_link ? "_blank" : undefined} rel={(tenant.settings as any)?.affiliate_link ? "noopener noreferrer" : undefined} className="hover:text-white transition-colors">{`${tenant.slug}.schoolpro.id`}</a></span>
+                <span className="ml-2">Powered by <a href={(tenant.settings as any)?.affiliate_link || `https://${tenant.slug}.bisnispro.id`} target={(tenant.settings as any)?.affiliate_link ? "_blank" : undefined} rel={(tenant.settings as any)?.affiliate_link ? "noopener noreferrer" : undefined} className="hover:text-white transition-colors">{`${tenant.slug}.bisnispro.id`}</a></span>
               )}
             </p>
             <div className="flex gap-4">

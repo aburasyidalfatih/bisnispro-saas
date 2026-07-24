@@ -95,11 +95,11 @@ const getOverviewData = unstable_cache(
       const roleMap = new Map<string, string>()
       tenantUsers.forEach(tu => {
         const existing = roleMap.get(tu.userId)
-        if (!existing || ['owner', 'admin', 'guru', 'operator'].includes(tu.role)) roleMap.set(tu.userId, tu.role)
+        if (!existing || ['owner', 'admin', 'staf', 'operator'].includes(tu.role)) roleMap.set(tu.userId, tu.role)
       })
       roleMap.forEach((role) => {
-        if (['owner', 'admin', 'guru', 'operator', 'teacher'].includes(role)) onlineStaff++
-        else if (['orangtua', 'siswa'].includes(role)) onlineParents++
+        if (['owner', 'admin', 'staf', 'operator', 'teacher'].includes(role)) onlineStaff++
+        else if (['orangtua', 'klien'].includes(role)) onlineParents++
       })
     }
 

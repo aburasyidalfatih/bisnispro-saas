@@ -34,7 +34,7 @@ export default async function MyCoursesPage() {
             <ChevronLeft className="h-4 w-4" />
             Kembali ke Katalog
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight">Kelas Saya</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Divisi Saya</h1>
           <p className="text-muted-foreground text-sm">Lanjutkan proses belajar Anda.</p>
         </div>
       </div>
@@ -43,11 +43,11 @@ export default async function MyCoursesPage() {
         {enrollments.length === 0 ? (
           <div className="col-span-full py-20 text-center glass rounded-3xl">
             <GraduationCap className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-bold">Belum Ada Kelas</h3>
-            <p className="text-muted-foreground mb-4">Anda belum mendaftar di kelas apapun.</p>
+            <h3 className="text-lg font-bold">Belum Ada Divisi</h3>
+            <p className="text-muted-foreground mb-4">Anda belum mendaftar di divisi apapun.</p>
             <Link href="/admin/academy">
               <Button variant="default" className="rounded-xl">
-                Jelajahi Katalog Kelas
+                Jelajahi Katalog Divisi
               </Button>
             </Link>
           </div>

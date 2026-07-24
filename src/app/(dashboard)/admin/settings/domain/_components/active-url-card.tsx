@@ -89,7 +89,7 @@ export function ActiveUrlCard({
               <Input
                 value={subdomainInput}
                 onChange={(e) => setSubdomainInput(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                placeholder="nama-sekolah"
+                placeholder="nama-perusahaan"
                 className="border-0 bg-transparent px-0 focus-visible:ring-0 shadow-none"
                 disabled={data?.hasChangedSubdomain}
               />

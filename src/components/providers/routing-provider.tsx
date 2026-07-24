@@ -43,7 +43,7 @@ export function useRouting() {
   /**
    * Mengubah href mentah menjadi href yang sesuai dengan konteks domain.
    * Contoh: "/contact" -> "/site/pijm/contact" (jika di main domain)
-   * Contoh: "/contact" -> "/contact" (jika di subdomain pijm.schoolpro.id)
+   * Contoh: "/contact" -> "/contact" (jika di subdomain pijm.bisnispro.id)
    */
   const resolveHref = (href: string) => {
     // Jika href eksternal, biarkan saja

@@ -25,9 +25,9 @@ export async function POST(req: Request) {
     // Selalu return sukses untuk mencegah email enumeration
     if (!user) return NextResponse.json({ message: "Jika email terdaftar, link reset akan dikirim." })
 
-    // Coba dapatkan tenantId dari hostname agar email dikirim dari SMTP sekolah jika ada
+    // Coba dapatkan tenantId dari hostname agar email dikirim dari SMTP perusahaan jika ada
     const host = req.headers.get("host") || ""
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
     const hostWithoutPort = host.split(":")[0]
     let tenantId = undefined
 
@@ -38,16 +38,16 @@ export async function POST(req: Request) {
     }
 
     const { token } = await createToken(user.id, "password_reset", 1)
-    const origin = req.headers.get("origin") || process.env.AUTH_URL || "https://schoolpro.id"
+    const origin = req.headers.get("origin") || process.env.AUTH_URL || "https://bisnispro.id"
     const resetUrl = `${origin}/reset-password?token=${token}`
 
     const emailResult = await sendEmail(
       user.email,
-      "Reset Password — SchoolPro",
+      "Reset Password — BisnisPro",
       `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
           <h2 style="margin: 0;">🔐 Reset Password</h2>
-          <p style="margin: 4px 0 0; opacity: 0.9;">SchoolPro</p>
+          <p style="margin: 4px 0 0; opacity: 0.9;">BisnisPro</p>
         </div>
         <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
           <p>Halo <strong>${user.name}</strong>,</p>
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
           <p style="color: #64748b; font-size: 13px;">Link ini berlaku selama 1 jam. Jika Anda tidak meminta reset password, abaikan email ini.</p>
         </div>
         <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
-          SchoolPro — Platform Edukasi Terintegrasi
+          BisnisPro — Platform Edukasi Terintegrasi
         </div>
       </div>`,
       tenantId

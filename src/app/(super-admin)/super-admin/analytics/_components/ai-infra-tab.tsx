@@ -97,7 +97,7 @@ export function AiInfraTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatNumber(academicStats.totalCbtExams)} CBT</div>
-            <p className="text-xs text-muted-foreground mt-1">{formatNumber(academicStats.totalTeacherJournals)} Jurnal Guru</p>
+            <p className="text-xs text-muted-foreground mt-1">{formatNumber(academicStats.totalTeacherJournals)} Jurnal Staf</p>
           </CardContent>
         </Card>
       </div>
@@ -110,7 +110,7 @@ export function AiInfraTab() {
               <BrainCircuit className="h-5 w-5 text-indigo-500" />
               Top 5 Pengguna AI
             </CardTitle>
-            <CardDescription>Sekolah dengan pemakaian token AI terbanyak</CardDescription>
+            <CardDescription>Perusahaan dengan pemakaian token AI terbanyak</CardDescription>
           </CardHeader>
           <CardContent>
             {aiInfraStats.topAiTenants.length > 0 ? (

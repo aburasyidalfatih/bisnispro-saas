@@ -65,7 +65,7 @@ export default function CreateCampaignPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold">Buat Kampanye Donasi</h1>
-          <p className="text-sm text-muted-foreground">Galang dana untuk kebutuhan sekolah.</p>
+          <p className="text-sm text-muted-foreground">Galang dana untuk kebutuhan perusahaan.</p>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export default function CreateCampaignPage() {
         <CardContent className="space-y-5">
           <div className="space-y-2">
             <Label>Judul Kampanye *</Label>
-            <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Pembangunan Masjid Sekolah" className="rounded-xl" />
+            <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Pembangunan Masjid Perusahaan" className="rounded-xl" />
           </div>
 
           <div className="space-y-2">
@@ -121,14 +121,14 @@ export default function CreateCampaignPage() {
           </div>
 
           <div className="space-y-2">
-            <Label>QRIS Sekolah (Unggah Gambar Barcode)</Label>
+            <Label>QRIS Perusahaan (Unggah Gambar Barcode)</Label>
             {tenant && (
               <ImageUploadDirect
                 tenantId={tenant.id}
                 value={form.qrisUrl}
                 onChange={url => setForm(f => ({ ...f, qrisUrl: url }))}
                 subDir="donations"
-                hint="Upload file gambar QRIS sekolah"
+                hint="Upload file gambar QRIS perusahaan"
               />
             )}
           </div>
@@ -138,7 +138,7 @@ export default function CreateCampaignPage() {
             <Textarea
               value={form.bankInfo}
               onChange={e => setForm(f => ({ ...f, bankInfo: e.target.value }))}
-              placeholder="Contoh: Transfer ke BSI 123-456-7890 a.n. Masjid Sekolah"
+              placeholder="Contoh: Transfer ke BSI 123-456-7890 a.n. Masjid Perusahaan"
               className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm min-h-[80px] resize-none focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>

@@ -27,7 +27,7 @@ export function SiteBreadcrumbs({
     ? [...baseBreadcrumbs, { label: currentItemName, href: currentItemUrl }]
     : baseBreadcrumbs
 
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id'
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id'
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
 
   return (

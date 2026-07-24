@@ -2,8 +2,8 @@ import { Metadata } from"next"
 import { StarSenderManager } from"./_components/starsender-manager"
 
 export const metadata: Metadata = {
-  title:"WhatsApp Gateway | SchoolPro",
-  description:"Kelola koneksi gateway WhatsApp untuk sekolah Anda",
+  title:"WhatsApp Gateway | BisnisPro",
+  description:"Kelola koneksi gateway WhatsApp untuk perusahaan Anda",
 }
 
 export default function WhatsappSettingsPage() {
@@ -12,7 +12,7 @@ export default function WhatsappSettingsPage() {
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">WhatsApp Gateway</h1>
         <p className="text-muted-foreground">
-          Hubungkan nomor WhatsApp sekolah Anda untuk mengaktifkan notifikasi sistem dan fitur pesan broadcast massal secara otomatis menggunakan StarSender API atau Meta API.
+          Hubungkan nomor WhatsApp perusahaan Anda untuk mengaktifkan notifikasi sistem dan fitur pesan broadcast massal secara otomatis menggunakan StarSender API atau Meta API.
         </p>
       </div>
 

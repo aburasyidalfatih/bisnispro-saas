@@ -28,7 +28,7 @@ export default function CustomPagesPage() {
   const { data: session } = useSession()
   const tenantId = (session?.user as any)?.tenants?.[0]?.id
   const { branding } = useTenantBranding()
-  const domainString = branding?.slug ? `${branding.slug}.schoolpro.id` : "domain.schoolpro.id"
+  const domainString = branding?.slug ? `${branding.slug}.bisnispro.id` : "domain.bisnispro.id"
 
   // AI State
   const [aiModalOpen, setAiModalOpen] = useState(false)
@@ -196,7 +196,7 @@ export default function CustomPagesPage() {
             <CardContent className="p-6 space-y-6 pt-6">
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Judul Halaman <span className="text-red-500">*</span></Label>
-                <Input value={form.title} onChange={e => generateSlug(e.target.value)} placeholder="Contoh: Tata Tertib Siswa" className="rounded-xl h-10 font-medium" />
+                <Input value={form.title} onChange={e => generateSlug(e.target.value)} placeholder="Contoh: Tata Tertib Klien" className="rounded-xl h-10 font-medium" />
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Isi Halaman</Label>
@@ -282,7 +282,7 @@ export default function CustomPagesPage() {
               <Textarea 
                 value={aiTopic}
                 onChange={(e) => setAiTopic(e.target.value)}
-                placeholder="Misal: Buatkan tata tertib siswa SD. Jam masuk 07.00. Wajib seragam rapi. Dilarang bawa HP."
+                placeholder="Misal: Buatkan tata tertib klien SD. Jam masuk 07.00. Wajib seragam rapi. Dilarang bawa HP."
                 className="h-32 rounded-xl resize-none focus-visible:ring-primary/50"
               />
             </div>

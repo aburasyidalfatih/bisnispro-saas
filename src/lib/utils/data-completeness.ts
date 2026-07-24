@@ -9,7 +9,7 @@ export interface CompletenessResult {
 }
 
 /**
- * Cek kelengkapan data pengajuan sekolah.
+ * Cek kelengkapan data pengajuan perusahaan.
  * - "complete" (🟢): Semua data lengkap & lokasi cocok dataset
  * - "location" (🟡): Data ada tapi province/regency tidak cocok dataset
  * - "incomplete" (🔴): Ada field wajib yang kosong
@@ -29,7 +29,7 @@ export function checkDataCompleteness(app: {
 }): CompletenessResult {
   const missing: string[] = []
 
-  if (!app.schoolName?.trim()) missing.push("Nama Sekolah")
+  if (!app.schoolName?.trim()) missing.push("Nama Perusahaan")
   if (!app.schoolSlug?.trim()) missing.push("Subdomain")
   if (!app.npsn || app.npsn.length !== 8) missing.push("NPSN")
   if (!app.province?.trim()) missing.push("Provinsi")
@@ -39,7 +39,7 @@ export function checkDataCompleteness(app: {
   if (!app.adminPhone || app.adminPhone.length < 10) missing.push("No. WhatsApp")
   if (!app.address?.trim()) missing.push("Alamat")
   if (!app.logo?.trim()) missing.push("Logo")
-  if (!app.studentCount || app.studentCount < 1) missing.push("Jumlah Siswa")
+  if (!app.studentCount || app.studentCount < 1) missing.push("Jumlah Klien")
 
   if (missing.length > 0) {
     return { level: "incomplete", missingFields: missing, locationMatch: false }

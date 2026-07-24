@@ -62,7 +62,7 @@ export function DangerZoneSettings({ tenantId }: DangerZoneSettingsProps) {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-red-700/80 dark:text-red-300 mb-4">
-          Penghapusan website akan melenyapkan <strong>seluruh data sekolah</strong> (berita, galeri, fasilitas, guru, tagihan, dll) secara permanen. Akun Anda akan tetap ada, namun website ini tidak dapat dikembalikan.
+          Penghapusan website akan melenyapkan <strong>seluruh data perusahaan</strong> (berita, galeri, aset, staf, tagihan, dll) secara permanen. Akun Anda akan tetap ada, namun website ini tidak dapat dikembalikan.
         </p>
 
         <Dialog open={open} onOpenChange={(val) => {
@@ -82,7 +82,7 @@ export function DangerZoneSettings({ tenantId }: DangerZoneSettingsProps) {
                 Hapus Permanen?
               </DialogTitle>
               <DialogDescription>
-                Tindakan ini <strong>tidak dapat dibatalkan</strong>. Ini akan secara permanen menghapus data lembaga dari peladen kami.
+                Tindakan ini <strong>tidak dapat dibatalkan</strong>. Ini akan secara permanen menghapus data bisnis dari peladen kami.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-4">

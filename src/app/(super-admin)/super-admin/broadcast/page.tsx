@@ -67,7 +67,7 @@ export default function BroadcastPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Broadcast Pesan</h2>
-          <p className="text-muted-foreground">Kirim pengumuman massal ke Lembaga atau Mitra Afiliasi.</p>
+          <p className="text-muted-foreground">Kirim pengumuman massal ke Bisnis atau Mitra Afiliasi.</p>
         </div>
       </div>
 
@@ -91,10 +91,10 @@ export default function BroadcastPage() {
                       <SelectValue placeholder="Pilih penerima..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all_tenants">Semua Lembaga (Sekolah Aktif)</SelectItem>
-                      <SelectItem value="pending_tenants">Lembaga Menunggu Review (PENDING)</SelectItem>
-                      <SelectItem value="free_tenants">Lembaga Versi Gratis (Free Plan)</SelectItem>
-                      <SelectItem value="pro_tenants">Lembaga Versi Premium (Pro Plan)</SelectItem>
+                      <SelectItem value="all_tenants">Semua Bisnis (Perusahaan Aktif)</SelectItem>
+                      <SelectItem value="pending_tenants">Bisnis Menunggu Review (PENDING)</SelectItem>
+                      <SelectItem value="free_tenants">Bisnis Versi Gratis (Free Plan)</SelectItem>
+                      <SelectItem value="pro_tenants">Bisnis Versi Premium (Pro Plan)</SelectItem>
                       <SelectItem value="all_affiliates">Semua Mitra Afiliasi</SelectItem>
                     </SelectContent>
                   </Select>

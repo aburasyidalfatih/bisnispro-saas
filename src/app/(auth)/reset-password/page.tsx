@@ -87,8 +87,8 @@ export default function ResetPasswordPage() {
               {success 
                 ? "Password Anda telah diperbarui" 
                 : (isMainDomain 
-                    ? "Masukkan password baru untuk akun SchoolPro Anda" 
-                    : `Masukkan password baru untuk sistem ${tenantNameDisplay || 'sekolah'}`)}
+                    ? "Masukkan password baru untuk akun BisnisPro Anda" 
+                    : `Masukkan password baru untuk sistem ${tenantNameDisplay || 'perusahaan'}`)}
             </p>
           </div>
 
@@ -122,7 +122,7 @@ export default function ResetPasswordPage() {
             </form>
           )}
         </div>
-        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "SchoolPro" : "Sistem Informasi Sekolah")}</p>
+        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "BisnisPro" : "Sistem Informasi Perusahaan")}</p>
       </div>
     </div>
   )

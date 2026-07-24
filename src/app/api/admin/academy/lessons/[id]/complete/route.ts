@@ -30,7 +30,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     })
 
     if (!enrollment) {
-      return NextResponse.json({ error: "Anda belum mendaftar kelas ini" }, { status: 403 })
+      return NextResponse.json({ error: "Anda belum mendaftar divisi ini" }, { status: 403 })
     }
 
     // Upsert lesson progress

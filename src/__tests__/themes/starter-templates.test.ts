@@ -2,7 +2,7 @@ import Handlebars from "handlebars"
 import { describe, expect, it } from "vitest"
 import * as starterTemplates from "@/features/themes/constants/starter-templates"
 
-describe("SchoolPro theme starter templates", () => {
+describe("BisnisPro theme starter templates", () => {
   it("keeps every generated Handlebars template syntactically valid", () => {
     const templates = Object.entries(starterTemplates).filter(([key]) => (
       key.startsWith("LAYOUT_") || key.startsWith("TEMPLATE_")

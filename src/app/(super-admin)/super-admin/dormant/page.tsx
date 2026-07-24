@@ -130,7 +130,7 @@ export default function DormantSchoolsPage() {
 
   const handleBulkDelete = async () => {
     if (selectedTenants.length === 0) return
-    if (!confirm("Apakah Anda yakin ingin MENGHAPUS secara permanen semua sekolah yang dipilih? Data tidak dapat dipulihkan!")) return
+    if (!confirm("Apakah Anda yakin ingin MENGHAPUS secara permanen semua perusahaan yang dipilih? Data tidak dapat dipulihkan!")) return
     
     setIsProcessing(true)
     try {
@@ -154,9 +154,9 @@ export default function DormantSchoolsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Sekolah Dormant (Belum Login)</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Perusahaan Dormant (Belum Login)</h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Daftar {tenants.length} sekolah yang sudah disetujui namun belum pernah login ke dasbor mereka.
+            Daftar {tenants.length} perusahaan yang sudah disetujui namun belum pernah login ke dasbor mereka.
           </p>
         </div>
         <Button onClick={() => fetchTenants(page)} variant="outline" size="sm" className="gap-2">
@@ -167,7 +167,7 @@ export default function DormantSchoolsPage() {
 
       <Tabs defaultValue="list" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="list" className="gap-2"><Moon className="h-4 w-4" /> Daftar Sekolah</TabsTrigger>
+          <TabsTrigger value="list" className="gap-2"><Moon className="h-4 w-4" /> Daftar Perusahaan</TabsTrigger>
           <TabsTrigger value="templates" className="gap-2"><Settings className="h-4 w-4" /> Pengaturan Template</TabsTrigger>
         </TabsList>
 
@@ -178,10 +178,10 @@ export default function DormantSchoolsPage() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Moon className="h-5 w-5 text-orange-500" />
-                Daftar Sekolah Dormant ({tenants.length})
+                Daftar Perusahaan Dormant ({tenants.length})
               </CardTitle>
               <CardDescription>
-                Lakukan follow-up agar sekolah segera memanfaatkan fitur SchoolPro.
+                Lakukan follow-up agar perusahaan segera memanfaatkan fitur BisnisPro.
               </CardDescription>
             </div>
             
@@ -237,7 +237,7 @@ export default function DormantSchoolsPage() {
                       aria-label="Pilih Semua"
                     />
                   </TableHead>
-                  <TableHead>Nama Sekolah</TableHead>
+                  <TableHead>Nama Perusahaan</TableHead>
                   <TableHead>Subdomain</TableHead>
                   <TableHead>Kontak</TableHead>
                   <TableHead>Tanggal Disetujui</TableHead>
@@ -254,7 +254,7 @@ export default function DormantSchoolsPage() {
                 ) : tenants.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                      Tidak ada sekolah dormant saat ini. Hebat!
+                      Tidak ada perusahaan dormant saat ini. Hebat!
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -275,7 +275,7 @@ export default function DormantSchoolsPage() {
                       </TableCell>
                       <TableCell>
                         <a 
-                          href={`https://${t.slug}.schoolpro.id`} 
+                          href={`https://${t.slug}.bisnispro.id`} 
                           target="_blank" 
                           rel="noreferrer"
                           className="flex items-center gap-1 text-blue-500 hover:underline"
@@ -338,7 +338,7 @@ export default function DormantSchoolsPage() {
               Template Pesan Notifikasi
             </CardTitle>
             <CardDescription>
-              Ubah kata-kata pesan otomatis yang akan dikirim ke WhatsApp dan Email sekolah. Variabel yang didukung: <code className="bg-muted px-1 rounded">{"{{tenant_name}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_slug}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_email}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_phone}}"}</code>
+              Ubah kata-kata pesan otomatis yang akan dikirim ke WhatsApp dan Email perusahaan. Variabel yang didukung: <code className="bg-muted px-1 rounded">{"{{tenant_name}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_slug}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_email}}"}</code>, <code className="bg-muted px-1 rounded">{"{{tenant_phone}}"}</code>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -367,7 +367,7 @@ export default function DormantSchoolsPage() {
                     <Input 
                       value={emailSubject} 
                       onChange={(e) => setEmailSubject(e.target.value)}
-                      placeholder="Bantuan Setup Website Sekolah..."
+                      placeholder="Bantuan Setup Website Perusahaan..."
                     />
                   </div>
                   <div className="space-y-2">

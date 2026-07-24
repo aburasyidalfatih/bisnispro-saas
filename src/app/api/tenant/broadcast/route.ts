@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     if (plan === "lite" && target !== "all_gtk") {
       return NextResponse.json(
-        { error: "Paket Lite hanya dapat melakukan broadcast ke Guru & Staf." },
+        { error: "Paket Lite hanya dapat melakukan broadcast ke Staf & Staf." },
         { status: 403 }
       )
     }

@@ -22,7 +22,7 @@ export function MarqueeForm({ form, setForm }: MarqueeFormProps) {
           <div className="space-y-1">
             <CardTitle className="text-lg">Teks Berjalan (Marquee)</CardTitle>
             <CardDescription>
-              Teks berjalan yang muncul di bagian paling atas website publik sekolah.
+              Teks berjalan yang muncul di bagian paling atas website publik perusahaan.
             </CardDescription>
           </div>
         </div>

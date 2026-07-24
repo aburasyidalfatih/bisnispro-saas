@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   let slug = headersList.get("x-tenant-slug")
   if (!slug) {
     const host = headersList.get("host") || ""
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.test"
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.test"
     if (host.endsWith(`.${rootDomain}`)) {
       slug = host.replace(`.${rootDomain}`, "")
     } else if (host !== rootDomain && !host.startsWith("www.")) {

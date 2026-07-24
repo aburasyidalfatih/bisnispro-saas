@@ -19,7 +19,7 @@ export function LockedFeature({ featureName, requiredPlan }: LockedFeatureProps)
           </div>
           <CardTitle className="text-xl">Fitur Terkunci</CardTitle>
           <CardDescription className="text-base mt-2">
-            Fitur <strong className="text-foreground">{featureName}</strong> hanya tersedia untuk sekolah dengan paket berlangganan <strong>{requiredPlan.toUpperCase()}</strong> ke atas.
+            Fitur <strong className="text-foreground">{featureName}</strong> hanya tersedia untuk perusahaan dengan paket berlangganan <strong>{requiredPlan.toUpperCase()}</strong> ke atas.
           </CardDescription>
         </CardHeader>
         <CardContent>

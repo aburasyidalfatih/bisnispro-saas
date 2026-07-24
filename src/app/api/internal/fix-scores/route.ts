@@ -36,7 +36,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ 
       success: true,
-      message: `Berhasil memperbaiki ${fixed} sekolah.`,
+      message: `Berhasil memperbaiki ${fixed} perusahaan.`,
       tenantsFixed: tenantsWithoutScore.map(t => t.name)
     })
   } catch (error: any) {

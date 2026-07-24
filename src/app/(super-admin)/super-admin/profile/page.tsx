@@ -141,7 +141,7 @@ export default function SuperAdminProfilePage() {
                   value={profileForm.email} 
                   onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })} 
                   className="rounded-xl"
-                  placeholder="admin@schoolpro.id"
+                  placeholder="admin@bisnispro.id"
                 />
               </div>
               <div className="space-y-2">

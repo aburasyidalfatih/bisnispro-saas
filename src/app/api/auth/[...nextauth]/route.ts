@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 
 async function getDynamicConfig(req: NextRequest) {
   // PENTING: Di belakang reverse proxy (nginx → Docker), req.nextUrl.hostname
-  // mengembalikan nama container internal (misal: schoolpro-dev-app), bukan domain asli.
+  // mengembalikan nama container internal (misal: bisnispro-dev-app), bukan domain asli.
   // Gunakan X-Forwarded-Host atau Host header, sama seperti middleware.ts
   const rawHost =
     req.headers.get("x-forwarded-host") ||
@@ -17,7 +17,7 @@ async function getDynamicConfig(req: NextRequest) {
     req.nextUrl.hostname
   const hostWithoutPort = rawHost.split(":")[0]
 
-  const rootDomain = process.env.AUTH_URL ? process.env.AUTH_URL.replace("https://", "").replace("http://", "") : (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id")
+  const rootDomain = process.env.AUTH_URL ? process.env.AUTH_URL.replace("https://", "").replace("http://", "") : (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id")
   const isMainDomain =
     hostWithoutPort === "localhost" ||
     hostWithoutPort === rootDomain ||

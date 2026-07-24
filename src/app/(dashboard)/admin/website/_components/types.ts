@@ -22,16 +22,21 @@ export interface WebsiteData {
   _count?: {
     posts: number
     documents: number
-    facilities: number
-    staff: number
-    achievements: number
-    alumni: number
-    extracurriculars: number
-    programs: number
+    facilities?: number
+    staff?: number
+    achievements?: number
+    mitra?: number
+    extracurriculars?: number
+    programs?: number
     popups: number
     sliders: number
     events: number
     partnerships: number
     contactSubmissions: number
+    offices?: number
+    teamMembers?: number
+    portfolios?: number
+    testimonials?: number
+    services?: number
   }
 }

@@ -88,7 +88,7 @@ export async function addUserToTenant(params: {
     }
 
     if (existing) {
-      const roleMap: Record<string, string> = { guru: "Guru", orangtua: "Orang Tua", admin: "Admin", siswa: "Siswa", owner: "Owner" }
+      const roleMap: Record<string, string> = { staf: "Staf", orangtua: "Orang Tua", admin: "Admin", klien: "Klien", owner: "Owner" }
       const existingRoleLabel = roleMap[existing.role] || existing.role
       const targetRoleLabel = roleMap[role] || role
 

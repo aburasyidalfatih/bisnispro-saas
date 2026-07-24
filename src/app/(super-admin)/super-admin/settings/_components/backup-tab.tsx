@@ -199,7 +199,7 @@ export function BackupTab() {
             <Database className="h-4 w-4" /> Backup Manual via UI Dinonaktifkan
           </Button>
           <p className="text-[10px] text-muted-foreground text-center">
-            Sistem SchoolPro berjalan di dalam Docker yang aman. Backup otomatis sudah dijadwalkan berjalan setiap jam 02:00 WIB. Untuk backup manual seketika, gunakan terminal VPS: <code>./scripts/backup-db.sh</code>
+            Sistem BisnisPro berjalan di dalam Docker yang aman. Backup otomatis sudah dijadwalkan berjalan setiap jam 02:00 WIB. Untuk backup manual seketika, gunakan terminal VPS: <code>./scripts/backup-db.sh</code>
           </p>
 
           {backupData?.lastBackupLog && (

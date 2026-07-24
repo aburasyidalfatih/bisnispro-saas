@@ -32,7 +32,7 @@ Halo ${affiliate.user.name},
 
 Selamat! Anda mendapat komisi dari referral:
 
-🏫 Sekolah: ${tenantName}
+🏫 Perusahaan: ${tenantName}
 💰 Komisi: Rp ${formatCurrency(commissionAmount)}
 💳 Saldo Saat Ini: Rp ${formatCurrency(affiliate.balance)}
 📊 Total Pendapatan: Rp ${formatCurrency(affiliate.totalEarnings)}
@@ -47,9 +47,9 @@ Terima kasih sudah menjadi mitra ${cfg.platformName}! 🤝`
         </div>
         <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0;">
           <p>Halo <strong>${affiliate.user.name}</strong>,</p>
-          <p>Selamat! Anda mendapat komisi dari referral sekolah.</p>
+          <p>Selamat! Anda mendapat komisi dari referral perusahaan.</p>
           <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-            <tr><td style="padding: 8px 0; color: #64748b;">Sekolah</td><td style="padding: 8px 0; font-weight: 600;">${tenantName}</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748b;">Perusahaan</td><td style="padding: 8px 0; font-weight: 600;">${tenantName}</td></tr>
             <tr><td style="padding: 8px 0; color: #64748b;">Komisi</td><td style="padding: 8px 0; font-weight: 600; color: #d97706;">Rp ${formatCurrency(commissionAmount)}</td></tr>
             <tr><td style="padding: 8px 0; color: #64748b;">Saldo Saat Ini</td><td style="padding: 8px 0; font-weight: 600;">Rp ${formatCurrency(affiliate.balance)}</td></tr>
             <tr><td style="padding: 8px 0; color: #64748b;">Total Pendapatan</td><td style="padding: 8px 0; font-weight: 600;">Rp ${formatCurrency(affiliate.totalEarnings)}</td></tr>

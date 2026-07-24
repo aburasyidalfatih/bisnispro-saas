@@ -24,7 +24,7 @@ export async function exportToExcel(
 
     const ExcelJS = (await import("exceljs")).default
     const workbook = new ExcelJS.Workbook()
-    workbook.creator = "SchoolPro"
+    workbook.creator = "BisnisPro"
     workbook.created = new Date()
 
     const worksheet = workbook.addWorksheet(sheetName)

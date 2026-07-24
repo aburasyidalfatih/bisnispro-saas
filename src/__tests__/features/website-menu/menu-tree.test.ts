@@ -6,23 +6,23 @@ describe("normalizeWebsiteMenuTree", () => {
     const menus = normalizeWebsiteMenuTree([
       {
         id: "root-newer",
-        label: "Profil Sekolah",
+        label: "Profil Perusahaan",
         url: "/profil",
         order: 2,
         createdAt: "2024-01-02T00:00:00.000Z",
         children: [
-          { id: "child-gtk", label: "Guru & Staf (GTK)", url: "/gtk", order: 1 },
+          { id: "child-gtk", label: "Staf & Staf (GTK)", url: "/gtk", order: 1 },
         ],
       },
       {
         id: "root-keeper",
-        label: " Profil  Sekolah ",
+        label: " Profil  Perusahaan ",
         url: "/profil/",
         order: 1,
         createdAt: "2024-01-01T00:00:00.000Z",
         children: [
-          { id: "child-profile", label: "Profil Lembaga", url: "/profil", order: 0 },
-          { id: "child-gtk-duplicate", label: "guru & staf (gtk)", url: "/gtk/", order: 2 },
+          { id: "child-profile", label: "Profil Bisnis", url: "/profil", order: 0 },
+          { id: "child-gtk-duplicate", label: "staf & staf (gtk)", url: "/gtk/", order: 2 },
         ],
       },
     ])

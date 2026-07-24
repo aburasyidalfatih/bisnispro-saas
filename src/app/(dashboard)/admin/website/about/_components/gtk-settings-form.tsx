@@ -122,7 +122,7 @@ export function GtkSettingsForm({ form, setForm }: GtkSettingsFormProps) {
                     <Input 
                       value={stat.label} 
                       onChange={(e) => updateStatItem(index, "label", e.target.value)} 
-                      placeholder="Misal: Rasio Guru:Siswa" 
+                      placeholder="Misal: Rasio Staf:Klien" 
                       className="rounded-xl h-10 flex-1"
                     />
                     <Button 

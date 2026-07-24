@@ -99,7 +99,7 @@ export function FeaturesSection() {
           Website Bisnis Modern dengan Fitur Canggih
         </h2>
         <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto px-2">
-          Nikmati fasilitas website modern. Tingkatkan konversi dan kredibilitas bisnis Anda dengan fitur-fitur profesional kami.
+          Nikmati aset website modern. Tingkatkan konversi dan kredibilitas bisnis Anda dengan fitur-fitur profesional kami.
         </p>
       </div>
 

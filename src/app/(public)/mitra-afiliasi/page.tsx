@@ -19,18 +19,18 @@ export default function MitraAfiliasi() {
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-              Bantu Sekolah Go Digital, <br />
+              Bantu Perusahaan Go Digital, <br />
               <span className="text-gradient">Dapatkan Penghasilan Tambahan</span>
             </h1>
 
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Bergabunglah dengan program Afiliasi SchoolPro. Bagikan link referral Anda, bantu sekolah beralih ke manajemen digital modern, dan dapatkan komisi <strong className="text-foreground">20%</strong> dari setiap pembayaran mereka.
+              Bergabunglah dengan program Afiliasi BisnisPro. Bagikan link referral Anda, bantu perusahaan beralih ke manajemen digital modern, dan dapatkan komisi <strong className="text-foreground">20%</strong> dari setiap pembayaran mereka.
             </p>
 
             <div className="space-y-4 pt-4">
               {[
-                { icon: TrendingUp, title: "Komisi 20% Berulang", desc: "Dapatkan komisi tidak hanya di awal, tapi selama sekolah tersebut berlangganan." },
-                { icon: Target, title: "Dashboard Transparan", desc: "Pantau jumlah klik, calon sekolah mendaftar, dan saldo yang siap ditarik secara real-time." },
+                { icon: TrendingUp, title: "Komisi 20% Berulang", desc: "Dapatkan komisi tidak hanya di awal, tapi selama perusahaan tersebut berlangganan." },
+                { icon: Target, title: "Dashboard Transparan", desc: "Pantau jumlah klik, calon perusahaan mendaftar, dan saldo yang siap ditarik secara real-time." },
                 { icon: Shield, title: "Pencairan Mudah & Aman", desc: "Tarik saldo komisi langsung ke rekening bank Anda dengan cepat." },
               ].map((feature, i) => (
                 <div key={i} className="flex gap-4 p-4 rounded-2xl glass border hover:border-primary/30 transition-colors">
@@ -76,7 +76,7 @@ export default function MitraAfiliasi() {
                 <Link href="/syarat-ketentuan" className="underline hover:text-primary">
                   Syarat &amp; Ketentuan
                 </Link>{" "}
-                program Afiliasi SchoolPro.
+                program Afiliasi BisnisPro.
               </p>
             </div>
           </div>

@@ -25,7 +25,7 @@ export async function GET(req: Request) {
 
   const stream = new ReadableStream({
     async start(controller) {
-      const header = ["ID", "Nama", "Email", "Role", "Lembaga", "Tanggal Bergabung"]
+      const header = ["ID", "Nama", "Email", "Role", "Bisnis", "Tanggal Bergabung"]
       controller.enqueue(header.join(",") + "\n")
 
       const BATCH_SIZE = 1000
@@ -89,7 +89,7 @@ export async function GET(req: Request) {
   return new Response(stream, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="Data_Pengguna_SchoolPro_${new Date().toISOString().split('T')[0]}.csv"`
+      "Content-Disposition": `attachment; filename="Data_Pengguna_BisnisPro_${new Date().toISOString().split('T')[0]}.csv"`
     }
   })
 }

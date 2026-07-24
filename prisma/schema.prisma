@@ -89,15 +89,15 @@ model Tenant {
   waQueueLogs            WaQueueLog[]
   socialMediaCredentials SocialMediaCredential[]
 
-  websiteMenus       WebsiteMenu[]
-  customPages        CustomPage[]
-  faqs               Faq[]
-  pageViews          PageView[]
-  errorLogs          ErrorLog[]
-  systemFeedbacks    SystemFeedback[]
-  courseEnrollments  CourseEnrollment[]
+  websiteMenus      WebsiteMenu[]
+  customPages       CustomPage[]
+  faqs              Faq[]
+  pageViews         PageView[]
+  errorLogs         ErrorLog[]
+  systemFeedbacks   SystemFeedback[]
+  courseEnrollments CourseEnrollment[]
 
-  discountCodes      DiscountCode[]
+  discountCodes DiscountCode[]
 
   @@index([isActive])
   @@index([plan])
@@ -205,7 +205,7 @@ model TenantUser {
   id       String @id @default(cuid())
   tenantId String
   userId   String
-  role     String @default("orangtua")
+  role     String @default("STAFF")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -218,7 +218,7 @@ model Invitation {
   id        String   @id @default(cuid())
   tenantId  String
   email     String
-  role      String   @default("orangtua")
+  role      String   @default("STAFF")
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
@@ -432,8 +432,8 @@ model PlatformSetting {
 
 model TenantApplication {
   id             String            @id @default(cuid())
-  businessName     String
-  businessSlug     String            @unique
+  businessName   String
+  businessSlug   String            @unique
   adminName      String
   adminEmail     String
   adminPhone     String
@@ -448,7 +448,7 @@ model TenantApplication {
   regency        String?
   businessType   String?           @default("UMKM")
   logo           String?
-  employeeCount   Int               @default(0)
+  employeeCount  Int               @default(0)
   affiliateId    String?
   emailOpenedAt  DateTime?
   utmSource      String?
@@ -531,7 +531,7 @@ model Document {
   fileUrl     String
   mimeType    String
   size        Int
-  type        String   @default("MATERI_TUGAS")
+  type        String   @default("DOCUMENT")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -572,21 +572,21 @@ model Event {
 }
 
 model Portfolio {
-  id          String   @id @default(cuid())
-  tenantId    String
-  title       String
-  slug        String
-  description String?
-  completedAt DateTime
-  clientName  String   @default("LOKAL")
-  category    String   @default("SISWA")
-  imageUrl    String?
-  projectUrl  String?
+  id           String   @id @default(cuid())
+  tenantId     String
+  title        String
+  slug         String
+  description  String?
+  completedAt  DateTime
+  clientName   String   @default("LOKAL")
+  category     String   @default("SISWA")
+  imageUrl     String?
+  projectUrl   String?
   technologies Json?
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
   @@index([tenantId])
@@ -679,18 +679,18 @@ model Service {
 }
 
 model Testimonial {
-  id              String   @id @default(cuid())
-  tenantId        String
-  name            String
-  role            String   @default("KULIAH")
-  company         String?
-  testimonial     String?
-  imageUrl        String?
-  linkedin        String?
-  rating          Int      @default(5)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  role        String   @default("Customer")
+  company     String?
+  testimonial String?
+  imageUrl    String?
+  linkedin    String?
+  rating      Int      @default(5)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([createdAt])
@@ -699,23 +699,23 @@ model Testimonial {
 }
 
 model TeamMember {
-  id              String             @id @default(cuid())
-  tenantId        String
-  name            String
-  position        String
-  department      String?
-  imageUrl        String?
-  bio             String?
-  sortOrder       Int                @default(0)
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  email           String?
-  phone           String?
-  instagram       String?
-  facebook        String?
-  linkedin        String?
-  twitter         String?
-  tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  tenantId   String
+  name       String
+  position   String
+  department String?
+  imageUrl   String?
+  bio        String?
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  email      String?
+  phone      String?
+  instagram  String?
+  facebook   String?
+  linkedin   String?
+  twitter    String?
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([createdAt])
@@ -773,7 +773,7 @@ model SubscriptionPlan {
   price           Float          @default(0)
   interval        String         @default("MONTHLY")
   features        Json?
-  maxTeamMembers     Int            @default(0)
+  maxTeamMembers  Int            @default(0)
   maxStorage      Int            @default(0)
   monthlyAiTokens Int            @default(0)
   isActive        Boolean        @default(true)
@@ -1131,21 +1131,21 @@ model CustomTheme {
   aboutHtml            String?
   achievementHtml      String?
   contactHtml          String?
-  testimonialHtml  String?
+  testimonialHtml      String?
   galleryHtml          String?
   newsDetailHtml       String?
   newsHtml             String?
   programHtml          String?
-  teamHtml            String?
+  teamHtml             String?
   isActive             Boolean  @default(true)
   // New template columns
   pengumumanHtml       String?
   pengumumanDetailHtml String?
-  serviceHtml             String?
-  portfolioHtml           String?
+  serviceHtml          String?
+  portfolioHtml        String?
   agendaHtml           String?
   unduhanHtml          String?
-  teamDetailHtml      String?
+  teamDetailHtml       String?
   tenants              Tenant[]
 
   @@index([name])

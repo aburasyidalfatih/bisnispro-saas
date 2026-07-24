@@ -80,7 +80,7 @@ export default function WebsitePosterPage() {
           )}
           <div>
             <h1 className="text-5xl font-black tracking-tight text-slate-900 uppercase">
-              {tenant?.name ||"Nama Lembaga"}
+              {tenant?.name ||"Nama Bisnis"}
             </h1>
             <p className="text-xl text-slate-600 mt-3 font-medium">
               {tenant?.tagline ||"Portal Informasi Resmi"}
@@ -122,7 +122,7 @@ export default function WebsitePosterPage() {
             {tenant?.phone && <span>📞 {tenant.phone}</span>}
             {tenant?.email && <span>✉️ {tenant.email}</span>}
           </div>
-          <p className="text-[10px] text-slate-300 mt-8">Powered by SchoolPro SaaS</p>
+          <p className="text-[10px] text-slate-300 mt-8">Powered by BisnisPro SaaS</p>
         </div>
         
       </div>

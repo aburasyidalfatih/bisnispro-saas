@@ -86,14 +86,14 @@ export function DnsGuideCard({
                   <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-mono">
-                        {rootDomain ||"schoolpro.id"}
+                        {rootDomain ||"bisnispro.id"}
                       </code>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() =>
                           copyToClipboard(
-                            rootDomain ||"schoolpro.id","CNAME value"
+                            rootDomain ||"bisnispro.id","CNAME value"
                           )
                         }
                         className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-muted"

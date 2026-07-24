@@ -110,15 +110,15 @@ export function ProviderMeta({ form, setForm, handleSaveBatch, saving }: Props) 
           <div className="rounded-xl bg-muted/50 p-4 space-y-3">
             <div>
               <p className="font-semibold text-foreground mb-1">URL Kebijakan Privasi:</p>
-              <code className="block bg-background border p-2 rounded-lg text-xs break-all">https://schoolpro.id/privacy-policy</code>
+              <code className="block bg-background border p-2 rounded-lg text-xs break-all">https://bisnispro.id/privacy-policy</code>
             </div>
             <div>
               <p className="font-semibold text-foreground mb-1">Webhook Callback URL:</p>
-              <code className="block bg-background border p-2 rounded-lg text-xs break-all">https://schoolpro.id/api/webhook/meta-wa</code>
+              <code className="block bg-background border p-2 rounded-lg text-xs break-all">https://bisnispro.id/api/webhook/meta-wa</code>
             </div>
             <div>
               <p className="font-semibold text-foreground mb-1">Webhook Verify Token:</p>
-              <code className="block bg-background border p-2 rounded-lg text-xs break-all">schoolpro_meta_verify_token_123</code>
+              <code className="block bg-background border p-2 rounded-lg text-xs break-all">bisnispro_meta_verify_token_123</code>
             </div>
           </div>
         </CardContent>

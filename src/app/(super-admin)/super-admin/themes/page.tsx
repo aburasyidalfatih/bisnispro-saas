@@ -46,7 +46,7 @@ export default async function SuperAdminThemesPage() {
     {
       id: "sys-default",
       name: "Tema Default",
-      author: "SchoolPro Official",
+      author: "BisnisPro Official",
       version: "1.0.0",
       thumbnail: null,
       isSystem: true,
@@ -61,7 +61,7 @@ export default async function SuperAdminThemesPage() {
     systemThemes.push({
       id: "sys-modern",
       name: "Tema Corporat",
-      author: "SchoolPro Official",
+      author: "BisnisPro Official",
       version: "1.0.0",
       thumbnail: null,
       isSystem: true,
@@ -80,7 +80,7 @@ export default async function SuperAdminThemesPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Theme Engine</h1>
-          <p className="text-muted-foreground mt-1">Kelola tema bawaan dan tema kustom berbasis Handlebars untuk sekolah.</p>
+          <p className="text-muted-foreground mt-1">Kelola tema bawaan dan tema kustom berbasis Handlebars untuk perusahaan.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" className="bg-white" asChild>
@@ -132,7 +132,7 @@ export default async function SuperAdminThemesPage() {
                 <span>{format(theme.createdAt, "dd MMM yyyy", { locale: id })}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Sekolah Pengguna</span>
+                <span>Perusahaan Pengguna</span>
                 <Badge variant="outline" className="font-bold">{theme._count.tenants}</Badge>
               </div>
             </CardContent>

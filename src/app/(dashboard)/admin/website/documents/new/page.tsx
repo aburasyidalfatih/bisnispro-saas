@@ -176,7 +176,7 @@ export default function NewDocumentPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="UNDUHAN_UMUM">Unduhan Umum (Bebas)</SelectItem>
-                  <SelectItem value="MATERI_TUGAS">Materi / Tugas Sekolah</SelectItem>
+                  <SelectItem value="MATERI_TUGAS">Materi / Tugas Perusahaan</SelectItem>
                 </SelectContent>
               </Select>
             </div>

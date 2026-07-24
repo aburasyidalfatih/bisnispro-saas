@@ -49,7 +49,7 @@ export default function ImportGTKPage() {
         }
         
         // Validasi kolom
-        const requiredColumns = ["Nama Lengkap","Email","No HP (Opsional)","Role (guru/admin/staff)"]
+        const requiredColumns = ["Nama Lengkap","Email","No HP (Opsional)","Role (staf/admin/staff)"]
         const columns = Object.keys(results.data[0] as any)
         const missing = requiredColumns.filter(c => !columns.includes(c))
         
@@ -79,7 +79,7 @@ export default function ImportGTKPage() {
       if (res.ok) {
         setSuccess(true)
         toast({ title:"Import Berhasil", description: `${result.count} pengguna berhasil ditambahkan.` })
-        setTimeout(() => router.push("/admin/users?role=guru"), 2000)
+        setTimeout(() => router.push("/admin/users?role=staf"), 2000)
       } else {
         setError(result.error ||"Gagal melakukan import")
         toast({ title:"Import Gagal", description: result.error, variant:"destructive" })
@@ -92,12 +92,12 @@ export default function ImportGTKPage() {
   }
 
   const downloadTemplate = () => {
-    const csvContent ="Nama Lengkap,Email,No HP (Opsional),Role (guru/admin/staff)\nBapak Budi,budi.guru@sekolah.com,081234567890,guru\nIbu Siti,siti.admin@sekolah.com,,admin"
+    const csvContent ="Nama Lengkap,Email,No HP (Opsional),Role (staf/admin/staff)\nBapak Budi,budi.staf@perusahaan.com,081234567890,staf\nIbu Siti,siti.admin@perusahaan.com,,admin"
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement("a")
     const url = URL.createObjectURL(blob)
     link.setAttribute("href", url)
-    link.setAttribute("download","template_import_gtk_schoolpro.csv")
+    link.setAttribute("download","template_import_gtk_bisnispro.csv")
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
@@ -112,7 +112,7 @@ export default function ImportGTKPage() {
         </div>
         <h2 className="text-3xl font-bold tracking-tight mb-3">Fitur Premium</h2>
         <p className="text-lg text-muted-foreground max-w-md mb-8">
-          Fasilitas Import Data GTK secara massal (Excel/CSV) hanya tersedia untuk sekolah dengan paket berlangganan.
+          Aset Import Data GTK secara massal (Excel/CSV) hanya tersedia untuk perusahaan dengan paket berlangganan.
         </p>
         <Link href="/admin/billing">
           <Button size="lg" className="btn-gradient text-white rounded-xl px-10 shadow-lg glow-primary border-0 font-bold text-base h-12 flex items-center justify-center">
@@ -127,13 +127,13 @@ export default function ImportGTKPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href="/admin/users?role=guru">
+        <Link href="/admin/users?role=staf">
           <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl">
             <ChevronLeft className="h-5 w-5" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">Import Data Staf/Guru (GTK)</h1>
+          <h1 className="text-2xl font-bold">Import Data Staf/Staf (GTK)</h1>
           <p className="text-sm text-muted-foreground">Tambahkan akun pengajar dan staf secara massal menggunakan file CSV.</p>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function ImportGTKPage() {
                   </div>
                   <div className="flex gap-3">
                      <div className="h-6 w-6 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0">2</div>
-                     <div>Isi data Guru/Staf menggunakan Excel. Pastikan <b>Email wajib diisi</b> dan unik.</div>
+                     <div>Isi data Staf/Staf menggunakan Excel. Pastikan <b>Email wajib diisi</b> dan unik.</div>
                   </div>
                   <div className="flex gap-3">
                      <div className="h-6 w-6 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0">3</div>
@@ -180,8 +180,8 @@ export default function ImportGTKPage() {
                      <div className="text-center py-10">
                         <CheckCircle2 className="h-16 w-16 text-emerald-500 mx-auto mb-4" />
                         <h2 className="text-2xl font-bold mb-2">Import Berhasil!</h2>
-                        <p className="text-muted-foreground">Akun GTK berhasil dibuat dan ditautkan ke lembaga.</p>
-                        <p className="text-xs text-muted-foreground mt-2">Mengarahkan kembali ke daftar guru...</p>
+                        <p className="text-muted-foreground">Akun GTK berhasil dibuat dan ditautkan ke bisnis.</p>
+                        <p className="text-xs text-muted-foreground mt-2">Mengarahkan kembali ke daftar staf...</p>
                      </div>
                   ) : (
                      <>
@@ -211,7 +211,7 @@ export default function ImportGTKPage() {
                                     <CheckCircle2 className="h-5 w-5" />
                                     <div>
                                        <p className="font-bold">File Valid!</p>
-                                       <p className="text-xs opacity-80">{parsedData.length} baris data guru siap di-import.</p>
+                                       <p className="text-xs opacity-80">{parsedData.length} baris data staf siap di-import.</p>
                                     </div>
                                  </div>
                                  <Button 
@@ -237,7 +237,7 @@ export default function ImportGTKPage() {
                                           <TableRow key={i}>
                                              <TableCell className="p-3">{row["Nama Lengkap"]}</TableCell>
                                              <TableCell className="p-3">{row["Email"]}</TableCell>
-                                             <TableCell className="p-3">{row["Role (guru/admin/staff)"]}</TableCell>
+                                             <TableCell className="p-3">{row["Role (staf/admin/staff)"]}</TableCell>
                                           </TableRow>
                                        ))}
                                     </TableBody>

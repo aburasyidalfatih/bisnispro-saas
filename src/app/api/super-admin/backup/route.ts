@@ -41,7 +41,7 @@ export async function GET() {
 
     try {
       files = fs.readdirSync(BACKUP_DIR)
-        .filter(f => f.startsWith("schoolpro_db_") && f.endsWith(".sql.gz"))
+        .filter(f => f.startsWith("bisnispro_db_") && f.endsWith(".sql.gz"))
         .map(f => {
           const stat = fs.statSync(path.join(BACKUP_DIR, f))
           return {
@@ -74,7 +74,7 @@ export async function GET() {
     try {
       const { stdout } = await execAsync(
         `docker compose exec -T db psql -U postgres -d saasmasterpro -t -c "SELECT pg_size_pretty(pg_database_size('saasmasterpro'));"`,
-        { cwd: process.env.COMPOSE_DIR || "/home/ubuntu/schoolpro-prod" }
+        { cwd: process.env.COMPOSE_DIR || "/home/ubuntu/bisnispro-prod" }
       )
       dbSize = stdout.trim()
     } catch { /* might fail locally */ }
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
 
     // Ambil base name murni (menghapus ../ atau absolute path)
     const filename = path.basename(rawFilename)
-    if (!filename.startsWith("schoolpro_db_")) {
+    if (!filename.startsWith("bisnispro_db_")) {
       return NextResponse.json({ error: "Nama file tidak valid" }, { status: 400 })
     }
     

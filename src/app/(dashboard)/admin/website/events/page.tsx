@@ -68,7 +68,7 @@ export default function EventsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Agenda & Acara</h1>
-          <p className="text-muted-foreground mt-1">Kelola kalender acara dan kegiatan sekolah.</p>
+          <p className="text-muted-foreground mt-1">Kelola kalender acara dan kegiatan perusahaan.</p>
         </div>
         <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
           <Link href="/admin/website/events/new">
@@ -87,7 +87,7 @@ export default function EventsPage() {
             <div className="py-12 text-center">
               <Calendar className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
               <p className="font-semibold mb-1">Belum ada acara</p>
-              <p className="text-sm text-muted-foreground mb-4">Tambahkan acara baru ke dalam kalender sekolah.</p>
+              <p className="text-sm text-muted-foreground mb-4">Tambahkan acara baru ke dalam kalender perusahaan.</p>
               <Button asChild variant="outline" className="rounded-xl">
                 <Link href="/admin/website/events/new">Tambah Sekarang</Link>
               </Button>

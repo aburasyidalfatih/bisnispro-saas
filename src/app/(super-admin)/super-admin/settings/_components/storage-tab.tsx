@@ -134,7 +134,7 @@ export function StorageTab({ form, setForm, handleSaveBatch, saving }: StorageTa
             </div>
             <div className="space-y-2">
               <Label>Bucket Name</Label>
-              <Input value={form.S3_BUCKET} onChange={e => setForm({...form, S3_BUCKET: e.target.value})} placeholder="schoolpro-assets" className="rounded-xl" />
+              <Input value={form.S3_BUCKET} onChange={e => setForm({...form, S3_BUCKET: e.target.value})} placeholder="bisnispro-assets" className="rounded-xl" />
             </div>
           </div>
           <div className="space-y-2">

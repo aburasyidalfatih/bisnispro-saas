@@ -54,7 +54,7 @@ export async function getEmailTransporter(tenantId?: string) {
       auth: { user, pass },
     }),
     from: from,
-    fromName: "SchoolPro",
+    fromName: "BisnisPro",
   }
 }
 

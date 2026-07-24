@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     amount,
     method: paymentChannel,
     customerName: donorName,
-    customerEmail: donorEmail || "donatur@schoolpro.id",
+    customerEmail: donorEmail || "donatur@bisnispro.id",
     metadata: { campaignId, isAnonymous, message, donorName },
   })
 

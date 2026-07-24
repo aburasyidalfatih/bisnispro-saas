@@ -9,7 +9,7 @@ import { id as dateId } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 
 export function PortofolioList({ achievements, base }: { achievements: any[], base: string }) {
-  const [activeTab, setActiveTab] = useState<"ALL" | "SISWA" | "GURU" | "SEKOLAH">("ALL")
+  const [activeTab, setActiveTab] = useState<"ALL" | "SISWA" | "GURU" | "PERUSAHAAN">("ALL")
 
   const filteredAchievements = achievements.filter((item) => {
     if (activeTab === "ALL") return true
@@ -22,7 +22,7 @@ export function PortofolioList({ achievements, base }: { achievements: any[], ba
         return { label: "Klien", color: "bg-blue-500 text-white" }
       case "GURU":
         return { label: "Tim & Staf", color: "bg-emerald-500 text-white" }
-      case "SEKOLAH":
+      case "PERUSAHAAN":
         return { label: "Institusi", color: "bg-violet-500 text-white" }
       default:
         return { label: "Klien", color: "bg-blue-500 text-white" }
@@ -33,7 +33,7 @@ export function PortofolioList({ achievements, base }: { achievements: any[], ba
     { id: "ALL", label: "Semua Portofolio" },
     { id: "SISWA", label: "Klien" },
     { id: "GURU", label: "Tim & Staf" },
-    { id: "SEKOLAH", label: "Institusi" },
+    { id: "PERUSAHAAN", label: "Institusi" },
   ]
 
   return (

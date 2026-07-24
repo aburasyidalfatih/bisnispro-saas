@@ -167,7 +167,7 @@ export default function CategoryPage() {
             <div className="py-12 text-center">
               <Tag className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
               <p className="font-semibold mb-1">Belum ada kategori</p>
-              <p className="text-sm text-muted-foreground mb-4">Tambahkan kategori pertama untuk merapikan artikel sekolah.</p>
+              <p className="text-sm text-muted-foreground mb-4">Tambahkan kategori pertama untuk merapikan artikel perusahaan.</p>
               <Button onClick={handleCreate} variant="outline" className="rounded-xl">
                 Tambah Sekarang
               </Button>
@@ -225,7 +225,7 @@ export default function CategoryPage() {
               <Input 
                 id="name" 
                 {...form.register("name")} 
-                placeholder="Contoh: Berita Sekolah" 
+                placeholder="Contoh: Berita Perusahaan" 
                 className="rounded-xl"
               />
               {form.formState.errors.name && <p className="text-xs text-red-500">{form.formState.errors.name.message}</p>}
@@ -236,7 +236,7 @@ export default function CategoryPage() {
               <Input 
                 id="slug" 
                 {...form.register("slug")} 
-                placeholder="berita-sekolah" 
+                placeholder="berita-perusahaan" 
                 className="rounded-xl bg-muted/50"
               />
               <p className="text-[10px] text-muted-foreground">URL yang akan muncul di address bar. Pastikan unik.</p>

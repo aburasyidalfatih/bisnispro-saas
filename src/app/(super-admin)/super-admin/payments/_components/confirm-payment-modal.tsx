@@ -72,7 +72,7 @@ export function ConfirmPaymentModal({ open, onOpenChange, payment, onSuccess }: 
           <div className="py-2 space-y-3">
             <div className="rounded-2xl bg-muted/50 border p-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Lembaga</span>
+                <span className="text-muted-foreground">Bisnis</span>
                 <span className="font-bold">{payment.tenant.name}</span>
               </div>
               <div className="flex justify-between">
@@ -80,8 +80,8 @@ export function ConfirmPaymentModal({ open, onOpenChange, payment, onSuccess }: 
                 <span className="font-bold text-primary">Rp {payment.amount.toLocaleString("id-ID")}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Jumlah Siswa</span>
-                <span className="font-bold">{(payment.metadata as any)?.studentCount || "—"} siswa</span>
+                <span className="text-muted-foreground">Jumlah Klien</span>
+                <span className="font-bold">{(payment.metadata as any)?.studentCount || "—"} klien</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Masa Aktif</span>
@@ -89,7 +89,7 @@ export function ConfirmPaymentModal({ open, onOpenChange, payment, onSuccess }: 
               </div>
             </div>
             <p className="text-xs text-amber-600 bg-amber-50 rounded-xl p-3 border border-amber-200">
-              ⚠️ Pastikan Anda sudah menerima pembayaran dari lembaga sebelum mengkonfirmasi.
+              ⚠️ Pastikan Anda sudah menerima pembayaran dari bisnis sebelum mengkonfirmasi.
             </p>
           </div>
         )}

@@ -73,10 +73,10 @@ export function Announcements({
                       <SelectValue placeholder="Pilih Tujuan" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</SelectItem>
-                      <SelectItem value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</SelectItem>
+                      <SelectItem value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Klien)</SelectItem>
+                      <SelectItem value="PENGUMUMAN_GTK">Khusus Staf & Staf (GTK)</SelectItem>
                       <SelectItem value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</SelectItem>
-                      <SelectItem value="PENGUMUMAN_SISWA">Khusus Siswa</SelectItem>
+                      <SelectItem value="PENGUMUMAN_SISWA">Khusus Klien</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -119,10 +119,10 @@ export function Announcements({
                       <SelectValue placeholder="Pilih Tujuan" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Siswa)</SelectItem>
-                      <SelectItem value="PENGUMUMAN_GTK">Khusus Guru & Staf (GTK)</SelectItem>
+                      <SelectItem value="PENGUMUMAN_SEMUA">Semua Civitas (GTK, Ortu, Klien)</SelectItem>
+                      <SelectItem value="PENGUMUMAN_GTK">Khusus Staf & Staf (GTK)</SelectItem>
                       <SelectItem value="PENGUMUMAN_ORTU">Khusus Orangtua Wali</SelectItem>
-                      <SelectItem value="PENGUMUMAN_SISWA">Khusus Siswa</SelectItem>
+                      <SelectItem value="PENGUMUMAN_SISWA">Khusus Klien</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -170,7 +170,7 @@ export function Announcements({
                       {post.author?.name?.charAt(0) ||"A"}
                     </div>
                     <div>
-                      <p className="font-semibold text-sm">{post.author?.name ||"Admin Sekolah"}</p>
+                      <p className="font-semibold text-sm">{post.author?.name ||"Admin Perusahaan"}</p>
                       <p className="text-[11px] text-muted-foreground">
                         {format(new Date(post.createdAt),"dd MMM yyyy, HH:mm", { locale: localeId })}
                       </p>

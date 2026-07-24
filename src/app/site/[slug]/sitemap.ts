@@ -18,13 +18,13 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   // Determine base URL dynamically based on headers
   const headerList = await headers()
   const protocol = headerList.get("x-forwarded-proto") || "https"
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
-  const host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id';
+  const host = headerList.get("x-forwarded-host") || headerList.get("host") || "bisnispro.id"
   const domainUrl = `${protocol}://${host}`
   
-  // Base path logic for subdirectories (if on schoolpro.id/site/[slug])
+  // Base path logic for subdirectories (if on bisnispro.id/site/[slug])
   // Wait, if it's accessed via custom domain, the base path is just ""
-  // But if accessed via schoolpro.id/site/demo, the base path is /site/demo
+  // But if accessed via bisnispro.id/site/demo, the base path is /site/demo
   const isMainDomain = host === rootDomain || host === `www.${rootDomain}` || host.startsWith("localhost")
   const basePath = isMainDomain ? `/site/${slug}` : ""
 
@@ -75,7 +75,7 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/ekstrakurikuler`,
+      url: `${baseUrl}/aset ekstra`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
@@ -156,11 +156,11 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
     })
   }
 
-  // Dynamic routes: Ekstrakurikuler
+  // Dynamic routes: Aset Ekstra
   if (extracurriculars.length > 0) {
     extracurriculars.forEach((extra: any) => {
       routes.push({
-        url: `${baseUrl}/ekstrakurikuler/${extra.slug || extra.id}`,
+        url: `${baseUrl}/aset ekstra/${extra.slug || extra.id}`,
         lastModified: extra.updatedAt || extra.createdAt,
         changeFrequency: "yearly",
         priority: 0.5,

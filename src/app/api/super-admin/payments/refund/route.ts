@@ -45,7 +45,7 @@ export async function POST(req: Request) {
           plan: "free",
           planId: null,
           expiresAt: null,
-          // Opsional: Jika ingin mengembalikan AI tokens / quota siswa ke default, bisa di sini.
+          // Opsional: Jika ingin mengembalikan AI tokens / quota klien ke default, bisa di sini.
           // Untuk amannya, biarkan mereka sesuai bawaan paket free (otomatis dilimit di logic API nanti)
         }
       })

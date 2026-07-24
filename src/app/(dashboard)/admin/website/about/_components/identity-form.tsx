@@ -44,7 +44,7 @@ export function IdentityForm({
           {/* Kolom Kiri */}
           <div className="space-y-4">
             <div className="space-y-2 mb-4">
-              <Label>Logo Lembaga</Label>
+              <Label>Logo Bisnis</Label>
               <div className="flex items-center gap-4">
                 <div className="relative shrink-0 h-14 w-14 overflow-hidden rounded-xl border bg-muted">
                   {logoPreview ? (
@@ -113,15 +113,15 @@ export function IdentityForm({
           {/* Kolom Kanan */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Nama Lembaga</Label>
+              <Label>Nama Bisnis</Label>
               <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                placeholder="Nama lembaga Anda" className="rounded-xl" />
+                placeholder="Nama bisnis Anda" className="rounded-xl" />
             </div>
 
             <div className="space-y-2">
               <Label>Tagline / Slogan</Label>
               <Input value={form.tagline} onChange={e => setForm(p => ({ ...p, tagline: e.target.value }))}
-                placeholder="Slogan singkat yang menggambarkan lembaga" className="rounded-xl" />
+                placeholder="Slogan singkat yang menggambarkan bisnis" className="rounded-xl" />
               <p className="text-xs text-muted-foreground">Tampil di hero section dan navbar website</p>
             </div>
 
@@ -129,7 +129,7 @@ export function IdentityForm({
               <Label>Deskripsi Singkat</Label>
               <Textarea value={form.description}
                 onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
-                placeholder="Deskripsi singkat lembaga Anda (maks. 300 karakter)"
+                placeholder="Deskripsi singkat bisnis Anda (maks. 300 karakter)"
                 maxLength={300} rows={4}
                 className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
               <p className="text-xs text-muted-foreground">{form.description.length}/300 karakter</p>
@@ -139,7 +139,7 @@ export function IdentityForm({
 
         <div className="grid gap-4 sm:grid-cols-2 mt-2">
           <div className="space-y-2">
-            <Label>Status Sekolah</Label>
+            <Label>Status Perusahaan</Label>
             <Select value={form.settings?.schoolStatus ||"SWASTA"}
               onValueChange={v => setForm(p => ({ ...p, settings: { ...p.settings, schoolStatus: v } }))}>
               <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
@@ -152,7 +152,7 @@ export function IdentityForm({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Estimasi Jumlah Siswa Saat Ini</Label>
+            <Label>Estimasi Jumlah Klien Saat Ini</Label>
             <Input type="number" value={form.settings?.studentCount ||""} 
               onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, studentCount: parseInt(e.target.value) || 0 } }))}
               placeholder="Misal: 500" className="rounded-xl" />

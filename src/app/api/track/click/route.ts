@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     const url = searchParams.get("url")
 
     // Default fallback url jika url tidak ada atau tidak valid
-    const redirectUrl = url ? decodeURIComponent(url) : process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"
+    const redirectUrl = url ? decodeURIComponent(url) : process.env.NEXT_PUBLIC_APP_URL || "https://bisnispro.id"
 
     if (logId) {
       // Perbarui log bahwa tautan telah diklik
@@ -30,6 +30,6 @@ export async function GET(req: Request) {
 
     return NextResponse.redirect(redirectUrl)
   } catch (error) {
-    return NextResponse.redirect(process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id")
+    return NextResponse.redirect(process.env.NEXT_PUBLIC_APP_URL || "https://bisnispro.id")
   }
 }

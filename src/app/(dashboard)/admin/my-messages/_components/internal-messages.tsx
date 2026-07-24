@@ -47,7 +47,7 @@ export function InternalMessages({
           </div>
           <div>
             <CardTitle className="text-lg">Pesan Internal</CardTitle>
-            <CardDescription>Komunikasi antar guru dan staf</CardDescription>
+            <CardDescription>Komunikasi antar staf dan staf</CardDescription>
           </div>
         </div>
         <Dialog open={showComposeModal} onOpenChange={setShowComposeModal}>
@@ -113,7 +113,7 @@ export function InternalMessages({
             <EmptyState 
               icon={MessageSquare} 
               title="Kotak masuk kosong" 
-              description="Belum ada pesan internal dari staf atau guru lainnya." 
+              description="Belum ada pesan internal dari staf atau staf lainnya." 
               className="py-12 border-0 bg-transparent"
             />
           ) : (

@@ -126,7 +126,7 @@ export default function SuperAdminCommissionsPage() {
                   <TableHead>Tanggal</TableHead>
                   <TableHead>Afiliator (Penerima)</TableHead>
                   <TableHead>Tipe</TableHead>
-                  <TableHead>Asal Transaksi (Sekolah)</TableHead>
+                  <TableHead>Asal Transaksi (Perusahaan)</TableHead>
                   <TableHead className="text-right">Nominal</TableHead>
                 </TableRow>
               </TableHeader>

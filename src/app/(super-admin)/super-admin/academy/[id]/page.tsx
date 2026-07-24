@@ -37,7 +37,7 @@ export default function CourseBuilderPage({ params }: { params: Promise<{ id: st
         const data = await res.json()
         setCourse(data)
       } else {
-        toast({ title: "Error", description: "Gagal memuat kelas", variant: "destructive" })
+        toast({ title: "Error", description: "Gagal memuat divisi", variant: "destructive" })
       }
     } catch (e) {
       console.error(e)
@@ -66,7 +66,7 @@ export default function CourseBuilderPage({ params }: { params: Promise<{ id: st
         })
       })
       if (res.ok) {
-        toast({ title: "Tersimpan", description: "Pengaturan kelas berhasil diperbarui" })
+        toast({ title: "Tersimpan", description: "Pengaturan divisi berhasil diperbarui" })
       } else {
         throw new Error("Gagal menyimpan")
       }
@@ -158,7 +158,7 @@ export default function CourseBuilderPage({ params }: { params: Promise<{ id: st
   }
 
   if (loading) return <div className="p-8 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>
-  if (!course) return <div className="p-8 text-center text-red-500">Kelas tidak ditemukan</div>
+  if (!course) return <div className="p-8 text-center text-red-500">Divisi tidak ditemukan</div>
 
   return (
     <div className="space-y-6 pb-20">
@@ -176,11 +176,11 @@ export default function CourseBuilderPage({ params }: { params: Promise<{ id: st
         <div className="lg:col-span-1 space-y-6">
           <Card className="rounded-2xl border-0 shadow-xl glass">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Settings className="h-5 w-5 text-primary" /> Pengaturan Kelas</CardTitle>
+              <CardTitle className="flex items-center gap-2"><Settings className="h-5 w-5 text-primary" /> Pengaturan Divisi</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Judul Kelas</Label>
+                <Label>Judul Divisi</Label>
                 <Input value={course.title} onChange={e => setCourse({...course, title: e.target.value})} className="rounded-xl" />
               </div>
               <div className="space-y-2">
@@ -202,7 +202,7 @@ export default function CourseBuilderPage({ params }: { params: Promise<{ id: st
               <div className="flex items-center justify-between pt-2">
                 <div className="space-y-0.5">
                   <Label>Status Publikasi</Label>
-                  <div className="text-xs text-muted-foreground">Tampilkan di katalog lembaga</div>
+                  <div className="text-xs text-muted-foreground">Tampilkan di katalog bisnis</div>
                 </div>
                 <Switch checked={course.isPublished} onCheckedChange={c => setCourse({...course, isPublished: c})} />
               </div>
@@ -333,7 +333,7 @@ export default function CourseBuilderPage({ params }: { params: Promise<{ id: st
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Judul Materi</Label>
-              <Input value={currentLesson.title} onChange={e => setCurrentLesson({...currentLesson, title: e.target.value})} className="rounded-xl" placeholder="Contoh: Cara Menambahkan Siswa Baru" />
+              <Input value={currentLesson.title} onChange={e => setCurrentLesson({...currentLesson, title: e.target.value})} className="rounded-xl" placeholder="Contoh: Cara Menambahkan Klien Baru" />
             </div>
             <div className="space-y-2">
               <Label>URL Video (Opsional - YouTube/Vimeo/MP4)</Label>

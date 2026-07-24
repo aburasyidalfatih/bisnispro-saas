@@ -60,7 +60,7 @@ export function EcosystemTab() {
               {formatRupiah(ecosystemStats.totalGmv)}
             </h1>
             <p className="text-slate-300 max-w-lg text-sm">
-              Total perputaran uang melalui ekosistem transaksi platform (Kantin, Tabungan Siswa, dan PPDB) dari seluruh lembaga.
+              Total perputaran uang melalui ekosistem transaksi platform (Kantin, Tabungan Klien, dan PPDB) dari seluruh bisnis.
             </p>
           </div>
           <div className="shrink-0">
@@ -85,7 +85,7 @@ export function EcosystemTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatRupiah(ecosystemStats.canteenGmv)}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total transaksi belanja siswa di kantin digital.</p>
+            <p className="text-xs text-muted-foreground mt-1">Total transaksi belanja klien di kantin digital.</p>
           </CardContent>
         </Card>
 
@@ -102,7 +102,7 @@ export function EcosystemTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatRupiah(ecosystemStats.savingDeposits)}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total dana yang disetor wali murid ke dalam dompet digital siswa.</p>
+            <p className="text-xs text-muted-foreground mt-1">Total dana yang disetor wali murid ke dalam dompet digital klien.</p>
           </CardContent>
         </Card>
 

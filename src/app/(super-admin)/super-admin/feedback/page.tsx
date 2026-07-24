@@ -59,7 +59,7 @@ export default async function FeedbackPage({ searchParams }: { searchParams: Pro
           <div>
             <CardTitle>Daftar Laporan</CardTitle>
             <CardDescription className="mt-1">
-              Menampilkan seluruh masukan dari lembaga. Anda dapat mengubah statusnya untuk memudahkan pelacakan (tracking).
+              Menampilkan seluruh masukan dari bisnis. Anda dapat mengubah statusnya untuk memudahkan pelacakan (tracking).
             </CardDescription>
           </div>
           <ExportFeedbackButton data={feedbacks} />
@@ -70,7 +70,7 @@ export default async function FeedbackPage({ searchParams }: { searchParams: Pro
               <TableRow>
                 <TableHead>Tanggal</TableHead>
                 <TableHead>Pengirim</TableHead>
-                <TableHead>Lembaga</TableHead>
+                <TableHead>Bisnis</TableHead>
                 <TableHead>Tipe</TableHead>
                 <TableHead>Pesan</TableHead>
                 <TableHead>Status</TableHead>

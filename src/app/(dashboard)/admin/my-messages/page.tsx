@@ -99,7 +99,7 @@ export default function AdminMessagesPage() {
       fetch(`/api/tenant/users?tenantId=${tenantId}`)
         .then(r => r.json())
         .then(d => {
-          const validUsers = (d.data || []).filter((u: any) => ["guru","admin","owner"].includes(u.role))
+          const validUsers = (d.data || []).filter((u: any) => ["staf","admin","owner"].includes(u.role))
           setTenantUsers(validUsers)
           setLoadingUsers(false)
         })

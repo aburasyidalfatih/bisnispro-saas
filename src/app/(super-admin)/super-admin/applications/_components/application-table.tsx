@@ -53,10 +53,10 @@ export function ApplicationTable({
                   onChange={toggleSelectAll} 
                 />
               </TableHead>
-              <TableHead className="px-4 py-3 font-semibold">Lembaga (Sekolah)</TableHead>
+              <TableHead className="px-4 py-3 font-semibold">Bisnis (Perusahaan)</TableHead>
               <TableHead className="px-4 py-3 font-semibold">Penanggungjawab</TableHead>
               <TableHead className="px-4 py-3 font-semibold">Kota / Provinsi</TableHead>
-              <TableHead className="px-4 py-3 font-semibold text-center">Jml. Siswa</TableHead>
+              <TableHead className="px-4 py-3 font-semibold text-center">Jml. Klien</TableHead>
               <TableHead className="px-4 py-3 font-semibold">Affiliator</TableHead>
               <TableHead className="px-4 py-3 font-semibold">Status</TableHead>
               <TableHead className="px-4 py-3 font-semibold text-right">Aksi</TableHead>
@@ -105,7 +105,7 @@ export function ApplicationTable({
                     </div>
                     <div>
                       <p className="font-bold">{app.schoolName}</p>
-                      <p className="text-[10px] text-muted-foreground">Subdomain: <span className="text-primary">{app.schoolSlug}.schoolpro.id</span></p>
+                      <p className="text-[10px] text-muted-foreground">Subdomain: <span className="text-primary">{app.schoolSlug}.bisnispro.id</span></p>
                       <p className="text-[10px] text-muted-foreground/70 mt-0.5">Pengajuan: {new Date(app.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
                   </div>

@@ -16,7 +16,7 @@ export const socialShareWorker = new Worker(
       })
       if (!post) throw new Error("Post not found")
 
-      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
       const host = post.tenant.domain || `${post.tenant.slug}.${rootDomain}`
       const isPengumuman = post.type?.includes("PENGUMUMAN")
       const postUrl = `https://${host}/${isPengumuman ? 'pengumuman' : 'berita'}/${post.slug}`

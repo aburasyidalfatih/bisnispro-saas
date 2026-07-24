@@ -138,7 +138,7 @@ export async function processTemplateNotification({
       message: "Info Transaksi: Ananda {{studentName}} baru saja melakukan pembelian di {{merchantName}} sebesar Rp {{amount}}. Sisa saldo dompet saat ini: Rp {{newBalance}}."
     },
     discipline_alert: {
-      title: "Pemberitahuan Kedisiplinan Siswa",
+      title: "Pemberitahuan Kedisiplinan Klien",
       message: "Bapak/Ibu Wali Murid, menginformasikan bahwa ananda {{studentName}} mendapat catatan terkait: {{violation}} (Poin: {{points}}). Harap hubungi pihak BK {{schoolName}} untuk detail lebih lanjut."
     },
     invoice_overdue: {

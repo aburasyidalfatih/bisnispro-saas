@@ -79,7 +79,7 @@ export function ResetMenuButton() {
           <AlertDialogTitle>Reset Menu ke Default?</AlertDialogTitle>
           <AlertDialogDescription>
             Tindakan ini akan <strong>menghapus semua menu navigasi</strong> yang sudah Anda buat dan menggantinya
-            dengan susunan menu bawaan sistem (Beranda, Profil Sekolah, Informasi, Galeri, Kontak beserta sub-menunya).
+            dengan susunan menu bawaan sistem (Beranda, Profil Perusahaan, Informasi, Galeri, Kontak beserta sub-menunya).
             <br /><br />
             Perubahan ini tidak dapat dibatalkan.
           </AlertDialogDescription>

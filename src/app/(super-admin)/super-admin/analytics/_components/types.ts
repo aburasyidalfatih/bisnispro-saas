@@ -10,15 +10,11 @@ export interface AnalyticsData {
   contentStats: {
     totalPosts: number
     totalAnnouncements: number
-    totalBlogGuru: number
     totalEvents: number
-    totalAchievements: number
     totalDocuments: number
     totalWaMessages: number
-    totalStudents: number
-    totalStaff: number
-    totalClassrooms: number
-    totalSubjects: number
+    totalUsers: number
+    totalSubscriptions: number
   }
 
   loginTrend7Days: { date: string; count: number }[]

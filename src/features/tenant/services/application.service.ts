@@ -24,8 +24,8 @@ export async function sendApplicationNotification(applicationId: string) {
   if (!app) return
 
   const settings = await getPlatformSettings()
-  const platformName = settings.platform_name || "SchoolPro"
-  const rootDomain = settings.NEXT_PUBLIC_ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const platformName = settings.platform_name || "BisnisPro"
+  const rootDomain = settings.NEXT_PUBLIC_ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
 
   let subject = ""
   let message = ""
@@ -179,7 +179,7 @@ export async function sendNewApplicationAlerts(
   if (!app) return
 
   const settings = await getPlatformSettings()
-  const rootDomain = settings.NEXT_PUBLIC_ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const rootDomain = settings.NEXT_PUBLIC_ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
 
 
   // 1. Alert ke semua Super Admin
@@ -188,7 +188,7 @@ export async function sendNewApplicationAlerts(
     select: { id: true, phone: true, name: true, email: true },
   })
 
-  const defaultAdminTpl = `*PENDAFTARAN SEKOLAH BARU*\n\nBisnis: {{businessName}}\nAdmin: {{adminName}}\nWA: {{adminPhone}}\nSubdomain: {{businessSlug}}.${rootDomain}\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`
+  const defaultAdminTpl = `*PENDAFTARAN PERUSAHAAN BARU*\n\nBisnis: {{businessName}}\nAdmin: {{adminName}}\nWA: {{adminPhone}}\nSubdomain: {{businessSlug}}.${rootDomain}\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`
   const adminMsg = (settings.WA_TEMPLATE_ALERT_SUPERADMIN || defaultAdminTpl)
     .replace(/{{businessName}}/g, app.businessName)
     .replace(/{{adminName}}/g, app.adminName)
@@ -214,7 +214,7 @@ export async function sendNewApplicationAlerts(
     if (admin.email && emailEnabledSuperAdmin) {
       await sendEmail(
         admin.email,
-        "PENDAFTARAN SEKOLAH BARU",
+        "PENDAFTARAN PERUSAHAAN BARU",
         `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #dc2626, #ef4444); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
             <h2 style="margin: 0;">🏫 Pendaftaran Bisnis Baru</h2>
@@ -224,7 +224,7 @@ export async function sendNewApplicationAlerts(
             <p>${adminMsg.replace(/\n/g, "<br>")}</p>
           </div>
           <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
-            SchoolPro — Platform Edukasi Terintegrasi
+            BisnisPro — Platform Edukasi Terintegrasi
           </div>
         </div>`
       ).catch(err => logger.error("Super Admin email alert failed", err, { adminId: admin.id }))
@@ -242,7 +242,7 @@ export async function sendNewApplicationAlerts(
 
     if (!affiliate) return
 
-    const defaultAffiliateTpl = `*LEAD SEKOLAH BARU! 🎉*\n\nHalo {{affiliateName}},\nKabar baik! Pendaftaran bisnis baru telah masuk menggunakan kode referral Anda ({{referralCode}}).\n\nBisnis: {{businessName}}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`
+    const defaultAffiliateTpl = `*LEAD PERUSAHAAN BARU! 🎉*\n\nHalo {{affiliateName}},\nKabar baik! Pendaftaran bisnis baru telah masuk menggunakan kode referral Anda ({{referralCode}}).\n\nBisnis: {{businessName}}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`
     const affiliateMsg = (settings.WA_TEMPLATE_ALERT_AFFILIATE || defaultAffiliateTpl)
       .replace(/{{affiliateName}}/g, affiliate.user.name)
       .replace(/{{referralCode}}/g, affiliate.referralCode)
@@ -269,7 +269,7 @@ export async function sendNewApplicationAlerts(
     if (affiliate.user.email && emailEnabledAffiliate) {
       await sendEmail(
         affiliate.user.email,
-        "LEAD SEKOLAH BARU! 🎉",
+        "LEAD PERUSAHAAN BARU! 🎉",
         `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
             <h2 style="margin: 0;">🎉 Lead Bisnis Baru!</h2>
@@ -279,7 +279,7 @@ export async function sendNewApplicationAlerts(
             <p>${affiliateMsg.replace(/\n/g, "<br>")}</p>
           </div>
           <div style="background: #f1f5f9; padding: 12px 24px; border-radius: 0 0 12px 12px; text-align: center; color: #94a3b8; font-size: 12px;">
-            SchoolPro — Program Mitra Afiliasi
+            BisnisPro — Program Mitra Afiliasi
           </div>
         </div>`
       ).catch(err => logger.error("Affiliate email alert failed", err, { affiliateId }))
@@ -355,6 +355,9 @@ export async function approveApplication(id: string) {
     })
   }
 
+  // Seed dummy data untuk Website Instan
+  await seedDummyBusinessData(tenant.id, app.businessName, app.businessType || "UMKM")
+
 
 
   // 2. Cek apakah user admin sudah ada
@@ -421,4 +424,98 @@ export async function approveApplication(id: string) {
   } catch {}
 
   return tenant
+}
+
+async function seedDummyBusinessData(tenantId: string, businessName: string, businessType: string) {
+  try {
+    // 1. Tambah Layanan Dummy
+    await db.service.createMany({
+      data: [
+        {
+          tenantId,
+          name: "Layanan Premium 1",
+          slug: "layanan-premium-1",
+          description: `Solusi terbaik dari ${businessName} untuk kebutuhan Anda. Dirancang khusus untuk efisiensi dan hasil maksimal.`,
+          icon: "star",
+          status: "PUBLISHED"
+        },
+        {
+          tenantId,
+          name: "Layanan Premium 2",
+          slug: "layanan-premium-2",
+          description: "Pendekatan inovatif yang kami kembangkan untuk membantu Anda mencapai target lebih cepat.",
+          icon: "zap",
+          status: "PUBLISHED"
+        },
+        {
+          tenantId,
+          name: "Konsultasi Ahli",
+          slug: "konsultasi-ahli",
+          description: "Diskusikan masalah Anda dengan tim profesional kami dan dapatkan solusi yang paling tepat.",
+          icon: "message-circle",
+          status: "PUBLISHED"
+        }
+      ]
+    })
+
+    // 2. Tambah Portofolio Dummy
+    await db.portfolio.createMany({
+      data: [
+        {
+          tenantId,
+          title: "Proyek Sukses Alpha",
+          slug: "proyek-sukses-alpha",
+          description: "Membantu klien meningkatkan efisiensi operasional hingga 40% dalam 3 bulan pertama.",
+          clientName: "PT Bintang Terang",
+          category: "Korporat",
+          completedAt: new Date(),
+          status: "PUBLISHED"
+        },
+        {
+          tenantId,
+          title: "Implementasi Solusi Modern",
+          slug: "implementasi-solusi-modern",
+          description: "Pembaruan sistem menyeluruh yang menghasilkan pertumbuhan pendapatan yang signifikan.",
+          clientName: "CV Maju Jaya",
+          category: "UMKM",
+          completedAt: new Date(),
+          status: "PUBLISHED"
+        }
+      ]
+    })
+
+    // 3. Tambah Tim Dummy
+    await db.teamMember.createMany({
+      data: [
+        {
+          tenantId,
+          name: "Budi Santoso",
+          position: "Chief Executive Officer",
+          bio: "Berpengalaman lebih dari 10 tahun di industri, memimpin visi dan strategi perusahaan.",
+          status: "PUBLISHED"
+        },
+        {
+          tenantId,
+          name: "Siti Rahma",
+          position: "Head of Operations",
+          bio: "Ahli dalam mengoptimalkan proses bisnis dan memastikan kepuasan klien maksimal.",
+          status: "PUBLISHED"
+        }
+      ]
+    })
+
+    // 4. Update Hero Slider/Settings Tenant
+    // Catatan: Jika ada tabel Slider, kita tambahkan. Jika di settings JSON, kita update settings.
+    await db.tenant.update({
+      where: { id: tenantId },
+      data: {
+        tagline: `Mitra Terbaik untuk ${businessType} Anda`,
+        about: `Selamat datang di ${businessName}. Kami adalah perusahaan yang berdedikasi tinggi untuk memberikan pelayanan terbaik di sektor ${businessType}. Dengan pengalaman dan profesionalisme, kami siap membantu mewujudkan tujuan Anda.`,
+      }
+    })
+
+    logger.info("Successfully seeded dummy business data for instant website", { tenantId })
+  } catch (err) {
+    logger.error("Failed to seed dummy business data", err, { tenantId })
+  }
 }

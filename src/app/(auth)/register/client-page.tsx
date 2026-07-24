@@ -72,10 +72,10 @@ export default function RegisterPage({
         <div className="glass rounded-3xl p-8 md:p-10 shadow-2xl">
           <div className="flex flex-col items-center mb-8 text-center">
             {isMainDomain ? (
-              <Image src={normalizeImageUrl(platformLogo) || "/logo-schoolpro.png"} alt="SchoolPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
+              <Image src={normalizeImageUrl(platformLogo) || "/logo-bisnispro.png"} alt="BisnisPro Logo" width={160} height={80} className="h-20 w-auto mb-2 object-contain" priority />
             ) : (
               platformLogo ? (
-                <Image src={normalizeImageUrl(platformLogo) || "/logo-schoolpro.png"} alt={tenantNameDisplay || "Logo Tenant"} width={160} height={80} className="h-20 w-auto mb-4 object-contain" priority />
+                <Image src={normalizeImageUrl(platformLogo) || "/logo-bisnispro.png"} alt={tenantNameDisplay || "Logo Tenant"} width={160} height={80} className="h-20 w-auto mb-4 object-contain" priority />
               ) : (
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
                   {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "S"}
@@ -87,8 +87,8 @@ export default function RegisterPage({
             </h1>
             <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
               {isMainDomain 
-                ? "Daftar dan buat lembaga Anda" 
-                : `Formulir ini khusus untuk membuat akun wali / calon wali siswa ${tenantNameDisplay || 'sekolah'}`}
+                ? "Daftar dan buat bisnis Anda" 
+                : `Formulir ini khusus untuk membuat akun wali / calon wali klien ${tenantNameDisplay || 'perusahaan'}`}
             </p>
           </div>
 
@@ -160,7 +160,7 @@ export default function RegisterPage({
             </div>
           )}
         </div>
-        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "SchoolPro" : "Sistem Informasi Sekolah")}</p>
+        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "BisnisPro" : "Sistem Informasi Perusahaan")}</p>
       </div>
     </div>
   )

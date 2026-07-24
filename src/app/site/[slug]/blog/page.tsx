@@ -25,7 +25,7 @@ function SmartPlaceholder({ title, type }: { title: string, type: string }) {
          style={{ background: `linear-gradient(135deg, hsl(${hue1}, 70%, 90%), hsl(${hue2}, 70%, 85%))` }}>
       <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, black 2px, transparent 0)", backgroundSize: "32px 32px" }} />
       <div className="relative z-10 w-16 h-16 rounded-full bg-white/40 backdrop-blur-md flex items-center justify-center mb-3 shadow-sm border border-white/50">
-        <Image className="opacity-40" src="/logo-schoolpro.png" alt="Logo" width={32} height={32} />
+        <Image className="opacity-40" src="/logo-bisnispro.png" alt="Logo" width={32} height={32} />
       </div>
       <p className="relative z-10 text-center font-bold text-foreground/60 text-lg sm:text-xl line-clamp-2 max-w-[80%] leading-tight mix-blend-color-burn">{title}</p>
     </div>
@@ -34,7 +34,7 @@ function SmartPlaceholder({ title, type }: { title: string, type: string }) {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();
-  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id';
   const { slug } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}

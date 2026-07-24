@@ -9,9 +9,9 @@ import { getWaQueueDelays } from "@/features/notification/services/wa-queue.serv
 // ==========================================
 export async function resolveBroadcastRecipients(tenantId: string, target: string) {
   const targetRoles: string[] = []
-  if (target === "all_gtk") targetRoles.push("guru")
+  if (target === "all_gtk") targetRoles.push("staf")
   if (target === "all_parents") targetRoles.push("orangtua")
-  if (target === "all") targetRoles.push("guru", "orangtua")
+  if (target === "all") targetRoles.push("staf", "orangtua")
 
   if (targetRoles.length === 0) {
     throw new Error("Target penerima tidak valid")

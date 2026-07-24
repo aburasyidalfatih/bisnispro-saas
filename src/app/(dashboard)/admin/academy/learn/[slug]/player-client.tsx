@@ -32,7 +32,7 @@ export function AcademyPlayer({ course }: { course: any }) {
     setCompletedLessonIds(completed)
   }, [allLessons])
 
-  if (!activeLesson) return <div className="p-10 text-center">Belum ada materi di kelas ini.</div>
+  if (!activeLesson) return <div className="p-10 text-center">Belum ada materi di divisi ini.</div>
 
   const currentIndex = allLessons.findIndex((l: any) => l.id === activeLesson.id)
   const hasNext = currentIndex < allLessons.length - 1
@@ -148,7 +148,7 @@ export function AcademyPlayer({ course }: { course: any }) {
       {/* Sidebar Playlist */}
       <div className={cn("fixed lg:absolute top-0 right-0 h-full w-80 bg-background border-l shadow-2xl lg:shadow-none z-20 flex flex-col transition-transform duration-300", sidebarOpen ? "translate-x-0" : "translate-x-full")}>
         <div className="h-16 flex items-center justify-between px-6 border-b shrink-0 bg-muted/10">
-          <h3 className="font-bold">Materi Kelas</h3>
+          <h3 className="font-bold">Materi Divisi</h3>
           <Button variant="ghost" size="icon" className="lg:hidden rounded-full" onClick={() => setSidebarOpen(false)}>
             <X className="h-4 w-4" />
           </Button>

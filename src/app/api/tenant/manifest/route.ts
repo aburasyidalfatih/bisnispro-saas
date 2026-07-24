@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     }
   } catch (e) {}
 
-  const logoUrl = tenant.logo || "/logo-schoolpro.png"
+  const logoUrl = tenant.logo || "/logo-bisnispro.png"
 
   const manifest = {
     name: tenant.name,

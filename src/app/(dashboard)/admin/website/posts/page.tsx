@@ -80,7 +80,7 @@ export default function PostsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{typeFilter ==="PENGUMUMAN" ?"Pengumuman" :"Artikel & Pos"}</h1>
-          <p className="text-muted-foreground mt-1">{typeFilter ==="PENGUMUMAN" ?"Kelola papan pengumuman sekolah untuk siswa dan publik." :"Kelola pos editorial, blog guru, dan pengumuman."}</p>
+          <p className="text-muted-foreground mt-1">{typeFilter ==="PENGUMUMAN" ?"Kelola papan pengumuman perusahaan untuk klien dan publik." :"Kelola pos editorial, blog staf, dan pengumuman."}</p>
         </div>
         <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
           <Link href={`/admin/website/posts/new${typeFilter ? `?type=${typeFilter}` :""}`}>
@@ -92,7 +92,7 @@ export default function PostsPage() {
       <Card className="glass border-0">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Daftar {typeFilter ==="PENGUMUMAN" ?"Pengumuman" :"Artikel"}</CardTitle>
-          <CardDescription className="text-xs">Daftar semua {typeFilter ==="PENGUMUMAN" ?"pengumuman" :"tulisan"} yang ada di website sekolah.</CardDescription>
+          <CardDescription className="text-xs">Daftar semua {typeFilter ==="PENGUMUMAN" ?"pengumuman" :"tulisan"} yang ada di website perusahaan.</CardDescription>
         </CardHeader>
         <CardContent>
           {posts.length === 0 ? (

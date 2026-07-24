@@ -45,7 +45,7 @@ function ScoreInfoTooltip({ iconClass }: { iconClass: string }) {
       <Info className={iconClass} />
       {open && (
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2 bg-slate-800 text-white text-[10px] rounded-lg shadow-xl z-50 text-center leading-tight font-normal">
-          Sistem Penilaian: Berdasarkan jumlah pengajuan dan paket langganan sekolah aktif.
+          Sistem Penilaian: Berdasarkan jumlah pengajuan dan paket langganan perusahaan aktif.
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-slate-800"></div>
         </div>
       )}
@@ -101,7 +101,7 @@ export function AffiliateLeaderboardClient({ backHref, variant = "full" }: Affil
             <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent flex items-center gap-2">
               <Trophy className="h-7 w-7 text-amber-500" /> Leaderboard Afiliasi
             </h1>
-            <p className="text-muted-foreground mt-1">Peringkat mitra terbaik dalam mengajak sekolah bergabung.</p>
+            <p className="text-muted-foreground mt-1">Peringkat mitra terbaik dalam mengajak perusahaan bergabung.</p>
           </div>
         </div>
         
@@ -302,7 +302,7 @@ export function AffiliateLeaderboardClient({ backHref, variant = "full" }: Affil
               </div>
               <div className="mt-4 flex gap-4 text-xs text-muted-foreground border-t pt-4">
                 <span className="font-medium">Sistem Penilaian:</span>
-                <span>Berdasarkan akumulasi jumlah pengajuan dan tipe paket sekolah yang berhasil aktif.</span>
+                <span>Berdasarkan akumulasi jumlah pengajuan dan tipe paket perusahaan yang berhasil aktif.</span>
               </div>
             </CardContent>
           </Card>

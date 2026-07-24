@@ -16,7 +16,7 @@ export default async function AffiliateGuidePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Panduan Program Afiliasi</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Pelajari cara kerja, skema komisi, dan tips sukses mereferensikan sekolah.</p>
+        <p className="text-muted-foreground mt-1 text-sm">Pelajari cara kerja, skema komisi, dan tips sukses mereferensikan perusahaan.</p>
       </div>
 
       {/* Skema Komisi Hero */}
@@ -30,7 +30,7 @@ export default async function AffiliateGuidePage() {
           </div>
           <CardTitle className="text-3xl text-emerald-900">20% Komisi Berulang</CardTitle>
           <CardDescription className="text-base text-emerald-800/80 max-w-xl">
-            Dapatkan passive income terus-menerus selama sekolah yang Anda ajak tetap berlangganan paket berbayar di SchoolPro.
+            Dapatkan passive income terus-menerus selama perusahaan yang Anda ajak tetap berlangganan paket berbayar di BisnisPro.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -48,13 +48,13 @@ export default async function AffiliateGuidePage() {
             <CardTitle className="text-lg">Sebar Link / Kode</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Bagikan link afiliasi Anda ke kepala sekolah, yayasan, atau operator sekolah. Mereka bisa daftar gratis dulu.
+            Bagikan link afiliasi Anda ke kepala perusahaan, yayasan, atau operator perusahaan. Mereka bisa daftar gratis dulu.
           </CardContent>
         </Card>
         <Card className="glass shadow-sm">
           <CardHeader className="pb-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg mb-2">2</div>
-            <CardTitle className="text-lg">Sekolah Daftar</CardTitle>
+            <CardTitle className="text-lg">Perusahaan Daftar</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
             Setiap pendaftaran yang menggunakan link/kode Anda akan otomatis tercatat permanen (terikat dengan akun Anda).
@@ -66,7 +66,7 @@ export default async function AffiliateGuidePage() {
             <CardTitle className="text-lg">Terima Komisi</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Saat sekolah tersebut Upgrade ke paket berbayar (Lite atau Pro), 20% komisi masuk ke dashboard Anda secara otomatis — berulang di setiap pembayaran, selamanya.
+            Saat perusahaan tersebut Upgrade ke paket berbayar (Lite atau Pro), 20% komisi masuk ke dashboard Anda secara otomatis — berulang di setiap pembayaran, selamanya.
           </CardContent>
         </Card>
       </div>
@@ -87,19 +87,19 @@ export default async function AffiliateGuidePage() {
               </span>
             </summary>
             <p className="text-muted-foreground mt-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
-              Tidak, program afiliasi SchoolPro 100% gratis. Anda cukup mendaftar, melengkapi profil, dan langsung bisa menyebarkan link Anda.
+              Tidak, program afiliasi BisnisPro 100% gratis. Anda cukup mendaftar, melengkapi profil, dan langsung bisa menyebarkan link Anda.
             </p>
           </details>
 
           <details className="group border-b pb-4 last:border-0 last:pb-0">
             <summary className="flex cursor-pointer list-none items-center justify-between font-semibold">
-              Bagaimana jika sekolah hanya memakai paket Gratis?
+              Bagaimana jika perusahaan hanya memakai paket Gratis?
               <span className="transition group-open:rotate-180">
                 <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
               </span>
             </summary>
             <p className="text-muted-foreground mt-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
-              Status sekolah akan tetap tercatat sebagai referral Anda ("Leads & Sekolah"). Namun komisi dalam bentuk saldo uang baru akan didapatkan ketika sekolah memutuskan untuk meningkatkan (Upgrade) layanannya ke paket berbayar (Lite atau Pro). Setiap kali sekolah tersebut membayar (termasuk perpanjangan), Anda otomatis mendapat 20% komisi — selamanya!
+              Status perusahaan akan tetap tercatat sebagai referral Anda ("Leads & Perusahaan"). Namun komisi dalam bentuk saldo uang baru akan didapatkan ketika perusahaan memutuskan untuk meningkatkan (Upgrade) layanannya ke paket berbayar (Lite atau Pro). Setiap kali perusahaan tersebut membayar (termasuk perpanjangan), Anda otomatis mendapat 20% komisi — selamanya!
             </p>
           </details>
 
@@ -123,9 +123,9 @@ export default async function AffiliateGuidePage() {
               </span>
             </summary>
             <div className="text-muted-foreground mt-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1 space-y-2">
-              <p>1. <strong>Edukasi Dulu:</strong> Jangan langsung jualan paket berbayar. Ajak mereka daftar Paket Gratis dulu karena fiturnya sudah sangat membantu sekolah.</p>
-              <p>2. <strong>Fokus pada Otomatisasi:</strong> Jelaskan bahwa SchoolPro bisa membuat tagihan SPP otomatis dan integrasi WhatsApp (fitur yang paling dicari bendahara).</p>
-              <p>3. <strong>Gunakan Network:</strong> Hubungi grup-grup Kepala Sekolah, MGMP, atau jaringan alumni sekolah Anda.</p>
+              <p>1. <strong>Edukasi Dulu:</strong> Jangan langsung jualan paket berbayar. Ajak mereka daftar Paket Gratis dulu karena fiturnya sudah sangat membantu perusahaan.</p>
+              <p>2. <strong>Fokus pada Otomatisasi:</strong> Jelaskan bahwa BisnisPro bisa membuat tagihan SPP otomatis dan integrasi WhatsApp (fitur yang paling dicari bendahara).</p>
+              <p>3. <strong>Gunakan Network:</strong> Hubungi grup-grup Kepala Perusahaan, MGMP, atau jaringan mitra perusahaan Anda.</p>
             </div>
           </details>
         </CardContent>

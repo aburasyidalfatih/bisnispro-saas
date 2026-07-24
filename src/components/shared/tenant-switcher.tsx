@@ -45,7 +45,7 @@ export function TenantSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 glass rounded-xl" align="start">
-        <DropdownMenuLabel className="text-xs text-muted-foreground">Lembaga Anda</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs text-muted-foreground">Bisnis Anda</DropdownMenuLabel>
         {tenants.map((t) => (
           <DropdownMenuItem
             key={t.id}

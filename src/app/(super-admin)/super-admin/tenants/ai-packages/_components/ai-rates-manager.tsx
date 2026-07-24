@@ -53,14 +53,14 @@ export function AiRatesManager() {
   const rateLabels: Record<string, string> = {
     "vision-mission": "Visi & Misi",
     "about": "Profil / Sejarah",
-    "principal-speech": "Sambutan Kepala Sekolah",
+    "principal-speech": "Sambutan Kepala Perusahaan",
     "program": "Program / Jurusan",
-    "facility": "Fasilitas",
-    "teacher-bio": "Biodata Guru",
-    "extracurricular": "Ekstrakurikuler",
+    "facility": "Aset",
+    "teacher-bio": "Biodata Staf",
+    "extracurricular": "Aset Ekstra",
     "event": "Agenda (Event)",
     "achievement": "Prestasi",
-    "alumni": "Testimoni Alumni",
+    "mitra": "Testimoni Mitra",
     "post": "Pembuatan Artikel Berita (Post)",
   }
 

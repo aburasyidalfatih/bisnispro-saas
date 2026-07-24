@@ -148,7 +148,7 @@ export function OverviewCards({
                 </div>
               </div>
               <p className="text-[11px] text-muted-foreground mt-1">
-                Dari {totalTenants || 0} sekolah yang terdaftar
+                Dari {totalTenants || 0} perusahaan yang terdaftar
               </p>
             </div>
             <div className="mt-3 flex items-center gap-1 text-xs text-yellow-600 font-medium">

@@ -91,7 +91,7 @@ export default function LeaderboardPage() {
               <Trophy className="h-8 w-8 text-yellow-500" /> Papan Peringkat Nasional {new Date().getFullYear()}
             </h1>
           </div>
-          <p className="text-muted-foreground">Kompetisi website sekolah paling aktif se-Indonesia.</p>
+          <p className="text-muted-foreground">Kompetisi website perusahaan paling aktif se-Indonesia.</p>
         </div>
       </div>
 
@@ -122,8 +122,8 @@ export default function LeaderboardPage() {
                       <li>Gunakan Custom Domain: <span className="font-bold text-primary">+2.000 Pts</span> <span className="text-muted-foreground text-xs">(Bonus Instan)</span></li>
                       <li>Data Prestasi: <span className="font-bold text-primary">+20 Pts</span></li>
                       <li>Agenda/Event: <span className="font-bold text-primary">+15 Pts</span></li>
-                      <li>Data Fasilitas: <span className="font-bold text-primary">+15 Pts</span></li>
-                      <li>Profil Guru (GTK): <span className="font-bold text-primary">+10 Pts</span></li>
+                      <li>Data Aset: <span className="font-bold text-primary">+15 Pts</span></li>
+                      <li>Profil Staf (GTK): <span className="font-bold text-primary">+10 Pts</span></li>
                       <li>Foto Galeri: <span className="font-bold text-primary">+5 Pts</span></li>
                     </ul>
                   </div>
@@ -146,7 +146,7 @@ export default function LeaderboardPage() {
                     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">🎯 Aktivitas Harian</h4>
                     <ul className="space-y-1.5 list-disc list-inside text-sm text-foreground">
                       <li>Admin Login Harian: <span className="font-bold text-primary">+10 Pts</span></li>
-                      <li>Guru Login Harian: <span className="font-bold text-primary">+3 Pts</span></li>
+                      <li>Staf Login Harian: <span className="font-bold text-primary">+3 Pts</span></li>
                       <li>Buat Pengumuman Internal: <span className="font-bold text-primary">+2 Pts</span> <span className="text-muted-foreground text-xs">(Maks 250 pesan)</span></li>
                     </ul>
                   </div>
@@ -167,7 +167,7 @@ export default function LeaderboardPage() {
             <div className="flex-1 text-center sm:text-left">
               <h2 className="text-2xl font-bold mb-2">{myRankEntry.tenant.name}</h2>
               <p className="text-indigo-100 mb-4 max-w-lg">
-                Tingkatkan peringkat Anda dengan rajin memposting berita, melengkapi galeri, dan memperbarui profil sekolah secara berkala!
+                Tingkatkan peringkat Anda dengan rajin memposting berita, melengkapi galeri, dan memperbarui profil perusahaan secara berkala!
               </p>
               <div className="flex flex-wrap justify-center sm:justify-start gap-4">
                 <div className="bg-black/20 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
@@ -182,7 +182,7 @@ export default function LeaderboardPage() {
       <div className="flex items-center gap-4 bg-card p-2 rounded-2xl border shadow-sm">
         <Search className="h-5 w-5 text-muted-foreground ml-3" />
         <Input 
-          placeholder="Cari nama sekolah..." 
+          placeholder="Cari nama perusahaan..." 
           className="border-0 shadow-none focus-visible:ring-0 text-base"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -245,8 +245,8 @@ export default function LeaderboardPage() {
                     {entry.tenant.name}
                     {isMe && <span className="ml-2 text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full align-middle">ANDA</span>}
                   </h3>
-                  <a href={entry.tenant.domain ? `https://${entry.tenant.domain}` : `http://${entry.tenant.slug}.schoolpro.id`} target="_blank" rel="noopener" className="text-xs text-muted-foreground hover:underline truncate block">
-                    {entry.tenant.domain || `${entry.tenant.slug}.schoolpro.id`}
+                  <a href={entry.tenant.domain ? `https://${entry.tenant.domain}` : `http://${entry.tenant.slug}.bisnispro.id`} target="_blank" rel="noopener" className="text-xs text-muted-foreground hover:underline truncate block">
+                    {entry.tenant.domain || `${entry.tenant.slug}.bisnispro.id`}
                   </a>
                 </div>
 

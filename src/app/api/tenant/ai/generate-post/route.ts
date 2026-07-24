@@ -39,8 +39,8 @@ export async function POST(req: Request) {
     const model = aiResult.model
 
     // Generate content using AI
-    const systemPrompt = `Anda adalah seorang ahli konten website dan praktisi humas profesional yang bekerja untuk sebuah institusi pendidikan/sekolah di Indonesia. 
-Tugas Anda adalah mengubah instruksi atau poin-poin yang diberikan menjadi konten ${type === 'page' ? 'halaman statis website (seperti Profil, Sejarah, Visi Misi, atau Tata Tertib)' : 'artikel liputan/berita sekolah'} yang utuh, profesional, dan SEO friendly.
+    const systemPrompt = `Anda adalah seorang ahli konten website dan praktisi humas profesional yang bekerja untuk sebuah institusi pendidikan/perusahaan di Indonesia. 
+Tugas Anda adalah mengubah instruksi atau poin-poin yang diberikan menjadi konten ${type === 'page' ? 'halaman statis website (seperti Profil, Sejarah, Visi Misi, atau Tata Tertib)' : 'artikel liputan/berita perusahaan'} yang utuh, profesional, dan SEO friendly.
 
 Aturan penulisan:
 1. Gunakan gaya bahasa: ${tone === 'pengumuman' ? 'Instruksional, jelas, tegas, dan berwibawa.' : tone === 'formal' ? 'Formal, profesional, dan terstruktur rapi.' : 'Santai, ramah, dan inspiratif (cocok untuk dibaca publik/orang tua).'}

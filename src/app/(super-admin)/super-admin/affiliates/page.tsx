@@ -259,7 +259,7 @@ export default function SuperAdminAffiliatesPage() {
                     <TableHead className="px-4 py-3 font-medium">Mitra</TableHead>
                     <TableHead className="px-4 py-3 font-medium">Kode Ref</TableHead>
                     <TableHead className="px-4 py-3 font-medium">Rekening</TableHead>
-                    <TableHead className="px-4 py-3 font-medium text-center">Total Sekolah</TableHead>
+                    <TableHead className="px-4 py-3 font-medium text-center">Total Perusahaan</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-right">Saldo Aktif</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-right">Req. Withdraw</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-center">Status</TableHead>
@@ -294,7 +294,7 @@ export default function SuperAdminAffiliatesPage() {
                             )}
                           </TableCell>
                           <TableCell className="px-4 py-3 text-center">
-                            <Badge variant="secondary" className="font-medium">{aff._count?.tenantApplications || 0} Sekolah</Badge>
+                            <Badge variant="secondary" className="font-medium">{aff._count?.tenantApplications || 0} Perusahaan</Badge>
                           </TableCell>
                           <TableCell className="px-4 py-3 text-right font-bold text-emerald-600">Rp {aff.balance.toLocaleString('id-ID')}</TableCell>
                           <TableCell className="px-4 py-3 text-right">
@@ -381,7 +381,7 @@ export default function SuperAdminAffiliatesPage() {
                 onChange={e => setSettingsForm({...settingsForm, AFFILIATE_COMMISSION_PERCENTAGE: e.target.value})} 
                 className="rounded-xl"
               />
-              <p className="text-xs text-muted-foreground">Persentase dari total pembayaran sekolah yang akan masuk ke saldo Mitra (Misal: 20).</p>
+              <p className="text-xs text-muted-foreground">Persentase dari total pembayaran perusahaan yang akan masuk ke saldo Mitra (Misal: 20).</p>
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium">Persentase Cashback Default (%)</label>
@@ -391,7 +391,7 @@ export default function SuperAdminAffiliatesPage() {
                 onChange={e => setSettingsForm({...settingsForm, AFFILIATE_DEFAULT_CASHBACK_PERCENTAGE: e.target.value})} 
                 className="rounded-xl"
               />
-              <p className="text-xs text-muted-foreground">Cashback (potongan harga) berupa persentase otomatis yang dibuat untuk sekolah saat menggunakan kode referral mitra baru.</p>
+              <p className="text-xs text-muted-foreground">Cashback (potongan harga) berupa persentase otomatis yang dibuat untuk perusahaan saat menggunakan kode referral mitra baru.</p>
             </div>
           </div>
           <DialogFooter>

@@ -46,8 +46,8 @@ export function ContactForm({ form, setForm }: ContactFormProps) {
               <Input value={form.phone} onChange={(e) => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="021-12345678" className="rounded-xl" />
             </div>
             <div className="space-y-2">
-              <Label className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email Lembaga</Label>
-              <Input type="email" value={form.email} onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))} placeholder="info@lembaga.com" className="rounded-xl" />
+              <Label className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email Bisnis</Label>
+              <Input type="email" value={form.email} onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))} placeholder="info@bisnis.com" className="rounded-xl" />
             </div>
             <div className="space-y-2 lg:col-span-2 mt-2">
               <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> Code Embed google map</Label>

@@ -7,7 +7,7 @@ export async function processDailyDrip() {
   
   // Ambil nama platform dari settings
   const platformNameSetting = await db.platformSetting.findUnique({ where: { key: "platform_name" } })
-  const platformName = platformNameSetting?.value || "SchoolPro"
+  const platformName = platformNameSetting?.value || "BisnisPro"
   // 1. Ambil semua template campaign yang aktif, urutkan berdasarkan dayOffset
   const campaigns = await db.dripCampaign.findMany({
     where: { isActive: true },
@@ -70,8 +70,8 @@ export async function processDailyDrip() {
           }
         })
 
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id"
-        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bisnispro.id"
+        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
         
         const tenantUrl = tenant.domain 
           ? `https://${tenant.domain}` 
@@ -81,7 +81,7 @@ export async function processDailyDrip() {
           .replace(/{{name}}/g, owner.name)
           .replace(/{{schoolName}}/g, tenant.name)
 
-        rawContent = rawContent.replace(/https:\/\/schoolpro\.id\/admin/g, `${tenantUrl}/admin`)
+        rawContent = rawContent.replace(/https:\/\/bisnispro\.id\/admin/g, `${tenantUrl}/admin`)
 
         const trackableContent = rawContent.replace(/(https?:\/\/[^\s<>'"\)]+)/g, (url) => {
           const encodedUrl = encodeURIComponent(url)
@@ -106,7 +106,7 @@ export async function processDailyDrip() {
                     <tr>
                       <td style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); padding: 40px 30px; text-align: center;">
                         <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.025em;">${platformName} Edukasi</h1>
-                        <p style="color: #e0e7ff; margin: 8px 0 0 0; font-size: 15px; font-weight: 500;">Membantu Anda Mengembangkan Sekolah</p>
+                        <p style="color: #e0e7ff; margin: 8px 0 0 0; font-size: 15px; font-weight: 500;">Membantu Anda Mengembangkan Perusahaan</p>
                       </td>
                     </tr>
                     <tr>

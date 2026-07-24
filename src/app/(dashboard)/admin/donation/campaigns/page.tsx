@@ -73,7 +73,7 @@ export default function DonationCampaignsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Kampanye Donasi</h1>
-          <p className="text-sm text-muted-foreground">Kelola crowdfunding untuk kebutuhan sekolah.</p>
+          <p className="text-sm text-muted-foreground">Kelola crowdfunding untuk kebutuhan perusahaan.</p>
         </div>
         <Link href="/admin/donation/campaigns/create">
           <Button className="rounded-xl gap-2"><Plus className="h-4 w-4" /> Kampanye Baru</Button>

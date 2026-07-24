@@ -1,9 +1,9 @@
-import React from"react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
-import { Input } from"@/components/ui/input"
-import { Label } from"@/components/ui/label"
-import { Globe } from"lucide-react"
-import { AboutFormState } from"./types"
+import React, { useEffect, useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Globe } from "lucide-react"
+import { AboutFormState } from "./types"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 
@@ -15,6 +15,14 @@ interface SeoFormProps {
 }
 
 export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
+  const [baseDomain, setBaseDomain] = useState("bisnispro.id")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setBaseDomain(window.location.hostname.includes(".") ? window.location.hostname.split(".").slice(-2).join(".") : "bisnispro.id")
+    }
+  }, [])
+
   return (
     <Card className="glass border-0 lg:col-span-2">
       <CardHeader>
@@ -36,7 +44,7 @@ export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
             </div>
             <Input value={form.seoTitle} onChange={e => setForm(p => ({ ...p, seoTitle: e.target.value }))}
               placeholder="Judul halaman untuk Google (maks. 70 karakter)" className="rounded-xl" maxLength={70} />
-            <p className="text-xs text-muted-foreground">{form.seoTitle?.length || 0}/70 · Kosongkan untuk pakai nama lembaga</p>
+            <p className="text-xs text-muted-foreground">{form.seoTitle?.length || 0}/70 · Kosongkan untuk pakai nama bisnis</p>
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -46,7 +54,7 @@ export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
               placeholder="Deskripsi singkat untuk hasil pencarian Google (maks. 160 karakter)"
               maxLength={160} rows={3}
               className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm resize-y min-h-[100px]" />
-            <p className="text-xs text-muted-foreground">{form.seoDesc?.length || 0}/160 · Kosongkan untuk pakai deskripsi lembaga</p>
+            <p className="text-xs text-muted-foreground">{form.seoDesc?.length || 0}/160 · Kosongkan untuk pakai deskripsi bisnis</p>
             {(form.seoDesc?.length || 0) >= 160 && (
               <p className="text-xs text-destructive font-medium">Tidak boleh lebih dari 160 karakter.</p>
             )}
@@ -62,7 +70,7 @@ export function SeoForm({ form, setForm, domainStatus, slug }: SeoFormProps) {
             <p className="text-green-700 text-xs mt-0.5">
               {domainStatus?.domain 
                 ? `https://${domainStatus.domain}` 
-                : `https://${slug ||"tenant"}.${typeof window !=="undefined" && window.location.hostname.includes(".") ? window.location.hostname.split(".").slice(-2).join(".") :"schoolpro.id"}`}
+                : `https://${slug || "tenant"}.${baseDomain}`}
             </p>
             <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
               {form.seoDesc || form.description ||"Deskripsi website Anda akan muncul di sini..."}

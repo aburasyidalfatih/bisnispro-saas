@@ -19,7 +19,7 @@ export const DEFAULT_AI_TOKEN_COSTS: Record<string, number> = {
   "extracurricular": 15,
   "event": 10,
   "achievement": 10,
-  "alumni": 5,
+  "mitra": 5,
   "post": 50,
 }
 
@@ -138,7 +138,7 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
       const tenantUser = await db.tenantUser.findUnique({
         where: { tenantId_userId: { tenantId, userId } }
       })
-      isTeacher = tenantUser?.role.toLowerCase() === "guru" || tenantUser?.role.toLowerCase() === "teacher"
+      isTeacher = tenantUser?.role.toLowerCase() === "staf" || tenantUser?.role.toLowerCase() === "teacher"
     }
 
     if (isTeacher) {
@@ -186,7 +186,7 @@ export async function checkAiTokenBalance(tenantId: string, userId?: string) {
       const tenantUser = await db.tenantUser.findUnique({
         where: { tenantId_userId: { tenantId, userId } }
       })
-      const isTeacher = tenantUser?.role.toLowerCase() === "guru" || tenantUser?.role.toLowerCase() === "teacher"
+      const isTeacher = tenantUser?.role.toLowerCase() === "staf" || tenantUser?.role.toLowerCase() === "teacher"
       
       if (isTeacher) {
         const user = await db.user.findUnique({ where: { id: userId } })

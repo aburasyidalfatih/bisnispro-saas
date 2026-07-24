@@ -30,13 +30,13 @@ export default async function AcademyCatalogPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Katalog Kelas Academy</h1>
-          <p className="text-muted-foreground text-sm">Tingkatkan skill dan pengetahuan manajemen sekolah Anda.</p>
+          <h1 className="text-2xl font-bold tracking-tight">Katalog Divisi Academy</h1>
+          <p className="text-muted-foreground text-sm">Tingkatkan skill dan pengetahuan manajemen perusahaan Anda.</p>
         </div>
         <Link href="/admin/academy/my-courses">
           <Button variant="outline" className="gap-2 rounded-xl">
             <BookOpen className="h-4 w-4" />
-            Kelas Saya
+            Divisi Saya
           </Button>
         </Link>
       </div>
@@ -45,8 +45,8 @@ export default async function AcademyCatalogPage() {
         {courses.length === 0 ? (
           <div className="col-span-full py-20 text-center glass rounded-3xl">
             <GraduationCap className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-bold">Belum Ada Kelas</h3>
-            <p className="text-muted-foreground">Super Admin belum menerbitkan kelas apapun.</p>
+            <h3 className="text-lg font-bold">Belum Ada Divisi</h3>
+            <p className="text-muted-foreground">Super Admin belum menerbitkan divisi apapun.</p>
           </div>
         ) : (
           courses.map(course => {

@@ -8,15 +8,15 @@ import { cn } from "@/lib/utils"
 export function MobileBottomNav({ className }: { className?: string }) {
   const pathname = usePathname()
 
-  const isSiswa = pathname.startsWith("/siswa")
+  const isKlien = pathname.startsWith("/klien")
   const isGTK = pathname.startsWith("/panel-gtk")
-  const baseRoute = isSiswa ? "/siswa" : isGTK ? "/panel-gtk" : "/ortu"
+  const baseRoute = isKlien ? "/klien" : isGTK ? "/panel-gtk" : "/ortu"
 
-  const navItems = isSiswa ? [
-    { label: "Beranda", icon: Home, href: "/siswa" },
-    { label: "Tugas", icon: FileText, href: "/siswa/tugas" },
-    { label: "Nilai", icon: Wallet, href: "/siswa/nilai" },
-    { label: "Profil", icon: User, href: "/siswa/profil" },
+  const navItems = isKlien ? [
+    { label: "Beranda", icon: Home, href: "/klien" },
+    { label: "Tugas", icon: FileText, href: "/klien/tugas" },
+    { label: "Nilai", icon: Wallet, href: "/klien/nilai" },
+    { label: "Profil", icon: User, href: "/klien/profil" },
   ] : isGTK ? [
     { label: "Beranda", icon: Home, href: "/panel-gtk" },
     { label: "Absensi", icon: CalendarCheck, href: "/panel-gtk/absensi" },
@@ -30,7 +30,7 @@ export function MobileBottomNav({ className }: { className?: string }) {
     { label: "Profil", icon: User, href: "/ortu/profil" },
   ]
 
-  const floatingAction = isSiswa || isGTK
+  const floatingAction = isKlien || isGTK
     ? { label: "Jadwal", icon: Calendar, href: `${baseRoute}/jadwal` }
     : { label: "Wallet", icon: Wallet, href: "/ortu/wallet" }
 

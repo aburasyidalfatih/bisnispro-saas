@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     let loginUrl = "/login"
     if (!updatedUser.isSuperAdmin && updatedUser.tenants && updatedUser.tenants.length > 0) {
       const protocol = process.env.NODE_ENV === "production" ? "https" : "http"
-      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+      const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
       loginUrl = `${protocol}://${updatedUser.tenants[0].tenant.slug}.${rootDomain}/login`
     }
 

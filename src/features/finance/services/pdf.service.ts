@@ -8,11 +8,11 @@ export interface InvoicePdfData {
   dueDate?: string
   status: string
   
-  // Penerima Tagihan (Siswa atau Tenant)
+  // Penerima Tagihan (Klien atau Tenant)
   billedToName: string
   billedToDetails?: string[]
 
-  // Info Instansi / Sekolah / Platform
+  // Info Instansi / Perusahaan / Platform
   companyName: string
   companyDetails?: string[]
   

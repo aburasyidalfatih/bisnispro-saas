@@ -119,7 +119,7 @@ export default function TenantsPage() {
       body: JSON.stringify({ id }),
     })
     if (res.ok) {
-      toast({ title: "Lembaga dihapus", description: `${name} berhasil dihapus.` })
+      toast({ title: "Bisnis dihapus", description: `${name} berhasil dihapus.` })
       fetchTenants()
     } else {
       toast({ title: "Gagal", description: "Tidak dapat menghapus tenant.", variant: "destructive" })
@@ -162,8 +162,8 @@ export default function TenantsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="flex-1">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Manajemen Lembaga</h1>
-          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola sekolah dan lembaga yang terdaftar ({total} tenant)</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Manajemen Bisnis</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Kelola perusahaan dan bisnis yang terdaftar ({total} tenant)</p>
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={handleSyncContacts} variant="outline" className="gap-2 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 rounded-xl">
@@ -203,7 +203,7 @@ export default function TenantsPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-b bg-muted/30">
-                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Lembaga / Institusi</TableHead>
+                <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Bisnis / Institusi</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Kontak Owner</TableHead>
                 <TableHead className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest hidden lg:table-cell">URL / Domain</TableHead>
                 <TableHead 
@@ -321,7 +321,7 @@ export default function TenantsPage() {
                       <span className={cn("text-[10px] font-bold uppercase rounded-lg px-2 py-1 tracking-tighter", planBadge[t.plan] || planBadge.free)}>
                         {t.plan}
                       </span>
-                      <p className="text-[9px] text-muted-foreground mt-1">{t.studentQuota} Siswa</p>
+                      <p className="text-[9px] text-muted-foreground mt-1">{t.studentQuota} Klien</p>
                     </TableCell>
                     <TableCell className="px-4 py-4 text-center">
                       <span className="text-[11px] font-bold text-foreground">
@@ -374,7 +374,7 @@ export default function TenantsPage() {
                               </DropdownMenuItem>
                             }
                             title={`Hapus total "${t.name}"?`}
-                            description="Tindakan ini akan menghapus permanen seluruh database sekolah ini."
+                            description="Tindakan ini akan menghapus permanen seluruh database perusahaan ini."
                             confirmText="Ya, Hapus Permanen"
                             onConfirm={() => handleDelete(t.id, t.name)}
                           />
@@ -451,7 +451,7 @@ export default function TenantsPage() {
                             </DropdownMenuItem>
                           }
                           title={`Hapus total "${t.name}"?`}
-                          description="Tindakan ini akan menghapus permanen seluruh database sekolah ini."
+                          description="Tindakan ini akan menghapus permanen seluruh database perusahaan ini."
                           confirmText="Ya, Hapus Permanen"
                           onConfirm={() => handleDelete(t.id, t.name)}
                         />
@@ -468,7 +468,7 @@ export default function TenantsPage() {
                   {/* Row 3: Badges row */}
                   <div className="flex items-center gap-2 flex-wrap pl-[52px]">
                     <span className={cn("text-[10px] font-bold uppercase rounded-lg px-2 py-1 tracking-tighter", planBadge[t.plan] || planBadge.free)}>
-                      {t.plan} · {t.studentQuota} siswa
+                      {t.plan} · {t.studentQuota} klien
                     </span>
                     <span className={cn(
                       "inline-flex items-center text-[10px] font-bold uppercase rounded-full px-2 py-0.5",

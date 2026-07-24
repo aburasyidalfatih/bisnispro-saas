@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet"
-import { useTheme } from "next-themes"
+import { useTheme } from "@teispace/next-themes"
 import MarkerClusterGroup from "react-leaflet-cluster"
 import "leaflet/dist/leaflet.css"
 
@@ -55,10 +55,10 @@ export default function MapContent({ points }: { points: MapPoint[] }) {
                 <div className="text-sm">
                   <p className="font-bold">{point.name}</p>
                   <p className="text-xs mt-1" style={{ color: point.type === "tenant" ? "#10b981" : "#f59e0b" }}>
-                    {point.type === "tenant" ? "🟢 Sekolah Aktif" : "🟠 Pengajuan"}
+                    {point.type === "tenant" ? "🟢 Perusahaan Aktif" : "🟠 Pengajuan"}
                   </p>
                   {point.slug && (
-                    <p className="text-xs text-gray-500 mt-0.5">{point.slug}.schoolpro.id</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{point.slug}.bisnispro.id</p>
                   )}
                 </div>
               </Popup>

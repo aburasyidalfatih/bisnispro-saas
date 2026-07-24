@@ -31,7 +31,7 @@ export async function POST() {
     where: { slug: "pro" },
     data: {
       features: [
-        "Manajemen Data Siswa Lengkap",
+        "Manajemen Data Klien Lengkap",
         "E-Rapor & Cetak Dokumen Otomatis",
         "Keuangan & SPP Digital",
         "Fitur Absensi & Notifikasi Ortu",

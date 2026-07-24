@@ -6,12 +6,12 @@ import ClientLoginPage from "./client-page"
 
 export default async function LoginPage() {
   const headerList = await headers()
-  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "schoolpro.id"
+  let host = headerList.get("x-forwarded-host") || headerList.get("host") || "bisnispro.id"
   host = host.split(':')[0]
   const isMainDomain = checkIsMainDomain(host)
 
   let tenantNameDisplay: string | null = null
-  let platformLogo = "/logo-schoolpro.png"
+  let platformLogo = "/logo-bisnispro.png"
   let googleAuthEnabled = false
   let turnstileSiteKey: string | null = null
 

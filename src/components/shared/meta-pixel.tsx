@@ -13,7 +13,7 @@ export const MetaPixel = ({ pixelId }: { pixelId: string }) => {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname
       // Hanya aktifkan pixel di domain utama platform, JANGAN di web tenant (subdomain)
-      const mainDomains = ['schoolpro.id', 'www.schoolpro.id', 'schoolpro.my.id', 'www.schoolpro.my.id', 'localhost']
+      const mainDomains = ['bisnispro.id', 'www.bisnispro.id', 'bisnispro.my.id', 'www.bisnispro.my.id', 'localhost']
       if (mainDomains.includes(hostname)) {
         setIsPlatform(true)
       }
@@ -24,7 +24,7 @@ export const MetaPixel = ({ pixelId }: { pixelId: string }) => {
     // Only track if loaded and fbq is available AND we are on the main platform domain
     if (loaded && typeof window !== 'undefined' && (window as any).fbq && isPlatform) {
       // Trigger PageView only on Landing Page and Form Page
-      if (pathname === '/' || pathname === '/daftarkan-sekolah') {
+      if (pathname === '/' || pathname === '/daftarkan-perusahaan') {
         (window as any).fbq('track', 'PageView')
       }
     }
@@ -59,7 +59,7 @@ export const MetaPixel = ({ pixelId }: { pixelId: string }) => {
           // Fire initial PageView if we land directly on allowed pages
           if (typeof window !== 'undefined' && (window as any).fbq) {
             const path = window.location.pathname;
-            if (path === '/' || path === '/daftarkan-sekolah') {
+            if (path === '/' || path === '/daftarkan-perusahaan') {
                (window as any).fbq('track', 'PageView');
             }
           }
@@ -74,7 +74,7 @@ export const trackMetaEvent = (eventName: string, data: any = {}) => {
   if (typeof window !== 'undefined' && (window as any).fbq) {
     // Pastikan tidak trigger event jika dijalankan di subdomain tenant
     const hostname = window.location.hostname
-    const mainDomains = ['schoolpro.id', 'www.schoolpro.id', 'schoolpro.my.id', 'www.schoolpro.my.id', 'localhost']
+    const mainDomains = ['bisnispro.id', 'www.bisnispro.id', 'bisnispro.my.id', 'www.bisnispro.my.id', 'localhost']
     
     if (mainDomains.includes(hostname)) {
       (window as any).fbq('track', eventName, data);

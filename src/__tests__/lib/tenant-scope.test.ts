@@ -20,10 +20,10 @@ describe("tenant scope helpers", () => {
   })
 
   it("injects tenantId into create data", () => {
-    const args = { data: { name: "Siswa A" } }
+    const args = { data: { name: "Klien A" } }
 
     expect(applyTenantScopeToArgs(args, "create", "tenant-1")).toEqual({
-      data: { name: "Siswa A", tenantId: "tenant-1" },
+      data: { name: "Klien A", tenantId: "tenant-1" },
     })
   })
 

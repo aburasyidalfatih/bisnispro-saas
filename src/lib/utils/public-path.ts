@@ -3,15 +3,15 @@ import { headers } from "next/headers"
 /**
  * Menentukan base path yang benar untuk link di website tenant.
  * 
- * - Jika diakses via subdomain (demo.schoolpro.my.id) → base = ""
+ * - Jika diakses via subdomain (demo.bisnispro.my.id) → base = ""
  *   sehingga link jadi "/agenda", "/berita", dll.
- * - Jika diakses via custom domain (sekolahanda.com) → base = ""
- * - Jika diakses via main domain path (schoolpro.id/site/demo) → base = "/site/demo"
+ * - Jika diakses via custom domain (perusahaananda.com) → base = ""
+ * - Jika diakses via main domain path (bisnispro.id/site/demo) → base = "/site/demo"
  */
 export async function getPublicBasePath(slug: string): Promise<string> {
   const headerList = await headers()
   const hostname = headerList.get("x-hostname") || headerList.get("host") || ""
-  const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const rootDomain = headerList.get("x-root-domain") || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
 
   const cleanHostname = hostname.split(":")[0]
   const isMainDomain =

@@ -26,7 +26,7 @@ export function GoogleContactsTab({
             Integrasi Google Contacts
           </CardTitle>
           <CardDescription>
-            Masukkan kredensial OAuth 2.0 untuk menyinkronkan kontak penanggung jawab Tenant/Sekolah langsung ke akun Google Admin Anda secara massal.
+            Masukkan kredensial OAuth 2.0 untuk menyinkronkan kontak penanggung jawab Tenant/Perusahaan langsung ke akun Google Admin Anda secara massal.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

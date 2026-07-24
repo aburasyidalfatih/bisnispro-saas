@@ -82,7 +82,7 @@ export async function getBillingDashboardData(tenantId: string) {
   const manualPayment = {
     bank: platformSettings.find(s => s.key === "MANUAL_PAYMENT_BANK")?.value || "Bank BCA",
     number: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NUMBER")?.value || "1234 5678 90",
-    name: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NAME")?.value || "PT SchoolPro Indonesia",
+    name: platformSettings.find(s => s.key === "MANUAL_PAYMENT_NAME")?.value || "PT BisnisPro Indonesia",
     waNumber: platformSettings.find(s => s.key === "MANUAL_PAYMENT_WA")?.value || "6281234567890",
   }
 
@@ -219,7 +219,7 @@ export async function validateDiscountCode(code: string, tenantId?: string) {
   
   if (discount.type === "CASHBACK" && tenantId) {
     if (discount.linkedTenantId && discount.linkedTenantId !== tenantId) {
-      throw new Error("Kode kupon ini sudah terikat ke sekolah lain")
+      throw new Error("Kode kupon ini sudah terikat ke perusahaan lain")
     }
   }
 

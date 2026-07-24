@@ -48,13 +48,13 @@ export function getRootDomain(hostname?: string): string {
     host = window.location.hostname
   }
   
-  if (host.endsWith("schoolpro.my.id") || host === "schoolpro.my.id") {
-    return "schoolpro.my.id"
-  } else if (host.endsWith("schoolpro.id") || host === "schoolpro.id") {
-    return "schoolpro.id"
+  if (host.endsWith("bisnispro.my.id") || host === "bisnispro.my.id") {
+    return "bisnispro.my.id"
+  } else if (host.endsWith("bisnispro.id") || host === "bisnispro.id") {
+    return "bisnispro.id"
   }
   
-  return process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  return process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
 }
 
 /**

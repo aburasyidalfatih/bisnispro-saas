@@ -60,7 +60,7 @@ export function TemplateStarsender({ form, setForm }: Props) {
             <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_ALERT_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_ALERT_SUPERADMIN: checked ? "true" : "false"})} /></div>
           </div>
         </div>
-        <Textarea value={form.WA_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder={`Sekolah Baru: {{schoolName}}\nWA: {{adminPhone}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_SUPERADMIN !== "true" && form.EMAIL_ENABLE_ALERT_SUPERADMIN !== "true"} />
+        <Textarea value={form.WA_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder={`Perusahaan Baru: {{schoolName}}\nWA: {{adminPhone}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_SUPERADMIN !== "true" && form.EMAIL_ENABLE_ALERT_SUPERADMIN !== "true"} />
       </div>
       <div className="space-y-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">

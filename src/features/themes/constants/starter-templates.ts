@@ -1,7 +1,7 @@
 // =============================================
 // DOCUMENTATION
 // =============================================
-export const STARTER_README = `# SchoolPro Theme Starter Kit
+export const STARTER_README = `# BisnisPro Theme Starter Kit
 
 ## Struktur Folder
 \`\`\`
@@ -10,21 +10,21 @@ export const STARTER_README = `# SchoolPro Theme Starter Kit
 │   └── main.hbs            # Layout utama (wajib) — berisi {{{body}}}
 ├── templates/
 │   ├── index.hbs           # Halaman utama (wajib)
-│   ├── profil.hbs          # Halaman profil/tentang sekolah
-│   ├── fasilitas.hbs       # Halaman daftar fasilitas
-│   ├── guru.hbs            # Halaman daftar guru/staff
-│   ├── guru-detail.hbs     # Halaman detail profil guru
+│   ├── profil.hbs          # Halaman profil/tentang perusahaan
+│   ├── aset.hbs       # Halaman daftar aset
+│   ├── staf.hbs            # Halaman daftar staf/staff
+│   ├── staf-detail.hbs     # Halaman detail profil staf
 │   ├── berita.hbs          # Halaman daftar berita
 │   ├── berita-detail.hbs   # Halaman detail berita
 │   ├── galeri.hbs          # Halaman galeri foto
 │   ├── kontak.hbs          # Halaman kontak
-│   ├── ekstrakurikuler.hbs # Halaman daftar ekstrakurikuler
+│   ├── aset ekstra.hbs # Halaman daftar aset ekstra
 │   ├── program.hbs         # Halaman daftar program
 │   ├── prestasi.hbs        # Halaman daftar prestasi
 │   ├── pengumuman.hbs      # Halaman daftar pengumuman
 │   ├── pengumuman-detail.hbs # Halaman detail pengumuman
-│   ├── ppdb.hbs            # Halaman pendaftaran siswa baru
-│   ├── alumni.hbs          # Halaman daftar alumni & testimonial
+│   ├── ppdb.hbs            # Halaman pendaftaran klien baru
+│   ├── mitra.hbs          # Halaman daftar mitra & testimonial
 │   ├── agenda.hbs          # Halaman kalender agenda/event
 │   └── unduhan.hbs         # Halaman dokumen & file download
 └── assets/
@@ -39,27 +39,27 @@ export const STARTER_README = `# SchoolPro Theme Starter Kit
 |----------|------|--------|
 | \`tenant.name\` | string | "SMA Prestasi Bangsa" |
 | \`tenant.tagline\` | string | "Membentuk Generasi Cerdas" |
-| \`tenant.about\` | string | Deskripsi panjang sekolah |
+| \`tenant.about\` | string | Deskripsi panjang perusahaan |
 | \`tenant.address\` | string | "Jl. Pendidikan No. 123" |
 | \`tenant.phone\` | string | "+62 812 345 678" |
 | \`tenant.whatsapp\` | string | "6281234567890" |
-| \`tenant.email\` | string | "info@sekolah.id" |
+| \`tenant.email\` | string | "info@perusahaan.id" |
 | \`tenant.logo\` | string | URL logo |
 | \`tenant.heroImage\` | string | URL hero image |
-| \`tenant.instagram\` | string | "sekolahprestasi" |
-| \`tenant.facebook\` | string | "sekolahprestasi" |
-| \`tenant.youtube\` | string | "@sekolahprestasi" |
-| \`tenant.tiktok\` | string | "@sekolahprestasi" |
+| \`tenant.instagram\` | string | "perusahaanprestasi" |
+| \`tenant.facebook\` | string | "perusahaanprestasi" |
+| \`tenant.youtube\` | string | "@perusahaanprestasi" |
+| \`tenant.tiktok\` | string | "@perusahaanprestasi" |
 
 ### Objek \`tenant.settings\`
 | Variabel | Tipe | Contoh |
 |----------|------|--------|
 | \`settings.principalName\` | string | "Dr. Ahmad Fauzi, M.Pd" |
-| \`settings.principalTitle\` | string | "Kepala Sekolah" |
+| \`settings.principalTitle\` | string | "Kepala Perusahaan" |
 | \`settings.principalImage\` | string | URL foto |
 | \`settings.principalMessage\` | string | Sambutan panjang |
-| \`settings.visi\` | string | Visi sekolah |
-| \`settings.misi\` | string | Misi sekolah (HTML) |
+| \`settings.visi\` | string | Visi perusahaan |
+| \`settings.misi\` | string | Misi perusahaan (HTML) |
 | \`settings.npsn\` | string | "12345678" |
 | \`settings.akreditasi\` | string | "A (Unggul)" |
 | \`settings.establishedYear\` | string | "1985" |
@@ -75,7 +75,7 @@ export const STARTER_README = `# SchoolPro Theme Starter Kit
 | \`tenant.posts[]\` | \`title\`, \`slug\`, \`excerpt\`, \`content\`, \`coverImage\`, \`createdAt\`, \`category.name\` |
 | \`tenant.events[]\` | \`title\`, \`description\`, \`location\`, \`startDate\`, \`endDate\` |
 | \`tenant.sliders[]\` | \`title\`, \`subtitle\`, \`imageUrl\`, \`linkUrl\` |
-| \`tenant.alumni[]\` | \`name\`, \`graduationYear\`, \`currentPosition\`, \`imageUrl\`, \`testimonial\` |
+| \`tenant.mitra[]\` | \`name\`, \`graduationYear\`, \`currentPosition\`, \`imageUrl\`, \`testimonial\` |
 | \`tenant.gallery[]\` | \`url\`, \`caption\` |
 | \`tenant.documents[]\` | \`title\`, \`fileUrl\`, \`fileSize\`, \`createdAt\` |
 | \`tenant.partnerships[]\` | \`name\`, \`logo\`, \`website\` |
@@ -320,7 +320,7 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
 </section>
 {{/if}}
 
-<!-- ═══════════════ SAMBUTAN KEPALA SEKOLAH ═══════════════ -->
+<!-- ═══════════════ SAMBUTAN KEPALA PERUSAHAAN ═══════════════ -->
 {{#if settings.principalName}}
 <section class="py-20 bg-gray-50">
   <div class="max-w-6xl mx-auto px-8 flex flex-col md:flex-row items-center gap-12">
@@ -339,7 +339,7 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
 </section>
 {{/if}}
 
-<!-- ═══════════════ TENTANG SEKOLAH ═══════════════ -->
+<!-- ═══════════════ TENTANG PERUSAHAAN ═══════════════ -->
 <section class="py-20">
   <div class="max-w-6xl mx-auto px-8">
     <div class="text-center mb-12">
@@ -386,7 +386,7 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
   <div class="max-w-7xl mx-auto px-8">
     <div class="text-center mb-12">
       <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Sarana Prasarana</span>
-      <h3 class="text-3xl font-bold mt-2">Fasilitas Sekolah</h3>
+      <h3 class="text-3xl font-bold mt-2">Aset Perusahaan</h3>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       {{#each tenant.facilities}}
@@ -402,7 +402,7 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
       {{/each}}
     </div>
     <div class="text-center mt-10">
-      <a href="{{base}}/fasilitas" class="text-indigo-600 font-semibold hover:underline">Lihat Semua Fasilitas →</a>
+      <a href="{{base}}/aset" class="text-indigo-600 font-semibold hover:underline">Lihat Semua Aset →</a>
     </div>
   </div>
 </section>
@@ -489,15 +489,15 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
 {{/if}}
 
 <!-- ═══════════════ ALUMNI TESTIMONIALS ═══════════════ -->
-{{#if tenant.alumni}}
+{{#if tenant.mitra}}
 <section class="py-20">
   <div class="max-w-6xl mx-auto px-8">
     <div class="text-center mb-12">
-      <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Alumni</span>
-      <h3 class="text-3xl font-bold mt-2">Apa Kata Alumni Kami</h3>
+      <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Mitra</span>
+      <h3 class="text-3xl font-bold mt-2">Apa Kata Mitra Kami</h3>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {{#each (limit tenant.alumni 3)}}
+      {{#each (limit tenant.mitra 3)}}
       <div class="bg-white rounded-2xl p-6 shadow-sm border text-center">
         {{#if this.imageUrl}}
         <img src="{{this.imageUrl}}" alt="{{this.name}}" class="w-20 h-20 rounded-full object-cover mx-auto mb-4">
@@ -538,7 +538,7 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
 <section class="py-20 bg-indigo-600 text-white text-center">
   <div class="max-w-3xl mx-auto px-8">
     <h3 class="text-3xl font-black mb-4">Bergabunglah Bersama Kami!</h3>
-    <p class="text-indigo-200 text-lg mb-8">Pendaftaran siswa baru telah dibuka. Jangan lewatkan kesempatan untuk menjadi bagian dari keluarga besar {{tenant.name}}.</p>
+    <p class="text-indigo-200 text-lg mb-8">Pendaftaran klien baru telah dibuka. Jangan lewatkan kesempatan untuk menjadi bagian dari keluarga besar {{tenant.name}}.</p>
     <a href="{{base}}/ppdb" class="inline-block bg-white text-indigo-600 px-8 py-3 rounded-full font-bold hover:shadow-xl transition-all">Daftar Sekarang</a>
   </div>
 </section>`
@@ -572,7 +572,7 @@ export const TEMPLATE_PROFIL_HBS = `<section class="py-20">
     </div>
     {{/if}}
 
-    <!-- Info Sekolah -->
+    <!-- Info Perusahaan -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
       {{#if settings.npsn}}
       <div class="bg-gray-50 rounded-xl p-5 text-center">
@@ -594,13 +594,13 @@ export const TEMPLATE_PROFIL_HBS = `<section class="py-20">
       {{/if}}
       {{#if settings.studentCount}}
       <div class="bg-gray-50 rounded-xl p-5 text-center">
-        <div class="text-xs text-gray-400 uppercase font-bold mb-1">Jumlah Siswa</div>
+        <div class="text-xs text-gray-400 uppercase font-bold mb-1">Jumlah Klien</div>
         <div class="text-lg font-bold">{{settings.studentCount}}</div>
       </div>
       {{/if}}
     </div>
 
-    <!-- Kepala Sekolah -->
+    <!-- Kepala Perusahaan -->
     {{#if settings.principalName}}
     <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col md:flex-row items-center gap-8 border">
       {{#if settings.principalImage}}
@@ -623,8 +623,8 @@ export const TEMPLATE_FASILITAS_HBS = `<section class="py-20">
   <div class="max-w-7xl mx-auto px-8">
     <div class="text-center mb-16">
       <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Sarana Prasarana</span>
-      <h2 class="text-4xl font-black mt-2">Fasilitas Sekolah</h2>
-      <p class="text-gray-500 mt-3 max-w-xl mx-auto">Sarana dan prasarana pendukung pendidikan untuk kenyamanan seluruh siswa</p>
+      <h2 class="text-4xl font-black mt-2">Aset Perusahaan</h2>
+      <p class="text-gray-500 mt-3 max-w-xl mx-auto">Sarana dan prasarana pendukung pendidikan untuk kenyamanan seluruh klien</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       {{#each tenant.facilities}}
@@ -654,7 +654,7 @@ export const TEMPLATE_GURU_HBS = `<section class="py-20">
   <div class="max-w-7xl mx-auto px-8">
     <div class="text-center mb-16">
       <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Tim Pendidik</span>
-      <h2 class="text-4xl font-black mt-2">Guru & Tenaga Kependidikan</h2>
+      <h2 class="text-4xl font-black mt-2">Staf & Tenaga Kependidikan</h2>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
       {{#each tenant.staff}}
@@ -797,7 +797,7 @@ export const TEMPLATE_EKSKUL_HBS = `<section class="py-20">
   <div class="max-w-7xl mx-auto px-8">
     <div class="text-center mb-16">
       <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Pengembangan Diri</span>
-      <h2 class="text-4xl font-black mt-2">Ekstrakurikuler</h2>
+      <h2 class="text-4xl font-black mt-2">Aset Ekstra</h2>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       {{#each tenant.extracurriculars}}
@@ -886,7 +886,7 @@ export const TEMPLATE_PENGUMUMAN_HBS = `<section class="py-20">
     <div class="text-center mb-12">
       <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Informasi</span>
       <h2 class="text-4xl font-black mt-2">Pengumuman Resmi</h2>
-      <p class="text-gray-500 mt-3 max-w-xl mx-auto">Informasi penting dan pengumuman resmi dari sekolah untuk seluruh civitas akademika.</p>
+      <p class="text-gray-500 mt-3 max-w-xl mx-auto">Informasi penting dan pengumuman resmi dari perusahaan untuk seluruh civitas akademika.</p>
     </div>
     {{#if tenant.posts}}
     <div class="space-y-6">
@@ -955,7 +955,7 @@ export const TEMPLATE_PPDB_HBS = `<!-- Hero PPDB -->
   </div>
 </section>
 
-<!-- Info Sekolah -->
+<!-- Info Perusahaan -->
 <section class="py-20">
   <div class="max-w-6xl mx-auto px-8">
     <div class="text-center mb-16">
@@ -969,12 +969,12 @@ export const TEMPLATE_PPDB_HBS = `<!-- Hero PPDB -->
       </div>
       <div class="text-center p-8 bg-emerald-50 rounded-2xl">
         <div class="text-4xl mb-4">👨‍🏫</div>
-        <h4 class="font-bold text-lg mb-2">Guru Profesional</h4>
+        <h4 class="font-bold text-lg mb-2">Staf Profesional</h4>
         <p class="text-sm text-gray-600">Tenaga pendidik berpengalaman dan bersertifikasi.</p>
       </div>
       <div class="text-center p-8 bg-amber-50 rounded-2xl">
         <div class="text-4xl mb-4">🏫</div>
-        <h4 class="font-bold text-lg mb-2">Fasilitas Lengkap</h4>
+        <h4 class="font-bold text-lg mb-2">Aset Lengkap</h4>
         <p class="text-sm text-gray-600">Sarana dan prasarana modern untuk menunjang pembelajaran.</p>
       </div>
     </div>
@@ -998,15 +998,15 @@ export const TEMPLATE_PPDB_HBS = `<!-- Hero PPDB -->
 // =============================================
 export const TEMPLATE_ALUMNI_HBS = `<section class="py-20">
   <div class="max-w-7xl mx-auto px-8">
-    <nav class="text-sm text-gray-400 mb-6"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <span class="text-gray-700">Alumni</span></nav>
+    <nav class="text-sm text-gray-400 mb-6"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <span class="text-gray-700">Mitra</span></nav>
     <div class="text-center mb-16">
       <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Kebanggaan Kami</span>
-      <h2 class="text-4xl font-black mt-2">Alumni {{tenant.name}}</h2>
-      <p class="text-gray-500 mt-3 max-w-2xl mx-auto">Mengenal lebih dekat para alumni yang telah berhasil di berbagai bidang dan menjadi inspirasi generasi berikutnya.</p>
+      <h2 class="text-4xl font-black mt-2">Mitra {{tenant.name}}</h2>
+      <p class="text-gray-500 mt-3 max-w-2xl mx-auto">Mengenal lebih dekat para mitra yang telah berhasil di berbagai bidang dan menjadi inspirasi generasi berikutnya.</p>
     </div>
-    {{#if tenant.alumni}}
+    {{#if tenant.mitra}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {{#each tenant.alumni}}
+      {{#each tenant.mitra}}
       <div class="bg-white rounded-2xl p-8 shadow-sm border hover:shadow-lg transition-all text-center group">
         {{#if this.imageUrl}}
         <img src="{{this.imageUrl}}" alt="{{this.name}}" class="w-24 h-24 rounded-full object-cover mx-auto mb-6 ring-4 ring-indigo-50 group-hover:ring-indigo-200 transition-all">
@@ -1025,7 +1025,7 @@ export const TEMPLATE_ALUMNI_HBS = `<section class="py-20">
     {{else}}
     <div class="text-center py-20 bg-gray-50 rounded-3xl border border-dashed">
       <div class="text-5xl mb-4">🎓</div>
-      <h3 class="text-xl font-bold text-gray-600">Data Alumni Segera Hadir</h3>
+      <h3 class="text-xl font-bold text-gray-600">Data Mitra Segera Hadir</h3>
     </div>
     {{/if}}
   </div>
@@ -1079,7 +1079,7 @@ export const TEMPLATE_UNDUHAN_HBS = `<section class="py-20">
     <div class="text-center mb-16">
       <span class="text-indigo-600 font-bold text-sm uppercase tracking-widest">Dokumen</span>
       <h2 class="text-4xl font-black mt-2">Pusat Unduhan</h2>
-      <p class="text-gray-500 mt-3">Unduh dokumen, formulir, dan berkas penting dari sekolah.</p>
+      <p class="text-gray-500 mt-3">Unduh dokumen, formulir, dan berkas penting dari perusahaan.</p>
     </div>
     {{#if tenant.documents}}
     <div class="space-y-4">
@@ -1110,7 +1110,7 @@ export const TEMPLATE_UNDUHAN_HBS = `<section class="py-20">
 // =============================================
 export const TEMPLATE_GURU_DETAIL_HBS = `<section class="py-20">
   <div class="max-w-4xl mx-auto px-8">
-    <nav class="text-sm text-gray-400 mb-8"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <a href="{{base}}/gtk" class="hover:text-indigo-600">Guru & Staf</a> / <span class="text-gray-700">{{staff.name}}</span></nav>
+    <nav class="text-sm text-gray-400 mb-8"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <a href="{{base}}/gtk" class="hover:text-indigo-600">Staf & Staf</a> / <span class="text-gray-700">{{staff.name}}</span></nav>
     <div class="bg-white rounded-3xl shadow-lg border overflow-hidden">
       <div class="md:flex">
         <div class="md:w-1/3 shrink-0">
@@ -1135,7 +1135,7 @@ export const TEMPLATE_GURU_DETAIL_HBS = `<section class="py-20">
       </div>
     </div>
     <div class="text-center mt-10">
-      <a href="{{base}}/gtk" class="text-indigo-600 font-semibold hover:underline">← Kembali ke Daftar Guru</a>
+      <a href="{{base}}/gtk" class="text-indigo-600 font-semibold hover:underline">← Kembali ke Daftar Staf</a>
     </div>
   </div>
 </section>`
@@ -1144,7 +1144,7 @@ export const TEMPLATE_GURU_DETAIL_HBS = `<section class="py-20">
 // STARTER CSS & JS
 // =============================================
 export const STARTER_CSS = `/* ═══════════════════════════════════════════
-   SchoolPro Custom Theme — Stylesheet
+   BisnisPro Custom Theme — Stylesheet
    ═══════════════════════════════════════════ */
 
 /* Global overrides */
@@ -1187,10 +1187,10 @@ html { scroll-behavior: smooth; }
 `
 
 export const STARTER_JS = `// ═══════════════════════════════════════════
-// SchoolPro Custom Theme — Scripts
+// BisnisPro Custom Theme — Scripts
 // ═══════════════════════════════════════════
 
-console.log('[SchoolPro Theme] loaded successfully');
+console.log('[BisnisPro Theme] loaded successfully');
 
 // Mobile menu toggle (contoh)
 document.addEventListener('DOMContentLoaded', function() {

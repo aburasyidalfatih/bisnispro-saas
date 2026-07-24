@@ -302,7 +302,7 @@ export default function SuperAdminApplicationsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-3">
-            Pengajuan Sekolah Baru
+            Pengajuan Perusahaan Baru
             <Button 
               variant={isWaDisabled ? "destructive" : "outline"} 
               size="sm" 
@@ -334,7 +334,7 @@ export default function SuperAdminApplicationsPage() {
               {isAutoApproveInstant ? "Auto Approve (Instant) On" : "Auto Approve (Instant) Off"}
             </Button>
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">Validasi dan tinjau pendaftaran tenant dari sekolah.</p>
+          <p className="text-muted-foreground mt-1 text-sm">Validasi dan tinjau pendaftaran tenant dari perusahaan.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">

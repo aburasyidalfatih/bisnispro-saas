@@ -49,9 +49,9 @@ export function OverviewTab() {
       {/* SECTION 1: LIVE SUMMARY  */}
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-7">
         <SummaryCard icon={Wifi} label="Online Saat Ini" value={data.onlineUsers} color="emerald" pulse />
-        <SummaryCard icon={UserCheck} label="Guru/Staff Online" value={data.onlineStaff} color="blue" />
-        <SummaryCard icon={Users} label="Ortu/Siswa Online" value={data.onlineParents} color="violet" />
-        <SummaryCard icon={Building2} label="Lembaga Aktif" value={data.activeTenants} color="primary" subtitle={`/ ${data.totalTenants} total`} />
+        <SummaryCard icon={UserCheck} label="Staf/Staff Online" value={data.onlineStaff} color="blue" />
+        <SummaryCard icon={Users} label="Ortu/Klien Online" value={data.onlineParents} color="violet" />
+        <SummaryCard icon={Building2} label="Bisnis Aktif" value={data.activeTenants} color="primary" subtitle={`/ ${data.totalTenants} total`} />
         <SummaryCard icon={Users} label="Total User" value={data.totalUsers} color="slate" />
         <SummaryCard icon={TrendingUp} label="Login Hari Ini" value={data.loginsToday} color="amber" />
         <SummaryCard icon={MessageSquare} label="WA Terkirim" value={data.contentStats.totalWaMessages} color="green" />
@@ -63,16 +63,12 @@ export function OverviewTab() {
           <BookOpen className="h-5 w-5 text-primary" /> Aktivitas Konten Platform
         </h2>
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          <MiniStat icon={BookOpen} label="Artikel Published" value={data.contentStats.totalPosts} />
+          <MiniStat icon={BookOpen} label="Artikel/Blog" value={data.contentStats.totalPosts} />
           <MiniStat icon={Megaphone} label="Pengumuman" value={data.contentStats.totalAnnouncements} />
-          <MiniStat icon={BookMarked} label="Blog Guru" value={data.contentStats.totalBlogGuru} />
           <MiniStat icon={CalendarDays} label="Event/Agenda" value={data.contentStats.totalEvents} />
-          <MiniStat icon={Trophy} label="Prestasi" value={data.contentStats.totalAchievements} />
           <MiniStat icon={FileText} label="Dokumen" value={data.contentStats.totalDocuments} />
-          <MiniStat icon={GraduationCap} label="Siswa Aktif" value={data.contentStats.totalStudents} />
-          <MiniStat icon={Users} label="GTK/Staff" value={data.contentStats.totalStaff} />
-          <MiniStat icon={Layers} label="Kelas" value={data.contentStats.totalClassrooms} />
-          <MiniStat icon={BookMarked} label="Mata Pelajaran" value={data.contentStats.totalSubjects} />
+          <MiniStat icon={MessageSquare} label="Pesan WA" value={data.contentStats.totalWaMessages} />
+          <MiniStat icon={Users} label="Total Akun" value={data.contentStats.totalUsers} />
         </div>
       </div>
 
@@ -84,7 +80,7 @@ export function OverviewTab() {
             <CardTitle className="flex items-center gap-2 text-base">
               <TrendingUp className="h-5 w-5 text-blue-500" /> Tren Login Harian (7 Hari Terakhir)
             </CardTitle>
-            <CardDescription>Jumlah login unik per hari dari seluruh lembaga.</CardDescription>
+            <CardDescription>Jumlah login unik per hari dari seluruh bisnis.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[220px] sm:h-[280px] w-full">
@@ -111,9 +107,9 @@ export function OverviewTab() {
         <Card className="glass border-0 md:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <School className="h-5 w-5 text-primary" /> Tren Pendaftaran Sekolah (6 Bulan Terakhir)
+              <School className="h-5 w-5 text-primary" /> Tren Pendaftaran Perusahaan (6 Bulan Terakhir)
             </CardTitle>
-            <CardDescription>Grafik jumlah lembaga baru yang mendaftar ke platform per bulan.</CardDescription>
+            <CardDescription>Grafik jumlah bisnis baru yang mendaftar ke platform per bulan.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[220px] sm:h-[280px] w-full">
@@ -123,18 +119,18 @@ export function OverviewTab() {
                   <XAxis dataKey="month" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
                   <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                   <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Line type="monotone" dataKey="count" name="Sekolah Baru" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 4, fill: "#8b5cf6" }} activeDot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="count" name="Perusahaan Baru" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 4, fill: "#8b5cf6" }} activeDot={{ r: 6 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        {/* Top 10 Lembaga Aktif */}
+        {/* Top 10 Bisnis Aktif */}
         <Card className="glass border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <TrendingUp className="h-5 w-5 text-emerald-500" /> Top 10 Lembaga Paling Aktif
+              <TrendingUp className="h-5 w-5 text-emerald-500" /> Top 10 Bisnis Paling Aktif
             </CardTitle>
             <CardDescription>Berdasarkan total login bulan ini.</CardDescription>
           </CardHeader>
@@ -202,7 +198,7 @@ export function OverviewTab() {
             <CardTitle className="flex items-center gap-2 text-base">
               <Building2 className="h-5 w-5 text-emerald-600" /> Penetrasi Pasar
             </CardTitle>
-            <CardDescription>Negeri vs Swasta dari total lembaga yang mendaftar.</CardDescription>
+            <CardDescription>Negeri vs Swasta dari total bisnis yang mendaftar.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
             <div className="h-[320px] w-full">
@@ -227,7 +223,7 @@ export function OverviewTab() {
             <CardTitle className="flex items-center gap-2 text-base">
               <Users className="h-5 w-5 text-purple-600" /> Profil Pembuat Akun
             </CardTitle>
-            <CardDescription>Jabatan orang yang mendaftarkan sekolah.</CardDescription>
+            <CardDescription>Jabatan orang yang mendaftarkan perusahaan.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[320px] w-full mt-2">

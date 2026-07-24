@@ -40,7 +40,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
       const tenantsCount = await db.tenant.count({ where: { template: themeName } })
       if (tenantsCount > 0) {
-        return NextResponse.json({ error: "Tema sistem tidak bisa dihapus karena masih digunakan oleh sekolah." }, { status: 400 })
+        return NextResponse.json({ error: "Tema sistem tidak bisa dihapus karena masih digunakan oleh perusahaan." }, { status: 400 })
       }
 
       const setting = await db.platformSetting.findUnique({ where: { key: "deleted_system_themes" } })
@@ -66,7 +66,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     // Cek apakah masih digunakan oleh tenant
     const tenantsCount = await db.tenant.count({ where: { customThemeId: id } })
     if (tenantsCount > 0) {
-      return NextResponse.json({ error: "Tema tidak bisa dihapus karena masih digunakan oleh sekolah." }, { status: 400 })
+      return NextResponse.json({ error: "Tema tidak bisa dihapus karena masih digunakan oleh perusahaan." }, { status: 400 })
     }
 
     await db.customTheme.delete({ where: { id } })

@@ -72,7 +72,7 @@ export function StatsForm({ form, setForm }: StatsFormProps) {
               <Input 
                 value={stat.label} 
                 onChange={(e) => updateStatItem(type, index, "label", e.target.value)} 
-                placeholder="Misal: Total Guru & Staf" 
+                placeholder="Misal: Total Staf & Staf" 
                 className="rounded-xl h-10 flex-1"
               />
               <Button 

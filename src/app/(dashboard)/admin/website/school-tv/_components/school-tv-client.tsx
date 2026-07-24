@@ -97,7 +97,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
     if (!newTime.trim() || !namesString) {
       toast({
         title: "Gagal",
-        description: "Jam piket dan guru piket wajib diisi.",
+        description: "Jam piket dan staf piket wajib diisi.",
         variant: "destructive"
       })
       return
@@ -120,7 +120,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
     
     toast({
       title: "Slot Ditambahkan",
-      description: `Guru piket berhasil masuk antrean hari ${DAYS.find(d => d.value === activeDay)?.label}.`
+      description: `Staf piket berhasil masuk antrean hari ${DAYS.find(d => d.value === activeDay)?.label}.`
     })
   }
 
@@ -133,7 +133,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
     
     toast({
       title: "Slot Dihapus",
-      description: "Data guru piket telah dihapus dari daftar."
+      description: "Data staf piket telah dihapus dari daftar."
     })
   }
 
@@ -150,7 +150,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
       if (res.ok) {
         toast({
           title: "Berhasil Disimpan",
-          description: "Pengaturan jadwal guru piket School TV berhasil diperbarui.",
+          description: "Pengaturan jadwal staf piket School TV berhasil diperbarui.",
         })
         router.refresh()
       } else {
@@ -183,7 +183,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                 Akses TV Display
               </CardTitle>
               <CardDescription>
-                Tautan publik layar informasi digital sekolah Anda.
+                Tautan publik layar informasi digital perusahaan Anda.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -209,7 +209,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                 1. Pilih hari pada tab (misal: <b>Senin</b>).
               </p>
               <p>
-                2. Input rentang jam tugas (misal: <code>08:00 - 10:00</code>) dan nama guru piket.
+                2. Input rentang jam tugas (misal: <code>08:00 - 10:00</code>) dan nama staf piket.
               </p>
               <p>
                 3. Klik tombol <b className="text-emerald-600">Tambahkan Slot</b>.
@@ -292,10 +292,10 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
                 <Calendar className="h-6 w-6 text-blue-500" />
-                Jadwal Guru Piket Mingguan
+                Jadwal Staf Piket Mingguan
               </CardTitle>
               <CardDescription>
-                Atur jadwal guru piket harian yang akan dipajang secara bergantian di layar TV lobi.
+                Atur jadwal staf piket harian yang akan dipajang secara bergantian di layar TV lobi.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -381,7 +381,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                   
                   <div className="space-y-2 sm:col-span-2 flex gap-3 items-end">
                     <div className="flex-1 space-y-2 relative">
-                      <Label className="text-xs font-semibold text-slate-600">Nama Guru / Petugas Piket</Label>
+                      <Label className="text-xs font-semibold text-slate-600">Nama Staf / Petugas Piket</Label>
                       
                       {/* Selected Badges */}
                       {selectedStaff.length > 0 && (
@@ -403,7 +403,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
 
                       <div className="relative">
                         <Input
-                          placeholder={selectedStaff.length > 0 ? "Pilih guru lainnya..." : "Cari & pilih guru piket..."}
+                          placeholder={selectedStaff.length > 0 ? "Pilih staf lainnya..." : "Cari & pilih staf piket..."}
                           value={staffSearch}
                           onChange={e => {
                             setStaffSearch(e.target.value)
@@ -421,7 +421,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                             
                             <div className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 divide-y divide-slate-100">
                               {safeStaffList.filter(s => s.name.toLowerCase().includes((staffSearch || "").toLowerCase())).length === 0 ? (
-                                <div className="p-3 text-sm text-slate-500 text-center">Tidak ada nama guru yang cocok</div>
+                                <div className="p-3 text-sm text-slate-500 text-center">Tidak ada nama staf yang cocok</div>
                               ) : (
                                 safeStaffList
                                   .filter(s => s.name.toLowerCase().includes((staffSearch || "").toLowerCase()))
@@ -446,7 +446,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                                       >
                                         <div>
                                           <p className="font-medium">{s.name}</p>
-                                          <p className="text-xs text-slate-400">{s.role || "Staf/Guru"}</p>
+                                          <p className="text-xs text-slate-400">{s.role || "Staf/Staf"}</p>
                                         </div>
                                         {isSelected && <span className="text-blue-600 font-bold">✓</span>}
                                       </button>

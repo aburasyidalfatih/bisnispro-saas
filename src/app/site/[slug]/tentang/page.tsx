@@ -18,7 +18,7 @@ import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();
-  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id';
   const { slug } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProfilTerpaduPage({ params }: { params: Promise<{ slug: string }> }) {
   const headerList = await headers();
-  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'schoolpro.id';
+  const rootDomain = headerList.get('x-root-domain') || process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'bisnispro.id';
   const { slug } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
@@ -123,7 +123,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
          </div>
       </section>
 
-      {/* ── SAMBUTAN KEPALA SEKOLAH ── */}
+      {/* ── SAMBUTAN KEPALA PERUSAHAAN ── */}
       {settings.sambutanKepsek && (
         <section className="py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
            <div className="grid md:grid-cols-12 gap-12 items-center">
@@ -265,7 +265,7 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
                       <Activity className="h-6 w-6 text-primary group-hover:text-white" />
                    </div>
                    <p className="text-4xl md:text-5xl font-black mb-2">{totalEkskul}+</p>
-                   <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Ekstrakurikuler</p>
+                   <p className="text-sm font-semibold uppercase tracking-widest text-white/70">Aset Ekstra</p>
                 </div>
               </>
             )}

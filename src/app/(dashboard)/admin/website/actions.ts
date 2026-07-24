@@ -2,12 +2,18 @@
 
 import { db } from "@/lib/db"
 import { subDays, format, addDays } from "date-fns"
+import { requireTenantMembership } from "@/lib/api-utils"
 
 export async function getAdminActivityHeatmap(tenantId: string) {
   try {
+    // 1. Authorization Check (IDOR fix)
+    await requireTenantMembership(tenantId, ["OWNER", "ADMIN"])
+
     const today = new Date()
     const startDate = subDays(today, 365)
     
+    // 2. Query Optimization (OOM fix)
+    // We only select createdAt to minimize memory footprint
     const logs = await db.auditLog.findMany({
       where: {
         tenantId,
@@ -61,6 +67,9 @@ export async function getAdminActivityHeatmap(tenantId: string) {
 }
 export async function getRecentActivity(tenantId: string) {
   try {
+    // 1. Authorization Check (IDOR fix)
+    await requireTenantMembership(tenantId, ["OWNER", "ADMIN", "STAFF"])
+
     const logs = await db.auditLog.findMany({
       where: { tenantId },
       orderBy: { createdAt: 'desc' },

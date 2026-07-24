@@ -55,7 +55,7 @@ export function GoogleTab({ form, setForm, handleSaveBatch, saving }: GoogleTabP
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">Kredensial ini digunakan sebagai <i>fallback</i> jika sekolah/tenant tidak mengatur kredensial Indexing mereka sendiri. Berguna untuk meminta Google mengindeks artikel secara instan.</p>
+          <p className="text-sm text-muted-foreground">Kredensial ini digunakan sebagai <i>fallback</i> jika perusahaan/tenant tidak mengatur kredensial Indexing mereka sendiri. Berguna untuk meminta Google mengindeks artikel secara instan.</p>
           
           <div className="space-y-2">
             <Label>Client Email</Label>
@@ -141,8 +141,8 @@ export function GoogleTab({ form, setForm, handleSaveBatch, saving }: GoogleTabP
             <li>Klik <strong>Create Credentials &gt; OAuth client ID</strong>.</li>
             <li>Pilih <strong>Web application</strong>.</li>
             <li>Pada <strong>Authorized redirect URIs</strong>, tambahkan URL berikut:
-              <code className="block mt-1 bg-muted p-2 rounded-lg text-xs break-all text-foreground font-semibold">https://schoolpro.my.id/api/auth/callback/google</code>
-              <code className="block mt-1 bg-muted p-2 rounded-lg text-xs break-all text-foreground font-semibold">https://schoolpro.id/api/auth/callback/google</code>
+              <code className="block mt-1 bg-muted p-2 rounded-lg text-xs break-all text-foreground font-semibold">https://bisnispro.my.id/api/auth/callback/google</code>
+              <code className="block mt-1 bg-muted p-2 rounded-lg text-xs break-all text-foreground font-semibold">https://bisnispro.id/api/auth/callback/google</code>
             </li>
           </ol>
         </CardContent>

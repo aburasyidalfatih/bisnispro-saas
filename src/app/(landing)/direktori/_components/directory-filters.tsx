@@ -59,7 +59,7 @@ export function DirectoryFilters({
     <div className="bg-white/50 dark:bg-black/20 backdrop-blur-md p-6 rounded-3xl border shadow-sm mb-10 space-y-6">
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Cari Nama Sekolah</label>
+          <label className="text-sm font-medium">Cari Nama Perusahaan</label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
@@ -82,7 +82,7 @@ export function DirectoryFilters({
       
       <div className="flex items-center justify-between pt-2 border-t">
         <p className="text-sm text-muted-foreground">
-          Menampilkan <span className="font-semibold text-foreground">{total}</span> sekolah
+          Menampilkan <span className="font-semibold text-foreground">{total}</span> perusahaan
         </p>
         {(search || province) && (
           <Button 

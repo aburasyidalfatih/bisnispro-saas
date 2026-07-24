@@ -88,7 +88,7 @@ export default function AcceptInvitePage() {
             </>
           )}
         </div>
-        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "SchoolPro" : "Sistem Informasi Sekolah")}</p>
+        <p className="text-center text-xs text-muted-foreground mt-6">&copy; {new Date().getFullYear()} {tenantNameDisplay || (isMainDomain ? "BisnisPro" : "Sistem Informasi Perusahaan")}</p>
       </div>
     </div>
   )

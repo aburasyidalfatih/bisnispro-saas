@@ -88,7 +88,7 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
             </div>
             <div className="space-y-2">
               <Label>Nama Platform</Label>
-              <Input value={form.platform_name} onChange={e => setForm({...form, platform_name: e.target.value})} placeholder="SchoolPro" className="rounded-xl" />
+              <Input value={form.platform_name} onChange={e => setForm({...form, platform_name: e.target.value})} placeholder="BisnisPro" className="rounded-xl" />
             </div>
             <div className="space-y-2">
               <Label>Tagline Platform</Label>
@@ -96,7 +96,7 @@ export function GeneralTab({ form, setForm, handleSaveBatch, saving, initialWaSu
             </div>
             <div className="space-y-2">
               <Label>Email Kontak</Label>
-              <Input value={form.contact_email} onChange={e => setForm({...form, contact_email: e.target.value})} placeholder="support@schoolpro.id" className="rounded-xl" />
+              <Input value={form.contact_email} onChange={e => setForm({...form, contact_email: e.target.value})} placeholder="support@bisnispro.id" className="rounded-xl" />
             </div>
             <div className="space-y-2">
               <Label>Alamat Platform</Label>

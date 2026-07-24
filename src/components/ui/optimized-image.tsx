@@ -16,7 +16,7 @@ interface OptimizedImageProps extends Omit<ImageProps, "alt"> {
  */
 export function OptimizedImage({ 
   alt, 
-  fallbackAlt = "Gambar SchoolPro", 
+  fallbackAlt = "Gambar BisnisPro", 
   src, 
   className, 
   ...props 

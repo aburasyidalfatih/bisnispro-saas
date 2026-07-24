@@ -167,7 +167,7 @@ export default function BillingHistoryPage() {
                         </p>
                         {meta.studentCount ? (
                           <p className="text-xs text-muted-foreground mt-0.5">
-                            {meta.studentCount} siswa × Rp {Number(meta.pricePerStudent || 0).toLocaleString("id-ID")}
+                            {meta.studentCount} klien × Rp {Number(meta.pricePerStudent || 0).toLocaleString("id-ID")}
                           </p>
                         ) : meta.type ==="AI_QUOTA" ? (
                           <p className="text-xs text-muted-foreground mt-0.5 font-medium text-blue-600">

@@ -56,7 +56,7 @@ export default function ReportsPage() {
             { header:"Nilai", key:"value" },
           ],
           data: [
-            { metric:"Total Siswa Aktif", value: stats?.studentCount ?? 0 },
+            { metric:"Total Klien Aktif", value: stats?.studentCount ?? 0 },
             { metric:"Total Pengguna", value: stats?.userCount ?? 0 },
             { metric:"Total Pendapatan (Rp)", value: financeSummary?.totalRevenue ?? 0 },
             { metric:"Total Tunggakan (Rp)", value: financeSummary?.totalDue ?? 0 },
@@ -96,7 +96,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Laporan & Analitik</h1>
-          <p className="text-muted-foreground">Ringkasan data keuangan dan operasional lembaga Anda.</p>
+          <p className="text-muted-foreground">Ringkasan data keuangan dan operasional bisnis Anda.</p>
         </div>
         <Button variant="outline" className="gap-2 rounded-xl" onClick={handleExport} disabled={exporting}>
           {exporting ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" /> : <Download className="h-4 w-4" />}
@@ -109,7 +109,7 @@ export default function ReportsPage() {
         {[
           { label:"Total Pendapatan", value: `Rp ${(financeSummary?.totalRevenue ?? 0).toLocaleString("id-ID")}`, icon: TrendingUp, color:"text-emerald-600 bg-emerald-500/10" },
           { label:"Total Tunggakan", value: `Rp ${(financeSummary?.totalDue ?? 0).toLocaleString("id-ID")}`, icon: AlertCircle, color:"text-red-600 bg-red-500/10" },
-          { label:"Total Siswa", value: stats?.studentCount ??"—", icon: GraduationCap, color:"text-blue-600 bg-blue-500/10" },
+          { label:"Total Klien", value: stats?.studentCount ??"—", icon: GraduationCap, color:"text-blue-600 bg-blue-500/10" },
           { label:"Total Pengguna", value: stats?.userCount ??"—", icon: Users, color:"text-violet-600 bg-violet-500/10" },
         ].map((s) => (
           <Card key={s.label} className="glass border-0">

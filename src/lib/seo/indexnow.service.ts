@@ -1,12 +1,12 @@
 import { logger } from "@/lib/logger"
 
-// Gunakan key statis untuk seluruh network SchoolPro
-export const INDEXNOW_KEY = "schoolpro-indexnow-secret-key-2026"
+// Gunakan key statis untuk seluruh network BisnisPro
+export const INDEXNOW_KEY = "bisnispro-indexnow-secret-key-2026"
 
 /**
  * Submit URLs to IndexNow (Bing, Yandex, Seznam)
- * @param host Hostname dari website (contoh: sekolahanda.sch.id atau smpn1.schoolpro.id)
- * @param urls Array of URLs to index (contoh: ["https://sekolahanda.sch.id/berita/123"])
+ * @param host Hostname dari website (contoh: perusahaananda.sch.id atau smpn1.bisnispro.id)
+ * @param urls Array of URLs to index (contoh: ["https://perusahaananda.sch.id/berita/123"])
  */
 export async function submitToIndexNow(host: string, urls: string[]): Promise<boolean> {
   if (process.env.NODE_ENV !== "production") {

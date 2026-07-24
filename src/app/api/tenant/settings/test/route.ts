@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       await transporter.sendMail({
         from: data.smtpFrom || data.smtpUser,
         to: data.smtpTo,
-        subject: "Test Email — SchoolPro",
+        subject: "Test Email — BisnisPro",
         html: `<p>Email test berhasil dikirim dari konfigurasi SMTP.</p><p>Waktu: ${new Date().toLocaleString("id-ID")}</p>`,
       })
       return NextResponse.json({ message: "Email test berhasil dikirim!" })
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
       const body: Record<string, string> = {
         messageType: "text",
         to: data.waPhone,
-        body: `Test pesan dari SchoolPro. Waktu: ${new Date().toLocaleString("id-ID")}`,
+        body: `Test pesan dari BisnisPro. Waktu: ${new Date().toLocaleString("id-ID")}`,
       }
       // Sertakan deviceId jika tersedia
       if (data.waDeviceId) body.deviceId = data.waDeviceId
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
           to: toPhone,
           type: "text",
           text: {
-            body: `Test pesan Meta API dari SchoolPro. Waktu: ${new Date().toLocaleString("id-ID")}`
+            body: `Test pesan Meta API dari BisnisPro. Waktu: ${new Date().toLocaleString("id-ID")}`
           }
         }),
       })
@@ -175,7 +175,7 @@ export async function POST(req: Request) {
         body: JSON.stringify({
           numberId: data.wavioNumberId,
           to: toPhone,
-          text: `Test pesan Wavio API dari SchoolPro. Waktu: ${new Date().toLocaleString("id-ID")}`
+          text: `Test pesan Wavio API dari BisnisPro. Waktu: ${new Date().toLocaleString("id-ID")}`
         }),
       })
       const result = await res.json()

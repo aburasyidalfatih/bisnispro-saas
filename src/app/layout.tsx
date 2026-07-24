@@ -22,7 +22,7 @@ import { normalizeImageUrl } from "@/lib/utils"
 
 export async function generateMetadata(): Promise<Metadata> {
   let blockIndexing = false
-  let platformLogo = "/logo-schoolpro.png"
+  let platformLogo = "/logo-bisnispro.png"
 
   try {
     const settings = await db.platformSetting.findMany({
@@ -42,24 +42,24 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    metadataBase: new URL("https://schoolpro.id"),
-    title: "SchoolPro - Platform Manajemen & Website Sekolah Terpadu",
-    description: "SchoolPro adalah platform SaaS terbaik untuk digitalisasi sekolah. Tersedia fitur pembuatan website sekolah otomatis, PPDB Online, manajemen data master, hingga tagihan siswa.",
-    keywords: ["aplikasi sekolah", "website sekolah", "sistem informasi sekolah", "ppdb online", "saas pendidikan", "software administrasi sekolah", "website sekolah gratis", "web sekolah gratis"],
-    authors: [{ name: "SchoolPro Team" }],
+    metadataBase: new URL("https://bisnispro.id"),
+    title: "BisnisPro - Platform Manajemen & Website Perusahaan Terpadu",
+    description: "BisnisPro adalah platform SaaS terbaik untuk digitalisasi perusahaan. Tersedia fitur pembuatan website perusahaan otomatis, PPDB Online, manajemen data master, hingga tagihan klien.",
+    keywords: ["aplikasi perusahaan", "website perusahaan", "sistem informasi perusahaan", "ppdb online", "saas pendidikan", "software administrasi perusahaan", "website perusahaan gratis", "web perusahaan gratis"],
+    authors: [{ name: "BisnisPro Team" }],
     robots: blockIndexing ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "website",
       locale: "id_ID",
-      url: "https://schoolpro.id",
-      title: "SchoolPro - Platform Manajemen & Website Sekolah Terpadu",
-      description: "Digitalisasi sekolah menjadi sangat mudah dengan SchoolPro. Buat website sekolah, kelola PPDB, tagihan, dan data akademik dalam satu portal cerdas.",
-      siteName: "SchoolPro",
+      url: "https://bisnispro.id",
+      title: "BisnisPro - Platform Manajemen & Website Perusahaan Terpadu",
+      description: "Digitalisasi perusahaan menjadi sangat mudah dengan BisnisPro. Buat website perusahaan, kelola PPDB, tagihan, dan data akademik dalam satu portal cerdas.",
+      siteName: "BisnisPro",
     },
     twitter: {
       card: "summary_large_image",
-      title: "SchoolPro - Digitalisasi Sekolah Tanpa Ribet",
-      description: "Satu platform untuk seluruh kebutuhan administrasi, pendaftaran, dan operasional lembaga pendidikan Anda.",
+      title: "BisnisPro - Digitalisasi Perusahaan Tanpa Ribet",
+      description: "Satu platform untuk seluruh kebutuhan administrasi, pendaftaran, dan operasional bisnis pendidikan Anda.",
     },
     icons: {
       icon: platformLogo,
@@ -106,14 +106,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="id" data-theme={colorTheme} suppressHydrationWarning>
       <head>
-        {cdnUrl && (
+        {cdnUrl ? (
           <>
             <link rel="preconnect" href={cdnUrl} crossOrigin="anonymous" />
             <link rel="dns-prefetch" href={cdnUrl} />
           </>
-        )}
+        ) : null}
       </head>
-      <body className={`${inter.className} ${inter.variable} ${plusJakarta.variable} ${playfair.variable} ${outfit.variable} overflow-x-clip w-full`} suppressHydrationWarning>
+      <body className={`${plusJakarta.className} ${inter.variable} ${plusJakarta.variable} ${playfair.variable} ${outfit.variable} overflow-x-clip w-full`} suppressHydrationWarning>
         <SessionProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
             <ColorThemeProvider>

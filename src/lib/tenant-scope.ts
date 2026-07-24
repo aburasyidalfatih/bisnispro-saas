@@ -3,7 +3,7 @@ const TENANT_SCOPED_MODEL_NAMES = new Set([
   "AffiliateCommission",
   "AiMemory",
   "AiUsageLog",
-  "Alumni",
+  "Mitra",
   "AuditLog",
   "Category",
   "ContactSubmission",

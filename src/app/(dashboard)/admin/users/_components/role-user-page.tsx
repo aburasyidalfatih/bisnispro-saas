@@ -46,12 +46,12 @@ const roleConfig: Record<string, { label: string; badge: string; icon: any; addL
     addLabel: "Tambah Admin",
     emptyLabel: "Belum ada admin",
   },
-  guru: {
-    label: "Guru / Tenaga Kependidikan",
+  staf: {
+    label: "Staf / Tenaga Kependidikan",
     badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
     icon: Users,
-    addLabel: "Tambah Guru",
-    emptyLabel: "Belum ada guru",
+    addLabel: "Tambah Staf",
+    emptyLabel: "Belum ada staf",
   },
   orangtua: {
     label: "Orang Tua / Wali",
@@ -63,7 +63,7 @@ const roleConfig: Record<string, { label: string; badge: string; icon: any; addL
 }
 
 interface RoleUserPageProps {
-  userRole: "admin" | "guru" | "orangtua"
+  userRole: "admin" | "staf" | "orangtua"
 }
 
 export function RoleUserPage({ userRole }: RoleUserPageProps) {
@@ -214,7 +214,7 @@ export function RoleUserPage({ userRole }: RoleUserPageProps) {
 
   const handleLoginAs = async (userId: string, name: string) => {
     if (!resolvedTenantId) {
-      toast({ title: "Gagal", description: "Lembaga belum terdeteksi, coba refresh halaman.", variant: "destructive" })
+      toast({ title: "Gagal", description: "Bisnis belum terdeteksi, coba refresh halaman.", variant: "destructive" })
       return
     }
     try {
@@ -249,7 +249,7 @@ export function RoleUserPage({ userRole }: RoleUserPageProps) {
           <p className="text-muted-foreground mt-1">Kelola data {config.label.toLowerCase()} ({filtered.length} data)</p>
         </div>
         <div className="flex gap-2">
-          {userRole ==="guru" ? (
+          {userRole ==="staf" ? (
             <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
               <Link href="/admin/website/gtk/new">
                 <UserPlus className="h-4 w-4" />
@@ -417,12 +417,12 @@ export function RoleUserPage({ userRole }: RoleUserPageProps) {
                                 <LogIn className="h-4 w-4" /> Login Sebagai
                               </DropdownMenuItem>
                             )}
-                            {u.role !== "guru" && (
+                            {u.role !== "staf" && (
                               <DropdownMenuItem className="gap-2 rounded-lg cursor-pointer" onClick={() => setEditUser(u)}>
                                 <Pencil className="h-4 w-4" /> Edit
                               </DropdownMenuItem>
                             )}
-                            {u.role === "guru" && (
+                            {u.role === "staf" && (
                               u.staffId ? (
                                 <DropdownMenuItem asChild className="gap-2 rounded-lg cursor-pointer">
                                   <Link href={`/admin/website/gtk/${u.staffId}/edit`}>
@@ -443,7 +443,7 @@ export function RoleUserPage({ userRole }: RoleUserPageProps) {
                                 </DropdownMenuItem>
                               }
                               title={`Hapus ${u.name}?`}
-                              description={`${u.name} akan dihapus dari lembaga ini. Tindakan ini tidak dapat dibatalkan.`}
+                              description={`${u.name} akan dihapus dari bisnis ini. Tindakan ini tidak dapat dibatalkan.`}
                               confirmText="Ya, hapus"
                               onConfirm={() => handleDelete(u.tenantUserId, u.name)}
                             />

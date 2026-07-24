@@ -43,7 +43,7 @@ export function AdminContactSection({ form, setForm }: any) {
                 <SelectItem value="Direktur / CEO">Direktur / CEO</SelectItem>
                 <SelectItem value="Wakil Direktur / CEO">Wakil Direktur / CEO</SelectItem>
                 <SelectItem value="Owner / Pendiri">Owner / Pendiri</SelectItem>
-                <SelectItem value="Pimpinan Lembaga">Pimpinan Lembaga</SelectItem>
+                <SelectItem value="Pimpinan Bisnis">Pimpinan Bisnis</SelectItem>
                 <SelectItem value="Staf / Admin">Staf / Admin</SelectItem>
                 <SelectItem value="Freelancer">Freelancer</SelectItem>
               </SelectContent>

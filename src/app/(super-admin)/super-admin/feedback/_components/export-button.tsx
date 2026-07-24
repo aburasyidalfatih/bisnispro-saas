@@ -24,7 +24,7 @@ export function ExportFeedbackButton({ data }: ExportButtonProps) {
   const handleExportCSV = () => {
     if (!data || data.length === 0) return
 
-    const headers = ["ID", "Tanggal", "Nama Pengirim", "Email Pengirim", "Lembaga", "Tipe", "Pesan", "Status"]
+    const headers = ["ID", "Tanggal", "Nama Pengirim", "Email Pengirim", "Bisnis", "Tipe", "Pesan", "Status"]
     const rows = data.map(item => [
       item.id,
       format(new Date(item.createdAt), "dd MMM yyyy HH:mm", { locale: id }),

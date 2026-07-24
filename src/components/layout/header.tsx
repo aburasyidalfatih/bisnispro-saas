@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession, signOut } from "next-auth/react"
-import { useTheme } from "next-themes"
+import { useTheme } from "@teispace/next-themes"
 import { usePathname } from "next/navigation"
 import { Bell, Moon, Sun, LogOut, User, Search, Home, ChevronRight, UserPlus, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -45,7 +45,7 @@ const labelMap: Record<string, string> = {
   export: "Export Data",
   audit: "Audit Log",
   website: "Kelola Website",
-  about: "Profil Lembaga",
+  about: "Profil Bisnis",
   gallery: "Galeri",
   contact: "Kontak",
   "super-admin": "Super Admin",
@@ -57,7 +57,7 @@ const labelMap: Record<string, string> = {
   "my-messages": "Pesan",
   help: "Panduan",
   faq: "FAQ",
-  tenants: "Lembaga",
+  tenants: "Bisnis",
   plans: "Paket & Harga",
   admins: "Super Admin",
   activity: "Aktivitas",

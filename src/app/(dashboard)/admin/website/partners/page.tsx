@@ -111,8 +111,8 @@ export default function PartnershipsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Kerjasama Lembaga</h1>
-          <p className="text-muted-foreground mt-1">Kelola logo lembaga/perusahaan yang bekerja sama dengan sekolah.</p>
+          <h1 className="text-2xl font-bold tracking-tight">Kerjasama Bisnis</h1>
+          <p className="text-muted-foreground mt-1">Kelola logo bisnis/perusahaan yang bekerja sama dengan perusahaan.</p>
         </div>
         <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
           <Link href="/admin/website/partners/new">
@@ -131,7 +131,7 @@ export default function PartnershipsPage() {
             <div className="py-12 text-center">
               <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
               <p className="font-semibold mb-1">Belum ada data kerjasama</p>
-              <p className="text-sm text-muted-foreground mb-4">Tambahkan logo lembaga atau perusahaan mitra.</p>
+              <p className="text-sm text-muted-foreground mb-4">Tambahkan logo bisnis atau perusahaan mitra.</p>
               <Button asChild variant="outline" className="rounded-xl">
                 <Link href="/admin/website/partners/new">Tambah Sekarang</Link>
               </Button>

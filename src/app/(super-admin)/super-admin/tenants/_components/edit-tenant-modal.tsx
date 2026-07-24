@@ -72,12 +72,12 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="rounded-3xl max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit Data Lembaga</DialogTitle>
+          <DialogTitle>Edit Data Bisnis</DialogTitle>
           <DialogDescription>Perbarui informasi institusi dan lisensi.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Nama Sekolah</Label>
+            <Label>Nama Perusahaan</Label>
             <Input value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} className="rounded-xl" />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -105,7 +105,7 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Kuota Siswa</Label>
+              <Label>Kuota Klien</Label>
               <Input type="number" value={editForm.studentQuota} onChange={(e) => setEditForm({...editForm, studentQuota: Number(e.target.value)})} className="rounded-xl" />
             </div>
           </div>

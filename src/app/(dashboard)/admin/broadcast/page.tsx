@@ -121,7 +121,7 @@ export default function BroadcastPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Broadcast Pesan</h2>
-          <p className="text-muted-foreground">Kirim pengumuman massal ke GTK atau Orang Tua Siswa.</p>
+          <p className="text-muted-foreground">Kirim pengumuman massal ke GTK atau Orang Tua Klien.</p>
         </div>
       </div>
 
@@ -156,10 +156,10 @@ export default function BroadcastPage() {
                           <SelectValue placeholder="Pilih penerima..." />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all_gtk">Semua Guru & Staf (GTK)</SelectItem>
+                          <SelectItem value="all_gtk">Semua Staf & Staf (GTK)</SelectItem>
                           {tenantPlan ==="pro" && (
                             <>
-                              <SelectItem value="all_parents">Semua Orang Tua Siswa</SelectItem>
+                              <SelectItem value="all_parents">Semua Orang Tua Klien</SelectItem>
                               <SelectItem value="all">Semua GTK & Orang Tua</SelectItem>
                             </>
                           )}
@@ -167,7 +167,7 @@ export default function BroadcastPage() {
                       </Select>
                       {tenantPlan ==="lite" && (
                         <p className="text-[11px] text-amber-600 font-medium">
-                          Paket Lite hanya dapat melakukan broadcast ke Guru & Staf. Upgrade ke PRO untuk broadcast ke Orang Tua.
+                          Paket Lite hanya dapat melakukan broadcast ke Staf & Staf. Upgrade ke PRO untuk broadcast ke Orang Tua.
                         </p>
                       )}
                     </div>

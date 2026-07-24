@@ -44,7 +44,7 @@ export function TenantLeaderboard() {
           <div>
             <CardTitle className="text-lg font-bold">Top Aktivitas Kelola Website</CardTitle>
             <CardDescription className="text-xs">
-              Lembaga paling aktif berdasarkan skor keseluruhan
+              Bisnis paling aktif berdasarkan skor keseluruhan
             </CardDescription>
           </div>
         </div>

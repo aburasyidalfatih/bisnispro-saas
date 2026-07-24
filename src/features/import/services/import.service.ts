@@ -34,9 +34,9 @@ export class ImportService {
 
         const name = row["Nama Lengkap"] || "User Tanpa Nama"
         const phone = row["No HP (Opsional)"] || null
-        let role = row["Role (guru/admin/staff)"]?.toLowerCase() || "guru"
-        if (!["guru", "admin", "staff"].includes(role)) {
-          role = "guru"
+        let role = row["Role (staf/admin/staff)"]?.toLowerCase() || "staf"
+        if (!["staf", "admin", "staff"].includes(role)) {
+          role = "staf"
         }
 
         let user = await db.user.findUnique({ where: { email } })
@@ -67,7 +67,7 @@ export class ImportService {
            })
            successCount++
         } else if (existingTu.role !== role) {
-           // Mencegah penanggung jawab (owner) atau admin di-downgrade menjadi guru
+           // Mencegah penanggung jawab (owner) atau admin di-downgrade menjadi staf
            if (existingTu.role === "owner" || existingTu.role === "admin") {
               console.log(`Skipping role update for ${email} because they are already ${existingTu.role}`)
               continue

@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     })
 
     if (!targetUser) {
-      return NextResponse.json({ error: "Akun pengelola sekolah tidak ditemukan" }, { status: 404 })
+      return NextResponse.json({ error: "Akun pengelola perusahaan tidak ditemukan" }, { status: 404 })
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10)

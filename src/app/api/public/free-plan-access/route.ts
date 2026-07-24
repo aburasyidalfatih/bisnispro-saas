@@ -25,8 +25,8 @@ const KEY_MAP: Record<string, string> = {
   website_content: "enable_website",
   data_master: "enable_data_master",
   akademik: "enable_akademik",
-  kehadiran_guru: "enable_kehadiran_guru",
-  kehadiran_siswa: "enable_kehadiran_siswa",
+  kehadiran_staf: "enable_kehadiran_staf",
+  kehadiran_klien: "enable_kehadiran_klien",
   donasi: "enable_donasi",
   laporan: "enable_analytics",
   broadcast_wa: "enable_broadcast_wa",
@@ -62,19 +62,19 @@ export async function GET(req: NextRequest) {
 
       // Auto-migrate old database state for the new attendance keys
       if (planAccess.kehadiran !== undefined) {
-        if (planAccess.kehadiran_guru === undefined) {
-          planAccess.kehadiran_guru = planAccess.kehadiran
+        if (planAccess.kehadiran_staf === undefined) {
+          planAccess.kehadiran_staf = planAccess.kehadiran
         }
-        if (planAccess.kehadiran_siswa === undefined) {
-          planAccess.kehadiran_siswa = planAccess.kehadiran
+        if (planAccess.kehadiran_klien === undefined) {
+          planAccess.kehadiran_klien = planAccess.kehadiran
         }
       } else {
         // Fallback to defaults if neither old nor new keys exist
-        if (planAccess.kehadiran_guru === undefined) {
-          planAccess.kehadiran_guru = normalizedPlan === "pro" || normalizedPlan === "lite"
+        if (planAccess.kehadiran_staf === undefined) {
+          planAccess.kehadiran_staf = normalizedPlan === "pro" || normalizedPlan === "lite"
         }
-        if (planAccess.kehadiran_siswa === undefined) {
-          planAccess.kehadiran_siswa = normalizedPlan === "pro"
+        if (planAccess.kehadiran_klien === undefined) {
+          planAccess.kehadiran_klien = normalizedPlan === "pro"
         }
       }
 
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
       }
       
       // Keep enable_kehadiran for backward compatibility (mapped to student attendance / pro)
-      legacyFormat["enable_kehadiran"] = !!planAccess["kehadiran_siswa"]
+      legacyFormat["enable_kehadiran"] = !!planAccess["kehadiran_klien"]
 
       // Juga return raw plan access untuk hook baru
       return NextResponse.json({

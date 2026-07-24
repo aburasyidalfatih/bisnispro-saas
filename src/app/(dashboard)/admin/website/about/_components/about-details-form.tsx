@@ -29,7 +29,7 @@ export function AboutDetailsForm({
             </div>
             <div className="space-y-1">
               <CardTitle className="text-lg">Tentang Kami</CardTitle>
-              <CardDescription>Cerita lengkap, sejarah, visi, dan misi lembaga</CardDescription>
+              <CardDescription>Cerita lengkap, sejarah, visi, dan misi bisnis</CardDescription>
             </div>
           </div>
           <Button type="button" variant="outline" size="sm" onClick={() => openAiModal("about")} className="h-7 text-[10px] gap-1.5 rounded-xl border-violet-200 text-violet-600 bg-violet-50 hover:bg-violet-100 hover:text-violet-700 px-2 mt-0 shrink-0">
@@ -41,7 +41,7 @@ export function AboutDetailsForm({
             <RichTextEditor 
               value={form.about ||""}
               onChange={val => setForm(p => ({ ...p, about: val }))}
-              placeholder="Ceritakan tentang lembaga Anda, sejarah panjang..."
+              placeholder="Ceritakan tentang bisnis Anda, sejarah panjang..."
             />
           </div>
           
@@ -53,7 +53,7 @@ export function AboutDetailsForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div className="space-y-1.5">
               <Label>NPSN</Label>
-              <Input value={form.settings?.npsn ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, npsn: e.target.value } }))} placeholder="Nomor Pokok Sekolah Nasional" className="rounded-xl h-9" />
+              <Input value={form.settings?.npsn ||""} onChange={e => setForm(p => ({ ...p, settings: { ...p.settings, npsn: e.target.value } }))} placeholder="Nomor Pokok Perusahaan Nasional" className="rounded-xl h-9" />
             </div>
             <div className="space-y-1.5">
               <Label>Akreditasi</Label>
@@ -85,7 +85,7 @@ export function AboutDetailsForm({
               <RichTextEditor 
                 value={form.settings?.visi ||""}
                 onChange={val => setForm(p => ({ ...p, settings: { ...p.settings, visi: val } }))}
-                placeholder="Visi sekolah..."
+                placeholder="Visi perusahaan..."
               />
             </div>
             <div className="space-y-1.5 md:col-span-2">
@@ -93,7 +93,7 @@ export function AboutDetailsForm({
               <RichTextEditor 
                 value={form.settings?.misi ||""}
                 onChange={val => setForm(p => ({ ...p, settings: { ...p.settings, misi: val } }))}
-                placeholder="Misi sekolah..."
+                placeholder="Misi perusahaan..."
               />
             </div>
           </div>

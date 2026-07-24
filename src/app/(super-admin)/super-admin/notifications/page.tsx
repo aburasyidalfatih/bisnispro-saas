@@ -53,7 +53,7 @@ function DripTable() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="px-4 py-3 font-medium">Tanggal Kirim</TableHead>
-                      <TableHead className="px-4 py-3 font-medium">Lembaga</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Bisnis</TableHead>
                       <TableHead className="px-4 py-3 font-medium">Campaign</TableHead>
                       <TableHead className="px-4 py-3 font-medium">Status Baca</TableHead>
                       <TableHead className="px-4 py-3 font-medium">Status Klik</TableHead>
@@ -66,7 +66,7 @@ function DripTable() {
                           {format(new Date(log.sentAt), "dd MMM yyyy, HH:mm", { locale: id })}
                         </TableCell>
                         <TableCell className="px-4 py-3">
-                          <span className="font-medium text-foreground">{log.tenant?.name || "Lembaga Dihapus"}</span>
+                          <span className="font-medium text-foreground">{log.tenant?.name || "Bisnis Dihapus"}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3">
                           {log.campaign?.title || "Campaign Dihapus"}
@@ -254,7 +254,7 @@ function InternalTable() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="px-4 py-3 font-medium">Waktu</TableHead>
-                      <TableHead className="px-4 py-3 font-medium">Lembaga</TableHead>
+                      <TableHead className="px-4 py-3 font-medium">Bisnis</TableHead>
                       <TableHead className="px-4 py-3 font-medium">Pengirim & Penerima</TableHead>
                       <TableHead className="px-4 py-3 font-medium">Subjek & Pesan</TableHead>
                       <TableHead className="px-4 py-3 font-medium">Status Baca</TableHead>
@@ -267,7 +267,7 @@ function InternalTable() {
                           {format(new Date(msg.createdAt), "dd MMM yyyy, HH:mm", { locale: id })}
                         </TableCell>
                         <TableCell className="px-4 py-3 align-top">
-                          <span className="font-medium text-foreground">{msg.tenant?.name || "Lembaga Dihapus"}</span>
+                          <span className="font-medium text-foreground">{msg.tenant?.name || "Bisnis Dihapus"}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3 align-top">
                           <div className="text-xs text-muted-foreground mb-1">Dari: <strong className="text-foreground">{msg.sender?.name || "Dihapus"}</strong></div>
@@ -320,7 +320,7 @@ export default function NotificationsHistoryPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Riwayat Notifikasi & Email</h2>
-        <p className="text-muted-foreground">Log pengiriman Email Edukasi (Drip) dan Notifikasi Sistem ke seluruh lembaga.</p>
+        <p className="text-muted-foreground">Log pengiriman Email Edukasi (Drip) dan Notifikasi Sistem ke seluruh bisnis.</p>
       </div>
 
       <Tabs defaultValue="drip" className="space-y-4">

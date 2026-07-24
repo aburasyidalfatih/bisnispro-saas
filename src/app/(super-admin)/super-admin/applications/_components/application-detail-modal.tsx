@@ -53,30 +53,30 @@ export function ApplicationDetailModal({ open, setOpen, selectedApp }: Applicati
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-lg truncate">{selectedApp.schoolName}</h3>
                 <p className="text-sm text-muted-foreground truncate">
-                  https://{selectedApp.schoolSlug}.schoolpro.id
+                  https://{selectedApp.schoolSlug}.bisnispro.id
                 </p>
               </div>
               <div>{getStatusBadge(selectedApp.status)}</div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Informasi Sekolah */}
+              {/* Informasi Perusahaan */}
               <div className="space-y-4">
-                <h4 className="font-bold border-b pb-2 flex items-center gap-2"><School className="h-4 w-4" /> Informasi Sekolah</h4>
+                <h4 className="font-bold border-b pb-2 flex items-center gap-2"><School className="h-4 w-4" /> Informasi Perusahaan</h4>
                 <div className="grid grid-cols-2 gap-y-3 text-sm">
-                  <div className="text-muted-foreground">Nama Sekolah</div>
+                  <div className="text-muted-foreground">Nama Perusahaan</div>
                   <div className="font-medium">{selectedApp.schoolName}</div>
                   
-                  <div className="text-muted-foreground">Status Lembaga</div>
+                  <div className="text-muted-foreground">Status Bisnis</div>
                   <div className="font-medium">{selectedApp.schoolStatus || '-'}</div>
                   
                   <div className="text-muted-foreground">NPSN</div>
                   <div className="font-medium">{selectedApp.npsn || '-'}</div>
                   
                   <div className="text-muted-foreground">Subdomain</div>
-                  <div className="font-medium text-primary">{selectedApp.schoolSlug}.schoolpro.id</div>
+                  <div className="font-medium text-primary">{selectedApp.schoolSlug}.bisnispro.id</div>
 
-                  <div className="text-muted-foreground">Jumlah Siswa</div>
+                  <div className="text-muted-foreground">Jumlah Klien</div>
                   <div className="font-medium">{selectedApp.studentCount ? selectedApp.studentCount.toLocaleString('id-ID') : '-'}</div>
                 </div>
               </div>

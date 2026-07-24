@@ -15,7 +15,7 @@ interface Partnership {
 const PartnerImage = ({ src, alt }: { src: string | null | undefined, alt: string }) => {
   const [error, setError] = useState(false)
   
-  const finalSrc = error || !src ? "https://schoolpro.id/logo-schoolpro.png" : src
+  const finalSrc = error || !src ? "https://bisnispro.id/logo-bisnispro.png" : src
 
   return (
     <Image 
@@ -40,7 +40,7 @@ export function PartnershipsSection({ partnerships, labels, basePath = "" }: { p
     <section className="py-12 md:py-20 bg-muted/20 border-y border-border/50 overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-10 text-center">
         <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-3 text-foreground">
-          Kerjasama Lembaga
+          Kerjasama Bisnis
         </h2>
         <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
           Kami bangga dapat bekerja sama dengan berbagai institusi dan perusahaan terkemuka.

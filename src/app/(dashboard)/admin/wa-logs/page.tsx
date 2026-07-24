@@ -69,7 +69,7 @@ export default function TenantWaLogsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Log Antrean WhatsApp</h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Pantau status pesan WhatsApp yang dikirim secara massal ke siswa/guru Anda.
+            Pantau status pesan WhatsApp yang dikirim secara massal ke klien/staf Anda.
           </p>
         </div>
         <div className="relative w-full sm:max-w-xs">

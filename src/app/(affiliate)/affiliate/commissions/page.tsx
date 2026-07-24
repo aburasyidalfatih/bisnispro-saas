@@ -116,7 +116,7 @@ export default async function AffiliateCommissionsPage() {
             <CreditCard className="h-5 w-5 text-muted-foreground" />
             Riwayat Komisi
           </CardTitle>
-          <CardDescription>Rincian komisi dari pembayaran sekolah.</CardDescription>
+          <CardDescription>Rincian komisi dari pembayaran perusahaan.</CardDescription>
         </CardHeader>
         <CardContent>
           {affiliate.commissions.length === 0 ? (
@@ -129,7 +129,7 @@ export default async function AffiliateCommissionsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="px-4 py-3 font-medium">Tanggal</TableHead>
-                    <TableHead className="px-4 py-3 font-medium">Sekolah</TableHead>
+                    <TableHead className="px-4 py-3 font-medium">Perusahaan</TableHead>
                     <TableHead className="px-4 py-3 font-medium text-right">Nominal</TableHead>
                     <TableHead className="px-4 py-3 font-medium">Status</TableHead>
                   </TableRow>

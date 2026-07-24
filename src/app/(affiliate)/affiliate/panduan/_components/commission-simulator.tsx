@@ -55,10 +55,10 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <label className="text-sm font-medium text-emerald-900 flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-emerald-600" /> Jumlah Sekolah Direferensikan
+              <Building2 className="w-4 h-4 text-emerald-600" /> Jumlah Perusahaan Direferensikan
             </label>
             <span className="bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full font-bold text-sm">
-              {schoolCount.toLocaleString("id-ID")} Sekolah
+              {schoolCount.toLocaleString("id-ID")} Perusahaan
             </span>
           </div>
           <Input 
@@ -76,10 +76,10 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
           <div className="space-y-3 mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="flex justify-between items-center">
               <label className="text-sm font-medium text-emerald-900 flex items-center gap-2">
-                <Users className="w-4 h-4 text-emerald-600" /> Rata-rata Siswa per Sekolah
+                <Users className="w-4 h-4 text-emerald-600" /> Rata-rata Klien per Perusahaan
               </label>
               <span className="bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full font-bold text-sm">
-                {studentPerSchool.toLocaleString("id-ID")} Siswa
+                {studentPerSchool.toLocaleString("id-ID")} Klien
               </span>
             </div>
             <Input 
@@ -101,10 +101,10 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-            <p className="text-xs text-emerald-700 mb-1 font-medium">{selectedPlan === "pro" ? "Total Siswa Keseluruhan" : "Biaya Langganan/ Sekolah"}</p>
+            <p className="text-xs text-emerald-700 mb-1 font-medium">{selectedPlan === "pro" ? "Total Klien Keseluruhan" : "Biaya Langganan/ Perusahaan"}</p>
             <p className="text-lg font-bold text-emerald-900">
               {selectedPlan === "pro" 
-                ? `${totalStudents.toLocaleString("id-ID")} Siswa` 
+                ? `${totalStudents.toLocaleString("id-ID")} Klien` 
                 : `Rp ${priceLite.toLocaleString("id-ID")} / Tahun`}
             </p>
           </div>
@@ -125,7 +125,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
         <div className="bg-blue-50 p-3 rounded-lg flex items-start gap-2 border border-blue-100">
           <Info className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
           <p className="text-xs text-blue-800 leading-relaxed">
-            Perhitungan di atas menggunakan estimasi Paket {selectedPlan === "pro" ? "Pro (Rp " + pricePerStudent.toLocaleString("id-ID") + "/siswa)" : "Lite (Rp " + priceLite.toLocaleString("id-ID") + "/tahun flat)"}. Komisi yang Anda terima akan terus berlanjut (<strong>Lifetime</strong>) setiap tahun selama sekolah tersebut memperpanjang langganannya.
+            Perhitungan di atas menggunakan estimasi Paket {selectedPlan === "pro" ? "Pro (Rp " + pricePerStudent.toLocaleString("id-ID") + "/klien)" : "Lite (Rp " + priceLite.toLocaleString("id-ID") + "/tahun flat)"}. Komisi yang Anda terima akan terus berlanjut (<strong>Lifetime</strong>) setiap tahun selama perusahaan tersebut memperpanjang langganannya.
           </p>
         </div>
       </div>

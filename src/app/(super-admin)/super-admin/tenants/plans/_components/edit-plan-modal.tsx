@@ -158,7 +158,7 @@ export function EditPlanModal({ isOpen, onClose, plan, onUpdatePlan, pricing, on
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Harga per Siswa (Rp / Tahun)</Label>
+                  <Label className="text-xs font-semibold">Harga per Klien (Rp / Tahun)</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">Rp</span>
                     <Input
@@ -169,11 +169,11 @@ export function EditPlanModal({ isOpen, onClose, plan, onUpdatePlan, pricing, on
                     />
                   </div>
                   <p className="text-[10px] text-muted-foreground">
-                    Contoh: 50 siswa = Rp {(50 * Number(pricing.PRICE_PER_STUDENT)).toLocaleString("id-ID")}
+                    Contoh: 50 klien = Rp {(50 * Number(pricing.PRICE_PER_STUDENT)).toLocaleString("id-ID")}
                   </p>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Minimal Pembelian Siswa</Label>
+                  <Label className="text-xs font-semibold">Minimal Pembelian Klien</Label>
                   <Input
                     type="number"
                     value={pricing.MIN_STUDENTS}
@@ -181,7 +181,7 @@ export function EditPlanModal({ isOpen, onClose, plan, onUpdatePlan, pricing, on
                     className="rounded-xl font-bold"
                   />
                   <p className="text-[10px] text-muted-foreground">
-                    Minimal <strong>{pricing.MIN_STUDENTS}</strong> siswa per upgrade.
+                    Minimal <strong>{pricing.MIN_STUDENTS}</strong> klien per upgrade.
                   </p>
                 </div>
               </div>
@@ -214,7 +214,7 @@ export function EditPlanModal({ isOpen, onClose, plan, onUpdatePlan, pricing, on
           {/* Quotas */}
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">Siswa</Label>
+              <Label className="text-xs font-semibold">Klien</Label>
               <Input
                 type="number"
                 value={plan.maxStudents ?? 0}

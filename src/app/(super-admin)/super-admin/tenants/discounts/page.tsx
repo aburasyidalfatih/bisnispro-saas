@@ -287,7 +287,7 @@ export default function DiscountsPage() {
           <div className="col-span-full py-12 text-center border-2 border-dashed rounded-3xl">
             <Tag className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
             <h3 className="text-lg font-semibold">{searchQuery ? "Tidak Ditemukan" : "Belum Ada Diskon"}</h3>
-            <p className="text-muted-foreground">{searchQuery ? `Tidak ada kode diskon yang cocok dengan "${searchQuery}".` : "Buat kode diskon pertama untuk dibagikan ke sekolah."}</p>
+            <p className="text-muted-foreground">{searchQuery ? `Tidak ada kode diskon yang cocok dengan "${searchQuery}".` : "Buat kode diskon pertama untuk dibagikan ke perusahaan."}</p>
           </div>
         )}
       </div>

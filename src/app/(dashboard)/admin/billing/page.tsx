@@ -197,7 +197,7 @@ export default function BillingPage() {
 
   const handleCheckout = async () => {
     if (selectedPlanSlug ==="pro" && studentCount < minStudents) {
-      toast({ title:"Gagal", description: `Minimal ${minStudents} siswa`, variant:"destructive" })
+      toast({ title:"Gagal", description: `Minimal ${minStudents} klien`, variant:"destructive" })
       return
     }
     setCheckingOut(true)
@@ -243,7 +243,7 @@ export default function BillingPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Langganan & Penagihan</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Kelola paket sekolah dan kuota siswa Anda.</p>
+          <p className="text-muted-foreground mt-1 text-sm">Kelola paket perusahaan dan kuota klien Anda.</p>
         </div>
         <Button variant="outline" className="gap-2 rounded-xl" asChild>
           <Link href="/admin/billing/history">

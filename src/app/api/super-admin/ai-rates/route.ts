@@ -12,7 +12,7 @@ const DEFAULT_RATES = {
   "extracurricular": 15,
   "event": 10,
   "achievement": 10,
-  "alumni": 5,
+  "mitra": 5,
   "post": 50,
 }
 

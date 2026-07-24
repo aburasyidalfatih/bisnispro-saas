@@ -123,23 +123,23 @@ export async function POST(request: Request) {
     // Extract HTML templates
     const layoutHtml = await readFileContent("layouts/main.hbs", ["layouts/main.hbs", "main.hbs", "theme.hbs"], MAX_TEMPLATE_CHARS)
     const indexHtml = await readFileContent("templates/index.hbs", ["templates/index.hbs", "index.hbs"], MAX_TEMPLATE_CHARS)
-    const facilityHtml = await readFileContent("templates/fasilitas.hbs", ["templates/fasilitas.hbs", "fasilitas.hbs"], MAX_TEMPLATE_CHARS)
+    const facilityHtml = await readFileContent("templates/aset.hbs", ["templates/aset.hbs", "aset.hbs"], MAX_TEMPLATE_CHARS)
     const aboutHtml = await readFileContent("templates/profil.hbs", ["templates/profil.hbs", "profil.hbs"], MAX_TEMPLATE_CHARS)
-    const staffHtml = await readFileContent("templates/guru.hbs", ["templates/guru.hbs", "guru.hbs"], MAX_TEMPLATE_CHARS)
+    const staffHtml = await readFileContent("templates/staf.hbs", ["templates/staf.hbs", "staf.hbs"], MAX_TEMPLATE_CHARS)
     const newsHtml = await readFileContent("templates/berita.hbs", ["templates/berita.hbs", "berita.hbs"], MAX_TEMPLATE_CHARS)
     const newsDetailHtml = await readFileContent("templates/berita-detail.hbs", ["templates/berita-detail.hbs", "berita-detail.hbs"], MAX_TEMPLATE_CHARS)
     const galleryHtml = await readFileContent("templates/galeri.hbs", ["templates/galeri.hbs", "galeri.hbs"], MAX_TEMPLATE_CHARS)
     const contactHtml = await readFileContent("templates/kontak.hbs", ["templates/kontak.hbs", "kontak.hbs"], MAX_TEMPLATE_CHARS)
-    const extracurricularHtml = await readFileContent("templates/ekstrakurikuler.hbs", ["templates/ekstrakurikuler.hbs", "ekstrakurikuler.hbs"], MAX_TEMPLATE_CHARS)
+    const extracurricularHtml = await readFileContent("templates/aset ekstra.hbs", ["templates/aset ekstra.hbs", "aset ekstra.hbs"], MAX_TEMPLATE_CHARS)
     const programHtml = await readFileContent("templates/program.hbs", ["templates/program.hbs", "program.hbs"], MAX_TEMPLATE_CHARS)
     const achievementHtml = await readFileContent("templates/prestasi.hbs", ["templates/prestasi.hbs", "prestasi.hbs"], MAX_TEMPLATE_CHARS)
     const pengumumanHtml = await readFileContent("templates/pengumuman.hbs", ["templates/pengumuman.hbs", "pengumuman.hbs"], MAX_TEMPLATE_CHARS)
     const pengumumanDetailHtml = await readFileContent("templates/pengumuman-detail.hbs", ["templates/pengumuman-detail.hbs", "pengumuman-detail.hbs"], MAX_TEMPLATE_CHARS)
     const ppdbHtml = await readFileContent("templates/ppdb.hbs", ["templates/ppdb.hbs", "ppdb.hbs"], MAX_TEMPLATE_CHARS)
-    const alumniHtml = await readFileContent("templates/alumni.hbs", ["templates/alumni.hbs", "alumni.hbs"], MAX_TEMPLATE_CHARS)
+    const mitraHtml = await readFileContent("templates/mitra.hbs", ["templates/mitra.hbs", "mitra.hbs"], MAX_TEMPLATE_CHARS)
     const agendaHtml = await readFileContent("templates/agenda.hbs", ["templates/agenda.hbs", "agenda.hbs"], MAX_TEMPLATE_CHARS)
     const unduhanHtml = await readFileContent("templates/unduhan.hbs", ["templates/unduhan.hbs", "unduhan.hbs"], MAX_TEMPLATE_CHARS)
-    const staffDetailHtml = await readFileContent("templates/guru-detail.hbs", ["templates/guru-detail.hbs", "guru-detail.hbs"], MAX_TEMPLATE_CHARS)
+    const staffDetailHtml = await readFileContent("templates/staf-detail.hbs", ["templates/staf-detail.hbs", "staf-detail.hbs"], MAX_TEMPLATE_CHARS)
     const customCss = await readFileContent("assets/styles.css", ["assets/styles.css", "styles.css"], MAX_ASSET_CHARS)
     const customJs = await readFileContent("assets/scripts.js", ["assets/scripts.js", "scripts.js"], MAX_ASSET_CHARS)
     
@@ -152,23 +152,23 @@ export async function POST(request: Request) {
     const templateFiles: Record<string, string> = {
       "main.hbs": layoutHtml,
       "index.hbs": indexHtml,
-      ...(facilityHtml ? { "fasilitas.hbs": facilityHtml } : {}),
+      ...(facilityHtml ? { "aset.hbs": facilityHtml } : {}),
       ...(aboutHtml ? { "profil.hbs": aboutHtml } : {}),
-      ...(staffHtml ? { "guru.hbs": staffHtml } : {}),
+      ...(staffHtml ? { "staf.hbs": staffHtml } : {}),
       ...(newsHtml ? { "berita.hbs": newsHtml } : {}),
       ...(newsDetailHtml ? { "berita-detail.hbs": newsDetailHtml } : {}),
       ...(galleryHtml ? { "galeri.hbs": galleryHtml } : {}),
       ...(contactHtml ? { "kontak.hbs": contactHtml } : {}),
-      ...(extracurricularHtml ? { "ekstrakurikuler.hbs": extracurricularHtml } : {}),
+      ...(extracurricularHtml ? { "aset ekstra.hbs": extracurricularHtml } : {}),
       ...(programHtml ? { "program.hbs": programHtml } : {}),
       ...(achievementHtml ? { "prestasi.hbs": achievementHtml } : {}),
       ...(pengumumanHtml ? { "pengumuman.hbs": pengumumanHtml } : {}),
       ...(pengumumanDetailHtml ? { "pengumuman-detail.hbs": pengumumanDetailHtml } : {}),
       ...(ppdbHtml ? { "ppdb.hbs": ppdbHtml } : {}),
-      ...(alumniHtml ? { "alumni.hbs": alumniHtml } : {}),
+      ...(mitraHtml ? { "mitra.hbs": mitraHtml } : {}),
       ...(agendaHtml ? { "agenda.hbs": agendaHtml } : {}),
       ...(unduhanHtml ? { "unduhan.hbs": unduhanHtml } : {}),
-      ...(staffDetailHtml ? { "guru-detail.hbs": staffDetailHtml } : {}),
+      ...(staffDetailHtml ? { "staf-detail.hbs": staffDetailHtml } : {}),
     }
 
     const syntaxErrors: string[] = []
@@ -212,7 +212,7 @@ export async function POST(request: Request) {
       pengumumanHtml: pengumumanHtml || null,
       pengumumanDetailHtml: pengumumanDetailHtml || null,
       ppdbHtml: ppdbHtml || null,
-      alumniHtml: alumniHtml || null,
+      mitraHtml: mitraHtml || null,
       agendaHtml: agendaHtml || null,
       unduhanHtml: unduhanHtml || null,
       staffDetailHtml: staffDetailHtml || null,

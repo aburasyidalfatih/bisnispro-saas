@@ -63,7 +63,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
 
   const currentTenant = session?.user?.tenants?.[0]
   const brandLogo = (currentTenant as any)?.logo
-  const brandName = currentTenant?.name || "SchoolPro"
+  const brandName = currentTenant?.name || "BisnisPro"
   const brandInitial = brandName.charAt(0).toUpperCase()
 
   return (

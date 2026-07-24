@@ -109,7 +109,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <OfficesSection facilities={tenant.facilities || []} labels={labels} basePath={base} />
       </ScrollReveal>
 
-      {/* ── 9. Ekstrakurikuler ── */}
+      {/* ── 9. Aset Ekstra ── */}
       
 
       {/* ── 10. Tim & Staff Highlight ── */}
@@ -180,7 +180,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
       </ScrollReveal>
 
 
-      {/* ── 13. Kerjasama Lembaga ── */}
+      {/* ── 13. Kerjasama Bisnis ── */}
       <ScrollReveal delay={0.1}>
         <PartnershipsSection partnerships={partnerships} labels={labels} basePath={base} />
       </ScrollReveal>

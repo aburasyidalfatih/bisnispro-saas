@@ -23,7 +23,7 @@ export function ContentSteps({ sections }: ContentStepsProps) {
         <h2 className="text-xl md:text-2xl font-bold tracking-tight">Lengkapi Konten Website</h2>
       </div>
       <p className="text-muted-foreground text-sm md:text-base max-w-3xl">
-        Selesaikan seluruh langkah di bawah ini secara berurutan agar website sekolah Anda tampil sempurna dan informatif di mata publik.
+        Selesaikan seluruh langkah di bawah ini secara berurutan agar website perusahaan Anda tampil sempurna dan informatif di mata publik.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 pt-2">

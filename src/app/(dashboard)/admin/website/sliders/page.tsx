@@ -130,7 +130,7 @@ export default function SlidersPage() {
             <div className="py-12 text-center">
               <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
               <p className="font-semibold mb-1">Belum ada slide</p>
-              <p className="text-sm text-muted-foreground mb-4">Unggah gambar slide pertama sekolah Anda.</p>
+              <p className="text-sm text-muted-foreground mb-4">Unggah gambar slide pertama perusahaan Anda.</p>
               <Button asChild variant="outline" className="rounded-xl">
                 <Link href="/admin/website/sliders/new">Unggah Sekarang</Link>
               </Button>

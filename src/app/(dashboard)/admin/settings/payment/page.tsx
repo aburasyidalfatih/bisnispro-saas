@@ -205,8 +205,8 @@ export default function PaymentSettingsPage() {
                 <Landmark className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-lg">Transfer Manual (Rekening Sekolah)</CardTitle>
-                <CardDescription>Tambahkan nomor rekening sekolah untuk pembayaran manual oleh orang tua.</CardDescription>
+                <CardTitle className="text-lg">Transfer Manual (Rekening Perusahaan)</CardTitle>
+                <CardDescription>Tambahkan nomor rekening perusahaan untuk pembayaran manual oleh orang tua.</CardDescription>
               </div>
             </div>
             <Button onClick={addManualBank} variant="outline" size="sm" className="gap-2 rounded-xl">
@@ -245,7 +245,7 @@ export default function PaymentSettingsPage() {
                   <div className="sm:col-span-4 space-y-1.5">
                     <Label className="text-xs">Atas Nama (A/N)</Label>
                     <Input 
-                      placeholder="Yayasan Sekolah / Budi" 
+                      placeholder="Yayasan Perusahaan / Budi" 
                       value={bank.name} 
                       onChange={(e) => updateManualBank(index,"name", e.target.value)}
                       className="rounded-lg h-9 text-sm bg-background"

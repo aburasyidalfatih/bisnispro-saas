@@ -11,7 +11,7 @@ const ActivityCalendar = dynamic(
 import { getAdminActivityHeatmap } from "../actions"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Activity } from "lucide-react"
-import { useTheme } from "next-themes"
+import { useTheme } from "@teispace/next-themes"
 import { Tooltip as ReactTooltip } from "react-tooltip"
 import "react-tooltip/dist/react-tooltip.css"
 

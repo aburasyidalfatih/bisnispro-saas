@@ -44,17 +44,17 @@ export function TenantCompletenessPopup() {
       .then(res => res.json())
       .then(data => {
         const missingFields: string[] = []
-        if (!data.name?.trim()) missingFields.push("Nama Lembaga")
-        if (!data.logo?.trim()) missingFields.push("Logo Lembaga")
+        if (!data.name?.trim()) missingFields.push("Nama Bisnis")
+        if (!data.logo?.trim()) missingFields.push("Logo Bisnis")
         if (!data.tagline?.trim()) missingFields.push("Tagline / Slogan")
         if (!data.description?.trim()) missingFields.push("Deskripsi Singkat")
-        if (!data.settings?.schoolStatus?.trim()) missingFields.push("Status Sekolah")
-        if (!data.settings?.studentCount || data.settings.studentCount < 1) missingFields.push("Jumlah Siswa")
+        if (!data.settings?.schoolStatus?.trim()) missingFields.push("Status Perusahaan")
+        if (!data.settings?.studentCount || data.settings.studentCount < 1) missingFields.push("Jumlah Klien")
         if (!data.settings?.province?.trim()) missingFields.push("Provinsi")
         if (!data.settings?.regency?.trim()) missingFields.push("Kabupaten/Kota")
         if (!data.address?.trim()) missingFields.push("Alamat Lengkap")
         if (!data.phone?.trim()) missingFields.push("Nomor Telepon")
-        if (!data.email?.trim()) missingFields.push("Email Lembaga")
+        if (!data.email?.trim()) missingFields.push("Email Bisnis")
 
         if (missingFields.length > 0) {
           setMissing(missingFields)
@@ -86,10 +86,10 @@ export function TenantCompletenessPopup() {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
               <AlertTriangle className="h-5 w-5 text-amber-600" />
             </div>
-            <DialogTitle>Lengkapi Data Lembaga</DialogTitle>
+            <DialogTitle>Lengkapi Data Bisnis</DialogTitle>
           </div>
           <DialogDescription className="text-left">
-            Website lembaga Anda sudah aktif, namun masih ada data profil yang belum lengkap. 
+            Website bisnis Anda sudah aktif, namun masih ada data profil yang belum lengkap. 
             Mohon lengkapi agar layanan dapat berjalan maksimal.
           </DialogDescription>
         </DialogHeader>

@@ -89,7 +89,7 @@ export default function RetentionPage() {
     <div className="space-y-6 pb-10">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Retensi Lembaga</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Retensi Bisnis</h1>
           <p className="text-muted-foreground mt-1">Kelola pesan dan pantau tenant yang tidak aktif (dormant).</p>
         </div>
         <Button onClick={handleSave} disabled={saving} className="gap-2">
@@ -101,7 +101,7 @@ export default function RetentionPage() {
       <Tabs defaultValue="settings" className="space-y-6">
         <TabsList>
           <TabsTrigger value="settings">Pengaturan Pesan</TabsTrigger>
-          <TabsTrigger value="history">Daftar Sekolah Dormant</TabsTrigger>
+          <TabsTrigger value="history">Daftar Perusahaan Dormant</TabsTrigger>
           <TabsTrigger value="email-logs">History Email</TabsTrigger>
         </TabsList>
 
@@ -123,12 +123,12 @@ export default function RetentionPage() {
                 <div className="grid gap-2">
                   <Label>Isi Email (HTML)</Label>
                   <Textarea rows={4} value={form.RETENTION_30_EMAIL_BODY || ""} onChange={e => setForm({...form, RETENTION_30_EMAIL_BODY: e.target.value})} className="font-mono text-sm" />
-                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> dan <code>{"{email_pendaftaran}"}</code> untuk variabel dinamis.</p>
+                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_perusahaan}"}</code> dan <code>{"{email_pendaftaran}"}</code> untuk variabel dinamis.</p>
                 </div>
                 <div className="grid gap-2">
                   <Label>Pesan WhatsApp</Label>
                   <Textarea rows={3} value={form.RETENTION_30_WA || ""} onChange={e => setForm({...form, RETENTION_30_WA: e.target.value})} />
-                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> dan <code>{"{email_pendaftaran}"}</code> untuk variabel dinamis.</p>
+                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_perusahaan}"}</code> dan <code>{"{email_pendaftaran}"}</code> untuk variabel dinamis.</p>
                 </div>
               </CardContent>
             </Card>
@@ -149,12 +149,12 @@ export default function RetentionPage() {
                 <div className="grid gap-2">
                   <Label>Isi Email (HTML)</Label>
                   <Textarea rows={4} value={form.RETENTION_60_EMAIL_BODY || ""} onChange={e => setForm({...form, RETENTION_60_EMAIL_BODY: e.target.value})} className="font-mono text-sm" />
-                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> untuk variabel dinamis.</p>
+                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_perusahaan}"}</code> untuk variabel dinamis.</p>
                 </div>
                 <div className="grid gap-2">
                   <Label>Pesan WhatsApp</Label>
                   <Textarea rows={3} value={form.RETENTION_60_WA || ""} onChange={e => setForm({...form, RETENTION_60_WA: e.target.value})} />
-                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> untuk variabel dinamis.</p>
+                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_perusahaan}"}</code> untuk variabel dinamis.</p>
                 </div>
               </CardContent>
             </Card>
@@ -175,12 +175,12 @@ export default function RetentionPage() {
                 <div className="grid gap-2">
                   <Label>Isi Email (HTML)</Label>
                   <Textarea rows={4} value={form.RETENTION_90_EMAIL_BODY || ""} onChange={e => setForm({...form, RETENTION_90_EMAIL_BODY: e.target.value})} className="font-mono text-sm" />
-                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> untuk variabel dinamis.</p>
+                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_perusahaan}"}</code> untuk variabel dinamis.</p>
                 </div>
                 <div className="grid gap-2">
                   <Label>Pesan WhatsApp</Label>
                   <Textarea rows={3} value={form.RETENTION_90_WA || ""} onChange={e => setForm({...form, RETENTION_90_WA: e.target.value})} />
-                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_sekolah}"}</code> untuk variabel dinamis.</p>
+                  <p className="text-xs text-muted-foreground">Gunakan <code>{"{nama_perusahaan}"}</code> untuk variabel dinamis.</p>
                 </div>
               </CardContent>
             </Card>
@@ -192,15 +192,15 @@ export default function RetentionPage() {
             <CardHeader className="border-b bg-white/50">
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-primary" />
-                Daftar Sekolah Dormant (30, 60, 90 Hari)
+                Daftar Perusahaan Dormant (30, 60, 90 Hari)
               </CardTitle>
-              <CardDescription>Daftar Lembaga yang terdeteksi tidak aktif berdasarkan kategori hari.</CardDescription>
+              <CardDescription>Daftar Bisnis yang terdeteksi tidak aktif berdasarkan kategori hari.</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               <Table>
                 <TableHeader className="bg-slate-50/50">
                   <TableRow>
-                    <TableHead className="pl-6">Nama Sekolah</TableHead>
+                    <TableHead className="pl-6">Nama Perusahaan</TableHead>
                     <TableHead>Kontak</TableHead>
                     <TableHead>Terakhir Login</TableHead>
                     <TableHead className="pr-6">Status Retensi</TableHead>
@@ -210,7 +210,7 @@ export default function RetentionPage() {
                   {combinedRetentionData.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
-                        Belum ada data sekolah dormant di kategori 30, 60, 90 hari.
+                        Belum ada data perusahaan dormant di kategori 30, 60, 90 hari.
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -219,7 +219,7 @@ export default function RetentionPage() {
                         <TableRow key={tenant.id}>
                           <TableCell className="pl-6">
                             <div className="font-medium text-slate-900">{tenant.name}</div>
-                            <div className="text-xs text-muted-foreground">{tenant.slug}.schoolpro.id</div>
+                            <div className="text-xs text-muted-foreground">{tenant.slug}.bisnispro.id</div>
                           </TableCell>
                           <TableCell>
                             <div className="text-sm">{tenant.email || '-'}</div>

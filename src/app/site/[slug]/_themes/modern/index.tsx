@@ -131,7 +131,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
 
       {/* ══════════════════════════════════════════════════════════════
-          6. FASILITAS SEKOLAH
+          6. FASILITAS PERUSAHAAN
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.facilities?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
@@ -171,7 +171,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          10. GALERI SEKOLAH (Horizontal Scroll)
+          10. GALERI PERUSAHAAN (Horizontal Scroll)
       ══════════════════════════════════════════════════════════════ */}
       {gallery.length > 0 && (
         <ScrollReveal>

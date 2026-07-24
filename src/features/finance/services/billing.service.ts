@@ -53,7 +53,7 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
     const pricing = await getPricingConfig()
     
     if (planSlug === "pro" && studentCount < pricing.MIN_STUDENTS) {
-      return { success: false, error: `Minimal pembelian adalah ${pricing.MIN_STUDENTS} siswa` }
+      return { success: false, error: `Minimal pembelian adalah ${pricing.MIN_STUDENTS} klien` }
     }
 
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
@@ -119,7 +119,7 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
 
         if (isValid) {
           if (discount.type === "CASHBACK" && discount.linkedTenantId && discount.linkedTenantId !== tenantId) {
-            if (!isAutoCarryOver) throw new Error("Kode kupon ini sudah terikat ke sekolah lain")
+            if (!isAutoCarryOver) throw new Error("Kode kupon ini sudah terikat ke perusahaan lain")
           } else {
             if (discount.type === "CASHBACK") {
               discountPercentage = 0
@@ -206,7 +206,7 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
     const pricing = await getPricingConfig()
 
     if (studentCount <= 0) {
-      return { success: false, error: "Jumlah siswa harus lebih dari 0" }
+      return { success: false, error: "Jumlah klien harus lebih dari 0" }
     }
 
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
@@ -267,7 +267,7 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
         (!discount.expiresAt || new Date(discount.expiresAt) > now)
       ) {
         if (discount.type === "CASHBACK" && discount.linkedTenantId && discount.linkedTenantId !== tenantId) {
-          throw new Error("Kode kupon ini sudah terikat ke sekolah lain")
+          throw new Error("Kode kupon ini sudah terikat ke perusahaan lain")
         }
 
         if (discount.type === "CASHBACK") {

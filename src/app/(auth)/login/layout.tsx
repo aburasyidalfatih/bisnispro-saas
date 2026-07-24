@@ -5,7 +5,7 @@ import { db } from "@/lib/db"
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers()
   const host = headersList.get("host") || ""
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
   const hostWithoutPort = host.split(":")[0]
   
   const isMainDomain = 

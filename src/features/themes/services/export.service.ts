@@ -40,7 +40,7 @@ export async function exportTheme(themeId: string): Promise<{ buffer: Buffer; fi
       name: theme.name,
       author: theme.author,
       version: theme.version,
-      description: `Tema kustom ${theme.name} diekspor dari SchoolPro.`
+      description: `Tema kustom ${theme.name} diekspor dari BisnisPro.`
     }, null, 2))
 
     zip.file("layouts/main.hbs", theme.layoutHtml)
@@ -85,9 +85,9 @@ export async function exportTheme(themeId: string): Promise<{ buffer: Buffer; fi
   // 1. theme.json
   zip.file("theme.json", JSON.stringify({
     name: themeName,
-    author: "SchoolPro Official",
+    author: "BisnisPro Official",
     version: "1.0.0",
-    description: "Template starter kit lengkap dari SchoolPro. Berisi semua halaman yang tersedia untuk dikustomisasi oleh tim desain."
+    description: "Template starter kit lengkap dari BisnisPro. Berisi semua halaman yang tersedia untuk dikustomisasi oleh tim desain."
   }, null, 2))
 
   // 2. README.md — Dokumentasi variabel Handlebars

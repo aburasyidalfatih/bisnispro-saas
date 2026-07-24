@@ -94,7 +94,7 @@ export function ProfileSettings({
           <Input value={profileForm.email} onChange={e => setProfileForm(p => ({ ...p, email: e.target.value }))} placeholder="email@contoh.com" className="rounded-xl h-9 text-sm" />
           <p className="text-[11px] text-muted-foreground -mt-1 flex items-center gap-1">
             <Info className="h-3 w-3 text-primary" />
-            Gunakan email yang paling sering digunakan. Update rutin terkait SchoolPro akan disampaikan melalui email.
+            Gunakan email yang paling sering digunakan. Update rutin terkait BisnisPro akan disampaikan melalui email.
           </p>
         </div>
         <div className="space-y-1.5">

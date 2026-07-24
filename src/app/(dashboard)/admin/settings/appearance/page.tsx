@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from"react"
-import { useTheme } from"next-themes"
+import { useTheme } from"@teispace/next-themes"
 import { useSession } from"next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
@@ -111,7 +111,7 @@ export default function AppearancePage() {
     }
     if (!tenantId) {
       setSaving(false)
-      toast({ title:"Gagal menyimpan", description:"Lembaga tidak ditemukan.", variant:"destructive" })
+      toast({ title:"Gagal menyimpan", description:"Bisnis tidak ditemukan.", variant:"destructive" })
       return
     }
     try {
@@ -143,7 +143,7 @@ export default function AppearancePage() {
       {/* Header Section */}
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-black tracking-tight text-foreground">Penampilan (Appearance)</h1>
-        <p className="text-muted-foreground text-lg max-w-2xl">Personalisasi identitas visual institusi Anda untuk memberikan pengalaman pengguna kelas dunia.</p>
+        <p className="text-muted-foreground text-lg max-w-2xl">Personalisasi identitas visual institusi Anda untuk memberikan pengalaman pengguna divisi dunia.</p>
       </div>
 
 
@@ -355,7 +355,7 @@ export default function AppearancePage() {
           <CardTitle className="text-lg flex items-center gap-2">
             <Type className="h-5 w-5 text-indigo-500" /> Kustomisasi Lanjutan (Advanced)
           </CardTitle>
-          <CardDescription>Timpa pengaturan bawaan dengan *Brand Kit* kustom sekolah Anda.</CardDescription>
+          <CardDescription>Timpa pengaturan bawaan dengan *Brand Kit* kustom perusahaan Anda.</CardDescription>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid gap-8 md:grid-cols-2">
@@ -414,7 +414,7 @@ export default function AppearancePage() {
                     dynamicSettings.fontFamily ==="playfair" ?"font-serif" :
                     dynamicSettings.fontFamily ==="outfit" ?"font-sans font-bold tracking-tight" :"font-sans"
                   )}>
-                    <h5 className="text-xl font-black text-foreground">Sekolah Masa Depan</h5>
+                    <h5 className="text-xl font-black text-foreground">Perusahaan Masa Depan</h5>
                     <p className="text-xs text-muted-foreground leading-relaxed">Pendidikan adalah senjata paling ampuh yang dapat Anda gunakan untuk mengubah dunia.</p>
                   </div>
                 </div>

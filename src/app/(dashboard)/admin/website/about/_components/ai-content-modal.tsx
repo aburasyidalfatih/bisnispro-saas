@@ -30,8 +30,8 @@ export function AiContentModal({
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-violet-500" />
             {aiPromptType ==="vision-mission" &&"Poles Visi & Misi"}
-            {aiPromptType ==="about" &&"Generate Sejarah Sekolah"}
-            {aiPromptType ==="principal-speech" &&"Buat Sambutan Kepala Sekolah"}
+            {aiPromptType ==="about" &&"Generate Sejarah Perusahaan"}
+            {aiPromptType ==="principal-speech" &&"Buat Sambutan Kepala Perusahaan"}
           </DialogTitle>
           <DialogDescription>
             Ubah poin-poin singkat Anda menjadi konten profesional.
@@ -41,7 +41,7 @@ export function AiContentModal({
         <div className="space-y-4 py-4">
           {aiPromptType ==="principal-speech" && (
             <div className="space-y-2">
-              <Label>Nama Kepala Sekolah</Label>
+              <Label>Nama Kepala Perusahaan</Label>
               <Input value={aiInputName} onChange={e => setAiInputName(e.target.value)} placeholder="Contoh: Bpk. Budi Santoso" className="rounded-xl" />
             </div>
           )}
@@ -49,15 +49,15 @@ export function AiContentModal({
             <Label>
               {aiPromptType ==="vision-mission" &&"Masukkan Visi/Misi Kasar"}
               {aiPromptType ==="about" &&"Fakta & Sejarah Singkat"}
-              {aiPromptType ==="principal-speech" &&"Fokus/Harapan Utama Sekolah Tahun Ini"}
+              {aiPromptType ==="principal-speech" &&"Fokus/Harapan Utama Perusahaan Tahun Ini"}
               <span className="text-red-500">*</span>
             </Label>
             <Textarea 
               value={aiInputText}
               onChange={(e) => setAiInputText(e.target.value)}
               placeholder={
-                aiPromptType ==="vision-mission" ?"Sekolah yang pintar, bertakwa, dan bisa komputer." :
-                aiPromptType ==="about" ?"Berdiri tahun 1990, awalnya 3 kelas. Sekarang fasilitas lengkap." :"Ingin tingkatkan akhlak dan teknologi. Fokus pada prestasi olimpiade sains."
+                aiPromptType ==="vision-mission" ?"Perusahaan yang pintar, bertakwa, dan bisa komputer." :
+                aiPromptType ==="about" ?"Berdiri tahun 1990, awalnya 3 divisi. Sekarang aset lengkap." :"Ingin tingkatkan akhlak dan teknologi. Fokus pada prestasi olimpiade sains."
               }
               className="min-h-[120px] rounded-xl resize-none"
             />

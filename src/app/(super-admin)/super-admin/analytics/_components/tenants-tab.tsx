@@ -60,7 +60,7 @@ export function TenantsTab() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <CardTitle className="text-base">Detail Aktivitas Per-Tenant</CardTitle>
-              <CardDescription>Top 50 lembaga berdasarkan aktivitas login terbaru.</CardDescription>
+              <CardDescription>Top 50 bisnis berdasarkan aktivitas login terbaru.</CardDescription>
             </div>
             <div className="relative max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -78,9 +78,9 @@ export function TenantsTab() {
             <Table>
               <TableHeader>
                 <TableRow className="border-b bg-muted/30">
-                  <TableHead className="px-3 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Sekolah</TableHead>
+                  <TableHead className="px-3 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Perusahaan</TableHead>
                   <TableHead className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Paket</TableHead>
-                  <SortableHeader label="Siswa" column="studentCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
+                  <SortableHeader label="Klien" column="studentCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <SortableHeader label="GTK" column="staffCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <SortableHeader label="Post" column="postCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <SortableHeader label="Login Bulan Ini" column="loginCount" current={sortColumn} order={sortOrder} onSort={handleSort} />

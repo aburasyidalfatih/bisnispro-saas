@@ -54,7 +54,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
         <div className="lg:col-span-2 space-y-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">{course.title}</h1>
-            <p className="text-muted-foreground">Oleh {course.author?.name || "Admin SchoolPro"}</p>
+            <p className="text-muted-foreground">Oleh {course.author?.name || "Admin BisnisPro"}</p>
           </div>
 
           <Card className="glass border-0 shadow-xl overflow-hidden rounded-2xl">
@@ -66,7 +66,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
               )}
             </div>
             <CardContent className="p-6">
-              <h2 className="text-xl font-bold mb-4">Tentang Kelas Ini</h2>
+              <h2 className="text-xl font-bold mb-4">Tentang Divisi Ini</h2>
               <div className="prose prose-sm dark:prose-invert max-w-none">
                 {course.description ? (
                   <p className="whitespace-pre-line leading-relaxed">{course.description}</p>
@@ -77,11 +77,11 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
             </CardContent>
           </Card>
 
-          <h2 className="text-2xl font-bold mt-8 mb-4">Materi Kelas (Silabus)</h2>
+          <h2 className="text-2xl font-bold mt-8 mb-4">Materi Divisi (Silabus)</h2>
           <div className="space-y-4">
             {course.modules.length === 0 ? (
               <div className="p-8 text-center bg-muted/30 rounded-2xl border border-dashed">
-                <p className="text-muted-foreground">Materi belum tersedia untuk kelas ini.</p>
+                <p className="text-muted-foreground">Materi belum tersedia untuk divisi ini.</p>
               </div>
             ) : (
               course.modules.map((mod, index) => (
@@ -177,7 +177,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                   <form action="/api/admin/academy/checkout" method="POST">
                     <input type="hidden" name="courseId" value={course.id} />
                     <Button type="submit" className="w-full rounded-xl h-12 text-base font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20">
-                      Beli Kelas Ini
+                      Beli Divisi Ini
                     </Button>
                   </form>
                 )}

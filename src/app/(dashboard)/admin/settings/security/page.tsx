@@ -28,6 +28,11 @@ export default function SecurityPage() {
   const [sessions, setSessions] = useState<SessionRow[]>([])
   const [sessionsLoading, setSessionsLoading] = useState(true)
   const [tenantId, setTenantId] = useState<string | null>(null)
+  const [originUrl, setOriginUrl] = useState("https://yourdomain.com")
+
+  useEffect(() => {
+    setOriginUrl(window.location.origin)
+  }, [])
 
   // Role check — Google OAuth hanya untuk owner/admin
   const currentRole = session?.user?.tenants?.[0]?.role ||"orangtua"
@@ -393,9 +398,17 @@ export default function SecurityPage() {
                   </div>
                   <div className="sm:col-span-2 rounded-xl border bg-muted/30 p-4 space-y-2">
                     <p className="text-xs font-semibold">Authorized Redirect URI:</p>
-                    <code className="text-xs bg-background rounded-lg px-3 py-2 block font-mono select-all">
-                      {typeof window !=="undefined" ? `${window.location.origin}/api/auth/callback/google` :"https://yourdomain.com/api/auth/callback/google"}
-                    </code>
+                    <div className="flex justify-between items-center bg-background rounded-lg px-3 py-2 border font-mono text-[11px] sm:text-xs">
+                      <span className="truncate mr-2 text-muted-foreground">
+                        {`${originUrl}/api/auth/callback/google`}
+                      </span>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0 rounded-md" onClick={() => {
+                        navigator.clipboard.writeText(`${originUrl}/api/auth/callback/google`)
+                        toast({ title: "Disalin", description: "URL disalin ke clipboard." })
+                      }}>
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
                     <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener"
                       className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                       <ExternalLink className="h-3 w-3" /> Buka Google Cloud Console
@@ -436,7 +449,7 @@ export default function SecurityPage() {
               <ConfirmDialog
                 trigger={<Button variant="destructive" size="sm" className="rounded-lg text-xs">Hapus Akun</Button>}
                 title="Hapus akun Anda?"
-                description="Semua data termasuk lembaga dan file Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
+                description="Semua data termasuk bisnis dan file Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
                 confirmText="Ya, hapus akun saya"
                 onConfirm={() => { toast({ title:"Fitur segera hadir", description:"Penghapusan akun akan tersedia di versi berikutnya." }) }}
               />

@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Transaksi sudah dikonfirmasi sebelumnya" }, { status: 409 })
     }
 
-    // Ambil jumlah siswa dan tipe pembayaran dari metadata
+    // Ambil jumlah klien dan tipe pembayaran dari metadata
     const meta = payment.metadata as any
     const studentCount = meta?.studentCount || 0
     const isAddon = meta?.type === "ADDON_QUOTA"
@@ -224,9 +224,9 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       message: payment.plan === "AI_TOKEN_USER"
-        ? `Berhasil mengkonfirmasi Top-Up AI Token untuk Guru.`
+        ? `Berhasil mengkonfirmasi Top-Up AI Token untuk Staf.`
         : isAddon 
-          ? `Berhasil menambah ${studentCount} kuota siswa untuk Tenant "${payment.tenant.name}".`
+          ? `Berhasil menambah ${studentCount} kuota klien untuk Tenant "${payment.tenant.name}".`
           : `Tenant "${payment.tenant.name}" berhasil diupgrade ke ${payment.plan?.toUpperCase() || 'PAKET BARU'} hingga ${expiresAt.toLocaleDateString("id-ID")}.`,
     })
   } catch (error) {

@@ -164,7 +164,7 @@ Pembayaran untuk ${tenant.name} telah dikonfirmasi!
 💰 Jumlah: Rp ${formatCurrency(payment.amount)}
 📦 Tipe: ${type}${
   meta?.type !== "AI_QUOTA" ? `
-👥 Kuota Siswa: ${(tenant as any).studentQuota || 0}` : `
+👥 Kuota Klien: ${(tenant as any).studentQuota || 0}` : `
 🤖 Token AI: +${formatCurrency(meta?.aiTokens || 0)}`
 }${
   tenant.expiresAt ? `
@@ -187,7 +187,7 @@ Selamat menggunakan fitur premium ${cfg.platformName}! 🎉`
             <tr><td style="padding: 8px 0; color: #64748b;">Jumlah</td><td style="padding: 8px 0; font-weight: 600; color: #059669;">Rp ${formatCurrency(payment.amount)}</td></tr>
             <tr><td style="padding: 8px 0; color: #64748b;">Tipe</td><td style="padding: 8px 0; font-weight: 600;">${type}</td></tr>
             ${meta?.type !== "AI_QUOTA" 
-              ? `<tr><td style="padding: 8px 0; color: #64748b;">Kuota Siswa</td><td style="padding: 8px 0; font-weight: 600;">${(tenant as any).studentQuota || 0}</td></tr>`
+              ? `<tr><td style="padding: 8px 0; color: #64748b;">Kuota Klien</td><td style="padding: 8px 0; font-weight: 600;">${(tenant as any).studentQuota || 0}</td></tr>`
               : `<tr><td style="padding: 8px 0; color: #64748b;">Token AI</td><td style="padding: 8px 0; font-weight: 600;">+\${formatCurrency(meta?.aiTokens || 0)}</td></tr>`
             }
             ${tenant.expiresAt 
@@ -333,7 +333,7 @@ export async function notifySubscriptionExpiring(): Promise<SubscriptionReminder
 
       const waMessage = cfg.tplSubscriptionReminder
         ? renderTemplate(cfg.tplSubscriptionReminder, templateVars)
-        : `*${urgency} Pengingat Langganan - SchoolPro*
+        : `*${urgency} Pengingat Langganan - BisnisPro*
 
 Halo,
 

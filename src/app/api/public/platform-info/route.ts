@@ -12,9 +12,9 @@ const getCachedPlatformInfo = unstable_cache(
     })
 
     const data: Record<string, any> = {
-      app_logo: "/logo-schoolpro.png", // fallback
-      platform_name: "SchoolPro",
-      platform_tagline: "Solusi Manajemen Sekolah Digital",
+      app_logo: "/logo-bisnispro.png", // fallback
+      platform_name: "BisnisPro",
+      platform_tagline: "Solusi Manajemen Perusahaan Digital",
       googleAuthEnabled: false,
       turnstileSiteKey: "",
     }
@@ -55,8 +55,8 @@ export async function GET() {
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ 
-      app_logo: "/logo-schoolpro.png",
-      platform_name: "SchoolPro",
+      app_logo: "/logo-bisnispro.png",
+      platform_name: "BisnisPro",
     })
   }
 }

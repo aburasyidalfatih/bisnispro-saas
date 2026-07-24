@@ -81,7 +81,7 @@ export function EmailTab({ form, setForm, handleSaveBatch, saving }: EmailTabPro
           </div>
           <div className="space-y-2">
             <Label>Email Pengirim (From)</Label>
-            <Input value={form.SMTP_FROM} onChange={e => setForm({...form, SMTP_FROM: e.target.value})} placeholder="noreply@schoolpro.id" className="rounded-xl" />
+            <Input value={form.SMTP_FROM} onChange={e => setForm({...form, SMTP_FROM: e.target.value})} placeholder="noreply@bisnispro.id" className="rounded-xl" />
           </div>
           <Button className="w-full gap-2 btn-gradient text-white border-0 rounded-xl mt-2 flex items-center justify-center h-10 px-4" onClick={() => handleSaveBatch(['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'SMTP_FROM'])} disabled={saving}>
             <Save className="h-4 w-4" /> Simpan SMTP

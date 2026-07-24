@@ -59,7 +59,7 @@ export function ThemeUploadModal({ trigger }: ThemeUploadModalProps) {
 
       toast({
         title: "Tema Berhasil Diupload!",
-        description: `Tema ${result.theme.name} siap digunakan oleh sekolah.`,
+        description: `Tema ${result.theme.name} siap digunakan oleh perusahaan.`,
       })
       
       setOpen(false)

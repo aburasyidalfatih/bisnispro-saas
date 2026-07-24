@@ -44,7 +44,7 @@ export default function DashboardPage() {
   const chartData = stats?.chartData || []
 
   const statCards = [
-    { label:"Total Siswa Aktif", value: stats?.studentCount ??"—", icon: GraduationCap, gradient:"from-blue-500/10 to-cyan-500/10", iconColor:"text-blue-600 dark:text-blue-400" },
+    { label:"Total Klien Aktif", value: stats?.studentCount ??"—", icon: GraduationCap, gradient:"from-blue-500/10 to-cyan-500/10", iconColor:"text-blue-600 dark:text-blue-400" },
     { label:"Pendapatan", value: stats?.totalRevenue ? `Rp ${stats.totalRevenue.toLocaleString("id-ID")}` :"Rp 0", icon: CreditCard, gradient:"from-emerald-500/10 to-teal-500/10", iconColor:"text-emerald-600 dark:text-emerald-400" },
     { label:"Tunggakan", value: stats?.totalDue ? `Rp ${stats.totalDue.toLocaleString("id-ID")}` :"Rp 0", icon: AlertTriangle, gradient:"from-amber-500/10 to-orange-500/10", iconColor:"text-amber-600 dark:text-amber-400" },
     { label:"Total Pengguna", value: stats?.userCount ??"—", icon: Users, gradient:"from-violet-500/10 to-purple-500/10", iconColor:"text-violet-600 dark:text-violet-400" },
@@ -64,10 +64,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isAdminRole) {
-      if (currentRole ==="guru") {
+      if (currentRole ==="staf") {
         router.replace("/panel-gtk")
-      } else if (currentRole ==="siswa") {
-        router.replace("/siswa")
+      } else if (currentRole ==="klien") {
+        router.replace("/klien")
       } else {
         router.replace("/ortu")
       }
@@ -92,7 +92,7 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold tracking-tight">
           Selamat datang, {session?.user?.name} 👋
         </h1>
-        <p className="text-muted-foreground mt-1">Berikut ringkasan aktivitas lembaga Anda.</p>
+        <p className="text-muted-foreground mt-1">Berikut ringkasan aktivitas bisnis Anda.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -154,7 +154,7 @@ export default function DashboardPage() {
               {[
                 { label:"Notifikasi Belum Dibaca", value: stats?.notifCount ?? 0, icon: Bell, color:"text-amber-600 bg-amber-500/10" },
                 { label:"Aktivitas Tercatat", value: stats?.auditCount ?? 0, icon: BarChart3, color:"text-violet-600 bg-violet-500/10" },
-                { label:"Total Siswa Aktif", value: stats?.studentCount ?? 0, icon: GraduationCap, color:"text-blue-600 bg-blue-500/10" },
+                { label:"Total Klien Aktif", value: stats?.studentCount ?? 0, icon: GraduationCap, color:"text-blue-600 bg-blue-500/10" },
                 { label:"Total Pengguna Sistem", value: stats?.userCount ?? 0, icon: Users, color:"text-emerald-600 bg-emerald-500/10" },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between">

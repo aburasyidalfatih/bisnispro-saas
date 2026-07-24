@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     if (waNumbersSetting && waNumbersSetting.value) {
       const numbers = waNumbersSetting.value.split(",").map(n => n.trim()).filter(n => n);
       
-      const message = `🚨 *SECURITY ALERT - SCHOOLPRO WAF* 🚨\n\n` +
+      const message = `🚨 *SECURITY ALERT - BISNISPRO WAF* 🚨\n\n` +
         `Terdeteksi serangan siber ke sistem:\n` +
         `- *Jenis*: ${attackType}\n` +
         `- *IP*: ${ipAddress}\n` +

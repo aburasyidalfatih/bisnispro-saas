@@ -1,24 +1,24 @@
-# Dokumen Laporan Audit Enterprise Produksi: SchoolPro SaaS
+# Dokumen Laporan Audit Enterprise Produksi: BisnisPro SaaS
 
 > [!IMPORTANT]
-> Laporan ini disusun oleh **Principal Enterprise Architect & Security Auditor** untuk mengevaluasi kesiapan platform SchoolPro SaaS menghadapi **Massive-Scale Multi-tenant** (Ribuan hingga puluhan ribu sekolah).
+> Laporan ini disusun oleh **Principal Enterprise Architect & Security Auditor** untuk mengevaluasi kesiapan platform BisnisPro SaaS menghadapi **Massive-Scale Multi-tenant** (Ribuan hingga puluhan ribu perusahaan).
 
 ## 1. Executive Summary (Ringkasan Eksekutif)
 
 - **Enterprise Readiness Score: 4/10**
-  Saat ini arsitektur SchoolPro sudah modern secara stack (Next.js App Router, Prisma), namun belum memiliki infrastruktur tingkat *Enterprise* yang disiapkan untuk menampung *load* masif (belum ada Message Queue terpisah dan RLS Database yang memadai di Production/Docker).
+  Saat ini arsitektur BisnisPro sudah modern secara stack (Next.js App Router, Prisma), namun belum memiliki infrastruktur tingkat *Enterprise* yang disiapkan untuk menampung *load* masif (belum ada Message Queue terpisah dan RLS Database yang memadai di Production/Docker).
 
 - **Critical Scaling Bottlenecks:**
   1. **Asynchronous Task Anti-Pattern:** Mem-bypass *message queue* (Inngest) dan menjalankan *background jobs* (Import CSV, Bulk WA) secara *fire-and-forget* (Promises) di dalam Edge/Node.js API Route. Ini akan menyebabkan *Event Loop Blocking*, memori bocor (OOM), dan *Silent Task Failures*.
-  2. **Ketiadaan Database Row Level Security (RLS):** Keamanan *multi-tenant* sepenuhnya bergantung pada lapisan aplikasi (klausul `where: { tenantId }` di Prisma). Jika satu baris kode luput/bug, kebocoran data antar sekolah (*Cross-Tenant Data Leak*) pasti terjadi.
+  2. **Ketiadaan Database Row Level Security (RLS):** Keamanan *multi-tenant* sepenuhnya bergantung pada lapisan aplikasi (klausul `where: { tenantId }` di Prisma). Jika satu baris kode luput/bug, kebocoran data antar perusahaan (*Cross-Tenant Data Leak*) pasti terjadi.
   3. **Connection Exhaustion:** Tanpa konfigurasi *Connection Pooler* (seperti PgBouncer) secara lokal di VPS Docker, lonjakan trafik serentak (misal: pengumuman PPDB atau Rapor) akan menghabiskan batas koneksi PostgreSQL, menyebabkan *error* `too many clients already`.
 
 ## 2. Mass-Scale Architecture Audit (Tabel Audit Enterprise)
 
 | Kategori | Temuan Saat Ini | Tingkat Risiko | Dampak Skalabilitas |
 | :--- | :--- | :--- | :--- |
-| **Hyper-Tenant Isolation & RLS** | Isolasi tenant hanya dikelola di level ORM (Prisma). PostgreSQL native RLS belum dikonfigurasi. | **Kritis (High)** | Jika terjadi *human error* di kode, data sekolah A dapat terbaca oleh sekolah B. |
-| **Connection Pooling & Caching** | Terhubung langsung ke DB tanpa PgBouncer di layer VPS. Mengandalkan koneksi ORM langsung. | **Tinggi (High)** | Terjadinya *Connection Timeout* saat puluhan ribu siswa mengakses Rapor/PPDB bersamaan. |
+| **Hyper-Tenant Isolation & RLS** | Isolasi tenant hanya dikelola di level ORM (Prisma). PostgreSQL native RLS belum dikonfigurasi. | **Kritis (High)** | Jika terjadi *human error* di kode, data perusahaan A dapat terbaca oleh perusahaan B. |
+| **Connection Pooling & Caching** | Terhubung langsung ke DB tanpa PgBouncer di layer VPS. Mengandalkan koneksi ORM langsung. | **Tinggi (High)** | Terjadinya *Connection Timeout* saat puluhan ribu klien mengakses Rapor/PPDB bersamaan. |
 | **Async & Background Processing** | Modul berat (Import CSV, Notifikasi WA) menggunakan *fire-and-forget* (Bypass Inngest karena limitasi Docker). | **Kritis (High)** | Pekerjaan berat terhenti di tengah jalan tanpa jejak saat container di-*restart* atau API menabrak batas batas *timeout*. |
 | **Rate Limiting & Security** | *Rate limiting* mendasar, namun belum menggunakan isolasi proteksi redis per-tenant tingkat *Edge/Middleware*. | **Sedang (Medium)** | Rentan *DDoS* level aplikasi dan *Brute Force* login/OTP. |
 | **Edge Computing & RSC** | Penggunaan *Server Components* sudah baik, namun banyak modul berat membebani *Node Server* alih-alih di-*cache*. | **Rendah (Low)** | *Latency* tinggi untuk aksi ringan yang sebenarnya bisa di-*cache* memori. |
@@ -26,7 +26,7 @@
 ## 3. Deep Dive & Actionable Recommendations (Analisis Mendalam)
 
 ### A. Bahaya Laten Asynchronous Process di Node.js
-Menjalankan *long-running tasks* seperti *import* data ribuan siswa menggunakan `Promise` tanpa antrean (queue) adalah malapraktik di arsitektur *Enterprise*.
+Menjalankan *long-running tasks* seperti *import* data ribuan klien menggunakan `Promise` tanpa antrean (queue) adalah malapraktik di arsitektur *Enterprise*.
 
 > [!WARNING]
 > Jika server menerima trafik besar, *Event Loop* Node.js akan terblokir oleh proses CSV/WA, membuat *response time* API lain melambat tajam atau *timeout*.
@@ -100,7 +100,7 @@ Langkah taktis yang wajib segera dieksekusi oleh tim Engineering:
 > [!CAUTION]
 > **Keputusan Profesional: NO-GO UNTUK LOAD 1.000 TENANT SERENTAK BESOK.**
 
-Arsitektur saat ini akan **HANCUR/TUMBANG** jika puluhan *tenant* (*schools*) mulai menggunakan fitur sinkron tugas berat (seperti import data siswa massal atau pengiriman tagihan SPP ke ribuan wali murid via WA) dalam waktu yang persis bersamaan. Kelumpuhan ini dipicu karena antrean (*background queue*) dimatikan/di-bypass di lingkungan produksi VPS, memaksa *Web Server* memproses semuanya secara *blocking*.
+Arsitektur saat ini akan **HANCUR/TUMBANG** jika puluhan *tenant* (*schools*) mulai menggunakan fitur sinkron tugas berat (seperti import data klien massal atau pengiriman tagihan SPP ke ribuan wali murid via WA) dalam waktu yang persis bersamaan. Kelumpuhan ini dipicu karena antrean (*background queue*) dimatikan/di-bypass di lingkungan produksi VPS, memaksa *Web Server* memproses semuanya secara *blocking*.
 
 **Investasi Infrastruktur Terpenting:**
-Prioritaskan alokasi *engineering* minggu ini semata-mata untuk mengintegrasikan ulang arsitektur *Message Queue* lokal (seperti BullMQ dengan Redis) dan memisahkan kontainer *Web Service* dengan kontainer *Worker Service*. Setelah dua pembenahan krusial ini selesai, SchoolPro akan langsung *scalable* untuk menampung puluhan ribu sekolah tanpa isu kinerja.
+Prioritaskan alokasi *engineering* minggu ini semata-mata untuk mengintegrasikan ulang arsitektur *Message Queue* lokal (seperti BullMQ dengan Redis) dan memisahkan kontainer *Web Service* dengan kontainer *Worker Service*. Setelah dua pembenahan krusial ini selesai, BisnisPro akan langsung *scalable* untuk menampung puluhan ribu perusahaan tanpa isu kinerja.

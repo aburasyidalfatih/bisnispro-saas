@@ -40,12 +40,12 @@ export function TenantMap() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-primary" /> Peta Sebaran Sekolah
+            <MapPin className="h-5 w-5 text-primary" /> Peta Sebaran Perusahaan
           </CardTitle>
           <div className="flex gap-4 text-xs">
             <div className="flex items-center gap-1.5">
               <span className="h-3 w-3 rounded-full bg-emerald-500" />
-              <span className="text-muted-foreground">Sekolah Aktif ({tenantCount})</span>
+              <span className="text-muted-foreground">Perusahaan Aktif ({tenantCount})</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="h-3 w-3 rounded-full bg-amber-500" />

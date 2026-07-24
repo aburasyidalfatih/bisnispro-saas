@@ -7,8 +7,8 @@ export default async function PublicLayout({ children }: { children: React.React
     where: { key: { in: ["app_logo", "platform_name"] } },
   })
 
-  let appLogo = "/logo-schoolpro.png"
-  let platformName = "SchoolPro"
+  let appLogo = "/logo-bisnispro.png"
+  let platformName = "BisnisPro"
 
   settings.forEach((s) => {
     if (s.key === "app_logo" && s.value) appLogo = s.value

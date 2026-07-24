@@ -44,7 +44,7 @@ export function ActionModal({
           <div className="space-y-3 py-4">
             <Label>Alasan {actionType === "REVISION" ? "Revisi" : "Penolakan"} (Wajib)</Label>
             <Textarea 
-              placeholder="Tulis alasan secara detail agar sekolah dapat memperbaikinya..." 
+              placeholder="Tulis alasan secara detail agar perusahaan dapat memperbaikinya..." 
               value={adminMessage}
               onChange={(e) => setAdminMessage(e.target.value)}
               className="min-h-[100px]"
@@ -97,7 +97,7 @@ export function BulkActionModal({
       <DialogContent className="glass border-0">
         <DialogHeader>
           <DialogTitle>
-            Konfirmasi Masal: {actionType === "APPROVED" ? "Setujui" : actionType === "REVISION" ? "Revisi" : actionType === "DELETE" ? "Hapus" : actionType === "RESEND_EMAIL" ? "Kirim Ulang Email" : "Tolak"} ({selectedIds.length} Sekolah)
+            Konfirmasi Masal: {actionType === "APPROVED" ? "Setujui" : actionType === "REVISION" ? "Revisi" : actionType === "DELETE" ? "Hapus" : actionType === "RESEND_EMAIL" ? "Kirim Ulang Email" : "Tolak"} ({selectedIds.length} Perusahaan)
           </DialogTitle>
           <DialogDescription>
             {actionType === "DELETE" 

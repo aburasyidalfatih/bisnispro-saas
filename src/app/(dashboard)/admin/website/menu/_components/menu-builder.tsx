@@ -364,7 +364,7 @@ export function MenuBuilder() {
             <div className="space-y-2">
               <Label>Nama Menu / Label</Label>
               <Input 
-                placeholder="Contoh: Profil Sekolah" 
+                placeholder="Contoh: Profil Perusahaan" 
                 value={formData.label}
                 onChange={e => setFormData({...formData, label: e.target.value})}
               />
@@ -378,7 +378,7 @@ export function MenuBuilder() {
                 onChange={e => setFormData({...formData, url: e.target.value})}
                 disabled={editingMenu?.isSystem && editingMenu?.url === "/"}
               />
-              <p className="text-xs text-muted-foreground">Gunakan "/" untuk beranda, atau awali dengan "/" untuk halaman internal (contoh: /fasilitas).</p>
+              <p className="text-xs text-muted-foreground">Gunakan "/" untuk beranda, atau awali dengan "/" untuk halaman internal (contoh: /aset).</p>
             </div>
 
             <div className="space-y-2">
