@@ -1,4 +1,4 @@
-import { db, runWithTenantContext } from "@/lib/db"
+import { db } from "@/lib/db"
 import { unstable_cache } from "next/cache"
 import { revalidateTag } from "next/cache"
 import { normalizeWebsiteMenuTree } from "@/features/website-menu/menu-tree"
@@ -7,8 +7,6 @@ const CACHE_TTL_SECONDS = 60 * 60 // 1 hour
 
 function normalizeInactiveCustomTheme<T extends { customThemeId: string | null; customTheme: any; template?: string }>(tenant: T | null): T | null {
   if (!tenant) return null
-
-  // Jika customThemeId terisi, tapi data customTheme tidak ditemukan (null/dihapus) atau statusnya non-aktif (isActive === false)
   if (tenant.customThemeId && (!tenant.customTheme || tenant.customTheme.isActive === false)) {
     return {
       ...tenant,
@@ -17,13 +15,17 @@ function normalizeInactiveCustomTheme<T extends { customThemeId: string | null; 
       template: tenant.template === "custom" ? "default" : tenant.template,
     }
   }
-
   return tenant
 }
 
-export async function clearTenantCache(slug: string) {
+export async function clearTenantCache(slug: string, tag?: string) {
   try {
+    // @ts-ignore
     revalidateTag(`tenant-${slug}`)
+    if (tag) {
+      // @ts-ignore
+      revalidateTag(tag)
+    }
   } catch (error) {
     console.error(`Error in clearTenantCache`, String(error))
   }
@@ -95,220 +97,14 @@ export const getTenantHomeData = async (slug: string) => {
             customTheme: true,
             template: true,
             createdAt: true,
-            _count: {
-              select: { staff: true, programs: true, achievements: true }
-            },
-            staff: { orderBy: { sortOrder: 'asc' }, take: 100 },
-            alumni: { where: { isApproved: true }, orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
-            programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 10 },
-            extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
-            facilities: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
-            achievements: { orderBy: [{ order: 'asc' }, { date: 'desc' }], take: 10 },
-            posts: { 
-              where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
-              orderBy: { createdAt: 'desc' }, take: 20,
-              include: { author: { select: { name: true, avatar: true } }, category: true }
-            },
-            events: { orderBy: { createdAt: 'desc' }, take: 6 },
-            documents: { orderBy: { createdAt: 'desc' }, take: 10 },
-            sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
-            partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
-            faqs: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 50 },
-          }
+          },
         })
-        
-        if (tenantHome) {
-          const pengumuman = await db.post.findMany({
-            where: { tenantId: tenantHome.id, status: "PUBLISHED", type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] } },
-            orderBy: { createdAt: 'desc' },
-            take: 4,
-            include: { author: { select: { name: true, avatar: true } }, category: true }
-          });
-          const existingIds = new Set(tenantHome.posts.map(p => p.id));
-          const missing = pengumuman.filter(a => !existingIds.has(a.id));
-          if (missing.length > 0) {
-            tenantHome.posts = [...tenantHome.posts, ...missing];
-          }
-        }
-
         return normalizeInactiveCustomTheme(tenantHome)
-      } catch (e) {
-        console.error("Fallback getTenantHomeData due to schema error:", e)
-        const tenantHome = await db.tenant.findUnique({
-          where: { slug },
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            gallery: true,
-            about: true,
-            settings: true,
-            customThemeId: true,
-            customTheme: true,
-            template: true,
-            createdAt: true,
-            _count: {
-              select: { staff: true, programs: true, achievements: true }
-            },
-            staff: { orderBy: { sortOrder: 'asc' }, take: 100 },
-            alumni: { orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }], take: 15 },
-            programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 10 },
-            extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
-            facilities: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }], take: 15 },
-            achievements: { orderBy: [{ order: 'asc' }, { date: 'desc' }], take: 10 },
-            posts: { 
-              where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
-              orderBy: { createdAt: 'desc' }, take: 20,
-              include: { author: { select: { name: true, avatar: true } } }
-            },
-            events: { orderBy: { createdAt: 'desc' }, take: 6 },
-            documents: { orderBy: { createdAt: 'desc' }, take: 10 },
-            sliders: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
-            partnerships: { where: { isActive: true }, orderBy: { sortOrder: 'asc' }, take: 20 },
-          }
-        })
-        
-        if (tenantHome) {
-          const pengumuman = await db.post.findMany({
-            where: { tenantId: tenantHome.id, status: "PUBLISHED", type: { in: ["PENGUMUMAN", "PENGUMUMAN_SEMUA"] } },
-            orderBy: { createdAt: 'desc' },
-            take: 4,
-            include: { author: { select: { name: true, avatar: true } } }
-          });
-          const existingIds = new Set(tenantHome.posts.map(p => p.id));
-          const missing = pengumuman.filter(a => !existingIds.has(a.id));
-          if (missing.length > 0) {
-            tenantHome.posts = [...tenantHome.posts, ...missing];
-          }
-        }
-
-        return normalizeInactiveCustomTheme(tenantHome)
+      } catch (error) {
+        return null
       }
     },
     [`tenant-home-${slug}`],
-    { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
-  )()
-}
-
-export const getTenantAlumni = async (slug: string) => {
-  return unstable_cache(
-    async () => {
-      try {
-        return await db.tenant.findUnique({
-          where: { slug },
-          select: {
-            id: true,
-            alumni: { where: { isApproved: true }, orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }] },
-          }
-        })
-      } catch (e) {
-        console.error("Fallback getTenantAlumni due to schema error:", e)
-        return await db.tenant.findUnique({
-          where: { slug },
-          select: {
-            id: true,
-            alumni: { orderBy: [{ sortOrder: 'asc' }, { graduationYear: 'desc' }] },
-          }
-        })
-      }
-    },
-    [`tenant-alumni-${slug}`],
-    { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
-  )()
-}
-
-export const getTenantStaff = async (slug: string) => {
-  return unstable_cache(
-    async () => {
-      return db.tenant.findUnique({
-        where: { slug },
-        select: {
-          id: true,
-          staff: { orderBy: { sortOrder: 'asc' } },
-        }
-      })
-    },
-    [`tenant-staff-${slug}`],
-    { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
-  )()
-}
-
-export const getTenantPrograms = async (slug: string) => {
-  return unstable_cache(
-    async () => {
-      return db.tenant.findUnique({
-        where: { slug },
-        select: {
-          id: true,
-          programs: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }] },
-        }
-      })
-    },
-    [`tenant-programs-${slug}`],
-    { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
-  )()
-}
-
-export const getTenantFacilities = async (slug: string) => {
-  return unstable_cache(
-    async () => {
-      return db.tenant.findUnique({
-        where: { slug },
-        select: {
-          id: true,
-          facilities: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }] },
-        }
-      })
-    },
-    [`tenant-facilities-${slug}`],
-    { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
-  )()
-}
-
-export const getTenantExtracurriculars = async (slug: string) => {
-  return unstable_cache(
-    async () => {
-      return db.tenant.findUnique({
-        where: { slug },
-        select: {
-          id: true,
-          extracurriculars: { orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }] },
-        }
-      })
-    },
-    [`tenant-extracurriculars-${slug}`],
-    { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
-  )()
-}
-
-export const getTenantAchievements = async (slug: string) => {
-  return unstable_cache(
-    async () => {
-      return db.tenant.findUnique({
-        where: { slug },
-        select: {
-          id: true,
-          achievements: { orderBy: [{ order: 'asc' }, { date: 'desc' }] },
-        }
-      })
-    },
-    [`tenant-achievements-${slug}`],
-    { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
-  )()
-}
-
-export const getTenantGallery = async (slug: string) => {
-  return unstable_cache(
-    async () => {
-      return db.tenant.findUnique({
-        where: { slug },
-        select: {
-          id: true,
-          gallery: true,
-        }
-      })
-    },
-    [`tenant-gallery-${slug}`],
     { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
   )()
 }
@@ -321,7 +117,7 @@ export const getTenantPosts = async (slug: string) => {
         select: {
           id: true,
           posts: { 
-            where: { status: "PUBLISHED", type: { notIn: ["PENGUMUMAN_GTK", "PENGUMUMAN_ORTU", "PENGUMUMAN_SISWA"] } }, 
+            where: { status: "PUBLISHED" }, 
             orderBy: { createdAt: 'desc' },
             include: { 
               author: { 
@@ -329,11 +125,8 @@ export const getTenantPosts = async (slug: string) => {
                   name: true, 
                   avatar: true, 
                   bio: true,
-                  id: true,
-                  staffProfiles: {
-                    select: { id: true, name: true, bio: true, imageUrl: true, tenantId: true, instagram: true, facebook: true, youtube: true, tiktok: true, linkedin: true, twitter: true, pinterest: true }
-                  }
-                } 
+                  id: true
+                }
               }, 
               category: true 
             }
@@ -358,7 +151,7 @@ export const getTenantProfileData = async (slug: string) => {
           about: true,
           createdAt: true,
           _count: {
-            select: { staff: true, alumni: true, programs: true, extracurriculars: true }
+            select: { }
           }
         }
       })
@@ -367,3 +160,7 @@ export const getTenantProfileData = async (slug: string) => {
     { tags: [`tenant-${slug}`], revalidate: CACHE_TTL_SECONDS }
   )()
 }
+
+
+
+

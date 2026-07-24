@@ -1,10 +1,7 @@
 import { db } from "@/lib/db"
 import bcrypt from "bcryptjs"
 
-export interface ImportStudentDTO {
-  tenantId: string
-  students: Array<Record<string, any>>
-}
+
 
 export interface ImportUserDTO {
   tenantId: string
@@ -18,35 +15,7 @@ export type ImportResultDTO = {
 }
 
 export class ImportService {
-  static async importStudents(data: ImportStudentDTO): Promise<ImportResultDTO> {
-    try {
-      const { tenantId, students } = data
 
-      if (!students || students.length === 0) {
-        return { success: false, error: "Data siswa kosong" }
-      }
-
-      const mappedStudents = students.map((row) => ({
-        tenantId,
-        name: row["Nama Lengkap"] || "Tanpa Nama",
-        nis: row["NIS"] || null,
-        nisn: row["NISN"] || null,
-        email: row["Email (Opsional)"] || null,
-        gender: row["Gender (L/P)"]?.toUpperCase() === "P" ? "P" : "L", // default L
-        isActive: true
-      }))
-
-      const result = await db.student.createMany({
-        data: mappedStudents,
-        skipDuplicates: true 
-      })
-
-      return { success: true, count: result.count }
-    } catch (error) {
-      console.error("Failed to import students:", error)
-      return { success: false, error: "Gagal mengimpor data siswa" }
-    }
-  }
 
   static async importUsers(data: ImportUserDTO): Promise<ImportResultDTO> {
     try {

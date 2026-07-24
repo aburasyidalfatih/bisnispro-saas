@@ -99,7 +99,7 @@ export default function RevenuePage() {
                     <Tooltip 
                       cursor={{fill: 'rgba(79, 70, 229, 0.05)'}}
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
-                      formatter={(value: number) => [`Rp ${value.toLocaleString("id-ID")}`, 'Pendapatan']}
+                      formatter={(value: any) => [`Rp ${value.toLocaleString("id-ID")}`, 'Pendapatan']}
                     />
                     <Bar 
                       dataKey="total" 
@@ -122,3 +122,4 @@ export default function RevenuePage() {
     </div>
   )
 }
+

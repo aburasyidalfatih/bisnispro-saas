@@ -127,7 +127,7 @@ export async function updateWebsiteData(tenantId: string, data: Record<string, a
     if (settings.studentCount !== undefined) {
       try {
         await db.tenantApplication.update({
-          where: { schoolSlug: updated.slug },
+          where: { businessSlug: updated.slug },
           data: { studentCount: Number(settings.studentCount) }
         })
       } catch (error) {
@@ -275,3 +275,4 @@ export async function changeSubdomain(tenantId: string, newSlug: string, userId:
 
   return { message: "Subdomain berhasil diubah" }
 }
+

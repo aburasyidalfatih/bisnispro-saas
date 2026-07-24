@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
-import { getTenantLayoutData, getTenantStaff, getTenantPosts } from "@/features/tenant/services/tenant-modular.service"
+import { getTenantLayoutData, getTenantPosts } from "@/features/tenant/services/tenant-modular.service"
+import { db } from "@/lib/db"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
@@ -17,16 +18,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
   
-  const staffData = await getTenantStaff(slug)
+  const teamMembersData = await db.teamMember.findMany({ where: { tenant: { slug } } })
   const staffSlugDecoded = decodeURIComponent(id)
-  const staff = (staffData?.staff || []).find((s: any) => 
+  const staff = (teamMembersData || []).find((s: any) => 
     s.id === id || slugify(s.name) === staffSlugDecoded
   )
   if (!staff) return {}
   
   return {
     title: `${staff.name} - ${tenant.name}`,
-    description: (staff.bio ? staff.bio.replace(/<[^>]*>?/gm, '') : `Profil ${staff.name} (${staff.role}) di ${tenant.name}`),
+    description: (staff.bio ? staff.bio.replace(/<[^>]*>?/gm, '') : `Profil ${staff.name} (${staff.position}) di ${tenant.name}`),
     alternates: {
       canonical: `/tim/${staff.id}`,
     },
@@ -38,9 +39,9 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
-  const staffData = await getTenantStaff(slug)
+  const teamMembersData = await db.teamMember.findMany({ where: { tenant: { slug } } })
   const staffSlugDecoded = decodeURIComponent(id)
-  const staff = (staffData?.staff || []).find((s: any) => 
+  const staff = (teamMembersData || []).find((s: any) => 
     s.id === id || slugify(s.name) === staffSlugDecoded
   )
   if (!staff) notFound()
@@ -48,10 +49,10 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering
-  if (tenant.customThemeId && tenant.customTheme?.staffDetailHtml) {
+  if (tenant.customThemeId && tenant.customTheme && 'teamDetailHtml' in tenant.customTheme) {
     const { renderCustomTheme } = await import("@/app/site/[slug]/_themes/custom-renderer")
     const rendered = renderCustomTheme({
-      templateHtml: tenant.customTheme.staffDetailHtml,
+      templateHtml: (tenant.customTheme as any).teamDetailHtml,
       layoutHtml: tenant.customTheme.layoutHtml,
       customCss: tenant.customTheme.customCss,
       customJs: tenant.customTheme.customJs,
@@ -62,10 +63,6 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
   
   // Get articles written by this staff member
   let articles: any[] = []
-  if (staff.userId) {
-    const postsData = await getTenantPosts(slug)
-    articles = (postsData?.posts || []).filter((p: any) => p.authorId === staff.userId)
-  }
 
   return (
     <div className="bg-background min-h-screen pb-20">
@@ -114,7 +111,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
              <div className="flex-1 text-center md:text-left pt-2 md:pt-6">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary font-bold tracking-widest uppercase text-xs mb-5 border border-primary/20 backdrop-blur-md shadow-sm">
                    <Briefcase className="h-3.5 w-3.5" />
-                   {staff.role}
+                   {staff.position}
                 </div>
                 <h1 className="text-4xl md:text-6xl font-black text-foreground leading-tight tracking-tighter mb-8 drop-shadow-sm break-words hyphens-auto">
                    {staff.name}
@@ -133,18 +130,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                        <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                      </a>
                    )}
-                   {staff.youtube && (
-                     <a href={staff.youtube} target="_blank" rel="noreferrer" className="flex items-center justify-center w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/icon">
-                       <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
-                     </a>
-                   )}
-                   {staff.tiktok && (
-                     <a href={staff.tiktok} target="_blank" rel="noreferrer" className="flex items-center justify-center w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/icon">
-                       <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                         <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                       </svg>
-                     </a>
-                   )}
+
                    {staff.linkedin && (
                      <a href={staff.linkedin} target="_blank" rel="noreferrer" className="flex items-center justify-center w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/icon">
                        <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
@@ -155,11 +141,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                        <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
                      </a>
                    )}
-                   {staff.pinterest && (
-                     <a href={staff.pinterest} target="_blank" rel="noreferrer" className="flex items-center justify-center w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_14px_0_rgb(0,0,0,0.05)] group/icon">
-                       <svg className="h-4 w-4 text-slate-400 group-hover/icon:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 22s-2-5.5-2-9c0-1.6 1.4-3 3-3s3 1.4 3 3c0 2.2-1.7 4-3.5 4-2 0-3.5-1.5-3.5-3.5C9 10 10.5 8 12.5 8 15 8 17 10 17 12.5 17 16 15 19.5 12 22z"/></svg>
-                     </a>
-                   )}
+
                 </div>
              </div>
           </div>
@@ -237,7 +219,7 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px] translate-y-1/3 -translate-x-1/3"></div>
                  
                  <h4 className="font-black text-xl mb-8 text-foreground flex items-center gap-3 relative z-10">
-                    Informasi Akademik
+                    Informasi Tim
                  </h4>
                  
                  <ul className="space-y-8 relative z-10">
@@ -246,20 +228,8 @@ export default async function GTKDetailPage({ params }: { params: Promise<{ slug
                           <BookOpen className="h-6 w-6" />
                        </div>
                        <div className="flex-1 pt-1">
-                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Mata Pelajaran</p>
-                          <p className="font-bold text-foreground text-base leading-tight">{staff.subject || "Tim Kelas / Umum"}</p>
-                       </div>
-                    </li>
-                    
-                    <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-                    
-                    <li className="flex items-start gap-5 group/item">
-                       <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-primary shrink-0 shadow-sm group-hover/item:bg-primary/5 group-hover/item:border-primary/20 transition-all duration-300">
-                          <GraduationCap className="h-6 w-6" />
-                       </div>
-                       <div className="flex-1 pt-1">
-                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Pendidikan</p>
-                          <p className="font-bold text-foreground text-base leading-tight">{staff.education || "S1 Pendidikan"}</p>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Departemen</p>
+                          <p className="font-bold text-foreground text-base leading-tight">Umum</p>
                        </div>
                     </li>
                  </ul>

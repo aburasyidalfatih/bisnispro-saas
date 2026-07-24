@@ -94,7 +94,7 @@ export async function getTenantsForSuperAdmin(params: {
         id: t.id, name: t.name, slug: t.slug, domain: t.domain,
         plan: t.plan, theme: t.theme, isActive: t.isActive, createdAt: t.createdAt,
         retentionStatus: t.retentionStatus,
-        studentQuota: t.studentQuota, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
+        studentQuota: 0, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
         userCount: t._count.users, owner: t.users[0]?.user || null,
         storageUsed: storageMap.get(t.id) || 0,
         isContactSynced: !!(typeof t.settings === "string" ? JSON.parse(t.settings) : t.settings || {})?.googleContactId
@@ -139,7 +139,7 @@ export async function getTenantsForSuperAdmin(params: {
     id: t.id, name: t.name, slug: t.slug, domain: t.domain,
     plan: t.plan, theme: t.theme, isActive: t.isActive, createdAt: t.createdAt,
     retentionStatus: t.retentionStatus,
-    studentQuota: t.studentQuota, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
+    studentQuota: 0, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
     userCount: t._count.users, owner: t.users[0]?.user || null,
     storageUsed: storageMap.get(t.id) || 0,
     isContactSynced: !!(typeof t.settings === "string" ? JSON.parse(t.settings) : t.settings || {})?.googleContactId
@@ -157,7 +157,7 @@ export async function updateTenantByAdmin(id: string, data: {
   domain?: string | null
   plan?: string
   isActive?: boolean
-  studentQuota?: number
+  
   aiTokens?: number
 }) {
   try {
@@ -172,7 +172,7 @@ export async function updateTenantByAdmin(id: string, data: {
       domain: data.domain || null,
       plan: data.plan,
       isActive: data.isActive,
-      studentQuota: Number(data.studentQuota || 0),
+      
       aiTokens: Number(data.aiTokens || 0)
     }
 
@@ -221,7 +221,7 @@ export async function deleteTenantByAdmin(tenantId: string) {
   if (existing?.slug) {
     // Hapus aplikasi terkait agar NPSN/slug bisa didaftarkan ulang
     const deletedApps = await db.tenantApplication.findMany({
-      where: { schoolSlug: existing.slug }
+      where: { businessSlug: existing.slug }
     })
     
     for (const app of deletedApps) {
@@ -307,3 +307,4 @@ export async function getPaymentsForSuperAdmin(params: {
     }
   }
 }
+

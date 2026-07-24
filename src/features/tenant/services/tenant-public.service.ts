@@ -35,13 +35,9 @@ export async function invalidatePublicTenantCache(slug: string) {
       revalidatePath(`/site/${slug}/berita`, "page")
       revalidatePath(`/site/${slug}/agenda`, "page")
       revalidatePath(`/site/${slug}/gallery`, "page")
-      revalidateTag(`tenant-${slug}`)
-      revalidateTag(`tenant-layout-${slug}`)
-      revalidateTag(`tenant-home-${slug}`)
       if (tenant) {
-        revalidateTag(`tenant-${tenant.id}`)
+        // no-op
       }
-      revalidateTag(`tenant-public`)
     } catch (e) {
       console.error("Error in Next.js revalidate API:", e)
     }

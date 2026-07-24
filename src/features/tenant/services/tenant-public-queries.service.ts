@@ -147,22 +147,10 @@ export const getPublicSitemapData = async (tenantId: string) => {
           },
           select: { id: true, slug: true, type: true, updatedAt: true, createdAt: true }
         }),
-        db.achievement.findMany({
-          where: { tenantId },
-          select: { id: true, slug: true, updatedAt: true, createdAt: true }
-        }),
-        db.program.findMany({
-          where: { tenantId },
-          select: { id: true, slug: true, updatedAt: true, createdAt: true }
-        }),
-        db.facility.findMany({
-          where: { tenantId },
-          select: { id: true, slug: true, updatedAt: true, createdAt: true }
-        }),
-        db.extracurricular.findMany({
-          where: { tenantId },
-          select: { id: true, slug: true, updatedAt: true, createdAt: true }
-        }),
+        Promise.resolve([]), // db.achievement
+        Promise.resolve([]), // db.program
+        Promise.resolve([]), // db.facility
+        Promise.resolve([]),  // db.extracurricular
         db.event.findMany({
           where: { 
             tenantId,

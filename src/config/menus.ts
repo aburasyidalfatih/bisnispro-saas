@@ -304,3 +304,6 @@ export function getSuperAdminMenu(pendingPayments = 0): MenuSection[] {
   ]
 }
 
+
+export function getGTKMenu(basePath: string): MenuSection[] { return []; }
+export function getMemberMenu(basePath: string): MenuSection[] { return []; }

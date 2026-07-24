@@ -124,7 +124,7 @@ export function AiInfraTab() {
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e2e8f0" />
                     <XAxis type="number" />
                     <YAxis dataKey="name" type="category" width={120} tick={{ fontSize: 11 }} />
-                    <Tooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} formatter={(value: number) => [formatNumber(value), 'Tokens']} />
+                    <Tooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} formatter={(value: any) => [formatNumber(value), 'Tokens']} />
                     <Bar dataKey="tokens" radius={[0, 4, 4, 0]}>
                       {aiInfraStats.topAiTenants.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -166,9 +166,9 @@ export function AiInfraTab() {
                       outerRadius={100}
                       paddingAngle={5}
                       dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                     />
-                    <Tooltip formatter={(value: number) => [formatNumber(value), 'Pesan']} />
+                    <Tooltip formatter={(value: any) => [formatNumber(value), 'Pesan']} />
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>
@@ -185,3 +185,5 @@ export function AiInfraTab() {
     </div>
   )
 }
+
+

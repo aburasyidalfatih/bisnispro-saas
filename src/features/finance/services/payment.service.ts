@@ -254,111 +254,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
           })
           .catch(err => console.error("Gagal kirim notifikasi super admin:", err))
       )
-      if (payment.plan === "WALLET_TOPUP") {
-        await retryAsync(
-          async () => {
-             const metadata = payment.metadata as any
-             if (!metadata?.walletId) throw new Error("Wallet ID not found in payment metadata")
-             
-             const wallet = await db.walletAccount.findUnique({ where: { id: metadata.walletId }})
-             if (!wallet) throw new Error("Wallet not found")
-             
-             // Gunakan transaksi untuk menjamin integritas uang & log
-             await db.$transaction(async (tx) => {
-               // 1. Update Wallet Balance atomically
-              const updatedWallet = await tx.walletAccount.update({
-                where: { id: wallet.id },
-                data: { balance: { increment: payment.amount } }
-              })
-              
-              // 2. Insert WalletTransaction
-              await tx.walletTransaction.create({
-                data: {
-                  walletId: wallet.id,
-                  tenantId: payment.tenantId,
-                  type: "DEPOSIT",
-                  amount: payment.amount,
-                  balanceBefore: updatedWallet.balance - payment.amount,
-                  balanceAfter: updatedWallet.balance,
-                  referenceId: payment.reference,
-                  description: "Top-Up via Tripay",
-                  status: "SUCCESS"
-                }
-              })
-             })
-
-             // 3. Notify Admin
-             const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service");
-             await notifyTenantAdmins(payment.tenantId, {
-               title: "Top-Up Saldo Berhasil",
-               message: `Wali murid telah berhasil melakukan top-up saldo sebesar Rp ${payment.amount.toLocaleString("id-ID")}.`,
-               type: "success"
-             })
-          },
-          "topup-wallet"
-        )
-      } else if (payment.plan === "INVOICE") {
-        await retryAsync(
-          async () => {
-             const metadata = payment.metadata as any
-             if (!metadata?.invoiceId) throw new Error("Invoice ID not found in payment metadata")
-             
-             const invoice = await db.invoice.findUnique({ 
-               where: { id: metadata.invoiceId },
-               include: { student: { select: { name: true } } }
-             })
-             if (!invoice) throw new Error("Invoice not found")
-
-             await db.$transaction(async (tx) => {
-               // Update Invoice to PAID
-               await tx.invoice.update({
-                 where: { id: invoice.id },
-                 data: { 
-                   status: "PAID",
-                   amountPaid: invoice.amount,
-                   amountDue: 0,
-                 }
-               })
-
-               // 1. Rekam jejak pembayaran invoice
-               await tx.invoicePayment.create({
-                 data: {
-                   invoiceId: invoice.id,
-                   tenantId: invoice.tenantId,
-                   amount: payment.amount,
-                   method: "TRIPAY",
-                   status: "VERIFIED",
-                   reference: payment.reference,
-                   verifiedAt: new Date(),
-                   paidAt: new Date(),
-                   notes: "Pembayaran otomatis via Tripay",
-                 }
-               })
-
-               // 2. Rekam Pemasukan di Arus Kas (Cashflow) Sekolah
-               await tx.cashflow.create({
-                 data: {
-                   tenantId: invoice.tenantId,
-                   type: "INCOME",
-                   category: "SPP", 
-                   amount: payment.amount,
-                   description: `${invoice.title} — ${invoice.student?.name || 'Siswa'}`,
-                   referenceId: invoice.code,
-                 },
-               })
-             })
-
-             // Notify Admin
-             const { notifyTenantAdmins } = await import("@/features/notification/services/notification.service");
-             await notifyTenantAdmins(payment.tenantId, {
-               title: "Pembayaran Tagihan Berhasil",
-               message: `Tagihan '${invoice.title}' senilai Rp ${payment.amount.toLocaleString("id-ID")} telah berhasil dibayar.`,
-               type: "success"
-             })
-          },
-          "pay-invoice"
-        )
-      } else if (payment.plan === "AI_TOKEN_USER") {
+      if (payment.plan === "AI_TOKEN_USER") {
         await retryAsync(
           async () => {
              const metadata = payment.metadata as any
@@ -444,12 +340,8 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
             planId: plan?.id,
           }
 
-          if (isAddon) {
-            // Addon: hanya tambah kuota, JANGAN ubah expiresAt
-            updateData.studentQuota = { increment: (payment.metadata as any)?.studentCount || 0 }
-          } else {
-            // Upgrade/renewal: set kuota dan expiresAt
-            updateData.studentQuota = plan?.maxStudents || 0
+          if (!isAddon) {
+            // Upgrade/renewal: set expiresAt
             if (expiresAt) {
               updateData.expiresAt = expiresAt
             }

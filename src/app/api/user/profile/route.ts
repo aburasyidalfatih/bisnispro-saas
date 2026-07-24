@@ -39,17 +39,7 @@ export async function PUT(req: Request) {
     },
   })
 
-  // Sync to all associated Staff profiles
-  await db.staff.updateMany({
-    where: { userId: session.user.id },
-    data: {
-      name: parsed.data.name,
-      email: parsed.data.email || undefined,
-      phone: parsed.data.phone || null,
-      ...(parsed.data.avatar !== undefined ? { imageUrl: parsed.data.avatar || null } : {}),
-      ...(parsed.data.bio !== undefined ? { bio: parsed.data.bio || null } : {})
-    }
-  })
+
 
   // Invalidate tenant caches so updated avatar reflects on frontend articles/bios immediately
   if (session.user.tenants && Array.isArray(session.user.tenants)) {

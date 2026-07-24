@@ -81,7 +81,7 @@ export async function POST(req: Request) {
         tenantUpdateData.aiTokens = { increment: meta?.aiTokens || 0 }
       } else if (isAddon) {
         tenantUpdateData.plan = payment.plan || "pro"
-        tenantUpdateData.studentQuota = { increment: studentCount }
+        tenantUpdateData.employeeCount = { increment: studentCount }
       } else {
         tenantUpdateData.plan = payment.plan || "pro"
         
@@ -94,8 +94,8 @@ export async function POST(req: Request) {
 
         // Untuk renewal: pertahankan kuota tertinggi (jangan timpa addon)
         if (studentCount > 0) {
-          const currentQuota = payment.tenant.studentQuota || 0
-          tenantUpdateData.studentQuota = Math.max(currentQuota, studentCount)
+          const currentQuota = payment.tenant.employeeCount || 0
+          tenantUpdateData.employeeCount = Math.max(currentQuota, studentCount)
         }
         tenantUpdateData.expiresAt = expiresAt
       }
@@ -234,3 +234,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Terjadi kesalahan saat konfirmasi pembayaran" }, { status: 500 })
   }
 }
+
+
+
+
+
+

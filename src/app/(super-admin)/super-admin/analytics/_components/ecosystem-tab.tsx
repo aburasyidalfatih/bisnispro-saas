@@ -138,7 +138,7 @@ export function EcosystemTab() {
                    <XAxis dataKey="name" />
                    <YAxis tickFormatter={(val) => `Rp ${val / 1000000}M`} />
                    <Tooltip 
-                     formatter={(value: number) => [formatRupiah(value), "Total"]}
+                     formatter={(value: any) => [formatRupiah(value), "Total"]}
                      cursor={{ fill: 'rgba(0,0,0,0.05)' }} 
                    />
                    <Bar dataKey="value" radius={[6, 6, 0, 0]}>
@@ -155,3 +155,4 @@ export function EcosystemTab() {
     </div>
   )
 }
+

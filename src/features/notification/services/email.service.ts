@@ -1,4 +1,5 @@
 import { db } from "@/lib/db"
+// @ts-ignore
 import nodemailer from "nodemailer"
 import { logger } from "@/lib/logger"
 
@@ -183,3 +184,4 @@ export async function processEmailQueueCron() {
 
   return { processed: queues.length, successCount, failCount }
 }
+

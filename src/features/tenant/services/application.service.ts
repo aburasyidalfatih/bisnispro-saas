@@ -16,7 +16,7 @@ async function getPlatformSettings(): Promise<Record<string, string>> {
 }
 
 /**
- * Mengirim notifikasi status pendaftaran (Email & WA) ke pendaftar sekolah.
+ * Mengirim notifikasi status pendaftaran (Email & WA) ke pendaftar bisnis.
  * Dipanggil saat: PENDING (setelah daftar), APPROVED, REVISION, REJECTED.
  */
 export async function sendApplicationNotification(applicationId: string) {
@@ -39,18 +39,18 @@ export async function sendApplicationNotification(applicationId: string) {
     case "PENDING": {
       waEnabled = settings.WA_ENABLE_PENDING !== "false";
       emailEnabled = settings.EMAIL_ENABLE_PENDING !== "false";
-      subject = settings.WA_SUBJECT_PENDING || `Pendaftaran ${app.schoolName} Berhasil Diterima`
+      subject = settings.WA_SUBJECT_PENDING || `Pendaftaran ${app.businessName} Berhasil Diterima`
       const tpl =
         settings.WA_TEMPLATE_PENDING ||
-        `Halo {{adminName}},\n\nSelamat! Formulir pendaftaran sekolah {{schoolName}} telah kami terima dan saat ini sudah masuk ke dalam antrean peninjauan tim kami.\n\nKami akan segera menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih.`
+        `Halo {{adminName}},\n\nSelamat! Formulir pendaftaran bisnis {{businessName}} telah kami terima dan saat ini sudah masuk ke dalam antrean peninjauan tim kami.\n\nKami akan segera menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih.`
       message = tpl
         .replace(/{{adminName}}/g, app.adminName)
-        .replace(/{{schoolName}}/g, app.schoolName)
+        .replace(/{{businessName}}/g, app.businessName)
         
-      wavioTemplateName = settings.WAVIO_TEMPLATE_PENDING || "school_registration_pending"
+      wavioTemplateName = settings.WAVIO_TEMPLATE_PENDING || "business_registration_pending"
       wavioVariables = {
         "1": app.adminName,
-        "2": app.schoolName
+        "2": app.businessName
       }
       break
     }
@@ -58,22 +58,22 @@ export async function sendApplicationNotification(applicationId: string) {
       waEnabled = settings.WA_ENABLE_APPROVED !== "false";
       emailEnabled = settings.EMAIL_ENABLE_APPROVED !== "false";
 
-      const loginUrl = `https://${app.schoolSlug}.${rootDomain}/login`
-      subject = settings.WA_SUBJECT_APPROVED || `Selamat! Pendaftaran ${app.schoolName} Disetujui`
+      const loginUrl = `https://${app.businessSlug}.${rootDomain}/login`
+      subject = settings.WA_SUBJECT_APPROVED || `Selamat! Pendaftaran ${app.businessName} Disetujui`
       const tpl =
         settings.WA_TEMPLATE_APPROVED ||
-        `Halo {{adminName}},\n\nPendaftaran sekolah {{schoolName}} telah disetujui. Anda sekarang dapat mengakses dashboard sekolah menggunakan informasi berikut:\n\nURL Login: {{loginUrl}}\nEmail: {{adminEmail}}\nWA Penanggung Jawab: {{adminPhone}}\n\nSilakan gunakan password yang Anda buat pada saat mendaftar.\n\nTerima kasih.`
+        `Halo {{adminName}},\n\nPendaftaran bisnis {{businessName}} telah disetujui. Anda sekarang dapat mengakses dashboard bisnis menggunakan informasi berikut:\n\nURL Login: {{loginUrl}}\nEmail: {{adminEmail}}\nWA Penanggung Jawab: {{adminPhone}}\n\nSilakan gunakan password yang Anda buat pada saat mendaftar.\n\nTerima kasih.`
       message = tpl
         .replace(/{{adminName}}/g, app.adminName)
-        .replace(/{{schoolName}}/g, app.schoolName)
+        .replace(/{{businessName}}/g, app.businessName)
         .replace(/{{loginUrl}}/g, loginUrl)
         .replace(/{{adminEmail}}/g, app.adminEmail)
         .replace(/{{adminPhone}}/g, app.adminPhone)
         
-      wavioTemplateName = settings.WAVIO_TEMPLATE_APPROVED || "school_registration_approved"
+      wavioTemplateName = settings.WAVIO_TEMPLATE_APPROVED || "business_registration_approved"
       wavioVariables = {
         "1": app.adminName,
-        "2": app.schoolName,
+        "2": app.businessName,
         "3": loginUrl,
         "4": app.adminEmail,
         "5": app.adminPhone
@@ -83,7 +83,7 @@ export async function sendApplicationNotification(applicationId: string) {
     case "REVISION": {
       waEnabled = settings.WA_ENABLE_REVISION !== "false";
       emailEnabled = settings.EMAIL_ENABLE_REVISION !== "false";
-      subject = settings.WA_SUBJECT_REVISION || `Permintaan Revisi Pendaftaran: ${app.schoolName}`
+      subject = settings.WA_SUBJECT_REVISION || `Permintaan Revisi Pendaftaran: ${app.businessName}`
       const revisionUrl = `https://${rootDomain}/revisi-pengajuan/${app.id}`
       const tpl =
         settings.WA_TEMPLATE_REVISION ||
@@ -93,7 +93,7 @@ export async function sendApplicationNotification(applicationId: string) {
         .replace(/{{adminMessage}}/g, app.adminMessage || "")
         .replace(/{{revisionUrl}}/g, revisionUrl)
         
-      wavioTemplateName = settings.WAVIO_TEMPLATE_REVISION || "school_registration_revision"
+      wavioTemplateName = settings.WAVIO_TEMPLATE_REVISION || "business_registration_revision"
       wavioVariables = {
         "1": app.adminName,
         "2": app.adminMessage || "",
@@ -104,19 +104,19 @@ export async function sendApplicationNotification(applicationId: string) {
     case "REJECTED": {
       waEnabled = settings.WA_ENABLE_REJECTED !== "false";
       emailEnabled = settings.EMAIL_ENABLE_REJECTED !== "false";
-      subject = settings.WA_SUBJECT_REJECTED || `Update Pendaftaran: ${app.schoolName}`
+      subject = settings.WA_SUBJECT_REJECTED || `Update Pendaftaran: ${app.businessName}`
       const tpl =
         settings.WA_TEMPLATE_REJECTED ||
-        `Halo {{adminName}},\n\nMohon maaf, pendaftaran sekolah {{schoolName}} belum dapat kami setujui saat ini.\n\nAlasan: {{adminMessage}}\n\nTerima kasih atas minat Anda.`
+        `Halo {{adminName}},\n\nMohon maaf, pendaftaran bisnis {{businessName}} belum dapat kami setujui saat ini.\n\nAlasan: {{adminMessage}}\n\nTerima kasih atas minat Anda.`
       message = tpl
         .replace(/{{adminName}}/g, app.adminName)
-        .replace(/{{schoolName}}/g, app.schoolName)
+        .replace(/{{businessName}}/g, app.businessName)
         .replace(/{{adminMessage}}/g, app.adminMessage || "")
         
-      wavioTemplateName = settings.WAVIO_TEMPLATE_REJECTED || "school_registration_rejected"
+      wavioTemplateName = settings.WAVIO_TEMPLATE_REJECTED || "business_registration_rejected"
       wavioVariables = {
         "1": app.adminName,
-        "2": app.schoolName,
+        "2": app.businessName,
         "3": app.adminMessage || ""
       }
       break
@@ -169,7 +169,7 @@ export async function sendApplicationNotification(applicationId: string) {
 }
 
 /**
- * Mengirim alert WA ke Super Admin dan Mitra Afiliasi ketika ada pendaftaran sekolah baru.
+ * Mengirim alert WA ke Super Admin dan Mitra Afiliasi ketika ada pendaftaran bisnis baru.
  */
 export async function sendNewApplicationAlerts(
   applicationId: string,
@@ -188,18 +188,18 @@ export async function sendNewApplicationAlerts(
     select: { id: true, phone: true, name: true, email: true },
   })
 
-  const defaultAdminTpl = `*PENDAFTARAN SEKOLAH BARU*\n\nSekolah: {{schoolName}}\nAdmin: {{adminName}}\nWA: {{adminPhone}}\nSubdomain: {{schoolSlug}}.${rootDomain}\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`
+  const defaultAdminTpl = `*PENDAFTARAN SEKOLAH BARU*\n\nBisnis: {{businessName}}\nAdmin: {{adminName}}\nWA: {{adminPhone}}\nSubdomain: {{businessSlug}}.${rootDomain}\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`
   const adminMsg = (settings.WA_TEMPLATE_ALERT_SUPERADMIN || defaultAdminTpl)
-    .replace(/{{schoolName}}/g, app.schoolName)
+    .replace(/{{businessName}}/g, app.businessName)
     .replace(/{{adminName}}/g, app.adminName)
     .replace(/{{adminPhone}}/g, app.adminPhone)
-    .replace(/{{schoolSlug}}/g, app.schoolSlug)
+    .replace(/{{businessSlug}}/g, app.businessSlug)
 
   const waEnabledSuperAdmin = settings.WA_ENABLE_ALERT_SUPERADMIN !== "false";
   const emailEnabledSuperAdmin = settings.EMAIL_ENABLE_ALERT_SUPERADMIN !== "false";
   const wavioTplSuperadmin = settings.WAVIO_TEMPLATE_ALERT_SUPERADMIN || "superadmin_alert_new_school"
   const wavioVarsSuperadmin = {
-    "1": app.schoolName,
+    "1": app.businessName,
     "2": app.adminPhone
   }
 
@@ -217,7 +217,7 @@ export async function sendNewApplicationAlerts(
         "PENDAFTARAN SEKOLAH BARU",
         `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #dc2626, #ef4444); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
-            <h2 style="margin: 0;">🏫 Pendaftaran Sekolah Baru</h2>
+            <h2 style="margin: 0;">🏫 Pendaftaran Bisnis Baru</h2>
             <p style="margin: 4px 0 0; opacity: 0.9;">Super Admin Alert</p>
           </div>
           <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
@@ -242,11 +242,11 @@ export async function sendNewApplicationAlerts(
 
     if (!affiliate) return
 
-    const defaultAffiliateTpl = `*LEAD SEKOLAH BARU! 🎉*\n\nHalo {{affiliateName}},\nKabar baik! Pendaftaran sekolah baru telah masuk menggunakan kode referral Anda ({{referralCode}}).\n\nSekolah: {{schoolName}}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`
+    const defaultAffiliateTpl = `*LEAD SEKOLAH BARU! 🎉*\n\nHalo {{affiliateName}},\nKabar baik! Pendaftaran bisnis baru telah masuk menggunakan kode referral Anda ({{referralCode}}).\n\nBisnis: {{businessName}}\nStatus: PENDING (Menunggu Review)\n\nSilakan pantau perkembangan lead Anda di Dashboard Mitra Afiliasi.`
     const affiliateMsg = (settings.WA_TEMPLATE_ALERT_AFFILIATE || defaultAffiliateTpl)
       .replace(/{{affiliateName}}/g, affiliate.user.name)
       .replace(/{{referralCode}}/g, affiliate.referralCode)
-      .replace(/{{schoolName}}/g, app.schoolName)
+      .replace(/{{businessName}}/g, app.businessName)
 
     const waEnabledAffiliate = settings.WA_ENABLE_ALERT_AFFILIATE !== "false";
     const emailEnabledAffiliate = settings.EMAIL_ENABLE_ALERT_AFFILIATE !== "false";
@@ -254,7 +254,7 @@ export async function sendNewApplicationAlerts(
     const wavioTplAffiliate = settings.WAVIO_TEMPLATE_ALERT_AFFILIATE || "affiliate_alert_new_lead"
     const wavioVarsAffiliate = {
       "1": affiliate.user.name || "Mitra",
-      "2": app.schoolName,
+      "2": app.businessName,
       "3": affiliate.referralCode
     }
 
@@ -272,7 +272,7 @@ export async function sendNewApplicationAlerts(
         "LEAD SEKOLAH BARU! 🎉",
         `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
-            <h2 style="margin: 0;">🎉 Lead Sekolah Baru!</h2>
+            <h2 style="margin: 0;">🎉 Lead Bisnis Baru!</h2>
             <p style="margin: 4px 0 0; opacity: 0.9;">Program Mitra Afiliasi</p>
           </div>
           <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; line-height: 1.6;">
@@ -297,14 +297,14 @@ export async function approveApplication(id: string) {
   if (!app) throw new Error("Pengajuan tidak ditemukan")
 
   // 1. Cek apakah tenant dengan slug yang sama sudah ada (misal: re-approve setelah revisi)
-  let tenant = await db.tenant.findUnique({ where: { slug: app.schoolSlug } })
+  let tenant = await db.tenant.findUnique({ where: { slug: app.businessSlug } })
 
   if (tenant) {
     // Update data tenant yang sudah ada dengan data terbaru dari pengajuan
     tenant = await db.tenant.update({
       where: { id: tenant.id },
       data: {
-        name: app.schoolName,
+        name: app.businessName,
         email: app.adminEmail,
         phone: app.adminPhone,
         address: app.address,
@@ -312,10 +312,8 @@ export async function approveApplication(id: string) {
         isActive: true,
         affiliateId: app.affiliateId,
         settings: {
-          npsn: app.npsn,
           province: app.province,
           regency: app.regency,
-          schoolStatus: app.schoolStatus,
           adminPosition: app.adminPosition,
         },
         tenantScore: {
@@ -329,13 +327,12 @@ export async function approveApplication(id: string) {
   } else {
     // Fetch free plan from database to get the maxStudents quota
     const freePlan = await db.subscriptionPlan.findUnique({ where: { slug: "free" } })
-    const quota = freePlan ? freePlan.maxStudents : 0
 
     // Buat Tenant Baru
     tenant = await db.tenant.create({
       data: {
-        name: app.schoolName,
-        slug: app.schoolSlug,
+        name: app.businessName,
+        slug: app.businessSlug,
         email: app.adminEmail,
         phone: app.adminPhone,
         address: app.address,
@@ -343,14 +340,12 @@ export async function approveApplication(id: string) {
         isActive: true,
         plan: "free",
         planId: freePlan ? freePlan.id : undefined,
-        studentQuota: quota,
+        
         aiTokens: freePlan?.monthlyAiTokens || 0, // Bonus token awal untuk Free
         affiliateId: app.affiliateId,
         settings: {
-          npsn: app.npsn,
           province: app.province,
           regency: app.regency,
-          schoolStatus: app.schoolStatus,
           adminPosition: app.adminPosition,
         },
         tenantScore: {
@@ -407,24 +402,7 @@ export async function approveApplication(id: string) {
 
   // 4. Buat profil GTK (Staff) otomatis untuk admin menggunakan role saat mendaftar
   if (app.adminPosition) {
-    const existingStaff = await db.staff.findFirst({
-      where: { tenantId: tenant.id, userId: user.id }
-    })
-    
-    if (!existingStaff) {
-      await db.staff.create({
-        data: {
-          tenantId: tenant.id,
-          userId: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone || null,
-          role: app.adminPosition,
-          sortOrder: 0, // Prioritaskan di urutan atas
-          bio: `Bertanggung jawab sebagai ${app.adminPosition} sekaligus pengelola sistem website sekolah.`
-        }
-      })
-    }
+    /* staff removed */
   }
 
   await db.tenantApplication.update({

@@ -118,7 +118,7 @@ export function FinanceTab() {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={data.revenueStats.revenuePerPlan} cx="50%" cy="45%" innerRadius={55} outerRadius={90} paddingAngle={4} dataKey="amount"
-                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`} labelLine={false}>
+                      label={({ name, percent }) => `${name} (${((percent || 0) * 100).toFixed(0)}%)`} labelLine={false}>
                       {data.revenueStats.revenuePerPlan.map((_, i) => (
                         <Cell key={i} fill={[PLAN_COLORS.LITE || '#3b82f6', PLAN_COLORS.PRO || '#8b5cf6', '#f59e0b'][i] || COLORS[i % COLORS.length]} />
                       ))}
@@ -182,3 +182,4 @@ export function FinanceTab() {
 function Layers(props: any) {
   return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg>
 }
+

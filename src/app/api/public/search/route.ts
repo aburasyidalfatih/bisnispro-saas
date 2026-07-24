@@ -29,74 +29,8 @@ export async function GET(req: NextRequest) {
       select: { id: true, title: true, slug: true, type: true, seoDesc: true, content: true, featuredImage: true }
     })
 
-    // 2. Facilities
-    const facilitiesPromise = db.facility.findMany({
-      where: {
-        tenantId,
-        OR: [
-          { name: { contains: query } },
-          { description: { contains: query } }
-        ]
-      },
-      take: 5,
-      select: { id: true, name: true, slug: true, description: true, imageUrl: true }
-    })
-
-    // 3. Extracurriculars
-    const ekstrakurikulerPromise = db.extracurricular.findMany({
-      where: {
-        tenantId,
-        OR: [
-          { name: { contains: query } },
-          { description: { contains: query } }
-        ]
-      },
-      take: 5,
-      select: { id: true, name: true, slug: true, description: true, imageUrl: true }
-    })
-
-    // 4. Achievements
-    const prestasiPromise = db.achievement.findMany({
-      where: {
-        tenantId,
-        OR: [
-          { title: { contains: query } },
-          { description: { contains: query } }
-        ]
-      },
-      take: 5,
-      select: { id: true, title: true, slug: true, description: true, imageUrl: true }
-    })
-
-    // 5. Programs
-    const programPromise = db.program.findMany({
-      where: {
-        tenantId,
-        OR: [
-          { name: { contains: query } },
-          { description: { contains: query } }
-        ]
-      },
-      take: 5,
-      select: { id: true, name: true, slug: true, description: true }
-    })
-
-    // 6. Staff
-    const staffPromise = db.staff.findMany({
-      where: {
-        tenantId,
-        OR: [
-          { name: { contains: query } },
-          { bio: { contains: query } },
-          { role: { contains: query } }
-        ]
-      },
-      take: 5,
-      select: { id: true, name: true, role: true, imageUrl: true }
-    })
-
-    const [posts, facilities, ekstrakurikulers, prestasis, programs, staffs] = await Promise.all([
-      postsPromise, facilitiesPromise, ekstrakurikulerPromise, prestasiPromise, programPromise, staffPromise
+    const [posts] = await Promise.all([
+      postsPromise
     ])
 
     const results = []
@@ -123,65 +57,6 @@ export async function GET(req: NextRequest) {
         url: `${urlPrefix}/${p.slug}`,
         excerpt: p.seoDesc || p.content?.replace(/<[^>]*>?/gm, '').substring(0, 80) + "...",
         imageUrl: p.featuredImage
-      })
-    }
-
-    // Map Facilities
-    for (const f of facilities) {
-      results.push({
-        id: f.id,
-        title: f.name,
-        type: "FASILITAS",
-        url: `/fasilitas/${f.slug || f.id}`,
-        excerpt: f.description?.replace(/<[^>]*>?/gm, '').substring(0, 80) + "...",
-        imageUrl: f.imageUrl
-      })
-    }
-
-    // Map Ekstrakurikuler
-    for (const e of ekstrakurikulers) {
-      results.push({
-        id: e.id,
-        title: e.name,
-        type: "EKSTRAKURIKULER",
-        url: `/ekstrakurikuler/${e.slug || e.id}`,
-        excerpt: e.description?.replace(/<[^>]*>?/gm, '').substring(0, 80) + "...",
-        imageUrl: e.imageUrl
-      })
-    }
-
-    // Map Prestasi
-    for (const p of prestasis) {
-      results.push({
-        id: p.id,
-        title: p.title,
-        type: "PRESTASI",
-        url: `/prestasi/${p.slug || p.id}`,
-        excerpt: p.description?.replace(/<[^>]*>?/gm, '').substring(0, 80) + "...",
-        imageUrl: p.imageUrl
-      })
-    }
-
-    // Map Program
-    for (const p of programs) {
-      results.push({
-        id: p.id,
-        title: p.name,
-        type: "PROGRAM",
-        url: `/program/${p.slug || p.id}`,
-        excerpt: p.description?.replace(/<[^>]*>?/gm, '').substring(0, 80) + "...",
-      })
-    }
-
-    // Map Staff
-    for (const s of staffs) {
-      results.push({
-        id: s.id,
-        title: s.name,
-        type: "GTK",
-        url: `/gtk/${s.id}`,
-        excerpt: s.role,
-        imageUrl: s.imageUrl
       })
     }
 

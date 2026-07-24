@@ -102,10 +102,10 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     // Calculate real stats from database based on user requirements
     const getCachedStats = unstable_cache(
       async (tenantId: string) => {
-        const klien = await db.achievement.count({ where: { tenantId, type: "SISWA" } })
-        const guru = await db.achievement.count({ where: { tenantId, type: "GURU" } })
-        const s1s2 = await db.staff.count({ where: { tenantId, education: { in: ["S1", "S2", "S3"] } } })
-        const total = await db.staff.count({ where: { tenantId } })
+        const klien = await db.portfolio.count({ where: { tenantId } })
+        const guru = await db.portfolio.count({ where: { tenantId } })
+        const s1s2 = await db.teamMember.count({ where: { tenantId, education: { in: ["S1", "S2", "S3"] } } })
+        const total = await db.teamMember.count({ where: { tenantId } })
         return { klien, guru, s1s2, total }
       },
       [`tenant-stats-${tenantForRender.id}`],

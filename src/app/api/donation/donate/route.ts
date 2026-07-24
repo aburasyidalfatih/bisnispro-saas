@@ -34,72 +34,7 @@ export async function POST(req: Request) {
 
   // === DONASI VIA WALLET ===
   if (method === "WALLET") {
-    if (!session?.user) return NextResponse.json({ error: "Login diperlukan untuk donasi via Wallet" }, { status: 401 })
-
-    const parent = await db.studentParent.findFirst({
-      where: { userId: session.user.id },
-      include: { student: { include: { walletAccount: true } } },
-    })
-    const wallet = parent?.student?.walletAccount
-    if (!wallet) return NextResponse.json({ error: "Wallet tidak ditemukan" }, { status: 404 })
-    if (wallet.balance < amount) return NextResponse.json({ error: "Saldo wallet tidak mencukupi" }, { status: 400 })
-
-    await db.$transaction(async (tx) => {
-      // Potong saldo secara atomic
-      const updatedWallet = await tx.walletAccount.update({ where: { id: wallet.id }, data: { balance: { decrement: amount } } })
-      if (updatedWallet.balance < 0) {
-        throw new Error("Saldo wallet tidak mencukupi")
-      }
-      const newBalance = updatedWallet.balance
-
-      await tx.walletTransaction.create({
-        data: {
-          walletId: wallet.id,
-          tenantId,
-          type: "WITHDRAWAL",
-          amount,
-          balanceBefore: newBalance + amount,
-          balanceAfter: newBalance,
-          referenceId: campaignId,
-          description: `Donasi: ${campaign.title}`,
-          status: "SUCCESS",
-        },
-      })
-
-      await tx.donation.create({
-        data: {
-          campaignId,
-          tenantId,
-          donorName: isAnonymous ? "Hamba Allah" : donorName,
-          donorEmail,
-          userId: session.user.id,
-          amount,
-          method: "WALLET",
-          isAnonymous,
-          message,
-          status: "PAID",
-          paidAt: new Date(),
-        },
-      })
-
-      await tx.donationCampaign.update({
-        where: { id: campaignId },
-        data: { collectedAmount: { increment: amount } },
-      })
-
-      await tx.cashflow.create({
-        data: {
-          tenantId,
-          type: "INCOME",
-          category: "DONASI",
-          amount,
-          description: `Donasi: ${campaign.title} — ${donorName}`,
-          referenceId: campaignId,
-        },
-      })
-    })
-
-    return NextResponse.json({ message: "Donasi berhasil dikirim!", method: "WALLET" })
+    return NextResponse.json({ error: "Metode pembayaran WALLET tidak lagi didukung" }, { status: 400 })
   }
 
   // === DONASI VIA MANUAL ===

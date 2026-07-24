@@ -110,9 +110,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
       </ScrollReveal>
 
       {/* ── 9. Ekstrakurikuler ── */}
-      <ScrollReveal delay={0.2}>
-        
-      </ScrollReveal>
+      
 
       {/* ── 10. Tim & Staff Highlight ── */}
       <ScrollReveal delay={0.1}>
@@ -247,3 +245,4 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
     </main>
   )
 }
+

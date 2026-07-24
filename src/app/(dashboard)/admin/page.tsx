@@ -134,7 +134,7 @@ export default function DashboardPage() {
                 <YAxis className="text-xs" axisLine={false} tickLine={false} tickFormatter={formatCurrency} />
                 <Tooltip
                   contentStyle={{ borderRadius:"12px", border:"none", boxShadow:"0 8px 32px rgba(0,0,0,0.1)" }}
-                  formatter={(value: number) => [`Rp ${value.toLocaleString("id-ID")}`,"Pendapatan"]}
+                  formatter={(value: any) => [`Rp ${value.toLocaleString("id-ID")}`,"Pendapatan"]}
                 />
                 <Bar dataKey="pendapatan" fill="url(#gradientPendapatan)" radius={[8, 8, 0, 0]} />
               </BarChart>
@@ -174,4 +174,5 @@ export default function DashboardPage() {
     </div>
   )
 }
+
 

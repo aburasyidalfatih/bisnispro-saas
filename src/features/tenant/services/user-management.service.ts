@@ -18,18 +18,7 @@ export async function listTenantUsers(tenantId: string, role?: string | null) {
     take: 500,
   })
 
-  // Fetch staff records if role is guru or fetching all
-  let staffMap = new Map<string, string>()
-  if (!role || role === "guru") {
-    const userIds = data.map((tu) => tu.user.id)
-    const staffRecords = await tenantDb.staff.findMany({
-      where: { tenantId, userId: { in: userIds } },
-      select: { id: true, userId: true }
-    })
-    staffRecords.forEach(s => {
-      if (s.userId) staffMap.set(s.userId, s.id)
-    })
-  }
+
 
   return data.map((tu) => ({
     id: tu.user.id,
@@ -40,7 +29,6 @@ export async function listTenantUsers(tenantId: string, role?: string | null) {
     role: tu.role,
     isActive: tu.user.isActive,
     createdAt: tu.user.createdAt,
-    staffId: staffMap.get(tu.user.id) || null,
   }))
 }
 
@@ -125,34 +113,7 @@ export async function addUserToTenant(params: {
     data: { tenantId, userId: user.id, role },
   })
 
-  // JIKA role === "guru", otomatis buat profil Staff (GTK)
-  if (role === "guru") {
-    const existingStaff = await tenantDb.staff.findFirst({
-      where: { tenantId, userId: user.id }
-    })
-    
-    if (!existingStaff) {
-      // Ambil sortOrder terakhir
-      const lastStaff = await tenantDb.staff.findFirst({
-        where: { tenantId },
-        orderBy: { sortOrder: 'desc' },
-        select: { sortOrder: true }
-      })
-      const nextOrder = lastStaff ? lastStaff.sortOrder + 1 : 0
-      
-      await tenantDb.staff.create({
-        data: {
-          tenantId,
-          userId: user.id,
-          name,
-          email,
-          phone: phone || null,
-          role: "Guru",
-          sortOrder: nextOrder,
-        }
-      })
-    }
-  }
+
 
   // Audit trail
   await tenantDb.auditLog.create({
@@ -235,16 +196,7 @@ export async function editTenantUser(params: {
     data: updateData
   })
 
-  // Sinkronkan ke Staff (jika ada)
-  const existingStaff = await tenantDb.staff.findFirst({
-    where: { tenantId: targetTu.tenantId, userId: targetTu.userId }
-  })
-  if (existingStaff) {
-    await tenantDb.staff.update({
-      where: { id: existingStaff.id },
-      data: { name, email, phone: phone || null }
-    })
-  }
+
 
   // Audit trail
   await tenantDb.auditLog.create({

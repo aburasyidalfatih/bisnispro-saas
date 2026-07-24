@@ -6,8 +6,8 @@ export const createAuditLogSchema = z.object({
   action: z.string().min(1, "Aksi tidak boleh kosong"),
   entity: z.string().min(1, "Entitas tidak boleh kosong"),
   entityId: z.string().optional(),
-  oldData: z.record(z.unknown()).optional(),
-  newData: z.record(z.unknown()).optional(),
+  oldData: z.record(z.string(), z.unknown()).optional(),
+  newData: z.record(z.string(), z.unknown()).optional(),
   ipAddress: z.string().optional(),
   userAgent: z.string().optional(),
 });

@@ -47,7 +47,7 @@ export function AdsCharts({ metaData, fmtRp, fmtNum }: AdsChartsProps) {
                     tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
                   <YAxis yAxisId="clicks" orientation="right" stroke="#10b981" fontSize={10} tickLine={false} axisLine={false} />
                   <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '11px' }}
-                    formatter={(value: any, name: string) => [name === 'Spend' ? fmtRp(value) : fmtNum(value), name]} />
+                    formatter={(value: any, name: any) => [name === 'Spend' ? fmtRp(value) : fmtNum(value), name]} />
                   <Legend iconType="circle" wrapperStyle={{ fontSize: '11px' }} />
                   <Area yAxisId="spend" type="monotone" dataKey="spend" name="Spend" stroke="#ef4444" fill="url(#gradSpend)" strokeWidth={2} />
                   <Area yAxisId="clicks" type="monotone" dataKey="clicks" name="Clicks" stroke="#10b981" fill="url(#gradClicks)" strokeWidth={2} />
@@ -126,7 +126,7 @@ export function AdsCharts({ metaData, fmtRp, fmtNum }: AdsChartsProps) {
                     return (
                       <PieChart>
                         <Pie data={pieData} cx="50%" cy="45%" innerRadius={50} outerRadius={85} paddingAngle={3} dataKey="value"
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                          label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`} labelLine={false}>
                           {pieData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                         </Pie>
                         <RechartsTooltip />
@@ -142,3 +142,5 @@ export function AdsCharts({ metaData, fmtRp, fmtNum }: AdsChartsProps) {
     </>
   )
 }
+
+

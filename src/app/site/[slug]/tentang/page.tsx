@@ -78,10 +78,10 @@ export default async function ProfilTerpaduPage({ params }: { params: Promise<{ 
     }
   }
   
-  const totalStaff = profileData?._count?.staff || 0
-  const totalKlien = profileData?._count?.klien || 0
-  const totalEkskul = profileData?._count?.extracurriculars || 0
-  const totalPrograms = profileData?._count?.programs || 0
+  const totalStaff = (profileData?._count as any)?.staff || 0
+  const totalKlien = (profileData?._count as any)?.klien || 0
+  const totalEkskul = (profileData?._count as any)?.extracurriculars || 0
+  const totalPrograms = (profileData?._count as any)?.programs || 0
 
   return (
     <div className="bg-background">

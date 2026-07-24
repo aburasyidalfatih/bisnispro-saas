@@ -122,7 +122,7 @@ export async function POST(req: Request) {
 
     if (app.status === "APPROVED") {
       const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
-      return NextResponse.redirect(`https://${app.schoolSlug}.${rootDomain}/login?verified=true`, 303)
+      return NextResponse.redirect(`https://${app.businessSlug}.${rootDomain}/login?verified=true`, 303)
     }
 
     // Setujui instan (Ini akan membuat Tenant dan User Admin)
@@ -148,7 +148,7 @@ export async function POST(req: Request) {
     
     // Redirect ke halaman login subdomain dengan status 303 (See Other) agar browser melakukan GET request
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
-    return NextResponse.redirect(`https://${app.schoolSlug}.${rootDomain}/login?verified=true`, 303)
+    return NextResponse.redirect(`https://${app.businessSlug}.${rootDomain}/login?verified=true`, 303)
 
   } catch (error) {
     logger.error("Verify email POST error", error, { path: "/api/public/verify-email" })
@@ -163,3 +163,8 @@ export async function POST(req: Request) {
     `, { status: 500, headers: { 'Content-Type': 'text/html' } })
   }
 }
+
+
+
+
+

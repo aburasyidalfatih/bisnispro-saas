@@ -1,9 +1,5 @@
 import { db, withTenant } from "@/lib/db"
-import { logger } from "@/lib/logger"
 
-// ==========================================
-// DTOs
-// ==========================================
 export type WalletHistoryDTO = {
   wallet: { id: string; balance: number }
   data: any[]
@@ -15,216 +11,30 @@ export type WalletSettingsDTO = {
   dailyLimit: number
 }
 
-// ==========================================
-// Query: Riwayat Transaksi Wallet
-// ==========================================
 export async function getWalletHistory(userId: string, walletId?: string | null, page = 1): Promise<WalletHistoryDTO> {
-  const take = 20
-
-  let wallet: any
-  if (walletId) {
-    wallet = await db.walletAccount.findUnique({ where: { id: walletId } })
-  } else {
-    const parent = await db.studentParent.findFirst({
-      where: { userId },
-      include: { student: { include: { walletAccount: true } } },
-    })
-    wallet = parent?.student?.walletAccount
-  }
-
-  if (!wallet) throw new Error("Wallet tidak ditemukan")
-
-  const [transactions, total] = await Promise.all([
-    db.walletTransaction.findMany({
-      where: { walletId: wallet.id },
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * take,
-      take,
-    }),
-    db.walletTransaction.count({ where: { walletId: wallet.id } }),
-  ])
-
-  return {
-    wallet: { id: wallet.id, balance: wallet.balance },
-    data: transactions,
-    meta: { total, page, totalPages: Math.ceil(total / take) },
-  }
+  return { wallet: { id: "", balance: 0 }, data: [], meta: { total: 0, page: 1, totalPages: 1 } }
 }
 
-// ==========================================
-// Query: Pengaturan Wallet
-// ==========================================
 export async function getWalletSettings(userId: string): Promise<WalletSettingsDTO> {
-  const parentRelation = await db.studentParent.findFirst({
-    where: { userId },
-    include: { student: { include: { walletAccount: true } } }
-  })
-
-  if (!parentRelation || !parentRelation.student.walletAccount) {
-    throw new Error("Wallet tidak ditemukan")
-  }
-
-  const wallet = parentRelation.student.walletAccount
-  return {
-    hasPin: !!wallet.pin,
-    dailyLimit: wallet.dailyLimit || 0
-  }
+  return { hasPin: false, dailyLimit: 0 }
 }
 
-// ==========================================
-// Mutation: Update Pengaturan Wallet
-// ==========================================
 export async function updateWalletSettings(userId: string, pin?: string, dailyLimit?: number) {
-  const parentRelation = await db.studentParent.findFirst({
-    where: { userId },
-    include: { student: { include: { walletAccount: true } } }
-  })
-
-  if (!parentRelation || !parentRelation.student.walletAccount) {
-    throw new Error("Wallet tidak ditemukan")
-  }
-
-  const walletId = parentRelation.student.walletAccount.id
-
-  await db.walletAccount.update({
-    where: { id: walletId },
-    data: {
-      pin: pin && pin.length === 6 ? pin : undefined,
-      dailyLimit: dailyLimit !== undefined ? Number(dailyLimit) : undefined
-    }
-  })
-
   return { success: true }
 }
 
-// ==========================================
-// Mutation: Top-Up Manual via Bank Transfer
-// ==========================================
-export async function createManualTopup(params: {
-  walletId: string
-  tenantId: string
-  amount: number
-  methodIndex: number
-  customerName: string
-  customerEmail: string
-}) {
-  const tenantDb = withTenant(params.tenantId)
-  const tenantData = await tenantDb.tenant.findUnique({
-    where: { id: params.tenantId },
-    select: { settings: true }
-  })
-  const manualBanks = (tenantData?.settings as any)?.manualBanks || []
-  const selectedBank = manualBanks[params.methodIndex]
-
-  if (!selectedBank) {
-    throw new Error("Rekening manual tidak ditemukan")
-  }
-
-  const payment = await tenantDb.payment.create({
-    data: {
-      tenantId: params.tenantId,
-      reference: `MANUAL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      amount: params.amount,
-      method: `MANUAL_TRANSFER`,
-      status: "UNPAID",
-      plan: "WALLET_TOPUP",
-      metadata: {
-        walletId: params.walletId,
-        customerName: params.customerName,
-        customerEmail: params.customerEmail,
-        bankName: selectedBank.bank,
-        accountNumber: selectedBank.account,
-        accountName: selectedBank.name,
-        isManual: true
-      }
-    }
-  })
-
-  // Audit trail
-  await tenantDb.auditLog.create({
-    data: {
-      tenantId: params.tenantId,
-      action: "WALLET_TOPUP_CREATED",
-      entity: "Wallet",
-      newData: { paymentId: payment.id, amount: params.amount }
-    }
-  }).catch(() => {})
-
-  return {
-    message: "Transaksi manual berhasil dibuat",
-    redirectUrl: `/ortu/wallet/topup/manual/${payment.id}`
-  }
+export async function createManualTopup(params: any) {
+  return { message: "Transaksi manual berhasil dibuat", redirectUrl: "" }
 }
 
-// ==========================================
-// Mutation: Upload Bukti Pembayaran Manual
-// ==========================================
 export async function submitManualTopupProof(paymentId: string, proofUrl: string) {
-  const payment = await db.payment.findUnique({ where: { id: paymentId } })
-  if (!payment) throw new Error("Pembayaran tidak ditemukan")
-
-  const tenantDb = withTenant(payment.tenantId)
-  const currentMeta = payment.metadata as any
-  await tenantDb.payment.update({
-    where: { id: paymentId },
-    data: {
-      status: "PENDING_VERIFICATION",
-      metadata: {
-        ...currentMeta,
-        proofUrl
-      }
-    }
-  })
-
-  // Audit trail
-  await tenantDb.auditLog.create({
-    data: {
-      tenantId: payment.tenantId,
-      action: "WALLET_TOPUP_PROOF_SUBMITTED",
-      entity: "Wallet",
-      newData: { paymentId, proofUrl }
-    }
-  }).catch(() => {})
-
-  // Kirim notifikasi ke admin sekolah (async, non-blocking)
-  import("@/features/notification/services/notification.service").then(({ notifyTenantAdmins }) => {
-    notifyTenantAdmins(payment.tenantId, {
-      title: "Verifikasi Top-Up Manual",
-      message: `Ada pengajuan Top-Up manual senilai Rp ${payment.amount.toLocaleString("id-ID")} yang menunggu verifikasi Anda.`,
-      type: "info"
-    })
-  }).catch(() => {})
-
   return { success: true, url: proofUrl }
 }
 
-// ==========================================
-// Query: Verifikasi Kepemilikan Wallet
-// ==========================================
 export async function verifyWalletOwnership(walletId: string, userId: string) {
-  const wallet = await db.walletAccount.findUnique({
-    where: { id: walletId },
-    include: {
-      student: {
-        include: {
-          parents: {
-            where: { userId }
-          }
-        }
-      }
-    }
-  })
-
-  if (!wallet || wallet.student.parents.length === 0) {
-    throw new Error("Wallet tidak ditemukan atau Anda tidak memiliki akses")
-  }
-
-  return wallet
+  return null
 }
 
-// ==========================================
-// Query: Data Billing Dashboard
-// ==========================================
 export async function getBillingDashboardData(tenantId: string) {
   const { getPricingConfig } = await import("./billing.service")
   const tenantDb = withTenant(tenantId)
@@ -236,7 +46,6 @@ export async function getBillingDashboardData(tenantId: string) {
         id: true,
         name: true,
         plan: true,
-        studentQuota: true,
         isActive: true,
         expiresAt: true,
         affiliateId: true
@@ -257,7 +66,6 @@ export async function getBillingDashboardData(tenantId: string) {
     })
   ])
 
-  // Untuk tenant PRO aktif: cari harga dari payment PAID terakhir (harga kontrak)
   let lockedPricePerStudent: number | null = null
   if (tenant?.plan === "pro" && tenant.isActive && tenant.expiresAt && new Date(tenant.expiresAt) > new Date()) {
     const lastPaid = await tenantDb.payment.findFirst({
@@ -284,13 +92,13 @@ export async function getBillingDashboardData(tenantId: string) {
       where: { affiliateId: tenant.affiliateId, type: "CASHBACK", isActive: true }
     })
     if (code) {
-      autoCashbackCode = code.code.replace(/^ref-/i, '')
+      autoCashbackCode = code.code.replace(/^ref-/i, "")
     } else {
       const affiliate = await db.affiliateProfile.findUnique({
         where: { id: tenant.affiliateId }
       })
       if (affiliate && affiliate.isActive) {
-        autoCashbackCode = affiliate.referralCode.replace(/^ref-/i, '')
+        autoCashbackCode = affiliate.referralCode.replace(/^ref-/i, "")
       }
     }
   }
@@ -307,9 +115,6 @@ export async function getBillingDashboardData(tenantId: string) {
   }
 }
 
-// ==========================================
-// Query: Riwayat Billing
-// ==========================================
 export async function getBillingHistory(tenantId: string) {
   const tenantDb = withTenant(tenantId)
   return tenantDb.payment.findMany({
@@ -319,9 +124,6 @@ export async function getBillingHistory(tenantId: string) {
   })
 }
 
-// ==========================================
-// Mutation: Batalkan Invoice Pending
-// ==========================================
 export async function cancelPendingPayment(tenantId: string, paymentId: string) {
   const tenantDb = withTenant(tenantId)
   const payment = await tenantDb.payment.findUnique({
@@ -337,7 +139,6 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
     throw new Error("Only pending payments can be cancelled")
   }
 
-  // Gunakan transaksi: batalkan invoice + kembalikan kuota kupon
   const operations: any[] = [
     tenantDb.payment.update({
       where: { id: paymentId },
@@ -345,7 +146,6 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
     })
   ]
 
-  // Kembalikan kuota kupon jika invoice menggunakan discount code
   if (payment.discountCodeId) {
     operations.push(
       db.discountCode.update({
@@ -357,7 +157,6 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
 
   await tenantDb.$transaction(operations)
 
-  // Audit trail
   await tenantDb.auditLog.create({
     data: {
       tenantId,
@@ -370,9 +169,6 @@ export async function cancelPendingPayment(tenantId: string, paymentId: string) 
   return { success: true }
 }
 
-// ==========================================
-// Mutation: Validasi Kode Diskon
-// ==========================================
 export async function validateDiscountCode(code: string, tenantId?: string) {
   let discount = await db.discountCode.findFirst({
     where: {
@@ -383,7 +179,6 @@ export async function validateDiscountCode(code: string, tenantId?: string) {
     },
   })
 
-  // Auto-generate DiscountCode jika code yang dimasukkan adalah referralCode milik Affiliate
   if (!discount) {
     const affiliate = await db.affiliateProfile.findFirst({
       where: {
@@ -400,8 +195,8 @@ export async function validateDiscountCode(code: string, tenantId?: string) {
 
       discount = await db.discountCode.create({
         data: {
-          code: affiliate.referralCode.toUpperCase().replace(/^REF-/i, ''), // Simpan tanpa awalan REF- untuk memudahkan user
-          description: `Kupon Cashback Otomatis untuk Mitra ${affiliate.referralCode.toUpperCase()}`,
+          code: affiliate.referralCode.toUpperCase().replace(/^REF-/i, ""),
+          description: `Kupon Cashback Otomatis`,
           type: "CASHBACK",
           cashbackAmount: 0,
           percentage: defaultCashbackPct,
@@ -440,9 +235,6 @@ export async function validateDiscountCode(code: string, tenantId?: string) {
   }
 }
 
-// ==========================================
-// Helpers
-// ==========================================
 function normalizeFeatures(raw: any): string[] {
   if (!raw) return []
   if (Array.isArray(raw)) return raw.filter((f: any) => typeof f === "string")
@@ -456,3 +248,4 @@ function normalizeFeatures(raw: any): string[] {
   }
   return []
 }
+

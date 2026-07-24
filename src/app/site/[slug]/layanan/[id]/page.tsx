@@ -1,7 +1,8 @@
 import { headers } from "next/headers"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
-import { getTenantLayoutData, getTenantPrograms } from "@/features/tenant/services/tenant-modular.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
+import { db } from "@/lib/db"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { normalizeImageUrl } from "@/lib/utils"
 import Link from "next/link"
@@ -17,14 +18,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, id } = await params
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) return {}
-  const programsData = await getTenantPrograms(slug)
-  const program = (programsData?.programs || []).find((p: any) => p.id === id || p.slug === id)
-  if (!program) return {}
+  const service = await db.service.findFirst({
+    where: {
+      tenant: { slug },
+      OR: [{ id }, { slug: id }]
+    }
+  })
+  if (!service) return {}
   return {
-    title: `${program.name} - ${tenant.name}`,
-    description: (program.description ? program.description.replace(/<[^>]*>?/gm, '') : `Informasi layanan ${program.name}`),
+    title: `${service.name} - ${tenant.name}`,
+    description: (service.description ? service.description.replace(/<[^>]*>?/gm, '') : `Informasi layanan ${service.name}`),
     alternates: {
-      canonical: `/layanan/${program.slug || program.id}`,
+      canonical: `/layanan/${service.slug || service.id}`,
     },
   }
 }
@@ -36,20 +41,24 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
   const tenant = await getTenantLayoutData(slug)
   if (!tenant) notFound()
 
-  const programsData = await getTenantPrograms(slug)
-  const program = (programsData?.programs || []).find((p: any) => p.id === id || p.slug === id)
-  if (!program) notFound()
+  const service = await db.service.findFirst({
+    where: {
+      tenant: { slug },
+      OR: [{ id }, { slug: id }]
+    }
+  })
+  if (!service) notFound()
 
   const base = await getPublicBasePath(slug)
   
-  const focusList = program.focus ? program.focus.split(',').map((f: string) => f.trim()).filter(Boolean) : [
+  const focusList = [
     "Teori & Praktik Intensif",
     "Sertifikasi Kompetensi",
     "Kemitraan Industri",
     "Pengembangan Karakter"
   ]
 
-  const prospectList = program.prospects ? program.prospects.split(',').map((p: string) => p.trim()).filter(Boolean) : [
+  const prospectList = [
     "Terserap di Industri/Perusahaan Mitra",
     "Melanjutkan ke Perguruan Tinggi Terkemuka",
     "Menjadi Wirausaha Muda Profesional"
@@ -64,8 +73,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Course",
-            "name": program.name,
-            "description": program.description ? program.description.replace(/<[^>]*>?/gm, '') : `Program keahlian ${program.name}`,
+            "name": service.name,
+            "description": service.description ? service.description.replace(/<[^>]*>?/gm, '') : `Program keahlian ${service.name}`,
             "provider": {
               "@type": "Organization",
               "name": tenant.name,
@@ -82,8 +91,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
             basePath={base}
             targetUrl="/layanan"
             fallbackLabel={(tenant.settings as any)?.labels?.programs?.sectionTitle || "Layanan"}
-            currentItemName={program.name}
-            currentItemUrl={`/layanan/${program.slug || program.id}`}
+            currentItemName={service.name}
+            currentItemUrl={`/layanan/${service.slug || service.id}`}
           />
           
           <div className="flex items-center gap-3 mb-4 mt-6">
@@ -93,7 +102,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
           </div>
           
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight mb-4">
-             {program.name}
+             {service.name}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
              Mempersiapkan proyek selesai yang kompeten, profesional, dan berkarakter unggul siap bersaing di dunia kerja maupun jenjang pendidikan tinggi.
@@ -102,11 +111,11 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
       </div>
 
       <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 md:mt-12">
-        {program.imageUrl ? (
+        {service.imageUrl ? (
           <div className="w-full aspect-video relative rounded-3xl overflow-hidden mb-12 shadow-sm border border-border/50 bg-muted">
             <Image 
-              src={normalizeImageUrl(program.imageUrl) || program.imageUrl} 
-              alt={program.name} 
+              src={normalizeImageUrl(service.imageUrl) || service.imageUrl} 
+              alt={service.name} 
               fill 
               className="object-cover"
               priority
@@ -121,8 +130,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
         <div className="grid md:grid-cols-2 gap-12 items-start">
            <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
              <h3 className="text-xl font-bold mb-4 text-foreground">Tentang Program</h3>
-             {program.description ? (
-               <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(program.description, { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }} />
+             {service.description ? (
+               <div className="whitespace-pre-wrap prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(service.description, { ADD_TAGS: ["iframe", "video", "source"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "controls"] }) }} />
              ) : (
                <p className="italic">Tidak ada deskripsi detail untuk program ini.</p>
              )}
@@ -158,8 +167,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
 
         {/* Share Buttons */}
         <ShareButtons 
-          url={`https://${tenant.domain || tenant.slug + '.' + rootDomain}/layanan/${program.id}`} 
-          title={program.name}
+          url={`https://${tenant.domain || tenant.slug + '.' + rootDomain}/layanan/${service.id}`} 
+          title={service.name}
           tenantId={tenant.id}
         />
       </article>

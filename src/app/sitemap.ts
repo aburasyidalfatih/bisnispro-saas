@@ -114,58 +114,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${domainUrl}/program`,
+      url: `${domainUrl}/layanan`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${domainUrl}/berita`,
+      url: `${domainUrl}/artikel`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${domainUrl}/agenda`,
+      url: `${domainUrl}/portofolio`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${domainUrl}/prestasi`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${domainUrl}/fasilitas`,
+      url: `${domainUrl}/tim`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
-    },
-    {
-      url: `${domainUrl}/ekstrakurikuler`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${domainUrl}/gtk`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${domainUrl}/alumni`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${domainUrl}/gallery`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.6,
     },
     {
       url: `${domainUrl}/contact`,
@@ -184,7 +154,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (posts.length > 0) {
     posts.forEach((post) => {
       const isPengumuman = post.type?.includes("PENGUMUMAN")
-      const prefix = isPengumuman ? "pengumuman" : "berita"
+      const prefix = isPengumuman ? "pengumuman" : "artikel"
       routes.push({
         url: `${domainUrl}/${prefix}/${post.slug || post.id}`,
         lastModified: post.updatedAt || post.createdAt,
@@ -194,86 +164,52 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  // Dynamic routes: Prestasi
-  const achievements = await db.achievement.findMany({
+  // Dynamic routes: Portofolio
+  const portfolios = await db.portfolio.findMany({
     where: { tenantId: tenant.id },
     select: { id: true, slug: true, updatedAt: true, createdAt: true },
     take: 500
   })
-  if (achievements.length > 0) {
-    achievements.forEach((achievement) => {
+  if (portfolios.length > 0) {
+    portfolios.forEach((portfolio) => {
       routes.push({
-        url: `${domainUrl}/prestasi/${achievement.slug || achievement.id}`,
-        lastModified: achievement.updatedAt || achievement.createdAt,
+        url: `${domainUrl}/portofolio/${portfolio.slug || portfolio.id}`,
+        lastModified: portfolio.updatedAt || portfolio.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
       })
     })
   }
 
-  // Dynamic routes: Program
-  const programs = await db.program.findMany({
+  // Dynamic routes: Layanan
+  const services = await db.service.findMany({
     where: { tenantId: tenant.id },
     select: { id: true, slug: true, updatedAt: true, createdAt: true },
     take: 500
   })
-  if (programs.length > 0) {
-    programs.forEach((program) => {
+  if (services.length > 0) {
+    services.forEach((service) => {
       routes.push({
-        url: `${domainUrl}/program/${program.slug || program.id}`,
-        lastModified: program.updatedAt || program.createdAt,
+        url: `${domainUrl}/layanan/${service.slug || service.id}`,
+        lastModified: service.updatedAt || service.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
       })
     })
   }
 
-  // Dynamic routes: Agenda
-  const events = await db.event.findMany({
-    where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true },
-    take: 500
-  })
-  if (events.length > 0) {
-    events.forEach((event) => {
-      routes.push({
-        url: `${domainUrl}/agenda/${event.slug || event.id}`,
-        lastModified: event.updatedAt || event.createdAt,
-        changeFrequency: "monthly",
-        priority: 0.6,
-      })
-    })
-  }
-
-  // Dynamic routes: Fasilitas
-  const facilities = await db.facility.findMany({
-    where: { tenantId: tenant.id },
-    select: { id: true, slug: true, updatedAt: true, createdAt: true },
-    take: 500
-  })
-  if (facilities.length > 0) {
-    facilities.forEach((facility) => {
-      routes.push({
-        url: `${domainUrl}/fasilitas/${facility.slug || facility.id}`,
-        lastModified: facility.updatedAt || facility.createdAt,
-        changeFrequency: "yearly",
-        priority: 0.5,
-      })
-    })
-  }
-
-  // Dynamic routes: GTK (Staff)
-  const staff = await db.staff.findMany({
+  // Dynamic routes: Tim
+  const teamMembers = await db.teamMember.findMany({
     where: { tenantId: tenant.id },
     select: { id: true, name: true, updatedAt: true, createdAt: true },
     take: 500
   })
-  if (staff.length > 0) {
-    staff.forEach((s) => {
-      const slugifiedName = s.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  if (teamMembers.length > 0) {
+    teamMembers.forEach((member) => {
+      const slugifiedName = member.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       routes.push({
-        url: `${domainUrl}/gtk/${slugifiedName}`,
-        lastModified: s.updatedAt || s.createdAt,
+        url: `${domainUrl}/tim/${slugifiedName}`,
+        lastModified: member.updatedAt || member.createdAt,
         changeFrequency: "yearly",
         priority: 0.5,
       })

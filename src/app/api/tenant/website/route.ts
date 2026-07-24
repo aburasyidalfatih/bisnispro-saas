@@ -28,7 +28,7 @@ const websiteSchema = z.object({
   telegram: z.string().max(100).optional().nullable(),
   // Konten JSON
   gallery: z.array(z.any()).optional().nullable(),
-  settings: z.record(z.any()).optional().nullable(),
+  settings: z.record(z.string(), z.any()).optional().nullable(),
   // SEO
   seoTitle: z.string().max(100).optional().nullable(),
   seoDesc: z.string().max(500).optional().nullable(),
@@ -103,3 +103,4 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: error.message || "Terjadi kesalahan" }, { status })
   }
 }
+

@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     }
 
     // 1. Ambil data penerima berdasarkan target
-    let recipients: { name: string; email?: string | null; phone?: string | null; schoolName?: string; userId?: string; tenantId?: string }[] = []
+    let recipients: { name: string; email?: string | null; phone?: string | null; businessName?: string; userId?: string; tenantId?: string }[] = []
 
     if (target === "all_tenants") {
       const owners = await db.tenantUser.findMany({
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
             name: owner.name || "Admin",
             email: owner.email,
             phone: owner.phone,
-            schoolName: tu.tenant.name,
+            businessName: tu.tenant.name,
             userId: owner.id,
             tenantId: tu.tenant.id
           })
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         name: app.adminName,
         email: app.adminEmail,
         phone: app.adminPhone,
-        schoolName: app.schoolName
+        businessName: app.businessName
       }))
     }
     else if (target === "free_tenants" || target === "pro_tenants") {
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
             name: owner.name || "Admin",
             email: owner.email,
             phone: owner.phone,
-            schoolName: tu.tenant.name,
+            businessName: tu.tenant.name,
             userId: owner.id,
             tenantId: tu.tenant.id
           })
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
         name: aff.user.name || "Mitra",
         email: aff.user.email,
         phone: aff.user.phone,
-        schoolName: "Afiliasi", // Fallback variable
+        businessName: "Afiliasi", // Fallback variable
         userId: aff.userId
       }))
     }
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
             .replace(/{{name}}/g, recipient.name || "")
             .replace(/{{email}}/g, recipient.email || "")
             .replace(/{{phone}}/g, recipient.phone || "")
-            .replace(/{{schoolName}}/g, recipient.schoolName || "")
+            .replace(/{{businessName}}/g, recipient.businessName || "")
 
           const sendPromises = []
 
@@ -118,7 +118,7 @@ export async function POST(req: Request) {
           if ((channel === "email" || channel === "both" || channel === "all") && recipient.email) {
             let finalSubject = subject
               .replace(/{{name}}/g, recipient.name || "")
-              .replace(/{{schoolName}}/g, recipient.schoolName || "")
+              .replace(/{{businessName}}/g, recipient.businessName || "")
 
             sendPromises.push(
               sendEmail(
@@ -151,7 +151,7 @@ export async function POST(req: Request) {
             let finalSubject = subject || "Pengumuman Sistem"
             finalSubject = finalSubject
               .replace(/{{name}}/g, recipient.name || "")
-              .replace(/{{schoolName}}/g, recipient.schoolName || "")
+              .replace(/{{businessName}}/g, recipient.businessName || "")
 
             sendPromises.push(
               db.notification.create({
@@ -196,3 +196,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Gagal memulai broadcast" }, { status: 500 })
   }
 }
+

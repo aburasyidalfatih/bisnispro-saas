@@ -10,7 +10,7 @@ export const deleteTenantSchema = z.object({
 })
 
 export const exportSchema = z.object({
-  data: z.array(z.record(z.any())).min(1, "Data tidak boleh kosong"),
+  data: z.array(z.record(z.string(), z.any())).min(1, "Data tidak boleh kosong"),
   columns: z.array(z.object({
     header: z.string(),
     key: z.string(),
@@ -36,3 +36,4 @@ export const subscriptionPlanSchema = z.object({
 })
 
 export type SubscriptionPlanInput = z.infer<typeof subscriptionPlanSchema>
+

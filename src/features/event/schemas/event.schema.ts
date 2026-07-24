@@ -5,14 +5,9 @@ export const eventSchema = z.object({
   description: z.string().optional().or(z.literal("")),
   location: z.string().optional().or(z.literal("")),
   contactPerson: z.string().optional().or(z.literal("")),
-  startDate: z.coerce.date({
-    required_error: "Tanggal mulai wajib diisi",
-    invalid_type_error: "Format tanggal tidak valid",
-  }),
-  endDate: z.coerce.date({
-    required_error: "Tanggal selesai wajib diisi",
-    invalid_type_error: "Format tanggal tidak valid",
-  }),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
   status: z.string().default("PUBLISHED"),
   publishedAt: z.coerce.date().nullable().optional(),
 })
+

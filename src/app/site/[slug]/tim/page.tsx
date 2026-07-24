@@ -2,7 +2,8 @@ import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { Users, GraduationCap, Mail, MessageSquare, Award, BookOpen } from "lucide-react"
-import { getTenantLayoutData, getTenantStaff } from "@/features/tenant/services/tenant-modular.service"
+import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
+import { db } from "@/lib/db"
 import { getPublicBasePath } from "@/lib/utils/public-path"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 import { DynamicIcon } from "@/components/ui/icon-picker"
@@ -43,14 +44,14 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
   
   if (!tenant) notFound()
 
-  const staffData = await getTenantStaff(slug)
-  const staff = staffData?.staff || []
+  const staffData = await db.teamMember.findMany({ where: { tenant: { slug } } })
+  const staff = staffData || []
   const base = await getPublicBasePath(slug)
 
   // Custom Theme rendering
-  if (tenant.customThemeId && tenant.customTheme?.staffHtml) {
+  if (tenant.customThemeId && tenant.customTheme && 'teamHtml' in tenant.customTheme) {
     const rendered = renderCustomTheme({
-      templateHtml: tenant.customTheme.staffHtml,
+      templateHtml: (tenant.customTheme as any).teamHtml,
       layoutHtml: tenant.customTheme.layoutHtml,
       customCss: tenant.customTheme.customCss,
       customJs: tenant.customTheme.customJs,
@@ -71,7 +72,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
   }
   
   if (!principal) {
-    principal = staff.find((s: any) => s.role && (s.role.toLowerCase().includes("kepala") || s.role.toLowerCase().includes("pimpinan") || s.role.toLowerCase().includes("direktur") || s.role.toLowerCase().includes("ketua")))
+    principal = staff.find((s: any) => s.position && (s.position.toLowerCase().includes("kepala") || s.position.toLowerCase().includes("pimpinan") || s.position.toLowerCase().includes("direktur") || s.position.toLowerCase().includes("ketua")))
   }
 
   const teachers = staff.filter((s: any) => s.id !== principal?.id)
@@ -148,7 +149,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
               </Link>
               <div className="flex-1 space-y-6">
                 <div>
-                  <div className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-2">{principal.role || "Pimpinan"}</div>
+                  <div className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-2">{principal.position || "Pimpinan"}</div>
                   <Link href={`${base}/tim/${principalSlug}`}>
                     <h2 className="text-3xl font-extrabold text-foreground hover:text-primary transition-colors">{principal.name}</h2>
                   </Link>
@@ -158,9 +159,6 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
                 </div>
                 
                 <div className="flex flex-wrap gap-4 items-center">
-                  <div className="flex items-center gap-2 text-xs font-bold text-primary bg-primary/5 px-4 py-2 rounded-full border border-primary/10">
-                    <GraduationCap className="h-4 w-4" /> {principal.education || "Pendidikan"}
-                  </div>
                   
                   {/* Social Media Icons */}
                   <div className="flex items-center gap-2 ml-auto md:ml-0">
@@ -174,18 +172,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
                         <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                       </a>
                     )}
-                    {principal.youtube && (
-                      <a href={principal.youtube} target="_blank" rel="noreferrer" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 border border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground transition-all shadow-sm">
-                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
-                      </a>
-                    )}
-                    {principal.tiktok && (
-                      <a href={principal.tiktok} target="_blank" rel="noreferrer" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 border border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground transition-all shadow-sm">
-                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                        </svg>
-                      </a>
-                    )}
+
                   </div>
                   
                   <Link href={`${base}/tim/${principalSlug}`} className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20 md:ml-auto">
@@ -232,7 +219,7 @@ export default async function GTKPage({ params }: { params: Promise<{ slug: stri
                 </div>
                 <div className="p-6 text-center bg-white relative z-10">
                   <h4 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">{s.name}</h4>
-                  <p className="text-xs text-primary font-bold uppercase tracking-widest mt-1 mb-4">{s.role}</p>
+                  <p className="text-xs text-primary font-bold uppercase tracking-widest mt-1 mb-4">{s.position}</p>
                   {s.bio && (
                     <p className="text-[11px] text-muted-foreground line-clamp-2 italic mb-4">
                       "{s.bio.replace(/<[^>]*>?/gm, '')}"

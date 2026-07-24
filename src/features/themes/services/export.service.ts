@@ -5,22 +5,15 @@ import {
   LAYOUT_MAIN_HBS,
   TEMPLATE_INDEX_HBS,
   TEMPLATE_PROFIL_HBS,
-  TEMPLATE_FASILITAS_HBS,
-  TEMPLATE_GURU_HBS,
   TEMPLATE_BERITA_HBS,
   TEMPLATE_BERITA_DETAIL_HBS,
   TEMPLATE_GALERI_HBS,
   TEMPLATE_KONTAK_HBS,
-  TEMPLATE_EKSKUL_HBS,
   TEMPLATE_PROGRAM_HBS,
-  TEMPLATE_PRESTASI_HBS,
   TEMPLATE_PENGUMUMAN_HBS,
   TEMPLATE_PENGUMUMAN_DETAIL_HBS,
-  TEMPLATE_PPDB_HBS,
-  TEMPLATE_ALUMNI_HBS,
   TEMPLATE_AGENDA_HBS,
   TEMPLATE_UNDUHAN_HBS,
-  TEMPLATE_GURU_DETAIL_HBS,
   STARTER_CSS,
   STARTER_JS
 } from "../constants/starter-templates"
@@ -52,23 +45,22 @@ export async function exportTheme(themeId: string): Promise<{ buffer: Buffer; fi
 
     zip.file("layouts/main.hbs", theme.layoutHtml)
     zip.file("templates/index.hbs", theme.indexHtml)
-    if (theme.facilityHtml) zip.file("templates/fasilitas.hbs", theme.facilityHtml)
+    if (theme.officeHtml) zip.file("templates/kantor.hbs", theme.officeHtml)
     if (theme.aboutHtml) zip.file("templates/profil.hbs", theme.aboutHtml)
-    if (theme.staffHtml) zip.file("templates/guru.hbs", theme.staffHtml)
+    if (theme.teamHtml) zip.file("templates/tim.hbs", theme.teamHtml)
     if (theme.newsHtml) zip.file("templates/berita.hbs", theme.newsHtml)
     if (theme.newsDetailHtml) zip.file("templates/berita-detail.hbs", theme.newsDetailHtml)
     if (theme.galleryHtml) zip.file("templates/galeri.hbs", theme.galleryHtml)
     if (theme.contactHtml) zip.file("templates/kontak.hbs", theme.contactHtml)
-    if (theme.extracurricularHtml) zip.file("templates/ekstrakurikuler.hbs", theme.extracurricularHtml)
+    if (theme.serviceHtml) zip.file("templates/layanan.hbs", theme.serviceHtml)
     if (theme.programHtml) zip.file("templates/program.hbs", theme.programHtml)
-    if (theme.achievementHtml) zip.file("templates/prestasi.hbs", theme.achievementHtml)
+    if (theme.portfolioHtml) zip.file("templates/portofolio.hbs", theme.portfolioHtml)
+    if (theme.testimonialHtml) zip.file("templates/testimoni.hbs", theme.testimonialHtml)
     if (theme.pengumumanHtml) zip.file("templates/pengumuman.hbs", theme.pengumumanHtml)
     if (theme.pengumumanDetailHtml) zip.file("templates/pengumuman-detail.hbs", theme.pengumumanDetailHtml)
-    if (theme.ppdbHtml) zip.file("templates/ppdb.hbs", theme.ppdbHtml)
-    if (theme.alumniHtml) zip.file("templates/alumni.hbs", theme.alumniHtml)
     if (theme.agendaHtml) zip.file("templates/agenda.hbs", theme.agendaHtml)
     if (theme.unduhanHtml) zip.file("templates/unduhan.hbs", theme.unduhanHtml)
-    if (theme.staffDetailHtml) zip.file("templates/guru-detail.hbs", theme.staffDetailHtml)
+    if (theme.teamDetailHtml) zip.file("templates/tim-detail.hbs", theme.teamDetailHtml)
     if (theme.customCss) zip.file("assets/styles.css", theme.customCss)
     if (theme.customJs) zip.file("assets/scripts.js", theme.customJs)
     
@@ -107,22 +99,15 @@ export async function exportTheme(themeId: string): Promise<{ buffer: Buffer; fi
   // 4. Semua template halaman
   zip.file("templates/index.hbs", TEMPLATE_INDEX_HBS)
   zip.file("templates/profil.hbs", TEMPLATE_PROFIL_HBS)
-  zip.file("templates/fasilitas.hbs", TEMPLATE_FASILITAS_HBS)
-  zip.file("templates/guru.hbs", TEMPLATE_GURU_HBS)
   zip.file("templates/berita.hbs", TEMPLATE_BERITA_HBS)
   zip.file("templates/berita-detail.hbs", TEMPLATE_BERITA_DETAIL_HBS)
   zip.file("templates/galeri.hbs", TEMPLATE_GALERI_HBS)
   zip.file("templates/kontak.hbs", TEMPLATE_KONTAK_HBS)
-  zip.file("templates/ekstrakurikuler.hbs", TEMPLATE_EKSKUL_HBS)
   zip.file("templates/program.hbs", TEMPLATE_PROGRAM_HBS)
-  zip.file("templates/prestasi.hbs", TEMPLATE_PRESTASI_HBS)
   zip.file("templates/pengumuman.hbs", TEMPLATE_PENGUMUMAN_HBS)
   zip.file("templates/pengumuman-detail.hbs", TEMPLATE_PENGUMUMAN_DETAIL_HBS)
-  zip.file("templates/ppdb.hbs", TEMPLATE_PPDB_HBS)
-  zip.file("templates/alumni.hbs", TEMPLATE_ALUMNI_HBS)
   zip.file("templates/agenda.hbs", TEMPLATE_AGENDA_HBS)
   zip.file("templates/unduhan.hbs", TEMPLATE_UNDUHAN_HBS)
-  zip.file("templates/guru-detail.hbs", TEMPLATE_GURU_DETAIL_HBS)
 
   // 5. Assets
   zip.file("assets/styles.css", STARTER_CSS)

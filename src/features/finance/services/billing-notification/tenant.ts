@@ -148,7 +148,7 @@ export async function notifyPaymentConfirmed(paymentId: string): Promise<void> {
       reference: payment.reference,
       amount: formatCurrency(payment.amount),
       invoiceType: type,
-      studentQuota: String(tenant.studentQuota || 0),
+      studentQuota: String((tenant as any).studentQuota || 0),
       expiresAt: tenant.expiresAt ? formatDate(tenant.expiresAt) : "-",
     }
 
@@ -164,7 +164,7 @@ Pembayaran untuk ${tenant.name} telah dikonfirmasi!
 💰 Jumlah: Rp ${formatCurrency(payment.amount)}
 📦 Tipe: ${type}${
   meta?.type !== "AI_QUOTA" ? `
-👥 Kuota Siswa: ${tenant.studentQuota || 0}` : `
+👥 Kuota Siswa: ${(tenant as any).studentQuota || 0}` : `
 🤖 Token AI: +${formatCurrency(meta?.aiTokens || 0)}`
 }${
   tenant.expiresAt ? `
@@ -187,8 +187,8 @@ Selamat menggunakan fitur premium ${cfg.platformName}! 🎉`
             <tr><td style="padding: 8px 0; color: #64748b;">Jumlah</td><td style="padding: 8px 0; font-weight: 600; color: #059669;">Rp ${formatCurrency(payment.amount)}</td></tr>
             <tr><td style="padding: 8px 0; color: #64748b;">Tipe</td><td style="padding: 8px 0; font-weight: 600;">${type}</td></tr>
             ${meta?.type !== "AI_QUOTA" 
-              ? `<tr><td style="padding: 8px 0; color: #64748b;">Kuota Siswa</td><td style="padding: 8px 0; font-weight: 600;">${tenant.studentQuota || 0}</td></tr>`
-              : `<tr><td style="padding: 8px 0; color: #64748b;">Token AI</td><td style="padding: 8px 0; font-weight: 600;">+${formatCurrency(meta?.aiTokens || 0)}</td></tr>`
+              ? `<tr><td style="padding: 8px 0; color: #64748b;">Kuota Siswa</td><td style="padding: 8px 0; font-weight: 600;">${(tenant as any).studentQuota || 0}</td></tr>`
+              : `<tr><td style="padding: 8px 0; color: #64748b;">Token AI</td><td style="padding: 8px 0; font-weight: 600;">+\${formatCurrency(meta?.aiTokens || 0)}</td></tr>`
             }
             ${tenant.expiresAt 
               ? `<tr><td style="padding: 8px 0; color: #64748b;">Aktif Hingga</td><td style="padding: 8px 0; font-weight: 600;">${formatDate(tenant.expiresAt)}</td></tr>`
@@ -223,7 +223,7 @@ Selamat menggunakan fitur premium ${cfg.platformName}! 🎉`
           "2": payment.reference,
           "3": formatCurrency(payment.amount),
           "4": type,
-          "5": String(tenant.studentQuota || 0),
+          "5": String((tenant as any).studentQuota || 0),
           "6": tenant.expiresAt ? formatDate(tenant.expiresAt) : "-"
         }
         sendWhatsApp(owner.user.phone, waMessage, undefined, { name: cfg.wavioTplPaymentConfirmed, variables: wavioVars }).catch(() => {})

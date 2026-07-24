@@ -1,0 +1,2 @@
+src/features/tenant/services/tenant-modular.service.ts(23,5): error TS2554: Expected 2 arguments, but got 1.
+src/features/tenant/services/tenant-modular.service.ts(25,7): error TS2554: Expected 2 arguments, but got 1.

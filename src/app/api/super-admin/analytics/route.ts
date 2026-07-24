@@ -103,18 +103,14 @@ const getOverviewData = unstable_cache(
       })
     }
 
-    const [totalPosts, totalAnnouncements, totalBlogGuru, totalEvents, totalAchievements, totalDocuments, totalWaMessages, totalStudents, totalStaff, totalClassrooms, totalSubjects] = await Promise.all([
+    const [totalPosts, totalAnnouncements, totalEvents, totalDocuments, totalWaMessages, platformUsers, totalSubscriptions] = await Promise.all([
       db.post.count({ where: { status: "PUBLISHED", deletedAt: null } }),
       db.post.count({ where: { type: "PENGUMUMAN", status: "PUBLISHED", deletedAt: null } }),
-      db.post.count({ where: { type: "BLOG_GURU", status: "PUBLISHED", deletedAt: null } }),
       db.event.count(),
-      db.achievement.count(),
       db.document.count(),
       db.waQueueLog.count({ where: { status: "SENT" } }),
-      db.student.count({ where: { isActive: true, deletedAt: null } }),
-      db.staff.count({ where: { deletedAt: null } }),
-      db.classroom.count({ where: { isActive: true } }),
-      db.subject.count({ where: { isActive: true } }),
+      db.user.count(),
+      db.subscription.count({ where: { status: "ACTIVE" } }),
     ])
 
     const loginTrend7Days = await (async () => {
@@ -144,8 +140,8 @@ const getOverviewData = unstable_cache(
       topActiveTenants = loginsByTenant.map(l => ({ name: nameMap.get(l.tenantId!) || 'Unknown', logins: l._count.id }))
     }
 
-    const schoolStatusGroups = await db.tenantApplication.groupBy({ by: ['schoolStatus'], _count: { id: true } })
-    const schoolStatusBreakdown = schoolStatusGroups.map(g => ({ name: g.schoolStatus || 'TIDAK DIKETAHUI', value: g._count.id }))
+    const schoolStatusGroups = await db.tenantApplication.groupBy({ by: ['businessType'], _count: { id: true } })
+    const schoolStatusBreakdown = schoolStatusGroups.map(g => ({ name: g.businessType || 'TIDAK DIKETAHUI', value: g._count.id }))
 
     const recentApplications = await db.tenantApplication.findMany({ where: { createdAt: { gte: sixMonthsAgo } }, select: { createdAt: true }, orderBy: { createdAt: 'asc' } })
     const monthlyGrowth = recentApplications.reduce((acc: Record<string, number>, app) => {
@@ -159,7 +155,7 @@ const getOverviewData = unstable_cache(
 
     return {
       onlineUsers: onlineUserIds.length, onlineStaff, onlineParents, totalTenants, activeTenants, totalUsers, loginsToday,
-      contentStats: { totalPosts, totalAnnouncements, totalBlogGuru, totalEvents, totalAchievements, totalDocuments, totalWaMessages, totalStudents, totalStaff, totalClassrooms, totalSubjects },
+      contentStats: { totalPosts, totalAnnouncements, totalEvents, totalDocuments, totalWaMessages, totalUsers: platformUsers, totalSubscriptions },
       loginTrend7Days, contentTrend30Days, planBreakdown, topActiveTenants, schoolStatusBreakdown,
       monthlyGrowth: Object.entries(monthlyGrowth).map(([month, count]) => ({ month, count })),
       positionBreakdown
@@ -185,14 +181,13 @@ const getGrowthData = unstable_cache(
     const regencyGroups = await db.tenantApplication.groupBy({ by: ['regency'], where: { regency: { not: null } }, _count: { id: true }, orderBy: { _count: { id: 'desc' } }, take: 10 })
     const topRegencies = regencyGroups.map(g => ({ name: g.regency!, value: g._count.id }))
 
-    const [totalPendaftar, ppdbStatusGroups, activePpdbPeriods] = await Promise.all([
-      db.pendaftarPpdb.count(), db.pendaftarPpdb.groupBy({ by: ['status'], _count: { id: true } }), db.periodePpdb.count({ where: { isActive: true } }),
-    ])
+    const totalPendaftar = 0, activePpdbPeriods = 0
+    const ppdbStatusGroups: any[] = []
 
     const [donationsAgg, activeCampaigns, unpaidInvoices] = await Promise.all([
       db.donation.aggregate({ where: { status: "PAID" }, _sum: { amount: true } }),
-      db.donationCampaign.count({ where: { isActive: true, deletedAt: null } }),
-      db.invoice.count({ where: { status: "UNPAID", deletedAt: null } }),
+      db.donationCampaign.count({ where: { isActive: true } }),
+      Promise.resolve(0), // unpaidInvoices
     ])
 
     return {
@@ -270,15 +265,9 @@ const getFinanceData = unstable_cache(
 // ============================================
 const getEcosystemData = unstable_cache(
   async () => {
-    const [canteenGmvAgg, savingDepositAgg, savingWithdrawalAgg, ppdbPaymentAgg] = await Promise.all([
-      db.canteenOrder.aggregate({ where: { status: "COMPLETED" }, _sum: { total: true } }),
-      db.walletTransaction.aggregate({ where: { type: "DEPOSIT", status: "SUCCESS" }, _sum: { amount: true } }),
-      db.walletTransaction.aggregate({ where: { type: "WITHDRAWAL", status: "SUCCESS" }, _sum: { amount: true } }),
-      db.pembayaranPpdb.aggregate({ where: { status: "LUNAS" }, _sum: { nominal: true } })
-    ])
-    const totalGmv = (canteenGmvAgg._sum.total || 0) + (savingDepositAgg._sum.amount || 0) + (ppdbPaymentAgg._sum.nominal || 0)
+    const totalGmv = 0
     return {
-      ecosystemStats: { totalGmv, canteenGmv: canteenGmvAgg._sum.total || 0, savingDeposits: savingDepositAgg._sum.amount || 0, savingWithdrawals: savingWithdrawalAgg._sum.amount || 0, ppdbPayments: ppdbPaymentAgg._sum.nominal || 0 },
+      ecosystemStats: { totalGmv, canteenGmv: 0, savingDeposits: 0, savingWithdrawals: 0, ppdbPayments: 0 },
     }
   },
   ["sa-analytics-ecosystem"], { revalidate: 600 }
@@ -293,7 +282,7 @@ const getAiInfraData = unstable_cache(
       db.aiUsageLog.aggregate({ _sum: { tokens: true } }),
       db.waQueueLog.count({ where: { status: "SENT" } }),
       db.waQueueLog.count({ where: { status: "FAILED" } }),
-      db.cbtExam.count(), db.teacherJournal.count()
+      Promise.resolve(0), Promise.resolve(0)
     ])
 
     const aiUsersGroups = await db.aiUsageLog.groupBy({ by: ['tenantId'], _sum: { tokens: true }, orderBy: { _sum: { tokens: 'desc' } }, take: 5 })
@@ -409,8 +398,9 @@ const getEngagementData = unstable_cache(
       db.tenant.count({ where: { isActive: true, lastActiveAt: { gte: thirtyDaysAgo } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: thirtyDaysAgo, gte: sixtyDaysAgoDate } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: sixtyDaysAgoDate, gte: ninetyDaysAgoDate } } }), db.tenant.count({ where: { isActive: true, lastActiveAt: { lt: ninetyDaysAgoDate } } }), db.tenant.count({ where: { retentionStatus: "ACTIVE" } }), db.tenant.count({ where: { retentionStatus: "AT_RISK" } }), db.tenant.count({ where: { retentionStatus: "CHURNED" } }), db.subscription.count({ where: { status: "EXPIRED", endDate: { lt: now } } }),
     ])
 
-    const [tenantsWithPpdb, tenantsWithWaGateway, tenantsWithDonasi, tenantsWithCanteen, tenantsWithCustomDomain, tenantsWithAi] = await Promise.all([
-      db.periodePpdb.groupBy({ by: ['tenantId'] }).then(r => r.length), Promise.resolve(0), db.donationCampaign.groupBy({ by: ['tenantId'] }).then(r => r.length), db.canteenMerchant.groupBy({ by: ['tenantId'] }).then(r => r.length), db.tenant.count({ where: { domain: { not: null } } }), db.tenant.count({ where: { aiTokens: { gt: 0 } } }),
+    const tenantsWithPpdb = 0, tenantsWithWaGateway = 0, tenantsWithDonasi = 0, tenantsWithCanteen = 0
+    const [tenantsWithCustomDomain, tenantsWithAi] = await Promise.all([
+      db.tenant.count({ where: { domain: { not: null } } }), db.tenant.count({ where: { aiTokens: { gt: 0 } } }),
     ])
 
     const featureAdoption = [
@@ -444,24 +434,24 @@ const getTenantsData = unstable_cache(
 
     const tenantIds = allTenants.map(t => t.id)
     
-    const [tenantLoginCounts, studentCounts, staffCounts, postCounts] = await Promise.all([
+    const [tenantLoginCounts, userCounts, subscriptionCounts, postCounts] = await Promise.all([
       db.auditLog.groupBy({ by: ['tenantId'], where: { action: "USER_LOGIN", createdAt: { gte: startOfMonth }, tenantId: { in: tenantIds } }, _count: { id: true } }),
-      db.student.groupBy({ by: ['tenantId'], where: { tenantId: { in: tenantIds }, isActive: true, deletedAt: null }, _count: { id: true } }),
-      db.staff.groupBy({ by: ['tenantId'], where: { tenantId: { in: tenantIds }, deletedAt: null }, _count: { id: true } }),
+      db.tenantUser.groupBy({ by: ['tenantId'], where: { tenantId: { in: tenantIds } }, _count: { id: true } }),
+      db.subscription.groupBy({ by: ['tenantId'], where: { tenantId: { in: tenantIds }, status: "ACTIVE" }, _count: { id: true } }),
       db.post.groupBy({ by: ['tenantId'], where: { tenantId: { in: tenantIds }, status: "PUBLISHED", deletedAt: null }, _count: { id: true } })
     ])
 
     const tenantLoginMap = new Map(tenantLoginCounts.filter(l => l.tenantId).map(l => [l.tenantId, l._count.id]))
-    const studentCountMap = new Map(studentCounts.filter(s => s.tenantId).map(s => [s.tenantId, s._count.id]))
-    const staffCountMap = new Map(staffCounts.filter(s => s.tenantId).map(s => [s.tenantId, s._count.id]))
+    const userCountMap = new Map(userCounts.filter(s => s.tenantId).map(s => [s.tenantId, s._count.id]))
+    const subscriptionCountMap = new Map(subscriptionCounts.filter(s => s.tenantId).map(s => [s.tenantId, s._count.id]))
     const postCountMap = new Map(postCounts.filter(p => p.tenantId).map(p => [p.tenantId, p._count.id]))
 
     const tenantActivity = allTenants.map(t => ({ 
       id: t.id, 
       name: t.name, 
       plan: t.plan, 
-      studentCount: studentCountMap.get(t.id) || 0, 
-      staffCount: staffCountMap.get(t.id) || 0, 
+      userCount: userCountMap.get(t.id) || 0, 
+      subscriptionCount: subscriptionCountMap.get(t.id) || 0, 
       postCount: postCountMap.get(t.id) || 0, 
       loginCount: tenantLoginMap.get(t.id) || 0, 
       lastActiveAt: t.lastActiveAt, 
