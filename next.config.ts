@@ -62,11 +62,6 @@ const nextConfig: NextConfig = {
     // Matikan checker bawaan Next.js agar tidak berjalan 2x dan menyebabkan OOM di VPS.
     ignoreBuildErrors: true,
   },
-  eslint: {
-    // Lint is enforced by the package prebuild script; Next's built-in lint step
-    // currently conflicts with the repo's ESLint toolchain options.
-    ignoreDuringBuilds: true,
-  },
   images: {
     // Next.js Image Optimization diaktifkan untuk meningkatkan skor LCP & Speed Index.
     // Cache TTL diset 1 minggu untuk meminimalkan load CPU VPS (4 Cores).
