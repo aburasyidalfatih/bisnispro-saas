@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
-import { Tag, Edit, Plus, Trash2, Save, X } from "lucide-react"
+import { Tag, Edit, Plus, Trash2, Save, X, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useConfirm } from "@/components/providers/confirm-provider"
 import {
@@ -38,22 +38,34 @@ interface DiscountCode {
   affiliateEmail?: string
 }
 
+interface PaginationMeta {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
 export default function DiscountsPage() {
   const [loading, setLoading] = useState(true)
   const [discounts, setDiscounts] = useState<DiscountCode[]>([])
+  const [pagination, setPagination] = useState<PaginationMeta>({ total: 0, page: 1, limit: 20, totalPages: 1 })
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchInput, setSearchInput] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [editingDiscount, setEditingDiscount] = useState<Partial<DiscountCode> | null>(null)
   const { confirm } = useConfirm()
 
-  const fetchDiscounts = async () => {
+  const fetchDiscounts = useCallback(async (page = 1, search = "") => {
     setLoading(true)
     try {
-      const res = await fetch("/api/super-admin/discounts")
+      const params = new URLSearchParams({ page: String(page), limit: "20" })
+      if (search) params.set("search", search)
+      const res = await fetch(`/api/super-admin/discounts?${params}`)
       const json = await res.json()
-      const items = Array.isArray(json) ? json : json.data || []
-      if (res.ok && Array.isArray(items)) {
-        setDiscounts(items)
+      if (res.ok && json.data) {
+        setDiscounts(json.data)
+        setPagination({ total: json.total, page: json.page, limit: json.limit, totalPages: json.totalPages })
       } else {
         throw new Error(json.error || "Format respons tidak valid")
       }
@@ -62,9 +74,28 @@ export default function DiscountsPage() {
     } finally {
       setLoading(false)
     }
+  }, [])
+
+  useEffect(() => { fetchDiscounts() }, [fetchDiscounts])
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput)
+    fetchDiscounts(1, searchInput)
   }
 
-  useEffect(() => { fetchDiscounts() }, [])
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSearch()
+  }
+
+  const handleClearSearch = () => {
+    setSearchInput("")
+    setSearchQuery("")
+    fetchDiscounts(1, "")
+  }
+
+  const goToPage = (page: number) => {
+    fetchDiscounts(page, searchQuery)
+  }
 
   const openCreate = () => {
     setEditingDiscount({
@@ -106,7 +137,7 @@ export default function DiscountsPage() {
       const res = await fetch(`/api/super-admin/discounts/${id}`, { method: "DELETE" })
       if (!res.ok) throw new Error("Gagal menghapus diskon")
       toast({ title: "Berhasil", description: "Kode diskon dihapus." })
-      fetchDiscounts()
+      fetchDiscounts(pagination.page, searchQuery)
     } catch (e: any) {
       toast({ title: "Error", description: e.message, variant: "destructive" })
     }
@@ -153,7 +184,7 @@ export default function DiscountsPage() {
 
       toast({ title: "Berhasil", description: `Kode diskon berhasil ${isEdit ? "diperbarui" : "dibuat"}.` })
       setIsDialogOpen(false)
-      fetchDiscounts()
+      fetchDiscounts(pagination.page, searchQuery)
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" })
     } finally {
@@ -167,7 +198,7 @@ export default function DiscountsPage() {
 
   return (
     <div className="space-y-6 pb-10">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Kode Diskon</h1>
           <p className="text-muted-foreground mt-1 text-sm">
@@ -178,6 +209,34 @@ export default function DiscountsPage() {
           <Plus className="w-4 h-4" /> Tambah Diskon
         </Button>
       </div>
+
+      {/* Search Bar */}
+      <div className="flex gap-2">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Cari kode diskon atau deskripsi..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+            className="pl-9 rounded-xl bg-muted/40"
+          />
+        </div>
+        <Button onClick={handleSearch} className="rounded-xl" variant="secondary">
+          Cari
+        </Button>
+        {searchQuery && (
+          <Button onClick={handleClearSearch} className="rounded-xl" variant="ghost" size="icon">
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
+      {searchQuery && (
+        <p className="text-sm text-muted-foreground">
+          Menampilkan hasil untuk "<span className="font-semibold text-foreground">{searchQuery}</span>" — {pagination.total} data ditemukan.
+        </p>
+      )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {discounts.map((discount) => (
@@ -227,11 +286,64 @@ export default function DiscountsPage() {
         {discounts.length === 0 && (
           <div className="col-span-full py-12 text-center border-2 border-dashed rounded-3xl">
             <Tag className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-            <h3 className="text-lg font-semibold">Belum Ada Diskon</h3>
-            <p className="text-muted-foreground">Buat kode diskon pertama untuk dibagikan ke sekolah.</p>
+            <h3 className="text-lg font-semibold">{searchQuery ? "Tidak Ditemukan" : "Belum Ada Diskon"}</h3>
+            <p className="text-muted-foreground">{searchQuery ? `Tidak ada kode diskon yang cocok dengan "${searchQuery}".` : "Buat kode diskon pertama untuk dibagikan ke sekolah."}</p>
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
+          <p className="text-sm text-muted-foreground">
+            Total {pagination.total} data · Halaman {pagination.page} dari {pagination.totalPages}
+          </p>
+          <div className="flex items-center gap-1.5">
+            <Button 
+              variant="outline" size="icon" className="h-9 w-9 rounded-lg" 
+              disabled={pagination.page <= 1}
+              onClick={() => goToPage(1)}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" size="icon" className="h-9 w-9 rounded-lg" 
+              disabled={pagination.page <= 1}
+              onClick={() => goToPage(pagination.page - 1)}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <div className="flex items-center gap-1 px-2">
+              <Input
+                type="number"
+                min={1}
+                max={pagination.totalPages}
+                value={pagination.page}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value)
+                  if (val >= 1 && val <= pagination.totalPages) goToPage(val)
+                }}
+                className="w-14 h-9 text-center rounded-lg text-sm font-medium"
+              />
+              <span className="text-sm text-muted-foreground">/ {pagination.totalPages}</span>
+            </div>
+            <Button 
+              variant="outline" size="icon" className="h-9 w-9 rounded-lg" 
+              disabled={pagination.page >= pagination.totalPages}
+              onClick={() => goToPage(pagination.page + 1)}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" size="icon" className="h-9 w-9 rounded-lg" 
+              disabled={pagination.page >= pagination.totalPages}
+              onClick={() => goToPage(pagination.totalPages)}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md rounded-3xl p-0 overflow-hidden border-0 shadow-2xl">

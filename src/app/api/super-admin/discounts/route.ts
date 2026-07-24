@@ -12,10 +12,19 @@ export async function GET(req: Request) {
     const url = new URL(req.url)
     const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"))
     const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get("limit") || "20")))
+    const search = url.searchParams.get("search")?.trim() || ""
     const skip = (page - 1) * limit
+
+    const where = search ? {
+      OR: [
+        { code: { contains: search, mode: "insensitive" as const } },
+        { description: { contains: search, mode: "insensitive" as const } },
+      ]
+    } : {}
 
     const [discounts, total] = await Promise.all([
       db.discountCode.findMany({
+        where,
         take: limit,
         skip,
         orderBy: { createdAt: "desc" },
@@ -27,7 +36,7 @@ export async function GET(req: Request) {
           }
         }
       }),
-      db.discountCode.count()
+      db.discountCode.count({ where })
     ])
     return NextResponse.json({ data: discounts, total, page, limit, totalPages: Math.ceil(total / limit) })
   } catch (error) {
