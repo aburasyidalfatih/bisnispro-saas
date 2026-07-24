@@ -79,6 +79,7 @@ export async function processDailyDrip() {
 
         let rawContent = campaignToSend.content
           .replace(/{{name}}/g, owner.name)
+          .replace(/{{businessName}}/g, tenant.name)
           .replace(/{{schoolName}}/g, tenant.name)
 
         rawContent = rawContent.replace(/https:\/\/bisnispro\.id\/admin/g, `${tenantUrl}/admin`)
@@ -135,6 +136,7 @@ export async function processDailyDrip() {
 
         const subject = campaignToSend.subject
           .replace(/{{name}}/g, owner.name)
+          .replace(/{{businessName}}/g, tenant.name)
           .replace(/{{schoolName}}/g, tenant.name)
 
         await emailQueue.add("send-educational-email", {

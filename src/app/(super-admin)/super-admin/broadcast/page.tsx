@@ -140,7 +140,7 @@ export default function BroadcastPage() {
                   </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-2">
                     <Info className="h-3 w-3" />
-                    Variabel tersedia: <code className="bg-accent px-1 rounded">{"{{name}}"}</code> <code className="bg-accent px-1 rounded">{"{{email}}"}</code> <code className="bg-accent px-1 rounded">{"{{phone}}"}</code> <code className="bg-accent px-1 rounded">{"{{schoolName}}"}</code> (khusus tenant)
+                    Variabel tersedia: <code className="bg-accent px-1 rounded">{"{{name}}"}</code> <code className="bg-accent px-1 rounded">{"{{email}}"}</code> <code className="bg-accent px-1 rounded">{"{{phone}}"}</code> <code className="bg-accent px-1 rounded">{"{{businessName}}"}</code> (khusus tenant)
                   </p>
                 </div>
 

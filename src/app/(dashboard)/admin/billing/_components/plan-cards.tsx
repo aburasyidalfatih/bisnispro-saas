@@ -237,7 +237,7 @@ export function PlanCards({
               <div className="flex items-center justify-between bg-muted/40 rounded-xl px-3 py-2">
                 <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Kapasitas</span>
                 <span className="text-sm font-bold flex items-center gap-1">
-                  <Users className="h-3.5 w-3.5 text-primary" /> {billing?.studentQuota || 0} Klien
+                  <Users className="h-3.5 w-3.5 text-primary" /> {billing?.employeeCount || 0} Karyawan
                 </span>
               </div>
             </div>

@@ -325,7 +325,7 @@ export async function approveApplication(id: string) {
       },
     })
   } else {
-    // Fetch free plan from database to get the maxStudents quota
+    // Fetch free plan from database to get the maxTeamMembers quota
     const freePlan = await db.subscriptionPlan.findUnique({ where: { slug: "free" } })
 
     // Buat Tenant Baru

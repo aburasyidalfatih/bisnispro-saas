@@ -78,7 +78,7 @@ export function TemplateStarsender({ form, setForm }: Props) {
           <CreditCard className="h-4 w-4 text-indigo-500" />
           <h4 className="font-bold text-base">Template Notifikasi Billing</h4>
         </div>
-        <p className="text-xs text-muted-foreground mb-4">Variabel: {'{{tenantName}}, {{reference}}, {{amount}}, {{expiredAt}}, {{expiresAt}}, {{invoiceType}}, {{bankName}}, {{bankNumber}}, {{bankAccountName}}, {{adminWA}}, {{studentQuota}}, {{affiliateName}}, {{commissionAmount}}, {{currentBalance}}, {{daysRemaining}}, {{urgency}}'}</p>
+        <p className="text-xs text-muted-foreground mb-4">Variabel: {'{{tenantName}}, {{reference}}, {{amount}}, {{expiredAt}}, {{expiresAt}}, {{invoiceType}}, {{bankName}}, {{bankNumber}}, {{bankAccountName}}, {{adminWA}}, {{employeeCount}}, {{affiliateName}}, {{commissionAmount}}, {{currentBalance}}, {{daysRemaining}}, {{urgency}}'}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">

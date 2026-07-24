@@ -1,5 +1,5 @@
 export interface TenantBilling {
-  id: string; name: string; plan: string; studentQuota: number
+  id: string; name: string; plan: string; employeeCount: number
   isActive: boolean; expiresAt: string | null
   pricing: { PRICE_PER_STUDENT: number; MIN_STUDENTS: number }
   hasPendingInvoice?: boolean
@@ -10,7 +10,7 @@ export interface TenantBilling {
 
 export interface PlanInfo {
   slug: string; name: string; description: string; price: number
-  interval: string; maxStudents: number; maxStorage: number
+  interval: string; maxTeamMembers: number; maxStorage: number
   features: string[]; isPopular: boolean
 }
 

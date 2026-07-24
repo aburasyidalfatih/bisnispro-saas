@@ -250,7 +250,7 @@ export const DEFAULT_SETTINGS_FORM: SettingsForm = {
   WA_TEMPLATE_INVOICE_CREATED: `*Invoice {{invoiceType}} - BisnisPro*\n\nHalo,\n\nInvoice untuk {{invoiceType}} {{tenantName}} telah dibuat:\n\n📋 No. Invoice: {{reference}}\n💰 Total: Rp {{amount}}\n⏰ Batas Bayar: {{expiredAt}}\n\nSilakan transfer ke:\n🏦 {{bankName}}\n💳 {{bankNumber}}\n📛 a.n. {{bankAccountName}}\n\nSetelah transfer, hubungi admin via WA {{adminWA}} untuk konfirmasi.\n\nTerima kasih! 🙏`,
   WA_ENABLE_INVOICE_CREATED: "true",
   EMAIL_ENABLE_INVOICE_CREATED: "true",
-  WA_TEMPLATE_PAYMENT_CONFIRMED: `*Pembayaran Dikonfirmasi ✅ - BisnisPro*\n\nHalo,\n\nPembayaran untuk {{tenantName}} telah dikonfirmasi!\n\n📋 No. Invoice: {{reference}}\n💰 Jumlah: Rp {{amount}}\n📦 Tipe: {{invoiceType}}\n👥 Kuota Klien: {{studentQuota}}\n📅 Aktif Hingga: {{expiresAt}}\n\nSelamat menggunakan fitur premium! 🎉`,
+  WA_TEMPLATE_PAYMENT_CONFIRMED: `*Pembayaran Dikonfirmasi ✅ - BisnisPro*\n\nHalo,\n\nPembayaran untuk {{tenantName}} telah dikonfirmasi!\n\n📋 No. Invoice: {{reference}}\n💰 Jumlah: Rp {{amount}}\n📦 Tipe: {{invoiceType}}\n👥 Jumlah Karyawan: {{employeeCount}}\n📅 Aktif Hingga: {{expiresAt}}\n\nSelamat menggunakan fitur premium! 🎉`,
   WA_ENABLE_PAYMENT_CONFIRMED: "true",
   EMAIL_ENABLE_PAYMENT_CONFIRMED: "true",
   WA_TEMPLATE_AFFILIATE_COMMISSION: `*Komisi Masuk! 💰 - BisnisPro*\n\nHalo {{affiliateName}},\n\nSelamat! Anda mendapat komisi dari referral:\n\n🏫 Perusahaan: {{tenantName}}\n💰 Komisi: Rp {{commissionAmount}}\n💳 Saldo Saat Ini: Rp {{currentBalance}}\n\nTerima kasih sudah menjadi mitra BisnisPro! 🤝`,
