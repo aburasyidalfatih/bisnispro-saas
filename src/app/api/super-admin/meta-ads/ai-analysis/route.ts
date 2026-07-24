@@ -140,7 +140,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: aiResult.error }, { status: 500 })
     }
 
-    const prompt = `Kamu adalah seorang Digital Marketing Expert, Copywriter, dan Data Analyst profesional untuk platform SaaS bernama BisnisPro (platform manajemen perusahaan berbasis web untuk SD, SMP, SMA, dan SMK di Indonesia).
+    const prompt = `Kamu adalah seorang Digital Marketing Expert, Copywriter, dan Data Analyst profesional untuk platform SaaS bernama BisnisPro (platform manajemen perusahaan berbasis web untuk UMKM dan perusahaan di Indonesia).
 
 BisnisPro menawarkan:
 - Website perusahaan profesional

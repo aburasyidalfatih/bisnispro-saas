@@ -9,7 +9,7 @@ import { id as dateId } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 
 export function PortofolioList({ achievements, base }: { achievements: any[], base: string }) {
-  const [activeTab, setActiveTab] = useState<"ALL" | "SISWA" | "GURU" | "PERUSAHAAN">("ALL")
+  const [activeTab, setActiveTab] = useState<"ALL" | "KLIEN" | "TIM" | "PERUSAHAAN">("ALL")
 
   const filteredAchievements = achievements.filter((item) => {
     if (activeTab === "ALL") return true
@@ -18,8 +18,10 @@ export function PortofolioList({ achievements, base }: { achievements: any[], ba
 
   const getTypeBadge = (type: string) => {
     switch (type) {
+      case "KLIEN":
       case "SISWA":
         return { label: "Klien", color: "bg-blue-500 text-white" }
+      case "TIM":
       case "GURU":
         return { label: "Tim & Staf", color: "bg-emerald-500 text-white" }
       case "PERUSAHAAN":
@@ -31,8 +33,8 @@ export function PortofolioList({ achievements, base }: { achievements: any[], ba
 
   const tabs = [
     { id: "ALL", label: "Semua Portofolio" },
-    { id: "SISWA", label: "Klien" },
-    { id: "GURU", label: "Tim & Staf" },
+    { id: "KLIEN", label: "Klien" },
+    { id: "TIM", label: "Tim & Staf" },
     { id: "PERUSAHAAN", label: "Institusi" },
   ]
 
@@ -134,7 +136,7 @@ export function PortofolioList({ achievements, base }: { achievements: any[], ba
             </div>
             <h3 className="text-2xl font-bold">Terus Berproses Menuju Juara</h3>
             <p className="text-muted-foreground mt-3 max-w-md mx-auto text-lg leading-relaxed">
-              Daftar portofolio sedang dalam proses pembaruan. Nantikan kabar gembira dari klien-siswi terbaik kami segera!
+              Daftar portofolio sedang dalam proses pembaruan. Nantikan kabar gembira dari klien terbaik kami segera!
             </p>
           </div>
         )}

@@ -60,7 +60,7 @@ export async function createPost(params: {
     const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId } },
     })
-    const allowedRoles = ["owner", "admin", "teacher", "operator", "staf"]
+    const allowedRoles = ["owner", "admin", "operator", "staf"]
     if (!tu || !allowedRoles.includes(tu.role)) {
       throw new Error("Tidak punya izin untuk membuat artikel")
     }
@@ -335,7 +335,7 @@ export async function createCategory(params: {
     const tu = await tenantDb.tenantUser.findUnique({
       where: { tenantId_userId: { tenantId, userId } },
     })
-    const allowedRoles = ["owner", "admin", "teacher", "operator"]
+    const allowedRoles = ["owner", "admin", "operator", "staf"]
     if (!tu || !allowedRoles.includes(tu.role)) {
       throw new Error("Tidak punya izin untuk membuat kategori")
     }

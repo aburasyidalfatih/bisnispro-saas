@@ -38,13 +38,13 @@ export async function GET(req: NextRequest) {
     // Map Posts
     for (const p of posts) {
       let typeLabel = "BERITA"
-      let urlPrefix = "/berita"
+      let urlPrefix = "/blog"
       if (p.type.includes("PENGUMUMAN")) {
         typeLabel = "PENGUMUMAN"
-        urlPrefix = "/pengumuman"
+        urlPrefix = "/blog"
       } else if (p.type === "AGENDA") {
         typeLabel = "AGENDA"
-        urlPrefix = "/agenda"
+        urlPrefix = "/event"
       } else if (p.type === "GALERI") {
         typeLabel = "GALERI"
         urlPrefix = "/gallery"

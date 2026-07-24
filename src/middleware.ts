@@ -25,7 +25,7 @@ const redis = process.env.UPSTASH_REDIS_REST_URL ? Redis.fromEnv() : null
 async function resolveCustomDomain(domain: string, requestUrl: string): Promise<string | null> {
   try {
     if (redis) {
-      const cached = await redis.get(`smp:domain:${domain}`)
+      const cached = await redis.get(`bp:domain:${domain}`)
       if (cached) return cached as string
     }
 
@@ -48,7 +48,7 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
     const slug = data.slug
 
     if (redis && slug) {
-      await redis.set(`smp:domain:${domain}`, slug, { ex: 300 })
+      await redis.set(`bp:domain:${domain}`, slug, { ex: 300 })
     }
 
     return slug
@@ -64,7 +64,7 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
 async function getCustomDomainForSlug(slug: string, requestUrl: string): Promise<string | null> {
   try {
     if (redis) {
-      const cached = await redis.get(`smp:slug-domain:${slug}`)
+      const cached = await redis.get(`bp:slug-domain:${slug}`)
       if (cached) return cached as string
     }
 
@@ -86,7 +86,7 @@ async function getCustomDomainForSlug(slug: string, requestUrl: string): Promise
     const domain = data.domain
 
     if (redis && domain) {
-      await redis.set(`smp:slug-domain:${slug}`, domain, { ex: 300 })
+      await redis.set(`bp:slug-domain:${slug}`, domain, { ex: 300 })
     }
 
     return domain
@@ -372,7 +372,6 @@ export default async function middleware(request: NextRequest) {
     // Jangan rewrite rute Dashboard/Login di subdomain
     if (
       pathname.startsWith("/admin") ||
-      pathname.startsWith("/ortu") ||
       pathname.startsWith("/login") ||
       pathname.startsWith("/register") ||
       pathname.startsWith("/forgot-password") ||
@@ -425,7 +424,6 @@ export default async function middleware(request: NextRequest) {
 
     if (
       pathname.startsWith("/admin") ||
-      pathname.startsWith("/ortu") ||
       pathname.startsWith("/login") ||
       pathname.startsWith("/register") ||
       pathname.startsWith("/forgot-password") ||

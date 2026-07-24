@@ -170,13 +170,13 @@ export function IdentityForm({
             />
           </div>
           <div className="space-y-2">
-            <Label>Semester Aktif</Label>
+            <Label>Periode Aktif</Label>
             <Select 
               value={form.settings?.academicSemester || "Ganjil"} 
               onValueChange={v => setForm(p => ({ ...p, settings: { ...p.settings, academicSemester: v } }))} 
             >
               <SelectTrigger className="flex h-10 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                <SelectValue placeholder="Pilih Semester" />
+                <SelectValue placeholder="Pilih Periode" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Ganjil">Ganjil</SelectItem>

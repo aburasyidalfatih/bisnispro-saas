@@ -254,8 +254,8 @@ export function PlanCards({
             ) : (
               <>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Semua fitur Lite</span></div>
-                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Akademik & E-Rapor</span></div>
-                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Keuangan & E-Kantin</span></div>
+                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Manajemen Operasional</span></div>
+                <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Keuangan & Invoicing</span></div>
                 <div className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" /><span>Absensi Klien & Donasi</span></div>
               </>
             )}

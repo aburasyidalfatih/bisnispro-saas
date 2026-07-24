@@ -18,8 +18,7 @@ export const socialShareWorker = new Worker(
 
       const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
       const host = post.tenant.domain || `${post.tenant.slug}.${rootDomain}`
-      const isPengumuman = post.type?.includes("PENGUMUMAN")
-      const postUrl = `https://${host}/${isPengumuman ? 'pengumuman' : 'berita'}/${post.slug}`
+      const postUrl = `https://${host}/blog/${post.slug}`
       const imageUrl = post.featuredImage || ""
       const message = `${post.title}\n\nBaca selengkapnya:\n${postUrl}`
 

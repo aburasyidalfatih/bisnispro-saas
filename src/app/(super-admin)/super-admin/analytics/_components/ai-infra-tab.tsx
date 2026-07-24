@@ -92,12 +92,12 @@ export function AiInfraTab() {
              <Database className="h-16 w-16 text-amber-500" />
           </div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Academic Data</CardTitle>
+            <CardTitle className="text-sm font-medium">Data Operasional</CardTitle>
             <Database className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(academicStats.totalCbtExams)} CBT</div>
-            <p className="text-xs text-muted-foreground mt-1">{formatNumber(academicStats.totalTeacherJournals)} Jurnal Staf</p>
+            <div className="text-2xl font-bold">{formatNumber(academicStats?.totalCbtExams || 0)} Ujian</div>
+            <p className="text-xs text-muted-foreground mt-1">{formatNumber(academicStats?.totalTeacherJournals || 0)} Jurnal Staf</p>
           </CardContent>
         </Card>
       </div>

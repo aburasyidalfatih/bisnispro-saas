@@ -39,8 +39,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL("https://bisnispro.id"),
     title: "BisnisPro - Platform Manajemen & Website Perusahaan Terpadu",
-    description: "BisnisPro adalah platform SaaS terbaik untuk digitalisasi perusahaan. Tersedia fitur pembuatan website perusahaan otomatis, PPDB Online, manajemen data master, hingga tagihan klien.",
-    keywords: ["aplikasi perusahaan", "website perusahaan", "sistem informasi perusahaan", "ppdb online", "saas pendidikan", "software administrasi perusahaan", "website perusahaan gratis", "web perusahaan gratis"],
+    description: "BisnisPro adalah platform SaaS terbaik untuk digitalisasi perusahaan. Tersedia fitur pembuatan website perusahaan otomatis, manajemen data master, layanan & portofolio, hingga tagihan klien.",
+    keywords: ["aplikasi perusahaan", "website perusahaan", "sistem informasi perusahaan", "saas bisnis", "platform manajemen bisnis", "software administrasi perusahaan", "website perusahaan gratis", "web perusahaan gratis"],
     authors: [{ name: "BisnisPro Team" }],
     robots: blockIndexing ? { index: false, follow: false } : undefined,
     openGraph: {
@@ -48,13 +48,13 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "id_ID",
       url: "https://bisnispro.id",
       title: "BisnisPro - Platform Manajemen & Website Perusahaan Terpadu",
-      description: "Digitalisasi perusahaan menjadi sangat mudah dengan BisnisPro. Buat website perusahaan, kelola PPDB, tagihan, dan data akademik dalam satu portal cerdas.",
+      description: "Digitalisasi perusahaan menjadi sangat mudah dengan BisnisPro. Buat website perusahaan, kelola tim, layanan, tagihan, dan operasional bisnis dalam satu portal cerdas.",
       siteName: "BisnisPro",
     },
     twitter: {
       card: "summary_large_image",
       title: "BisnisPro - Digitalisasi Perusahaan Tanpa Ribet",
-      description: "Satu platform untuk seluruh kebutuhan administrasi, pendaftaran, dan operasional bisnis pendidikan Anda.",
+      description: "Satu platform untuk seluruh kebutuhan administrasi, pendaftaran, dan operasional bisnis Anda.",
     },
     icons: {
       icon: platformLogo,

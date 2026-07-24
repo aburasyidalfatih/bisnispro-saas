@@ -83,7 +83,7 @@ export function LatestUpdates({ events, posts, basePath }: LatestUpdatesProps) {
                 <Megaphone className="h-6 w-6 text-primary" />
                 <h3 className="font-bold text-lg">Pengumuman</h3>
               </div>
-              <Link href={`${basePath}/pengumuman`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+              <Link href={`${basePath}/blog`} className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
                 Lihat Semua <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
@@ -94,7 +94,7 @@ export function LatestUpdates({ events, posts, basePath }: LatestUpdatesProps) {
                 const badgeColor = badgeColors[idx % badgeColors.length];
                 
                 return (
-                  <Link key={idx} href={`${basePath}/pengumuman/${item.slug || item.id}`} className="flex gap-4 group cursor-pointer">
+                  <Link key={idx} href={`${basePath}/blog/${item.slug || item.id}`} className="flex gap-4 group cursor-pointer">
                     <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl px-4 py-2 min-w-[70px] border border-transparent group-hover:border-primary/30 group-hover:bg-primary/5 transition-colors h-fit">
                       <span className="text-2xl font-black text-foreground group-hover:text-primary leading-none mb-1">
                         {format(new Date(item.createdAt), "dd")}

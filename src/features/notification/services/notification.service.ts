@@ -119,31 +119,31 @@ export async function processTemplateNotification({
   const defaults: Record<string, {title: string, message: string}> = {
     invoice_created: {
       title: "Tagihan Baru: {{invoiceTitle}}",
-      message: "Halo, ada tagihan baru untuk ananda {{studentName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
+      message: "Halo, ada tagihan baru untuk akun {{clientName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
     },
     payment_success: {
       title: "Pembayaran Berhasil: {{invoiceTitle}}",
-      message: "Terima kasih, pembayaran sebesar Rp {{amountPaid}} untuk tagihan {{invoiceTitle}} ananda {{studentName}} telah berhasil kami terima."
+      message: "Terima kasih, pembayaran sebesar Rp {{amountPaid}} untuk tagihan {{invoiceTitle}} akun {{clientName}} telah berhasil kami terima."
     },
     wallet_topup: {
       title: "Top-up Saldo Berhasil",
-      message: "Top-up saldo E-Kantin ananda {{studentName}} sebesar Rp {{amount}} telah berhasil. Saldo saat ini: Rp {{newBalance}}."
+      message: "Top-up saldo akun {{clientName}} sebesar Rp {{amount}} telah berhasil. Saldo saat ini: Rp {{newBalance}}."
     },
     attendance_alert: {
-      title: "Info Kehadiran: {{studentName}}",
-      message: "Ananda {{studentName}} tercatat dengan status: {{status}} pada pukul {{time}}."
+      title: "Info Kehadiran: {{memberName}}",
+      message: "{{memberName}} telah hadir di kantor dengan status: {{status}} pada pukul {{time}}."
     },
     canteen_transaction: {
-      title: "Transaksi E-Kantin",
-      message: "Info Transaksi: Ananda {{studentName}} baru saja melakukan pembelian di {{merchantName}} sebesar Rp {{amount}}. Sisa saldo dompet saat ini: Rp {{newBalance}}."
+      title: "Transaksi Layanan",
+      message: "Info Transaksi: Akun {{clientName}} baru saja melakukan pembelian di {{merchantName}} sebesar Rp {{amount}}. Sisa saldo dompet saat ini: Rp {{newBalance}}."
     },
     discipline_alert: {
-      title: "Pemberitahuan Kedisiplinan Klien",
-      message: "Bapak/Ibu Wali Murid, menginformasikan bahwa ananda {{studentName}} mendapat catatan terkait: {{violation}} (Poin: {{points}}). Harap hubungi pihak BK {{schoolName}} untuk detail lebih lanjut."
+      title: "Catatan Kedisiplinan Tim",
+      message: "Catatan internal: {{memberName}} mendapat catatan terkait: {{violation}} (Poin: {{points}}). Harap hubungi manajemen {{businessName}} untuk detail lebih lanjut."
     },
     invoice_overdue: {
       title: "Peringatan Jatuh Tempo: {{invoiceTitle}}",
-      message: "Pemberitahuan dari {{schoolName}}. Tagihan {{invoiceTitle}} ananda {{studentName}} sebesar Rp {{amountDue}} telah/akan jatuh tempo pada {{dueDate}}. Mohon segera lakukan pembayaran."
+      message: "Pemberitahuan dari {{businessName}}. Tagihan {{invoiceTitle}} untuk akun {{clientName}} sebesar Rp {{amountDue}} telah/akan jatuh tempo pada {{dueDate}}. Mohon segera lakukan pembayaran."
     }
   }
 
@@ -161,7 +161,10 @@ export async function processTemplateNotification({
 
   if (channels.length === 0 || !targetUserId) return
 
-  // Automatically inject schoolName
+  // Automatically inject businessName & schoolName
+  if (!variables["businessName"]) {
+    variables["businessName"] = tenant.name
+  }
   if (!variables["schoolName"]) {
     variables["schoolName"] = tenant.name
   }

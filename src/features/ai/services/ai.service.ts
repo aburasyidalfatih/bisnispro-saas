@@ -132,13 +132,13 @@ export async function deductAiToken(tenantId: string, tokensUsed: number, userId
       }
     })
 
-    // Strict separation: If user is TEACHER, they MUST use their own tokens.
+    // Strict separation: If user is STAFF, they MUST use their own tokens.
     let isTeacher = false
     if (userId) {
       const tenantUser = await db.tenantUser.findUnique({
         where: { tenantId_userId: { tenantId, userId } }
       })
-      isTeacher = tenantUser?.role.toLowerCase() === "staf" || tenantUser?.role.toLowerCase() === "teacher"
+      isTeacher = tenantUser?.role.toLowerCase() === "staf"
     }
 
     if (isTeacher) {
@@ -181,12 +181,12 @@ export async function checkAiTokenBalance(tenantId: string, userId?: string) {
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } })
     if (!tenant) return { success: false, hasBalance: false, balance: 0, error: "Tenant not found" }
     
-    // Strict separation for Teachers
+    // Strict separation for Staff
     if (userId) {
       const tenantUser = await db.tenantUser.findUnique({
         where: { tenantId_userId: { tenantId, userId } }
       })
-      const isTeacher = tenantUser?.role.toLowerCase() === "staf" || tenantUser?.role.toLowerCase() === "teacher"
+      const isTeacher = tenantUser?.role.toLowerCase() === "staf"
       
       if (isTeacher) {
         const user = await db.user.findUnique({ where: { id: userId } })

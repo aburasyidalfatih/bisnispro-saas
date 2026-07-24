@@ -156,18 +156,18 @@ export default function BroadcastPage() {
                           <SelectValue placeholder="Pilih penerima..." />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all_gtk">Semua Staf & Staf (GTK)</SelectItem>
+                          <SelectItem value="all_gtk">Semua Karyawan & Tim</SelectItem>
                           {tenantPlan ==="pro" && (
                             <>
-                              <SelectItem value="all_parents">Semua Orang Tua Klien</SelectItem>
-                              <SelectItem value="all">Semua GTK & Orang Tua</SelectItem>
+                              <SelectItem value="all_parents">Semua Klien</SelectItem>
+                              <SelectItem value="all">Semua Karyawan, Tim & Klien</SelectItem>
                             </>
                           )}
                         </SelectContent>
                       </Select>
                       {tenantPlan ==="lite" && (
                         <p className="text-[11px] text-amber-600 font-medium">
-                          Paket Lite hanya dapat melakukan broadcast ke Staf & Staf. Upgrade ke PRO untuk broadcast ke Orang Tua.
+                          Paket Lite hanya dapat melakukan broadcast ke Karyawan & Tim. Upgrade ke PRO untuk broadcast ke Klien.
                         </p>
                       )}
                     </div>

@@ -181,7 +181,7 @@ export function Announcements({
                       {post.type ==="PENGUMUMAN_SEMUA" ?"TARGET: SEMUA" :
                        post.type ==="PENGUMUMAN_GTK" ?"TARGET: GTK" :
                        post.type ==="PENGUMUMAN_ORTU" ?"TARGET: ORANGTUA" :
-                       post.type ==="PENGUMUMAN_SISWA" ?"TARGET: SISWA" :"PENGUMUMAN"}
+                       post.type ==="PENGUMUMAN_SISWA" ?"TARGET: KLIEN" :"PENGUMUMAN"}
                     </span>
                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEditModal(post)}>
                       <Pencil className="h-4 w-4" />

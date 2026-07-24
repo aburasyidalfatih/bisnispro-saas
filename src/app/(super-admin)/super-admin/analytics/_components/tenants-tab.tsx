@@ -81,7 +81,7 @@ export function TenantsTab() {
                   <TableHead className="px-3 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">Perusahaan</TableHead>
                   <TableHead className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Paket</TableHead>
                   <SortableHeader label="Klien" column="studentCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
-                  <SortableHeader label="GTK" column="staffCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
+                  <SortableHeader label="Staf" column="staffCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <SortableHeader label="Post" column="postCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <SortableHeader label="Login Bulan Ini" column="loginCount" current={sortColumn} order={sortOrder} onSort={handleSort} />
                   <TableHead className="px-3 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">Terakhir Aktif</TableHead>

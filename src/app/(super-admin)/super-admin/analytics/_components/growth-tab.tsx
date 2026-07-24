@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Target, MapPin, GraduationCap, Receipt, Heart, Timer, BookOpen } from "lucide-react"
+import { Target, MapPin, GraduationCap, Receipt, Heart, Timer, BookOpen, Building2 } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from "recharts"
 import { cn } from "@/lib/utils"
 import { AnalyticsData, COLORS } from "./types"
@@ -125,7 +125,7 @@ export function GrowthTab() {
         <Card className="glass border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <GraduationCap className="h-5 w-5 text-blue-500" /> Insight PPDB
+              <Building2 className="h-5 w-5 text-blue-500" /> Insight Pendaftaran Klien
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -134,7 +134,7 @@ export function GrowthTab() {
               <span className="text-lg font-bold">{data.ppdbStats.totalPendaftar.toLocaleString('id-ID')}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Periode PPDB Aktif</span>
+              <span className="text-sm text-muted-foreground">Periode Pendaftaran Aktif</span>
               <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">{data.ppdbStats.activePeriods} periode</Badge>
             </div>
             <div className="space-y-2 pt-2 border-t">
@@ -146,7 +146,7 @@ export function GrowthTab() {
                 </div>
               ))}
               {data.ppdbStats.statusBreakdown.length === 0 && (
-                <p className="text-xs text-muted-foreground italic">Belum ada data PPDB.</p>
+                <p className="text-xs text-muted-foreground italic">Belum ada data pendaftaran.</p>
               )}
             </div>
           </CardContent>
@@ -171,7 +171,7 @@ export function GrowthTab() {
               </Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Invoice SPP Belum Lunas</span>
+              <span className="text-sm text-muted-foreground">Invoice Tagihan Belum Lunas</span>
               <Badge variant="outline" className={cn(
                 data.financeStats.unpaidInvoices > 0 
                   ? "bg-amber-50 text-amber-600 border-amber-200" 

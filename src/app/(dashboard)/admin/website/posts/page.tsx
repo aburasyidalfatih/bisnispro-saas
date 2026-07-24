@@ -186,7 +186,7 @@ export default function PostsPage() {
                         <div className="flex items-center justify-end gap-1">
                           {post.status ==="PUBLISHED" && (
                             <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-blue-600" title="Lihat di website">
-                              <a href={`/berita/${post.slug}`} target="_blank" rel="noopener noreferrer">
+                              <a href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer">
                                 <Eye className="h-4 w-4" />
                               </a>
                             </Button>

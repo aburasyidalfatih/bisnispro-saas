@@ -87,7 +87,7 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
             </div>
             <div className="space-y-2">
               <Label>Custom Domain</Label>
-              <Input value={editForm.domain} onChange={(e) => setEditForm({...editForm, domain: e.target.value})} placeholder="myschool.sch.id" className="rounded-xl font-mono text-xs" />
+              <Input value={editForm.domain} onChange={(e) => setEditForm({...editForm, domain: e.target.value})} placeholder="mycompany.co.id" className="rounded-xl font-mono text-xs" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">

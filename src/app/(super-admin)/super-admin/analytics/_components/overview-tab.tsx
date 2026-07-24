@@ -50,7 +50,7 @@ export function OverviewTab() {
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-7">
         <SummaryCard icon={Wifi} label="Online Saat Ini" value={data.onlineUsers} color="emerald" pulse />
         <SummaryCard icon={UserCheck} label="Staf/Staff Online" value={data.onlineStaff} color="blue" />
-        <SummaryCard icon={Users} label="Ortu/Klien Online" value={data.onlineParents} color="violet" />
+        <SummaryCard icon={Users} label="Klien Online" value={data.onlineParents} color="violet" />
         <SummaryCard icon={Building2} label="Bisnis Aktif" value={data.activeTenants} color="primary" subtitle={`/ ${data.totalTenants} total`} />
         <SummaryCard icon={Users} label="Total User" value={data.totalUsers} color="slate" />
         <SummaryCard icon={TrendingUp} label="Login Hari Ini" value={data.loginsToday} color="amber" />
@@ -198,7 +198,7 @@ export function OverviewTab() {
             <CardTitle className="flex items-center gap-2 text-base">
               <Building2 className="h-5 w-5 text-emerald-600" /> Penetrasi Pasar
             </CardTitle>
-            <CardDescription>Negeri vs Swasta dari total bisnis yang mendaftar.</CardDescription>
+            <CardDescription>Kategori bisnis dari total bisnis yang mendaftar.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
             <div className="h-[320px] w-full">

@@ -16,7 +16,7 @@ export function SchoolsMarquee({ activeTenants, totalTenants }: SchoolsMarqueePr
     <section className="py-8 md:py-10 border-y bg-muted/30 overflow-hidden">
       <div className="container mx-auto px-4 mb-6 text-center">
         <p className="text-base md:text-lg font-bold text-foreground/90 uppercase tracking-[0.2em]">
-          Dipercaya oleh <span className="text-primary font-black px-1">{displayCount}</span> inovator pendidikan di seluruh Indonesia
+          Dipercaya oleh <span className="text-primary font-black px-1">{displayCount}</span> inovator bisnis di seluruh Indonesia
         </p>
       </div>
       {/* Marquee Container */}

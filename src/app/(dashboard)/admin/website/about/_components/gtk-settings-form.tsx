@@ -85,9 +85,9 @@ export function GtkSettingsForm({ form, setForm }: GtkSettingsFormProps) {
               <Users className="h-4 w-4 text-primary" />
             </div>
             <div className="space-y-1">
-              <CardTitle className="text-lg">Statistik Halaman GTK</CardTitle>
+              <CardTitle className="text-lg">Statistik Halaman Tim</CardTitle>
               <CardDescription>
-                Atur 4 statistik yang muncul di banner halaman GTK. Jika dikosongkan, akan menggunakan data bawaan (Total Staf, Lulusan, dsb).
+                Atur 4 statistik yang muncul di banner halaman Tim. Jika dikosongkan, akan menggunakan data bawaan (Total Staf, Kinerja, dsb).
               </CardDescription>
             </div>
           </div>
@@ -162,7 +162,7 @@ export function GtkSettingsForm({ form, setForm }: GtkSettingsFormProps) {
             <div className="space-y-1">
               <CardTitle className="text-lg">Call-to-Action (CTA)</CardTitle>
               <CardDescription>
-                Teks ajakan atau informasi lowongan pekerjaan (Karir) di bagian bawah halaman GTK. Biarkan kosong untuk nilai bawaan.
+                Teks ajakan atau informasi lowongan pekerjaan (Karir) di bagian bawah halaman Tim. Biarkan kosong untuk nilai bawaan.
               </CardDescription>
             </div>
           </div>

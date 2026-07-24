@@ -278,11 +278,10 @@ const getEcosystemData = unstable_cache(
 // ============================================
 const getAiInfraData = unstable_cache(
   async () => {
-    const [aiUsageAgg, totalWaSent, totalWaFailed, totalCbtExams, totalTeacherJournals] = await Promise.all([
+    const [aiUsageAgg, totalWaSent, totalWaFailed] = await Promise.all([
       db.aiUsageLog.aggregate({ _sum: { tokens: true } }),
       db.waQueueLog.count({ where: { status: "SENT" } }),
       db.waQueueLog.count({ where: { status: "FAILED" } }),
-      Promise.resolve(0), Promise.resolve(0)
     ])
 
     const aiUsersGroups = await db.aiUsageLog.groupBy({ by: ['tenantId'], _sum: { tokens: true }, orderBy: { _sum: { tokens: 'desc' } }, take: 5 })
@@ -296,7 +295,7 @@ const getAiInfraData = unstable_cache(
 
     return {
       aiInfraStats: { totalAiTokensUsed: aiUsageAgg._sum.tokens || 0, topAiTenants, waSent: totalWaSent, waFailed: totalWaFailed, totalStorageBytes: 0 },
-      academicStats: { totalCbtExams, totalTeacherJournals },
+      academicStats: { totalCbtExams: 0, totalTeacherJournals: 0 },
     }
   },
   ["sa-analytics-ai-infra"], { revalidate: 600 }
@@ -404,7 +403,7 @@ const getEngagementData = unstable_cache(
     ])
 
     const featureAdoption = [
-      { feature: "PPDB Online", count: tenantsWithPpdb, icon: "ppdb" }, { feature: "WhatsApp Gateway", count: tenantsWithWaGateway, icon: "wa" }, { feature: "Donasi & Infaq", count: tenantsWithDonasi, icon: "donasi" }, { feature: "E-Kantin", count: tenantsWithCanteen, icon: "kantin" }, { feature: "Custom Domain", count: tenantsWithCustomDomain, icon: "domain" }, { feature: "AI / Kecerdasan Buatan", count: tenantsWithAi, icon: "ai" },
+      { feature: "Pendaftaran Online", count: tenantsWithPpdb, icon: "ppdb" }, { feature: "WhatsApp Gateway", count: tenantsWithWaGateway, icon: "wa" }, { feature: "Donasi & Infaq", count: tenantsWithDonasi, icon: "donasi" }, { feature: "Layanan & Produk", count: tenantsWithCanteen, icon: "kantin" }, { feature: "Custom Domain", count: tenantsWithCustomDomain, icon: "domain" }, { feature: "AI / Kecerdasan Buatan", count: tenantsWithAi, icon: "ai" },
     ].sort((a, b) => b.count - a.count)
 
 

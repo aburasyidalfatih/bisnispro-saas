@@ -40,9 +40,9 @@ export function EcosystemTab() {
   }
 
   const chartData = [
-    { name: "GMV E-Kantin", value: ecosystemStats.canteenGmv, fill: "#3b82f6" },
+    { name: "GMV Layanan", value: ecosystemStats.canteenGmv, fill: "#3b82f6" },
     { name: "Top-Up Tabungan", value: ecosystemStats.savingDeposits, fill: "#10b981" },
-    { name: "Pembayaran PPDB", value: ecosystemStats.ppdbPayments, fill: "#8b5cf6" },
+    { name: "Pembayaran Pendaftaran", value: ecosystemStats.ppdbPayments, fill: "#8b5cf6" },
   ]
 
   return (
@@ -60,7 +60,7 @@ export function EcosystemTab() {
               {formatRupiah(ecosystemStats.totalGmv)}
             </h1>
             <p className="text-slate-300 max-w-lg text-sm">
-              Total perputaran uang melalui ekosistem transaksi platform (Kantin, Tabungan Klien, dan PPDB) dari seluruh bisnis.
+              Total perputaran uang melalui ekosistem transaksi platform (Layanan, Tabungan & Pendaftaran) dari seluruh bisnis.
             </p>
           </div>
           <div className="shrink-0">
@@ -78,14 +78,14 @@ export function EcosystemTab() {
              <Store className="h-32 w-32 text-blue-500" />
           </div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">GMV E-Kantin</CardTitle>
+            <CardTitle className="text-sm font-medium">GMV Layanan</CardTitle>
             <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
               <Store className="h-4 w-4 text-blue-500" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatRupiah(ecosystemStats.canteenGmv)}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total transaksi belanja klien di kantin digital.</p>
+            <p className="text-xs text-muted-foreground mt-1">Total transaksi layanan bisnis.</p>
           </CardContent>
         </Card>
 
@@ -102,7 +102,7 @@ export function EcosystemTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatRupiah(ecosystemStats.savingDeposits)}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total dana yang disetor wali murid ke dalam dompet digital klien.</p>
+            <p className="text-xs text-muted-foreground mt-1">Total dana yang disetor klien ke dalam dompet digital klien.</p>
           </CardContent>
         </Card>
 
@@ -112,7 +112,7 @@ export function EcosystemTab() {
              <GraduationCap className="h-32 w-32 text-purple-500" />
           </div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pembayaran PPDB</CardTitle>
+            <CardTitle className="text-sm font-medium">Pembayaran Pendaftaran</CardTitle>
             <div className="h-8 w-8 rounded-full bg-purple-500/10 flex items-center justify-center">
               <GraduationCap className="h-4 w-4 text-purple-500" />
             </div>

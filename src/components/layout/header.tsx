@@ -66,13 +66,13 @@ const labelMap: Record<string, string> = {
   whatsapp: "WhatsApp",
   payment: "Payment Gateway",
   // Academic routes (new)
-  subjects: "Mata Pelajaran",
-  schedules: "Jadwal Pelajaran",
-  grades: "E-Rapor",
-  discipline: "Catatan Perilaku (BK)",
-  jurnal: "Jurnal Mengajar",
-  nilai: "Input Nilai",
-  rapor: "Nilai & Rapor",
+  subjects: "Layanan",
+  schedules: "Jadwal Kerja",
+  grades: "Laporan Kinerja",
+  discipline: "Catatan Internal",
+  jurnal: "Jurnal Aktivitas",
+  nilai: "Input Kinerja",
+  rapor: "Kinerja & Laporan",
   kantin: "Riwayat Kantin",
 }
 

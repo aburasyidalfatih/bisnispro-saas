@@ -154,6 +154,7 @@ export async function createUpgradeInvoice(tenantId: string, studentCount: numbe
           expiredAt,
           metadata: {
             studentCount: planSlug === "pro" ? studentCount : 0,
+            pricePerUser: pricePerStudent,
             pricePerStudent,
             tenantName: tenant.name,
             tenantSlug: tenant.slug,
@@ -237,8 +238,9 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
       orderBy: { paidAt: "desc" },
       select: { metadata: true }
     })
-    const lockedPrice = (lastPaidPayment?.metadata as any)?.pricePerStudent
-    const pricePerStudent = lockedPrice && lockedPrice > 0 ? lockedPrice : pricing.PRICE_PER_STUDENT
+    const lockedPrice = (lastPaidPayment?.metadata as any)?.pricePerUser || (lastPaidPayment?.metadata as any)?.pricePerStudent
+    const pricePerUser = lockedPrice && lockedPrice > 0 ? lockedPrice : pricing.PRICE_PER_STUDENT
+    const pricePerStudent = pricePerUser
 
     const msPerDay = 24 * 60 * 60 * 1000
     const daysRemaining = Math.ceil((expiresAt.getTime() - now.getTime()) / msPerDay)
@@ -246,7 +248,7 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
     // Asumsikan 1 tahun = 365 hari untuk base calculation
     const ratio = Math.min(daysRemaining / 365, 1)
 
-    const fullSubTotal = studentCount * pricePerStudent
+    const fullSubTotal = studentCount * pricePerUser
     const subTotal = Math.round(fullSubTotal * ratio) // prorated, rounded to Int
 
     let amount = subTotal
@@ -301,6 +303,7 @@ export async function createAddonInvoice(tenantId: string, studentCount: number,
           expiredAt: expiredAtInvoice,
           metadata: {
             studentCount,
+            pricePerUser,
             pricePerStudent,
             tenantName: tenant.name,
             tenantSlug: tenant.slug,

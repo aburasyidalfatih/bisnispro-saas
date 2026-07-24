@@ -151,7 +151,7 @@ export const getTenantProfileData = async (slug: string) => {
           about: true,
           createdAt: true,
           _count: {
-            select: { }
+            select: { posts: true, services: true, portfolios: true, teamMembers: true, offices: true }
           }
         }
       })

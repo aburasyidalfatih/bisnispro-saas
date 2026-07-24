@@ -31,15 +31,15 @@ const FEATURE_LIST: FeatureItem[] = [
   { key: "school_tv", label: "School TV", description: "Layar Digital Signage untuk informasi publik di lobi perusahaan.", icon: MonitorSmartphone, category: "Konten & Website" },
   
   // Data & Manajemen
-  { key: "data_master", label: "Data Master", description: "Data admin, staf, klien, orang tua, divisi, dan mata pelajaran.", icon: Users, category: "Data & Manajemen" },
+  { key: "data_master", label: "Data Master", description: "Data admin, staf, klien, divisi, dan layanan & produk.", icon: Users, category: "Data & Manajemen" },
   { key: "ppdb", label: "PPDB Online", description: "Penerimaan peserta didik baru secara online.", icon: UserPlus, category: "Data & Manajemen" },
-  { key: "akademik", label: "Akademik", description: "Jadwal pelajaran, e-rapor, dan catatan perilaku (BK).", icon: GraduationCap, category: "Akademik & Kehadiran" },
+  { key: "akademik", label: "Akademik", description: "Jadwal kerja, laporan kinerja, dan manajemen operasional.", icon: GraduationCap, category: "Akademik & Kehadiran" },
   { key: "kehadiran_staf", label: "Kehadiran Staf (GTK)", description: "Absensi staf, rekap harian/bulanan/tahunan, dan koreksi manual.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
   { key: "kehadiran_klien", label: "Kehadiran Klien", description: "Sesi absensi klien, jurnal divisi, dan pengajuan izin klien.", icon: CalendarCheck, category: "Akademik & Kehadiran" },
   
   // Keuangan
   { key: "keuangan", label: "Keuangan & Kas", description: "Tagihan SPP, tabungan, cashflow, dan jenis tagihan.", icon: Wallet, category: "Keuangan" },
-  { key: "e_kantin", label: "E-Kantin", description: "Sistem kantin digital, merchant, dan pembayaran.", icon: Store, category: "Keuangan" },
+  { key: "e_kantin", label: "Invoicing & Keuangan", description: "Sistem invoicing digital, merchant, dan pembayaran.", icon: Store, category: "Keuangan" },
   { key: "donasi", label: "Donasi & Infaq", description: "Kampanye penggalangan dana dan donasi online.", icon: Heart, category: "Keuangan" },
   { key: "payment_gateway", label: "Payment Gateway", description: "Integrasi pembayaran otomatis (Tripay, dll).", icon: CreditCard, category: "Keuangan" },
   
@@ -52,10 +52,10 @@ const FEATURE_LIST: FeatureItem[] = [
   // Fitur Lanjutan
   { key: "academy", label: "Academy (LMS)", description: "Katalog divisi dan sistem pembelajaran tenant.", icon: GraduationCap, category: "Fitur Lanjutan" },
   { key: "laporan", label: "Laporan", description: "Dashboard laporan dan ekspor data.", icon: FileText, category: "Fitur Lanjutan" },
-  { key: "custom_domain", label: "Custom Domain", description: "Gunakan domain sendiri (.sch.id, dll).", icon: Globe, category: "Fitur Lanjutan" },
+  { key: "custom_domain", label: "Custom Domain", description: "Gunakan domain sendiri (.com, .co.id, dll).", icon: Globe, category: "Fitur Lanjutan" },
   { key: "ai_settings", label: "Kecerdasan Buatan (AI)", description: "Asisten AI untuk konten dan analisis.", icon: BrainCircuit, category: "Fitur Lanjutan" },
   { key: "audit_log", label: "Audit Log", description: "Riwayat aktivitas dan perubahan data.", icon: ClipboardList, category: "Fitur Lanjutan" },
-  { key: "portal_orangtua", label: "Portal Orang Tua", description: "Akses mandiri bagi orang tua/wali murid.", icon: User, category: "Fitur Lanjutan" },
+  { key: "portal_orangtua", label: "Portal Klien", description: "Akses mandiri bagi klien / pelanggan.", icon: User, category: "Fitur Lanjutan" },
 ]
 
 const PLAN_META = [

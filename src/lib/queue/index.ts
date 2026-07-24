@@ -25,7 +25,7 @@ const defaultJobOptions: DefaultJobOptions = {
   },
 }
 
-// Queue for processing heavy CSV imports (students, staff, etc.)
+// Queue for processing heavy CSV imports (team members, clients, etc.)
 export const importQueue = createQueue("import-queue", {
   connection: redisConnection,
   defaultJobOptions,
@@ -37,7 +37,7 @@ export const waQueue = createQueue("wa-queue", {
   defaultJobOptions,
 })
 
-// Queue for processing recurring invoices/SPP
+// Queue for processing recurring invoices/subscriptions
 export const billingQueue = createQueue("billing-queue", {
   connection: redisConnection,
   defaultJobOptions,
@@ -51,12 +51,6 @@ export const gamificationQueue = createQueue("gamification-queue", {
 
 // Queue for sending automated emails
 export const emailQueue = createQueue("email-queue", {
-  connection: redisConnection,
-  defaultJobOptions,
-})
-
-// Queue for processing CBT background scoring
-export const cbtQueue = createQueue("cbt-queue", {
   connection: redisConnection,
   defaultJobOptions,
 })

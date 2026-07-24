@@ -35,7 +35,7 @@ export interface CustomDomainSettings {
  * Format: smp-verify-<16 hex chars>
  */
 export function generateVerifyToken(): string {
-  return `smp-verify-${crypto.randomBytes(8).toString("hex")}`
+  return `bp-verify-${crypto.randomBytes(8).toString("hex")}`
 }
 
 // ==================== DNS VERIFICATION ====================
@@ -43,14 +43,14 @@ export function generateVerifyToken(): string {
 /**
  * Verifikasi domain dengan mengecek DNS TXT record.
  * Tenant harus menambahkan TXT record:
- *   Name:  _smp-verify.<domain>
+ *   Name:  _bp-verify.<domain>
  *   Value: <verifyToken>
  */
 export async function verifyDomainDns(
   domain: string,
   verifyToken: string
 ): Promise<{ success: boolean; reason?: string }> {
-  const txtHost = `_smp-verify.${domain}`
+  const txtHost = `_bp-verify.${domain}`
 
   try {
     const records = await dns.resolveTxt(txtHost)
@@ -80,7 +80,7 @@ export async function verifyDomainDns(
 // TTL: 1 jam — cukup untuk production, tidak terlalu lama jika domain berubah
 
 const CACHE_TTL_SECONDS = 3600
-const CACHE_PREFIX = "smp:domain:"
+const CACHE_PREFIX = "bp:domain:"
 
 import { getRedisClient } from "@/lib/redis"
 
@@ -102,17 +102,17 @@ export async function invalidateDomainCache(domain: string): Promise<void> {
 
 export async function cacheSlugDomain(slug: string, domain: string): Promise<void> {
   const redis = await getRedisClient()
-  await redis.set(`smp:slug-domain:${slug}`, domain, CACHE_TTL_SECONDS)
+  await redis.set(`bp:slug-domain:${slug}`, domain, CACHE_TTL_SECONDS)
 }
 
 export async function getCachedSlugDomain(slug: string): Promise<string | null> {
   const redis = await getRedisClient()
-  return redis.get(`smp:slug-domain:${slug}`)
+  return redis.get(`bp:slug-domain:${slug}`)
 }
 
 export async function invalidateSlugCache(slug: string): Promise<void> {
   const redis = await getRedisClient()
-  await redis.del(`smp:slug-domain:${slug}`)
+  await redis.del(`bp:slug-domain:${slug}`)
 }
 
 

@@ -282,7 +282,7 @@ export default function CustomPagesPage() {
               <Textarea 
                 value={aiTopic}
                 onChange={(e) => setAiTopic(e.target.value)}
-                placeholder="Misal: Buatkan tata tertib klien SD. Jam masuk 07.00. Wajib seragam rapi. Dilarang bawa HP."
+                placeholder="Misal: Buatkan Standar Operasional Prosedur (SOP) karyawan. Jam kerja 08.00 - 17.00. Wajib berpakaian rapi dan profesional."
                 className="h-32 rounded-xl resize-none focus-visible:ring-primary/50"
               />
             </div>

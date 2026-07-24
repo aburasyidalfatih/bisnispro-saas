@@ -162,7 +162,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          9. GURU & STAFF
+          9. TIM & KARYAWAN
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.staff?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>

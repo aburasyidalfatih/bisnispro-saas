@@ -29,14 +29,14 @@ Handlebars.registerHelper("json", function (context: any) {
 
 // ─── Comprehensive dummy data for theme demo ───
 const DUMMY_TENANT = {
-  name: "SMA Prestasi Bangsa",
-  slug: "sma-prestasi",
+  name: "PT Prestasi Bangsa",
+  slug: "pt-prestasi",
   tagline: "Membentuk Generasi Cerdas dan Berkarakter",
-  about: "SMA Prestasi Bangsa adalah perusahaan unggulan yang berdedikasi untuk memberikan pendidikan berkualitas tinggi berbasis karakter dan teknologi. Berdiri sejak tahun 1985, kami telah menghasilkan ribuan mitra yang berkontribusi di berbagai bidang. Kami mempersiapkan klien untuk siap menghadapi tantangan global dengan aset lengkap dan tenaga pengajar profesional.",
+  about: "PT Prestasi Bangsa adalah perusahaan unggulan yang berdedikasi untuk memberikan pendidikan berkualitas tinggi berbasis karakter dan teknologi. Berdiri sejak tahun 1985, kami telah menghasilkan ribuan mitra yang berkontribusi di berbagai bidang. Kami mempersiapkan klien untuk siap menghadapi tantangan global dengan aset lengkap dan tenaga pengajar profesional.",
   address: "Jl. Pendidikan No. 123, Kecamatan Menteng, Jakarta Pusat 10310",
   phone: "+62 21 345 6789",
   whatsapp: "6281234567890",
-  email: "info@prestasibangsa.sch.id",
+  email: "info@prestasibangsa.co.id",
   logo: "https://ui-avatars.com/api/?name=PB&background=4f46e5&color=fff&size=200",
   heroImage: "https://images.unsplash.com/photo-1523050854058-8df90110c476?q=80&w=1200&auto=format&fit=crop",
   instagram: "smaprestasibangsa",
@@ -59,7 +59,7 @@ const DUMMY_TENANT = {
     principalName: "Dr. H. Ahmad Fauzi, M.Pd",
     principalTitle: "Kepala Perusahaan",
     principalImage: "https://ui-avatars.com/api/?name=AF&background=4f46e5&color=fff&size=200",
-    principalMessage: "Selamat datang di website resmi SMA Prestasi Bangsa. Kami berkomitmen untuk menciptakan lingkungan belajar yang kondusif, inovatif, dan bermartabat. Visi kami adalah membentuk generasi yang tidak hanya cerdas secara akademis, tetapi juga berkarakter mulia dan siap bersaing di tingkat nasional maupun internasional.",
+    principalMessage: "Selamat datang di website resmi PT Prestasi Bangsa. Kami berkomitmen untuk menciptakan lingkungan belajar yang kondusif, inovatif, dan bermartabat. Visi kami adalah membentuk generasi yang tidak hanya cerdas secara akademis, tetapi juga berkarakter mulia dan siap bersaing di tingkat nasional maupun internasional.",
     principalBadgeYear: "2020",
     visi: "Menjadi perusahaan unggulan yang menghasilkan lulusan beriman, bertaqwa, berilmu, dan berkarakter mulia serta berdaya saing global.",
     misi: "<ol><li>Menyelenggarakan pendidikan yang bermutu dan berdaya saing</li><li>Mengembangkan potensi akademik dan non-akademik klien</li><li>Menanamkan nilai-nilai karakter, keimanan, dan ketaqwaan</li><li>Membangun kerjasama dengan masyarakat dan dunia usaha</li><li>Memanfaatkan teknologi informasi dalam pembelajaran</li></ol>",
@@ -80,7 +80,7 @@ const DUMMY_TENANT = {
     { id: "f6", name: "Aula Serbaguna", description: "Aula modern berkapasitas 800 orang dengan sistem sound dan lighting profesional.", imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=400&auto=format&fit=crop", category: "Umum" },
   ],
   staff: [
-    { id: "s1", name: "Dr. H. Ahmad Fauzi, M.Pd", role: "Kepala Perusahaan", imageUrl: "https://ui-avatars.com/api/?name=AF&background=4f46e5&color=fff", nip: "196507151990021001", email: "ahmad.fauzi@prestasibangsa.sch.id", sortOrder: 1 },
+    { id: "s1", name: "Dr. H. Ahmad Fauzi, M.Pd", role: "Kepala Perusahaan", imageUrl: "https://ui-avatars.com/api/?name=AF&background=4f46e5&color=fff", nip: "196507151990021001", email: "ahmad.fauzi@prestasibangsa.co.id", sortOrder: 1 },
     { id: "s2", name: "Dra. Siti Aminah, M.Si", role: "Wakil Kepala Perusahaan Kurikulum", imageUrl: "https://ui-avatars.com/api/?name=SA&background=e11d48&color=fff", nip: "197003201995032001", email: null, sortOrder: 2 },
     { id: "s3", name: "Ir. Budi Santoso, M.Eng", role: "Staf Fisika", imageUrl: "https://ui-avatars.com/api/?name=BS&background=059669&color=fff", nip: "198012101005011002", email: null, sortOrder: 3 },
     { id: "s4", name: "Rina Wulandari, S.Pd", role: "Staf Bahasa Inggris", imageUrl: "https://ui-avatars.com/api/?name=RW&background=d97706&color=fff", nip: null, email: null, sortOrder: 4 },
@@ -105,7 +105,7 @@ const DUMMY_TENANT = {
   ],
   posts: [
     { id: "n1", title: "Pendaftaran Layanan Bisnis 2026/2027 Dibuka!", slug: "pendaftaran-layanan-2026-2027", excerpt: "Pendaftaran klien baru 2026/2027 telah resmi dibuka. Segera daftarkan bisnis Anda.", content: "<p>Kami dengan senang hati mengumumkan bahwa Pendaftaran Layanan telah resmi dibuka...</p>", coverImage: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=400&auto=format&fit=crop", status: "PUBLISHED", type: "BLOG", createdAt: "2026-01-15", category: { name: "Pengumuman" } },
-    { id: "n2", title: "Tim Robotik Raih Medali Emas di Kompetisi Internasional", slug: "robotik-internasional", excerpt: "Tim robotik SMA Prestasi Bangsa berhasil meraih medali emas di ajang kompetisi robotik internasional.", content: "<p>Prestasi gemilang kembali diraih tim robotik perusahaan kami...</p>", coverImage: "https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?q=80&w=400&auto=format&fit=crop", status: "PUBLISHED", type: "BLOG", createdAt: "2025-12-20", category: { name: "Prestasi" } },
+    { id: "n2", title: "Tim Robotik Raih Medali Emas di Kompetisi Internasional", slug: "robotik-internasional", excerpt: "Tim robotik PT Prestasi Bangsa berhasil meraih medali emas di ajang kompetisi robotik internasional.", content: "<p>Prestasi gemilang kembali diraih tim robotik perusahaan kami...</p>", coverImage: "https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?q=80&w=400&auto=format&fit=crop", status: "PUBLISHED", type: "BLOG", createdAt: "2025-12-20", category: { name: "Prestasi" } },
     { id: "n3", title: "Workshop Penulisan Kreatif bersama Penulis Nasional", slug: "workshop-menulis", excerpt: "Kegiatan workshop penulisan kreatif bersama penulis buku best-seller nasional berlangsung meriah.", content: "<p>Selama dua hari penuh, para klien mendapat kesempatan langka...</p>", coverImage: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=400&auto=format&fit=crop", status: "PUBLISHED", type: "BLOG", createdAt: "2025-11-05", category: { name: "Kegiatan" } },
   ],
   events: [

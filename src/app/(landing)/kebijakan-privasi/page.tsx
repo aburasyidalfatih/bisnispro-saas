@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <ul>
             <li><strong>Informasi Akun & Bisnis:</strong> Nama lengkap, alamat email, nomor telepon, nama perusahaan, NPSN, dan dokumen legalitas perusahaan.</li>
-            <li><strong>Informasi Pengguna Akhir (Klien, Staf, Orang Tua):</strong> Data akademik, presensi, keuangan (SPP), dan data kontak yang dimasukkan oleh pihak perusahaan.</li>
+            <li><strong>Informasi Pengguna Akhir (Klien, Staf, Orang Tua):</strong> Data operasional, presensi, keuangan, dan data kontak yang dimasukkan oleh pihak perusahaan.</li>
             <li><strong>Informasi Sistem & Penggunaan:</strong> Alamat IP, jenis browser, data log aktivitas, dan cookie.</li>
           </ul>
 
@@ -82,7 +82,7 @@ export default function PrivacyPolicyPage() {
           <p>
             <strong>Email:</strong> support@bisnispro.id<br/>
             <strong>WhatsApp:</strong> +62 812-3456-7890<br/>
-            <strong>Alamat:</strong> Jl. Pendidikan No. 123, Jakarta, Indonesia
+            <strong>Alamat:</strong> Jl. Bisnis No. 123, Jakarta, Indonesia
           </p>
         </div>
       </div>

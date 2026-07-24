@@ -419,7 +419,7 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       {{#each (limit tenant.posts 3)}}
-      <a href="{{../base}}/berita/{{this.slug}}" class="bg-white rounded-2xl overflow-hidden shadow-sm border hover:shadow-lg transition-all group">
+      <a href="{{../base}}/blog/{{this.slug}}" class="bg-white rounded-2xl overflow-hidden shadow-sm border hover:shadow-lg transition-all group">
         {{#if this.coverImage}}
         <div class="h-48 overflow-hidden">
           <img src="{{this.coverImage}}" alt="{{this.title}}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -438,7 +438,7 @@ export const TEMPLATE_INDEX_HBS = `<!-- ═════════════�
       {{/each}}
     </div>
     <div class="text-center mt-10">
-      <a href="{{base}}/berita" class="text-indigo-600 font-semibold hover:underline">Lihat Semua Berita →</a>
+      <a href="{{base}}/blog" class="text-indigo-600 font-semibold hover:underline">Lihat Semua Berita →</a>
     </div>
   </div>
 </section>
@@ -686,7 +686,7 @@ export const TEMPLATE_BERITA_HBS = `<section class="py-20">
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       {{#each tenant.posts}}
-      <a href="{{../base}}/berita/{{this.slug}}" class="bg-white rounded-2xl overflow-hidden shadow-sm border hover:shadow-xl transition-all group">
+      <a href="{{../base}}/blog/{{this.slug}}" class="bg-white rounded-2xl overflow-hidden shadow-sm border hover:shadow-xl transition-all group">
         {{#if this.coverImage}}
         <div class="h-52 overflow-hidden">
           <img src="{{this.coverImage}}" alt="{{this.title}}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -724,7 +724,7 @@ export const TEMPLATE_BERITA_DETAIL_HBS = `<article class="py-20">
       {{{post.content}}}
     </div>
     <div class="mt-12 pt-8 border-t text-center">
-      <a href="{{base}}/berita" class="text-indigo-600 font-semibold hover:underline">← Kembali ke Daftar Berita</a>
+      <a href="{{base}}/blog" class="text-indigo-600 font-semibold hover:underline">← Kembali ke Daftar Berita</a>
     </div>
   </div>
 </article>`
@@ -891,7 +891,7 @@ export const TEMPLATE_PENGUMUMAN_HBS = `<section class="py-20">
     {{#if tenant.posts}}
     <div class="space-y-6">
       {{#each tenant.posts}}
-      <a href="{{../base}}/pengumuman/{{this.slug}}" class="block bg-white rounded-2xl p-6 border hover:border-indigo-200 hover:shadow-lg transition-all group">
+      <a href="{{../base}}/blog/{{this.slug}}" class="block bg-white rounded-2xl p-6 border hover:border-indigo-200 hover:shadow-lg transition-all group">
         <div class="flex items-start gap-6">
           <div class="shrink-0 w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-indigo-100 transition-colors">📢</div>
           <div class="flex-1 min-w-0">
@@ -921,7 +921,7 @@ export const TEMPLATE_PENGUMUMAN_HBS = `<section class="py-20">
 // =============================================
 export const TEMPLATE_PENGUMUMAN_DETAIL_HBS = `<article class="py-16">
   <div class="max-w-3xl mx-auto px-8">
-    <nav class="text-sm text-gray-400 mb-8"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <a href="{{base}}/pengumuman" class="hover:text-indigo-600">Pengumuman</a> / <span class="text-gray-700">Detail</span></nav>
+    <nav class="text-sm text-gray-400 mb-8"><a href="{{base}}" class="hover:text-indigo-600">Beranda</a> / <a href="{{base}}/blog" class="hover:text-indigo-600">Pengumuman</a> / <span class="text-gray-700">Detail</span></nav>
     {{#if post.category}}<span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-semibold uppercase">{{post.category.name}}</span>{{/if}}
     <h1 class="text-3xl md:text-4xl font-black mt-4 mb-4 leading-tight">{{post.title}}</h1>
     <div class="flex items-center gap-4 text-sm text-gray-400 mb-8 pb-8 border-b">
@@ -932,21 +932,21 @@ export const TEMPLATE_PENGUMUMAN_DETAIL_HBS = `<article class="py-16">
       {{{post.content}}}
     </div>
     <div class="mt-12 pt-8 border-t text-center">
-      <a href="{{base}}/pengumuman" class="text-indigo-600 font-semibold hover:underline">← Kembali ke Daftar Pengumuman</a>
+      <a href="{{base}}/blog" class="text-indigo-600 font-semibold hover:underline">← Kembali ke Daftar Pengumuman</a>
     </div>
   </div>
 </article>`
 
 // =============================================
-// TEMPLATE: PPDB
+// TEMPLATE: PENDAFTARAN / REGISTRATION
 // =============================================
-export const TEMPLATE_PPDB_HBS = `<!-- Hero PPDB -->
+export const TEMPLATE_REGISTRATION_HBS = `<!-- Hero Pendaftaran -->
 <section class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 text-white py-24 relative overflow-hidden">
   <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 80 80\\"><circle cx=\\"40\\" cy=\\"40\\" r=\\"2\\" fill=\\"white\\"/></svg>'); background-size: 40px 40px;"></div>
   <div class="max-w-4xl mx-auto px-8 text-center relative z-10">
-    <span class="inline-block bg-white/20 backdrop-blur-sm text-white px-4 py-1 rounded-full text-sm font-bold mb-6">📚 Tahun Ajaran Baru</span>
-    <h2 class="text-4xl md:text-5xl font-black mb-4 leading-tight">Penerimaan Peserta Didik Baru</h2>
-    <p class="text-xl text-indigo-200 max-w-2xl mx-auto mb-10">Bergabunglah bersama {{tenant.name}} dan raih masa depan gemilang putra-putri Anda.</p>
+    <span class="inline-block bg-white/20 backdrop-blur-sm text-white px-4 py-1 rounded-full text-sm font-bold mb-6">🚀 Pendaftaran Klien Baru</span>
+    <h2 class="text-4xl md:text-5xl font-black mb-4 leading-tight">Pendaftaran Online</h2>
+    <p class="text-xl text-indigo-200 max-w-2xl mx-auto mb-10">Bergabunglah bersama {{tenant.name}} dan dapatkan layanan terbaik untuk perkembangan bisnis Anda.</p>
     {{#if tenant.whatsapp}}
     <a href="https://wa.me/{{tenant.whatsapp}}" target="_blank" class="inline-flex items-center gap-3 bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:shadow-2xl transition-all">
       💬 Hubungi via WhatsApp
@@ -963,35 +963,37 @@ export const TEMPLATE_PPDB_HBS = `<!-- Hero PPDB -->
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div class="text-center p-8 bg-indigo-50 rounded-2xl">
-        <div class="text-4xl mb-4">🎓</div>
-        <h4 class="font-bold text-lg mb-2">Pendidikan Berkualitas</h4>
-        <p class="text-sm text-gray-600">Kurikulum terpadu dengan standar nasional dan internasional.</p>
+        <div class="text-4xl mb-4">💼</div>
+        <h4 class="font-bold text-lg mb-2">Layanan Berkualitas</h4>
+        <p class="text-sm text-gray-600">Solusi terpadu dengan standar profesional tinggi.</p>
       </div>
       <div class="text-center p-8 bg-emerald-50 rounded-2xl">
-        <div class="text-4xl mb-4">👨‍🏫</div>
-        <h4 class="font-bold text-lg mb-2">Staf Profesional</h4>
-        <p class="text-sm text-gray-600">Tenaga pendidik berpengalaman dan bersertifikasi.</p>
+        <div class="text-4xl mb-4">👥</div>
+        <h4 class="font-bold text-lg mb-2">Tim Profesional</h4>
+        <p class="text-sm text-gray-600">Tenaga ahli berpengalaman dan berdedikasi.</p>
       </div>
       <div class="text-center p-8 bg-amber-50 rounded-2xl">
-        <div class="text-4xl mb-4">🏫</div>
-        <h4 class="font-bold text-lg mb-2">Aset Lengkap</h4>
-        <p class="text-sm text-gray-600">Sarana dan prasarana modern untuk menunjang pembelajaran.</p>
+        <div class="text-4xl mb-4">🏢</div>
+        <h4 class="font-bold text-lg mb-2">Fasilitas Lengkap</h4>
+        <p class="text-sm text-gray-600">Sarana dan prasarana modern untuk menunjang bisnis Anda.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Kontak PPDB -->
+<!-- Kontak Pendaftaran -->
 <section class="py-16 bg-gray-50">
   <div class="max-w-3xl mx-auto px-8 text-center">
     <h3 class="text-2xl font-bold mb-4">Informasi Lebih Lanjut</h3>
-    <p class="text-gray-500 mb-8">Hubungi panitia PPDB untuk informasi jadwal, persyaratan, dan prosedur pendaftaran.</p>
+    <p class="text-gray-500 mb-8">Hubungi tim kami untuk informasi mengenai layanan, penawaran, dan prosedur pendaftaran.</p>
     <div class="flex flex-wrap justify-center gap-4">
       {{#if tenant.phone}}<a href="tel:{{tenant.phone}}" class="bg-white px-6 py-3 rounded-xl border hover:shadow-md transition-shadow font-medium">📞 {{tenant.phone}}</a>{{/if}}
       {{#if tenant.email}}<a href="mailto:{{tenant.email}}" class="bg-white px-6 py-3 rounded-xl border hover:shadow-md transition-shadow font-medium">✉️ {{tenant.email}}</a>{{/if}}
     </div>
   </div>
 </section>`
+
+export const TEMPLATE_PPDB_HBS = TEMPLATE_REGISTRATION_HBS
 
 // =============================================
 // TEMPLATE: ALUMNI

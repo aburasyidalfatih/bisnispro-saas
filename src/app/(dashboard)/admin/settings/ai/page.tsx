@@ -122,7 +122,7 @@ export default function AiSettingsPage() {
              <Coins className="h-8 w-8 text-primary" />
           </div>
           <CardTitle className="text-xl mb-2">Sisa Kuota Token AI</CardTitle>
-          <CardDescription className="mb-6 max-w-[250px] mx-auto max-w-full">Digunakan untuk fitur otomatisasi, pembuatan soal CBT, dan asisten RPP.</CardDescription>
+          <CardDescription className="mb-6 max-w-[250px] mx-auto max-w-full">Digunakan untuk fitur otomatisasi, pembuatan konten bisnis, dan asisten AI.</CardDescription>
           <div className="text-5xl font-black text-primary bg-primary/5 px-8 py-5 rounded-3xl border border-primary/10 shadow-inner">
             {formData.aiTokens.toLocaleString("id-ID")}
           </div>
@@ -203,7 +203,7 @@ export default function AiSettingsPage() {
             </div>
             <div>
               <CardTitle className="text-lg">Riwayat Penggunaan AI</CardTitle>
-              <CardDescription>Catatan aktivitas penggunaan fitur AI oleh staf dan staf.</CardDescription>
+              <CardDescription>Catatan aktivitas penggunaan fitur AI oleh pengguna dan staf.</CardDescription>
             </div>
           </div>
         </CardHeader>
