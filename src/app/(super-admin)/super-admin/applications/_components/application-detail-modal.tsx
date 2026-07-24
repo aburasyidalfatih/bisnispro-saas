@@ -51,9 +51,9 @@ export function ApplicationDetailModal({ open, setOpen, selectedApp }: Applicati
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-lg truncate">{selectedApp.schoolName}</h3>
+                <h3 className="font-bold text-lg truncate">{selectedApp.businessName}</h3>
                 <p className="text-sm text-muted-foreground truncate">
-                  https://{selectedApp.schoolSlug}.bisnispro.id
+                  https://{selectedApp.businessSlug}.bisnispro.id
                 </p>
               </div>
               <div>{getStatusBadge(selectedApp.status)}</div>
@@ -65,7 +65,7 @@ export function ApplicationDetailModal({ open, setOpen, selectedApp }: Applicati
                 <h4 className="font-bold border-b pb-2 flex items-center gap-2"><School className="h-4 w-4" /> Informasi Perusahaan</h4>
                 <div className="grid grid-cols-2 gap-y-3 text-sm">
                   <div className="text-muted-foreground">Nama Perusahaan</div>
-                  <div className="font-medium">{selectedApp.schoolName}</div>
+                  <div className="font-medium">{selectedApp.businessName}</div>
                   
                   <div className="text-muted-foreground">Status Bisnis</div>
                   <div className="font-medium">{selectedApp.schoolStatus || '-'}</div>
@@ -74,7 +74,7 @@ export function ApplicationDetailModal({ open, setOpen, selectedApp }: Applicati
                   <div className="font-medium">{selectedApp.npsn || '-'}</div>
                   
                   <div className="text-muted-foreground">Subdomain</div>
-                  <div className="font-medium text-primary">{selectedApp.schoolSlug}.bisnispro.id</div>
+                  <div className="font-medium text-primary">{selectedApp.businessSlug}.bisnispro.id</div>
 
                   <div className="text-muted-foreground">Jumlah Klien</div>
                   <div className="font-medium">{selectedApp.studentCount ? selectedApp.studentCount.toLocaleString('id-ID') : '-'}</div>

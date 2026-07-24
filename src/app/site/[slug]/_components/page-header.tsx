@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Script from "next/script"
 import { ChevronRight, Home } from "lucide-react"
 
 interface BreadcrumbItem {
@@ -62,7 +63,8 @@ export function PageHeader({ title, description, breadcrumbs }: PageHeaderProps)
         </nav>
 
         {/* JSON-LD Structured Data for Breadcrumbs */}
-        <script
+        <Script
+          id="page-header-breadcrumbs-jsonld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({

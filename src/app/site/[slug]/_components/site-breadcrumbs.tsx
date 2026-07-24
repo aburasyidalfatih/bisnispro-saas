@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Script from "next/script"
 import { ChevronRight, Home } from "lucide-react"
 import { buildDynamicBreadcrumbs } from "@/lib/utils/breadcrumbs"
 
@@ -54,7 +55,8 @@ export function SiteBreadcrumbs({
       </nav>
 
       {/* JSON-LD Structured Data */}
-      <script
+      <Script
+        id="site-breadcrumbs-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({

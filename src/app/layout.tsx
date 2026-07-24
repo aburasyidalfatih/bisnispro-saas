@@ -17,7 +17,7 @@ const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-ja
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" })
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" })
 
-import { db } from "@/lib/db"
+import { getCachedPlatformSettings } from "@/lib/platform-settings-cache"
 import { normalizeImageUrl } from "@/lib/utils"
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,18 +25,13 @@ export async function generateMetadata(): Promise<Metadata> {
   let platformLogo = "/logo-bisnispro.png"
 
   try {
-    const settings = await db.platformSetting.findMany({
-      where: { key: { in: ["block_search_indexing", "app_logo"] } }
-    })
-    
-    settings.forEach(setting => {
-      if (setting.key === "block_search_indexing" && setting.value === "true") {
-        blockIndexing = true
-      }
-      if (setting.key === "app_logo" && setting.value) {
-        platformLogo = normalizeImageUrl(setting.value) || setting.value
-      }
-    })
+    const settings = await getCachedPlatformSettings(["block_search_indexing", "app_logo"])
+    if (settings["block_search_indexing"] === "true") {
+      blockIndexing = true
+    }
+    if (settings["app_logo"]) {
+      platformLogo = normalizeImageUrl(settings["app_logo"]) || settings["app_logo"]
+    }
   } catch (error) {
     // Abaikan error DB
   }
@@ -84,21 +79,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   let metaPixelId = ""
   let cdnUrl = ""
   try {
-    const settings = await db.platformSetting.findMany({
-      where: { key: { in: ["META_PIXEL_ID", "S3_PUBLIC_URL"] } }
-    })
-    
-    settings.forEach(s => {
-      if (s.key === "META_PIXEL_ID") metaPixelId = s.value
-      if (s.key === "S3_PUBLIC_URL") {
-        try {
-          const url = new URL(s.value)
-          cdnUrl = `${url.protocol}//${url.hostname}`
-        } catch (e) {
-          // ignore invalid url
-        }
+    const settings = await getCachedPlatformSettings(["META_PIXEL_ID", "S3_PUBLIC_URL"])
+    if (settings["META_PIXEL_ID"]) metaPixelId = settings["META_PIXEL_ID"]
+    if (settings["S3_PUBLIC_URL"]) {
+      try {
+        const url = new URL(settings["S3_PUBLIC_URL"])
+        cdnUrl = `${url.protocol}//${url.hostname}`
+      } catch (e) {
+        // ignore invalid url
       }
-    })
+    }
   } catch (e) {
     // Abaikan error DB
   }

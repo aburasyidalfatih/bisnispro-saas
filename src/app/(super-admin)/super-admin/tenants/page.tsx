@@ -30,7 +30,7 @@ interface TenantRow {
   isActive: boolean
   createdAt: string
   retentionStatus?: string
-  studentQuota: number
+  employeeCount: number
   aiTokens: number
   userCount: number
   owner: { name: string; email: string; phone: string | null } | null
@@ -321,7 +321,7 @@ export default function TenantsPage() {
                       <span className={cn("text-[10px] font-bold uppercase rounded-lg px-2 py-1 tracking-tighter", planBadge[t.plan] || planBadge.free)}>
                         {t.plan}
                       </span>
-                      <p className="text-[9px] text-muted-foreground mt-1">{t.studentQuota} Klien</p>
+                      <p className="text-[9px] text-muted-foreground mt-1">{t.employeeCount} Karyawan</p>
                     </TableCell>
                     <TableCell className="px-4 py-4 text-center">
                       <span className="text-[11px] font-bold text-foreground">
@@ -468,7 +468,7 @@ export default function TenantsPage() {
                   {/* Row 3: Badges row */}
                   <div className="flex items-center gap-2 flex-wrap pl-[52px]">
                     <span className={cn("text-[10px] font-bold uppercase rounded-lg px-2 py-1 tracking-tighter", planBadge[t.plan] || planBadge.free)}>
-                      {t.plan} · {t.studentQuota} klien
+                      {t.plan} · {t.employeeCount} karyawan
                     </span>
                     <span className={cn(
                       "inline-flex items-center text-[10px] font-bold uppercase rounded-full px-2 py-0.5",

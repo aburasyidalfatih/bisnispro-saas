@@ -24,7 +24,7 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
     slug: "",
     domain: "",
     plan: "free",
-    studentQuota: 0,
+    employeeCount: 0,
     aiTokens: 0,
     isActive: true
   })
@@ -37,7 +37,7 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
         slug: tenant.slug,
         domain: tenant.domain || "",
         plan: tenant.plan,
-        studentQuota: tenant.studentQuota || 0,
+        employeeCount: tenant.employeeCount || 0,
         aiTokens: tenant.aiTokens || 0,
         isActive: tenant.isActive
       })
@@ -105,8 +105,8 @@ export function EditTenantModal({ open, onOpenChange, tenant, onSuccess }: EditT
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Kuota Klien</Label>
-              <Input type="number" value={editForm.studentQuota} onChange={(e) => setEditForm({...editForm, studentQuota: Number(e.target.value)})} className="rounded-xl" />
+              <Label>Jumlah Karyawan</Label>
+              <Input type="number" value={editForm.employeeCount} onChange={(e) => setEditForm({...editForm, employeeCount: Number(e.target.value)})} className="rounded-xl" />
             </div>
           </div>
           <div className="space-y-2">

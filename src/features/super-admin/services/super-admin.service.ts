@@ -94,7 +94,7 @@ export async function getTenantsForSuperAdmin(params: {
         id: t.id, name: t.name, slug: t.slug, domain: t.domain,
         plan: t.plan, theme: t.theme, isActive: t.isActive, createdAt: t.createdAt,
         retentionStatus: t.retentionStatus,
-        studentQuota: 0, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
+        employeeCount: t.employeeCount, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
         userCount: t._count.users, owner: t.users[0]?.user || null,
         storageUsed: storageMap.get(t.id) || 0,
         isContactSynced: !!(typeof t.settings === "string" ? JSON.parse(t.settings) : t.settings || {})?.googleContactId
@@ -139,7 +139,7 @@ export async function getTenantsForSuperAdmin(params: {
     id: t.id, name: t.name, slug: t.slug, domain: t.domain,
     plan: t.plan, theme: t.theme, isActive: t.isActive, createdAt: t.createdAt,
     retentionStatus: t.retentionStatus,
-    studentQuota: 0, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
+    employeeCount: t.employeeCount, aiTokens: t.aiTokens, aiAddonTokens: t.aiAddonTokens,
     userCount: t._count.users, owner: t.users[0]?.user || null,
     storageUsed: storageMap.get(t.id) || 0,
     isContactSynced: !!(typeof t.settings === "string" ? JSON.parse(t.settings) : t.settings || {})?.googleContactId
@@ -157,7 +157,7 @@ export async function updateTenantByAdmin(id: string, data: {
   domain?: string | null
   plan?: string
   isActive?: boolean
-  
+  employeeCount?: number
   aiTokens?: number
 }) {
   try {
@@ -172,7 +172,7 @@ export async function updateTenantByAdmin(id: string, data: {
       domain: data.domain || null,
       plan: data.plan,
       isActive: data.isActive,
-      
+      employeeCount: data.employeeCount !== undefined ? Number(data.employeeCount) : undefined,
       aiTokens: Number(data.aiTokens || 0)
     }
 

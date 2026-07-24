@@ -1,7 +1,7 @@
 export interface Application {
   id: string
-  schoolName: string
-  schoolSlug: string
+  businessName: string
+  businessSlug: string
   npsn: string
   schoolStatus: string
   province: string

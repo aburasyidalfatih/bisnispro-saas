@@ -217,8 +217,8 @@ export function EditPlanModal({ isOpen, onClose, plan, onUpdatePlan, pricing, on
               <Label className="text-xs font-semibold">Klien</Label>
               <Input
                 type="number"
-                value={plan.maxStudents ?? 0}
-                onChange={e => onUpdatePlan({ ...plan, maxStudents: Number(e.target.value) })}
+                value={plan.maxTeamMembers ?? 0}
+                onChange={e => onUpdatePlan({ ...plan, maxTeamMembers: Number(e.target.value) })}
                 className="rounded-xl"
                 disabled={isProPlan}
               />

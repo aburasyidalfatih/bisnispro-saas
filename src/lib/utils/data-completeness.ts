@@ -15,8 +15,8 @@ export interface CompletenessResult {
  * - "incomplete" (🔴): Ada field wajib yang kosong
  */
 export function checkDataCompleteness(app: {
-  schoolName?: string | null
-  schoolSlug?: string | null
+  businessName?: string | null
+  businessSlug?: string | null
   npsn?: string | null
   province?: string | null
   regency?: string | null
@@ -25,13 +25,13 @@ export function checkDataCompleteness(app: {
   adminPhone?: string | null
   address?: string | null
   logo?: string | null
-  studentCount?: number | null
+  employeeCount?: number | null
 }): CompletenessResult {
   const missing: string[] = []
 
-  if (!app.schoolName?.trim()) missing.push("Nama Perusahaan")
-  if (!app.schoolSlug?.trim()) missing.push("Subdomain")
-  if (!app.npsn || app.npsn.length !== 8) missing.push("NPSN")
+  if (!app.businessName?.trim()) missing.push("Nama Perusahaan")
+  if (!app.businessSlug?.trim()) missing.push("Subdomain")
+  // if (!app.npsn || app.npsn.length !== 8) missing.push("NPSN")
   if (!app.province?.trim()) missing.push("Provinsi")
   if (!app.regency?.trim()) missing.push("Kabupaten/Kota")
   if (!app.adminName?.trim()) missing.push("Nama Admin")
@@ -39,7 +39,7 @@ export function checkDataCompleteness(app: {
   if (!app.adminPhone || app.adminPhone.length < 10) missing.push("No. WhatsApp")
   if (!app.address?.trim()) missing.push("Alamat")
   if (!app.logo?.trim()) missing.push("Logo")
-  if (!app.studentCount || app.studentCount < 1) missing.push("Jumlah Klien")
+  if (!app.employeeCount || app.employeeCount < 1) missing.push("Jumlah Karyawan")
 
   if (missing.length > 0) {
     return { level: "incomplete", missingFields: missing, locationMatch: false }

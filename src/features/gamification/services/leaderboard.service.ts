@@ -43,8 +43,8 @@ export async function processLeaderboardSync() {
       _count: {
         select: {
           posts: { where: { status: "PUBLISHED", deletedAt: null, createdAt: { gte: startOfYear }, isEligibleForPoints: true } },
-          staff: { where: { createdAt: { gte: startOfYear } } },
-          facilities: { where: { createdAt: { gte: startOfYear } } },
+          teamMembers: { where: { createdAt: { gte: startOfYear } } },
+          offices: { where: { createdAt: { gte: startOfYear } } },
           events: { where: { createdAt: { gte: startOfYear } } },
           achievements: { where: { createdAt: { gte: startOfYear } } },
           internalMessages: { where: { receiverId: null, createdAt: { gte: startOfYear } } }
@@ -62,8 +62,8 @@ export async function processLeaderboardSync() {
     const postPoints = Math.min(postPointsMap[tenant.id] || 0, 7500)
     
     // ANTI-SPAM CAPS: Maksimal dihitung 50 entitas untuk mencegah spamming
-    const staffCount = Math.min(tenant._count.staff || 0, 50)
-    const facilityCount = Math.min(tenant._count.facilities || 0, 50)
+    const staffCount = Math.min(tenant._count.teamMembers || 0, 50)
+    const facilityCount = Math.min(tenant._count.offices || 0, 50)
     const eventCount = Math.min(tenant._count.events || 0, 50)
     const achievementCount = Math.min(tenant._count.achievements || 0, 50)
 

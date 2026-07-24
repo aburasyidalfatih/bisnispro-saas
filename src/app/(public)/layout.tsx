@@ -1,3 +1,4 @@
+import Script from 'next/script'
 import { db } from "@/lib/db"
 import { LandingNavbar } from "../(landing)/_components/landing-navbar"
 import { LandingFooter } from "../(landing)/_components/landing-footer"
@@ -18,7 +19,9 @@ export default async function PublicLayout({ children }: { children: React.React
   return (
     <div className="flex flex-col min-h-screen">
       {/* Force aurora theme — public pages are platform-owned */}
-      <script
+      <Script
+        id="force-aurora-theme-public"
+        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{
           __html: `document.documentElement.setAttribute("data-theme","aurora");`,
         }}

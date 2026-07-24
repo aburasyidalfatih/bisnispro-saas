@@ -313,7 +313,7 @@ export async function handleCallback(body: TripayCallbackBodyDTO, rawBody: strin
           // Fetch current tenant to check existing expiresAt (for renewals)
           const currentTenant = await db.tenant.findUnique({
             where: { id: payment.tenantId },
-            select: { plan: true, expiresAt: true, studentQuota: true },
+            select: { plan: true, expiresAt: true },
           })
 
           // Calculate expiresAt based on plan interval

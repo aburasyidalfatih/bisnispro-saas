@@ -436,24 +436,21 @@ async function seedDummyBusinessData(tenantId: string, businessName: string, bus
           name: "Layanan Premium 1",
           slug: "layanan-premium-1",
           description: `Solusi terbaik dari ${businessName} untuk kebutuhan Anda. Dirancang khusus untuk efisiensi dan hasil maksimal.`,
-          icon: "star",
-          status: "PUBLISHED"
+          icon: "star"
         },
         {
           tenantId,
           name: "Layanan Premium 2",
           slug: "layanan-premium-2",
           description: "Pendekatan inovatif yang kami kembangkan untuk membantu Anda mencapai target lebih cepat.",
-          icon: "zap",
-          status: "PUBLISHED"
+          icon: "zap"
         },
         {
           tenantId,
           name: "Konsultasi Ahli",
           slug: "konsultasi-ahli",
           description: "Diskusikan masalah Anda dengan tim profesional kami dan dapatkan solusi yang paling tepat.",
-          icon: "message-circle",
-          status: "PUBLISHED"
+          icon: "message-circle"
         }
       ]
     })
@@ -468,8 +465,7 @@ async function seedDummyBusinessData(tenantId: string, businessName: string, bus
           description: "Membantu klien meningkatkan efisiensi operasional hingga 40% dalam 3 bulan pertama.",
           clientName: "PT Bintang Terang",
           category: "Korporat",
-          completedAt: new Date(),
-          status: "PUBLISHED"
+          completedAt: new Date()
         },
         {
           tenantId,
@@ -478,8 +474,7 @@ async function seedDummyBusinessData(tenantId: string, businessName: string, bus
           description: "Pembaruan sistem menyeluruh yang menghasilkan pertumbuhan pendapatan yang signifikan.",
           clientName: "CV Maju Jaya",
           category: "UMKM",
-          completedAt: new Date(),
-          status: "PUBLISHED"
+          completedAt: new Date()
         }
       ]
     })
@@ -491,15 +486,13 @@ async function seedDummyBusinessData(tenantId: string, businessName: string, bus
           tenantId,
           name: "Budi Santoso",
           position: "Chief Executive Officer",
-          bio: "Berpengalaman lebih dari 10 tahun di industri, memimpin visi dan strategi perusahaan.",
-          status: "PUBLISHED"
+          bio: "Berpengalaman lebih dari 10 tahun di industri, memimpin visi dan strategi perusahaan."
         },
         {
           tenantId,
           name: "Siti Rahma",
           position: "Head of Operations",
-          bio: "Ahli dalam mengoptimalkan proses bisnis dan memastikan kepuasan klien maksimal.",
-          status: "PUBLISHED"
+          bio: "Ahli dalam mengoptimalkan proses bisnis dan memastikan kepuasan klien maksimal."
         }
       ]
     })

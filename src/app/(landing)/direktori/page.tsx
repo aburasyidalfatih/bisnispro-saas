@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import Script from "next/script"
 import { getBusinessesDirectory } from "./actions"
 import { DirectoryFilters } from "./_components/directory-filters"
 import { Card, CardContent } from "@/components/ui/card"
@@ -70,7 +71,8 @@ export default async function DirectoryPage({
   return (
     <main className="min-h-screen bg-muted/30 pt-12 pb-20 px-4">
       {/* Inject JSON-LD Schema */}
-      <script
+      <Script
+        id="directory-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />

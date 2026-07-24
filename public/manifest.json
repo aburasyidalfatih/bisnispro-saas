@@ -1,7 +1,7 @@
 {
-  "name": "SchoolPro",
-  "short_name": "SMP",
-  "description": "Platform SaaS Multi-Tenant",
+  "name": "BisnisPro",
+  "short_name": "BisnisPro",
+  "description": "Platform SaaS Multi-Tenant BisnisPro",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",

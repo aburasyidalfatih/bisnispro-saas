@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
 import { Metadata } from "next"
+import Script from "next/script"
 import { headers } from "next/headers"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import Image from "next/image"
@@ -80,7 +81,8 @@ export default async function CustomPagePublicView({ params }: PageProps) {
   return (
     <div className="bg-background min-h-screen pt-24 pb-16">
       {/* JSON-LD for BreadcrumbList */}
-      <script
+      <Script
+        id={`custom-page-breadcrumbs-jsonld-${page.id}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -105,7 +107,8 @@ export default async function CustomPagePublicView({ params }: PageProps) {
       />
 
       {/* JSON-LD for WebPage */}
-      <script
+      <Script
+        id={`custom-page-webpage-jsonld-${page.id}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({

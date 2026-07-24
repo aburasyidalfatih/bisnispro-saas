@@ -25,7 +25,7 @@ export async function GET(req: Request) {
   
   if (search) {
     where.OR = [
-      { schoolName: { contains: search, mode: "insensitive" } },
+      { businessName: { contains: search, mode: "insensitive" } },
       { adminEmail: { contains: search, mode: "insensitive" } },
       { regency: { contains: search, mode: "insensitive" } },
       { province: { contains: search, mode: "insensitive" } },

@@ -18,7 +18,7 @@ export async function GET() {
   // 2. Ambil semua pengajuan (status PENDING/REVISION)
   const applications = await db.tenantApplication.findMany({
     where: { status: { in: ["PENDING", "REVISION"] } },
-    select: { id: true, schoolName: true, province: true, regency: true, status: true }
+    select: { id: true, businessName: true, province: true, regency: true, status: true }
   })
 
   // 3. Map ke koordinat
@@ -38,7 +38,7 @@ export async function GET() {
     if (a.province) {
       const coord = findCoordinates(a.province, a.regency || "")
       if (coord) {
-        points.push({ ...coord, name: a.schoolName, type: "application" })
+        points.push({ ...coord, name: a.businessName, type: "application" })
       }
     }
   }

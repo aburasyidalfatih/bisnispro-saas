@@ -1,4 +1,5 @@
 import { db, withTenant } from "@/lib/db"
+import Script from "next/script"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { notFound } from "next/navigation"
 import { WebsiteNavbar } from "./_components/navbar"
@@ -219,7 +220,7 @@ export default async function WebsiteLayout({
     <RoutingProvider value={routingValue}>
       <div className="min-h-screen flex flex-col overflow-x-clip w-full max-w-[100vw]">
         {/* JSON-LD Structured Data untuk Rich Snippets */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
+        <Script id="tenant-site-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
 
         {/* Custom Head Script Integration */}
         {(tenant.settings as any)?.headScript && (

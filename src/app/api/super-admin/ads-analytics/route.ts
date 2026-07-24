@@ -16,12 +16,12 @@ export async function GET() {
     // ============================================
     // 1. Total Applications by UTM Source
     // ============================================
-    let allApplications: { id: string; schoolName: string; status: string; utmSource: string | null; utmMedium: string | null; utmCampaign: string | null; utmContent: string | null; createdAt: Date; affiliateId: string | null }[] = []
+    let allApplications: { id: string; businessName: string; status: string; utmSource: string | null; utmMedium: string | null; utmCampaign: string | null; utmContent: string | null; createdAt: Date; affiliateId: string | null }[] = []
     try {
       allApplications = await db.tenantApplication.findMany({
         select: {
           id: true,
-          schoolName: true,
+          businessName: true,
           status: true,
           utmSource: true,
           utmMedium: true,
@@ -38,7 +38,7 @@ export async function GET() {
       const fallback = await db.tenantApplication.findMany({
         select: {
           id: true,
-          schoolName: true,
+          businessName: true,
           status: true,
           createdAt: true,
           affiliateId: true,
@@ -101,7 +101,7 @@ export async function GET() {
     // ============================================
     // Get approved tenant slugs from applications
     const approvedApps = allApplications.filter(a => a.status === 'APPROVED')
-    const approvedSlugs = approvedApps.map(a => a.schoolName)
+    const approvedSlugs = approvedApps.map(a => a.businessName)
 
     // Get tenants that upgraded (lite or pro)
     const tenants = await db.tenant.findMany({
@@ -153,8 +153,8 @@ export async function GET() {
     const metaApproved = metaApps.filter(a => a.status === 'APPROVED')
 
     // Match meta-approved with tenants that upgraded
-    // We use schoolName matching (simplified)
-    const metaApprovedNames = metaApproved.map(a => a.schoolName.toLowerCase())
+    // We use businessName matching (simplified)
+    const metaApprovedNames = metaApproved.map(a => a.businessName.toLowerCase())
     const metaUpgraded = paidTenants.filter(t =>
       metaApprovedNames.includes(t.name.toLowerCase())
     )
@@ -202,7 +202,7 @@ export async function GET() {
     const recentAdsLeads = trackedApplications
       .slice(0, 20)
       .map(a => ({
-        schoolName: a.schoolName,
+        businessName: a.businessName,
         status: a.status,
         source: a.utmSource || '',
         medium: a.utmMedium || '',

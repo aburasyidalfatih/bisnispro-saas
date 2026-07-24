@@ -27,7 +27,7 @@ export const subscriptionPlanSchema = z.object({
   price: z.number().min(0).default(0),
   interval: z.enum(["MONTHLY", "YEARLY", "ONETIME"]).default("YEARLY"),
   features: z.string().optional(), // JSON string from UI
-  maxStudents: z.number().min(0).default(0),
+  maxTeamMembers: z.number().min(0).default(0),
   maxStorage: z.number().min(0).default(1024),
   monthlyAiTokens: z.number().min(0).default(0),
   isActive: z.boolean().optional().default(true),

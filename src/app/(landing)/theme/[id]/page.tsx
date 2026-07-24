@@ -1,4 +1,5 @@
 import { db } from "@/lib/db"
+import Script from "next/script"
 import { notFound } from "next/navigation"
 import Handlebars from "handlebars"
 import parse from "html-react-parser"

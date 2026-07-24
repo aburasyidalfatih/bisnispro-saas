@@ -78,7 +78,7 @@ export function PlanCard({ plan, pricing, onEdit, onToggleActive }: PlanCardProp
             <div className="flex items-center gap-1.5">
               <Users className="h-3 w-3 text-primary" />
               <span className="font-bold text-xs truncate">
-                {plan.slug === "pro" ? "Sesuai Beli" : plan.maxStudents === 0 ? "Unlimited" : `${plan.maxStudents} klien`}
+                {plan.slug === "pro" ? "Sesuai Beli" : plan.maxTeamMembers === 0 ? "Unlimited" : `${plan.maxTeamMembers} klien`}
               </span>
             </div>
           </div>

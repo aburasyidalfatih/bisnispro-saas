@@ -6,7 +6,7 @@ export interface SubscriptionPlan {
   price: number
   interval: string
   features: any
-  maxStudents: number
+  maxTeamMembers: number
   maxStorage: number
   monthlyAiTokens: number
   isActive: boolean

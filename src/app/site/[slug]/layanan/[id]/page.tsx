@@ -1,4 +1,5 @@
 import { headers } from "next/headers"
+import Script from "next/script"
 import { PageHeader } from "@/app/site/[slug]/_components/page-header"
 import { notFound } from "next/navigation"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
@@ -67,7 +68,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="bg-background min-h-screen pb-16">
       {/* JSON-LD for Course Rich Snippets */}
-      <script
+      <Script
+        id="service-detail-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({

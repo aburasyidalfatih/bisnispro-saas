@@ -123,14 +123,15 @@ export async function updateWebsiteData(tenantId: string, data: Record<string, a
 
   if (data.settings) {
     const settings = data.settings as Record<string, any>
-    if (settings.studentCount !== undefined) {
+    const countVal = settings.employeeCount ?? settings.studentCount
+    if (countVal !== undefined) {
       try {
         await db.tenantApplication.update({
           where: { businessSlug: updated.slug },
-          data: { studentCount: Number(settings.studentCount) }
+          data: { employeeCount: Number(countVal) }
         })
       } catch (error) {
-        console.error("[website service] Gagal sync studentCount ke application:", error)
+        console.error("[website service] Gagal sync employeeCount ke application:", error)
       }
     }
   }
