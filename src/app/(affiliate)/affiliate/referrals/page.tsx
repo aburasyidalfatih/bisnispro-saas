@@ -15,13 +15,13 @@ export default async function AffiliateReferralsPage() {
 
   if (!affiliate) redirect("/login")
 
-  // Ambil calon sekolah (Leads)
+  // Ambil calon bisnis (Leads)
   const applications = await db.tenantApplication.findMany({
     where: { affiliateId: affiliate.id },
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
-      schoolName: true,
+      businessName: true,
       adminName: true,
       adminPhone: true,
       status: true,
@@ -29,7 +29,7 @@ export default async function AffiliateReferralsPage() {
     },
   })
 
-  // Ambil sekolah aktif (Tenants)
+  // Ambil bisnis aktif (Tenants)
   const tenants = await db.tenant.findMany({
     where: { affiliateId: affiliate.id },
     orderBy: { createdAt: "desc" },
@@ -70,31 +70,31 @@ export default async function AffiliateReferralsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Leads & Sekolah</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Daftar sekolah yang mendaftar menggunakan link referral Anda.</p>
+        <h1 className="text-2xl font-bold tracking-tight">Leads & Bisnis</h1>
+        <p className="text-muted-foreground mt-1 text-sm">Daftar bisnis yang mendaftar menggunakan link referral Anda.</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Calon Sekolah (Leads) */}
+        {/* Calon Bisnis (Leads) */}
         <Card className="glass shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <School className="h-5 w-5 text-muted-foreground" />
               Pendaftar Baru
             </CardTitle>
-            <CardDescription>Sekolah yang masih dalam tahap verifikasi.</CardDescription>
+            <CardDescription>Bisnis yang masih dalam tahap verifikasi.</CardDescription>
           </CardHeader>
           <CardContent>
             {applications.length === 0 ? (
               <div className="text-center py-8 text-sm text-muted-foreground border border-dashed rounded-xl">
-                Belum ada sekolah yang mendaftar.
+                Belum ada bisnis yang mendaftar.
               </div>
             ) : (
               <div className="space-y-4">
                 {applications.map((app) => (
                   <div key={app.id} className="flex justify-between items-start p-4 border rounded-xl bg-background/50">
                     <div className="space-y-1">
-                      <h4 className="font-medium text-sm">{app.schoolName}</h4>
+                      <h4 className="font-medium text-sm">{app.businessName}</h4>
                       <p className="text-xs text-muted-foreground">{app.adminName} ({app.adminPhone})</p>
                       <p className="text-[10px] text-muted-foreground">{new Date(app.createdAt).toLocaleDateString("id-ID")}</p>
                     </div>
@@ -118,19 +118,19 @@ export default async function AffiliateReferralsPage() {
           </CardContent>
         </Card>
 
-        {/* Sekolah Aktif (Tenants) */}
+        {/* Bisnis Aktif (Tenants) */}
         <Card className="glass shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-              Sekolah Aktif
+              Bisnis Aktif
             </CardTitle>
-            <CardDescription>Sekolah yang sudah aktif menggunakan platform.</CardDescription>
+            <CardDescription>Bisnis yang sudah aktif menggunakan platform.</CardDescription>
           </CardHeader>
           <CardContent>
             {tenants.length === 0 ? (
               <div className="text-center py-8 text-sm text-muted-foreground border border-dashed rounded-xl">
-                Belum ada sekolah aktif dari referensi Anda.
+                Belum ada bisnis aktif dari referensi Anda.
               </div>
             ) : (
               <div className="space-y-4">
@@ -140,12 +140,12 @@ export default async function AffiliateReferralsPage() {
                       <h4 className="font-medium text-sm flex items-center gap-2">
                         {tenant.name}
                         {hasNeverLoggedIn(tenant.createdAt, tenant.lastActiveAt) && (
-                          <span className="flex items-center gap-1 text-[10px] bg-rose-500/10 text-rose-600 px-1.5 py-0.5 rounded-md border border-rose-500/20 font-medium" title="Sekolah ini belum pernah login sejak disetujui">
+                          <span className="flex items-center gap-1 text-[10px] bg-rose-500/10 text-rose-600 px-1.5 py-0.5 rounded-md border border-rose-500/20 font-medium" title="Bisnis ini belum pernah login sejak disetujui">
                             <AlertTriangle className="w-3 h-3" /> Belum Login
                           </span>
                         )}
                       </h4>
-                      <p className="text-xs text-muted-foreground">{tenant.slug}.schoolpro.id</p>
+                      <p className="text-xs text-muted-foreground">{tenant.slug}.bisnispro.id</p>
                       <p className="text-[10px] text-muted-foreground">{new Date(tenant.createdAt).toLocaleDateString("id-ID")}</p>
                     </div>
                     <div className="flex flex-col items-end gap-2">

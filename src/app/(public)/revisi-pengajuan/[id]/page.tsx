@@ -24,7 +24,7 @@ export default async function RevisionPage({ params }: { params: Promise<{ id: s
           </div>
           <h1 className="text-3xl font-bold tracking-tight">Status Pengajuan Tidak Berlaku</h1>
           <p className="text-muted-foreground text-lg">
-            Pengajuan sekolah Anda saat ini berstatus <strong>{application.status}</strong>. 
+            Pengajuan bisnis Anda saat ini berstatus <strong>{application.status}</strong>. 
             Halaman revisi hanya tersedia untuk pengajuan yang dikembalikan oleh admin.
           </p>
           <div className="pt-6">
@@ -43,7 +43,7 @@ export default async function RevisionPage({ params }: { params: Promise<{ id: s
         <div className="text-center space-y-4 mb-10">
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight">Revisi <span className="text-gradient">Data Pengajuan</span></h1>
           <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto">
-            Silakan perbaiki data pendaftaran sekolah Anda sesuai dengan catatan yang diberikan oleh tim verifikasi kami.
+            Silakan perbaiki data pendaftaran bisnis Anda sesuai dengan catatan yang diberikan oleh tim verifikasi kami.
           </p>
         </div>
 

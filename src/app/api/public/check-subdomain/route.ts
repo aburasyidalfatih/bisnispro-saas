@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
   // Cek di tabel Tenant dan TenantApplication
   const existingTenant = await db.tenant.findUnique({ where: { slug } })
-  const existingApp = await db.tenantApplication.findUnique({ where: { schoolSlug: slug } })
+  const existingApp = await db.tenantApplication.findUnique({ where: { businessSlug: slug } })
 
   const available = !existingTenant && !existingApp
 

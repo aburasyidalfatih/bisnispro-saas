@@ -4,22 +4,25 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { parseBody } from "@/lib/api-utils"
 
-const reviseSchoolSchema = z.object({
-  schoolName: z.string().min(3, "Nama sekolah minimal 3 karakter").max(200),
-  schoolSlug: z
+const reviseBusinessSchema = z.object({
+  businessName: z.string().min(3, "Nama bisnis minimal 3 karakter").max(200).optional(),
+  schoolName: z.string().optional(),
+  businessSlug: z
     .string()
     .min(3, "Subdomain minimal 3 karakter")
     .max(50)
-    .regex(/^[a-z0-9-]+$/, "Slug hanya boleh huruf kecil, angka, dan strip"),
-  npsn: z.string().min(8, "NPSN harus 8 digit").max(8, "NPSN harus 8 digit"),
-  schoolStatus: z.enum(["NEGERI", "SWASTA"]).optional().default("SWASTA"),
+    .regex(/^[a-z0-9-]+$/, "Slug hanya boleh huruf kecil, angka, dan strip")
+    .optional(),
+  schoolSlug: z.string().optional(),
+  businessType: z.string().optional().default("UMKM"),
   province: z.string().min(2, "Provinsi wajib diisi"),
   regency: z.string().min(2, "Kabupaten/Kota wajib diisi"),
   adminName: z.string().min(2, "Nama admin minimal 2 karakter").max(100),
   adminPhone: z.string().min(10, "Nomor telepon minimal 10 digit").max(15),
   address: z.string().min(5, "Alamat wajib diisi"),
   logo: z.string().min(1, "Logo wajib diunggah"),
-  studentCount: z.coerce.number().min(1, "Jumlah siswa harus lebih dari 0"),
+  employeeCount: z.coerce.number().min(1, "Jumlah karyawan harus lebih dari 0").optional().default(1),
+  studentCount: z.coerce.number().optional(),
 })
 
 export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
@@ -35,38 +38,41 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
       return NextResponse.json({ error: "Pengajuan ini tidak dalam status revisi" }, { status: 400 })
     }
 
-    const parsed = await parseBody(req, reviseSchoolSchema)
+    const parsed = await parseBody(req, reviseBusinessSchema)
     if (parsed.error) return parsed.error
 
     const {
-      schoolName, schoolSlug, npsn, schoolStatus,
-      province, regency, adminName, adminPhone, address, logo, studentCount
+      businessName, schoolName, businessSlug, schoolSlug, businessType,
+      province, regency, adminName, adminPhone, address, logo, employeeCount, studentCount
     } = parsed.data
 
+    const finalBusinessName = businessName || schoolName || application.businessName
+    const finalBusinessSlug = businessSlug || schoolSlug || application.businessSlug
+    const finalEmployeeCount = employeeCount ?? studentCount ?? application.employeeCount ?? 1
+
     // Cek ketersediaan slug/subdomain jika berubah
-    if (schoolSlug !== application.schoolSlug) {
-      const existingTenant = await db.tenant.findUnique({ where: { slug: schoolSlug } })
-      const existingApp = await db.tenantApplication.findUnique({ where: { schoolSlug } })
+    if (finalBusinessSlug !== application.businessSlug) {
+      const existingTenant = await db.tenant.findUnique({ where: { slug: finalBusinessSlug } })
+      const existingApp = await db.tenantApplication.findUnique({ where: { businessSlug: finalBusinessSlug } })
       
       if (existingTenant || (existingApp && existingApp.id !== id)) {
-        return NextResponse.json({ error: "Subdomain sudah digunakan oleh sekolah lain" }, { status: 400 })
+        return NextResponse.json({ error: "Subdomain sudah digunakan oleh bisnis lain" }, { status: 400 })
       }
     }
 
     await db.tenantApplication.update({
       where: { id },
       data: {
-        schoolName,
-        schoolSlug,
-        npsn,
-        schoolStatus,
+        businessName: finalBusinessName,
+        businessSlug: finalBusinessSlug,
+        businessType,
         province,
         regency,
         adminName,
         adminPhone,
         address,
         logo,
-        studentCount,
+        employeeCount: finalEmployeeCount,
         status: "PENDING", // Set back to PENDING for Super Admin to review
       }
     })

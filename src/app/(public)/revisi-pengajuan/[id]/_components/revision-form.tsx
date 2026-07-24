@@ -21,17 +21,16 @@ export function RevisionForm({ application }: { application: any }) {
   const [submitted, setSubmitted] = useState(false)
   
   const [form, setForm] = useState({
-    schoolName: application.schoolName,
-    schoolSlug: application.schoolSlug,
-    npsn: application.npsn || "",
-    schoolStatus: application.schoolStatus || "SWASTA",
+    businessName: application.businessName || application.schoolName || "",
+    businessSlug: application.businessSlug || application.schoolSlug || "",
+    businessType: application.businessType || "UMKM",
     province: application.province || "",
     regency: application.regency || "",
-    adminName: application.adminName,
-    adminPhone: application.adminPhone,
+    adminName: application.adminName || "",
+    adminPhone: application.adminPhone || "",
     address: application.address || "",
     logo: application.logo || null,
-    studentCount: application.studentCount || 0,
+    employeeCount: application.employeeCount || application.studentCount || 1,
   })
 
   const [logoFile, setLogoFile] = useState<File | null>(null)
@@ -43,7 +42,7 @@ export function RevisionForm({ application }: { application: any }) {
 
     try {
       if (!logoFile && !form.logo) {
-        toast({ title: "Gagal", description: "Logo sekolah wajib diunggah", variant: "destructive" })
+        toast({ title: "Gagal", description: "Logo bisnis wajib diunggah", variant: "destructive" })
         setLoading(false)
         return
       }
@@ -53,7 +52,7 @@ export function RevisionForm({ application }: { application: any }) {
       if (logoFile) {
         const formData = new FormData()
         formData.append("file", logoFile)
-        formData.append("type", "school-logo")
+        formData.append("type", "business-logo")
 
         const uploadRes = await fetch("/api/public/upload", { method: "POST", body: formData })
         if (!uploadRes.ok) {
@@ -117,20 +116,20 @@ export function RevisionForm({ application }: { application: any }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Informasi Sekolah */}
+        {/* Informasi Bisnis */}
         <Card className="glass border-0 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <div className="p-2 bg-primary/10 rounded-xl"><School className="h-5 w-5 text-primary" /></div>
-              Informasi Sekolah
+              <div className="p-2 bg-primary/10 rounded-xl"><Globe className="h-5 w-5 text-primary" /></div>
+              Informasi Bisnis
             </CardTitle>
-            <CardDescription>Perbaiki profil lembaga pendidikan Anda.</CardDescription>
+            <CardDescription>Perbaiki profil bisnis Anda.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
             {/* Logo Upload */}
             <div className="space-y-2">
-              <Label>Logo Sekolah <span className="text-red-500">*</span></Label>
+              <Label>Logo Bisnis <span className="text-red-500">*</span></Label>
               <div className="flex items-center gap-4">
                 {logoPreview ? (
                   <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded-lg border bg-white" loading="lazy" decoding="async" />
@@ -163,61 +162,46 @@ export function RevisionForm({ application }: { application: any }) {
 
             <div className="grid md:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <Label>Nama Sekolah <span className="text-red-500">*</span></Label>
-                <Input required value={form.schoolName} onChange={(e) => setForm({ ...form, schoolName: e.target.value })} className="rounded-xl" />
+                <Label>Nama Bisnis <span className="text-red-500">*</span></Label>
+                <Input required value={form.businessName} onChange={(e) => setForm({ ...form, businessName: e.target.value })} className="rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Label>Subdomain / URL Sistem <span className="text-red-500">*</span></Label>
                 <div className="flex rounded-xl overflow-hidden shadow-sm border focus-within:ring-2 focus-within:ring-primary/20">
                   <span className="flex items-center justify-center bg-muted/50 px-2 sm:px-3 border-r text-muted-foreground text-xs sm:text-sm font-medium shrink-0">https://</span>
-                  <Input required value={form.schoolSlug} onChange={(e) => setForm({ ...form, schoolSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} className="border-0 rounded-none focus-visible:ring-0 shadow-none px-2 font-semibold text-primary min-w-0" />
-                  <span className="flex items-center justify-center bg-muted/50 px-2 sm:px-3 border-l text-muted-foreground text-xs sm:text-sm font-medium shrink-0">.schoolpro.id</span>
+                  <Input required value={form.businessSlug} onChange={(e) => setForm({ ...form, businessSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} className="border-0 rounded-none focus-visible:ring-0 shadow-none px-2 font-semibold text-primary min-w-0" />
+                  <span className="flex items-center justify-center bg-muted/50 px-2 sm:px-3 border-l text-muted-foreground text-xs sm:text-sm font-medium shrink-0">.bisnispro.id</span>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>NPSN <span className="text-red-500">*</span></Label>
-                <Input required minLength={8} maxLength={8} value={form.npsn} onChange={(e) => setForm({ ...form, npsn: e.target.value.replace(/[^0-9]/g, "") })} className="rounded-xl" placeholder="8 digit NPSN" />
+                <Label>Tipe Bisnis</Label>
+                <Input value={form.businessType} onChange={(e) => setForm({ ...form, businessType: e.target.value })} className="rounded-xl" placeholder="UMKM, Startup, Corporate..." />
               </div>
               <div className="space-y-2">
-                <Label>Status Lembaga</Label>
-                <div className="flex gap-4 pt-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="status" value="SWASTA" checked={form.schoolStatus === "SWASTA"} onChange={(e) => setForm({ ...form, schoolStatus: e.target.value })} className="accent-primary w-4 h-4" />
-                    <span className="text-sm font-medium">Swasta</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="status" value="NEGERI" checked={form.schoolStatus === "NEGERI"} onChange={(e) => setForm({ ...form, schoolStatus: e.target.value })} className="accent-primary w-4 h-4" />
-                    <span className="text-sm font-medium">Negeri</span>
-                  </label>
-                </div>
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label>Jumlah Siswa Saat Ini <span className="text-red-500">*</span></Label>
-                <div className="relative">
-                  <Input 
-                    required 
-                    type="number"
-                    min="1"
-                    value={form.studentCount || ""} 
-                    onChange={(e) => setForm({...form, studentCount: parseInt(e.target.value) || 0})}
-                    placeholder="Contoh: 500" 
-                    className="rounded-xl h-11"
-                  />
-                </div>
+                <Label>Jumlah Karyawan <span className="text-red-500">*</span></Label>
+                <Input 
+                  required 
+                  type="number"
+                  min="1"
+                  value={form.employeeCount || ""} 
+                  onChange={(e) => setForm({...form, employeeCount: parseInt(e.target.value) || 1})}
+                  placeholder="Contoh: 10" 
+                  className="rounded-xl h-11"
+                />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Lokasi Sekolah */}
+        {/* Lokasi Bisnis */}
         <Card className="glass border-0 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <div className="p-2 bg-emerald-500/10 rounded-xl"><MapPin className="h-5 w-5 text-emerald-500" /></div>
-              Lokasi Sekolah
+              Lokasi Bisnis
             </CardTitle>
-            <CardDescription>Perbaiki wilayah dan alamat sekolah Anda.</CardDescription>
+            <CardDescription>Perbaiki wilayah dan alamat bisnis Anda.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
             <RegionSelector
@@ -229,7 +213,7 @@ export function RevisionForm({ application }: { application: any }) {
             />
             <div className="space-y-2">
               <Label>Alamat Lengkap <span className="text-red-500">*</span></Label>
-              <Textarea required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="rounded-xl min-h-[100px]" placeholder="Jl. Pendidikan No. 123..." />
+              <Textarea required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="rounded-xl min-h-[100px]" placeholder="Jl. Bisnis No. 123..." />
             </div>
           </CardContent>
         </Card>
@@ -242,7 +226,7 @@ export function RevisionForm({ application }: { application: any }) {
               <div className="p-2 bg-blue-500/10 rounded-xl"><User className="h-5 w-5 text-blue-500" /></div>
               Data Penanggung Jawab
             </CardTitle>
-            <CardDescription>Perbaiki data narahubung sekolah Anda.</CardDescription>
+            <CardDescription>Perbaiki data narahubung bisnis Anda.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="grid md:grid-cols-2 gap-5">

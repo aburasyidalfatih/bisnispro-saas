@@ -14,7 +14,7 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
       take: 10,
       select: {
-        schoolName: true,
+        businessName: true,
         regency: true,
         logo: true,
         createdAt: true,

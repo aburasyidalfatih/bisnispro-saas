@@ -10,7 +10,8 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 
 interface Registration {
-  schoolName: string
+  businessName?: string
+  schoolName?: string
   regency: string | null
   logo: string | null
   createdAt: string
@@ -67,6 +68,7 @@ export function SocialProofPopup() {
   if (!registrations || registrations.length === 0 || currentIndex >= registrations.length) return null
 
   const current = registrations[currentIndex]
+  const displayName = current.businessName || current.schoolName || ""
   const normalizedLogo = normalizeImageUrl(current.logo)
   const hasLogo = !!normalizedLogo
 
@@ -96,14 +98,14 @@ export function SocialProofPopup() {
           <div className="flex items-start gap-3 relative z-10">
             <div className="flex-shrink-0 relative h-10 w-10 rounded-full overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center">
               {hasLogo ? (
-                <Image src={normalizedLogo!} alt={current.schoolName} fill sizes="40px" className="object-cover" />
+                <Image src={normalizedLogo!} alt={displayName} fill sizes="40px" className="object-cover" />
               ) : (
                 <Building2 className="h-5 w-5 text-primary/60" />
               )}
             </div>
             <div className="flex-1 min-w-0 pr-4">
               <p className="text-sm font-semibold text-foreground leading-tight truncate">
-                {current.schoolName}
+                {displayName}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5 truncate">
                 {current.regency ? `${current.regency}` : "Indonesia"}
