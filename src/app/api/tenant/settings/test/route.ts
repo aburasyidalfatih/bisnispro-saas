@@ -42,6 +42,7 @@ export async function POST(req: Request) {
       )
     }
     try {
+      // @ts-ignore
       const nodemailer = await import("nodemailer")
       const transporter = nodemailer.default.createTransport({
         host: data.smtpHost,

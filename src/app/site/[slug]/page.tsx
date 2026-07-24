@@ -18,9 +18,8 @@ const LatestUpdates = dynamic(() => import("./_components/latest-updates").then(
 const ServicesSection = dynamic(() => import("./_components/services-section").then((mod) => mod.ServicesSection))
 const PortfolioSection = dynamic(() => import("./_components/portfolio-section").then((mod) => mod.PortfolioSection))
 const OfficesSection = dynamic(() => import("./_components/offices-section").then((mod) => mod.OfficesSection))
-const ExtracurricularsSection = dynamic(() => import("./_components/extracurriculars-section").then((mod) => mod.ExtracurricularsSection))
 const TeamHighlight = dynamic(() => import("./_components/team-highlight").then((mod) => mod.TeamHighlight))
-const ClientTestimonials = dynamic(() => import("./_components/klien-testimonials").then((mod) => mod.ClientTestimonials))
+const ClientTestimonials = dynamic(() => import("./_components/client-testimonials").then((mod) => mod.ClientTestimonials))
 const PartnershipsSection = dynamic(() => import("./_components/partnerships-section").then((mod) => mod.PartnershipsSection))
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { DefaultTheme } from "./_themes/default"
