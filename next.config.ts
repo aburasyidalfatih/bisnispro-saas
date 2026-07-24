@@ -48,7 +48,6 @@ const nextConfig: NextConfig = {
   },
   output: "standalone",
   outputFileTracingExcludes: {
-    // Exclude large or unnecessary files from being copied to the standalone output
     "/(.*)": [
       "node_modules/@swc/core-linux-x64-gnu",
       "node_modules/@swc/core-linux-x64-musl",
@@ -56,6 +55,7 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ["@prisma/client", "bcryptjs", "pdfkit"],
+  reactCompiler: true,
   productionBrowserSourceMaps: false, // Hemat RAM: jangan buat source maps
   typescript: {
     // Type check sudah dijamin oleh 'npm run typecheck' di script build (package.json).
@@ -75,8 +75,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     // Kurangi penggunaan CPU/Thread menjadi 1 untuk mencegah Out of Memory saat build di VPS
-    cpus: 1, 
-    reactCompiler: false,
+    cpus: 1,
     optimizePackageImports: [
       "lucide-react",
       "recharts",
