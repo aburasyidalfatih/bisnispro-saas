@@ -106,7 +106,7 @@ export function Omnisearch({ tenantId, basePath }: { tenantId: string; basePath:
           <input 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Cari apa saja... (Berita, Guru, Fasilitas)"
+            placeholder="Cari apa saja... (Berita, Tim, Kantor/Lokasi)"
             className="flex h-10 w-full rounded-md bg-transparent text-base md:text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
             autoFocus
           />

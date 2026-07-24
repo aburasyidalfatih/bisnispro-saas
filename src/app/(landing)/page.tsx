@@ -2,26 +2,26 @@ import { db } from "@/lib/db"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Buat Website Sekolah Gratis & Platform Manajemen - SchoolPro",
-  description: "Buat website sekolah gratis secara otomatis dan instan dengan SchoolPro. Platform terbaik untuk digitalisasi sekolah yang dilengkapi fitur PPDB Online dan sistem manajemen terpadu.",
+  title: "Buat Website Bisnis Gratis & Platform Manajemen - BisnisPro",
+  description: "Buat website profil bisnis gratis secara otomatis dan instan dengan BisnisPro. Platform terbaik untuk digitalisasi bisnis yang dilengkapi fitur CMS dan sistem manajemen terpadu.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Buat Website Sekolah Gratis & Platform Manajemen - SchoolPro",
-    description: "Buat website sekolah gratis secara otomatis dan instan dengan SchoolPro. Platform terbaik untuk digitalisasi sekolah yang dilengkapi fitur PPDB Online dan sistem manajemen terpadu.",
+    title: "Buat Website Bisnis Gratis & Platform Manajemen - BisnisPro",
+    description: "Buat website profil bisnis gratis secara otomatis dan instan dengan BisnisPro. Platform terbaik untuk digitalisasi bisnis yang dilengkapi fitur CMS dan sistem manajemen terpadu.",
     url: "/",
-    images: ["/logo-schoolpro.png"],
+    images: ["/logo-bisnispro.png"],
   },
   twitter: {
-    title: "Buat Website Sekolah Gratis & Platform Manajemen - SchoolPro",
-    description: "Buat website sekolah gratis secara otomatis dan instan dengan SchoolPro. Platform terbaik untuk digitalisasi sekolah yang dilengkapi fitur PPDB Online dan sistem manajemen terpadu.",
+    title: "Buat Website Bisnis Gratis & Platform Manajemen - BisnisPro",
+    description: "Buat website profil bisnis gratis secara otomatis dan instan dengan BisnisPro. Platform terbaik untuk digitalisasi bisnis yang dilengkapi fitur CMS dan sistem manajemen terpadu.",
   }
 }
 import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp"
 import { SocialProofPopup } from "@/components/shared/social-proof-popup"
 import { HeroSection } from "./_components/hero-section"
-import { SchoolsMarquee } from "./_components/schools-marquee"
+import { BusinessesMarquee } from "./_components/businesses-marquee"
 import { SolutionsSection } from "./_components/solutions-section"
 import { FeaturesSection } from "./_components/features-section"
 import { CtaSection } from "./_components/cta-section"
@@ -34,9 +34,9 @@ export default async function LandingPage() {
     where: { key: { in: ["app_logo", "platform_name", "platform_tagline", "SUPPORT_WA_NUMBERS"] } },
   })
 
-  let appLogo = "/logo-schoolpro.png"
-  let platformName = "SchoolPro"
-  let platformTagline = "Solusi Manajemen Sekolah Digital"
+  let appLogo = "/logo-bisnispro.png"
+  let platformName = "BisnisPro"
+  let platformTagline = "Solusi Manajemen Bisnis Digital"
   let supportWaNumbers: any[] = []
 
   settings.forEach((s) => {
@@ -88,7 +88,7 @@ export default async function LandingPage() {
       <main>
         <HeroSection />
         
-        <SchoolsMarquee activeTenants={activeTenants} totalTenants={totalTenants} />
+        <BusinessesMarquee activeTenants={activeTenants} totalTenants={totalTenants} />
         
         <SolutionsSection />
         

@@ -10,7 +10,7 @@ export function FaqSection({ faqs }: { faqs: any[] }) {
         <ScrollReveal>
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Tanya Jawab</h2>
-            <p className="text-muted-foreground text-lg md:text-xl">Pertanyaan yang sering diajukan mengenai sekolah kami</p>
+            <p className="text-muted-foreground text-lg md:text-xl">Pertanyaan yang sering diajukan mengenai perusahaan kami</p>
           </div>
         </ScrollReveal>
 

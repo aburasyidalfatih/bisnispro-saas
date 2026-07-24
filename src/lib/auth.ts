@@ -101,7 +101,7 @@ export const authOptions: NextAuthConfig = {
 
         // --- DOMAIN BASED LOGIN RESTRICTION ---
         const hostname = (credentials.hostname as string) || ""
-        const rootDomain = process.env.AUTH_URL ? process.env.AUTH_URL.replace("https://", "").replace("http://", "") : (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id")
+        const rootDomain = process.env.AUTH_URL ? process.env.AUTH_URL.replace("https://", "").replace("http://", "") : (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id")
         const hostWithoutPort = hostname.split(":")[0]
         const isMainDomain =
           !hostname ||
@@ -129,13 +129,13 @@ export const authOptions: NextAuthConfig = {
             if (tenantByDomain) {
               slug = tenantByDomain.slug
             } else {
-              throw new CustomAuthError("Sekolah tidak ditemukan untuk domain ini.")
+              throw new CustomAuthError("Bisnis tidak ditemukan untuk domain ini.")
             }
           }
 
           const belongsToTenant = user.tenants.some((t) => t.tenant.slug === slug)
           if (!belongsToTenant) {
-            throw new CustomAuthError("Akses ditolak: Anda tidak terdaftar di sekolah ini.")
+            throw new CustomAuthError("Akses ditolak: Anda tidak terdaftar di bisnis ini.")
           }
         }
 
@@ -178,7 +178,7 @@ export const authOptions: NextAuthConfig = {
         const { headers } = await import("next/headers")
         const headersList = await headers()
         const host = headersList.get("host") || ""
-        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
         const hostWithoutPort = host.split(":")[0]
         const isMainDomain =
           hostWithoutPort === "localhost" ||
@@ -222,7 +222,7 @@ export const authOptions: NextAuthConfig = {
           // --- NEW USER: provision based on context ---
           if (targetTenantSlug) {
             // STRICT MODE: Jika user belum ada sama sekali, tolak!
-            return "/login?error=" + encodeURIComponent("Email Anda belum terdaftar di sistem. Silakan hubungi Admin sekolah atau daftar terlebih dahulu.")
+            return "/login?error=" + encodeURIComponent("Email Anda belum terdaftar di sistem. Silakan hubungi Admin bisnis atau daftar terlebih dahulu.")
           }
 
           // Main domain: create Affiliate profile
@@ -288,10 +288,10 @@ export const authOptions: NextAuthConfig = {
                 where: { tenantId_userId: { tenantId: tenant.id, userId: existing.id } },
               })
               if (!alreadyMember) {
-                return "/login?error=" + encodeURIComponent("Akses ditolak. Email Anda tidak terdaftar sebagai anggota di sekolah ini.")
+                return "/login?error=" + encodeURIComponent("Akses ditolak. Email Anda tidak terdaftar sebagai anggota di bisnis ini.")
               }
             } else {
-              return "/login?error=" + encodeURIComponent("Sekolah tidak ditemukan.")
+              return "/login?error=" + encodeURIComponent("Bisnis tidak ditemukan.")
             }
           } else {
             // Main domain: ensure Affiliate profile exists (non-super-admin only)
@@ -328,7 +328,7 @@ export const authOptions: NextAuthConfig = {
         const { headers } = await import("next/headers")
         const headersList = await headers()
         const host = headersList.get("host") || ""
-        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+        const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
         const hostWithoutPort = host.split(":")[0]
         const isMainDomain =
           hostWithoutPort === "localhost" ||
@@ -478,7 +478,7 @@ export const authOptions: NextAuthConfig = {
           let hostname = headersList.get("x-forwarded-host") || headersList.get("host") || ""
           hostname = hostname.split(':')[0]
           
-          const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
+          const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
           
           if (hostname !== "localhost" && hostname !== rootDomain && hostname !== `www.${rootDomain}`) {
             let activeSlug = null

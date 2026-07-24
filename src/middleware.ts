@@ -1,9 +1,9 @@
 /**
  * Next.js Multi-Tenant Middleware
  * Menangani routing untuk:
- * 1. Main domain (schoolpro.id / schoolpro.my.id)
- * 2. Subdomain (tenant.schoolpro.id)
- * 3. Custom domain (sekolahanda.com)
+ * 1. Main domain (bisnispro.id / bisnispro.my.id)
+ * 2. Subdomain (tenant.bisnispro.id)
+ * 3. Custom domain (bisnisanda.com)
  */
 
 import NextAuth from "next-auth"
@@ -30,9 +30,9 @@ async function resolveCustomDomain(domain: string, requestUrl: string): Promise<
     }
 
     // Edge-Safe: Fetch from absolute URL or local Node.js API
-    let baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id";
+    let baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bisnispro.id";
     if (baseUrl.includes("127.0.0.1") || baseUrl.includes("localhost")) {
-      baseUrl = "https://schoolpro.id"; // Fallback to public URL to avoid Edge fetch issues
+      baseUrl = "https://bisnispro.id"; // Fallback to public URL to avoid Edge fetch issues
     }
     const res = await fetch(
       `${baseUrl}/api/internal/domain-lookup?domain=${encodeURIComponent(domain)}`,
@@ -68,9 +68,9 @@ async function getCustomDomainForSlug(slug: string, requestUrl: string): Promise
       if (cached) return cached as string
     }
 
-    let baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schoolpro.id";
+    let baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bisnispro.id";
     if (baseUrl.includes("127.0.0.1") || baseUrl.includes("localhost")) {
-      baseUrl = "https://schoolpro.id";
+      baseUrl = "https://bisnispro.id";
     }
     const res = await fetch(
       `${baseUrl}/api/internal/slug-lookup?slug=${encodeURIComponent(slug)}`,
@@ -206,11 +206,11 @@ export default async function middleware(request: NextRequest) {
     return new NextResponse(`WAF Blocked: Malicious payload detected (${attackType})`, { status: 403 })
   }
   
-  let rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "schoolpro.id"
-  if (hostname.endsWith("schoolpro.my.id") || hostname === "schoolpro.my.id") {
-    rootDomain = "schoolpro.my.id"
-  } else if (hostname.endsWith("schoolpro.id") || hostname === "schoolpro.id") {
-    rootDomain = "schoolpro.id"
+  let rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bisnispro.id"
+  if (hostname.endsWith("bisnispro.my.id") || hostname === "bisnispro.my.id") {
+    rootDomain = "bisnispro.my.id"
+  } else if (hostname.endsWith("bisnispro.id") || hostname === "bisnispro.id") {
+    rootDomain = "bisnispro.id"
   }
 
   const isMainDomain =
@@ -241,7 +241,7 @@ export default async function middleware(request: NextRequest) {
   // ============================================================
   // GLOBAL AUTHORIZATION & ROLE ISOLATION
   // ============================================================
-  const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate") || pathname.startsWith("/ortu") || pathname.startsWith("/panel-gtk") || pathname.startsWith("/siswa") || pathname.startsWith("/ujian")
+  const isProtected = pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/affiliate")
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
   // Only validate session when needed (skip for public pages to save JWT parsing)
@@ -264,36 +264,6 @@ export default async function middleware(request: NextRequest) {
 
     if (pathname.startsWith("/admin")) {
       if (!isSuperAdmin && !isAffiliate && activeRole !== "owner" && activeRole !== "admin") {
-        if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-        if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-        if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
-        return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
-      }
-    }
-
-    if (pathname.startsWith("/panel-gtk")) {
-      if (!isSuperAdmin && activeRole !== "guru") {
-        if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
-        if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-        if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
-        return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
-      }
-    }
-
-    if (pathname.startsWith("/ortu")) {
-      if (!isSuperAdmin && activeRole !== "orangtua") {
-        if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
-        if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-        if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
-        return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
-      }
-    }
-
-    if (pathname.startsWith("/siswa")) {
-      if (!isSuperAdmin && activeRole !== "siswa") {
-        if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
-        if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-        if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
         return addSecurityHeaders(NextResponse.redirect(new URL("/login", request.url)))
       }
     }
@@ -312,11 +282,8 @@ export default async function middleware(request: NextRequest) {
     }
 
     if (isAuthPage) {
-      // Prioritize school roles if they are on a school domain
+      // Prioritize business roles if they are on a business domain
       if (isSubdomain || isCustomDomain) {
-        if (activeRole === "guru") return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-        if (activeRole === "orangtua") return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-        if (activeRole === "siswa") return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
         if (activeRole === "owner" || activeRole === "admin") return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
       }
 
@@ -324,12 +291,6 @@ export default async function middleware(request: NextRequest) {
         return addSecurityHeaders(NextResponse.redirect(new URL("/super-admin", request.url)))
       } else if (isAffiliate && (!session.user?.tenants || session.user?.tenants.length === 0 || isMainDomain)) {
         return addSecurityHeaders(NextResponse.redirect(new URL("/affiliate", request.url)))
-      } else if (activeRole === "guru") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/panel-gtk", request.url)))
-      } else if (activeRole === "orangtua") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/ortu", request.url)))
-      } else if (activeRole === "siswa") {
-        return addSecurityHeaders(NextResponse.redirect(new URL("/siswa", request.url)))
       } else {
         return addSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)))
       }
@@ -353,7 +314,7 @@ export default async function middleware(request: NextRequest) {
 
     // Cek Affiliate Shortlink (contoh: /bdi123, /ref-abc, /mitra123)
     // Hindari rute sistem yang valid
-    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/forgot-password", "/reset-password", "/daftarkan-sekolah", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy", "/siswa", "/ujian", "/direktori", "/syarat-ketentuan", "/kebijakan-privasi"]
+    const systemRoutes = ["/admin", "/super-admin", "/affiliate", "/login", "/register", "/forgot-password", "/reset-password", "/daftarkan-bisnis", "/api", "/invoice", "/mitra-afiliasi", "/privacy-policy", "/direktori", "/syarat-ketentuan", "/kebijakan-privasi"]
     const isSystemRoute = systemRoutes.some(r => pathname.startsWith(r))
     
     // Tangkap path apa saja yang bukan system route dan panjangnya antara 5-15 karakter alfanumerik (atau hyphen)
@@ -368,7 +329,7 @@ export default async function middleware(request: NextRequest) {
       
       redirectUrl.searchParams.set("ref", code)
       const response = NextResponse.redirect(redirectUrl)
-      response.cookies.set("schoolpro_ref", code, { path: "/", maxAge: 30 * 24 * 60 * 60 }) // 30 days
+      response.cookies.set("bisnispro_ref", code, { path: "/", maxAge: 30 * 24 * 60 * 60 }) // 30 days
       return addSecurityHeaders(response)
     }
 
@@ -376,7 +337,7 @@ export default async function middleware(request: NextRequest) {
     const refQuery = request.nextUrl.searchParams.get("ref") || request.nextUrl.searchParams.get("r")
     if (refQuery) {
       const response = NextResponse.next()
-      response.cookies.set("schoolpro_ref", refQuery, { path: "/", maxAge: 30 * 24 * 60 * 60 })
+      response.cookies.set("bisnispro_ref", refQuery, { path: "/", maxAge: 30 * 24 * 60 * 60 })
       return addSecurityHeaders(response, "public")
     }
 
@@ -411,9 +372,6 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/invite") ||
       pathname.startsWith("/api") ||
       pathname.startsWith("/invoice") ||
-      pathname.startsWith("/panel-gtk") ||
-      pathname.startsWith("/siswa") ||
-      pathname.startsWith("/ujian") ||
       pathname.startsWith("/affiliate") ||
       pathname.startsWith("/super-admin")
     ) {
@@ -428,7 +386,7 @@ export default async function middleware(request: NextRequest) {
       return addSecurityHeaders(response, "protected")
     }
 
-    // Rewrite ke website sekolah
+    // Rewrite ke website bisnis
     const url = request.nextUrl.clone()
     url.pathname = `/site/${subdomain}${pathname}`
     const requestHeaders = new Headers(request.headers)
@@ -467,9 +425,6 @@ export default async function middleware(request: NextRequest) {
       pathname.startsWith("/invite") ||
       pathname.startsWith("/api") ||
       pathname.startsWith("/invoice") ||
-      pathname.startsWith("/panel-gtk") ||
-      pathname.startsWith("/siswa") ||
-      pathname.startsWith("/ujian") ||
       pathname.startsWith("/affiliate") ||
       pathname.startsWith("/super-admin")
     ) {

@@ -39,37 +39,37 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
       priority: 1,
     },
     {
-      url: `${baseUrl}/profil`,
+      url: `${baseUrl}/tentang`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/program`,
+      url: `${baseUrl}/layanan`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/berita`,
+      url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/agenda`,
+      url: `${baseUrl}/event`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/prestasi`,
+      url: `${baseUrl}/portofolio`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/fasilitas`,
+      url: `${baseUrl}/kantor`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
@@ -81,13 +81,13 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/gtk`,
+      url: `${baseUrl}/tim`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/alumni`,
+      url: `${baseUrl}/klien`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
@@ -120,11 +120,11 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
     })
   }
 
-  // Dynamic routes: Prestasi
+  // Dynamic routes: Portofolio
   if (achievements.length > 0) {
     achievements.forEach((achievement: any) => {
       routes.push({
-        url: `${baseUrl}/prestasi/${achievement.slug || achievement.id}`,
+        url: `${baseUrl}/portofolio/${achievement.slug || achievement.id}`,
         lastModified: achievement.updatedAt || achievement.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
@@ -136,7 +136,7 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   if (programs.length > 0) {
     programs.forEach((program: any) => {
       routes.push({
-        url: `${baseUrl}/program/${program.slug || program.id}`,
+        url: `${baseUrl}/layanan/${program.slug || program.id}`,
         lastModified: program.updatedAt || program.createdAt,
         changeFrequency: "yearly",
         priority: 0.6,
@@ -144,11 +144,11 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
     })
   }
 
-  // Dynamic routes: Fasilitas
+  // Dynamic routes: Kantor/Lokasi
   if (facilities.length > 0) {
     facilities.forEach((facility: any) => {
       routes.push({
-        url: `${baseUrl}/fasilitas/${facility.slug || facility.id}`,
+        url: `${baseUrl}/kantor/${facility.slug || facility.id}`,
         lastModified: facility.updatedAt || facility.createdAt,
         changeFrequency: "yearly",
         priority: 0.5,
@@ -172,7 +172,7 @@ export default async function sitemap({ params }: { params: Promise<{ slug: stri
   if (events.length > 0) {
     events.forEach((event: any) => {
       routes.push({
-        url: `${baseUrl}/agenda/${event.slug || event.id}`,
+        url: `${baseUrl}/event/${event.slug || event.id}`,
         lastModified: event.updatedAt || event.createdAt,
         changeFrequency: "weekly",
         priority: 0.7,

@@ -3,7 +3,7 @@
 import { db } from "@/lib/db"
 import { Prisma } from "@prisma/client"
 
-export async function getSchoolsDirectory(params: {
+export async function getBusinessesDirectory(params: {
   search?: string
   province?: string
   regency?: string
@@ -69,7 +69,7 @@ export async function getSchoolsDirectory(params: {
     ])
 
     return {
-      schools: schools.map(s => ({
+      businesses: schools.map(s => ({
         id: s.id,
         name: s.name,
         slug: s.slug,
@@ -87,7 +87,7 @@ export async function getSchoolsDirectory(params: {
       totalPages: Math.ceil(total / limit)
     }
   } catch (error) {
-    console.error("Failed to fetch schools directory:", error)
+    console.error("Failed to fetch businesses directory:", error)
     
     // Fallback if Prisma JSON path filtering fails due to dialect mismatch
     try {
@@ -112,7 +112,7 @@ export async function getSchoolsDirectory(params: {
       const total = await db.tenant.count({ where: whereClause })
       
       return {
-        schools: fallbackSchools.map(s => ({
+        businesses: fallbackSchools.map(s => ({
           id: s.id,
           name: s.name,
           slug: s.slug,
@@ -131,7 +131,7 @@ export async function getSchoolsDirectory(params: {
       }
     } catch (fallbackErr) {
        console.error("Fallback failed:", fallbackErr)
-       return { schools: [], total: 0, totalPages: 0 }
+       return { businesses: [], total: 0, totalPages: 0 }
     }
   }
 }

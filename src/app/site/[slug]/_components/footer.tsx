@@ -261,7 +261,7 @@ export function WebsiteFooter({ tenant }: FooterProps) {
             <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.5)" }}>
               &copy; {year} {tenant.name}. All rights reserved. 
               {(!tenant.plan || tenant.plan === "free") ? (
-                <span className="ml-2">Dibuat menggunakan <a href={(tenant.settings as any)?.affiliate_link || "https://schoolpro.id"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline decoration-white/20 underline-offset-2">Platform Web Sekolah Gratis</a> dari SchoolPro</span>
+                <span className="ml-2">Dibuat menggunakan <a href={(tenant.settings as any)?.affiliate_link || "https://schoolpro.id"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline decoration-white/20 underline-offset-2">Platform Web Perusahaan Gratis</a> dari SchoolPro</span>
               ) : tenant.plan === "lite" ? (
                 <span className="ml-2">Powered by <a href={(tenant.settings as any)?.affiliate_link || "https://schoolpro.id"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">SchoolPro.id</a></span>
               ) : (

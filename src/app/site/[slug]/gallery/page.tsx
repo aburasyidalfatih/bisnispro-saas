@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tenant) return {}
   
   const title = `Galeri Dokumentasi`
-  const description = `Galeri dokumentasi kegiatan dan fasilitas unggulan di ${tenant.name}`
+  const description = `Galeri dokumentasi kegiatan dan kantor unggulan di ${tenant.name}`
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
 
   return {

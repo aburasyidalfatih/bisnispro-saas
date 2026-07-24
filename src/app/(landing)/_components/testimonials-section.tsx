@@ -29,7 +29,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
             Kata Mereka
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Testimoni Mitra Kami
+            Testimoni Klien Kami
           </h2>
           <p className="text-muted-foreground text-lg">
             Apa kata mereka yang telah merasakan langsung kemudahan menggunakan platform kami.
@@ -60,7 +60,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
         className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-6 pb-8 -mx-4 px-4 sm:mx-0 sm:px-0"
       >
         {testimonials.map((t) => {
-          const tenantUrl = t.tenant?.domain ? `https://${t.tenant.domain}` : `https://${t.tenant?.slug}.schoolpro.id`;
+          const tenantUrl = t.tenant?.domain ? `https://${t.tenant.domain}` : `https://${t.tenant?.slug}.bisnispro.id`;
           
           return (
             <div 
@@ -80,14 +80,14 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
                 <div>
                   <h4 className="font-semibold text-gray-900 line-clamp-1">{t.user?.name}</h4>
                   <div className="text-sm text-gray-500 flex flex-wrap items-center gap-1">
-                    <span className="capitalize">{t.user?.tenants?.[0]?.role ? t.user.tenants[0].role : "Admin"}</span>
+                    <span className="capitalize">{t.user?.tenants?.[0]?.role ? t.user.tenants[0].role : "Pemilik Bisnis"}</span>
                     <span>•</span>
                     <a 
                       href={tenantUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-primary hover:underline font-medium inline-flex items-center gap-1 line-clamp-1"
-                      title="Kunjungi Website Sekolah"
+                      title="Kunjungi Website"
                     >
                       {t.tenant?.name}
                       <ExternalLink className="h-3 w-3" />

@@ -6,7 +6,7 @@
 
 // ─── Sub-entity types ───
 
-export interface PublicStaff {
+export interface PublicTeamMember {
   id: string
   name: string
   role: string | null
@@ -16,7 +16,7 @@ export interface PublicStaff {
   email: string | null
 }
 
-export interface PublicAlumni {
+export interface PublicClient {
   id: string
   name: string
   graduationYear: number
@@ -25,7 +25,7 @@ export interface PublicAlumni {
   testimonial: string | null
 }
 
-export interface PublicProgram {
+export interface PublicService {
   id: string
   name: string
   description: string | null
@@ -39,14 +39,14 @@ export interface PublicExtracurricular {
   imageUrl: string | null
 }
 
-export interface PublicFacility {
+export interface PublicOffice {
   id: string
   name: string
   description: string | null
   imageUrl: string | null
 }
 
-export interface PublicAchievement {
+export interface PublicPortfolio {
   id: string
   title: string
   description: string | null
@@ -216,12 +216,12 @@ export interface PublicTenant {
   createdAt: Date | string
 
   // Relations
-  staff: PublicStaff[]
-  alumni: PublicAlumni[]
-  programs: PublicProgram[]
+  staff: PublicTeamMember[]
+  klien: PublicClient[]
+  programs: PublicService[]
   extracurriculars: PublicExtracurricular[]
-  facilities: PublicFacility[]
-  achievements: PublicAchievement[]
+  facilities: PublicOffice[]
+  achievements: PublicPortfolio[]
   websiteMenus: PublicWebsiteMenu[]
   posts: PublicPost[]
   events: PublicEvent[]

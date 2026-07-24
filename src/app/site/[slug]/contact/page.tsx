@@ -90,7 +90,7 @@ export default async function ContactPage({ params }: { params: Promise<{ slug: 
         {(tenant.address || mapUrl) && (
           <div className="mb-12 relative w-full h-[400px] rounded-2xl overflow-hidden border bg-muted shadow-sm group">
             <iframe
-              title="Lokasi Sekolah"
+              title="Lokasi Perusahaan"
               width="100%"
               height="100%"
               style={{ border: 0 }}

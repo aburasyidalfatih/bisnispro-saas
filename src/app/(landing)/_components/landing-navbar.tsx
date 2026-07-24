@@ -34,18 +34,21 @@ export function LandingNavbar({ appLogo, platformName }: LandingNavbarProps) {
             Solusi
           </Link>
           <Link href="/direktori" className="hover:text-foreground transition-colors font-medium">
-            Direktori Sekolah
+            Direktori Bisnis
+          </Link>
+          <Link href="/mitra-afiliasi" className="hover:text-foreground transition-colors font-medium">
+            Mitra Afiliasi
           </Link>
         </div>
 
         {/* CTA + Mobile hint */}
         <div className="flex items-center gap-2">
-          <Link href="/daftarkan-sekolah" className="hidden md:block">
+          <Link href="/daftarkan-bisnis" className="hidden md:block">
             <Button
               size="sm"
               className="rounded-xl btn-gradient text-white shadow-lg glow-primary border-0 text-xs md:text-sm flex items-center justify-center h-10 px-4"
             >
-              Daftar Gratis
+              Buat Website Gratis
             </Button>
           </Link>
           
@@ -63,15 +66,15 @@ export function LandingNavbar({ appLogo, platformName }: LandingNavbarProps) {
                   Beranda
                 </Link>
                 <Link href="/direktori" className="block px-2 py-1 text-lg font-medium hover:text-primary transition-colors">
-                  Direktori Sekolah
+                  Direktori Bisnis
                 </Link>
                 <Link href="/mitra-afiliasi" className="block px-2 py-1 text-lg font-medium hover:text-primary transition-colors">
                   Program Afiliasi
                 </Link>
                 <div className="mt-4 border-t pt-4">
-                  <Link href="/daftarkan-sekolah" className="block w-full">
+                  <Link href="/daftarkan-bisnis" className="block w-full">
                     <Button className="w-full rounded-xl btn-gradient text-white shadow-lg border-0 h-12">
-                      Daftar Gratis
+                      Buat Website Gratis
                     </Button>
                   </Link>
                 </div>

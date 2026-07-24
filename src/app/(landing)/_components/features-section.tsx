@@ -1,88 +1,88 @@
-import { Bot, Check, Database, Globe, PiggyBank, School, Wallet, Users, Zap } from "lucide-react"
+import { Bot, Check, Database, Globe, PenTool, TrendingUp, Images, MessageCircle, LayoutTemplate } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const featureModules = [
   {
     id: "website",
-    title: "Website Sekolah Gratis",
+    title: "Custom Domain & Branding",
     icon: Globe,
-    description: "Pondasi digital sekolah Anda. Dapatkan web sekolah gratis dengan desain profesional tanpa biaya server.",
+    description: "Pondasi digital bisnis Anda. Dapatkan web perusahaan dengan domain custom dan branding profesional.",
     features: [
-      { name: "Profil Sekolah & Sejarah", status: "ready" },
-      { name: "Manajemen Fasilitas & Ekstrakurikuler", status: "ready" },
-      { name: "Galeri Kegiatan & Prestasi", status: "ready" },
-      { name: "Daftar Guru & Tenaga Kependidikan", status: "ready" },
-      { name: "Optimasi SEO (Mudah dicari di Google)", status: "ready" },
+      { name: "Profil Perusahaan & Visi Misi", status: "ready" },
+      { name: "Layanan & Produk", status: "ready" },
+      { name: "Integrasi Custom Domain", status: "ready" },
+      { name: "Tim & Karyawan", status: "ready" },
+      { name: "Optimasi Mobile & Cepat", status: "ready" },
     ],
   },
   {
-    id: "informasi",
-    title: "Pusat Informasi (Gratis)",
-    icon: Users,
-    description: "Portal komunikasi satu arah yang elegan antara sekolah dan masyarakat.",
+    id: "seo",
+    title: "SEO Otomatis",
+    icon: TrendingUp,
+    description: "Mudah ditemukan oleh calon klien di Google dengan fitur SEO otomatis kami.",
     features: [
-      { name: "Berita & Artikel Sekolah", status: "ready" },
-      { name: "Papan Pengumuman Resmi", status: "ready" },
-      { name: "Agenda Kegiatan Sekolah", status: "ready" },
-      { name: "Integrasi Kontak WhatsApp", status: "ready" },
+      { name: "Auto Meta Tags", status: "ready" },
+      { name: "Sitemap Generator", status: "ready" },
+      { name: "Optimasi Kecepatan", status: "ready" },
+      { name: "Schema Markup Bisnis", status: "ready" },
     ],
   },
   {
-    id: "data",
-    title: "Big Data Dasar (Gratis)",
-    icon: Database,
-    description: "Pusat data dasar untuk mengelola entitas operasional ringan.",
+    id: "blog",
+    title: "Blog & CMS",
+    icon: PenTool,
+    description: "Tingkatkan engagement dan trafik dengan mempublikasikan artikel dan berita terbaru.",
     features: [
-      { name: "Kelola Data Siswa Dasar", status: "ready" },
-      { name: "Kelola Data Guru & Pegawai", status: "ready" },
-      { name: "Ekspor/Impor Data via Excel", status: "ready" },
+      { name: "Sistem Manajemen Konten", status: "ready" },
+      { name: "Kategori & Tag", status: "ready" },
+      { name: "Komentar & Interaksi", status: "ready" },
     ],
   },
   {
-    id: "ppdb",
-    title: "PPDB Smart Hub (Ekspansi Pro)",
-    icon: Zap,
-    description: "Tingkatkan website Anda dengan sistem otomasi penerimaan siswa baru.",
+    id: "portfolio",
+    title: "Portofolio & Galeri",
+    icon: Images,
+    description: "Tampilkan karya terbaik, proyek, atau galeri foto layanan Anda secara elegan.",
     features: [
-      { name: "Portal Pendaftaran Mandiri", status: "ready" },
-      { name: "Auto-Generate Tagihan Formulir", status: "ready" },
-      { name: "Sistem Seleksi & Pengumuman Lulus", status: "ready" },
-      { name: "Sinkronisasi Langsung ke Master Siswa", status: "ready" },
+      { name: "Grid & Masonry Layout", status: "ready" },
+      { name: "Detail Proyek & Studi Kasus", status: "ready" },
+      { name: "Testimoni Klien", status: "ready" },
+      { name: "Integrasi Video", status: "ready" },
     ],
   },
   {
-    id: "keuangan",
-    title: "Core Banking & Tagihan (Ekspansi Pro)",
-    icon: Wallet,
-    description: "Ekosistem finansial tingkat lanjut untuk menekan tunggakan SPP.",
+    id: "whatsapp",
+    title: "WhatsApp Integration",
+    icon: MessageCircle,
+    description: "Konversi pengunjung menjadi pelanggan dengan tombol chat WhatsApp langsung.",
     features: [
-      { name: "Tagihan SPP Massal Otomatis", status: "ready" },
-      { name: "Auto-Reminder Jatuh Tempo via WA", status: "ready" },
-      { name: "Pembayaran Online (Payment Gateway)", status: "ready" },
-      { name: "Pembukuan Buku Kas Umum (BKU)", status: "ready" },
+      { name: "Floating WhatsApp Button", status: "ready" },
+      { name: "Form Lead ke WhatsApp", status: "ready" },
+      { name: "Multi Agen CS", status: "ready" },
+      { name: "Template Pesan Otomatis", status: "ready" },
     ],
   },
   {
-    id: "tabungan",
-    title: "E-Kantin & Tabungan (Ekspansi Pro)",
-    icon: PiggyBank,
-    description: "Digitalisasi transaksi kantin sekolah (Cashless) berbasis QR Code.",
+    id: "template",
+    title: "Multi Template",
+    icon: LayoutTemplate,
+    description: "Pilih desain terbaik untuk jenis industri dan brand identity Anda.",
     features: [
-      { name: "Dompet Digital per Siswa", status: "ready" },
-      { name: "Limit Belanja Harian", status: "ready" },
-      { name: "Transaksi via QR Code Scanner", status: "ready" },
-      { name: "Notifikasi Saldo ke Ortu via WA", status: "ready" },
+      { name: "Tema Startup & Teknologi", status: "ready" },
+      { name: "Tema F&B dan Restoran", status: "ready" },
+      { name: "Tema Kreatif & Agensi", status: "ready" },
+      { name: "Tema Jasa Profesional", status: "ready" },
     ],
   },
   {
     id: "ai",
-    title: "AI Analytics (Ekspansi Pro)",
+    title: "AI Copywriter",
     icon: Bot,
-    description: "Asisten kecerdasan buatan untuk membantu manajemen pengurus yayasan.",
+    description: "Asisten kecerdasan buatan untuk membantu menulis konten website Anda.",
     features: [
-      { name: "Chatbot Analis Keuangan", status: "coming_soon" },
-      { name: "Prediksi Penurunan Kinerja", status: "coming_soon" },
-      { name: "Generator Draf Surat Resmi", status: "coming_soon" },
+      { name: "Generator Deskripsi Layanan", status: "ready" },
+      { name: "Pembuat Artikel Blog", status: "coming_soon" },
+      { name: "Saran Tagline & Headline", status: "ready" },
     ],
   },
 ]
@@ -92,15 +92,14 @@ export function FeaturesSection() {
     <section id="fitur" className="container mx-auto px-4 py-10 md:py-16">
       <div className="text-center mb-10 md:mb-16 space-y-3">
         <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs md:text-sm text-primary font-medium">
-          <School className="h-3.5 w-3.5" />
-          Modul Lengkap
+          <Globe className="h-3.5 w-3.5" />
+          Fitur Lengkap
         </div>
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
-          Mulai dari Website, Tumbuh Menjadi Ekosistem
+          Website Bisnis Modern dengan Fitur Canggih
         </h2>
         <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto px-2">
-          Nikmati fasilitas website gratis selamanya. Kapan pun sekolah Anda siap, upgrade ke fitur Pro (PPDB,
-          Keuangan, Tabungan) hanya dengan satu klik di dalam dasbor.
+          Nikmati fasilitas website modern. Tingkatkan konversi dan kredibilitas bisnis Anda dengan fitur-fitur profesional kami.
         </p>
       </div>
 
@@ -142,7 +141,7 @@ export function FeaturesSection() {
                 {/* Feature list */}
                 <div className="w-full md:w-2/3 bg-background/40 rounded-xl md:rounded-2xl p-4 md:p-6 border shadow-inner">
                   <h4 className="font-semibold mb-4 md:mb-6 flex items-center gap-2 text-sm md:text-base">
-                    <Zap className="h-4 w-4 md:h-5 md:w-5 text-primary" /> Detail Modul
+                    <Check className="h-4 w-4 md:h-5 md:w-5 text-primary" /> Detail Fitur
                   </h4>
                   {/* Single column on mobile, 2 cols on sm+ */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">

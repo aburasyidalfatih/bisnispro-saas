@@ -10,18 +10,18 @@ export function SolutionsSection() {
           {/* Left */}
           <div className="space-y-5">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-              Langkah Pertama Menuju Digitalisasi Sekolah
+              Langkah Pertama Menuju Digitalisasi Bisnis Anda
             </h2>
             <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-              Banyak sekolah kesulitan membuat website karena biaya hosting yang mahal dan perlunya keahlian coding.
-              Kami hadir menyelesaikan masalah tersebut sepenuhnya.
+              Banyak pemilik bisnis kesulitan membuat website karena biaya yang mahal dan perlunya keahlian coding.
+              Kami hadir menyelesaikan masalah tersebut sepenuhnya, cocok untuk Restoran & Cafe, Properti & Real Estate, Jasa Profesional, Konsultan & Agensi, Toko & UMKM, serta Freelancer & Personal Brand.
             </p>
             <ul className="space-y-3 pt-1">
               {[
                 "Tanpa Biaya Hosting: Server super cepat & aman dari kami.",
-                "Tanpa Coding: Desain siap pakai, tinggal upload logo.",
-                "SEO Friendly: Mudah ditemukan orang tua di Google.",
-                "Siap Upgrade: Ekosistem PPDB & Keuangan menunggu di dalam.",
+                "Tanpa Coding: Desain siap pakai, tinggal upload logo dan konten.",
+                "SEO Friendly: Mudah ditemukan pelanggan di Google.",
+                "Tingkatkan Konversi: Integrasi WhatsApp dan formulir kontak otomatis.",
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary">
@@ -46,11 +46,10 @@ export function SolutionsSection() {
             </div>
             <div className="space-y-3">
               <div className="rounded-xl bg-muted/50 p-3 md:p-4 text-xs md:text-sm border">
-                &quot;Bapak/Ibu, tagihan SPP bulan ini sebesar Rp 150.000 telah terbit. Silakan lakukan pembayaran via
-                transfer ke Virtual Account...&quot;
+                &quot;Halo! Ada calon klien baru yang mengirim pesan dari website Anda mengenai jasa desain interior...&quot;
               </div>
               <div className="rounded-xl bg-muted/50 p-3 md:p-4 text-xs md:text-sm border">
-                &quot;Terima kasih! Pembayaran tagihan Buku Paket atas nama Budi telah kami terima.&quot;
+                &quot;Trafik website Anda minggu ini naik 120%. Artikel terbaru Anda masuk halaman pertama Google!&quot;
               </div>
             </div>
           </div>

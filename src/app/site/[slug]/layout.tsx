@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       template: `%s | ${tenant.name}`,
       default: tenant.seoTitle || tenant.name,
     },
-    keywords: [tenant.name, tenant.slug, "Sekolah", "Pendidikan", "Website Sekolah Resmi", "PPDB", tenant.address || "Indonesia"].filter(Boolean),
+    keywords: [tenant.name, tenant.slug, "Perusahaan", "Pendidikan", "Website Perusahaan Resmi", "PPDB", tenant.address || "Indonesia"].filter(Boolean),
     alternates: {},
     icons: normalizedLogo ? { 
       icon: normalizedLogo, 
@@ -121,7 +121,7 @@ export default async function WebsiteLayout({
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Website Ditangguhkan</h1>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              Website sekolah ini sedang dalam keadaan ditangguhkan (Suspend) karena tidak ada aktivitas masuk (login) oleh pengelola selama lebih dari 60 hari.
+              Website perusahaan ini sedang dalam keadaan ditangguhkan (Suspend) karena tidak ada aktivitas masuk (login) oleh pengelola selama lebih dari 60 hari.
             </p>
             <p className="text-sm text-gray-500 mb-8 p-4 bg-gray-50 rounded-xl">
               Jika Anda adalah pengelola website ini, segera masuk (login) ke Dasbor Admin SchoolPro untuk mengaktifkannya kembali sebelum data dihapus secara permanen.
@@ -178,7 +178,7 @@ export default async function WebsiteLayout({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "EducationalOrganization",
+        "@type": "LocalBusiness",
         "@id": `${canonicalUrl}/#organization`,
         "name": tenant.name,
         "url": canonicalUrl,

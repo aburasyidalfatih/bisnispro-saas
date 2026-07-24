@@ -1,43 +1,25 @@
-# SchoolPro SaaS
+# BisnisPro SaaS
 
-Platform Manajemen Sekolah Modern Berbasis Multi-Tenant SaaS (Software as a Service). Dirancang untuk memudahkan operasional sekolah mulai dari pembuatan website instan hingga pengelolaan keuangan dan akademik.
+Platform Pembuatan Website Bisnis & Company Profile Profesional Berbasis Multi-Tenant SaaS (Software as a Service). Dirancang untuk memudahkan UMKM, Startup, Agensi, dan Profesional membuat website company profile instan hanya dengan mendaftar.
 
 ---
 
 ## 💼 Model Bisnis (Freemium)
 
-SchoolPro menggunakan model bisnis freemium dengan dua tingkatan (tier):
+BisnisPro menggunakan model bisnis freemium dengan beberapa tingkatan (tier):
 
 1. **Free Tier (Gratis)**: 
-   Setiap sekolah (tenant) mendapatkan fasilitas pembuatan website profil sekolah secara gratis. Termasuk di dalamnya fitur **Custom Domain** (misal: `sekolah.sch.id`), CMS untuk mempublikasikan artikel/berita, galeri, dan profil sekolah.
-2. **Pro Tier (Rp 30.000 / Siswa / Tahun)**: 
-   Membuka seluruh fitur manajemen sekolah tingkat lanjut. Dimulai dari sistem PPDB (Penerimaan Peserta Didik Baru), Manajemen Kelas, Absensi, hingga Keuangan (Tagihan SPP, Tabungan, Pembayaran Online via Tripay).
-
----
-
-## 🗺️ Roadmap Pengembangan
-
-- **Fase 1: Optimalisasi CMS Website Sekolah (Free Tier)**
-  - Pendaftaran mandiri (Self-registration) untuk tenant sekolah.
-  - Setup Custom Domain & Branding.
-  - Sistem Manajemen Konten (CMS) untuk artikel/berita, galeri, dll.
-  - Manajemen akses role "Guru" untuk penulis artikel.
-- **Fase 2: Sistem SPMB/PPDB Online (Pintu Masuk Pro Tier)**
-  - Pendaftaran Akun Orang Tua/Calon Siswa.
-  - Form Pendaftaran SPMB dinamis.
-  - Dashboard seleksi untuk panitia PPDB.
-- **Fase 3: Manajemen Akademik Dasar & Keuangan (Core Pro)**
-  - Manajemen Induk: Tahun Ajaran, Kelas, Rombel.
-  - Keuangan: Tagihan Rutin (SPP), Insidental, Tabungan Siswa.
-  - Integrasi Gateway Pembayaran (Tripay).
-- **Fase 4: Ekspansi Fitur**
-  - E-Rapor, Presensi Harian, Perpustakaan Digital, dll.
+   Setiap bisnis (tenant) mendapatkan website company profile profesional secara gratis. Termasuk di dalamnya fitur **Custom Domain** (misal: `tokobudi.bisnispro.id`), CMS untuk mempublikasikan artikel/blog, galeri, dan profil perusahaan.
+2. **Pro Tier (Rp 99.000 / Bulan)**: 
+   Membuka seluruh fitur lanjutan. Unlimited layanan & portofolio, custom domain, AI copywriter, analytics, hapus branding BisnisPro.
+3. **Business Tier (Rp 249.000 / Bulan)**: 
+   Multi-user, WhatsApp gateway, email automation, priority support.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 16.2 (App Router, Turbopack, React Compiler)
+- **Framework**: Next.js 15 (App Router, Turbopack, React Compiler)
 - **Auth**: Auth.js v5 (JWT, Credentials, Google OAuth, 2FA/TOTP)
 - **Database**: Prisma ORM + PostgreSQL
 - **UI**: Tailwind CSS + Radix UI + Lucide Icons
@@ -48,32 +30,24 @@ SchoolPro menggunakan model bisnis freemium dengan dua tingkatan (tier):
 
 ---
 
-## 🚀 Quick Start (Development Area)
-
-> Sesuai SOP, pengembangan **hanya boleh** dilakukan di environment `schoolpro-dev`.
+## 🚀 Quick Start (Development)
 
 ```bash
 # 1. Install Dependencies
 npm install --legacy-peer-deps
 
-# 2. Setup Database (Pastikan PostgreSQL sudah berjalan & .env terisi)
+# 2. Copy environment config
+cp .env.example .env
+# Edit .env dengan konfigurasi database dan domain Anda
+
+# 3. Setup Database (Pastikan PostgreSQL sudah berjalan & .env terisi)
 npx prisma db push
 
-# 3. Jalankan Development Server
+# 4. Jalankan Development Server
 npm run dev
 ```
 
-Buka aplikasi di browser (biasanya berjalan di `http://localhost:3001` untuk environment development).
-
----
-
-## 👥 Akun Demo / Seed Data
-
-| Role | Email | Password |
-|------|-------|----------|
-| Super Admin | admin@schoolpro.id | admin123 |
-| Tenant Admin | tenant@schoolpro.id | admin123 |
-| Member | user@schoolpro.id | admin123 |
+Buka aplikasi di browser (biasanya berjalan di `http://localhost:3000`).
 
 ---
 
@@ -83,10 +57,11 @@ Buka aplikasi di browser (biasanya berjalan di `http://localhost:3001` untuk env
 src/
 ├── app/
 │   ├── (auth)/                    # Autentikasi (Login, Register, 2FA)
-│   ├── (dashboard)/               # Dashboard Tenant (Sekolah)
-│   ├── (super-admin)/             # Dashboard Super Admin (Pemilik SchoolPro)
-│   ├── (landing)/                 # Landing Page SchoolPro SaaS
-│   ├── site/[slug]/               # Website Publik Sekolah (Tenant)
+│   ├── (dashboard)/               # Dashboard Admin Bisnis (Tenant)
+│   ├── (super-admin)/             # Dashboard Super Admin (Pemilik BisnisPro)
+│   ├── (landing)/                 # Landing Page BisnisPro SaaS
+│   ├── (public)/                  # Pendaftaran Bisnis Baru
+│   ├── site/[slug]/               # Website Publik Company Profile (Tenant)
 │   ├── api/                       # API Routes
 │   └── layout.tsx                 # Root layout
 ├── components/
@@ -95,10 +70,31 @@ src/
 │   ├── shared/                    # Reusable components
 │   └── ui/                        # Radix UI primitives
 ├── lib/
-│   ├── services/                  # Business Logic & Database queries
-│   ├── validations/               # Zod Schemas
 │   ├── auth.ts                    # Auth.js Config
 │   └── db.ts                      # Prisma Client Singleton
-└── proxy.ts                       # Next.js Middleware Proxy (Multi-tenant router)
+├── features/                      # Feature-based modular services
+└── middleware.ts                   # Multi-tenant router middleware
 ```
+
+---
+
+## 🌐 Website Company Profile (Tenant)
+
+Setiap bisnis yang mendaftar langsung mendapat website profesional dengan halaman:
+
+| Halaman | Deskripsi |
+|---|---|
+| **Homepage** | Hero banner, statistik bisnis, layanan unggulan, testimoni |
+| **Tentang Kami** | Profil perusahaan, visi & misi, sejarah |
+| **Layanan** | Daftar layanan/produk yang ditawarkan |
+| **Portofolio** | Showcase proyek/karya yang pernah dikerjakan |
+| **Tim Kami** | Profil anggota tim perusahaan |
+| **Testimoni** | Review dan cerita sukses dari klien |
+| **Blog** | Artikel, tips bisnis, press release |
+| **Event** | Webinar, workshop, peluncuran produk |
+| **Galeri** | Foto kantor, produk, kegiatan |
+| **Partner** | Logo wall mitra dan klien |
+| **FAQ** | Pertanyaan yang sering diajukan |
+| **Kontak** | Form kontak, peta lokasi, jam operasional |
+| **Download** | Brosur, katalog, price list |
 

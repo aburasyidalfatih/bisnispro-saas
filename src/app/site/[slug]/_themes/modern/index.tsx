@@ -4,14 +4,13 @@ import { ArrowRight, MapPin, Phone, Mail, MessageCircle, Image as ImageIcon, Gra
 import { normalizeImageUrl } from "@/lib/utils"
 import { HeroSlider } from "../../_components/hero-slider"
 import { StatsBar } from "../../_components/stats-bar"
-import { PrincipalWelcome } from "../../_components/principal-welcome"
-import { InfoBoard } from "../../_components/info-board"
-import { ProgramsSection } from "../../_components/programs-section"
-import { AchievementsSection } from "../../_components/achievements-section"
-import { FacilitiesSection } from "../../_components/facilities-section"
-import { ExtracurricularsSection } from "../../_components/extracurriculars-section"
-import { StaffHighlight } from "../../_components/staff-highlight"
-import { AlumniTestimonials } from "../../_components/alumni-testimonials"
+import { FounderWelcome } from "../../_components/founder-welcome"
+import { LatestUpdates } from "../../_components/latest-updates"
+import { ServicesSection } from "../../_components/services-section"
+import { PortfolioSection } from "../../_components/portfolio-section"
+import { OfficesSection } from "../../_components/offices-section"
+import { TeamHighlight } from "../../_components/team-highlight"
+import { ClientTestimonials } from "../../_components/klien-testimonials"
 import { PartnershipsSection } from "../../_components/partnerships-section"
 import { FaqSection } from "../../_components/faq-section"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
@@ -43,7 +42,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
     imageUrl: s.imageUrl,
   }))
 
-  const alumni = (tenant.alumni || []).map((al) => ({
+  const klien = (tenant.klien || []).map((al) => ({
     id: al.id,
     name: al.name,
     graduationYear: al.graduationYear,
@@ -84,7 +83,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
                   title: tenant.tagline || `Selamat Datang di\n${tenant.name}`,
                   description: tenant.description || "Kami berkomitmen memberikan layanan terbaik untuk Anda.",
                   cta: { href: `/contact`, label: "Hubungi Kami" },
-                  ctaSecondary: { href: `/profil`, label: "Tentang Kami" },
+                  ctaSecondary: { href: `/tentang`, label: "Tentang Kami" },
                 },
               ]
         }
@@ -111,13 +110,13 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
             {/* Left: Sambutan Pimpinan (compact version) */}
             {hasPrincipal && (
               <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
-                <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
+                <FounderWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
               </div>
             )}
 
             {/* Right: Info Board (Agenda, Pengumuman, Berita stacked) */}
             <div className="space-y-0">
-              <InfoBoard events={tenant.events || []} posts={tenant.posts || []} basePath={base} />
+              <LatestUpdates events={tenant.events || []} posts={tenant.posts || []} basePath={base} />
             </div>
           </div>
         </div>
@@ -127,7 +126,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
           4. PROGRAM UNGGULAN
       ══════════════════════════════════════════════════════════════ */}
       <ScrollReveal>
-        <ProgramsSection programs={tenant.programs || []} basePath={base} />
+        <ServicesSection programs={tenant.programs || []} basePath={base} />
       </ScrollReveal>
 
 
@@ -137,7 +136,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       {(tenant.facilities?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
           <div className="bg-card py-10 mt-8">
-            <FacilitiesSection facilities={tenant.facilities || []} basePath={base} />
+            <OfficesSection facilities={tenant.facilities || []} basePath={base} />
           </div>
         </ScrollReveal>
       )}
@@ -147,7 +146,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.achievements?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <AchievementsSection achievements={achievements} basePath={base} />
+          <PortfolioSection achievements={achievements} basePath={base} />
         </ScrollReveal>
       )}
 
@@ -157,7 +156,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       {(tenant.extracurriculars?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.2}>
           <div className="bg-card py-10">
-            <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} basePath={base} />
+            
           </div>
         </ScrollReveal>
       )}
@@ -167,7 +166,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.staff?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
-          <StaffHighlight staff={staff} basePath={base} />
+          <TeamHighlight staff={staff} basePath={base} />
         </ScrollReveal>
       )}
 
@@ -180,7 +179,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-1">Galeri Sekolah</h2>
+                <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-1">Galeri Perusahaan</h2>
                 <p className="text-muted-foreground text-sm">Dokumentasi kegiatan dan momen berharga kami</p>
               </div>
               <Link href={`${base}/gallery`} className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
@@ -229,13 +228,13 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       {/* ══════════════════════════════════════════════════════════════
           11. TESTIMONIAL ALUMNI
       ══════════════════════════════════════════════════════════════ */}
-      {((tenant.alumni?.length ?? 0) > 0) && (
+      {((tenant.klien?.length ?? 0) > 0) && (
         <section className="py-10 md:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-8">
-              {/* Alumni Testimonial */}
+              {/* Klien Testimonial */}
               <div>
-                <AlumniTestimonials alumni={alumni} basePath={base} />
+                <ClientTestimonials klien={klien} basePath={base} />
               </div>
             </div>
           </div>

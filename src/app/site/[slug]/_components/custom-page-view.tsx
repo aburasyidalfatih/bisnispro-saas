@@ -5,7 +5,7 @@ import { headers } from "next/headers"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
-import { ShareButtons } from "../berita/[id]/_components/share-buttons"
+import { ShareButtons } from "../blog/[id]/_components/share-buttons"
 import DOMPurify from "isomorphic-dompurify"
 
 interface PageProps {

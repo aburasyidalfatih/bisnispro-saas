@@ -2,7 +2,7 @@ import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { db } from "@/lib/db"
-import BeritaPage from "../berita/page"
+import BeritaPage from "../blog/page"
 import CustomPagePublicView, { generateMetadata as generateCustomPageMetadata } from "../_components/custom-page-view"
 
 

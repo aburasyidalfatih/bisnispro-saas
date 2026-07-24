@@ -6,14 +6,13 @@ import dynamic from "next/dynamic"
 
 const HeroSlider = dynamic(() => import("../../_components/hero-slider").then(mod => mod.HeroSlider), { ssr: true })
 const StatsBar = dynamic(() => import("../../_components/stats-bar").then(mod => mod.StatsBar), { ssr: true })
-import { PrincipalWelcome } from "../../_components/principal-welcome"
-import { InfoBoard } from "../../_components/info-board"
-import { ProgramsSection } from "../../_components/programs-section"
-import { AchievementsSection } from "../../_components/achievements-section"
-import { FacilitiesSection } from "../../_components/facilities-section"
-import { ExtracurricularsSection } from "../../_components/extracurriculars-section"
-import { StaffHighlight } from "../../_components/staff-highlight"
-import { AlumniTestimonials } from "../../_components/alumni-testimonials"
+import { FounderWelcome } from "../../_components/founder-welcome"
+import { LatestUpdates } from "../../_components/latest-updates"
+import { ServicesSection } from "../../_components/services-section"
+import { PortfolioSection } from "../../_components/portfolio-section"
+import { OfficesSection } from "../../_components/offices-section"
+import { TeamHighlight } from "../../_components/team-highlight"
+import { ClientTestimonials } from "../../_components/klien-testimonials"
 import { PartnershipsSection } from "../../_components/partnerships-section"
 import { FaqSection } from "../../_components/faq-section"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
@@ -36,7 +35,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
     imageUrl: s.imageUrl,
   }))
 
-  const alumni = (tenant.alumni || []).map((al) => ({
+  const klien = (tenant.klien || []).map((al) => ({
     id: al.id,
     name: al.name,
     graduationYear: al.graduationYear,
@@ -77,7 +76,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
                   title: tenant.tagline || `Selamat Datang di\n${tenant.name}`,
                   description: tenant.description || "Kami berkomitmen memberikan layanan terbaik untuk Anda.",
                   cta: { href: `/contact`, label: labels?.hero?.cta1 || "Hubungi Kami" },
-                  ctaSecondary: { href: `/profil`, label: labels?.hero?.cta2 || "Tentang Kami" },
+                  ctaSecondary: { href: `/tentang`, label: labels?.hero?.cta2 || "Tentang Kami" },
                 },
               ]
         }
@@ -88,36 +87,36 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
       {/* ── 3. Sambutan Pimpinan ── */}
       {((tenant.settings as any)?.principalName || (tenant.settings as any)?.principalMessage || tenant.staff?.some((s: any) => s.role && (s.role.toLowerCase().includes("kepala") || s.role.toLowerCase().includes("pimpinan") || s.role.toLowerCase().includes("direktur") || s.role.toLowerCase().includes("ketua")))) && (
-        <PrincipalWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
+        <FounderWelcome tenantName={tenant.name} settings={tenant.settings} staff={tenant.staff} />
       )}
 
       {/* ── 4. Info Board (Agenda, Pengumuman, Artikel) ── */}
-      <InfoBoard events={tenant.events || []} posts={tenant.posts || []} basePath={base} />
+      <LatestUpdates events={tenant.events || []} posts={tenant.posts || []} basePath={base} />
 
-      {/* ── 6. Program Keahlian ── */}
+      {/* ── 6. Layanan ── */}
       <ScrollReveal>
-        <ProgramsSection programs={tenant.programs || []} labels={labels} basePath={base} />
+        <ServicesSection programs={tenant.programs || []} labels={labels} basePath={base} />
       </ScrollReveal>
 
 
-      {/* ── 7. Prestasi ── */}
+      {/* ── 7. Portofolio ── */}
       <ScrollReveal delay={0.1}>
-        <AchievementsSection achievements={achievements} labels={labels} basePath={base} />
+        <PortfolioSection achievements={achievements} labels={labels} basePath={base} />
       </ScrollReveal>
 
-      {/* ── 8. Fasilitas Sekolah ── */}
+      {/* ── 8. Kantor & Lokasi ── */}
       <ScrollReveal delay={0.1}>
-        <FacilitiesSection facilities={tenant.facilities || []} labels={labels} basePath={base} />
+        <OfficesSection facilities={tenant.facilities || []} labels={labels} basePath={base} />
       </ScrollReveal>
 
       {/* ── 9. Ekstrakurikuler ── */}
       <ScrollReveal delay={0.2}>
-        <ExtracurricularsSection extracurriculars={tenant.extracurriculars || []} labels={labels} basePath={base} />
+        
       </ScrollReveal>
 
-      {/* ── 10. Guru & Staff Highlight ── */}
+      {/* ── 10. Tim & Staff Highlight ── */}
       <ScrollReveal delay={0.1}>
-        <StaffHighlight staff={staff} labels={labels} basePath={base} />
+        <TeamHighlight staff={staff} labels={labels} basePath={base} />
       </ScrollReveal>
 
       {/* ── 11. Galeri ── */}
@@ -177,9 +176,9 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
         </ScrollReveal>
       )}
 
-      {/* ── 12. Testimonial Alumni ── */}
+      {/* ── 12. Testimonial Klien ── */}
       <ScrollReveal>
-        <AlumniTestimonials alumni={alumni} labels={labels} basePath={base} />
+        <ClientTestimonials klien={klien} labels={labels} basePath={base} />
       </ScrollReveal>
 
 

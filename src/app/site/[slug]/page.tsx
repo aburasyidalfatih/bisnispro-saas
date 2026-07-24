@@ -11,16 +11,16 @@ import { HeroSlider } from "./_components/hero-slider"
 import { StatsBar } from "./_components/stats-bar"
 import { getTenantHomeData, getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { getPublicBasePath } from "@/lib/utils/public-path"
-import { PrincipalWelcome } from "./_components/principal-welcome"
+import { FounderWelcome } from "./_components/founder-welcome"
 import dynamic from "next/dynamic"
 
-const InfoBoard = dynamic(() => import("./_components/info-board").then((mod) => mod.InfoBoard))
-const ProgramsSection = dynamic(() => import("./_components/programs-section").then((mod) => mod.ProgramsSection))
-const AchievementsSection = dynamic(() => import("./_components/achievements-section").then((mod) => mod.AchievementsSection))
-const FacilitiesSection = dynamic(() => import("./_components/facilities-section").then((mod) => mod.FacilitiesSection))
+const LatestUpdates = dynamic(() => import("./_components/latest-updates").then((mod) => mod.LatestUpdates))
+const ServicesSection = dynamic(() => import("./_components/services-section").then((mod) => mod.ServicesSection))
+const PortfolioSection = dynamic(() => import("./_components/portfolio-section").then((mod) => mod.PortfolioSection))
+const OfficesSection = dynamic(() => import("./_components/offices-section").then((mod) => mod.OfficesSection))
 const ExtracurricularsSection = dynamic(() => import("./_components/extracurriculars-section").then((mod) => mod.ExtracurricularsSection))
-const StaffHighlight = dynamic(() => import("./_components/staff-highlight").then((mod) => mod.StaffHighlight))
-const AlumniTestimonials = dynamic(() => import("./_components/alumni-testimonials").then((mod) => mod.AlumniTestimonials))
+const TeamHighlight = dynamic(() => import("./_components/team-highlight").then((mod) => mod.TeamHighlight))
+const ClientTestimonials = dynamic(() => import("./_components/klien-testimonials").then((mod) => mod.ClientTestimonials))
 const PartnershipsSection = dynamic(() => import("./_components/partnerships-section").then((mod) => mod.PartnershipsSection))
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { DefaultTheme } from "./_themes/default"
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   return {
     description,
-    keywords: [tenant.name, tenant.slug, "Website Resmi", "Sekolah", "Pendidikan", tenant.address || "Indonesia"].filter(Boolean),
+    keywords: [tenant.name, tenant.slug, "Website Resmi", "Perusahaan", "Pendidikan", tenant.address || "Indonesia"].filter(Boolean),
     manifest: `/api/tenant/manifest?slug=${slug}`,
     alternates: {},
     openGraph: {
@@ -103,32 +103,32 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     // Calculate real stats from database based on user requirements
     const getCachedStats = unstable_cache(
       async (tenantId: string) => {
-        const siswa = await db.achievement.count({ where: { tenantId, type: "SISWA" } })
+        const klien = await db.achievement.count({ where: { tenantId, type: "SISWA" } })
         const guru = await db.achievement.count({ where: { tenantId, type: "GURU" } })
         const s1s2 = await db.staff.count({ where: { tenantId, education: { in: ["S1", "S2", "S3"] } } })
         const total = await db.staff.count({ where: { tenantId } })
-        return { siswa, guru, s1s2, total }
+        return { klien, guru, s1s2, total }
       },
       [`tenant-stats-${tenantForRender.id}`],
       { tags: [`tenant-${tenantForRender.slug}`, `tenant-${tenantForRender.slug}-stats`], revalidate: 3600 }
     )
 
     const cachedCounts = await getCachedStats(tenantForRender.id)
-    const siswaAchievementsCount = cachedCounts.siswa
+    const klienAchievementsCount = cachedCounts.klien
     const guruAchievementsCount = cachedCounts.guru
     const s1s2StaffCount = cachedCounts.s1s2
     const totalStaffCount = cachedCounts.total
 
     stats = [
-      { value: siswaAchievementsCount > 0 ? `${siswaAchievementsCount}+` : "0", label: "Prestasi Siswa", icon: "Trophy" },
-      { value: guruAchievementsCount > 0 ? `${guruAchievementsCount}+` : "0", label: "Prestasi Guru & Staf", icon: "Award" },
-      { value: s1s2StaffCount > 0 ? `${s1s2StaffCount}` : "0", label: "Guru Lulusan S1/S2", icon: "GraduationCap" },
-      { value: totalStaffCount > 0 ? `${totalStaffCount}` : "0", label: "Total Guru & Staf", icon: "Users" },
+      { value: klienAchievementsCount > 0 ? `${klienAchievementsCount}+` : "0", label: "Proyek Selesai", icon: "CheckCircle" },
+      { value: guruAchievementsCount > 0 ? `${guruAchievementsCount}+` : "0", label: "Klien Puas", icon: "Smile" },
+      { value: s1s2StaffCount > 0 ? `${s1s2StaffCount}` : "0", label: "Tahun Pengalaman", icon: "Calendar" },
+      { value: totalStaffCount > 0 ? `${totalStaffCount}` : "0", label: "Tim Profesional", icon: "Users" },
     ]
   }
   const themeProps = { tenant: tenantForRender, base, gallery, stats }
 
-  // Jika sekolah menggunakan Custom Theme dari Super Admin
+  // Jika perusahaan menggunakan Custom Theme dari Super Admin
   if (tenantForRender.customThemeId && t.customTheme) {
     const rendered = renderCustomTheme({
       templateHtml: t.customTheme.indexHtml,
@@ -141,7 +141,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   }
 
   // Router Tema Bawaan React
-  // JSON-LD EducationalOrganization Schema moved to layout.tsx to avoid duplication
+  // JSON-LD LocalBusiness Schema moved to layout.tsx to avoid duplication
 
   switch (tenantForRender.template) {
     case "modern":

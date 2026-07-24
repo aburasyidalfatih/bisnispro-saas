@@ -1,27 +1,27 @@
 import { Metadata } from "next"
-import { getSchoolsDirectory } from "./actions"
+import { getBusinessesDirectory } from "./actions"
 import { DirectoryFilters } from "./_components/directory-filters"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, ExternalLink, School } from "lucide-react"
+import { MapPin, ExternalLink, Building2 } from "lucide-react"
 import Link from "next/link"
 import { formatSocialUrl } from "@/lib/utils"
 
 export const metadata: Metadata = {
-  title: "Direktori Sekolah Mitra - SchoolPro",
-  description: "Jelajahi daftar ratusan sekolah di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari SchoolPro.",
+  title: "Direktori Bisnis Mitra - BisnisPro",
+  description: "Jelajahi daftar ratusan bisnis dan perusahaan di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari BisnisPro.",
   alternates: {
     canonical: "/direktori",
   },
   openGraph: {
-    title: "Direktori Sekolah Mitra - SchoolPro",
-    description: "Jelajahi daftar ratusan sekolah di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari SchoolPro.",
+    title: "Direktori Bisnis Mitra - BisnisPro",
+    description: "Jelajahi daftar ratusan bisnis dan perusahaan di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari BisnisPro.",
     url: "/direktori",
-    images: ["/logo-schoolpro.png"],
+    images: ["/logo-bisnispro.png"],
   },
   twitter: {
-    title: "Direktori Sekolah Mitra - SchoolPro",
-    description: "Jelajahi daftar ratusan sekolah di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari SchoolPro.",
+    title: "Direktori Bisnis Mitra - BisnisPro",
+    description: "Jelajahi daftar ratusan bisnis dan perusahaan di seluruh Indonesia yang telah bertransformasi ke era digital dan menggunakan layanan manajemen terpadu dari BisnisPro.",
   }
 }
 
@@ -36,24 +36,24 @@ export default async function DirectoryPage({
   const regency = typeof resolvedSearchParams.city === "string" ? resolvedSearchParams.city : ""
   const page = typeof resolvedSearchParams.page === "string" ? parseInt(resolvedSearchParams.page, 10) : 1
 
-  const data = await getSchoolsDirectory({ search, province, regency, page })
+  const data = await getBusinessesDirectory({ search, province, regency, page })
   
   const getUrl = (s: any) => {
     if (s.customDomain) {
       return `https://${s.customDomain}`
     }
-    return `https://${s.slug}.schoolpro.id`
+    return `https://${s.slug}.bisnispro.id`
   }
 
   // Generate ItemList Schema for SEO
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "itemListElement": data.schools.map((s, index) => ({
+    "itemListElement": data.businesses.map((s, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "item": {
-        "@type": "EducationalOrganization",
+        "@type": "Organization",
         "name": s.name,
         "url": getUrl(s),
         "address": {
@@ -62,7 +62,7 @@ export default async function DirectoryPage({
           "addressLocality": s.regency,
           "addressCountry": "ID"
         },
-        "image": s.logo || "https://schoolpro.id/logo-schoolpro.png"
+        "image": s.logo || "https://bisnispro.id/logo-bisnispro.png"
       }
     }))
   }
@@ -77,9 +77,9 @@ export default async function DirectoryPage({
 
       <div className="max-w-7xl mx-auto space-y-10">
         <header className="text-center space-y-4 max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Direktori Sekolah</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Direktori Bisnis</h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Temukan dan jelajahi ratusan sekolah terbaik di seluruh Indonesia yang telah bertransformasi ke era digital bersama SchoolPro.
+            Temukan dan jelajahi ratusan bisnis terbaik di seluruh Indonesia yang telah bertransformasi ke era digital bersama BisnisPro.
           </p>
         </header>
         
@@ -93,15 +93,15 @@ export default async function DirectoryPage({
           />
 
           {/* Server-rendered Grid Results */}
-          {data.schools.length === 0 ? (
+          {data.businesses.length === 0 ? (
             <div className="text-center py-20 bg-white/50 rounded-3xl border border-dashed shadow-sm">
-              <School className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground">Tidak ada sekolah ditemukan</h3>
+              <Building2 className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground">Tidak ada bisnis ditemukan</h3>
               <p className="text-muted-foreground">Coba sesuaikan filter pencarian Anda.</p>
             </div>
           ) : (
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {data.schools.map(s => (
+              {data.businesses.map(s => (
                 <article key={s.id}>
                   <Card className="group overflow-hidden rounded-2xl border-0 shadow-sm bg-white hover:shadow-xl transition-all duration-300 relative h-full">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -115,7 +115,7 @@ export default async function DirectoryPage({
                             <span className="text-lg font-bold text-muted-foreground">{s.name.substring(0, 1)}</span>
                           )}
                         </div>
-                        <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-0 font-medium">Mitra SchoolPro</Badge>
+                        <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-0 font-medium">Mitra BisnisPro</Badge>
                       </div>
                       
                       <h2 className="font-bold text-lg leading-tight mb-1 line-clamp-2">{s.name}</h2>

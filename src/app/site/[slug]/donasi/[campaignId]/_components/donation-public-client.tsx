@@ -82,7 +82,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
           <h1 className="text-3xl font-black">Terima Kasih! 🎉</h1>
           <p className="text-muted-foreground">Konfirmasi donasi Anda sebesar <strong>Rp {amount.toLocaleString("id-ID")}</strong> untuk <strong>{campaign.title}</strong> telah kami terima.</p>
           <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200/50 px-4 py-3 rounded-xl max-w-sm mx-auto font-medium">
-            Status donasi saat ini sedang diverifikasi oleh pihak sekolah. Nominal donasi terkumpul akan bertambah setelah pembayaran Anda disetujui admin.
+            Status donasi saat ini sedang diverifikasi oleh pihak perusahaan. Nominal donasi terkumpul akan bertambah setelah pembayaran Anda disetujui admin.
           </p>
           <p className="text-xs text-muted-foreground">Semoga menjadi amal jariyah yang terus mengalir.</p>
         </div>
@@ -103,7 +103,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
             <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-gray-200 flex flex-col items-center gap-2">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Scan QRIS</span>
               <div className="relative w-48 h-48 bg-white border rounded-lg p-2 overflow-hidden flex items-center justify-center">
-                <Image src={normalizeImageUrl(campaign.qrisUrl) || campaign.qrisUrl} alt="QRIS Sekolah" fill className="object-contain max-h-full max-w-full" unoptimized />
+                <Image src={normalizeImageUrl(campaign.qrisUrl) || campaign.qrisUrl} alt="QRIS Perusahaan" fill className="object-contain max-h-full max-w-full" unoptimized />
               </div>
               <p className="text-[10px] text-muted-foreground">Bisa discan dengan aplikasi m-banking atau e-wallet apa saja</p>
             </div>
@@ -120,7 +120,7 @@ export function DonationPublicClient({ campaign }: { campaign: Campaign }) {
 
           {!campaign.qrisUrl && !campaign.bankInfo && (
             <div className="bg-slate-50 p-4 rounded-xl border text-center text-muted-foreground text-sm">
-              Silakan hubungi pihak sekolah untuk informasi rekening donasi.
+              Silakan hubungi pihak perusahaan untuk informasi rekening donasi.
             </div>
           )}
 
