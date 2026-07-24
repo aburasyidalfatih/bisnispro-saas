@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = tenant.seoTitle || tenant.name
   const description = tenant.seoDesc || tenant.description || tenant.tagline || `Website resmi ${tenant.name}`
 
-  let imageUrl = tenant.logo || "https://bisnispro.id/default-og.jpg"
+  let imageUrl = tenant.logo || "/logo-bisnispro.png"
   if (imageUrl.startsWith("/")) {
     const domain = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
     imageUrl = `${domain}${imageUrl}`

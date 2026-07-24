@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const domainUrl = tenant.domain ? `https://${tenant.domain}` : `https://${tenant.slug}.${rootDomain}`
   const pageUrl = `${domainUrl}/${page.slug}`
   
-  let imageUrl = normalizeImageUrl(page.featuredImage) || tenant.heroImage || tenant.logo || "https://bisnispro.id/default-og.jpg"
+  let imageUrl = normalizeImageUrl(page.featuredImage) || tenant.heroImage || tenant.logo || "/logo-bisnispro.png"
   if (imageUrl.startsWith("/")) imageUrl = `${domainUrl}${imageUrl}`
   const finalOgImageUrl = `${domainUrl}/api/og-proxy?url=${encodeURIComponent(imageUrl)}&ext=.jpg`
 
@@ -124,7 +124,7 @@ export default async function CustomPagePublicView({ params }: PageProps) {
                 "url": tenant.logo || "https://bisnispro.id/logo-bisnispro.png"
               }
             },
-            "image": normalizeImageUrl(page.featuredImage) || tenant.heroImage || "https://bisnispro.id/default-og.jpg"
+            "image": normalizeImageUrl(page.featuredImage) || tenant.heroImage || "/logo-bisnispro.png"
           })
         }}
       />

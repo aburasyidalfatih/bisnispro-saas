@@ -35,7 +35,7 @@ interface UserRow {
   role: string
   isActive: boolean
   createdAt: string
-  staffId?: string | null
+  teamMemberId?: string | null
 }
 
 const roleConfig: Record<string, { label: string; badge: string; icon: any; addLabel: string; emptyLabel: string }> = {
@@ -251,7 +251,7 @@ export function RoleUserPage({ userRole }: RoleUserPageProps) {
         <div className="flex gap-2">
           {userRole ==="staf" ? (
             <Button asChild className="gap-2 btn-gradient text-white border-0 rounded-xl flex items-center justify-center h-10 px-4">
-              <Link href="/admin/website/gtk/new">
+              <Link href="/admin/website/team">
                 <UserPlus className="h-4 w-4" />
                 {config.addLabel}
               </Link>
@@ -423,9 +423,9 @@ export function RoleUserPage({ userRole }: RoleUserPageProps) {
                               </DropdownMenuItem>
                             )}
                             {u.role === "staf" && (
-                              u.staffId ? (
+                              u.teamMemberId ? (
                                 <DropdownMenuItem asChild className="gap-2 rounded-lg cursor-pointer">
-                                  <Link href={`/admin/website/gtk/${u.staffId}/edit`}>
+                                  <Link href={`/admin/website/team/${u.teamMemberId || u.id}/edit`}>
                                     <Pencil className="h-4 w-4" /> Edit Profil & Akun
                                   </Link>
                                 </DropdownMenuItem>

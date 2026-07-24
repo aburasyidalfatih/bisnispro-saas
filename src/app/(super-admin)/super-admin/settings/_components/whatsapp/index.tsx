@@ -76,7 +76,7 @@ export function WhatsappTab({ form, setForm, handleSaveBatch, saving }: Whatsapp
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10"><Settings2 className="h-4 w-4 text-blue-500" /></div>
             <CardTitle className="text-lg">Template Pesan WhatsApp</CardTitle>
           </div>
-          <CardDescription>Gunakan variabel dinamis seperti {'{{adminName}}, {{schoolName}}, {{adminEmail}}, {{schoolSlug}}, {{adminMessage}}, {{adminPhone}}, {{affiliateName}}, {{referralCode}}'}</CardDescription>
+          <CardDescription>Gunakan variabel dinamis seperti {'{{adminName}}, {{businessName}}, {{adminEmail}}, {{businessSlug}}, {{adminMessage}}, {{adminPhone}}, {{affiliateName}}, {{referralCode}}'}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <Tabs defaultValue="starsender" className="w-full">

@@ -6,15 +6,15 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerStudent: number, priceLite: number }) {
+export function CommissionSimulator({ pricePerClient, priceLite }: { pricePerClient: number, priceLite: number }) {
   const [selectedPlan, setSelectedPlan] = useState<"lite" | "pro">("pro")
-  const [schoolCount, setSchoolCount] = useState(3)
-  const [studentPerSchool, setStudentPerSchool] = useState(300)
+  const [businessCount, setBusinessCount] = useState(3)
+  const [clientsPerBusiness, setClientsPerBusiness] = useState(300)
   
   const commissionRate = 0.20 // 20%
 
-  const totalStudents = schoolCount * studentPerSchool
-  const totalTagihan = selectedPlan === "pro" ? totalStudents * pricePerStudent : schoolCount * priceLite
+  const totalClients = businessCount * clientsPerBusiness
+  const totalTagihan = selectedPlan === "pro" ? totalClients * pricePerClient : businessCount * priceLite
   const totalKomisi = totalTagihan * commissionRate
 
   return (
@@ -58,7 +58,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
               <Building2 className="w-4 h-4 text-emerald-600" /> Jumlah Perusahaan Direferensikan
             </label>
             <span className="bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full font-bold text-sm">
-              {schoolCount.toLocaleString("id-ID")} Perusahaan
+              {businessCount.toLocaleString("id-ID")} Perusahaan
             </span>
           </div>
           <Input 
@@ -66,8 +66,8 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
             min="1" 
             max="50" 
             step="1"
-            value={schoolCount} 
-            onChange={(e) => setSchoolCount(parseInt(e.target.value))}
+            value={businessCount} 
+            onChange={(e) => setBusinessCount(parseInt(e.target.value))}
             className="w-full h-2 bg-emerald-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
           />
         </div>
@@ -79,7 +79,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
                 <Users className="w-4 h-4 text-emerald-600" /> Rata-rata Klien per Perusahaan
               </label>
               <span className="bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full font-bold text-sm">
-                {studentPerSchool.toLocaleString("id-ID")} Klien
+                {clientsPerBusiness.toLocaleString("id-ID")} Klien
               </span>
             </div>
             <Input 
@@ -87,8 +87,8 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
               min="50" 
               max="2000" 
               step="50"
-              value={studentPerSchool} 
-              onChange={(e) => setStudentPerSchool(parseInt(e.target.value))}
+              value={clientsPerBusiness} 
+              onChange={(e) => setClientsPerBusiness(parseInt(e.target.value))}
               className="w-full h-2 bg-emerald-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
             />
             <div className="flex justify-between text-xs text-muted-foreground font-medium px-1">
@@ -104,7 +104,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
             <p className="text-xs text-emerald-700 mb-1 font-medium">{selectedPlan === "pro" ? "Total Klien Keseluruhan" : "Biaya Langganan/ Perusahaan"}</p>
             <p className="text-lg font-bold text-emerald-900">
               {selectedPlan === "pro" 
-                ? `${totalStudents.toLocaleString("id-ID")} Klien` 
+                ? `${totalClients.toLocaleString("id-ID")} Klien` 
                 : `Rp ${priceLite.toLocaleString("id-ID")} / Tahun`}
             </p>
           </div>
@@ -125,7 +125,7 @@ export function CommissionSimulator({ pricePerStudent, priceLite }: { pricePerSt
         <div className="bg-blue-50 p-3 rounded-lg flex items-start gap-2 border border-blue-100">
           <Info className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
           <p className="text-xs text-blue-800 leading-relaxed">
-            Perhitungan di atas menggunakan estimasi Paket {selectedPlan === "pro" ? "Pro (Rp " + pricePerStudent.toLocaleString("id-ID") + "/klien)" : "Lite (Rp " + priceLite.toLocaleString("id-ID") + "/tahun flat)"}. Komisi yang Anda terima akan terus berlanjut (<strong>Lifetime</strong>) setiap tahun selama perusahaan tersebut memperpanjang langganannya.
+            Perhitungan di atas menggunakan estimasi Paket {selectedPlan === "pro" ? "Pro (Rp " + pricePerClient.toLocaleString("id-ID") + "/klien)" : "Lite (Rp " + priceLite.toLocaleString("id-ID") + "/tahun flat)"}. Komisi yang Anda terima akan terus berlanjut (<strong>Lifetime</strong>) setiap tahun selama perusahaan tersebut memperpanjang langganannya.
           </p>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { db } from "@/lib/db"
 
 export default async function AffiliateGuidePage() {
   const pricing = await getPricingConfig()
-  const pricePerStudent = pricing.PRICE_PER_STUDENT
+  const pricePerClient = pricing.PRICE_PER_STUDENT
 
   const litePlan = await db.subscriptionPlan.findUnique({ where: { slug: "lite" } })
   const priceLite = litePlan?.price || 1000000
@@ -35,7 +35,7 @@ export default async function AffiliateGuidePage() {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6 mt-2">
-            <CommissionSimulator pricePerStudent={pricePerStudent} priceLite={priceLite} />
+            <CommissionSimulator pricePerClient={pricePerClient} priceLite={priceLite} />
           </div>
         </CardContent>
       </Card>
@@ -124,8 +124,8 @@ export default async function AffiliateGuidePage() {
             </summary>
             <div className="text-muted-foreground mt-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1 space-y-2">
               <p>1. <strong>Edukasi Dulu:</strong> Jangan langsung jualan paket berbayar. Ajak mereka daftar Paket Gratis dulu karena fiturnya sudah sangat membantu perusahaan.</p>
-              <p>2. <strong>Fokus pada Otomatisasi:</strong> Jelaskan bahwa BisnisPro bisa membuat tagihan SPP otomatis dan integrasi WhatsApp (fitur yang paling dicari bendahara).</p>
-              <p>3. <strong>Gunakan Network:</strong> Hubungi grup-grup Kepala Perusahaan, MGMP, atau jaringan mitra perusahaan Anda.</p>
+              <p>2. <strong>Fokus pada Otomatisasi:</strong> Jelaskan bahwa BisnisPro bisa membuat tagihan otomatis dan integrasi WhatsApp (fitur yang paling dicari pengelola).</p>
+              <p>3. <strong>Gunakan Network:</strong> Hubungi grup-grup Pemimpin Perusahaan, asosiasi bisnis, atau jaringan mitra perusahaan Anda.</p>
             </div>
           </details>
         </CardContent>

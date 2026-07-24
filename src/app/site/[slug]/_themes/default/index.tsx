@@ -147,7 +147,7 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
                 return (
                   <Link key={i} href={`${base}/gallery`} className="group relative aspect-square rounded-2xl overflow-hidden border">
-                    <NextImage src={thumbnailUrl || '/placeholder.png'} alt={item.imageAlt || item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
+                    <NextImage src={thumbnailUrl || '/placeholder.svg'} alt={item.imageAlt || item.caption || `Dokumentasi Galeri ${i + 1} - ${tenant.name}`}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-300" />

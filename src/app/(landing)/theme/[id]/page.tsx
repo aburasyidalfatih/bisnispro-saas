@@ -104,7 +104,7 @@ const DUMMY_TENANT = {
     { id: "a4", title: "Finalis Lomba Debat Bahasa Inggris", description: "Tim debat berhasil lolos ke final di kompetisi debat Bahasa Inggris tingkat nasional.", level: "Nasional", year: 2024, imageUrl: null, createdAt: "2024-08-05" },
   ],
   posts: [
-    { id: "n1", title: "Penerimaan Peserta Didik Baru 2026/2027 Dibuka!", slug: "ppdb-2026-2027", excerpt: "Pendaftaran klien baru tahun ajaran 2026/2027 telah resmi dibuka. Segera daftarkan putra-putri Anda.", content: "<p>Kami dengan senang hati mengumumkan bahwa PPDB telah resmi dibuka...</p>", coverImage: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=400&auto=format&fit=crop", status: "PUBLISHED", type: "BLOG", createdAt: "2026-01-15", category: { name: "Pengumuman" } },
+    { id: "n1", title: "Pendaftaran Layanan Bisnis 2026/2027 Dibuka!", slug: "pendaftaran-layanan-2026-2027", excerpt: "Pendaftaran klien baru 2026/2027 telah resmi dibuka. Segera daftarkan bisnis Anda.", content: "<p>Kami dengan senang hati mengumumkan bahwa Pendaftaran Layanan telah resmi dibuka...</p>", coverImage: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=400&auto=format&fit=crop", status: "PUBLISHED", type: "BLOG", createdAt: "2026-01-15", category: { name: "Pengumuman" } },
     { id: "n2", title: "Tim Robotik Raih Medali Emas di Kompetisi Internasional", slug: "robotik-internasional", excerpt: "Tim robotik SMA Prestasi Bangsa berhasil meraih medali emas di ajang kompetisi robotik internasional.", content: "<p>Prestasi gemilang kembali diraih tim robotik perusahaan kami...</p>", coverImage: "https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?q=80&w=400&auto=format&fit=crop", status: "PUBLISHED", type: "BLOG", createdAt: "2025-12-20", category: { name: "Prestasi" } },
     { id: "n3", title: "Workshop Penulisan Kreatif bersama Penulis Nasional", slug: "workshop-menulis", excerpt: "Kegiatan workshop penulisan kreatif bersama penulis buku best-seller nasional berlangsung meriah.", content: "<p>Selama dua hari penuh, para klien mendapat kesempatan langka...</p>", coverImage: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=400&auto=format&fit=crop", status: "PUBLISHED", type: "BLOG", createdAt: "2025-11-05", category: { name: "Kegiatan" } },
   ],
@@ -113,17 +113,17 @@ const DUMMY_TENANT = {
     { id: "ev2", title: "Wisuda Angkatan 2026", description: "Acara pelepasan dan wisuda klien divisi XII angkatan 2026.", location: "Aula Serbaguna", startDate: "2026-06-25", endDate: null },
   ],
   documents: [
-    { id: "d1", title: "Brosur PPDB 2026/2027", fileUrl: "#", fileSize: 2500000, createdAt: "2026-01-10" },
-    { id: "d2", title: "Kalender Akademik 2025/2026", fileUrl: "#", fileSize: 1200000, createdAt: "2025-07-01" },
+    { id: "d1", title: "Brosur Layanan 2026/2027", fileUrl: "#", fileSize: 2500000, createdAt: "2026-01-10" },
+    { id: "d2", title: "Kalender Operasional 2025/2026", fileUrl: "#", fileSize: 1200000, createdAt: "2025-07-01" },
   ],
   sliders: [
-    { id: "sl1", title: "Selamat Datang di SMA Prestasi Bangsa", subtitle: "Membentuk Generasi Cerdas, Berkarakter, dan Berdaya Saing Global", imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c476?q=80&w=1200&auto=format&fit=crop", linkUrl: null, isActive: true, sortOrder: 1 },
-    { id: "sl2", title: "PPDB 2026/2027 Telah Dibuka", subtitle: "Daftarkan putra-putri Anda sekarang untuk masa depan yang cerah", imageUrl: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1200&auto=format&fit=crop", linkUrl: null, isActive: true, sortOrder: 2 },
+    { id: "sl1", title: "Selamat Datang di PT Prestasi Bangsa", subtitle: "Membentuk Generasi Cerdas, Berkarakter, dan Berdaya Saing Global", imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c476?q=80&w=1200&auto=format&fit=crop", linkUrl: null, isActive: true, sortOrder: 1 },
+    { id: "sl2", title: "Pendaftaran Layanan 2026/2027 Telah Dibuka", subtitle: "Daftarkan bisnis Anda sekarang untuk masa depan yang cerah", imageUrl: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=400&auto=format&fit=crop", linkUrl: null, isActive: true, sortOrder: 2 },
   ],
   mitra: [
-    { id: "al1", name: "Dr. Rina Kartika", graduationYear: 2005, currentPosition: "Dokter Spesialis Anak — RS Cipto Mangunkusumo", imageUrl: "https://ui-avatars.com/api/?name=RK&background=e11d48&color=fff", testimonial: "SMA Prestasi Bangsa memberikan fondasi akademis dan moral yang luar biasa kuat. Di sinilah saya belajar arti kerja keras dan integritas." },
+    { id: "al1", name: "Dr. Rina Kartika", graduationYear: 2005, currentPosition: "Dokter Spesialis Anak — RS Cipto Mangunkusumo", imageUrl: "https://ui-avatars.com/api/?name=RK&background=e11d48&color=fff", testimonial: "PT Prestasi Bangsa memberikan fondasi bisnis dan moral yang luar biasa kuat. Di sinilah saya belajar arti kerja keras dan integritas." },
     { id: "al2", name: "Arief Rahman, M.Sc", graduationYear: 2010, currentPosition: "Data Scientist — Google Singapore", imageUrl: "https://ui-avatars.com/api/?name=AR&background=059669&color=fff", testimonial: "Staf-staf di sini benar-benar menginspirasi. Berkat mereka saya menekuni bidang sains dan teknologi hingga akhirnya berkarir di perusahaan teknologi global." },
-    { id: "al3", name: "Maya Sari", graduationYear: 2015, currentPosition: "Founder — EduTech Startup", imageUrl: "https://ui-avatars.com/api/?name=MS&background=7c3aed&color=fff", testimonial: "Pengalaman berorganisasi di OSIS dan ekskul mengajarkan saya tentang kepemimpinan dan inovasi yang saya terapkan dalam membangun startup." },
+    { id: "al3", name: "Maya Sari", graduationYear: 2015, currentPosition: "Founder — EduTech Startup", imageUrl: "https://ui-avatars.com/api/?name=MS&background=7c3aed&color=fff", testimonial: "Pengalaman berorganisasi di Tim Marketing dan Program CSR mengajarkan saya tentang kepemimpinan dan inovasi yang saya terapkan dalam membangun startup." },
   ],
   partnerships: [
     { id: "pt1", name: "Universitas Indonesia", logo: "https://ui-avatars.com/api/?name=UI&background=FFC107&color=000&size=100", website: "https://ui.ac.id", isActive: true, sortOrder: 1 },

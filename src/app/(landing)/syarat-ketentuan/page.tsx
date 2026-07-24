@@ -37,7 +37,7 @@ export default function TermsAndConditionsPage() {
 
           <h2>2. Deskripsi Layanan</h2>
           <p>
-            BisnisPro menyediakan platform manajemen perusahaan berbasis cloud yang mencakup pembuatan website instan, sistem Penerimaan Peserta Didik Baru (PPDB), manajemen data akademik, tagihan, dan fitur lain yang dapat diperbarui dari waktu ke waktu. 
+            BisnisPro menyediakan platform manajemen perusahaan berbasis cloud yang mencakup pembuatan website instan, Pendaftaran Layanan, manajemen operasional & klien, tagihan, dan fitur lain yang dapat diperbarui dari waktu ke waktu. 
           </p>
 
           <h2>3. Akun dan Keamanan</h2>

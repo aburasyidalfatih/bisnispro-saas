@@ -33,9 +33,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? `https://${tenant.domain}` 
     : `https://${tenant.slug}.${rootDomain}`
 
-  const ogImageBase = tenant.heroImage || tenant.logo || "https://bisnispro.id/default-og.jpg"
+  const ogImageBase = tenant.heroImage || tenant.logo || "/logo-bisnispro.png"
+  const fullOgImageBase = ogImageBase.startsWith("/") ? `${canonicalDomain}${ogImageBase}` : ogImageBase
   // Fix: Proxy OG image through custom og-proxy to convert WebP to JPEG for Facebook/WhatsApp
-  const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(ogImageBase)}&ext=.jpg`
+  const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(fullOgImageBase)}&ext=.jpg`
 
   const normalizedLogo = tenant.logo ? (normalizeImageUrl(tenant.logo) || tenant.logo) : null;
 

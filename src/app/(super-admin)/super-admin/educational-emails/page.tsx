@@ -230,7 +230,7 @@ export default function EducationalEmailsPage() {
                     className="min-h-[300px] bg-background font-mono text-sm leading-relaxed"
                   />
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-2">
-                    Variabel tersedia: <code className="bg-accent px-1 rounded">{"{{name}}"}</code> (Nama Admin), <code className="bg-accent px-1 rounded">{"{{schoolName}}"}</code> (Nama Perusahaan)
+                    Variabel tersedia: <code className="bg-accent px-1 rounded">{"{{name}}"}</code> (Nama Admin), <code className="bg-accent px-1 rounded">{"{{businessName}}"}</code> (Nama Perusahaan)
                   </p>
                 </div>
 

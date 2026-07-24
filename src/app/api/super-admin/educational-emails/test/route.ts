@@ -22,15 +22,17 @@ export async function POST(req: Request) {
 
     // Dummy data untuk pengetesan
     const dummyOwnerName = session.user.name || "Bapak/Ibu Admin"
-    const dummySchoolName = "Perusahaan Uji Coba BisnisPro"
+    const dummyBusinessName = "Perusahaan Uji Coba BisnisPro"
 
     const subject = campaign.subject
       .replace(/{{name}}/g, dummyOwnerName)
-      .replace(/{{schoolName}}/g, dummySchoolName)
+      .replace(/{{businessName}}/g, dummyBusinessName)
+      .replace(/{{schoolName}}/g, dummyBusinessName)
     
     let rawContent = campaign.content
       .replace(/{{name}}/g, dummyOwnerName)
-      .replace(/{{schoolName}}/g, dummySchoolName)
+      .replace(/{{businessName}}/g, dummyBusinessName)
+      .replace(/{{schoolName}}/g, dummyBusinessName)
 
     rawContent = rawContent.replace(/https:\/\/bisnispro\.id\/admin/g, `https://perusahaan-uji-coba.bisnispro.id/admin`)
 

@@ -20,7 +20,7 @@ export function TemplateStarsender({ form, setForm }: Props) {
             <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_PENDING === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_PENDING: checked ? "true" : "false"})} /></div>
           </div>
         </div>
-        <Textarea value={form.WA_TEMPLATE_PENDING} onChange={e => setForm({...form, WA_TEMPLATE_PENDING: e.target.value})} placeholder={`Halo {{adminName}},\nSelamat! Pendaftaran {{schoolName}} diterima.`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_PENDING !== "true" && form.EMAIL_ENABLE_PENDING !== "true"} />
+        <Textarea value={form.WA_TEMPLATE_PENDING} onChange={e => setForm({...form, WA_TEMPLATE_PENDING: e.target.value})} placeholder={`Halo {{adminName}},\nSelamat! Pendaftaran {{businessName}} diterima.`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_PENDING !== "true" && form.EMAIL_ENABLE_PENDING !== "true"} />
       </div>
       <div className="space-y-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
@@ -30,7 +30,7 @@ export function TemplateStarsender({ form, setForm }: Props) {
             <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_APPROVED === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_APPROVED: checked ? "true" : "false"})} /></div>
           </div>
         </div>
-        <Textarea value={form.WA_TEMPLATE_APPROVED} onChange={e => setForm({...form, WA_TEMPLATE_APPROVED: e.target.value})} placeholder={`Halo {{adminName}},\nPendaftaran {{schoolName}} disetujui. URL: {{loginUrl}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_APPROVED !== "true" && form.EMAIL_ENABLE_APPROVED !== "true"} />
+        <Textarea value={form.WA_TEMPLATE_APPROVED} onChange={e => setForm({...form, WA_TEMPLATE_APPROVED: e.target.value})} placeholder={`Halo {{adminName}},\nPendaftaran {{businessName}} disetujui. URL: {{loginUrl}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_APPROVED !== "true" && form.EMAIL_ENABLE_APPROVED !== "true"} />
       </div>
       <div className="space-y-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
@@ -60,7 +60,7 @@ export function TemplateStarsender({ form, setForm }: Props) {
             <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_ALERT_SUPERADMIN === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_ALERT_SUPERADMIN: checked ? "true" : "false"})} /></div>
           </div>
         </div>
-        <Textarea value={form.WA_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder={`Perusahaan Baru: {{schoolName}}\nWA: {{adminPhone}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_SUPERADMIN !== "true" && form.EMAIL_ENABLE_ALERT_SUPERADMIN !== "true"} />
+        <Textarea value={form.WA_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder={`Perusahaan Baru: {{businessName}}\nWA: {{adminPhone}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_SUPERADMIN !== "true" && form.EMAIL_ENABLE_ALERT_SUPERADMIN !== "true"} />
       </div>
       <div className="space-y-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
@@ -70,7 +70,7 @@ export function TemplateStarsender({ form, setForm }: Props) {
             <div className="flex items-center gap-1.5"><span className="text-[10px] uppercase font-bold text-muted-foreground">Email</span><Switch checked={form.EMAIL_ENABLE_ALERT_AFFILIATE === "true"} onCheckedChange={(checked) => setForm({...form, EMAIL_ENABLE_ALERT_AFFILIATE: checked ? "true" : "false"})} /></div>
           </div>
         </div>
-        <Textarea value={form.WA_TEMPLATE_ALERT_AFFILIATE} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_AFFILIATE: e.target.value})} placeholder={`Halo {{affiliateName}},\nLead baru: {{schoolName}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_AFFILIATE !== "true" && form.EMAIL_ENABLE_ALERT_AFFILIATE !== "true"} />
+        <Textarea value={form.WA_TEMPLATE_ALERT_AFFILIATE} onChange={e => setForm({...form, WA_TEMPLATE_ALERT_AFFILIATE: e.target.value})} placeholder={`Halo {{affiliateName}},\nLead baru: {{businessName}}`} className="min-h-[100px] text-xs font-mono" disabled={form.WA_ENABLE_ALERT_AFFILIATE !== "true" && form.EMAIL_ENABLE_ALERT_AFFILIATE !== "true"} />
       </div>
 
       <div className="col-span-1 md:col-span-2 border-t pt-6 mt-6">

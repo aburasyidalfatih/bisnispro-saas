@@ -46,107 +46,107 @@ export default function NotificationsPage() {
   const DEFAULT_TEMPLATES = [
     {
       id:"invoice_created",
-      name:"Tagihan Baru (SPP)",
+      name:"Tagihan Baru",
       desc:"Dikirim saat tagihan baru diterbitkan.",
-      variables: ["studentName","invoiceTitle","amount","dueDate","schoolName"],
+      variables: ["clientName","invoiceTitle","amount","dueDate","companyName"],
       defaultTitle:"Tagihan Baru: {{invoiceTitle}}",
-      defaultMessage:"Halo, ada tagihan baru untuk ananda {{studentName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
+      defaultMessage:"Halo, ada tagihan baru untuk {{clientName}} sebesar Rp {{amount}}. Jatuh tempo pada {{dueDate}}. Silakan lakukan pembayaran melalui aplikasi."
     },
     {
       id:"payment_success",
       name:"Pembayaran Berhasil",
       desc:"Dikirim saat pembayaran tagihan berhasil diverifikasi.",
-      variables: ["studentName","invoiceTitle","amountPaid","schoolName"],
+      variables: ["clientName","invoiceTitle","amountPaid","companyName"],
       defaultTitle:"Pembayaran Berhasil: {{invoiceTitle}}",
-      defaultMessage:"Terima kasih, pembayaran sebesar Rp {{amountPaid}} untuk tagihan {{invoiceTitle}} ananda {{studentName}} telah berhasil kami terima."
+      defaultMessage:"Terima kasih, pembayaran sebesar Rp {{amountPaid}} untuk tagihan {{invoiceTitle}} {{clientName}} telah berhasil kami terima."
     },
     {
       id:"wallet_topup",
-      name:"Top-up Saldo E-Kantin",
-      desc:"Dikirim saat saldo tabungan/wallet bertambah.",
-      variables: ["studentName","amount","newBalance","schoolName"],
+      name:"Top-up Saldo Dompet",
+      desc:"Dikirim saat saldo dompet/wallet bertambah.",
+      variables: ["clientName","amount","newBalance","companyName"],
       defaultTitle:"Top-up Saldo Berhasil",
-      defaultMessage:"Top-up saldo E-Kantin ananda {{studentName}} sebesar Rp {{amount}} telah berhasil. Saldo saat ini: Rp {{newBalance}}."
+      defaultMessage:"Top-up saldo dompet {{clientName}} sebesar Rp {{amount}} telah berhasil. Saldo saat ini: Rp {{newBalance}}."
     },
     {
       id:"attendance_alert",
       name:"Notifikasi Kehadiran",
       desc:"Dikirim saat absensi harian klien dicatat.",
-      variables: ["studentName","status","time","schoolName"],
-      defaultTitle:"Info Kehadiran: {{studentName}}",
-      defaultMessage:"Ananda {{studentName}} tercatat dengan status: {{status}} pada pukul {{time}}."
+      variables: ["clientName","status","time","companyName"],
+      defaultTitle:"Info Kehadiran: {{clientName}}",
+      defaultMessage:"Klien {{clientName}} tercatat dengan status: {{status}} pada pukul {{time}}."
     },
     {
       id:"ppdb_registered",
-      name:"PPDB: Pendaftaran Akun",
+      name:"Pendaftaran: Akun Klien Baru",
       desc:"Dikirim setelah calon klien membuat akun pendaftaran.",
-      variables: ["applicantName","registrationNumber","schoolName","loginUrl"],
-      defaultTitle:"Pendaftaran Akun PPDB Berhasil",
-      defaultMessage:"Halo {{applicantName}}, akun pendaftaran PPDB Anda di {{schoolName}} telah dibuat dengan Nomor Registrasi: {{registrationNumber}}. Silakan login di {{loginUrl}} untuk melanjutkan."
+      variables: ["clientName","registrationNumber","companyName","loginUrl"],
+      defaultTitle:"Pendaftaran Akun Berhasil",
+      defaultMessage:"Halo {{clientName}}, akun pendaftaran Anda di {{companyName}} telah dibuat dengan Nomor Registrasi: {{registrationNumber}}. Silakan login di {{loginUrl}} untuk melanjutkan."
     },
     {
       id:"ppdb_form_fee",
-      name:"PPDB: Tagihan Formulir",
+      name:"Pendaftaran: Tagihan Formulir / Layanan",
       desc:"Dikirim saat tagihan biaya pendaftaran/formulir dibuat.",
-      variables: ["applicantName","amount","dueDate","schoolName"],
-      defaultTitle:"Tagihan Biaya Formulir PPDB",
-      defaultMessage:"Halo {{applicantName}}, silakan lakukan pembayaran formulir pendaftaran PPDB sebesar Rp {{amount}} sebelum {{dueDate}} agar dapat melanjutkan pengisian data."
+      variables: ["clientName","amount","dueDate","companyName"],
+      defaultTitle:"Tagihan Biaya Pendaftaran",
+      defaultMessage:"Halo {{clientName}}, silakan lakukan pembayaran pendaftaran sebesar Rp {{amount}} sebelum {{dueDate}} agar dapat melanjutkan pengisian data."
     },
     {
       id:"ppdb_document_submitted",
-      name:"PPDB: Berkas Terkirim",
+      name:"Pendaftaran: Berkas Terkirim",
       desc:"Dikirim saat calon klien menyelesaikan pengisian biodata dan submit berkas.",
-      variables: ["applicantName","registrationNumber","schoolName"],
-      defaultTitle:"Berkas PPDB Berhasil Dikirim",
-      defaultMessage:"Terima kasih {{applicantName}} (No. {{registrationNumber}}). Seluruh berkas pendaftaran Anda telah kami terima dan sedang dalam proses verifikasi oleh panitia {{schoolName}}."
+      variables: ["clientName","registrationNumber","companyName"],
+      defaultTitle:"Berkas Pendaftaran Berhasil Dikirim",
+      defaultMessage:"Terima kasih {{clientName}} (No. {{registrationNumber}}). Seluruh berkas pendaftaran Anda telah kami terima dan sedang dalam proses verifikasi oleh tim {{companyName}}."
     },
     {
       id:"ppdb_announcement",
-      name:"PPDB: Pengumuman Kelulusan",
-      desc:"Dikirim saat panitia mengumumkan hasil seleksi diterima/ditolak.",
-      variables: ["applicantName","registrationNumber","status","schoolName"],
-      defaultTitle:"Pengumuman Seleksi PPDB",
-      defaultMessage:"Halo {{applicantName}}, hasil seleksi PPDB di {{schoolName}} telah diumumkan. Status Anda: {{status}}. Silakan login ke dashboard untuk melihat detail selengkapnya."
+      name:"Pendaftaran: Pengumuman Status",
+      desc:"Dikirim saat tim mengumumkan hasil seleksi/verifikasi pendaftaran.",
+      variables: ["clientName","registrationNumber","status","companyName"],
+      defaultTitle:"Pengumuman Seleksi / Pendaftaran",
+      defaultMessage:"Halo {{clientName}}, hasil seleksi/verifikasi pendaftaran di {{companyName}} telah diumumkan. Status Anda: {{status}}. Silakan login ke dashboard untuk melihat detail selengkapnya."
     },
     {
       id:"ppdb_official_student",
-      name:"PPDB: Resmi Menjadi Klien",
-      desc:"Dikirim saat klien telah diverifikasi daftar ulang dan resmi diterima di divisi.",
-      variables: ["studentName","nis","schoolName"],
-      defaultTitle:"Selamat Bergabung di {{schoolName}}!",
-      defaultMessage:"Selamat! Proses daftar ulang selesai. Ananda {{studentName}} dengan NIS {{nis}} telah terdaftar secara resmi sebagai klien di {{schoolName}}."
+      name:"Pendaftaran: Resmi Menjadi Klien",
+      desc:"Dikirim saat klien telah diverifikasi daftar ulang dan resmi diterima.",
+      variables: ["clientName","clientCode","companyName"],
+      defaultTitle:"Selamat Bergabung di {{companyName}}!",
+      defaultMessage:"Selamat! Proses pendaftaran selesai. {{clientName}} dengan ID {{clientCode}} telah terdaftar secara resmi sebagai klien di {{companyName}}."
     },
     {
       id:"invoice_overdue",
       name:"Keuangan: Pengingat Jatuh Tempo",
-      desc:"Dikirim (otomatis) saat tagihan SPP/biaya lain sudah mendekati atau melewati tenggat waktu.",
-      variables: ["studentName","invoiceTitle","amountDue","dueDate","schoolName"],
+      desc:"Dikirim (otomatis) saat tagihan biaya layanan sudah mendekati atau melewati tenggat waktu.",
+      variables: ["clientName","invoiceTitle","amountDue","dueDate","companyName"],
       defaultTitle:"Peringatan Jatuh Tempo: {{invoiceTitle}}",
-      defaultMessage:"Pemberitahuan dari {{schoolName}}. Tagihan {{invoiceTitle}} ananda {{studentName}} sebesar Rp {{amountDue}} telah/akan jatuh tempo pada {{dueDate}}. Mohon segera lakukan pembayaran."
+      defaultMessage:"Pemberitahuan dari {{companyName}}. Tagihan {{invoiceTitle}} {{clientName}} sebesar Rp {{amountDue}} telah/akan jatuh tempo pada {{dueDate}}. Mohon segera lakukan pembayaran."
     },
     {
       id:"canteen_transaction",
-      name:"E-Kantin: Pemotongan Saldo (Jajan)",
-      desc:"Dikirim saat klien melakukan transaksi jajan di kantin menggunakan ID Card/QR.",
-      variables: ["studentName","merchantName","amount","newBalance","schoolName"],
-      defaultTitle:"Transaksi E-Kantin",
-      defaultMessage:"Info Transaksi: Ananda {{studentName}} baru saja melakukan pembelian di {{merchantName}} sebesar Rp {{amount}}. Sisa saldo dompet saat ini: Rp {{newBalance}}."
+      name:"Transaksi: Pemotongan Saldo",
+      desc:"Dikirim saat klien melakukan transaksi pembayaran menggunakan ID Card/QR.",
+      variables: ["clientName","merchantName","amount","newBalance","companyName"],
+      defaultTitle:"Transaksi Berhasil",
+      defaultMessage:"Info Transaksi: {{clientName}} baru saja melakukan transaksi di {{merchantName}} sebesar Rp {{amount}}. Sisa saldo dompet saat ini: Rp {{newBalance}}."
     },
     {
       id:"discipline_alert",
-      name:"Konseling: Catatan Kedisiplinan/Pelanggaran",
-      desc:"Dikirim ke wali murid saat ada penambahan poin pelanggaran atau catatan BK.",
-      variables: ["studentName","violation","points","schoolName"],
-      defaultTitle:"Pemberitahuan Kedisiplinan Klien",
-      defaultMessage:"Bapak/Ibu Wali Murid, menginformasikan bahwa ananda {{studentName}} mendapat catatan terkait: {{violation}} (Poin: {{points}}). Harap hubungi pihak BK {{schoolName}} untuk detail lebih lanjut."
+      name:"Customer Support: Catatan Layanan",
+      desc:"Dikirim ke klien saat ada penambahan catatan dari Customer Support.",
+      variables: ["clientName","topic","status","companyName"],
+      defaultTitle:"Pemberitahuan Customer Support",
+      defaultMessage:"Yth. {{clientName}}, menginformasikan catatan terkait: {{topic}} (Status: {{status}}). Harap hubungi pihak Customer Support {{companyName}} untuk detail lebih lanjut."
     },
     {
       id:"parent_portal_activation",
-      name:"Portal Wali: Aktivasi Akun",
-      desc:"Dikirim saat Admin mendaftarkan nomor WA/Email orang tua agar mereka bisa login.",
-      variables: ["parentName","studentName","username","password","loginUrl"],
-      defaultTitle:"Akses Portal Wali Murid",
-      defaultMessage:"Halo {{parentName}}, akun portal akademik untuk memantau ananda {{studentName}} telah aktif. Login di: {{loginUrl}} menggunakan Username: {{username}} dan Password: {{password}}."
+      name:"Portal Klien: Aktivasi Akun",
+      desc:"Dikirim saat Admin mendaftarkan kontak klien agar mereka bisa login.",
+      variables: ["clientName","username","password","loginUrl"],
+      defaultTitle:"Akses Portal Klien",
+      defaultMessage:"Halo {{clientName}}, akun portal bisnis Anda telah aktif. Login di: {{loginUrl}} menggunakan Username: {{username}} dan Password: {{password}}."
     }
   ]
 

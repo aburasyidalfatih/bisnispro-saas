@@ -1,6 +1,6 @@
 export interface CreateInvoiceDTO {
   tenantId: string;
-  studentId: string;
+  clientId: string;
   billingTypeId?: string;
   title: string;
   amount: number;

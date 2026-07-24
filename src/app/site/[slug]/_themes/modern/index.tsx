@@ -197,7 +197,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
 
                   return (
                     <div key={i} className="snap-start shrink-0 w-64 md:w-72 aspect-video relative rounded-2xl overflow-hidden group/item border shadow-sm bg-muted">
-                      <NextImage src={thumbnailUrl || '/placeholder.png'} alt={item.imageAlt || item.caption || `Galeri ${i + 1}`}
+                      <NextImage src={thumbnailUrl || '/placeholder.svg'} alt={item.imageAlt || item.caption || `Galeri ${i + 1}`}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         className="object-cover group-hover/item:scale-105 transition-transform duration-500" />
