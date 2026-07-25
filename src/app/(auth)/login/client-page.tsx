@@ -94,11 +94,11 @@ export default function LoginPage({
         } else {
           const role = session?.user?.tenants?.[0]?.role
           if (role === "staf") {
-            router.push("/panel-gtk")
+            router.push("/admin")
           } else if (role === "klien") {
             router.push("/klien")
           } else if (role === "orangtua") {
-            router.push("/ortu")
+            router.push("/admin")
           } else {
             router.push("/admin")
           }
@@ -126,7 +126,7 @@ export default function LoginPage({
                 <Image src={normalizeImageUrl(platformLogo) || "/logo-bisnispro.png"} alt={tenantNameDisplay || "Logo Tenant"} width={160} height={80} className="h-20 w-auto mb-4 object-contain" priority />
               ) : (
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
-                  {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "S"}
+                  {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "B"}
                 </div>
               )
             )}

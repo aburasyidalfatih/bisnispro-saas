@@ -78,7 +78,7 @@ export default function RegisterPage({
                 <Image src={normalizeImageUrl(platformLogo) || "/logo-bisnispro.png"} alt={tenantNameDisplay || "Logo Tenant"} width={160} height={80} className="h-20 w-auto mb-4 object-contain" priority />
               ) : (
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl btn-gradient text-white font-bold text-xl shadow-lg glow-primary mb-4">
-                  {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "S"}
+                  {tenantNameDisplay ? tenantNameDisplay.charAt(0) : "B"}
                 </div>
               )
             )}
@@ -88,7 +88,7 @@ export default function RegisterPage({
             <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
               {isMainDomain 
                 ? "Daftar dan buat bisnis Anda" 
-                : `Formulir ini khusus untuk membuat akun wali / calon wali klien ${tenantNameDisplay || 'perusahaan'}`}
+                : `Formulir ini khusus untuk membuat akun pengguna / klien ${tenantNameDisplay || 'perusahaan'}`}
             </p>
           </div>
 

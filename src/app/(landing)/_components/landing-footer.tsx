@@ -28,7 +28,7 @@ export function LandingFooter({ platformName }: LandingFooterProps) {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/direktori" className="hover:text-primary transition-colors">Direktori Bisnis</Link></li>
               <li><Link href="/mitra-afiliasi" className="hover:text-primary transition-colors">Program Kemitraan</Link></li>
-              <li><Link href="/blog" className="hover:text-primary transition-colors">Blog & Artikel</Link></li>
+              <li><Link href="/daftarkan-bisnis" className="hover:text-primary transition-colors">Buat Website</Link></li>
             </ul>
           </div>
 

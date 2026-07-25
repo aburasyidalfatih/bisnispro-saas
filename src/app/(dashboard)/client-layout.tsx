@@ -71,10 +71,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-4 right-[-48px] h-9 w-9 rounded-xl bg-background"
+                className="absolute top-3.5 right-3.5 z-20 h-8 w-8 rounded-lg bg-background/80 hover:bg-background border border-border shadow-sm"
                 onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -87,6 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               size="icon"
               className="lg:hidden h-9 w-9 rounded-xl mr-2"
               onClick={() => setMobileOpen(true)}
+              aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
             </Button>

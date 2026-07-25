@@ -40,14 +40,14 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
         <div className="hidden md:flex gap-3 shrink-0">
           <button 
             onClick={scrollLeft}
-            className="h-12 w-12 rounded-full border bg-white flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary transition-colors hover:shadow-md"
+            className="h-12 w-12 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors hover:shadow-md"
             aria-label="Previous testimonial"
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
           <button 
             onClick={scrollRight}
-            className="h-12 w-12 rounded-full border bg-white flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary transition-colors hover:shadow-md"
+            className="h-12 w-12 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors hover:shadow-md"
             aria-label="Next testimonial"
           >
             <ChevronRight className="h-6 w-6" />
@@ -65,21 +65,21 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
           return (
             <div 
               key={t.id} 
-              className="relative p-6 bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow shrink-0 snap-center w-[85vw] sm:w-[400px] md:w-[450px] flex flex-col"
+              className="relative p-6 bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow shrink-0 snap-center w-[85vw] sm:w-[400px] md:w-[450px] flex flex-col"
             >
               <MessageSquareQuote className="absolute top-6 right-6 h-8 w-8 text-primary/10" />
               <div className="flex items-center gap-4 mb-5">
                 {t.tenant?.logo ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={t.tenant.logo} alt="Logo" className="w-12 h-12 rounded-full object-cover border shrink-0" />
+                  <img src={t.tenant.logo} alt={t.tenant?.name ? `${t.tenant.name} logo` : "Logo"} className="w-12 h-12 rounded-full object-cover border shrink-0" />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
                     {t.tenant?.name?.[0]?.toUpperCase() || t.user?.name?.[0]?.toUpperCase()}
                   </div>
                 )}
                 <div>
-                  <h4 className="font-semibold text-gray-900 line-clamp-1">{t.user?.name}</h4>
-                  <div className="text-sm text-gray-500 flex flex-wrap items-center gap-1">
+                  <h4 className="font-semibold text-card-foreground line-clamp-1">{t.user?.name}</h4>
+                  <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-1">
                     <span className="capitalize">{t.user?.tenants?.[0]?.role ? t.user.tenants[0].role : "Pemilik Bisnis"}</span>
                     <span>•</span>
                     <a 
@@ -95,7 +95,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
                   </div>
                 </div>
               </div>
-              <p className="text-gray-700 leading-relaxed italic line-clamp-6 flex-1">"{t.message}"</p>
+              <p className="text-foreground leading-relaxed italic line-clamp-6 flex-1">"{t.message}"</p>
             </div>
           )
         })}
@@ -105,13 +105,15 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
       <div className="flex md:hidden justify-center gap-4 mt-2">
         <button 
           onClick={scrollLeft}
-          className="h-10 w-10 rounded-full border bg-white flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary transition-colors shadow-sm"
+          aria-label="Previous testimonial"
+          className="h-10 w-10 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         <button 
           onClick={scrollRight}
-          className="h-10 w-10 rounded-full border bg-white flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary transition-colors shadow-sm"
+          aria-label="Next testimonial"
+          className="h-10 w-10 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"
         >
           <ChevronRight className="h-5 w-5" />
         </button>

@@ -65,7 +65,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#6c47ff",
+  themeColor: "#0ea5e9",
 }
 
 import { ReferralCapture } from "@/components/shared/referral-capture"

@@ -44,7 +44,7 @@ export function TemplateWavio({ form, setForm }: Props) {
   return (
     <>
       <div className="rounded-xl bg-orange-500/10 p-4 mb-4 text-sm text-orange-800 dark:text-orange-200 border border-orange-500/20">
-        <p><strong>Penting:</strong> Untuk Wavio dan Meta, isi form di bawah ini dengan <strong>Nama Template</strong> yang sudah disetujui di Meta Business Manager (contoh: <code>school_registration_pending</code>), bukan teks isi pesannya. Pastikan urutan variabel di Meta sesuai dengan format sistem.</p>
+        <p><strong>Penting:</strong> Untuk Wavio dan Meta, isi form di bawah ini dengan <strong>Nama Template</strong> yang sudah disetujui di Meta Business Manager (contoh: <code>business_registration_pending</code>), bukan teks isi pesannya. Pastikan urutan variabel di Meta sesuai dengan format sistem.</p>
       </div>
       <div className="flex justify-end mb-4">
         <Button variant="outline" size="sm" onClick={handleSyncWavioTemplates} disabled={syncingTemplates} className="gap-2">
@@ -60,27 +60,27 @@ export function TemplateWavio({ form, setForm }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label className="text-emerald-600 font-bold">1. Pendaftaran Diterima (PENDING)</Label>
-          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_PENDING} onChange={e => setForm({...form, WAVIO_TEMPLATE_PENDING: e.target.value})} placeholder="school_registration_pending" className="rounded-xl" />
+          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_PENDING} onChange={e => setForm({...form, WAVIO_TEMPLATE_PENDING: e.target.value})} placeholder="business_registration_pending" className="rounded-xl" />
           <WavioTemplateHelper text={`Halo {{1}},\n\nSelamat! Formulir pendaftaran perusahaan {{2}} telah kami terima dan saat ini sudah masuk ke dalam antrean peninjauan tim kami.\n\nKami akan segera menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih.`} />
         </div>
         <div className="space-y-2">
           <Label className="text-blue-600 font-bold">2. Pendaftaran Disetujui (APPROVED)</Label>
-          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_APPROVED} onChange={e => setForm({...form, WAVIO_TEMPLATE_APPROVED: e.target.value})} placeholder="school_registration_approved" className="rounded-xl" />
+          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_APPROVED} onChange={e => setForm({...form, WAVIO_TEMPLATE_APPROVED: e.target.value})} placeholder="business_registration_approved" className="rounded-xl" />
           <WavioTemplateHelper text={`Halo {{1}},\n\nPendaftaran perusahaan {{2}} telah disetujui. Anda sekarang dapat mengakses dashboard perusahaan menggunakan informasi berikut:\n\nURL Login: {{3}}\nEmail: {{4}}\nWA Penanggung Jawab: {{5}}\n\nSilakan gunakan password yang Anda buat pada saat mendaftar.\n\nTerima kasih.`} />
         </div>
         <div className="space-y-2">
           <Label className="text-amber-600 font-bold">3. Revisi Data (REVISION)</Label>
-          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_REVISION} onChange={e => setForm({...form, WAVIO_TEMPLATE_REVISION: e.target.value})} placeholder="school_registration_revision" className="rounded-xl" />
+          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_REVISION} onChange={e => setForm({...form, WAVIO_TEMPLATE_REVISION: e.target.value})} placeholder="business_registration_revision" className="rounded-xl" />
           <WavioTemplateHelper text={`Halo {{1}},\n\nTerima kasih telah mendaftar. Namun, ada beberapa data yang perlu diperbaiki:\n\n"{{2}}"\n\nSilakan klik tautan berikut untuk melengkapi data: {{3}}`} />
         </div>
         <div className="space-y-2">
           <Label className="text-red-600 font-bold">4. Pendaftaran Ditolak (REJECTED)</Label>
-          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_REJECTED} onChange={e => setForm({...form, WAVIO_TEMPLATE_REJECTED: e.target.value})} placeholder="school_registration_rejected" className="rounded-xl" />
+          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_REJECTED} onChange={e => setForm({...form, WAVIO_TEMPLATE_REJECTED: e.target.value})} placeholder="business_registration_rejected" className="rounded-xl" />
           <WavioTemplateHelper text={`Halo {{1}},\n\nMohon maaf, pendaftaran perusahaan {{2}} belum dapat kami setujui saat ini.\n\nAlasan: {{3}}\n\nTerima kasih atas minat Anda.`} />
         </div>
         <div className="space-y-2">
           <Label className="text-purple-600 font-bold">5. Alert ke Super Admin</Label>
-          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_new_school" className="rounded-xl" />
+          <Input list="wavio-templates-list" value={form.WAVIO_TEMPLATE_ALERT_SUPERADMIN} onChange={e => setForm({...form, WAVIO_TEMPLATE_ALERT_SUPERADMIN: e.target.value})} placeholder="superadmin_alert_new_business" className="rounded-xl" />
           <WavioTemplateHelper text={`*PENDAFTARAN PERUSAHAAN BARU*\n\nPerusahaan: {{1}}\nWA Pendaftar: {{2}}\n\nSilakan cek di Panel Super Admin untuk meninjau pengajuan ini.`} />
         </div>
         <div className="space-y-2">

@@ -8,7 +8,7 @@ import { normalizeImageUrl } from "@/lib/utils"
 interface KlienMember {
   id: string
   name: string
-  graduationYear: number
+  graduationYear?: number | string | null
   currentStatus: string
   institutionName?: string | null
   testimonial?: string | null
@@ -89,7 +89,7 @@ export function ClientTestimonials({ klien, labels, basePath = "" }: ClientTesti
               Kata Mereka Tentang Kami
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl">
-              Cerita dan pengalaman klien kami setelah menempuh pendidikan di sini.
+              Cerita dan pengalaman klien kami setelah bekerjasama dengan kami.
             </p>
           </div>
           <Link href={`${basePath}/klien`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
@@ -139,8 +139,8 @@ export function ClientTestimonials({ klien, labels, basePath = "" }: ClientTesti
                 <div>
                   <h4 className="font-bold text-foreground">{person.name}</h4>
                   <p className="text-sm text-muted-foreground">
-                    Klien {person.graduationYear}
-                    {person.institutionName && ` • ${person.institutionName}`}
+                    {person.institutionName ? person.institutionName : "Klien / Mitra"}
+                    {person.graduationYear ? ` • ${person.graduationYear}` : ""}
                   </p>
                 </div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-bold w-fit mx-auto md:mx-0">

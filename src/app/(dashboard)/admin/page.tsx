@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from"react"
-import { useSession } from"next-auth/react"
-import { useRouter } from"next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
-import { Users, CreditCard, Bell, BarChart3, TrendingUp, GraduationCap, AlertTriangle } from"lucide-react"
+import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Users, CreditCard, Bell, BarChart3, TrendingUp, Building2, AlertTriangle } from "lucide-react"
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Area, AreaChart,
-} from"recharts"
+} from "recharts"
 
 
 export default function DashboardPage() {
@@ -44,7 +44,7 @@ export default function DashboardPage() {
   const chartData = stats?.chartData || []
 
   const statCards = [
-    { label:"Total Klien Aktif", value: stats?.studentCount ??"—", icon: GraduationCap, gradient:"from-blue-500/10 to-cyan-500/10", iconColor:"text-blue-600 dark:text-blue-400" },
+    { label:"Total Klien Aktif", value: stats?.totalClients ?? stats?.teamMemberCount ?? stats?.subscriptionCount ?? "—", icon: Building2, gradient:"from-blue-500/10 to-cyan-500/10", iconColor:"text-blue-600 dark:text-blue-400" },
     { label:"Pendapatan", value: stats?.totalRevenue ? `Rp ${stats.totalRevenue.toLocaleString("id-ID")}` :"Rp 0", icon: CreditCard, gradient:"from-emerald-500/10 to-teal-500/10", iconColor:"text-emerald-600 dark:text-emerald-400" },
     { label:"Tunggakan", value: stats?.totalDue ? `Rp ${stats.totalDue.toLocaleString("id-ID")}` :"Rp 0", icon: AlertTriangle, gradient:"from-amber-500/10 to-orange-500/10", iconColor:"text-amber-600 dark:text-amber-400" },
     { label:"Total Pengguna", value: stats?.userCount ??"—", icon: Users, gradient:"from-violet-500/10 to-purple-500/10", iconColor:"text-violet-600 dark:text-violet-400" },
@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
   const currentTenant = session?.user?.tenants?.find((t: any) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
-  const currentRole = currentTenant?.role ||"orangtua"
+  const currentRole = currentTenant?.role || "klien"
   
   const isImpersonatingUser = typeof document !=="undefined" && document.cookie.includes("impersonate-user=")
   const isImpersonatingTenant = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
@@ -65,11 +65,11 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isAdminRole) {
       if (currentRole ==="staf") {
-        router.replace("/panel-gtk")
+        router.replace("/admin")
       } else if (currentRole ==="klien") {
         router.replace("/klien")
       } else {
-        router.replace("/ortu")
+        router.replace("/admin")
       }
     } else if (currentPlan ==="free") {
       router.replace("/admin/website")
@@ -154,7 +154,7 @@ export default function DashboardPage() {
               {[
                 { label:"Notifikasi Belum Dibaca", value: stats?.notifCount ?? 0, icon: Bell, color:"text-amber-600 bg-amber-500/10" },
                 { label:"Aktivitas Tercatat", value: stats?.auditCount ?? 0, icon: BarChart3, color:"text-violet-600 bg-violet-500/10" },
-                { label:"Total Klien Aktif", value: stats?.studentCount ?? 0, icon: GraduationCap, color:"text-blue-600 bg-blue-500/10" },
+                { label:"Total Klien Aktif", value: stats?.totalClients ?? stats?.teamMemberCount ?? stats?.subscriptionCount ?? 0, icon: Building2, color:"text-blue-600 bg-blue-500/10" },
                 { label:"Total Pengguna Sistem", value: stats?.userCount ?? 0, icon: Users, color:"text-emerald-600 bg-emerald-500/10" },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between">

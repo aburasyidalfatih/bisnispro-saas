@@ -75,7 +75,7 @@ export function HeroSection() {
             </Link>
           </div>
 
-          <p className="text-xs text-muted-foreground/60 pt-2">
+          <p className="text-xs text-muted-foreground/80 pt-2">
             Tanpa kartu kredit &bull; Setup instan 5 menit &bull; Gratis selamanya
           </p>
         </div>

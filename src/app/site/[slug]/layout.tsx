@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       template: `%s | ${tenant.name}`,
       default: tenant.seoTitle || tenant.name,
     },
-    keywords: [tenant.name, tenant.slug, "Perusahaan", "Pendidikan", "Website Perusahaan Resmi", "PPDB", tenant.address || "Indonesia"].filter(Boolean),
+    keywords: [tenant.name, tenant.slug, "Perusahaan", "Website Perusahaan", "Layanan Bisnis", "Portofolio", tenant.address || "Indonesia"].filter(Boolean),
     alternates: {},
     icons: normalizedLogo ? { 
       icon: normalizedLogo, 

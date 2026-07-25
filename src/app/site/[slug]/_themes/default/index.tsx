@@ -38,7 +38,6 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
   const klien = (tenant.klien || []).map((al) => ({
     id: al.id,
     name: al.name,
-    graduationYear: al.graduationYear,
     currentStatus: (al as any).currentStatus || al.currentPosition || "LAINNYA",
     testimonial: al.testimonial,
     imageUrl: al.imageUrl,

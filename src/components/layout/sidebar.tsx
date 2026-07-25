@@ -121,7 +121,7 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
   // Detect role dari session
   const currentTenantSlug = session?.user?.tenants?.[0]?.slug
   const currentTenant = session?.user?.tenants?.find((t) => t.slug === currentTenantSlug) || session?.user?.tenants?.[0]
-  const currentRole = currentTenant?.role || "orangtua"
+  const currentRole = currentTenant?.role || "klien"
   const currentPlan = (branding as any).plan || (session?.user as any)?.tenants?.[0]?.plan || "free"
 
   const { access: planAccess } = usePlanAccess(currentPlan)
@@ -150,8 +150,8 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
     sections = getGTKMenu("/panel-gtk")
     homeHref = "/panel-gtk"
   } else {
-    sections = getMemberMenu("/ortu")
-    homeHref = "/ortu"
+    sections = getMemberMenu("/admin")
+    homeHref = "/admin"
   }
 
   // Auto-open parent menu if child is active
@@ -205,22 +205,23 @@ export function Sidebar({ isSuperAdmin }: SidebarProps) {
                 }
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="font-bold text-sm tracking-tight leading-tight truncate max-w-[140px] max-w-full">{brandName} v1.1</span>
+                <span className="font-bold text-sm tracking-tight leading-tight truncate max-w-[140px]">{brandName} v1.1</span>
                 <span className={cn(
                   "text-[10px] font-medium leading-tight",
                   isSuperAdminPath ? "text-red-500" : "text-muted-foreground"
                 )}>
-                  {isSuperAdminPath ? "Super Admin" : isAdminRole ? "Admin Panel" : isGTK ? "GTK Panel" : "User Panel"}
+                  {isSuperAdminPath ? "Super Admin" : isAdminRole ? "Admin Panel" : isGTK ? "Panel Tim" : "User Panel"}
                 </span>
               </div>
             </Link>
-            <Button variant="ghost" size="icon" onClick={() => setCollapsed(true)} className="h-8 w-8 rounded-lg shrink-0">
+            <Button variant="ghost" size="icon" onClick={() => setCollapsed(true)} aria-label="Toggle sidebar" className="h-8 w-8 rounded-lg shrink-0">
               <ChevronLeft className="h-4 w-4" />
             </Button>
           </>
         ) : (
           <button
             onClick={() => setCollapsed(false)}
+            aria-label="Toggle sidebar"
             className={cn(
               "relative flex h-9 w-9 mx-auto items-center justify-center rounded-xl text-white font-bold text-sm shadow-lg hover:opacity-90 transition-opacity overflow-hidden shrink-0",
               finalBrandLogo || isSuperAdminPath ? "bg-transparent shadow-none" : "btn-gradient"

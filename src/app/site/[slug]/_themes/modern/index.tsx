@@ -45,7 +45,6 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
   const klien = (tenant.klien || []).map((al) => ({
     id: al.id,
     name: al.name,
-    graduationYear: al.graduationYear,
     currentStatus: (al as any).currentStatus || al.currentPosition || "LAINNYA",
     testimonial: al.testimonial,
     imageUrl: al.imageUrl,
@@ -151,7 +150,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          8. EKSTRAKURIKULER
+          8. LAYANAN
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.extracurriculars?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.2}>
@@ -226,7 +225,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          11. TESTIMONIAL ALUMNI
+          11. TESTIMONI MITRA
       ══════════════════════════════════════════════════════════════ */}
       {((tenant.klien?.length ?? 0) > 0) && (
         <section className="py-10 md:py-16">

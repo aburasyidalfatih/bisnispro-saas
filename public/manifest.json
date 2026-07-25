@@ -2,9 +2,15 @@
   "name": "BisnisPro",
   "short_name": "BisnisPro",
   "description": "Platform SaaS Multi-Tenant BisnisPro",
-  "start_url": "/dashboard",
+  "start_url": "/admin",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#6c47ff",
-  "icons": []
+  "background_color": "#020817",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "/logo-bisnispro.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
