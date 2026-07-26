@@ -16,12 +16,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     await requireTenantMembership(tenantId, ["OWNER", "ADMIN", "STAFF"])
     
     const body = await req.json()
-    const { title, slug, description, completedAt, clientName, category, imageUrl, projectUrl, sortOrder } = body
+    const { title, titleEn, slug, description, descriptionEn, completedAt, clientName, category, imageUrl, projectUrl, sortOrder } = body
     
     const result = await db.portfolio.update({
       where: { id: resolvedParams.id, tenantId },
       data: {
-        title, slug, description, completedAt: new Date(completedAt), clientName, category, imageUrl, projectUrl, sortOrder
+        title, titleEn, slug, description, descriptionEn, completedAt: new Date(completedAt), clientName, category, imageUrl, projectUrl, sortOrder
       }
     })
 

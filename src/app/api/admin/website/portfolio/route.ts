@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     await requireTenantMembership(tenantId, ["OWNER", "ADMIN", "STAFF"])
     
     const body = await req.json()
-    const { title, slug, description, completedAt, clientName, category, imageUrl, projectUrl, sortOrder } = body
+    const { title, titleEn, slug, description, descriptionEn, completedAt, clientName, category, imageUrl, projectUrl, sortOrder } = body
     
     if (!title || !slug || !completedAt) return NextResponse.json({ error: "Judul, slug, dan tanggal wajib diisi" }, { status: 400 })
 
@@ -46,8 +46,10 @@ export async function POST(req: Request) {
       data: {
         tenantId,
         title,
+        titleEn,
         slug,
         description,
+        descriptionEn,
         completedAt: new Date(completedAt),
         clientName: clientName || "Rahasia",
         category: category || "Umum",

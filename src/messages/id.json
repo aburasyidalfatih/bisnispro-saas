@@ -1,0 +1,15 @@
+{
+  "common": {
+    "loading": "Memuat...",
+    "search": "Cari",
+    "submit": "Kirim",
+    "save": "Simpan",
+    "cancel": "Batal"
+  },
+  "navbar": {
+    "home": "Beranda",
+    "about": "Tentang Kami",
+    "services": "Layanan",
+    "contact": "Kontak"
+  }
+}

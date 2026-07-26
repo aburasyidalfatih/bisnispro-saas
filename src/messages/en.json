@@ -1,0 +1,15 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "search": "Search",
+    "submit": "Submit",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "navbar": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Services",
+    "contact": "Contact"
+  }
+}

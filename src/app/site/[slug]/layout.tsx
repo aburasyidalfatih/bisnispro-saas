@@ -1,5 +1,7 @@
 import { db, withTenant } from "@/lib/db"
 import Script from "next/script"
+import { NextIntlClientProvider } from "next-intl"
+import { getMessages, getLocale } from "next-intl/server"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
 import { notFound } from "next/navigation"
 import { WebsiteNavbar } from "./_components/navbar"
@@ -217,8 +219,12 @@ export default async function WebsiteLayout({
     ]
   }).replace(/</g, "\\u003c")
 
+  const messages = await getMessages()
+  const locale = await getLocale()
+
   return (
-    <RoutingProvider value={routingValue}>
+    <NextIntlClientProvider messages={messages} locale={locale}>
+      <RoutingProvider value={routingValue}>
       <div className="min-h-screen flex flex-col overflow-x-clip w-full max-w-[100vw]">
         {/* JSON-LD Structured Data untuk Rich Snippets */}
         <Script id="tenant-site-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
@@ -303,5 +309,6 @@ export default async function WebsiteLayout({
         )}
       </div>
     </RoutingProvider>
+    </NextIntlClientProvider>
   )
 }

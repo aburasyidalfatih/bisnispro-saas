@@ -470,8 +470,10 @@ model Post {
   tenantId            String
   authorId            String
   title               String
+  titleEn             String?
   slug                String
   content             String
+  contentEn           String?           @db.Text
   featuredImage       String?
   imageAlt            String?
   type                String            @default("BLOG_GURU")
@@ -575,8 +577,10 @@ model Portfolio {
   id           String   @id @default(cuid())
   tenantId     String
   title        String
+  titleEn      String?
   slug         String
   description  String?
+  descriptionEn String? @db.Text
   completedAt  DateTime
   clientName   String   @default("LOKAL")
   category     String   @default("SISWA")
@@ -658,8 +662,10 @@ model Service {
   id          String   @id @default(cuid())
   tenantId    String
   name        String
+  nameEn      String?
   slug        String
   description String?
+  descriptionEn String? @db.Text
   imageUrl    String?
   category    String?
   pricing     String?
@@ -1403,8 +1409,10 @@ model CustomPage {
   id            String   @id @default(cuid())
   tenantId      String
   title         String
+  titleEn       String?
   slug          String
   content       String?  @db.Text
+  contentEn     String?  @db.Text
   featuredImage String?
   isPublished   Boolean  @default(false)
   createdAt     DateTime @default(now())

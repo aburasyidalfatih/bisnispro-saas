@@ -19,7 +19,7 @@ export default function ServicesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState({ 
-    name: "", slug: "", description: "", imageUrl: "", 
+    name: "", nameEn: "", slug: "", description: "", descriptionEn: "", imageUrl: "", 
     category: "", pricing: "", icon: "", sortOrder: 0 
   })
   const [saving, setSaving] = useState(false)
@@ -87,7 +87,7 @@ export default function ServicesPage() {
       setForm({ ...srv })
     } else {
       setEditingId(null)
-      setForm({ name: "", slug: "", description: "", imageUrl: "", category: "", pricing: "", icon: "", sortOrder: services.length })
+      setForm({ name: "", nameEn: "", slug: "", description: "", descriptionEn: "", imageUrl: "", category: "", pricing: "", icon: "", sortOrder: services.length })
     }
     setIsModalOpen(true)
   }
@@ -179,6 +179,17 @@ export default function ServicesPage() {
             <div className="space-y-2">
               <Label>Deskripsi</Label>
               <Textarea value={form.description} onChange={(e) => setForm(p => ({...p, description: e.target.value}))} rows={4} />
+            </div>
+            <div className="pt-4 border-t space-y-4">
+              <h3 className="font-semibold text-sm">English Translation (Optional)</h3>
+              <div className="space-y-2">
+                <Label>Service Name (EN)</Label>
+                <Input value={form.nameEn || ""} onChange={(e) => setForm(p => ({...p, nameEn: e.target.value}))} />
+              </div>
+              <div className="space-y-2">
+                <Label>Description (EN)</Label>
+                <Textarea value={form.descriptionEn || ""} onChange={(e) => setForm(p => ({...p, descriptionEn: e.target.value}))} rows={4} />
+              </div>
             </div>
             <div className="pt-4 flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>Batal</Button>

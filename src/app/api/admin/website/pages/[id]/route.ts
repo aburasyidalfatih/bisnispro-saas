@@ -15,7 +15,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     const { id } = await params
     const body = await req.json()
-    const { title, slug, content, isPublished, featuredImage } = body
+    const { title, titleEn, slug, content, contentEn, isPublished, featuredImage } = body
 
     if (!title || !slug) {
       return NextResponse.json({ error: "Judul dan URL Slug wajib diisi" }, { status: 400 })
@@ -44,8 +44,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       where: { id },
       data: {
         title,
+        titleEn,
         slug,
         content,
+        contentEn,
         featuredImage,
         isPublished: isPublished ?? false
       }

@@ -16,11 +16,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     await requireTenantMembership(tenantId, ["OWNER", "ADMIN", "STAFF"])
     
     const body = await req.json()
-    const { name, slug, description, imageUrl, category, pricing, icon, sortOrder } = body
+    const { name, nameEn, slug, description, descriptionEn, imageUrl, category, pricing, icon, sortOrder } = body
     
     const result = await db.service.update({
       where: { id: resolvedParams.id, tenantId },
-      data: { name, slug, description, imageUrl, category, pricing, icon, sortOrder }
+      data: { name, nameEn, slug, description, descriptionEn, imageUrl, category, pricing, icon, sortOrder }
     })
 
     await invalidateDashboardCache(tenantId)

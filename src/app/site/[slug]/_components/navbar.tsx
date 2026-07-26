@@ -10,6 +10,7 @@ import Image from "next/image"
 import type { PublicTenant } from "../_themes/types"
 import { ICONS, IconName } from "@/components/ui/icon-picker"
 import { Omnisearch } from "./omnisearch"
+import { LanguageSwitcher } from "./language-switcher"
 
 interface NavbarProps {
   tenant: Pick<PublicTenant, 
@@ -257,6 +258,8 @@ export function WebsiteNavbar({ tenant }: NavbarProps) {
 
             {/* Right: Search + CTA */}
             <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+              <LanguageSwitcher />
+
               {/* Omnisearch Trigger */}
               <button 
                 type="button" 

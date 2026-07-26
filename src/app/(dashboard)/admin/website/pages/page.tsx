@@ -22,7 +22,7 @@ export default function CustomPagesPage() {
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [form, setForm] = useState({ title: "", slug: "", content: "", featuredImage: "", isPublished: true })
+  const [form, setForm] = useState({ title: "", titleEn: "", slug: "", content: "", contentEn: "", featuredImage: "", isPublished: true })
   const [saving, setSaving] = useState(false)
 
   const { data: session } = useSession()
@@ -107,10 +107,10 @@ export default function CustomPagesPage() {
   const openForm = (page?: any) => {
     if (page) {
       setEditingId(page.id)
-      setForm({ title: page.title, slug: page.slug, content: page.content || "", featuredImage: page.featuredImage || "", isPublished: page.isPublished })
+      setForm({ title: page.title, titleEn: page.titleEn || "", slug: page.slug, content: page.content || "", contentEn: page.contentEn || "", featuredImage: page.featuredImage || "", isPublished: page.isPublished })
     } else {
       setEditingId(null)
-      setForm({ title: "", slug: "", content: "", featuredImage: "", isPublished: true })
+      setForm({ title: "", titleEn: "", slug: "", content: "", contentEn: "", featuredImage: "", isPublished: true })
     }
     setIsFormOpen(true)
   }
@@ -205,6 +205,22 @@ export default function CustomPagesPage() {
                   onChange={val => setForm(p => ({ ...p, content: val }))}
                   placeholder="Tuliskan konten halaman di sini..."
                 />
+              </div>
+
+              <div className="pt-4 border-t space-y-6 mt-4">
+                <h3 className="font-semibold text-sm">English Translation (Optional)</h3>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Page Title (EN)</Label>
+                  <Input value={form.titleEn || ""} onChange={e => setForm(p => ({...p, titleEn: e.target.value}))} placeholder="Example: Terms and Conditions" className="rounded-xl h-10 font-medium" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Page Content (EN)</Label>
+                  <RichTextEditor 
+                    value={form.contentEn || ""}
+                    onChange={val => setForm(p => ({ ...p, contentEn: val }))}
+                    placeholder="Write the page content in English here..."
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

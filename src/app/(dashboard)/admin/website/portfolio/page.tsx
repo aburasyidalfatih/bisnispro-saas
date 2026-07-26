@@ -21,7 +21,7 @@ export default function PortfolioPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState({ 
-    title: "", slug: "", description: "", imageUrl: "", 
+    title: "", titleEn: "", slug: "", description: "", descriptionEn: "", imageUrl: "", 
     category: "", clientName: "", projectUrl: "", completedAt: new Date().toISOString().substring(0,10), sortOrder: 0 
   })
   const [saving, setSaving] = useState(false)
@@ -93,7 +93,7 @@ export default function PortfolioPage() {
     } else {
       setEditingId(null)
       setForm({ 
-        title: "", slug: "", description: "", imageUrl: "", 
+        title: "", titleEn: "", slug: "", description: "", descriptionEn: "", imageUrl: "", 
         category: "", clientName: "", projectUrl: "", completedAt: new Date().toISOString().substring(0,10), sortOrder: portfolios.length 
       })
     }
@@ -218,6 +218,17 @@ export default function PortfolioPage() {
             <div className="space-y-2">
               <Label>Deskripsi Lengkap</Label>
               <Textarea value={form.description} onChange={(e) => setForm(p => ({...p, description: e.target.value}))} rows={4} />
+            </div>
+            <div className="pt-4 border-t space-y-4">
+              <h3 className="font-semibold text-sm">English Translation (Optional)</h3>
+              <div className="space-y-2">
+                <Label>Project Title (EN)</Label>
+                <Input value={form.titleEn || ""} onChange={(e) => setForm(p => ({...p, titleEn: e.target.value}))} />
+              </div>
+              <div className="space-y-2">
+                <Label>Description (EN)</Label>
+                <Textarea value={form.descriptionEn || ""} onChange={(e) => setForm(p => ({...p, descriptionEn: e.target.value}))} rows={4} />
+              </div>
             </div>
             <div className="pt-4 flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>Batal</Button>
