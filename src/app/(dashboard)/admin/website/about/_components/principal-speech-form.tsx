@@ -1,4 +1,5 @@
 import React from"react"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
@@ -115,7 +116,7 @@ export function PrincipalSpeechForm({
               </div>
               {form.settings?.principalImage && (
                 <div className="mt-4 rounded-xl overflow-hidden border w-32 h-32">
-                  <img src={normalizeImageUrl(form.settings?.principalImage) || form.settings?.principalImage} alt="Principal preview" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                  <Image src={normalizeImageUrl(form.settings?.principalImage) || form.settings?.principalImage} alt="Principal preview" width={128} height={128} className="w-full h-full object-cover" unoptimized />
                 </div>
               )}
             </div>

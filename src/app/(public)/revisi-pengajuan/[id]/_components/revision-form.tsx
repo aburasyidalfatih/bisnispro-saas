@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -101,7 +102,7 @@ export function RevisionForm({ application }: { application: any }) {
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-rose-50 border border-rose-200 text-rose-800 rounded-xl p-4 flex gap-3">
+      <div className="bg-rose-50 border border-rose-200 text-rose-800 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-200 rounded-xl p-4 flex gap-3">
         <AlertCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
         <div>
           <h5 className="text-rose-800 font-bold">Pemberitahuan Revisi</h5>
@@ -132,7 +133,7 @@ export function RevisionForm({ application }: { application: any }) {
               <Label>Logo Bisnis <span className="text-red-500">*</span></Label>
               <div className="flex items-center gap-4">
                 {logoPreview ? (
-                  <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded-lg border bg-white" loading="lazy" decoding="async" />
+                  <Image src={logoPreview} alt="Logo" width={64} height={64} className="h-16 w-16 object-contain rounded-lg border bg-white" unoptimized />
                 ) : (
                   <div className="h-16 w-16 rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
                     <ImageIcon className="h-6 w-6 text-muted-foreground" />

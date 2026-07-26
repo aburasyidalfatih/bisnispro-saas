@@ -140,10 +140,10 @@ export default async function ThemeDemoPage({ params }: { params: Promise<{ id: 
   // Jangan render demo untuk tema sistem (karena mereka berbasis React, bukan Handlebars)
   if (id.startsWith("sys-")) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-8 bg-white rounded-xl shadow-sm border max-w-md">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Live Demo Tidak Tersedia</h1>
-          <p className="text-gray-600">Tema bawaan sistem (System Themes) tidak dapat di-preview melalui URL ini. Preview hanya berlaku untuk tema kustom yang di-upload (.zip).</p>
+      <div className="min-h-screen flex items-center justify-center bg-muted">
+        <div className="text-center p-8 bg-card rounded-xl shadow-sm border max-w-md">
+          <h1 className="text-2xl font-bold text-foreground mb-2">Live Demo Tidak Tersedia</h1>
+          <p className="text-muted-foreground">Tema bawaan sistem (System Themes) tidak dapat di-preview melalui URL ini. Preview hanya berlaku untuk tema kustom yang di-upload (.zip).</p>
         </div>
       </div>
     )
@@ -204,9 +204,9 @@ export default async function ThemeDemoPage({ params }: { params: Promise<{ id: 
   } catch (e: any) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-red-50 p-4">
-        <div className="bg-white rounded-lg shadow-sm border border-red-200 p-6 max-w-2xl w-full">
+        <div className="bg-card rounded-lg shadow-sm border border-red-200 p-6 max-w-2xl w-full">
           <h1 className="text-xl font-bold text-red-600 mb-4">Gagal Me-render Tema</h1>
-          <p className="text-gray-700 mb-4">Terdapat kesalahan sintaks Handlebars di dalam tema ini:</p>
+          <p className="text-foreground mb-4">Terdapat kesalahan sintaks Handlebars di dalam tema ini:</p>
           <pre className="bg-gray-900 text-gray-100 p-4 rounded text-sm overflow-auto whitespace-pre-wrap">
             {e.message}
           </pre>

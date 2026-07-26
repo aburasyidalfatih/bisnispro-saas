@@ -259,8 +259,8 @@ export function MenuBuilder() {
           />
         ) : (
           menus.map((menu, rootIdx) => (
-            <div key={menu.id} className="w-full border rounded-xl overflow-hidden bg-white shadow-sm">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-3 px-4 bg-slate-50 border-b">
+            <div key={menu.id} className="w-full border rounded-xl overflow-hidden bg-card shadow-sm">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-3 px-4 bg-muted border-b">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <div className="flex flex-col gap-0.5 mr-2">
                     <Button 
@@ -282,7 +282,7 @@ export function MenuBuilder() {
                   </div>
 
                   <div className="flex flex-col">
-                    <span className="font-semibold text-sm flex items-center gap-2 text-slate-900">
+                    <span className="font-semibold text-sm flex items-center gap-2 text-foreground">
                       {menu.label}
                       {!menu.isActive && <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Sembunyi</span>}
                       {menu.isSystem && <span className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">Bawaan</span>}
@@ -305,7 +305,7 @@ export function MenuBuilder() {
               </div>
 
               {menu.children && menu.children.length > 0 && (
-                <div className="bg-white px-4 py-2 flex flex-col gap-1">
+                <div className="bg-card px-4 py-2 flex flex-col gap-1">
                   {menu.children.map((child, childIdx) => (
                     <div key={child.id} className="flex items-center justify-between py-2 px-3 hover:bg-slate-50 rounded-lg group transition-colors">
                       <div className="flex items-center gap-3">

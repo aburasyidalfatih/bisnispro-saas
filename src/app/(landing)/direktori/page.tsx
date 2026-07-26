@@ -107,7 +107,7 @@ export default async function DirectoryPage({
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {data.businesses.map(s => (
                 <article key={s.id}>
-                  <Card className="group overflow-hidden rounded-2xl border-0 shadow-sm bg-white hover:shadow-xl transition-all duration-300 relative h-full">
+                  <Card className="group overflow-hidden rounded-2xl border-0 shadow-sm bg-card hover:shadow-xl transition-all duration-300 relative h-full">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     
                     <CardContent className="p-6 relative z-10 flex flex-col h-full">
@@ -189,7 +189,7 @@ export default async function DirectoryPage({
               {page > 1 ? (
                 <Link 
                   href={`/direktori?q=${encodeURIComponent(search)}&prov=${encodeURIComponent(province)}&city=${encodeURIComponent(regency)}&page=${page - 1}`}
-                  className="px-4 py-2 text-sm font-medium border rounded-xl bg-white hover:bg-muted transition-colors"
+                  className="px-4 py-2 text-sm font-medium border rounded-xl bg-card hover:bg-muted transition-colors"
                 >
                   Sebelumnya
                 </Link>
@@ -202,7 +202,7 @@ export default async function DirectoryPage({
               {page < data.totalPages ? (
                 <Link 
                   href={`/direktori?q=${encodeURIComponent(search)}&prov=${encodeURIComponent(province)}&city=${encodeURIComponent(regency)}&page=${page + 1}`}
-                  className="px-4 py-2 text-sm font-medium border rounded-xl bg-white hover:bg-muted transition-colors"
+                  className="px-4 py-2 text-sm font-medium border rounded-xl bg-card hover:bg-muted transition-colors"
                 >
                   Selanjutnya
                 </Link>

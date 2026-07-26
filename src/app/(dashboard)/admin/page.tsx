@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { DashboardSkeleton } from "@/components/shared/dashboard-skeleton"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, CreditCard, Bell, BarChart3, TrendingUp, Building2, AlertTriangle } from "lucide-react"
 import {
@@ -12,9 +13,10 @@ import {
 
 
 export default function DashboardPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [stats, setStats] = useState<any>(null)
   const [tenantId, setTenantId] = useState<string | null>(session?.user?.tenants?.[0]?.id || null)
+  const [loading, setLoading] = useState(true)
 
   // Resolve tenantId — fallback ke impersonate cookie
   useEffect(() => {
@@ -34,12 +36,18 @@ export default function DashboardPage() {
   }, [session?.user?.tenants])
 
   useEffect(() => {
-    if (!tenantId) return
+    if (status === "loading") return
+    if (!tenantId) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
     fetch(`/api/tenant/stats?tenantId=${tenantId}`)
       .then((r) => r.json())
       .then(setStats)
       .catch(() => {})
-  }, [tenantId])
+      .finally(() => setLoading(false))
+  }, [tenantId, status])
 
   const chartData = stats?.chartData || []
 
@@ -63,6 +71,7 @@ export default function DashboardPage() {
   const currentPlan = currentTenant?.plan ||"free"
 
   useEffect(() => {
+    if (status === "loading" || loading) return
     if (!isAdminRole) {
       if (currentRole ==="staf") {
         router.replace("/admin")
@@ -74,7 +83,11 @@ export default function DashboardPage() {
     } else if (currentPlan ==="free") {
       router.replace("/admin/website")
     }
-  }, [isAdminRole, router, currentRole, currentPlan])
+  }, [isAdminRole, router, currentRole, currentPlan, status, loading])
+
+  if (status === "loading" || loading) {
+    return <DashboardSkeleton />
+  }
 
   if (!isAdminRole) {
     return null

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Coins, Sparkles, AlertCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import Image from "next/image"
 
 export function AiTopupDialog({ 
   open, 
@@ -139,7 +140,7 @@ export function AiTopupDialog({
                            </div>
                         </div>
                         <div className="h-8 w-12 bg-white rounded flex items-center justify-center p-1 border">
-                           <img src={ch.icon_url} alt={ch.name} className="max-h-full max-w-full object-contain" loading="lazy" decoding="async" />
+                           <Image src={ch.icon_url} alt={ch.name} width={48} height={32} className="max-h-full max-w-full object-contain" unoptimized />
                         </div>
                      </label>
                   ))}

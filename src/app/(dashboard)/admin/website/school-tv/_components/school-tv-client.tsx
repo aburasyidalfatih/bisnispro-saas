@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { 
   MonitorSmartphone, Save, Plus, Trash2, Clock, User, 
   Calendar, Loader2, PlayCircle, ExternalLink, RefreshCw, QrCode
@@ -239,8 +240,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                 <div className="flex items-center gap-3">
                   {tvBarcode.image && (
                     <div className="h-16 w-16 relative rounded-md border overflow-hidden shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={tvBarcode.image} alt="Barcode" className="object-cover w-full h-full" />
+                      <Image src={tvBarcode.image} alt="Barcode" width={64} height={64} className="object-cover w-full h-full" unoptimized />
                     </div>
                   )}
                   <div className="flex-1">
@@ -300,7 +300,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Day Tabs */}
-              <div className="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl border">
+              <div className="flex flex-wrap gap-1.5 p-1 bg-muted rounded-xl border">
                 {DAYS.map(day => (
                   <button
                     key={day.value}
@@ -312,7 +312,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                     }}
                     className={`flex-1 min-w-[70px] text-center py-2 px-3 text-xs font-semibold rounded-lg transition-all ${
                       activeDay === day.value
-                        ? "bg-white text-blue-600 shadow-sm border"
+                        ? "bg-background text-primary shadow-sm border"
                         : "text-slate-600 hover:bg-white/50 hover:text-slate-900"
                     }`}
                   >
@@ -337,7 +337,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                 ) : (
                   <div className="grid gap-3 sm:grid-cols-2">
                     {currentDaySlots.map(slot => (
-                      <div key={slot.id} className="flex items-start justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 group hover:border-blue-400 transition-colors shadow-sm">
+                      <div key={slot.id} className="flex items-start justify-between bg-muted/50 p-4 rounded-xl border border-slate-200 group hover:border-blue-400 transition-colors shadow-sm">
                         <div className="space-y-1">
                           <div className="flex items-center gap-1.5 text-xs font-bold text-blue-600 uppercase tracking-wide">
                             <Clock className="h-3 w-3" />
@@ -361,7 +361,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
               </div>
 
               {/* Add Slot Form */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-4">
+              <div className="bg-muted/50 p-4 rounded-2xl border border-slate-200 space-y-4">
                 <h4 className="font-bold text-xs text-slate-600 uppercase tracking-widest flex items-center gap-1">
                   <Plus className="h-4 w-4 text-emerald-500" />
                   Tambah Slot Baru
@@ -375,7 +375,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                       placeholder="Contoh: 08:00 - 10:00"
                       value={newTime}
                       onChange={e => setNewTime(e.target.value)}
-                      className="bg-white h-10 border-slate-300 focus-visible:ring-blue-500"
+                      className="bg-background h-10 border-slate-300 focus-visible:ring-blue-500"
                     />
                   </div>
                   
@@ -410,7 +410,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                             setShowDropdown(true)
                           }}
                           onFocus={() => setShowDropdown(true)}
-                          className="bg-white h-10 border-slate-300 focus-visible:ring-blue-500"
+                          className="bg-background h-10 border-slate-300 focus-visible:ring-blue-500"
                         />
                         
                         {/* Dropdown list */}
@@ -419,7 +419,7 @@ export default function SchoolTvClient({ initialSettings, tenantSlug, tvUrl, sta
                             {/* Backdrop to close dropdown */}
                             <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
                             
-                            <div className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 divide-y divide-slate-100">
+                            <div className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-background border border-slate-200 rounded-lg shadow-lg z-20 divide-y divide-slate-100">
                               {safeStaffList.filter(s => s.name.toLowerCase().includes((staffSearch || "").toLowerCase())).length === 0 ? (
                                 <div className="p-3 text-sm text-slate-500 text-center">Tidak ada nama staf yang cocok</div>
                               ) : (

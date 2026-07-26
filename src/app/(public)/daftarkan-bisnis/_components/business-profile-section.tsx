@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { School, Hash, Loader2, Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 export function BisnisProfileSection({
   form, setForm, 
@@ -26,7 +27,7 @@ export function BisnisProfileSection({
           <Label>Logo Bisnis (Opsional)</Label>
           <div className="flex items-center gap-4">
             {logoPreview ? (
-              <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded-lg border bg-white" loading="lazy" decoding="async" />
+              <Image src={logoPreview} alt="Logo" width={64} height={64} className="h-16 w-16 object-contain rounded-lg border bg-white" unoptimized />
             ) : (
               <div className="h-16 w-16 rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
                 <School className="h-6 w-6 text-muted-foreground" />

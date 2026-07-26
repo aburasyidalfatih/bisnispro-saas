@@ -14,7 +14,7 @@ import {
 import { EmptyState } from "@/components/ui/empty-state"
 
 export default function ReportsPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [exporting, setExporting] = useState(false)
   const [stats, setStats] = useState<any>(null)
   const [financeSummary, setFinanceSummary] = useState<any>(null)
@@ -23,7 +23,10 @@ export default function ReportsPage() {
 
   useEffect(() => {
     const id = session?.user?.tenants?.[0]?.id
-    if (!id) return
+    if (!id) {
+      if (status !== "loading") setLoading(false)
+      return
+    }
     setTenantId(id)
     setLoading(true)
     Promise.all([
@@ -33,7 +36,7 @@ export default function ReportsPage() {
       setStats(statsData)
       setFinanceSummary(summaryData)
     }).catch(() => {}).finally(() => setLoading(false))
-  }, [session])
+  }, [session, status])
 
   const chartData = stats?.chartData || []
 
@@ -90,7 +93,19 @@ export default function ReportsPage() {
     return `${value}`
   }
 
-  if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+  if (loading || status === "loading") return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="skeleton h-8 w-64" />
+        <div className="skeleton h-4 w-80" />
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="skeleton h-[140px] rounded-2xl" style={{ animationDelay: `${i * 75}ms` }} />
+        ))}
+      </div>
+    </div>
+  )
 
   return (
     <div className="space-y-6">

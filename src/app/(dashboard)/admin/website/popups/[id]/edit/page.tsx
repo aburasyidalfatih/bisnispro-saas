@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from"react"
 import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
@@ -222,7 +223,7 @@ export default function EditPopupPage() {
                 >
                   <Input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                   {previewUrl ? (
-                    <img src={previewUrl} alt="Preview" className="max-h-48 rounded-lg object-contain" loading="lazy" decoding="async" />
+                    <Image src={previewUrl} alt="Preview" width={400} height={200} className="max-h-48 rounded-lg object-contain" unoptimized />
                   ) : (
                     <div className="text-center py-4">
                       <ImageIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />

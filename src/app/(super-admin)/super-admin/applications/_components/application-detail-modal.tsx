@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { School, MapPin, User, Clock, RefreshCcw, CheckCircle, XCircle } from "lucide-react"
 import { normalizeImageUrl } from "@/lib/utils"
 import { Application } from "./types"
+import Image from "next/image"
 
 interface ApplicationDetailModalProps {
   open: boolean
@@ -35,9 +36,12 @@ export function ApplicationDetailModal({ open, setOpen, selectedApp }: Applicati
               <div className="h-16 w-16 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden">
                 {selectedApp.logo ? (
                   <>
-                    <img src={normalizeImageUrl(selectedApp.logo) || selectedApp.logo} 
+                    <Image src={normalizeImageUrl(selectedApp.logo) || selectedApp.logo} 
                       alt="Logo" 
+                      width={64}
+                      height={64}
                       className="object-contain p-1 w-full h-full" 
+                      unoptimized
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                         const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;

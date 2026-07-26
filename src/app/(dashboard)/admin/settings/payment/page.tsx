@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from"react"
 import { useSession } from"next-auth/react"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
@@ -397,7 +398,7 @@ export default function PaymentSettingsPage() {
                         <div key={ch.code} className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2">
                           <div className="flex items-center gap-2">
                             {ch.icon_url && (
-                              <img src={ch.icon_url} alt={ch.name} className="h-5 w-5 object-contain rounded" loading="lazy" decoding="async" />
+                              <Image src={ch.icon_url} alt={ch.name} width={20} height={20} className="h-5 w-5 object-contain rounded" unoptimized />
                             )}
                             <span className="text-xs font-medium">{ch.name}</span>
                           </div>

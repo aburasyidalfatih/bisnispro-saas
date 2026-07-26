@@ -103,7 +103,7 @@ export default function WaQueueLogsPage() {
             placeholder="Cari nomor atau pesan..." 
             value={search} 
             onChange={(e) => { setSearch(e.target.value); setPage(1) }} 
-            className="pl-9 rounded-xl bg-white shadow-sm" 
+            className="pl-9 rounded-xl bg-background shadow-sm" 
           />
         </div>
       </div>

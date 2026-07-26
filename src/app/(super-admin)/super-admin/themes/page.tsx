@@ -83,7 +83,7 @@ export default async function SuperAdminThemesPage() {
           <p className="text-muted-foreground mt-1">Kelola tema bawaan dan tema kustom berbasis Handlebars untuk perusahaan.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="bg-white" asChild>
+          <Button variant="outline" className="bg-card" asChild>
             <Link href="/api/super-admin/themes/export?theme=sys-default" download>
               <Download className="mr-2 h-4 w-4" /> Export Template Standar
             </Link>

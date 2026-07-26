@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from"react"
 import { useSession } from"next-auth/react"
+import Image from "next/image"
 import QRCode from"react-qr-code"
 import { Button } from"@/components/ui/button"
 import { Printer, ArrowLeft, Globe, ScanFace } from"lucide-react"
@@ -72,7 +73,7 @@ export default function WebsitePosterPage() {
         {/* Top Header */}
         <div className="text-center space-y-6 relative z-10 pt-8">
           {tenant?.logo ? (
-            <img src={normalizeImageUrl(tenant.logo)} alt="Logo" className="h-32 w-auto mx-auto object-contain drop-shadow-md" loading="lazy" decoding="async" />
+            <Image src={normalizeImageUrl(tenant.logo) || ""} alt="Logo" width={128} height={128} className="h-32 w-auto mx-auto object-contain drop-shadow-md" unoptimized />
           ) : (
             <div className="h-32 w-32 bg-slate-100 rounded-full mx-auto flex items-center justify-center">
               <Globe className="h-12 w-12 text-slate-400" />

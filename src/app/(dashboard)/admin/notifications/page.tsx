@@ -400,7 +400,7 @@ export default function NotificationsPage() {
                     </div>
                     
                     <div>
-                      <div className="bg-indigo-50 border border-indigo-100 text-indigo-900 rounded-2xl p-4 text-sm space-y-3 h-full">
+                      <div className="bg-indigo-50 border border-indigo-100 text-indigo-900 dark:bg-indigo-950/40 dark:border-indigo-900/50 dark:text-indigo-200 rounded-2xl p-4 text-sm space-y-3 h-full">
                         <h4 className="font-semibold flex items-center gap-2">
                           <Info className="h-4 w-4" /> Variabel Dinamis
                         </h4>

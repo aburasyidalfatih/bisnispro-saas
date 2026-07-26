@@ -8,6 +8,7 @@ import { cn, normalizeImageUrl } from "@/lib/utils"
 import { checkDataCompleteness } from "@/lib/utils/data-completeness"
 import { Application } from "./types"
 import { Input } from "@/components/ui/input"
+import Image from "next/image"
 
 interface ApplicationTableProps {
   filteredApps: Application[]
@@ -83,9 +84,12 @@ export function ApplicationTable({
                     <div className="h-10 w-10 shrink-0 bg-white border rounded-xl flex items-center justify-center overflow-hidden relative">
                       {app.logo ? (
                         <>
-                          <img src={normalizeImageUrl(app.logo) || app.logo} 
+                          <Image src={normalizeImageUrl(app.logo) || app.logo} 
                             alt="Logo" 
+                            width={40}
+                            height={40}
                             className="object-contain p-0.5 w-full h-full" 
+                            unoptimized
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                               const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;

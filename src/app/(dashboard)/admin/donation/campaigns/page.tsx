@@ -3,6 +3,7 @@
 import { useEffect, useState } from"react"
 import { useSession } from"next-auth/react"
 import { useToast } from"@/hooks/use-toast"
+import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Badge } from"@/components/ui/badge"
@@ -105,7 +106,11 @@ export default function DonationCampaignsPage() {
 
       {/* Campaign Cards */}
       {loading ? (
-        <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="skeleton h-[140px] rounded-2xl" style={{ animationDelay: `${i * 75}ms` }} />
+          ))}
+        </div>
       ) : campaigns.length === 0 ? (
         <Card className="glass border-0">
           <CardContent className="py-20 flex flex-col items-center justify-center text-center">
@@ -126,7 +131,7 @@ export default function DonationCampaignsPage() {
             return (
               <Card key={campaign.id} className="glass border-0 shadow-sm overflow-hidden">
                 {campaign.imageUrl && (
-                  <img src={normalizeImageUrl(campaign.imageUrl) || campaign.imageUrl} alt={campaign.title} className="w-full h-36 object-cover" loading="lazy" decoding="async" />
+                  <Image src={normalizeImageUrl(campaign.imageUrl) || campaign.imageUrl} alt={campaign.title} width={400} height={144} className="w-full h-36 object-cover" unoptimized />
                 )}
                 <CardContent className="p-5">
                   <div className="flex justify-between items-start mb-3">

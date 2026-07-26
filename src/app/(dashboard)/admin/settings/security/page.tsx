@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from"react"
 import { useSession } from"next-auth/react"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
@@ -228,7 +229,7 @@ export default function SecurityPage() {
             {qrCode && !twoFAEnabled && (
               <div className="space-y-4">
                 <div className="flex justify-center">
-                  <img src={qrCode} alt="QR Code 2FA" className="rounded-xl border" width={200} height={200} loading="lazy" decoding="async" />
+                  <Image src={qrCode} alt="QR Code 2FA" className="rounded-xl border" width={200} height={200} unoptimized />
                 </div>
                 <div className="text-center">
                   <p className="text-xs text-muted-foreground mb-1">Atau masukkan kode manual:</p>

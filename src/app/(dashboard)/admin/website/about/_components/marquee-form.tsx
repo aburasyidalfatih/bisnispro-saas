@@ -48,7 +48,7 @@ export function MarqueeForm({ form, setForm }: MarqueeFormProps) {
               value={form.settings?.marqueeSpeed || "25s"} 
               onValueChange={(val) => setForm(prev => ({ ...prev, settings: { ...prev.settings, marqueeSpeed: val } }))}
             >
-              <SelectTrigger className="rounded-xl h-10 bg-white">
+              <SelectTrigger className="rounded-xl h-10 bg-background">
                 <SelectValue placeholder="Pilih kecepatan" />
               </SelectTrigger>
               <SelectContent>

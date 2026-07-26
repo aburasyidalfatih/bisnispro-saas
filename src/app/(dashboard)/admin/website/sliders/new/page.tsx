@@ -2,6 +2,7 @@
 
 import { useState, useRef } from"react"
 import { useTenantBranding } from"@/components/providers/tenant-branding-provider"
+import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
@@ -156,8 +157,7 @@ export default function NewSliderPage() {
               >
                 <Input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
                 {previewUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-lg" loading="lazy" decoding="async" />
+                  <Image src={previewUrl} alt="Preview" width={800} height={450} className="w-full h-full object-cover rounded-lg" unoptimized />
                 ) : (
                   <div className="text-center py-8">
                     <ImageIcon className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
