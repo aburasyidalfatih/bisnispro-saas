@@ -1192,8 +1192,6 @@ export const STARTER_JS = `// ════════════════�
 // BisnisPro Custom Theme — Scripts
 // ═══════════════════════════════════════════
 
-console.log('[BisnisPro Theme] loaded successfully');
-
 // Mobile menu toggle (contoh)
 document.addEventListener('DOMContentLoaded', function() {
   // Smooth scroll for anchor links

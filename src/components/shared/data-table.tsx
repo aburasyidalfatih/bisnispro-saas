@@ -13,8 +13,9 @@ import {
 } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, ArrowUpDown } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, ArrowUpDown, FileText } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -103,8 +104,8 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="px-4 py-12 text-center text-sm text-muted-foreground">
-                  Tidak ada data
+                <TableCell colSpan={columns.length} className="px-4 py-12">
+                  <EmptyState icon={FileText} title="Tidak Ada Data" description="Tidak ada data untuk ditampilkan." />
                 </TableCell>
               </TableRow>
             )}

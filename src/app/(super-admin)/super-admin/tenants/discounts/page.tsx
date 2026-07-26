@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface DiscountCode {
   id: string
@@ -284,10 +285,12 @@ export default function DiscountsPage() {
           </Card>
         ))}
         {discounts.length === 0 && (
-          <div className="col-span-full py-12 text-center border-2 border-dashed rounded-3xl">
-            <Tag className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-            <h3 className="text-lg font-semibold">{searchQuery ? "Tidak Ditemukan" : "Belum Ada Diskon"}</h3>
-            <p className="text-muted-foreground">{searchQuery ? `Tidak ada kode diskon yang cocok dengan "${searchQuery}".` : "Buat kode diskon pertama untuk dibagikan ke perusahaan."}</p>
+          <div className="col-span-full py-12">
+            <EmptyState 
+              icon={Tag} 
+              title={searchQuery ? "Tidak Ditemukan" : "Belum Ada Diskon"} 
+              description={searchQuery ? `Tidak ada kode diskon yang cocok dengan "${searchQuery}".` : "Buat kode diskon pertama untuk dibagikan ke perusahaan."} 
+            />
           </div>
         )}
       </div>

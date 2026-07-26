@@ -7,9 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Search, School, User, Ticket } from "lucide-react"
+import { ArrowLeft, Search, School, User, Ticket, Coins } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface Commission {
   id: string
@@ -137,8 +138,12 @@ export default function SuperAdminCommissionsPage() {
                   </TableRow>
                 ) : data.commissions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="py-20 text-center text-muted-foreground italic">
-                      Tidak ada riwayat komisi ditemukan.
+                    <TableCell colSpan={5} className="py-20">
+                      <EmptyState 
+                        icon={Coins} 
+                        title="Belum Ada Komisi" 
+                        description="Tidak ada riwayat komisi ditemukan."
+                      />
                     </TableCell>
                   </TableRow>
                 ) : (

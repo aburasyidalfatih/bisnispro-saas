@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Home, CalendarCheck, FileText, User, Calendar, LogOut, Award, ShieldAlert, MessageSquare, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -76,7 +77,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
                 brandLogo ? "bg-transparent shadow-none" : "bg-primary"
               )}>
                 {brandLogo ? (
-                  <img src={brandLogo} alt={brandName} className="h-full w-full object-contain" loading="lazy" decoding="async" />
+                  <Image src={brandLogo} alt={brandName} width={32} height={32} className="h-full w-full object-contain" />
                 ) : (
                   <span className="text-primary-foreground font-bold text-lg">{brandInitial}</span>
                 )}
@@ -113,6 +114,7 @@ export function GtkAppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-4">
             {aiData && (
               <button 
+                type="button"
                 onClick={() => setIsTopupOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors"
                 title="Top up Token AI"

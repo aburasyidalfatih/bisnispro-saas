@@ -5,6 +5,7 @@ import { ConfirmDialog } from"@/components/shared/confirm-dialog"
 import { Inbox, Check, ChevronDown, ChevronUp, Mail, Trash2 } from"lucide-react"
 import { cn } from"@/lib/utils"
 import { Submission } from"./types"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface WebsiteMessagesProps {
   submissions: Submission[]
@@ -45,10 +46,11 @@ export function WebsiteMessages({
         {loadingWebsite ? (
           <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-16 rounded-xl bg-muted animate-pulse" />)}</div>
         ) : submissions.length === 0 ? (
-          <div className="text-center py-12">
-            <Inbox className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
-            <p className="text-sm text-muted-foreground">Belum ada pesan dari pengunjung website</p>
-          </div>
+          <EmptyState
+            icon={Inbox}
+            title="Belum Ada Pesan"
+            description="Belum ada pesan dari pengunjung website"
+          />
         ) : (
           <div className="space-y-2">
             {submissions.map(sub => (

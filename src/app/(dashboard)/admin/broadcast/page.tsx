@@ -11,9 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from"@/components/ui/table"
 import { Badge } from"@/components/ui/badge"
-import { useToast } from"@/hooks/use-toast"
-import { Megaphone, Send, Loader2, Info, History } from"lucide-react"
-import { ServerPagination } from"@/components/shared/server-pagination"
+import { useToast } from "@/hooks/use-toast"
+import { Megaphone, Send, Loader2, Info, History, MessageSquare } from "lucide-react"
+import { ServerPagination } from "@/components/shared/server-pagination"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function BroadcastPage() {
   const { data: session } = useSession()
@@ -261,8 +262,14 @@ export default function BroadcastPage() {
                     </TableRow>
                   ) : history.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
-                        Belum ada riwayat pesan.
+                      <TableCell colSpan={4} className="h-32 text-center text-muted-foreground p-0">
+                        <div className="py-8">
+                          <EmptyState
+                            icon={MessageSquare}
+                            title="Belum Ada Riwayat"
+                            description="Belum ada riwayat pesan."
+                          />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ) : (

@@ -21,6 +21,7 @@ import { useForm } from"react-hook-form"
 import { zodResolver } from"@hookform/resolvers/zod"
 import { categorySchema } from"@/features/post/schemas/category.schema"
 import * as z from"zod"
+import { EmptyState } from "@/components/ui/empty-state"
 
 type FormData = z.infer<typeof categorySchema>
 
@@ -164,11 +165,9 @@ export default function CategoryPage() {
         </CardHeader>
         <CardContent>
           {items.length === 0 ? (
-            <div className="py-12 text-center">
-              <Tag className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="font-semibold mb-1">Belum ada kategori</p>
-              <p className="text-sm text-muted-foreground mb-4">Tambahkan kategori pertama untuk merapikan artikel perusahaan.</p>
-              <Button onClick={handleCreate} variant="outline" className="rounded-xl">
+            <div className="py-12 flex flex-col items-center">
+              <EmptyState icon={Tag} title="Belum Ada Data" description="Tambahkan kategori pertama untuk merapikan artikel perusahaan." />
+              <Button onClick={handleCreate} variant="outline" className="rounded-xl mt-4">
                 Tambah Sekarang
               </Button>
             </div>

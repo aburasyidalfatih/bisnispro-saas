@@ -7,6 +7,7 @@ import { Card, CardContent } from"@/components/ui/card"
 import { Input } from"@/components/ui/input"
 import { Button } from"@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from"@/components/ui/dialog"
+import { EmptyState } from "@/components/ui/empty-state"
 import Link from"next/link"
 import Image from"next/image"
 import { normalizeImageUrl } from"@/lib/utils"
@@ -191,7 +192,11 @@ export default function LeaderboardPage() {
 
       <div className="space-y-3">
         {visibleEntries.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">Belum ada data peringkat.</div>
+          <EmptyState 
+            icon={Trophy} 
+            title="Belum Ada Data" 
+            description="Belum ada data peringkat."
+          />
         ) : (
           visibleEntries.map((entry, idx) => {
             const isTop3 = entry.rank <= 3

@@ -11,6 +11,7 @@ import {
 } from"lucide-react"
 import Link from"next/link"
 import { cn } from"@/lib/utils"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface Payment {
   id: string
@@ -115,13 +116,11 @@ export default function BillingHistoryPage() {
       ) : payments.length === 0 ? (
         <Card className="glass border-0 shadow-md">
           <CardContent className="flex flex-col items-center justify-center py-16 gap-4 text-center">
-            <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center">
-              <FileText className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="font-semibold text-lg">Belum ada invoice</p>
-              <p className="text-muted-foreground text-sm mt-1">Invoice akan muncul di sini setelah Anda melakukan request upgrade.</p>
-            </div>
+            <EmptyState
+              icon={FileText}
+              title="Belum ada invoice"
+              description="Invoice akan muncul di sini setelah Anda melakukan request upgrade."
+            />
             <Button className="rounded-xl btn-gradient text-white border-0 mt-2 flex items-center justify-center h-10 px-4" asChild>
               <Link href="/admin/billing">Upgrade Paket</Link>
             </Button>

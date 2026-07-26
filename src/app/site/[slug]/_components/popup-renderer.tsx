@@ -49,6 +49,7 @@ export function PopupRenderer({ popup }: PopupProps) {
       <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-0 bg-transparent shadow-none shadow-black/20 max-w-full">
         <div className="bg-background rounded-3xl overflow-hidden border shadow-2xl relative">
           <button 
+            type="button"
             onClick={handleClose}
             aria-label="Tutup popup"
             className="absolute top-4 right-4 z-20 h-8 w-8 rounded-full bg-black/20 text-white backdrop-blur-md flex items-center justify-center hover:bg-black/40 transition-colors"

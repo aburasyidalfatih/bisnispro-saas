@@ -6,7 +6,8 @@ import { Card } from"@/components/ui/card"
 import { Input } from"@/components/ui/input"
 import { ServerPagination } from"@/components/shared/server-pagination"
 import { FileText, Search, User, Clock } from"lucide-react"
-import { cn } from"@/lib/utils"
+import { cn } from "@/lib/utils"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface AuditRow {
   id: string
@@ -84,10 +85,11 @@ export default function AuditPage() {
             {[1, 2, 3].map((i) => <div key={i} className="skeleton h-14 w-full rounded-xl" />)}
           </div>
         ) : logs.length === 0 ? (
-          <div className="p-12 text-center">
-            <FileText className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
-            <p className="text-muted-foreground">Belum ada aktivitas tercatat</p>
-          </div>
+          <EmptyState
+            icon={FileText}
+            title="Belum Ada Aktivitas"
+            description="Belum ada aktivitas tercatat"
+          />
         ) : (
           <div className="divide-y">
             {logs.map((log) => (

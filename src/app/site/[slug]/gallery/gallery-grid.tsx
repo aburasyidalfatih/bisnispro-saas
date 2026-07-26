@@ -38,7 +38,7 @@ export function GalleryGrid({ items }: Props) {
     <>
       <div className="columns-2 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6 space-y-4 sm:space-y-6">
         {items.map((item, i) => (
-          <button key={i} onClick={() => setLightbox(i)}
+          <button key={i} type="button" onClick={() => setLightbox(i)}
             className="group block relative w-full rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all duration-500 transform hover:-translate-y-1">
             {/* Aspect ratio is natural in columns, but we add an empty div with random heights if needed, or just let img determine height */}
             {item.type === "video" && extractYouTubeId(item.url) ? (
@@ -78,14 +78,14 @@ export function GalleryGrid({ items }: Props) {
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setLightbox(null)}>
           {/* Close */}
-          <button onClick={() => setLightbox(null)}
+          <button type="button" aria-label="Tutup lightbox" onClick={() => setLightbox(null)}
             className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors">
             <X className="h-5 w-5" />
           </button>
 
           {/* Prev */}
           {items.length > 1 && (
-            <button onClick={e => { e.stopPropagation(); prev() }}
+            <button type="button" aria-label="Foto sebelumnya" onClick={e => { e.stopPropagation(); prev() }}
               className="absolute left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors">
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -115,7 +115,7 @@ export function GalleryGrid({ items }: Props) {
 
           {/* Next */}
           {items.length > 1 && (
-            <button onClick={e => { e.stopPropagation(); next() }}
+            <button type="button" aria-label="Foto berikutnya" onClick={e => { e.stopPropagation(); next() }}
               className="absolute right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors">
               <ChevronRight className="h-5 w-5" />
             </button>

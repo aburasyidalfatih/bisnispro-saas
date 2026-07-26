@@ -21,6 +21,7 @@ import {
 import Link from "next/link"
 import { format } from "date-fns"
 import { id as localeId } from "date-fns/locale"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface Props {
   params: Promise<{ id: string }>
@@ -306,9 +307,11 @@ export default function CampaignDetailPage({ params }: Props) {
             </CardHeader>
             <CardContent>
               {paidDonations.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  Belum ada donasi lunas yang masuk untuk kampanye ini.
-                </div>
+                <EmptyState
+                  icon={Heart}
+                  title="Belum Ada Donasi"
+                  description="Belum ada donasi lunas yang masuk untuk kampanye ini."
+                />
               ) : (
                 <div className="divide-y">
                   {paidDonations.map((d: any) => (

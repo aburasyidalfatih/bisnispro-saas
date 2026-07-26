@@ -18,10 +18,6 @@ export function useRealtimeNotification() {
       try {
         const data = JSON.parse(event.data)
 
-        if (data.type === "CONNECTED") {
-          console.log("[Realtime SSE] Connected to server stream")
-        }
-
         if (data.type === "NEW_NOTIFICATION") {
           // 1. Tampilkan toast
           toast({

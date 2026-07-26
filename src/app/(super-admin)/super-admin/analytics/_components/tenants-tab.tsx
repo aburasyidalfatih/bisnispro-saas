@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils"
 import { AnalyticsData } from "./types"
 import { SortableHeader } from "./shared-components"
 
-import { Loader2 } from "lucide-react"
+import { Loader2, MapPin } from "lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export function TenantsTab() {
   const [data, setData] = useState<AnalyticsData | null>(null)
@@ -91,7 +92,9 @@ export function TenantsTab() {
               <TableBody>
                 {filteredTenants.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="py-16 text-center text-muted-foreground italic">Tidak ada data.</TableCell>
+                    <TableCell colSpan={8} className="py-16">
+                      <EmptyState icon={MapPin} title="Tidak Ada Data" description="Belum ada data tenant yang cocok." />
+                    </TableCell>
                   </TableRow>
                 ) : (
                   filteredTenants.map(t => (

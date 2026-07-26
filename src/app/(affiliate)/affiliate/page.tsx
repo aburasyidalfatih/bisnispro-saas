@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { redirect } from "next/navigation"
 import { CopyLinkButton } from "./copy-button"
+import { EmptyState } from "@/components/ui/empty-state"
+import { Coins } from "lucide-react"
 
 export default async function AffiliateDashboardPage() {
   const session = await auth()
@@ -204,8 +206,8 @@ export default async function AffiliateDashboardPage() {
         </CardHeader>
         <CardContent>
           {affiliate.commissions.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground text-sm">
-              Belum ada komisi masuk. Bagikan link referral Anda untuk mulai mendapatkan komisi!
+            <div className="py-8">
+              <EmptyState icon={Coins} title="Belum Ada Komisi Masuk" description="Bagikan link referral Anda untuk mulai mendapatkan komisi!" />
             </div>
           ) : (
             <div className="space-y-4">

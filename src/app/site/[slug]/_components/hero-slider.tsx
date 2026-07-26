@@ -226,6 +226,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
       {!isSingle && (
         <>
           <button
+            type="button"
             onClick={() => goTo((current - 1 + slides.length) % slides.length, "prev")}
             className="hidden lg:flex absolute left-8 xl:left-12 top-1/2 -translate-y-1/2 z-40 h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/30 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-110 shadow-lg"
             aria-label="Previous slide"
@@ -233,6 +234,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
+            type="button"
             onClick={() => goTo((current + 1) % slides.length, "next")}
             className="hidden lg:flex absolute right-8 xl:right-12 top-1/2 -translate-y-1/2 z-40 h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/30 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-110 shadow-lg"
             aria-label="Next slide"
@@ -248,6 +250,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
           {slides.map((_, i) => (
             <button
               key={i}
+              type="button"
               onClick={() => goTo(i, i > current ? "next" : "prev")}
               aria-label={`Go to slide ${i + 1}`}
               style={{ width: 36, height: 16, display: "flex", alignItems: "center", justifyContent: "center" }}

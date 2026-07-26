@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import Script from "next/script"
+import Image from "next/image"
 import { getBusinessesDirectory } from "./actions"
 import { DirectoryFilters } from "./_components/directory-filters"
 import { Card, CardContent } from "@/components/ui/card"
@@ -7,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { MapPin, ExternalLink, Building2 } from "lucide-react"
 import Link from "next/link"
 import { formatSocialUrl } from "@/lib/utils"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export const metadata: Metadata = {
   title: "Direktori Bisnis Mitra - BisnisPro",
@@ -96,11 +98,11 @@ export default async function DirectoryPage({
 
           {/* Server-rendered Grid Results */}
           {data.businesses.length === 0 ? (
-            <div className="text-center py-20 bg-white/50 rounded-3xl border border-dashed shadow-sm">
-              <Building2 className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground">Tidak ada bisnis ditemukan</h3>
-              <p className="text-muted-foreground">Coba sesuaikan filter pencarian Anda.</p>
-            </div>
+            <EmptyState 
+              icon={Building2} 
+              title="Tidak ada bisnis ditemukan" 
+              description="Coba sesuaikan filter pencarian Anda."
+            />
           ) : (
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {data.businesses.map(s => (
@@ -112,7 +114,7 @@ export default async function DirectoryPage({
                       <div className="flex items-start justify-between mb-4 gap-3">
                         <div className="h-12 w-12 rounded-xl bg-muted shrink-0 overflow-hidden border flex items-center justify-center">
                           {s.logo ? (
-                            <img src={s.logo} alt={s.name} className="h-full w-full object-cover" />
+                            <Image src={s.logo} alt={s.name} width={48} height={48} className="h-full w-full object-cover" />
                           ) : (
                             <span className="text-lg font-bold text-muted-foreground">{s.name.substring(0, 1)}</span>
                           )}

@@ -10,6 +10,8 @@ import { Plus, Trash2, Edit, Loader2, ArrowUp, ArrowDown, MoveRight } from "luci
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { IconPicker } from "@/components/ui/icon-picker"
+import { EmptyState } from "@/components/ui/empty-state"
+import { Menu } from "lucide-react"
 
 interface MenuItem {
   id: string
@@ -250,9 +252,11 @@ export function MenuBuilder() {
 
       <div className="flex flex-col w-full space-y-3">
         {menus.length === 0 ? (
-          <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed">
-            <p className="text-muted-foreground text-sm">Belum ada menu navigasi.</p>
-          </div>
+          <EmptyState 
+            icon={Menu} 
+            title="Belum Ada Menu" 
+            description="Belum ada menu navigasi."
+          />
         ) : (
           menus.map((menu, rootIdx) => (
             <div key={menu.id} className="w-full border rounded-xl overflow-hidden bg-white shadow-sm">

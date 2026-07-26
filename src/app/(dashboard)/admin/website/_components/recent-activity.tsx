@@ -7,6 +7,7 @@ import { History, FileText, Settings, UserPlus, Image as ImageIcon, Trash2, Edit
 import { formatDistanceToNow } from "date-fns"
 import { id } from "date-fns/locale"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface RecentActivityProps {
   tenantId: string
@@ -71,9 +72,8 @@ export function RecentActivity({ tenantId }: RecentActivityProps) {
             ))}
           </div>
         ) : activities.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground py-8">
-            <History className="h-8 w-8 mb-2 opacity-20" />
-            <p className="text-xs">Belum ada riwayat aktivitas</p>
+          <div className="py-8">
+            <EmptyState icon={History} title="Belum Ada Data" description="Belum ada riwayat aktivitas" />
           </div>
         ) : (
           <div className="space-y-3">

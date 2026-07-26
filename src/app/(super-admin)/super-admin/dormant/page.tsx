@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Moon, MessageCircle, ExternalLink, RefreshCw, Mail, Trash2, Send, Save, Settings } from "lucide-react"
+import { Moon, MessageCircle, ExternalLink, RefreshCw, Mail, Trash2, Send, Save, Settings, MapPin } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { ServerPagination } from "@/components/shared/server-pagination"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface DormantTenant {
   id: string
@@ -253,8 +254,12 @@ export default function DormantSchoolsPage() {
                   </TableRow>
                 ) : tenants.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                      Tidak ada perusahaan dormant saat ini. Hebat!
+                    <TableCell colSpan={6} className="h-24">
+                      <EmptyState 
+                        icon={MapPin} 
+                        title="Tidak Ada Perusahaan Dormant" 
+                        description="Tidak ada perusahaan dormant saat ini. Hebat!" 
+                      />
                     </TableCell>
                   </TableRow>
                 ) : (

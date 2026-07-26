@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, Play, Lock, ChevronLeft, BookOpen, Clock, CheckCircle2 } from "lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -80,9 +81,11 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
           <h2 className="text-2xl font-bold mt-8 mb-4">Materi Divisi (Silabus)</h2>
           <div className="space-y-4">
             {course.modules.length === 0 ? (
-              <div className="p-8 text-center bg-muted/30 rounded-2xl border border-dashed">
-                <p className="text-muted-foreground">Materi belum tersedia untuk divisi ini.</p>
-              </div>
+              <EmptyState 
+                icon={GraduationCap} 
+                title="Belum Ada Materi" 
+                description="Materi belum tersedia untuk divisi ini."
+              />
             ) : (
               course.modules.map((mod, index) => (
                 <Card key={mod.id} className="glass shadow-sm rounded-2xl border-0 overflow-hidden">

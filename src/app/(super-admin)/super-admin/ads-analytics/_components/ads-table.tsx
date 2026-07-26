@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Loader2, Layers, ChevronUp, ChevronDown, PencilLine, Pause, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { MetaData } from "./types"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface AdsTableProps {
   metaData: MetaData
@@ -43,7 +44,7 @@ export function AdsTable({ metaData, actionLoading, handleAction, handleUpdateBu
       {expandedSection === 'campaigns' && (
         <CardContent>
           {metaData.campaigns.length === 0 ? (
-            <p className="text-sm text-muted-foreground italic text-center py-8">Tidak ada kampanye.</p>
+            <EmptyState icon={Layers} title="Belum Ada Kampanye" description="Tidak ada kampanye." />
           ) : (
             <>
               {/* Desktop table */}

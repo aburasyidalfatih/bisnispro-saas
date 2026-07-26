@@ -13,6 +13,7 @@ import { ServerPagination } from"@/components/shared/server-pagination"
 import { Bell, Check, Info, CheckCircle, AlertTriangle, XCircle, FileText, Save, Loader2 } from"lucide-react"
 import { cn } from"@/lib/utils"
 import { toast } from"@/hooks/use-toast"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface NotifRow {
   id: string
@@ -293,10 +294,11 @@ export default function NotificationsPage() {
                 {[1, 2, 3].map((i) => <div key={i} className="skeleton h-16 w-full rounded-xl" />)}
               </div>
             ) : notifs.length === 0 ? (
-              <div className="p-12 text-center">
-                <Bell className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
-                <p className="text-muted-foreground">Belum ada notifikasi</p>
-              </div>
+              <EmptyState
+                icon={Bell}
+                title="Belum Ada Notifikasi"
+                description="Belum ada notifikasi"
+              />
             ) : (
               <div className="divide-y">
                 {notifs.map((n) => {

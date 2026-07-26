@@ -6,6 +6,7 @@ import { Input } from"@/components/ui/input"
 import { ServerPagination } from"@/components/shared/server-pagination"
 import { Megaphone, Search, Clock, CheckCircle2, AlertCircle, Loader2 } from"lucide-react"
 import { cn } from"@/lib/utils"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface WaQueueLog {
   id: string
@@ -89,9 +90,8 @@ export default function TenantWaLogsPage() {
             {[1, 2, 3, 4].map((i) => <div key={i} className="skeleton h-24 w-full rounded-xl" />)}
           </div>
         ) : logs.length === 0 ? (
-          <div className="p-12 text-center">
-            <Megaphone className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-            <p className="text-muted-foreground font-medium">Belum ada antrean pesan WA</p>
+          <div className="py-12">
+            <EmptyState icon={Megaphone} title="Belum Ada Data" description="Belum ada antrean pesan WA" />
           </div>
         ) : (
           <div className="divide-y divide-border/50">

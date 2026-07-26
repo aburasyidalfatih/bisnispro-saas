@@ -3,7 +3,8 @@ import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { School, CheckCircle2, Clock, XCircle, MessageCircle, AlertTriangle } from "lucide-react"
+import { School, CheckCircle2, Clock, XCircle, MessageCircle, AlertTriangle, UserPlus } from "lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default async function AffiliateReferralsPage() {
   const session = await auth()
@@ -86,8 +87,8 @@ export default async function AffiliateReferralsPage() {
           </CardHeader>
           <CardContent>
             {applications.length === 0 ? (
-              <div className="text-center py-8 text-sm text-muted-foreground border border-dashed rounded-xl">
-                Belum ada bisnis yang mendaftar.
+              <div className="py-8">
+                <EmptyState icon={UserPlus} title="Belum Ada Pendaftar" description="Belum ada bisnis yang mendaftar." />
               </div>
             ) : (
               <div className="space-y-4">
@@ -129,8 +130,8 @@ export default async function AffiliateReferralsPage() {
           </CardHeader>
           <CardContent>
             {tenants.length === 0 ? (
-              <div className="text-center py-8 text-sm text-muted-foreground border border-dashed rounded-xl">
-                Belum ada bisnis aktif dari referensi Anda.
+              <div className="py-8">
+                <EmptyState icon={UserPlus} title="Belum Ada Bisnis Aktif" description="Belum ada bisnis aktif dari referensi Anda." />
               </div>
             ) : (
               <div className="space-y-4">

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ShieldAlert, Shield, AlertTriangle, ShieldCheck, List, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface SecurityLog {
   id: string
@@ -174,11 +175,11 @@ export function SecurityLogs() {
             ))}
           </div>
         ) : logs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center bg-muted/20 rounded-xl border border-dashed">
-            <Shield className="w-12 h-12 text-muted-foreground/30 mb-3" />
-            <p className="text-sm font-medium">Sistem Aman</p>
-            <p className="text-xs text-muted-foreground">Tidak ada aktivitas mencurigakan yang terdeteksi.</p>
-          </div>
+          <EmptyState 
+            icon={Shield} 
+            title="Sistem Aman" 
+            description="Tidak ada aktivitas mencurigakan yang terdeteksi."
+          />
         ) : (
           <div className="overflow-x-auto">
             <Table>

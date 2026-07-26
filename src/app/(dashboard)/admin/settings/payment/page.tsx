@@ -8,6 +8,7 @@ import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { toast } from"@/hooks/use-toast"
+import { EmptyState } from "@/components/ui/empty-state"
 import { CreditCard, Save, Eye, EyeOff, Info, CheckCircle, ExternalLink, RefreshCw, Landmark, Plus, Trash2 } from"lucide-react"
 
 interface TripayConfig {
@@ -216,9 +217,8 @@ export default function PaymentSettingsPage() {
         </CardHeader>
         <CardContent>
           {manualBanks.length === 0 ? (
-            <div className="text-center py-6 border-2 border-dashed rounded-xl">
-              <Landmark className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">Belum ada rekening manual.</p>
+            <div className="py-6">
+              <EmptyState icon={Landmark} title="Belum Ada Data" description="Belum ada rekening manual." />
             </div>
           ) : (
             <div className="space-y-4">

@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, CheckCircle2, XCircle, ArrowLeft, Building2, User, Landmark, ShieldCheck } from "lucide-react"
+import { Clock, CheckCircle2, XCircle, ArrowLeft, Building2, User, Landmark, ShieldCheck, CreditCard } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface Withdrawal {
   id: string
@@ -185,7 +186,13 @@ export default function SuperAdminWithdrawalsPage() {
                 <TableBody>
                   {data.withdrawals.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="px-4 py-8 text-center text-muted-foreground italic">Tidak ada data penarikan.</TableCell>
+                      <TableCell colSpan={6} className="px-4 py-8">
+                        <EmptyState 
+                          icon={CreditCard} 
+                          title="Tidak Ada Data Penarikan" 
+                          description="Belum ada request penarikan komisi saat ini." 
+                        />
+                      </TableCell>
                     </TableRow>
                   ) : (
                     data.withdrawals.map((w) => (

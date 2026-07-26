@@ -2,6 +2,7 @@ import { useState, useEffect } from"react"
 import { Bell, Check, ArrowRight, Info, CheckCircle, AlertTriangle, XCircle } from"lucide-react"
 import { cn } from"@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { EmptyState } from "@/components/ui/empty-state"
 
 const typeIcons: Record<string, { icon: typeof Info; color: string }> = {
   info:    { icon: Info,          color:"text-blue-500 bg-blue-500/10" },
@@ -76,10 +77,7 @@ export function NotifRecentList() {
           {[1,2,3].map(i => <div key={i} className="skeleton h-12 rounded-xl" />)}
         </div>
       ) : notifs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-6 text-center">
-          <Bell className="h-8 w-8 text-muted-foreground/30 mb-2" />
-          <p className="text-sm text-muted-foreground">Belum ada notifikasi</p>
-        </div>
+        <EmptyState icon={Bell} title="Belum Ada Data" description="Belum ada notifikasi" />
       ) : (
         <div className="space-y-1.5">
           {notifs.map(n => {

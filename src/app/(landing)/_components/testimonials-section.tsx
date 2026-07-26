@@ -1,7 +1,7 @@
 "use client"
 import { MessageSquareQuote, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react"
 import { useRef } from "react"
-
+import Image from "next/image"
 
 export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -39,6 +39,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
         {/* Navigation Buttons */}
         <div className="hidden md:flex gap-3 shrink-0">
           <button 
+            type="button"
             onClick={scrollLeft}
             className="h-12 w-12 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors hover:shadow-md"
             aria-label="Previous testimonial"
@@ -46,6 +47,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
             <ChevronLeft className="h-6 w-6" />
           </button>
           <button 
+            type="button"
             onClick={scrollRight}
             className="h-12 w-12 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors hover:shadow-md"
             aria-label="Next testimonial"
@@ -70,8 +72,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
               <MessageSquareQuote className="absolute top-6 right-6 h-8 w-8 text-primary/10" />
               <div className="flex items-center gap-4 mb-5">
                 {t.tenant?.logo ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={t.tenant.logo} alt={t.tenant?.name ? `${t.tenant.name} logo` : "Logo"} className="w-12 h-12 rounded-full object-cover border shrink-0" />
+                  <Image src={t.tenant.logo} alt={t.tenant?.name ? `${t.tenant.name} logo` : "Logo"} width={48} height={48} className="w-12 h-12 rounded-full object-cover border shrink-0" />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
                     {t.tenant?.name?.[0]?.toUpperCase() || t.user?.name?.[0]?.toUpperCase()}
@@ -104,6 +105,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
       {/* Mobile Navigation Buttons */}
       <div className="flex md:hidden justify-center gap-4 mt-2">
         <button 
+          type="button"
           onClick={scrollLeft}
           aria-label="Previous testimonial"
           className="h-10 w-10 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"
@@ -111,6 +113,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
           <ChevronLeft className="h-5 w-5" />
         </button>
         <button 
+          type="button"
           onClick={scrollRight}
           aria-label="Next testimonial"
           className="h-10 w-10 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors shadow-sm"

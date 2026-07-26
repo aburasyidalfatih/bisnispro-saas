@@ -91,7 +91,6 @@ export async function getBusinessesDirectory(params: {
     
     // Fallback if Prisma JSON path filtering fails due to dialect mismatch
     try {
-      console.log("Attempting fallback string contains...")
       let whereClause: Prisma.TenantWhereInput = { isActive: true }
       if (search) whereClause.name = { contains: search, mode: "insensitive" }
       

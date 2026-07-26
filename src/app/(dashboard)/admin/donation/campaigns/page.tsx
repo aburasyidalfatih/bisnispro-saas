@@ -16,6 +16,7 @@ import Link from"next/link"
 import { format } from"date-fns"
 import { id as localeId } from"date-fns/locale"
 import { normalizeImageUrl } from"@/lib/utils"
+import { EmptyState } from "@/components/ui/empty-state"
 
 
 export default function DonationCampaignsPage() {
@@ -107,9 +108,12 @@ export default function DonationCampaignsPage() {
         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
       ) : campaigns.length === 0 ? (
         <Card className="glass border-0">
-          <CardContent className="py-20 text-center">
-            <HeartHandshake className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-40" />
-            <p className="text-muted-foreground">Belum ada kampanye donasi. Mulai kampanye pertama!</p>
+          <CardContent className="py-20 flex flex-col items-center justify-center text-center">
+            <EmptyState
+              icon={HeartHandshake}
+              title="Belum Ada Kampanye"
+              description="Belum ada kampanye donasi. Mulai kampanye pertama!"
+            />
             <Link href="/admin/donation/campaigns/create" className="inline-block mt-4">
               <Button className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Buat Kampanye</Button>
             </Link>

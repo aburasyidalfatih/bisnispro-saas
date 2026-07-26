@@ -1,7 +1,8 @@
 "use client"
 
 import { Card, CardContent } from"@/components/ui/card"
-import { Calendar } from"lucide-react"
+import { Calendar, Clock } from"lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 
 const days = ["Sen","Sel","Rab","Kam","Jum","Sab","Min"]
 
@@ -21,7 +22,9 @@ export default function MySchedulePage() {
                 <Calendar className="h-4 w-4 text-primary" />
                 <span className="font-semibold text-sm">{day}</span>
               </div>
-              <p className="text-xs text-muted-foreground">Tidak ada jadwal</p>
+              <div className="scale-75 origin-top">
+                <EmptyState icon={Clock} title="Kosong" description="Tidak ada jadwal" />
+              </div>
             </CardContent>
           </Card>
         ))}

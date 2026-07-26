@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ImageUploadDirect } from "@/components/ui/image-upload-direct"
+import { EmptyState } from "@/components/ui/empty-state"
 import Image from "next/image"
 
 export default function OfficesPage() {
@@ -112,13 +113,12 @@ export default function OfficesPage() {
               Memuat data...
             </div>
           ) : offices.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground">
-              <div className="flex h-16 w-16 mx-auto items-center justify-center rounded-2xl bg-muted/50 mb-4">
-                <Building2 className="h-8 w-8 opacity-50" />
-              </div>
-              <p>Belum ada data kantor cabang.</p>
-              <Button variant="outline" className="mt-4 rounded-xl" onClick={() => openForm()}>Buat Sekarang</Button>
-            </div>
+            <EmptyState 
+              icon={MapPin} 
+              title="Belum Ada Data" 
+              description="Belum ada data kantor cabang."
+              action={<Button onClick={() => openForm()}>Buat Sekarang</Button>}
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
               {offices.map((item) => (

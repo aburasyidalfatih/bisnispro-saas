@@ -10,6 +10,7 @@ import { toast } from"@/hooks/use-toast"
 import { Plus, Trash2, FileText, Download, ExternalLink } from"lucide-react"
 import Link from"next/link"
 import { format } from"date-fns"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface Document {
   id: string
@@ -101,11 +102,9 @@ export default function DocumentsPage() {
         </CardHeader>
         <CardContent>
           {documents.length === 0 ? (
-            <div className="py-12 text-center">
-              <FileText className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="font-semibold mb-1">Belum ada dokumen</p>
-              <p className="text-sm text-muted-foreground mb-4">Unggah dokumen baru untuk ditambahkan ke pusat unduhan.</p>
-              <Button asChild variant="outline" className="rounded-xl">
+            <div className="py-12 flex flex-col items-center">
+              <EmptyState icon={FileText} title="Belum Ada Data" description="Unggah dokumen baru untuk ditambahkan ke pusat unduhan." />
+              <Button asChild variant="outline" className="rounded-xl mt-4">
                 <Link href="/admin/website/documents/new">Unggah Sekarang</Link>
               </Button>
             </div>

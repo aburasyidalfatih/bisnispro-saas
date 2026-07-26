@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
   Receipt, Search, CheckCircle2, Clock, XCircle, AlertCircle,
-  TrendingUp, Wallet, CreditCard, School, ShieldCheck
+  TrendingUp, Wallet, CreditCard, School, ShieldCheck, FileText
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
@@ -20,6 +20,7 @@ import {
 import { ConfirmPaymentModal } from "./_components/confirm-payment-modal"
 import { CancelPaymentModal } from "./_components/cancel-payment-modal"
 import { RefundPaymentModal } from "./_components/refund-payment-modal"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface Payment {
   id: string
@@ -233,8 +234,8 @@ export default function PaymentsPage() {
               <TableBody>
                 {filteredPayments.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="py-20 text-center text-muted-foreground italic">
-                      Tidak ada transaksi ditemukan.
+                    <TableCell colSpan={9} className="py-20">
+                      <EmptyState icon={CreditCard} title="Tidak Ada Transaksi" description="Tidak ada transaksi yang ditemukan." />
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -320,8 +321,8 @@ export default function PaymentsPage() {
           {/* Mobile Card Layout */}
           <div className="md:hidden">
             {filteredPayments.length === 0 ? (
-              <div className="py-16 text-center text-muted-foreground italic text-sm">
-                Tidak ada transaksi ditemukan.
+              <div className="py-16">
+                <EmptyState icon={CreditCard} title="Tidak Ada Transaksi" description="Tidak ada transaksi yang ditemukan." />
               </div>
             ) : (
               <div className="divide-y divide-border/40">

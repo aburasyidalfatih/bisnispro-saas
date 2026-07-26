@@ -3,6 +3,7 @@
 import { Card, CardContent } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { FolderOpen, Upload } from"lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function MyDocumentsPage() {
   return (
@@ -20,8 +21,11 @@ export default function MyDocumentsPage() {
 
       <Card className="glass border-0">
         <CardContent className="p-12 text-center">
-          <FolderOpen className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-          <p className="text-muted-foreground">Belum ada dokumen</p>
+          <EmptyState
+            icon={FolderOpen}
+            title="Belum Ada Dokumen"
+            description="Belum ada dokumen"
+          />
         </CardContent>
       </Card>
     </div>

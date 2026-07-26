@@ -2,12 +2,13 @@
 import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ChevronLeft, PlayCircle, CheckCircle2, FileText, ChevronRight, Menu, X, Loader2 } from "lucide-react"
+import { ChevronLeft, PlayCircle, CheckCircle2, FileText, ChevronRight, Menu, X, Loader2, GraduationCap } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { toast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import DOMPurify from "isomorphic-dompurify"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export function AcademyPlayer({ course }: { course: any }) {
   const router = useRouter()
@@ -32,7 +33,11 @@ export function AcademyPlayer({ course }: { course: any }) {
     setCompletedLessonIds(completed)
   }, [allLessons])
 
-  if (!activeLesson) return <div className="p-10 text-center">Belum ada materi di divisi ini.</div>
+  if (!activeLesson) return (
+    <div className="h-full flex items-center justify-center p-10 w-full">
+      <EmptyState icon={GraduationCap} title="Belum Ada Materi" description="Belum ada materi di divisi ini." />
+    </div>
+  )
 
   const currentIndex = allLessons.findIndex((l: any) => l.id === activeLesson.id)
   const hasNext = currentIndex < allLessons.length - 1

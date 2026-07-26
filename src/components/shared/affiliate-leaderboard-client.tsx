@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, ArrowLeft, TrendingUp, Users, Target, Crown, Award, Medal, Info } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
@@ -149,7 +150,7 @@ export function AffiliateLeaderboardClient({ backHref, variant = "full" }: Affil
                   </div>
                   <CardContent className="pt-6 text-center space-y-4">
                     <div className="h-20 w-20 mx-auto rounded-full bg-slate-200 border-4 border-white shadow-md flex items-center justify-center overflow-hidden">
-                      {top3[1].avatar ? <img src={top3[1].avatar!} className="object-cover h-full w-full" alt="image" loading="lazy" decoding="async" /> : <span className="text-2xl font-bold text-slate-500">{top3[1].name.charAt(0)}</span>}
+                      {top3[1].avatar ? <Image src={top3[1].avatar!} width={80} height={80} className="object-cover h-full w-full" alt={top3[1].name} /> : <span className="text-2xl font-bold text-slate-500">{top3[1].name.charAt(0)}</span>}
                     </div>
                     <div>
                       <h3 className="font-bold text-lg line-clamp-1">{top3[1].name}</h3>
@@ -172,7 +173,7 @@ export function AffiliateLeaderboardClient({ backHref, variant = "full" }: Affil
                 </div>
                 <CardContent className="pt-6 text-center space-y-4">
                   <div className="h-24 w-24 mx-auto rounded-full bg-amber-100 border-4 border-white shadow-lg flex items-center justify-center overflow-hidden relative">
-                    {top3[0].avatar ? <img src={top3[0].avatar!} className="object-cover h-full w-full" alt="image" loading="lazy" decoding="async" /> : <span className="text-3xl font-bold text-amber-600">{top3[0].name.charAt(0)}</span>}
+                    {top3[0].avatar ? <Image src={top3[0].avatar!} width={96} height={96} className="object-cover h-full w-full" alt={top3[0].name} /> : <span className="text-3xl font-bold text-amber-600">{top3[0].name.charAt(0)}</span>}
                     <div className="absolute bottom-0 bg-amber-500 text-white text-[10px] w-full text-center font-bold">MVP</div>
                   </div>
                   <div>
@@ -196,7 +197,7 @@ export function AffiliateLeaderboardClient({ backHref, variant = "full" }: Affil
                   </div>
                   <CardContent className="pt-6 text-center space-y-4">
                     <div className="h-16 w-16 mx-auto rounded-full bg-orange-100 border-4 border-white shadow-md flex items-center justify-center overflow-hidden">
-                      {top3[2].avatar ? <img src={top3[2].avatar!} className="object-cover h-full w-full" alt="image" loading="lazy" decoding="async" /> : <span className="text-xl font-bold text-orange-600">{top3[2].name.charAt(0)}</span>}
+                      {top3[2].avatar ? <Image src={top3[2].avatar!} width={64} height={64} className="object-cover h-full w-full" alt={top3[2].name} /> : <span className="text-xl font-bold text-orange-600">{top3[2].name.charAt(0)}</span>}
                     </div>
                     <div>
                       <h3 className="font-bold text-md line-clamp-1">{top3[2].name}</h3>
@@ -268,7 +269,7 @@ export function AffiliateLeaderboardClient({ backHref, variant = "full" }: Affil
                         <TableCell className="px-4 py-3 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0 overflow-hidden">
-                              {item.avatar ? <img src={item.avatar} alt="image" loading="lazy" decoding="async" /> : item.name.charAt(0)}
+                              {item.avatar ? <Image src={item.avatar} width={32} height={32} alt={item.name} className="object-cover h-full w-full" /> : item.name.charAt(0)}
                             </div>
                             <div>
                               <div className="font-medium text-foreground">{item.name}</div>

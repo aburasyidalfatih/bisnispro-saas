@@ -11,6 +11,7 @@ import { Plus, Edit2, Trash2, HelpCircle, Loader2, Save, X } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function FaqPage() {
   const [faqs, setFaqs] = useState<any[]>([])
@@ -110,13 +111,12 @@ export default function FaqPage() {
               Memuat data...
             </div>
           ) : faqs.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground">
-              <div className="flex h-16 w-16 mx-auto items-center justify-center rounded-2xl bg-muted/50 mb-4">
-                <HelpCircle className="h-8 w-8 opacity-50" />
-              </div>
-              <p>Belum ada daftar tanya jawab.</p>
-              <Button variant="outline" className="mt-4 rounded-xl" onClick={() => openForm()}>Buat Sekarang</Button>
-            </div>
+            <EmptyState 
+              icon={HelpCircle} 
+              title="Belum Ada FAQ" 
+              description="Belum ada daftar tanya jawab."
+              action={<Button onClick={() => openForm()}>Buat Sekarang</Button>}
+            />
           ) : (
             <div className="divide-y">
               {faqs.map((faq) => (

@@ -10,8 +10,9 @@ import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Switch } from"@/components/ui/switch"
 import { toast } from"@/hooks/use-toast"
-import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins, History, User, Zap, CheckCircle2, ArrowRight } from"lucide-react"
+import { BrainCircuit, Key, Save, Loader2, Sparkles, Coins, History, User, Zap, CheckCircle2, ArrowRight, PackageOpen } from"lucide-react"
 import { cn } from"@/lib/utils"
+import { EmptyState } from "@/components/ui/empty-state"
 
 // Removed hardcoded AI_PACKAGES
 
@@ -175,8 +176,8 @@ export default function AiSettingsPage() {
                 </div>
               ))}
               {aiPackages.length === 0 && (
-                <div className="col-span-full flex items-center justify-center text-muted-foreground italic p-4 border rounded-xl h-32">
-                  Belum ada paket AI yang tersedia.
+                <div className="col-span-full py-10">
+                  <EmptyState icon={PackageOpen} title="Belum Ada Data" description="Belum ada paket AI yang tersedia." />
                 </div>
               )}
             </div>
@@ -222,7 +223,7 @@ export default function AiSettingsPage() {
                 {logsLoading ? (
                   <TableRow><TableCell colSpan={4} className="p-4 text-center text-muted-foreground">Memuat data...</TableCell></TableRow>
                 ) : logs.length === 0 ? (
-                  <TableRow><TableCell colSpan={4} className="p-8 text-center text-muted-foreground italic">Belum ada riwayat penggunaan AI.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={4} className="p-8"><EmptyState icon={History} title="Belum Ada Data" description="Belum ada riwayat penggunaan AI." /></TableCell></TableRow>
                 ) : (
                   logs.map((log) => (
                     <TableRow key={log.id} className="hover:bg-muted/30 transition-colors">

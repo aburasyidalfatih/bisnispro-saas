@@ -69,7 +69,6 @@ export class ImportService {
         } else if (existingTu.role !== role) {
            // Mencegah penanggung jawab (owner) atau admin di-downgrade menjadi staf
            if (existingTu.role === "owner" || existingTu.role === "admin") {
-              console.log(`Skipping role update for ${email} because they are already ${existingTu.role}`)
               continue
            }
            await db.tenantUser.update({

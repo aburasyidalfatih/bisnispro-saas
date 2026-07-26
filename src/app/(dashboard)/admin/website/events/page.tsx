@@ -10,6 +10,7 @@ import { toast } from"@/hooks/use-toast"
 import { Plus, Edit2, Trash2, Calendar, MapPin, Eye } from"lucide-react"
 import Link from"next/link"
 import { format } from"date-fns"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface Event {
   id: string
@@ -84,11 +85,9 @@ export default function EventsPage() {
         </CardHeader>
         <CardContent>
           {events.length === 0 ? (
-            <div className="py-12 text-center">
-              <Calendar className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="font-semibold mb-1">Belum ada acara</p>
-              <p className="text-sm text-muted-foreground mb-4">Tambahkan acara baru ke dalam kalender perusahaan.</p>
-              <Button asChild variant="outline" className="rounded-xl">
+            <div className="py-12 flex flex-col items-center">
+              <EmptyState icon={Calendar} title="Belum Ada Data" description="Tambahkan acara baru ke dalam kalender perusahaan." />
+              <Button asChild variant="outline" className="rounded-xl mt-4">
                 <Link href="/admin/website/events/new">Tambah Sekarang</Link>
               </Button>
             </div>

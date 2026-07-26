@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { google } from "googleapis"
+import { logger } from "@/lib/logger"
 
 // Helper function to extract Google Contacts credentials
 async function getGoogleCredentials() {
@@ -152,5 +153,5 @@ async function processSyncBackground(tenants: any[], people: any) {
     }
   }
 
-  console.log(`[SYNC COMPLETE] Sukses: ${successCount}, Dilewati (Sudah ada): ${skipCount}`)
+  logger.info(`[SYNC COMPLETE] Sukses: ${successCount}, Dilewati (Sudah ada): ${skipCount}`)
 }

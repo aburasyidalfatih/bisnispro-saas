@@ -13,6 +13,7 @@ import {
   Lock, Smartphone, ShieldCheck, ShieldOff, Copy,
   Monitor, Trash2, Eye, EyeOff, Info, ExternalLink,
 } from"lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface SessionRow {
   id: string
@@ -296,9 +297,8 @@ export default function SecurityPage() {
                 {[1, 2].map(i => <div key={i} className="skeleton h-16 w-full rounded-xl" />)}
               </div>
             ) : sessions.length === 0 ? (
-              <div className="text-center py-6">
-                <Monitor className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-                <p className="text-sm text-muted-foreground">Tidak ada sesi aktif tercatat</p>
+              <div className="py-6">
+                <EmptyState icon={Monitor} title="Belum Ada Data" description="Tidak ada sesi aktif tercatat" />
               </div>
             ) : (
               <div className="space-y-3">

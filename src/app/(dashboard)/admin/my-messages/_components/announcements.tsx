@@ -11,6 +11,7 @@ import { MessageSquare, Plus, Loader2, Pencil, Trash2 } from"lucide-react"
 import { format } from"date-fns"
 import { id as localeId } from"date-fns/locale"
 import { Textarea } from "@/components/ui/textarea"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface AnnouncementsProps {
   announcements: any[]
@@ -156,10 +157,11 @@ export function Announcements({
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : announcements.length === 0 ? (
-          <div className="text-center py-12">
-            <MessageSquare className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
-            <p className="text-sm text-muted-foreground">Belum ada pengumuman yang diterbitkan.</p>
-          </div>
+          <EmptyState
+            icon={MessageSquare}
+            title="Belum Ada Pengumuman"
+            description="Belum ada pengumuman yang diterbitkan."
+          />
         ) : (
           <div className="space-y-4">
             {announcements.map((post) => (

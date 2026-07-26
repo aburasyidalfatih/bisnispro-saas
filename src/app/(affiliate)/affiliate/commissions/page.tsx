@@ -5,8 +5,9 @@ import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Wallet, ArrowRightLeft, CreditCard, AlertCircle } from "lucide-react"
+import { Wallet, ArrowRightLeft, CreditCard, AlertCircle, Coins } from "lucide-react"
 import { WithdrawalForm } from "./_components/withdrawal-form"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default async function AffiliateCommissionsPage() {
   const session = await auth()
@@ -84,8 +85,8 @@ export default async function AffiliateCommissionsPage() {
           </CardHeader>
           <CardContent>
             {affiliate.withdrawals.length === 0 ? (
-              <div className="text-center py-8 text-sm text-muted-foreground border border-dashed rounded-xl">
-                Belum ada riwayat penarikan dana.
+              <div className="py-8">
+                <EmptyState icon={Coins} title="Tidak Ada Riwayat Penarikan" description="Belum ada riwayat penarikan dana." />
               </div>
             ) : (
               <div className="space-y-3">
@@ -120,8 +121,8 @@ export default async function AffiliateCommissionsPage() {
         </CardHeader>
         <CardContent>
           {affiliate.commissions.length === 0 ? (
-             <div className="text-center py-8 text-sm text-muted-foreground border border-dashed rounded-xl">
-               Belum ada riwayat komisi.
+             <div className="py-8">
+               <EmptyState icon={Coins} title="Tidak Ada Riwayat Komisi" description="Belum ada riwayat komisi." />
              </div>
           ) : (
             <div className="rounded-xl border overflow-hidden overflow-x-auto">

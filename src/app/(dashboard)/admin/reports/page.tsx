@@ -11,6 +11,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Legend,
 } from"recharts"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function ReportsPage() {
   const { data: session } = useSession()
@@ -149,8 +150,8 @@ export default function ReportsPage() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-[280px] text-muted-foreground text-sm">
-                Belum ada data pembayaran
+              <div className="py-10">
+                <EmptyState icon={Receipt} title="Belum Ada Data" description="Belum ada data pembayaran" />
               </div>
             )}
           </CardContent>
@@ -170,8 +171,8 @@ export default function ReportsPage() {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-[280px] text-muted-foreground text-sm">
-                Belum ada data tagihan
+              <div className="py-10">
+                <EmptyState icon={Receipt} title="Belum Ada Data" description="Belum ada data tagihan" />
               </div>
             )}
           </CardContent>
