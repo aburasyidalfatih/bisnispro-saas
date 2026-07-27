@@ -98,6 +98,7 @@ model Tenant {
   courseEnrollments CourseEnrollment[]
 
   discountCodes DiscountCode[]
+  rfqSubmissions RfqSubmission[]
 
   @@index([isActive])
   @@index([plan])
@@ -1322,6 +1323,31 @@ model CourseEnrollment {
   @@index([tenantId, enrolledAt(sort: Desc)])
   @@index([userId, status])
   @@map("course_enrollments")
+}
+
+model RfqSubmission {
+  id                String   @id @default(cuid())
+  tenantId          String
+  buyerName         String
+  buyerEmail        String
+  buyerPhone        String?
+  companyName       String?
+  country           String?
+  productInterest   String
+  quantity          String?
+  additionalMessage String?  @db.Text
+  status            String   @default("NEW") // NEW, REVIEWING, QUOTED, REJECTED
+  isRead            Boolean  @default(false)
+  ipAddress         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("rfq_submissions")
 }
 
 model LessonProgress {
