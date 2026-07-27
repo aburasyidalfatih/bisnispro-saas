@@ -30,6 +30,7 @@ export function ContactForm({ slug, labels = {} }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (sending) return
     setError("")
 
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
@@ -99,34 +100,34 @@ export function ContactForm({ slug, labels = {} }: Props) {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">{labels.labelName || "Nama Lengkap"} <span className="text-destructive">*</span></label>
-            <Input type="text" value={form.name} onChange={set("name")}
+            <label htmlFor="contact-name" className="text-sm font-medium">{labels.labelName || "Nama Lengkap"} <span className="text-destructive">*</span></label>
+            <Input id="contact-name" type="text" value={form.name} onChange={set("name")}
               placeholder="Nama lengkap Anda" />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Email <span className="text-destructive">*</span></label>
-            <Input type="email" value={form.email} onChange={set("email")}
+            <label htmlFor="contact-email" className="text-sm font-medium">Email <span className="text-destructive">*</span></label>
+            <Input id="contact-email" type="email" value={form.email} onChange={set("email")}
               placeholder="email@contoh.com" />
           </div>
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Nomor Telepon</label>
-          <Input type="tel" value={form.phone} onChange={set("phone")}
+          <label htmlFor="contact-phone" className="text-sm font-medium">Nomor Telepon</label>
+          <Input id="contact-phone" type="tel" value={form.phone} onChange={set("phone")}
             placeholder="08xxxxxxxxxx (opsional)" />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Subjek</label>
-          <Input type="text" value={form.subject} onChange={set("subject")}
+          <label htmlFor="contact-subject" className="text-sm font-medium">Subjek</label>
+          <Input id="contact-subject" type="text" value={form.subject} onChange={set("subject")}
             placeholder="Perihal pesan Anda (opsional)" />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Pesan <span className="text-destructive">*</span></label>
-          <Textarea rows={5} value={form.message} onChange={set("message")}
+          <label htmlFor="contact-message" className="text-sm font-medium">Pesan <span className="text-destructive">*</span></label>
+          <Textarea id="contact-message" rows={5} value={form.message} onChange={set("message")}
             placeholder="Tulis pesan Anda di sini..." />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Berapa hasil dari {num1} + {num2}? <span className="text-destructive">*</span></label>
-          <Input type="number" value={captchaAnswer} onChange={e => setCaptchaAnswer(e.target.value)}
+          <label htmlFor="contact-captcha" className="text-sm font-medium">Berapa hasil dari {num1} + {num2}? <span className="text-destructive">*</span></label>
+          <Input id="contact-captcha" type="number" value={captchaAnswer} onChange={e => setCaptchaAnswer(e.target.value)}
             placeholder="Jawaban" />
         </div>
 

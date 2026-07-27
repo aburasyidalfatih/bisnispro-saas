@@ -1,7 +1,6 @@
 import { headers } from "next/headers"
 import { checkIsMainDomain, getRootDomain } from "@/lib/utils"
 import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.service"
-import Script from "next/script"
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const headerList = await headers()
@@ -37,20 +36,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
     }
   }
 
-  return (
-    <>
-      {/* 
-        Menyuntikkan tema secara sinkron langsung ke DOM HTML sebelum komponen React di-render. 
-        Ini akan menghilangkan kedipan tema (Theme Flash) 100%. 
-      */}
-      <Script
-        id="auth-theme-injector"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `document.documentElement.setAttribute("data-theme", "${theme}");`
-        }}
-      />
-      {children}
-    </>
-  )
+  // CSS variables are inherited, so a server-rendered wrapper applies the
+  // tenant theme without inserting a script into a client-rendered tree.
+  return <div data-theme={theme} className="contents">{children}</div>
 }

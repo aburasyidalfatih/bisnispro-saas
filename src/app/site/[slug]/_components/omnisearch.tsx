@@ -104,6 +104,8 @@ export function Omnisearch({ tenantId, basePath }: { tenantId: string; basePath:
         <div className="flex items-center px-4 py-3 border-b border-border/50 bg-muted/20">
           <Search className="mr-3 h-5 w-5 text-muted-foreground shrink-0" />
           <input 
+            id="tenant-omnisearch"
+            aria-label="Cari konten website"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Cari apa saja... (Berita, Tim, Kantor/Lokasi)"

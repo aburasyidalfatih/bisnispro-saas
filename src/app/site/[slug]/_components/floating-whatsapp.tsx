@@ -8,7 +8,7 @@ interface FloatingWhatsAppProps {
   message?: string
 }
 
-export function FloatingWhatsApp({ whatsappNumber, message = "Halo, saya ingin bertanya tentang pendaftaran." }: FloatingWhatsAppProps) {
+export function FloatingWhatsApp({ whatsappNumber, message = "Halo, saya ingin mengetahui lebih lanjut tentang layanan Anda." }: FloatingWhatsAppProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [hasScrolled, setHasScrolled] = useState(false)
 
@@ -50,8 +50,8 @@ export function FloatingWhatsApp({ whatsappNumber, message = "Halo, saya ingin b
     >
       <div className="absolute inset-0 rounded-full animate-ping bg-[#25D366] opacity-30" style={{ animationDuration: '3s' }} />
       <MessageCircle className="h-7 w-7 relative z-10" />
-      <span className="absolute left-full ml-3 whitespace-nowrap bg-white text-gray-800 text-xs font-bold py-1.5 px-3 rounded-xl shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-        Butuh bantuan?
+      <span className="absolute left-full ml-3 whitespace-nowrap bg-white text-gray-800 text-xs font-bold py-1.5 px-3 rounded-xl shadow-md opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+        Hubungi kami
       </span>
     </a>
   )

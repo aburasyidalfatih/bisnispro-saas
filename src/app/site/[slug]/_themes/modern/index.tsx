@@ -13,6 +13,8 @@ import { TeamHighlight } from "../../_components/team-highlight"
 import { ClientTestimonials } from "../../_components/client-testimonials"
 import { PartnershipsSection } from "../../_components/partnerships-section"
 import { FaqSection } from "../../_components/faq-section"
+import { BusinessCta } from "../../_components/business-cta"
+import { ExportCapability } from "../../_components/export-capability"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { ThemeProps } from "../types"
 
@@ -122,7 +124,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          4. PROGRAM UNGGULAN
+          4. LAYANAN UNGGULAN
       ══════════════════════════════════════════════════════════════ */}
       <ScrollReveal>
         <ServicesSection programs={tenant.programs || []} basePath={base} />
@@ -141,7 +143,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          7. PRESTASI
+          7. PORTOFOLIO TERPILIH
       ══════════════════════════════════════════════════════════════ */}
       {(tenant.achievements?.length ?? 0) > 0 && (
         <ScrollReveal delay={0.1}>
@@ -179,7 +181,7 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
             <div className="flex items-end justify-between mb-8">
               <div>
                 <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-1">Galeri Perusahaan</h2>
-                <p className="text-muted-foreground text-sm">Dokumentasi kegiatan dan momen berharga kami</p>
+                <p className="text-muted-foreground text-sm">Dokumentasi karya, aktivitas, dan perjalanan bisnis kami</p>
               </div>
               <Link href={`${base}/gallery`} className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
                 Lihat Semua <ArrowRight className="h-4 w-4" />
@@ -258,71 +260,14 @@ export function ModernTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <FaqSection faqs={tenant.faqs} />
       )}
 
+      <ExportCapability tenant={tenant} base={base} />
+
       {/* ══════════════════════════════════════════════════════════════
           14. KONTAK CTA FOOTER
       ══════════════════════════════════════════════════════════════ */}
-      {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
-        <ScrollReveal delay={0.2}>
-        <section className="py-12 md:py-20 bg-background">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl border border-border bg-card shadow-2xl p-8 md:p-16 relative overflow-hidden">
-              <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
-              <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-primary/10 blur-3xl" />
-              
-              <div className="relative text-center max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60">
-                  Siap Bergabung Bersama Kami?
-                </h2>
-                <p className="text-muted-foreground mb-10">
-                  Kami selalu terbuka untuk menjawab pertanyaan Anda. Jangan ragu untuk menghubungi kami.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-                  {tenant.whatsapp && (
-                    <a href={`https://wa.me/${tenant.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener"
-                       className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-8 py-4 text-sm font-bold text-white shadow-lg shadow-[#25D366]/20 hover:bg-[#20bd5a] transition-all hover:-translate-y-1">
-                      <MessageCircle className="h-5 w-5" />
-                      Chat via WhatsApp
-                    </a>
-                  )}
-                  <Link href={`${base}/contact`}
-                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground px-8 py-4 text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all hover:-translate-y-1">
-                    Halaman Kontak <ArrowRight className="h-4 w-4 ml-2" />
-                  </Link>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-border">
-                  {tenant.phone && (
-                    <div className="flex flex-col items-center">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
-                        <Phone className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium text-foreground">{tenant.phone}</span>
-                    </div>
-                  )}
-                  {tenant.email && (
-                    <div className="flex flex-col items-center">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
-                        <Mail className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium text-foreground">{tenant.email}</span>
-                    </div>
-                  )}
-                  {tenant.address && (
-                    <div className="flex flex-col items-center">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
-                        <MapPin className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium text-foreground text-center line-clamp-2">{tenant.address}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        </ScrollReveal>
-      )}
+      <ScrollReveal delay={0.2}>
+        <BusinessCta tenant={tenant} base={base} />
+      </ScrollReveal>
     </main>
   )
 }

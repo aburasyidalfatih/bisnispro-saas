@@ -1,29 +1,22 @@
 "use client"
 
 import { useEffect } from "react"
-import Script from "next/script"
 import { hexToTailwindHsl } from "@/lib/color-utils"
 
 export function ThemeInjector({ theme, settings }: { theme: string; settings?: any }) {
   const primaryHsl = settings?.primaryColor ? hexToTailwindHsl(settings.primaryColor) : null
   const secondaryHsl = settings?.secondaryColor ? hexToTailwindHsl(settings.secondaryColor) : null
   const fontFamily = settings?.fontFamily || null
-
-  // Script ini dieksekusi oleh browser saat parsing HTML (sebelum React hydrate),
-  // sehingga tidak ada delay warna dan menghindari efek "FOUC".
-  const injectScript = `
-    try {
-      var root = document.documentElement;
-      root.setAttribute("data-theme", "${theme}");
-      ${fontFamily ? `root.setAttribute("data-font", "${fontFamily}");` : ''}
-    } catch(e) {}
-  `;
+  const industryPreset = settings?.industryPreset || "corporate"
+  const publicLocale = settings?.exportProfile?.enabled && settings?.exportProfile?.primaryLocale === "en" ? "en" : "id"
 
   useEffect(() => {
     const root = document.documentElement
     
     // Set base theme
     root.setAttribute("data-theme", theme)
+    root.setAttribute("data-industry", industryPreset)
+    root.setAttribute("lang", publicLocale)
     
     // Inject custom colors if provided
     if (primaryHsl) {
@@ -56,20 +49,39 @@ export function ThemeInjector({ theme, settings }: { theme: string; settings?: a
       root.style.removeProperty("--secondary")
       root.style.removeProperty("--accent")
       root.removeAttribute("data-font")
+      root.removeAttribute("data-industry")
+      root.removeAttribute("lang")
     }
-  }, [theme, settings, primaryHsl, secondaryHsl, fontFamily])
+  }, [theme, settings, primaryHsl, secondaryHsl, fontFamily, industryPreset, publicLocale])
 
   return (
-    <>
-      <Script id={`theme-script-${theme}`} strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: injectScript }} />
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          :root {
-            ${primaryHsl ? `--primary: ${primaryHsl};` : ''}
-            ${secondaryHsl ? `--secondary: ${secondaryHsl};\n            --accent: ${secondaryHsl};` : ''}
-          }
-        `
-      }} />
-    </>
+    <style dangerouslySetInnerHTML={{
+      __html: `
+        :root {
+          ${primaryHsl ? `--primary: ${primaryHsl};` : ''}
+          ${secondaryHsl ? `--secondary: ${secondaryHsl};\n          --accent: ${secondaryHsl};` : ''}
+        }
+      `
+    }} />
+  )
+}
+
+export function ThemeInitScript({ theme, settings }: { theme: string; settings?: any }) {
+  const fontFamily = settings?.fontFamily || null
+  const industryPreset = settings?.industryPreset || "corporate"
+  const publicLocale = settings?.exportProfile?.enabled && settings?.exportProfile?.primaryLocale === "en" ? "en" : "id"
+
+  const injectScript = `
+    try {
+      var root = document.documentElement;
+      root.setAttribute("data-theme", "${theme}");
+      root.setAttribute("data-industry", "${industryPreset}");
+      root.setAttribute("lang", "${publicLocale}");
+      ${fontFamily ? `root.setAttribute("data-font", "${fontFamily}");` : ''}
+    } catch(e) {}
+  `;
+
+  return (
+    <script dangerouslySetInnerHTML={{ __html: injectScript }} suppressHydrationWarning />
   )
 }

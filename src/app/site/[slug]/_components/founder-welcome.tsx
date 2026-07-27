@@ -19,7 +19,7 @@ export function FounderWelcome({ tenantName, settings, staff = [] }: FounderWelc
   const principalTitle = settings?.principalTitle || (principalStaff ? principalStaff.role : "Pimpinan Bisnis")
   const rawPrincipalImage = settings?.principalImage || (principalStaff ? (principalStaff.imageUrl || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076") : "/principal_portrait.png")
   const principalImage = normalizeImageUrl(rawPrincipalImage) || rawPrincipalImage
-  const principalMessage = settings?.principalMessage || `Puji syukur ke hadirat Tuhan YME atas segala rahmat dan karunia-Nya. Selamat datang di website resmi ${tenantName}. Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara perusahaan dengan orang tua, pelanggan, serta masyarakat luas.\n\nMelalui media ini, kami berharap seluruh informasi mengenai kegiatan, portofolio, serta program bisnis dapat tersampaikan secara transparan, cepat, dan akurat. Kami berkomitmen untuk terus meningkatkan kualitas layanan dan mencetak generasi penerus bangsa yang unggul dan berkarakter.`
+  const principalMessage = settings?.principalMessage || `Selamat datang di website resmi ${tenantName}. Kami menghadirkan ruang digital ini agar pelanggan, mitra, dan calon klien dapat mengenal layanan, portofolio, serta nilai yang kami bawa.\n\nKami berkomitmen memberi layanan yang profesional, responsif, dan dapat diandalkan. Semoga informasi di website ini membantu Anda menemukan solusi yang tepat untuk kebutuhan bisnis Anda.`
   const principalBadgeYear = settings?.principalBadgeYear || "2015"
 
   const paragraphs = principalMessage.split("\n").filter((p: string) => p.trim() !== "")

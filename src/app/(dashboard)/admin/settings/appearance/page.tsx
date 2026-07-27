@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from"react"
-import { useTheme } from"@teispace/next-themes"
 import { useSession } from"next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
@@ -30,7 +29,6 @@ const themeGradients: Record<string, string> = {
 }
 
 export default function AppearancePage() {
-  const { theme: darkMode, setTheme: setDarkMode } = useTheme()
   const { colorTheme, previewTheme, previewColorTheme, saveColorTheme, resetPreview, hasUnsavedChanges, activeTenantId } = useColorTheme()
   const { data: session } = useSession()
   
@@ -42,10 +40,13 @@ export default function AppearancePage() {
   const [availableCustomThemes, setAvailableCustomThemes] = useState<any[]>([])
   
   // Dynamic Theme Settings
-  const [dynamicSettings, setDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"", marqueeText:"" })
-  const [dbDynamicSettings, setDbDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"", marqueeText:"" })
+  const [dynamicSettings, setDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"", marqueeText:"", industryPreset:"corporate" })
+  const [dbDynamicSettings, setDbDynamicSettings] = useState({ primaryColor:"", secondaryColor:"", fontFamily:"", marqueeText:"", industryPreset:"corporate" })
 
-  const isImpersonating = typeof document !=="undefined" && document.cookie.includes("impersonate-tenant=")
+  const [isImpersonating, setIsImpersonating] = useState(false)
+  useEffect(() => {
+    setIsImpersonating(document.cookie.includes("impersonate-tenant="))
+  }, [])
   const canChangeTheme = isImpersonating || session?.user?.tenants?.some((t: any) => 
     t.id === activeTenantId && (t.role ==="owner" || t.role ==="admin")
   ) || false
@@ -54,7 +55,8 @@ export default function AppearancePage() {
   const hasSettingsChanged = dynamicSettings.primaryColor !== dbDynamicSettings.primaryColor || 
                              dynamicSettings.secondaryColor !== dbDynamicSettings.secondaryColor || 
                              dynamicSettings.fontFamily !== dbDynamicSettings.fontFamily ||
-                             dynamicSettings.marqueeText !== dbDynamicSettings.marqueeText
+                             dynamicSettings.marqueeText !== dbDynamicSettings.marqueeText ||
+                             dynamicSettings.industryPreset !== dbDynamicSettings.industryPreset
 
   // Fetch template + plan langsung dari database (bukan dari JWT session yang bisa stale)
   useEffect(() => {
@@ -78,6 +80,7 @@ export default function AppearancePage() {
             secondaryColor: data.settings.secondaryColor ||"",
             fontFamily: data.settings.fontFamily ||"inter",
             marqueeText: data.settings.marqueeText ||"",
+            industryPreset: data.settings.industryPreset || "corporate",
           }
           setDynamicSettings(s)
           setDbDynamicSettings(s)
@@ -350,6 +353,25 @@ export default function AppearancePage() {
       </Card>
 
       {/* Advanced Typografi & Warna Kustom */}
+      <Card className="border-border/40 shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2"><LayoutTemplate className="h-5 w-5 text-primary" /> Arah Industri Website</CardTitle>
+          <CardDescription>Preset ini menjaga komposisi dan CTA tetap profesional, sambil menyesuaikan karakter visual untuk industri Anda.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Select value={dynamicSettings.industryPreset} onValueChange={(industryPreset) => setDynamicSettings(p => ({ ...p, industryPreset }))}>
+            <SelectTrigger className="max-w-xl rounded-xl"><SelectValue placeholder="Pilih industri" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="corporate">Corporate / B2B — kredibel dan strategis</SelectItem>
+              <SelectItem value="agency">Agency — kreatif dan berani</SelectItem>
+              <SelectItem value="property">Property / Construction — kuat dan terpercaya</SelectItem>
+              <SelectItem value="fnb">F&B / Lifestyle — hangat dan atraktif</SelectItem>
+              <SelectItem value="healthcare">Healthcare / Beauty — bersih dan menenangkan</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
       <Card className="border-border/40 shadow-sm overflow-hidden">
         <CardHeader className="bg-muted/10 border-b">
           <CardTitle className="text-lg flex items-center gap-2">

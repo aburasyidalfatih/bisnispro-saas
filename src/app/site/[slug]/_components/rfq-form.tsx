@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function RfqForm({ slug }: { slug: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,6 +28,10 @@ export function RfqForm({ slug }: { slug: string }) {
       productInterest: "",
       quantity: "",
       additionalMessage: "",
+      deliveryTerms: "",
+      targetTimeline: "",
+      privacyConsent: false as true,
+      companyWebsite: "",
     },
   });
 
@@ -222,6 +227,13 @@ export function RfqForm({ slug }: { slug: string }) {
                 </FormItem>
               )}
             />
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <FormField control={form.control} name="deliveryTerms" render={({ field }) => <FormItem><FormLabel className="text-zinc-700 dark:text-zinc-300">Preferred delivery terms</FormLabel><FormControl><Input placeholder="e.g. FOB Jakarta, CIF" {...field} className="h-11 rounded-xl" /></FormControl><FormMessage /></FormItem>} />
+              <FormField control={form.control} name="targetTimeline" render={({ field }) => <FormItem><FormLabel className="text-zinc-700 dark:text-zinc-300">Target timeline</FormLabel><FormControl><Input placeholder="e.g. Q3 2026" {...field} className="h-11 rounded-xl" /></FormControl><FormMessage /></FormItem>} />
+            </div>
+            <FormField control={form.control} name="companyWebsite" render={({ field }) => <FormItem className="hidden" aria-hidden="true"><FormControl><Input tabIndex={-1} autoComplete="off" {...field} /></FormControl></FormItem>} />
+            <FormField control={form.control} name="privacyConsent" render={({ field }) => <FormItem className="flex items-start gap-3 space-y-0 rounded-xl border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel className="text-sm font-medium leading-relaxed">I agree that my details may be used to respond to this quotation request.</FormLabel><FormMessage /></div></FormItem>} />
 
             <Button 
               type="submit" 

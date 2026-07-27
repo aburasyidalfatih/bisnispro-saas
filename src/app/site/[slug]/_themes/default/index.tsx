@@ -15,6 +15,8 @@ import { TeamHighlight } from "../../_components/team-highlight"
 import { ClientTestimonials } from "../../_components/client-testimonials"
 import { PartnershipsSection } from "../../_components/partnerships-section"
 import { FaqSection } from "../../_components/faq-section"
+import { BusinessCta } from "../../_components/business-cta"
+import { ExportCapability } from "../../_components/export-capability"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { ThemeProps } from "../types"
 
@@ -189,58 +191,9 @@ export function DefaultTheme({ tenant, base, gallery, stats }: ThemeProps) {
         <FaqSection faqs={tenant.faqs} />
       )}
 
-      {/* ── 13. Kontak CTA ── */}
-      {(tenant.phone || tenant.email || tenant.whatsapp || tenant.address) && (
-        <ScrollReveal delay={0.2}>
-        <section className="py-10 md:py-16 bg-muted/30">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl bg-primary p-8 md:p-12 text-white relative overflow-hidden">
-              <div className="absolute inset-0 opacity-10"
-                style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                  <h2 className="text-2xl font-bold mb-2">{labels?.contact?.sectionTitle || "Hubungi Kami"}</h2>
-                  <p className="text-white/80 text-sm mb-6">{labels?.contact?.sectionSubtitle || "Kami siap membantu Anda. Jangan ragu untuk menghubungi kami."}</p>
-                  <div className="space-y-3">
-                    {tenant.phone && (
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-2 rounded-lg"><Phone className="h-4 w-4" /></div>
-                        <span className="text-sm font-medium">{tenant.phone}</span>
-                      </div>
-                    )}
-                    {tenant.email && (
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-2 rounded-lg"><Mail className="h-4 w-4" /></div>
-                        <span className="text-sm font-medium">{tenant.email}</span>
-                      </div>
-                    )}
-                    {tenant.address && (
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-2 rounded-lg"><MapPin className="h-4 w-4" /></div>
-                        <span className="text-sm font-medium">{tenant.address}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex md:justify-end gap-3">
-                  {tenant.whatsapp && (
-                    <a href={`https://wa.me/${tenant.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener"
-                       className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-[#20bd5a] transition-all hover:scale-105 active:scale-95">
-                      <MessageCircle className="h-5 w-5" />
-                      {labels?.contact?.btnWa || "Chat WhatsApp"}
-                    </a>
-                  )}
-                  <Link href={`${base}/contact`}
-                    className="inline-flex items-center justify-center rounded-xl bg-white text-primary px-6 py-3 text-sm font-bold shadow-lg hover:bg-slate-50 transition-all hover:scale-105 active:scale-95">
-                    {labels?.contact?.btnEmail || "Kirim Pesan"}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        </ScrollReveal>
-      )}
+      <ExportCapability tenant={tenant} base={base} />
+
+      <ScrollReveal delay={0.2}><BusinessCta tenant={tenant} base={base} /></ScrollReveal>
     </main>
   )
 }

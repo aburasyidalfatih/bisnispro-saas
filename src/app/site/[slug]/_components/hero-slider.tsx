@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight, Play } from "lucide-react"
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react"
 import { useRouting } from "@/components/providers/routing-provider"
 import Image from "next/image"
 import { normalizeImageUrl } from "@/lib/utils"
@@ -29,15 +29,25 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   const [prev, setPrev]       = useState<number | null>(null)
   const [animating, setAnimating] = useState(false)
   const [direction, setDirection] = useState<"next" | "prev">("next")
+  const [isPaused, setIsPaused] = useState(false)
+  const [reduceMotion, setReduceMotion] = useState(false)
   const [textKey, setTextKey] = useState(0) // forces text re-mount → re-animation
 
   // Swipe handlers
-  const [touchStart, setTouchStart] = useState<number | null>(null)
-  const [touchEnd, setTouchEnd] = useState<number | null>(null)
+  const touchStart = useRef<number | null>(null)
+  const touchEnd = useRef<number | null>(null)
 
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const autoTimer       = useRef<ReturnType<typeof setInterval> | null>(null)
   const isSingle        = slides.length <= 1
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const update = () => setReduceMotion(media.matches)
+    update()
+    media.addEventListener("change", update)
+    return () => media.removeEventListener("change", update)
+  }, [])
 
   const goTo = useCallback(
     (index: number, dir: "next" | "prev") => {
@@ -57,27 +67,18 @@ export function HeroSlider({ slides }: HeroSliderProps) {
     [animating, current]
   )
 
+  const goNext = useCallback(() => {
+    if (animating) return
+    goTo((current + 1) % slides.length, "next")
+  }, [animating, current, goTo, slides.length])
+
   // Auto-slide — restart whenever `current` changes so timing is fresh
   useEffect(() => {
-    if (isSingle) return
+    if (isSingle || isPaused || reduceMotion) return
     if (autoTimer.current) clearInterval(autoTimer.current)
-    autoTimer.current = setInterval(() => {
-      setCurrent((c) => {
-        const next = (c + 1) % slides.length
-        setDirection("next")
-        setPrev(c)
-        setAnimating(true)
-        setTextKey((k) => k + 1)
-        if (transitionTimer.current) clearTimeout(transitionTimer.current)
-        transitionTimer.current = setTimeout(() => {
-          setPrev(null)
-          setAnimating(false)
-        }, TRANSITION_MS)
-        return next
-      })
-    }, AUTO_INTERVAL)
+    autoTimer.current = setInterval(goNext, AUTO_INTERVAL)
     return () => { if (autoTimer.current) clearInterval(autoTimer.current) }
-  }, [slides.length, isSingle])
+  }, [goNext, isSingle, isPaused, reduceMotion])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -91,17 +92,17 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   const prevSlide = prev !== null ? slides[prev] : null
 
   const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientX)
+    touchEnd.current = null
+    touchStart.current = e.targetTouches[0].clientX
   }
 
   const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
+    touchEnd.current = e.targetTouches[0].clientX
   }
 
   const onTouchEndHandler = () => {
-    if (!touchStart || !touchEnd) return
-    const distance = touchStart - touchEnd
+    if (touchStart.current === null || touchEnd.current === null) return
+    const distance = touchStart.current - touchEnd.current
     const isLeftSwipe = distance > 50
     const isRightSwipe = distance < -50
 
@@ -126,7 +127,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
           key={`bg-prev-${prev}`}
           className="absolute inset-0 z-10"
           style={{
-            animation: `${direction === "next" ? "bgExitLeft" : "bgExitRight"} ${TRANSITION_MS}ms ease forwards`,
+              animation: reduceMotion ? "none" : `${direction === "next" ? "bgExitLeft" : "bgExitRight"} ${TRANSITION_MS}ms ease forwards`,
           }}
         >
           <SlideBackground slide={prevSlide} isPriority={prev === 0} />
@@ -136,7 +137,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
         key={`bg-curr-${current}`}
         className="absolute inset-0 z-20"
         style={{
-          animation: animating
+          animation: reduceMotion ? "none" : animating
             ? `${direction === "next" ? "bgEnterRight" : "bgEnterLeft"} ${TRANSITION_MS}ms ease forwards`
             : "none",
         }}
@@ -268,6 +269,9 @@ export function HeroSlider({ slides }: HeroSliderProps) {
               />
             </button>
           ))}
+          <button type="button" onClick={() => setIsPaused(value => !value)} aria-label={isPaused ? "Resume slide rotation" : "Pause slide rotation"} className="ml-2 flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/30 text-white transition hover:bg-white hover:text-black">
+            {isPaused ? <Play className="h-4 w-4 fill-current" /> : <Pause className="h-4 w-4" />}
+          </button>
         </div>
       )}
 

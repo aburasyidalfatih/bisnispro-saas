@@ -156,6 +156,8 @@ export interface PpdbCta {
 }
 
 export interface TenantSettings {
+  industryPreset?: "corporate" | "agency" | "property" | "fnb" | "healthcare"
+  exportProfile?: ExportProfile
   principalName?: string
   principalTitle?: string
   principalImage?: string
@@ -175,6 +177,24 @@ export interface TenantSettings {
   heroHighlights?: HeroHighlight[]
   ppdbCta?: PpdbCta
   [key: string]: unknown // Allow additional settings
+}
+
+export interface ExportProfile {
+  enabled?: boolean
+  primaryLocale?: "id" | "en"
+  targetMarkets?: string[]
+  currency?: string
+  legalEntity?: string
+  minimumOrder?: string
+  productionCapacity?: string
+  leadTime?: string
+  incoterms?: string
+  paymentTerms?: string
+  certifications?: string[]
+  exportCountries?: string[]
+  catalogueUrl?: string
+  companyProfileUrl?: string
+  responseSla?: string
 }
 
 // ─── Gallery Item ───

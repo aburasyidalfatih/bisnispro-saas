@@ -6,7 +6,7 @@ import { getTenantLayoutData } from "@/features/tenant/services/tenant-modular.s
 import { notFound } from "next/navigation"
 import { WebsiteNavbar } from "./_components/navbar"
 import { WebsiteFooter } from "./_components/footer"
-import { ThemeInjector } from "./_components/theme-injector"
+import { ThemeInjector, ThemeInitScript } from "./_components/theme-injector"
 import { RoutingProvider } from "@/components/providers/routing-provider"
 import { headers } from "next/headers"
 import { getActivePopup } from "@/features/popup/actions/popup.action"
@@ -41,6 +41,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const ogImageUrl = `${canonicalDomain}/api/og-proxy?url=${encodeURIComponent(fullOgImageBase)}&ext=.jpg`
 
   const normalizedLogo = tenant.logo ? (normalizeImageUrl(tenant.logo) || tenant.logo) : null;
+  const exportProfile = (tenant.settings as any)?.exportProfile
+  const ogLocale = exportProfile?.enabled && exportProfile?.primaryLocale === "en" ? "en_US" : "id_ID"
 
   return {
     metadataBase: new URL(canonicalDomain),
@@ -62,7 +64,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       },
       description: tenant.seoDesc || tenant.description || `Website resmi ${tenant.name}`,
       siteName: tenant.name,
-      locale: "id_ID",
+      locale: ogLocale,
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: tenant.name }],
       type: "website",
     },
@@ -178,6 +180,8 @@ export default async function WebsiteLayout({
     basePath: `/site/${slug}`
   }
   const canonicalUrl = `https://${tenant.domain || tenant.slug + '.' + rootDomain}`
+  const exportProfile = (tenant.settings as any)?.exportProfile
+  const exportCountry = exportProfile?.exportCountries?.[0] || "Indonesia"
   const structuredData = JSON.stringify({
     "@context": "https://schema.org",
     "@graph": [
@@ -199,7 +203,7 @@ export default async function WebsiteLayout({
           "streetAddress": tenant.address || "",
           "addressLocality": (tenant.settings as any)?.regency || "",
           "addressRegion": (tenant.settings as any)?.province || "",
-          "addressCountry": "ID"
+          "addressCountry": exportCountry
         }
       },
       {
@@ -234,7 +238,9 @@ export default async function WebsiteLayout({
           <div dangerouslySetInnerHTML={{ __html: (tenant.settings as any).headScript }} />
         )}
 
+        <ThemeInitScript theme={tenant.theme} settings={tenant.settings} />
         <ThemeInjector theme={tenant.theme} settings={tenant.settings} />
+        <a href="#tenant-main-content" className="sr-only fixed left-4 top-4 z-[100] rounded-lg bg-primary px-4 py-2 font-bold text-primary-foreground focus:not-sr-only">Skip to main content</a>
         
         {/* Render Navbar hanya jika tidak menggunakan Custom Theme dan bukan halaman TV */}
         {!isTvPage && !tenant.customThemeId && (
@@ -269,7 +275,7 @@ export default async function WebsiteLayout({
           </div>
         )}
         
-        <main className="flex-1 w-full max-w-full overflow-x-clip">{children}</main>
+        <main id="tenant-main-content" tabIndex={-1} className="flex-1 w-full max-w-full overflow-x-clip">{children}</main>
         
         {/* Render Footer hanya jika tidak menggunakan Custom Theme dan bukan halaman TV */}
         {!isTvPage && !tenant.customThemeId && (
@@ -285,14 +291,14 @@ export default async function WebsiteLayout({
         <MediumZoomSetup />
         
         {/* Floating WhatsApp Widget */}
-        {!isTvPage && tenant.whatsapp && !tenant.customThemeId && (
+        {!isTvPage && tenant.whatsapp && (
           <div className="print:hidden">
             <FloatingWhatsApp whatsappNumber={tenant.whatsapp} message={`Halo Admin ${tenant.name}, saya ingin bertanya mengenai info di website.`} />
           </div>
         )}
 
         {/* Scroll To Top Widget */}
-        {!isTvPage && !tenant.customThemeId && (
+        {!isTvPage && (
           <div className="print:hidden">
             <ScrollToTop />
           </div>

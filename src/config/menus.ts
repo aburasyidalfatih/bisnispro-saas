@@ -112,6 +112,7 @@ export function getTenantMenu(basePath: string, plan: string = "free", access: R
         { label: "FAQ", href: `${basePath}/website/faq`, icon: HelpCircle },
         { label: "Halaman Custom", href: `${basePath}/website/pages`, icon: LayoutTemplate },
         { label: "Dokumen/Download", href: `${basePath}/website/documents`, icon: Download },
+        { label: "Export Readiness", href: `${basePath}/website/export`, icon: Globe },
         { label: "Slider/Banner", href: `${basePath}/website/sliders`, icon: MonitorSmartphone },
         { label: "Popup", href: `${basePath}/website/popups`, icon: Megaphone },
         { label: "Menu Navigasi", href: `${basePath}/website/menu`, icon: LayoutDashboard },
